@@ -1,0 +1,48 @@
+.app-container {
+	display: flex;
+	.card-filter-panel {
+		flex: 1;
+	}
+	.card-info-panel {
+		flex: 2;
+	}
+	.card-preview-panel {
+		flex: 2;
+		position: relative;
+	}
+}
+
+.control-board {
+	.control-zoom {
+		display: grid;
+		grid-template-columns: 1fr 100px;
+		> span {
+			display: flex;
+			align-self: center;
+			margin-left: 5px;
+		}
+	}
+}
+
+.card-preview {
+	--zoom-ratio: 0.8;
+	--translate-percent: -12.5%;
+	top: 0;
+	left: 0;
+	transform: scale(var(--zoom-ratio)) translateY(var(--translate-percent)) translateX(var(--translate-percent));
+	margin: 5px;
+	position: relative;
+	width: 548.93pt;
+	height: 799.9pt;
+	.preview {
+		position: absolute;
+	}
+	.preview-effect {
+		background-color: lightblue;
+		opacity: 0.97;
+		top: 624.33pt;
+		left: 43.88pt;
+		width: 464.29pt;
+		height: 103.35pt;
+	}
+}
