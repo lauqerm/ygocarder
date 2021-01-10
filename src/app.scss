@@ -1,5 +1,7 @@
 .app-container {
 	display: flex;
+	--zoom-ratio: 0.8;
+	--translate-percent: -12.5%;
 	.card-filter-panel {
 		flex: 1;
 	}
@@ -24,9 +26,13 @@
 	}
 }
 
+#portal {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform: scale(var(--zoom-ratio)) translateY(var(--translate-percent)) translateX(var(--translate-percent));
+}
 .card-preview {
-	--zoom-ratio: 0.8;
-	--translate-percent: -12.5%;
 	top: 0;
 	left: 0;
 	transform: scale(var(--zoom-ratio)) translateY(var(--translate-percent)) translateX(var(--translate-percent));
@@ -36,9 +42,17 @@
 	height: 799.9pt;
 	.preview {
 		position: absolute;
+		overflow: hidden;
+	}
+	.preview-name {
+		background-color: lightcyan;
+		top: 30.56pt;
+		left: 39.73pt;
+		width: 387.98pt;
+		height: 57.16pt;
+		letter-spacing: 0.01em;
 	}
 	.preview-effect {
-		overflow: hidden;
 		background-color: lightblue;
 		opacity: 0.97;
 		top: 624.33pt;
@@ -46,8 +60,28 @@
 		width: 464.29pt;
 		height: 103.35pt;
 	}
+	.preview-atk {
+		background-color: lightcoral;
+		opacity: 0.95;
+		top: 726.75pt;
+		left: 343.47pt;
+		width: 49.93pt;
+		height: 23.67pt;
+	}
+	.preview-def {
+		background-color: lightcoral;
+		opacity: 0.95;
+		top: 726.75pt;
+		left: 454.87pt;
+		width: 49.93pt;
+		height: 23.67pt;
+	}
 }
 
 .hidden {
 	visibility: hidden;
+}
+
+.hide-selected {
+	display: none;
 }

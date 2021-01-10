@@ -10,6 +10,10 @@ export type TextBoxTitle = {
     zoom?: number,
     size?: TextBoxSize,
     atFoot?: boolean,
+    hiddenPad?: {
+        char: string,
+        length: number,
+    }
 }
 export const TextBoxTitle = ({
     name,
@@ -17,6 +21,7 @@ export const TextBoxTitle = ({
     zoom = 1,
     size = defaultSize,
     atFoot = false,
+    hiddenPad,
 }: TextBoxTitle) => {
     const [, setRefresh] = useState(0);
     const refresh = (message?: string | number) => {
@@ -31,6 +36,7 @@ export const TextBoxTitle = ({
         medianRatio: 1000,
         lastEffetiveRatio: 1000,
         iterationCount: 20,
+        test: 0,
     });
     const contentScaleRef = useRef({
         scaleRatio: 1,
@@ -109,6 +115,8 @@ export const TextBoxTitle = ({
                     } else {
                     // console.log(`${name} FINISHED RESIZE AS`, currentBoxRef.medianRatio);
                         currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
+                        // currentBoxRef.test = calculateMaxContentLength() - calculateContentLength();
+
                     }
                 }
             }
@@ -123,7 +131,12 @@ export const TextBoxTitle = ({
         scaleRatio,
         translatePercent,
     } = contentScaleRef.current;
-    const { content } = boxRef.current;
+    const { content, test } = boxRef.current;
+    const {
+        char = '0',
+        length: padThreshold = 0,
+    } = hiddenPad ?? {};
+    const padLength = Math.max(0, padThreshold - content.length);
     const line = calculateMaxLine();
     return <div ref={containerRef}
         className={`textbox-title textbox-title-${name} ${atFoot ? 'textbox-footer' : ''}`}
@@ -132,12 +145,15 @@ export const TextBoxTitle = ({
             width: `${100 / scaleRatio}%`,
             fontSize: `${fontSize}pt`,
             lineHeight: `${lineHeight}pt`,
+            // left: `${test}px`,
             ...(atFoot ? {
                 height: `${lineHeight}pt`,
                 top: `calc(${(line - 1)} * ${lineHeight}pt)`
             } : {}),
         }}
     >
-        {content}<div ref={measurerRef} className="lastline-measure" />
+        <span className="hidden-pad">{padLength > 0 ? ''.padStart(padLength, char) : ''}</span>
+        {content}
+        <div ref={measurerRef} className="lastline-measure" />
     </div>;
 };

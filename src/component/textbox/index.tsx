@@ -231,3 +231,4 @@ export const TextBox = ({
         />
     </div>;
 };
+TextBox.Title = TextBoxTitle;
