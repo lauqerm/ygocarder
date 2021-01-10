@@ -1,1 +1,1 @@
-export type TextBoxSizeList = { fontSize: number, lineHeight: number };
+export type TextBoxSize = { fontSize: number, lineHeight: number };

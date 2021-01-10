@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import { Input, InputNumber, Select, Slider } from 'antd';
 import { Card, defaultCard, ScaleValue } from './model';
 import { debounce } from 'lodash';
-import { EffectTextBox } from './component';
+import { TextBox } from './component';
 import { scaleCalc } from './util';
 
 const { TextArea } = Input;
@@ -33,9 +33,11 @@ function App() {
     const $onZoomChange = (value: number) => setZoom(scaleCalc(value, 100));
     const onZoomChange = debounce($onZoomChange, 100);
     const onEffectChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const value = e.target.value;
+
         setCard(current => ({
             ...current,
-            effect: e.target.value,
+            effect: value,
         }));
     };
 
@@ -106,7 +108,7 @@ function App() {
                     '--zoom-ratio': zoomValue.scaleRatio,
                     '--translate-percent': zoomValue.translatePercent,
                 } as any}>
-                    <EffectTextBox name="effect" value={currentCard.effect} zoom={scaleRatio} />
+                    <TextBox name="effect" zoom={scaleRatio} value={currentCard.effect} />
                 </div>
             </div>
         </div>

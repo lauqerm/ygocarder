@@ -1,0 +1,33 @@
+.preview-effect {
+	overflow: hidden;
+	.textbox {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		text-align: justify;
+		white-space: pre-wrap;
+		&.vanilla {
+			font-style: italic;
+		}
+	}
+}
+	
+.textbox-title {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	text-align: justify;
+	white-space: nowrap;
+	&.textbox-footer {
+		top: unset;
+		font-style: normal;
+	}
+}
+
+.lastline-measure {
+	display: inline-block;
+	width: 0;
+	height: 1px;
+}

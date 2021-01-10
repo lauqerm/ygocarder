@@ -1,1 +1,1 @@
-export { EffectTextBox } from './effect-textbox';
+export { TextBox } from './textbox';

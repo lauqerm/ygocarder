@@ -22,4 +22,4 @@ export const defaultCard = {
     type: [],
 };
 
-export type { TextBoxSizeList } from './textbox';
+export type { TextBoxSize } from './textbox';

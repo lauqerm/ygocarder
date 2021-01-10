@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.167",
-    "@types/ramda": "^0.27.34"
+    "@types/ramda": "^0.27.34",
+    "source-map-loader": "^1.0.0"
   }
 }

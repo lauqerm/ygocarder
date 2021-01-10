@@ -38,6 +38,7 @@
 		position: absolute;
 	}
 	.preview-effect {
+		overflow: hidden;
 		background-color: lightblue;
 		opacity: 0.97;
 		top: 624.33pt;
@@ -45,4 +46,8 @@
 		width: 464.29pt;
 		height: 103.35pt;
 	}
+}
+
+.hidden {
+	visibility: hidden;
 }
