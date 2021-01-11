@@ -10,10 +10,7 @@ export type TextBoxTitle = {
     zoom?: number,
     size?: TextBoxSize,
     atFoot?: boolean,
-    hiddenPad?: {
-        char: string,
-        length: number,
-    }
+    alignment?: 'left' | 'right',
 }
 export const TextBoxTitle = ({
     name,
@@ -21,7 +18,7 @@ export const TextBoxTitle = ({
     zoom = 1,
     size = defaultSize,
     atFoot = false,
-    hiddenPad,
+    alignment = 'left',
 }: TextBoxTitle) => {
     const [, setRefresh] = useState(0);
     const refresh = (message?: string | number) => {
@@ -36,14 +33,14 @@ export const TextBoxTitle = ({
         medianRatio: 1000,
         lastEffetiveRatio: 1000,
         iterationCount: 20,
-        test: 0,
     });
     const contentScaleRef = useRef({
         scaleRatio: 1,
         translatePercent: '0%',
     });
     const containerRef = useRef<HTMLDivElement>(null);
-    const measurerRef = useRef<HTMLDivElement>(null);
+    const measureRightRef = useRef<HTMLDivElement>(null);
+    const measureLeftRef = useRef<HTMLDivElement>(null);
 
     const calculateMaxLine = () => {
         const parentRef = containerRef?.current?.parentElement;
@@ -61,11 +58,12 @@ export const TextBoxTitle = ({
         return 1;
     };
     const calculateContentLength = () => {
-        if (measurerRef.current && containerRef.current) {
+        if (measureLeftRef.current && measureRightRef.current && containerRef.current) {
             // Font size and line height are subjected to canvas zoom
-            const { left: containerLeft } = containerRef.current.getBoundingClientRect();
-            const { left: measurerLeft } = measurerRef.current.getBoundingClientRect();
-            const lastLineLength = measurerLeft - containerLeft;
+            const { left: rightMeasurer } = measureRightRef.current.getBoundingClientRect();
+            const { left: leftMeasurer } = measureLeftRef.current.getBoundingClientRect();
+            console.log('🚀 ~ file: title.tsx ~ line 70 ~ calculateContentLength ~ leftMeasurer', leftMeasurer, rightMeasurer);
+            const lastLineLength = rightMeasurer - leftMeasurer;
             const textLength = lastLineLength;
 
             return textLength;
@@ -115,8 +113,6 @@ export const TextBoxTitle = ({
                     } else {
                     // console.log(`${name} FINISHED RESIZE AS`, currentBoxRef.medianRatio);
                         currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
-                        // currentBoxRef.test = calculateMaxContentLength() - calculateContentLength();
-
                     }
                 }
             }
@@ -131,29 +127,23 @@ export const TextBoxTitle = ({
         scaleRatio,
         translatePercent,
     } = contentScaleRef.current;
-    const { content, test } = boxRef.current;
-    const {
-        char = '0',
-        length: padThreshold = 0,
-    } = hiddenPad ?? {};
-    const padLength = Math.max(0, padThreshold - content.length);
+    const { content } = boxRef.current;
     const line = calculateMaxLine();
     return <div ref={containerRef}
-        className={`textbox-title textbox-title-${name} ${atFoot ? 'textbox-footer' : ''}`}
+        className={`textbox-title textbox-title-${name} textbox-title-${alignment} ${atFoot ? 'textbox-footer' : ''}`}
         style={{
             transform: `scaleX(${scaleRatio}) translateX(${translatePercent})`,
             width: `${100 / scaleRatio}%`,
             fontSize: `${fontSize}pt`,
             lineHeight: `${lineHeight}pt`,
-            // left: `${test}px`,
             ...(atFoot ? {
                 height: `${lineHeight}pt`,
                 top: `calc(${(line - 1)} * ${lineHeight}pt)`
             } : {}),
         }}
     >
-        <span className="hidden-pad">{padLength > 0 ? ''.padStart(padLength, char) : ''}</span>
+        <div ref={measureLeftRef} className="measurer" />
         {content}
-        <div ref={measurerRef} className="lastline-measure" />
+        <div ref={measureRightRef} className="measurer" />
     </div>;
 };

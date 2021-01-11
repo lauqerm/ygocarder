@@ -146,21 +146,15 @@ function App() {
                     </div>
                     <TextBox name="effect" zoom={scaleRatio} value={effect} />
                     <div className="preview preview-atk">
-                        <Title name="atk" zoom={scaleRatio} value={atk} size={{
+                        <Title name="atk" zoom={scaleRatio} value={atk} alignment="right" size={{
                             fontSize: 24.61,
                             lineHeight: 23.67,
-                        }} hiddenPad={{
-                            char: '0',
-                            length: 4,
                         }} />
                     </div>
                     <div className="preview preview-def">
-                        <Title name="def" zoom={scaleRatio} value={def} size={{
+                        <Title name="def" zoom={scaleRatio} value={def} alignment="right" size={{
                             fontSize: 24.61,
                             lineHeight: 23.67,
-                        }} hiddenPad={{
-                            char: '0',
-                            length: 4,
                         }} />
                     </div>
                 </div>

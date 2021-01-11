@@ -179,7 +179,7 @@ export const TextBox = ({
                             setLoading(false);
                         }
                     }
-                }
+                } else setLoading(false);
             }
         }
     });
@@ -217,7 +217,7 @@ export const TextBox = ({
                 lineHeight: `${lineHeight}pt`,
             }}
         >
-            {content}<div ref={measurerRef} className="lastline-measure" />
+            {content}<div ref={measurerRef} className="measurer" />
         </div>
         <TextBoxTitle key="footer"
             atFoot

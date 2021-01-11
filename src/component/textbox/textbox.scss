@@ -24,12 +24,15 @@
 		top: unset;
 		font-style: normal;
 	}
+	&.textbox-title-right {
+		text-align: right;
+	}
 	.hidden-pad {
 		visibility: hidden;
 	}
 }
 
-.lastline-measure {
+.measurer {
 	display: inline-block;
 	width: 0;
 	height: 1px;
