@@ -1,22 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { px2pt, scaleCalc } from '../../util';
-import { TextBoxSize } from '../../model';
+import { TextBoxFontSize } from '../../model';
 import './textbox.scss';
 
-const defaultSize: TextBoxSize = { fontSize: 16.41, lineHeight: 16.73 };
+const defaultSize: TextBoxFontSize = { fontSize: 16.41, lineHeight: 16.73 };
 export type TextBoxTitle = {
 	value?: string,
     name?: string,
+    className?: string,
     zoom?: number,
-    size?: TextBoxSize,
+    defaultMaxScaleRatio?: number,
+    font?: TextBoxFontSize,
     atFoot?: boolean,
     alignment?: 'left' | 'right',
 }
 export const TextBoxTitle = ({
     name,
     value = '',
+    className = '',
     zoom = 1,
-    size = defaultSize,
+    defaultMaxScaleRatio = 1,
+    font = defaultSize,
     atFoot = false,
     alignment = 'left',
 }: TextBoxTitle) => {
@@ -29,13 +33,13 @@ export const TextBoxTitle = ({
         content: '',
         prevValue: '',
         lowerRatio: 0,
-        upperRatio: 1000,
-        medianRatio: 1000,
-        lastEffetiveRatio: 1000,
+        upperRatio: -1,
+        medianRatio: -1,
+        lastEffetiveRatio: -1,
         iterationCount: 20,
     });
     const contentScaleRef = useRef({
-        scaleRatio: 1,
+        scaleRatio: -1,
         translatePercent: '0%',
     });
     const containerRef = useRef<HTMLDivElement>(null);
@@ -74,6 +78,7 @@ export const TextBoxTitle = ({
     useEffect(() => {
         const currentBoxRef = boxRef.current;
         const prevValue = currentBoxRef.prevValue;
+        if (contentScaleRef.current.scaleRatio < -1) return;
         if (prevValue !== value) {
             boxRef.current = {
                 ...boxRef.current,
@@ -118,11 +123,22 @@ export const TextBoxTitle = ({
             }
         }
     });
+    useEffect(() => {
+        boxRef.current = {
+            ...boxRef.current,
+            medianRatio: defaultMaxScaleRatio * 1000,
+            upperRatio: defaultMaxScaleRatio * 1000,
+            lastEffetiveRatio: defaultMaxScaleRatio * 1000,
+        };
+        contentScaleRef.current = scaleCalc(defaultMaxScaleRatio);
+        refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const {
         fontSize,
         lineHeight
-    } = size;
+    } = font;
     const {
         scaleRatio,
         translatePercent,
@@ -130,7 +146,7 @@ export const TextBoxTitle = ({
     const { content } = boxRef.current;
     const line = calculateMaxLine();
     return <div ref={containerRef}
-        className={`textbox-title textbox-title-${name} textbox-title-${alignment} ${atFoot ? 'textbox-footer' : ''}`}
+        className={`textbox-title textbox-title-${name} textbox-title-${alignment} ${atFoot ? 'textbox-footer' : ''} ${className ?? ''}`}
         style={{
             transform: `scaleX(${scaleRatio}) translateX(${translatePercent})`,
             width: `${100 / scaleRatio}%`,

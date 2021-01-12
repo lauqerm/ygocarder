@@ -14,6 +14,12 @@
 	}
 }
 
+.card-info-panel {
+	.card-info-sub-family {
+		height: 3em;
+	}
+}
+
 .control-board {
 	.control-zoom {
 		display: grid;
@@ -51,6 +57,21 @@
 		width: 387.98pt;
 		height: 57.16pt;
 		letter-spacing: 0.01em;
+	}
+	.preview-type-ability {
+		font-weight: bold;
+		background-color: lightgreen;
+		opacity: 0.95;
+		left: 41.96pt;
+		width: 468.13pt;
+		&.preview-type-ability-normal {
+			top: 601.95pt;
+			height: 24.76pt;
+		}
+		&.preview-type-ability-small {
+			top: 601.72pt;
+			height: 23.32pt;
+		}
 	}
 	.preview-effect {
 		background-color: lightblue;

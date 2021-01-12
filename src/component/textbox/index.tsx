@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { px2pt, scaleCalc } from '../../util';
-import { TextBoxSize } from '../../model';
+import { TextBoxFontSize } from '../../model';
 import { TextBoxTitle } from './title';
 import { Loading } from '../loading';
 import './textbox.scss';
 
-const defaultSizeList: TextBoxSize[] = [
+const defaultFontList: TextBoxFontSize[] = [
     { fontSize: 16.41, lineHeight: 16.73 },
     { fontSize: 13.88, lineHeight: 14.52 },
     { fontSize: 12.1, lineHeight: 12.77 },
@@ -15,17 +15,33 @@ const defaultSizeList: TextBoxSize[] = [
 export type TextBox = {
 	value?: string,
     name?: string,
+    className?: string,
     zoom?: number,
-    sizeList?: TextBoxSize[],
+    fontList?: TextBoxFontSize[],
     isFlavorText?: boolean,
+    size?: {
+        width: number,
+        height: number,
+    },
+    onLineChange?: (lineCount: number) => void,
 }
 export const TextBox = ({
     name,
     value = '',
     zoom = 1,
-    sizeList = defaultSizeList,
+    fontList = defaultFontList,
     isFlavorText = false,
+    className = '',
+    size = {
+        width: 464.29,
+        height: 103.35,
+    },
+    onLineChange = () => {},
 }: TextBox) => {
+    const {
+        height,
+        width,
+    } = size;
     const [, setRefresh] = useState(0);
     const refresh = (message?: string | number) => {
         if (message !== undefined) console.log(message);
@@ -39,7 +55,7 @@ export const TextBox = ({
         if (value === false) await (new Promise(resolve => setTimeout(resolve, 500)));
         if (currentIteration === loadingRef.current) setLoadingState(value);
     };
-    const [size, setSize] = useState(0);
+    const [font, setFont] = useState(0);
     const boxRef = useRef({
         content: '',
         title: '',
@@ -83,7 +99,7 @@ export const TextBox = ({
     const calculateContentLength = () => {
         if (measurerRef.current && containerRef.current) {
             // Font size and line height are subjected to canvas zoom
-            const { lineHeight } = sizeList[size] ?? sizeList[0];
+            const { lineHeight } = fontList[font] ?? fontList[0];
             const {
                 height: containerHeight,
                 width: containerWidth,
@@ -140,7 +156,7 @@ export const TextBox = ({
                 };
             }
 
-            setSize(0);
+            setFont(0);
             setLoading(true);
             refresh();
         } else {
@@ -168,14 +184,15 @@ export const TextBox = ({
                         contentScaleRef.current = scaleCalc(newMedian, 1000);
                         refresh();
                     } else {
-                        if (currentBoxRef.medianRatio < 680 && sizeList[size + 1] !== undefined) {
+                        if (currentBoxRef.medianRatio < 680 && fontList[font + 1] !== undefined) {
                             currentBoxRef.upperRatio = 1000;
                             currentBoxRef.lowerRatio = 0;
                             currentBoxRef.iterationCount = 30;
-                            setSize(cur => cur + 1);
+                            setFont(cur => cur + 1);
                         } else {
                             // console.log(`${name} FINISHED RESIZE AS`, currentBoxRef.medianRatio);
                             currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
+                            onLineChange(calculateMaxLine());
                             setLoading(false);
                         }
                     }
@@ -187,7 +204,7 @@ export const TextBox = ({
     const {
         fontSize,
         lineHeight
-    } = sizeList[size] ?? sizeList[0];
+    } = fontList[font] ?? fontList[0];
     const {
         scaleRatio: contentScaleRatio,
         translatePercent: contentTranslatePercent,
@@ -197,12 +214,15 @@ export const TextBox = ({
         content,
         footer,
     } = boxRef.current;
-    return <div className={`preview preview-${name}`}>
+    return <div className={`preview preview-${name} ${className ?? ''}`} style={{
+        width: `${width}pt`,
+        height: `${height}pt`,
+    }}>
         {loading && <Loading.FullView />}
         <TextBoxTitle key="title"
             name={name}
             zoom={zoom}
-            size={{
+            font={{
                 fontSize,
                 lineHeight
             }}
@@ -223,7 +243,7 @@ export const TextBox = ({
             atFoot
             name={name}
             zoom={zoom}
-            size={{
+            font={{
                 fontSize,
                 lineHeight
             }}
