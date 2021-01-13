@@ -13,6 +13,7 @@ export type TextBoxTitle = {
     font?: TextBoxFontSize,
     atFoot?: boolean,
     alignment?: 'left' | 'right',
+    children?: React.ReactNode,
 }
 export const TextBoxTitle = ({
     name,
@@ -23,6 +24,7 @@ export const TextBoxTitle = ({
     font = defaultSize,
     atFoot = false,
     alignment = 'left',
+    children,
 }: TextBoxTitle) => {
     const [, setRefresh] = useState(0);
     const refresh = (message?: string | number) => {
@@ -66,7 +68,6 @@ export const TextBoxTitle = ({
             // Font size and line height are subjected to canvas zoom
             const { left: rightMeasurer } = measureRightRef.current.getBoundingClientRect();
             const { left: leftMeasurer } = measureLeftRef.current.getBoundingClientRect();
-            console.log('🚀 ~ file: title.tsx ~ line 70 ~ calculateContentLength ~ leftMeasurer', leftMeasurer, rightMeasurer);
             const lastLineLength = rightMeasurer - leftMeasurer;
             const textLength = lastLineLength;
 
@@ -82,7 +83,7 @@ export const TextBoxTitle = ({
         if (prevValue !== value) {
             boxRef.current = {
                 ...boxRef.current,
-                upperRatio: 1000,
+                upperRatio: defaultMaxScaleRatio * 1000,
                 lowerRatio: 0,
                 prevValue: value,
                 content: value,
@@ -159,7 +160,7 @@ export const TextBoxTitle = ({
         }}
     >
         <div ref={measureLeftRef} className="measurer" />
-        {content}
+        {children !== undefined ? children : content}
         <div ref={measureRightRef} className="measurer" />
     </div>;
 };

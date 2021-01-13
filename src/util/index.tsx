@@ -27,3 +27,13 @@ export const compareFloat = (x: number | string, y: number | string) => {
 
 export const px2pt = (value: number) => value * 3 / 4;
 export const pt2px = (value: number) => value * 4 / 3;
+
+export const quoteConvert = (text?: string) => {
+    let normalizedString = (text ?? '');
+    normalizedString = normalizedString.replace(/(^|[-\u2014\s(["])'/g, '$1\u2018')
+        .replace(/'/g, '\u2019')
+        .replace(/(^|[-\u2014/[(\u2018\s])"/g, '$1\u201c')
+        .replace(/"/g, '\u201d')
+        .replace(/--/g, '\u2014');
+    return normalizedString;
+};

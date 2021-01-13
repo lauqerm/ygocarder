@@ -39,13 +39,13 @@ export const defaultSpell = {
     ...defaultCard,
     family: 'Spell' as CardFamily,
     attribute: 'Spell',
-    subFamily: 'Normal',
+    subFamily: 'NORMAL',
 };
 export const defaultTrap = {
     ...defaultCard,
     family: 'Trap' as CardFamily,
     attribute: 'Trap',
-    subFamily: 'Normal',
+    subFamily: 'NORMAL',
 };
 
 export {

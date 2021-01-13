@@ -61,6 +61,7 @@ export const TextBox = ({
         title: '',
         footer: '',
         prevValue: '',
+        displayValue: '',
         lowerRatio: 0,
         upperRatio: 1000,
         medianRatio: 1000,

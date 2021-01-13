@@ -51,16 +51,55 @@
 		overflow: hidden;
 	}
 	.preview-name {
+		font-family: MatrixRegularSmallCaps;
 		background-color: lightcyan;
 		top: 30.56pt;
 		left: 39.73pt;
-		width: 387.98pt;
+		width: 415.43pt;
 		height: 57.16pt;
 		letter-spacing: 0.01em;
+		> .textbox-title {
+			bottom: 0;
+			top: unset;
+		}
+	}
+	.preview-attribute {
+		background-color: lightgray;
+		top: 37.00pt;
+		left: 457.94pt;
+		width: 51.99pt;
+		height: 51.99pt;
+	}
+	.preview-sub-family {
+		top: 98.99pt;
+		left: 57.99pt;
+		height: 26pt;
+		width: 432.95pt;
+		text-align: right;
+	}
+	.preview-star {
+		top: 98.99pt;
+		left: 57.99pt;
+		height: 34pt;
+		width: 433.95pt;
+		text-align: right;
+		&.preview-star-oversize {
+			left: 0;
+			width: 548.93pt;
+		}
+	}
+	.preview-picture {
+		background-color: lightskyblue;
+		top: 146.98pt;
+		left: 66.99pt;
+		height: 415.95pt;
+		width: 415.95pt;
 	}
 	.preview-type-ability {
-		font-weight: bold;
 		background-color: lightgreen;
+		font-family: ITCStoneSerifSmallCapsBold;
+		font-variant: small-caps;
+		font-weight: bold;
 		opacity: 0.95;
 		left: 41.96pt;
 		width: 468.13pt;
@@ -72,9 +111,27 @@
 			top: 601.72pt;
 			height: 23.32pt;
 		}
+		.slash {
+
+		}
+		.slash-normal {
+			font-size: 19.69pt;
+		}
+		.slash-small {
+			
+		}
+		.small-space {
+			font-size: 8.51pt;
+			letter-spacing: -0.075em;
+		}
+		.large-space {
+			font-size: 13.13pt;
+			letter-spacing: -0.075em;
+		}
 	}
 	.preview-effect {
 		background-color: lightblue;
+		font-family: MatrixBook;
 		opacity: 0.97;
 		top: 624.33pt;
 		left: 43.88pt;
@@ -83,6 +140,7 @@
 	}
 	.preview-atk {
 		background-color: lightcoral;
+		font-family: MatrixBoldSmallCaps;
 		opacity: 0.95;
 		top: 726.75pt;
 		left: 343.47pt;
@@ -91,6 +149,7 @@
 	}
 	.preview-def {
 		background-color: lightcoral;
+		font-family: MatrixBoldSmallCaps;
 		opacity: 0.95;
 		top: 726.75pt;
 		left: 454.87pt;

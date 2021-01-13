@@ -1,0 +1,20 @@
+@font-face {
+	font-family: MatrixRegularSmallCaps, sans-serif;
+	src: url('/asset/font/Yu-Gi-Oh! Matrix Regular Small Caps 1.ttf');
+};
+@font-face {
+	font-family: MatrixBook, sans-serif;
+	src: url('/asset/font/Matrix Book.ttf');
+};
+@font-face {
+	font-family: ITCStoneSerifMedium, sans-serif;
+	src: url('/asset/font/Stone Serif ITC Medium.ttf');
+};
+@font-face {
+	font-family: ITCStoneSerifSmallCapsBold, sans-serif;
+	src: url('/asset/font/Yu-Gi-Oh! ITC Stone Serif Small Caps Bold.ttf');
+};
+@font-face {
+	font-family: MatrixBoldSmallCaps, sans-serif;
+	src: url('/asset/font/matrixbsc.ttf');
+};

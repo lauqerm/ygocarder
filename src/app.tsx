@@ -16,7 +16,7 @@ import {
 } from './model';
 import { debounce } from 'lodash';
 import { TextBox } from './component';
-import { scaleCalc } from './util';
+import { quoteConvert, scaleCalc } from './util';
 import { ExtractProps } from './type';
 
 const { TextArea } = Input;
@@ -24,6 +24,8 @@ const { Option } = Select;
 const { Title } = TextBox;
 type SelectValue = Parameters<NonNullable<ExtractProps<typeof Select>['onChange']>>[0];
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
+
+const TypeAbilitySpace = ({ type }: { type?: string }) => <span className={`type-ability-space ${type}-space`}> </span>;
 
 const defaultZoomScaleRatio = 50;
 const defaultScale: Record<string, ScaleValue> = {
@@ -36,11 +38,15 @@ const defaultScale: Record<string, ScaleValue> = {
         translatePercent: '0%',
     },
 };
-const onChangeFactory = (key: string, mutateFunction: (func: (card: Card) => Card) => void) => {
+const onChangeFactory = (
+    key: string,
+    mutateFunction: (func: (card: Card) => Card) => void,
+    valueTransform: (value: any) => any = (value) => value,
+) => {
     return (e: any) => {
         mutateFunction(current => ({
             ...current,
-            [key]: `${e?.target?.value}`,
+            [key]: valueTransform(e?.target?.value),
         }));
     };
 };
@@ -74,9 +80,14 @@ function App() {
     const onFamilyChange = (e: RadioChangeEvent) => setPage(e.target.value as CardFamily);
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
-    const onNameChange = onChangeFactory('name', setCard);
-    const onStarChange = onChangeFactory('star', setCard);
-    const onEffectChange = onChangeFactory('effect', setCard);
+    const onNameChange = onChangeFactory('name', setCard, quoteConvert);
+    const onStarChange = (value: string | number | undefined) => setCardPage(cur => {
+        return {
+            ...cur,
+            [selectedPage]: { ...cur[selectedPage], star: parseInt(`${value ?? 0}`) },
+        };
+    });
+    const onEffectChange = onChangeFactory('effect', setCard, quoteConvert);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
     const onTypeAbilityChange = (value: (string | number)[]) => {
@@ -201,6 +212,16 @@ function App() {
                     <div className="preview preview-attribute">
                         {attribute}
                     </div>
+                    {family === 'Monster'
+                        ? <div className={`preview preview-star ${star > 12 ? 'preview-star-oversize' : ''}`}>
+                            {star}
+                        </div>
+                        : <div className="preview preview-sub-family">
+                            {subFamily}
+                        </div>}
+                    <div className="preview preview-picture">
+                        {subFamily}
+                    </div>
                     <div className="effect-box">
                         <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
                             <Title name="type-ability" zoom={scaleRatio} value={`[ ${type_ability.join(' / ')} ]`}
@@ -212,7 +233,33 @@ function App() {
                                     }: {
                                         fontSize: 16.41,
                                         lineHeight: 19.692,
-                                    }} />
+                                    }}
+                            >
+                                <span>[</span><TypeAbilitySpace type="small" />
+                                {type_ability.map(entry => {
+                                    const firstChar = entry[0];
+                                    const restChars = entry.slice(1);
+
+                                    return <span style={{
+                                        fontFamily: 'ITCStoneSerifSmallCapsBold',
+                                        fontVariant: 'small-caps',
+                                        fontWeight: 'bold',
+                                        textTransform: 'capitalize',
+                                    }}>
+                                        <span style={{
+                                            fontSize: typeAbilitySize === 'normal' ? '21pt' : '19.69pt',
+                                            textTransform: 'lowercase',
+                                        }}>
+                                            {firstChar}
+                                        </span>
+                                        <span>{restChars}</span>
+                                        <TypeAbilitySpace type={typeAbilitySize === 'normal' ? 'large' : 'small'} />
+                                        <span>/</span>
+                                        <TypeAbilitySpace type={typeAbilitySize === 'normal' ? 'large' : 'small'} />
+                                    </span>;
+                                })}
+                                <span>]</span><TypeAbilitySpace type="small" />
+                            </Title>
                         </div>
                         <TextBox name="effect" zoom={scaleRatio} value={effect} onLineChange={onEffectLineChange} />
                     </div>
@@ -233,5 +280,16 @@ function App() {
         </div>
     );
 }
-
+{/* <span style="
+                                    font-family: ITCStoneSerifSmallCapsBold;
+                                    font-feature-settings: &quot;smcp&quot;;
+                                    font-weight: bold;
+                                    font-size: 17.72pt;
+                                    line-height: 1.2;
+                                    text-transform: capitalize;
+                                "><span style="
+                                    font-size: 21pt;
+                                    font-variant: small-caps;
+                                    text-transform: lowercase;
+                                ">M</span><span>achine</span></span> */}
 export default App;
