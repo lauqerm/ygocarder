@@ -8,6 +8,7 @@ import {
     defaultCard,
     defaultCardFamily,
     defaultMonster,
+    defaultMonsterCardType,
     defaultSpell,
     defaultTrap,
     defaultTypeAbilityList,
@@ -15,7 +16,7 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { AttributeIcon, Star, TextBox } from './component';
+import { AttributeIcon, CardFrame, CardPicture, Star, TextBox } from './component';
 import { quoteConvert, scaleCalc } from './util';
 import { ExtractProps } from './type';
 
@@ -24,6 +25,8 @@ const { Option } = Select;
 const { Title } = TextBox;
 type SelectValue = Parameters<NonNullable<ExtractProps<typeof Select>['onChange']>>[0];
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
+
+
 
 const TypeAbilitySpace = ({ type }: { type?: string }) => <span className={`type-ability-space ${type}-space`}> </span>;
 const TypeAbilitySlash = ({ type }: { type?: string }) => <span className={`type-ability-slash ${type}-slash`}>/</span>;
@@ -92,6 +95,7 @@ function App() {
             [selectedPage]: { ...cur[selectedPage], star: parseInt(`${value ?? 0}`) },
         };
     });
+    const onPictureChange = onChangeFactory('picture', setCard);
     const onEffectChange = onChangeFactory('effect', setCard, quoteConvert);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
@@ -113,6 +117,7 @@ function App() {
     const {
         family,
         name,
+        picture,
         effect,
         type_ability,
         atk, def, link_count,
@@ -162,7 +167,7 @@ function App() {
                         </Radio.Group>}
                 </div>
                 <div key="pic">
-          Pic?
+                    <Input key="key" placeholder="Card Picture Link" value={picture} onChange={onPictureChange} autoComplete="picture" />
                 </div>
                 <Input key="set-id" />
                 <InputNumber key="pendulum-scale" />
@@ -229,7 +234,7 @@ function App() {
                             {subFamily}
                         </div>}
                     <div className="preview preview-picture">
-                        {subFamily}
+                        <CardPicture src={picture} />
                     </div>
                     <div className="effect-box">
                         <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
@@ -284,30 +289,22 @@ function App() {
                     <div className="preview preview-atk">
                         <Title name="atk" zoom={scaleRatio} value={atk} alignment="right" font={{
                             fontSize: 24.61,
-                            lineHeight: 23.67,
+                            lineHeight: 29.532,
                         }} />
                     </div>
                     <div className="preview preview-def">
                         <Title name="def" zoom={scaleRatio} value={def} alignment="right" font={{
                             fontSize: 24.61,
-                            lineHeight: 23.67,
+                            lineHeight: 29.532,
                         }} />
+                    </div>
+                    <div className="preview preview-frame">
+                        <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability} />
                     </div>
                 </div>
             </div>
         </div>
     );
 }
-{/* <span style="
-                                    font-family: ITCStoneSerifSmallCapsBold;
-                                    font-feature-settings: &quot;smcp&quot;;
-                                    font-weight: bold;
-                                    font-size: 17.72pt;
-                                    line-height: 1.2;
-                                    text-transform: capitalize;
-                                "><span style="
-                                    font-size: 21pt;
-                                    font-variant: small-caps;
-                                    text-transform: lowercase;
-                                ">M</span><span>achine</span></span> */}
+
 export default App;

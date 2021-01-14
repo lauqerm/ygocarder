@@ -1,3 +1,3 @@
 export { TextBox } from './textbox';
-export { AttributeIcon } from './attribute';
+export { AttributeIcon, CardFrame, CardPicture } from './image';
 export { Star } from './star';

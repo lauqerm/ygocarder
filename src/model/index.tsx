@@ -29,7 +29,7 @@ export const defaultCard = {
     passcode: '',
     pendulum_effect: '',
     pendulum_scale: -1,
-    pic: '',
+    picture: 'https://images2.imgbox.com/13/c5/dXPTEORX_o.jpg',
     set_id: '',
     st_type: '',
     star: 4,

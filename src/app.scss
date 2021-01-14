@@ -49,10 +49,17 @@
 	.preview {
 		position: absolute;
 		overflow: hidden;
+		z-index: 100;
+	}
+	.preview-frame {
+		top: 0;
+		left: 0;
+		width: 548.93pt;
+		height: 799.9pt;
+		z-index: 1;
 	}
 	.preview-name {
 		font-family: MatrixRegularSmallCaps;
-		background-color: lightcyan;
 		top: 30.56pt;
 		left: 39.73pt;
 		width: 415.43pt;
@@ -64,7 +71,6 @@
 		}
 	}
 	.preview-attribute {
-		background-color: lightgray;
 		top: 37.00pt;
 		left: 457.94pt;
 		width: 51.99pt;
@@ -73,6 +79,12 @@
 			width: 100%;
 			height: 100%;
 		}
+	}
+	.preview-picture {
+		top: 146.98pt;
+		left: 66.99pt;
+		width: 415.95pt;
+		height: 415.95pt;
 	}
 	.preview-sub-family {
 		top: 98.99pt;
@@ -93,14 +105,12 @@
 		}
 	}
 	.preview-picture {
-		background-color: lightskyblue;
 		top: 146.98pt;
 		left: 66.99pt;
 		height: 415.95pt;
 		width: 415.95pt;
 	}
 	.preview-type-ability {
-		background-color: lightgreen;
 		font-family: ITCStoneSerifMedium;
 		font-variant: small-caps;
 		font-weight: bold;
@@ -148,7 +158,6 @@
 		}
 	}
 	.preview-effect {
-		background-color: lightblue;
 		font-family: MatrixBook;
 		opacity: 0.97;
 		top: 624.33pt;
@@ -157,7 +166,6 @@
 		height: 103.35pt;
 	}
 	.preview-atk {
-		background-color: lightcoral;
 		font-family: MatrixBoldSmallCaps;
 		opacity: 0.95;
 		top: 726.75pt;
@@ -166,7 +174,6 @@
 		height: 23.67pt;
 	}
 	.preview-def {
-		background-color: lightcoral;
 		font-family: MatrixBoldSmallCaps;
 		opacity: 0.95;
 		top: 726.75pt;

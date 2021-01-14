@@ -29,15 +29,15 @@ export const defaultMonsterType = [
 ];
 
 export const defaultMonsterCardType = [
-    'Normal',
+    'Pendulum',
     'Effect',
+    'Normal',
+    'Token',
     'Fusion',
     'Ritual',
     'Synchro',
-    'Pendulum',
     'Xyz',
     'Link',
-    'Token',
 ];
 
 export const defaultMonsterSubTypeAbility = [
