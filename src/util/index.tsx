@@ -1,7 +1,7 @@
 import { clamp } from 'ramda';
 
 export const scaleCalc = (value: number, range = 1) => {
-    const normalizedValue = clamp(0, 1, value / range);
+    const normalizedValue = Math.max(0.01, value / range);
     if (normalizedValue === 0) {
         console.warn('Divided by Zero');
         return {
@@ -14,7 +14,7 @@ export const scaleCalc = (value: number, range = 1) => {
 
     return {
         scaleRatio: newRatio,
-        translatePercent: `-${newTranslatePercent}%`,
+        translatePercent: `${newTranslatePercent * -1}%`,
     };
 };
 

@@ -15,7 +15,7 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { TextBox } from './component';
+import { AttributeIcon, Star, TextBox } from './component';
 import { quoteConvert, scaleCalc } from './util';
 import { ExtractProps } from './type';
 
@@ -26,6 +26,11 @@ type SelectValue = Parameters<NonNullable<ExtractProps<typeof Select>['onChange'
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
 
 const TypeAbilitySpace = ({ type }: { type?: string }) => <span className={`type-ability-space ${type}-space`}> </span>;
+const TypeAbilitySlash = ({ type }: { type?: string }) => <span className={`type-ability-slash ${type}-slash`}>/</span>;
+const TypeAbilityBracket = ({
+    type,
+    children,
+}: { type?: string, children: React.ReactNode }) => <span className={`type-ability-bracket ${type}-bracket`}>{children}</span>;
 
 const defaultZoomScaleRatio = 50;
 const defaultScale: Record<string, ScaleValue> = {
@@ -124,6 +129,8 @@ function App() {
         name: familyName,
         subFamily: subFamilyList,
     } = defaultCardFamily[family];
+    const isXyz = type_ability.includes('Xyz');
+    const isLink = type_ability.includes('Link');
     return (
         <div className="app-container" style={{
             '--zoom-ratio': zoomValue.scaleRatio,
@@ -145,9 +152,11 @@ function App() {
                 <hr />
                 <div className="card-info-sub-family">
                     {family === 'Monster'
-                        ? <div>
-                            {subFamily}: <InputNumber key="level-rank" value={star} onChange={onStarChange} />
-                        </div>
+                        ? isLink
+                            ? null
+                            : <div>
+                                {isXyz ? 'Rank' : 'Level'}: <InputNumber key="level-rank" min={0} max={13} value={star} onChange={onStarChange} />
+                            </div>
                         : <Radio.Group key="subFamily" value={subFamily} onChange={onSubFamilyChange}>
                             {subFamilyList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
                         </Radio.Group>}
@@ -210,11 +219,11 @@ function App() {
                         }} />
                     </div>
                     <div className="preview preview-attribute">
-                        {attribute}
+                        <AttributeIcon type={attribute} />
                     </div>
                     {family === 'Monster'
                         ? <div className={`preview preview-star ${star > 12 ? 'preview-star-oversize' : ''}`}>
-                            {star}
+                            {!isLink && <Star count={star} type={isXyz ? 'rank' : 'level'} />}
                         </div>
                         : <div className="preview preview-sub-family">
                             {subFamily}
@@ -225,40 +234,49 @@ function App() {
                     <div className="effect-box">
                         <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
                             <Title name="type-ability" zoom={scaleRatio} value={`[ ${type_ability.join(' / ')} ]`}
-                                defaultMaxScaleRatio={0.93}
+                                defaultMaxScaleRatio={1.075}
                                 font={typeAbilitySize === 'normal'
                                     ? {
                                         fontSize: 17.72,
-                                        lineHeight: 21.264,
+                                        lineHeight: 17.72 * 1.2,
                                     }: {
                                         fontSize: 16.41,
-                                        lineHeight: 19.692,
+                                        lineHeight: 16.41 * 1.2,
                                     }}
                             >
-                                <span>[</span><TypeAbilitySpace type="small" />
-                                {type_ability.map(entry => {
-                                    const firstChar = entry[0];
-                                    const restChars = entry.slice(1);
+                                <TypeAbilityBracket type={typeAbilitySize}>[</TypeAbilityBracket>
+                                <TypeAbilitySpace type="small" />
+                                {type_ability
+                                    .reduce<string[]>((acc, cur) => {
+                                        if (acc.length === 0) acc.push(cur);
+                                        else {
+                                            acc.push('/');
+                                            acc.push(cur);
+                                        }
+                                        return acc;
+                                    }, [])
+                                    .map(entry => {
+                                        if (entry === '/') return <>
+                                            <TypeAbilitySpace type={typeAbilitySize} />
+                                            <TypeAbilitySlash type={typeAbilitySize} />
+                                            <TypeAbilitySpace type={typeAbilitySize} />
+                                        </>;
+                                        const firstChar = entry[0];
+                                        const restChars = entry.slice(1);
 
-                                    return <span style={{
-                                        fontFamily: 'ITCStoneSerifSmallCapsBold',
-                                        fontVariant: 'small-caps',
-                                        fontWeight: 'bold',
-                                        textTransform: 'capitalize',
-                                    }}>
-                                        <span style={{
-                                            fontSize: typeAbilitySize === 'normal' ? '21pt' : '19.69pt',
-                                            textTransform: 'lowercase',
-                                        }}>
-                                            {firstChar}
-                                        </span>
-                                        <span>{restChars}</span>
-                                        <TypeAbilitySpace type={typeAbilitySize === 'normal' ? 'large' : 'small'} />
-                                        <span>/</span>
-                                        <TypeAbilitySpace type={typeAbilitySize === 'normal' ? 'large' : 'small'} />
-                                    </span>;
-                                })}
-                                <span>]</span><TypeAbilitySpace type="small" />
+                                        return <span>
+                                            <span style={{
+                                                fontSize: typeAbilitySize === 'normal' ? '21pt' : '19.69pt',
+                                            }}>
+                                                {firstChar}
+                                            </span>
+                                            <span style={{
+                                                textTransform: 'uppercase',
+                                            }}>{restChars}</span>
+                                        </span>;
+                                    })}
+                                <TypeAbilitySpace type="small" />
+                                <TypeAbilityBracket type={typeAbilitySize}>]</TypeAbilityBracket>
                             </Title>
                         </div>
                         <TextBox name="effect" zoom={scaleRatio} value={effect} onLineChange={onEffectLineChange} />

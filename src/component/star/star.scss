@@ -1,0 +1,25 @@
+.card-star {
+	text-align: right;
+	&.card-star-rank {
+		text-align: left;
+	}
+	.card-star-icon {
+		width: 34pt;
+		height: 34pt;
+		&.card-star-level:not(:first-child) {
+			margin-left: 2.359pt;
+		}
+		&.card-star-rank:not(:last-child) {
+			margin-right: 2.359pt;
+		}
+	}
+}
+.card-star-oversize {
+	display: flex;
+	justify-content: center;
+	column-gap: 2.359pt;
+	.card-star-icon {
+		width: 34pt;
+		height: 34pt;
+	}
+}
