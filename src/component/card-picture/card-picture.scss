@@ -1,0 +1,27 @@
+.card-image-cropper {
+	display: flex;
+	column-gap: 10px;
+	.download-button {
+		margin-top: 5px;
+		width: 100%;
+	}
+	.ant-radio-group {
+		width: 100%;
+	}
+	.card-image-source-input {
+		flex: 1;
+		.ant-radio-button-wrapper {
+			display: block;
+			height: unset;
+			padding: 10px;
+			width: 100%;
+		}
+		.ant-radio-button-wrapper-checked {
+			background-color: #1890ff;
+			color: white;
+		}
+	}
+	.card-cropper {
+		flex: 1;
+	}
+}

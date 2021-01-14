@@ -16,7 +16,7 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { AttributeIcon, CardFrame, CardPicture, Star, TextBox } from './component';
+import { AttributeIcon, CardFrame, CardPicture, ImageCropper, Star, TextBox } from './component';
 import { quoteConvert, scaleCalc } from './util';
 import { ExtractProps } from './type';
 
@@ -54,7 +54,7 @@ const onChangeFactory = (
     return (e: any) => {
         mutateFunction(current => ({
             ...current,
-            [key]: valueTransform(e?.target?.value),
+            [key]: valueTransform(typeof e === 'string' ? e : e?.target?.value),
         }));
     };
 };
@@ -81,6 +81,7 @@ function App() {
     const cardRef = useRef({
         effectLine: 0,
     });
+    const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const $onZoomChange = (value: number) => setZoom(scaleCalc(value, 100));
     const onZoomChange = debounce($onZoomChange, 100);
@@ -167,7 +168,7 @@ function App() {
                         </Radio.Group>}
                 </div>
                 <div key="pic">
-                    <Input key="key" placeholder="Card Picture Link" value={picture} onChange={onPictureChange} autoComplete="picture" />
+                    <ImageCropper defaultExternalSource={picture} onSourceChange={onPictureChange} previewCanvasRef={previewCanvasRef.current} />
                 </div>
                 <Input key="set-id" />
                 <InputNumber key="pendulum-scale" />
@@ -234,7 +235,9 @@ function App() {
                             {subFamily}
                         </div>}
                     <div className="preview preview-picture">
-                        <CardPicture src={picture} />
+                        {/* <CardPicture src={picture} /> */}
+                        <canvas className="card-frame" ref={previewCanvasRef}
+                        />
                     </div>
                     <div className="effect-box">
                         <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>

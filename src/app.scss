@@ -85,6 +85,11 @@
 		left: 66.99pt;
 		width: 415.95pt;
 		height: 415.95pt;
+		> canvas {
+			// For better sharpness
+			width: 555px;
+			height: 555px;
+		}
 	}
 	.preview-sub-family {
 		top: 98.99pt;
