@@ -37,3 +37,5 @@ export const quoteConvert = (text?: string) => {
         .replace(/--/g, '\u2014');
     return normalizedString;
 };
+
+export * from './categorize';

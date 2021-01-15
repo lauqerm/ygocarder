@@ -16,8 +16,8 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { AttributeIcon, CardFrame, CardPicture, ImageCropper, Star, TextBox } from './component';
-import { quoteConvert, scaleCalc } from './util';
+import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, Star, STSubFamily, TextBox, TypeAbilityLine } from './component';
+import { checkLink, checkMonster, checkXyz, quoteConvert, scaleCalc } from './util';
 import { ExtractProps } from './type';
 
 const { TextArea } = Input;
@@ -28,12 +28,6 @@ type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onCha
 
 
 
-const TypeAbilitySpace = ({ type }: { type?: string }) => <span className={`type-ability-space ${type}-space`}> </span>;
-const TypeAbilitySlash = ({ type }: { type?: string }) => <span className={`type-ability-slash ${type}-slash`}>/</span>;
-const TypeAbilityBracket = ({
-    type,
-    children,
-}: { type?: string, children: React.ReactNode }) => <span className={`type-ability-bracket ${type}-bracket`}>{children}</span>;
 
 const defaultZoomScaleRatio = 50;
 const defaultScale: Record<string, ScaleValue> = {
@@ -59,6 +53,11 @@ const onChangeFactory = (
     };
 };
 function App() {
+    const [, setRefresh] = useState(0);
+    const refresh = (message?: string | number) => {
+        if (message !== undefined) console.log(message);
+        setRefresh(cur => cur + 1);
+    };
     const [selectedPage, setPage] = useState<CardFamily>('Monster');
     const [currentCardPage, setCardPage] = useState<Record<string, Card>>({
         Monster: defaultMonster,
@@ -106,7 +105,10 @@ function App() {
             type_ability: value.map(entry => `${entry}`),
         }));
     };
-    const onEffectLineChange = (lineCount: number) => cardRef.current.effectLine = lineCount;
+    const onEffectLineChange = (lineCount: number) => {
+        cardRef.current.effectLine = lineCount;
+        refresh();
+    };
 
     useEffect(() => {
         $onZoomChange(defaultZoomScaleRatio);
@@ -115,6 +117,7 @@ function App() {
     const {
         scaleRatio
     } = zoomValue;
+    const currentCard = currentCardPage[selectedPage];
     const {
         family,
         name,
@@ -125,7 +128,7 @@ function App() {
         attribute,
         subFamily,
         star,
-    } = currentCardPage[selectedPage];
+    } = currentCard;
     const {
         effectLine,
     } = cardRef.current;
@@ -135,8 +138,9 @@ function App() {
         name: familyName,
         subFamily: subFamilyList,
     } = defaultCardFamily[family];
-    const isXyz = type_ability.includes('Xyz');
-    const isLink = type_ability.includes('Link');
+    const isXyz = checkXyz(currentCard);
+    const isLink = checkLink(currentCard);
+    const isMonster = checkMonster(currentCard);
     return (
         <div className="app-container" style={{
             '--zoom-ratio': zoomValue.scaleRatio,
@@ -152,21 +156,23 @@ function App() {
                 </Radio.Group>
                 <hr />
                 <Input key="name" placeholder="Card Name" value={name} onChange={onNameChange} />
-                <Radio.Group key="attribute" value={attribute} onChange={onAttributeChange}>
-                    {familyAttributeList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
-                </Radio.Group>
-                <hr />
-                <div className="card-info-sub-family">
-                    {family === 'Monster'
-                        ? isLink
-                            ? null
-                            : <div>
-                                {isXyz ? 'Rank' : 'Level'}: <InputNumber key="level-rank" min={0} max={13} value={star} onChange={onStarChange} />
-                            </div>
-                        : <Radio.Group key="subFamily" value={subFamily} onChange={onSubFamilyChange}>
-                            {subFamilyList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
-                        </Radio.Group>}
+                <div className="card-info-line2">
+                    <div className="card-info-sub-family">
+                        {family === 'Monster'
+                            ? isLink
+                                ? null
+                                : <div>
+                                    {isXyz ? 'Rank' : 'Level'}: <InputNumber key="level-rank" min={0} max={13} value={star} onChange={onStarChange} />
+                                </div>
+                            : <Radio.Group key="subFamily" value={subFamily} onChange={onSubFamilyChange}>
+                                {subFamilyList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
+                            </Radio.Group>}
+                    </div>
+                    <Radio.Group key="attribute" value={attribute} onChange={onAttributeChange}>
+                        {familyAttributeList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
+                    </Radio.Group>
                 </div>
+                <hr />
                 <div key="pic">
                     <ImageCropper noRedrawNumber={scaleRatio} defaultExternalSource={picture} onSourceChange={onPictureChange} previewCanvasRef={previewCanvasRef.current} />
                 </div>
@@ -186,12 +192,14 @@ function App() {
                         .filter(entry => !type_ability.includes(entry))
                         .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
                 </Select>
-                <TextArea key="effect"
-                    placeholder="Card effect"
-                    value={effect}
-                    onChange={onEffectChange}
-                    rows={6}
-                />
+                <div>
+                    <TextArea key="effect"
+                        placeholder="Card effect"
+                        value={effect}
+                        onChange={onEffectChange}
+                        rows={6}
+                    />
+                </div>
                 <Row>
                     <Col span={4}>
                         <Input key="atk" placeholder="ATK" value={atk} onChange={onATKChange} />
@@ -231,8 +239,8 @@ function App() {
                         ? <div className={`preview preview-star ${star > 12 ? 'preview-star-oversize' : ''}`}>
                             {!isLink && <Star count={star} type={isXyz ? 'rank' : 'level'} />}
                         </div>
-                        : <div className="preview preview-sub-family">
-                            {subFamily}
+                        : <div className="preview preview-st-sub-family">
+                            <STSubFamily family={family} subFamily={subFamily} />
                         </div>}
                     <div className="preview preview-picture">
                         {/* <CardPicture src={picture} /> */}
@@ -240,67 +248,34 @@ function App() {
                         />
                     </div>
                     <div className="effect-box">
-                        <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
-                            <Title name="type-ability" zoom={scaleRatio} value={`[ ${type_ability.join(' / ')} ]`}
-                                defaultMaxScaleRatio={1.075}
-                                font={typeAbilitySize === 'normal'
-                                    ? {
-                                        fontSize: 17.72,
-                                        lineHeight: 17.72 * 1.2,
-                                    }: {
-                                        fontSize: 16.41,
-                                        lineHeight: 16.41 * 1.2,
-                                    }}
-                            >
-                                <TypeAbilityBracket type={typeAbilitySize}>[</TypeAbilityBracket>
-                                <TypeAbilitySpace type="small" />
-                                {type_ability
-                                    .reduce<string[]>((acc, cur) => {
-                                        if (acc.length === 0) acc.push(cur);
-                                        else {
-                                            acc.push('/');
-                                            acc.push(cur);
-                                        }
-                                        return acc;
-                                    }, [])
-                                    .map(entry => {
-                                        if (entry === '/') return <>
-                                            <TypeAbilitySpace type={typeAbilitySize} />
-                                            <TypeAbilitySlash type={typeAbilitySize} />
-                                            <TypeAbilitySpace type={typeAbilitySize} />
-                                        </>;
-                                        const firstChar = entry[0];
-                                        const restChars = entry.slice(1);
-
-                                        return <span>
-                                            <span style={{
-                                                fontSize: typeAbilitySize === 'normal' ? '21pt' : '19.69pt',
-                                            }}>
-                                                {firstChar}
-                                            </span>
-                                            <span style={{
-                                                textTransform: 'uppercase',
-                                            }}>{restChars}</span>
-                                        </span>;
-                                    })}
-                                <TypeAbilitySpace type="small" />
-                                <TypeAbilityBracket type={typeAbilitySize}>]</TypeAbilityBracket>
-                            </Title>
-                        </div>
-                        <TextBox name="effect" zoom={scaleRatio} value={effect} onLineChange={onEffectLineChange} />
+                        {isMonster && <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
+                            <TypeAbilityLine scaleRatio={scaleRatio} typeAbility={type_ability} size={typeAbilitySize} />
+                        </div>}
+                        <TextBox className="preview" zoom={scaleRatio} value={effect} onLineChange={onEffectLineChange}
+                            name={isMonster ? 'monster-effect' : 'st-effect'}
+                            fontList={isMonster ? defaultMonsterFontList : defaultSTFontList}
+                            size={isMonster
+                                ? {
+                                    width: 464.29,
+                                    height: 103.35,
+                                }
+                                : {
+                                    width: 464.37,
+                                    height: 145.73,
+                                }} />
                     </div>
-                    <div className="preview preview-atk">
+                    {isMonster && <div className="preview preview-atk">
                         <Title name="atk" zoom={scaleRatio} value={atk} alignment="right" font={{
                             fontSize: 24.61,
                             lineHeight: 29.532,
                         }} />
-                    </div>
-                    <div className="preview preview-def">
+                    </div>}
+                    {isMonster && <div className="preview preview-def">
                         <Title name="def" zoom={scaleRatio} value={def} alignment="right" font={{
                             fontSize: 24.61,
                             lineHeight: 29.532,
                         }} />
-                    </div>
+                    </div>}
                     <div className="preview preview-frame">
                         <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability} />
                     </div>

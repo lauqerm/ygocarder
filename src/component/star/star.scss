@@ -23,3 +23,21 @@
 		height: 34pt;
 	}
 }
+
+.card-st-subfamily {
+	position: relative;
+	width: 100%;
+	> img {
+		position: absolute;
+	}
+	> .card-st-subfamily-container {
+		height: 26pt;
+		right: 0;
+	}
+	> .card-st-subfamily-icon {
+		width: 29pt;
+		height: 30pt;
+		top: -2pt;
+		right: 10pt;
+	}
+}

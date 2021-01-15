@@ -5,15 +5,36 @@ import { TextBoxTitle } from './title';
 import { Loading } from '../loading';
 import './textbox.scss';
 
-const defaultFontList: TextBoxFontSize[] = [
+export const defaultMonsterFontList: TextBoxFontSize[] = [
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
     { fontSize: 16.41, lineHeight: 16.73 },
     { fontSize: 13.88, lineHeight: 14.52 },
     { fontSize: 12.1, lineHeight: 12.77 },
     { fontSize: 10.88, lineHeight: 11.41 },
     { fontSize: 9.78, lineHeight: 10.21 },
 ];
+export const defaultSTFontList: TextBoxFontSize[] = [
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 16.41, lineHeight: 16.73 },
+    { fontSize: 13.45, lineHeight: 14.27 },
+    { fontSize: 13.45, lineHeight: 14.27 },
+    { fontSize: 10.88, lineHeight: 11.41 },
+    { fontSize: 9.78, lineHeight: 10.21 },
+];
 export type TextBox = {
-	value?: string,
+    value?: string,
+    forceLine?: number,
+    forceCondense?: number,
     name?: string,
     className?: string,
     zoom?: number,
@@ -27,9 +48,11 @@ export type TextBox = {
 }
 export const TextBox = ({
     name,
+    forceLine,
+    forceCondense,
     value = '',
     zoom = 1,
-    fontList = defaultFontList,
+    fontList = defaultMonsterFontList,
     isFlavorText = false,
     className = '',
     size = {
@@ -80,7 +103,7 @@ export const TextBox = ({
         if (parentRef) {
             // Container size is subjected to canvas zoom
             const { height: parentHeight } = parentRef.getBoundingClientRect();
-            const maxTextLine = Math.round(px2pt(parentHeight) / (lineHeight * zoom));
+            const maxTextLine = Math.floor(px2pt(parentHeight) / (lineHeight * zoom));
 
             return maxTextLine;
         }
@@ -159,46 +182,56 @@ export const TextBox = ({
 
             setFont(0);
             setLoading(true);
+            if (forceCondense && forceLine) {
+                contentScaleRef.current = scaleCalc(forceCondense, 1000);
+                setFont(forceLine);
+            }
             refresh();
         } else {
-            if (currentBoxRef.iterationCount === 0) {
-                currentBoxRef.iterationCount -= 1;
-                currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
-                refresh();
-            } else if (currentBoxRef.iterationCount > 0) {
-                currentBoxRef.iterationCount -= 1;
-                const lengthDiff = calculateContentLength() - calculateMaxContentLength();
-                if (lengthDiff > 0) {
-                    const newMedian = (currentBoxRef.medianRatio + currentBoxRef.lowerRatio) / 2;
-
-                    currentBoxRef.upperRatio = currentBoxRef.medianRatio;
-                    currentBoxRef.medianRatio = newMedian;
-                    contentScaleRef.current = scaleCalc(newMedian, 1000);
+            if (forceCondense && forceLine) setLoading(false);
+            else {
+                if (currentBoxRef.iterationCount === 0) {
+                    currentBoxRef.iterationCount -= 1;
+                    currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
                     refresh();
-                } else if (lengthDiff < 0) {
-                    const newMedian = (currentBoxRef.medianRatio + currentBoxRef.upperRatio) / 2;
+                } else if (currentBoxRef.iterationCount > 0) {
+                    currentBoxRef.iterationCount -= 1;
+                    const lengthDiff = calculateContentLength() - calculateMaxContentLength();
 
-                    currentBoxRef.lastEffetiveRatio = currentBoxRef.medianRatio;
-                    currentBoxRef.lowerRatio = currentBoxRef.medianRatio;
-                    if (Math.abs(currentBoxRef.medianRatio - newMedian) > 1) {
+                    if (lengthDiff > 0) {
+                        const newMedian = (currentBoxRef.medianRatio + currentBoxRef.lowerRatio) / 2;
+
+                        currentBoxRef.upperRatio = currentBoxRef.medianRatio;
                         currentBoxRef.medianRatio = newMedian;
                         contentScaleRef.current = scaleCalc(newMedian, 1000);
                         refresh();
-                    } else {
-                        if (currentBoxRef.medianRatio < 680 && fontList[font + 1] !== undefined) {
-                            currentBoxRef.upperRatio = 1000;
-                            currentBoxRef.lowerRatio = 0;
-                            currentBoxRef.iterationCount = 30;
-                            setFont(cur => cur + 1);
+                    } else if (lengthDiff < 0) {
+                        const newMedian = (currentBoxRef.medianRatio + currentBoxRef.upperRatio) / 2;
+
+                        currentBoxRef.lastEffetiveRatio = currentBoxRef.medianRatio;
+                        currentBoxRef.lowerRatio = currentBoxRef.medianRatio;
+                        if (Math.abs(currentBoxRef.medianRatio - newMedian) > 1) {
+                            currentBoxRef.medianRatio = newMedian;
+                            contentScaleRef.current = scaleCalc(newMedian, 1000);
+                            refresh();
                         } else {
+                            const currentMaxLine = calculateMaxLine();
+                            if (currentBoxRef.medianRatio < 680
+                            && fontList[font + 1] !== undefined) {
+                                currentBoxRef.upperRatio = 1000;
+                                currentBoxRef.lowerRatio = 0;
+                                currentBoxRef.iterationCount = 30;
+                                setFont(cur => cur + 1);
+                            } else {
                             // console.log(`${name} FINISHED RESIZE AS`, currentBoxRef.medianRatio);
-                            currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
-                            onLineChange(calculateMaxLine());
-                            setLoading(false);
+                                currentBoxRef.medianRatio = currentBoxRef.lastEffetiveRatio;
+                                onLineChange(currentMaxLine);
+                                setLoading(false);
+                            }
                         }
-                    }
-                } else setLoading(false);
-            }
+                    } else setLoading(false);
+                }
+            };
         }
     });
 
@@ -215,7 +248,7 @@ export const TextBox = ({
         content,
         footer,
     } = boxRef.current;
-    return <div className={`preview preview-${name} ${className ?? ''}`} style={{
+    return <div className={`textbox-container textbox-container-${name} ${className ?? ''}`} style={{
         width: `${width}pt`,
         height: `${height}pt`,
     }}>

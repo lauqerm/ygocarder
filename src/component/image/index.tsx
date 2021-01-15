@@ -12,6 +12,7 @@ export const AttributeIcon = ({
 
 const getCardFrame = (family: string, subFamily: string, typeAbility: string[]) => {
     let type = 'Effect';
+    if (family !== 'Monster') return family;
     // This list is sorted as the priority already
     defaultMonsterCardType.forEach(entry => {
         if (typeAbility.includes(entry)) type = entry;
