@@ -168,7 +168,7 @@ function App() {
                         </Radio.Group>}
                 </div>
                 <div key="pic">
-                    <ImageCropper defaultExternalSource={picture} onSourceChange={onPictureChange} previewCanvasRef={previewCanvasRef.current} />
+                    <ImageCropper noRedrawNumber={scaleRatio} defaultExternalSource={picture} onSourceChange={onPictureChange} previewCanvasRef={previewCanvasRef.current} />
                 </div>
                 <Input key="set-id" />
                 <InputNumber key="pendulum-scale" />

@@ -23,11 +23,13 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
 }
 
 export type ImageCropper = {
+    noRedrawNumber?: number,
 	defaultExternalSource?: string,
     onSourceChange?: (source: string) => void,
     previewCanvasRef?: HTMLCanvasElement | null,
 }
 export const ImageCropper = ({
+    noRedrawNumber = 0,
     defaultExternalSource = '',
     onSourceChange = () => {},
     previewCanvasRef,
@@ -75,9 +77,11 @@ export const ImageCropper = ({
         const scaleX = image.naturalWidth / image.width;
         const scaleY = image.naturalHeight / image.height;
         const pixelRatio = window.devicePixelRatio;
+        const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
+        const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
 
-        canvas.width = (crop.width ?? 0) * pixelRatio;
-        canvas.height = (crop.height ?? 0) * pixelRatio;
+        canvas.width = (boundingWidth ?? 0) * pixelRatio;
+        canvas.height = (boundingHeight ?? 0) * pixelRatio;
 
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         ctx.imageSmoothingQuality = 'high';
@@ -90,10 +94,10 @@ export const ImageCropper = ({
             (crop.height ?? 0) * scaleY,
             0,
             0,
-            (crop.width ?? 0),
-            (crop.height ?? 0)
+            (boundingWidth ?? 0),
+            (boundingHeight ?? 0)
         );
-    }, [completedCrop, previewCanvasRef]);
+    }, [completedCrop, previewCanvasRef, noRedrawNumber]);
 
     return (
         <div className="card-image-cropper">
