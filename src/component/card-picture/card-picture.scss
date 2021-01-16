@@ -22,6 +22,10 @@
 		}
 	}
 	.card-cropper {
-		flex: 1;
+		flex-basis: 300px;
+	}
+	.ReactCrop__image {
+		max-width: 300px;
+		max-height: 300px;
 	}
 }

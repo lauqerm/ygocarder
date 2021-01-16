@@ -1,0 +1,65 @@
+.link-marker-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	.link-marker-arrow {
+		position: absolute;
+		z-index: 2;
+		&.arrow-1 {
+			top: 125.98pt;
+			left: 45.99pt;
+			width: 49.99pt;
+			height: 50.99pt;
+		}
+		&.arrow-2 {
+			top: 115.99pt;
+			left: 225.97pt;
+			width: 98.99pt;
+			height: 32pt;
+		}
+		&.arrow-3 {
+			top: 125.98pt;
+			left: 452.94pt;
+			width: 50.99pt;
+			height: 50.99pt;
+		}
+		&.arrow-4 {
+			top: 304.96pt;
+			left: 35pt;
+			width: 33pt;
+			height: 98.99pt;
+		}
+		&.arrow-6 {
+			top: 304.96pt;
+			left: 481.94pt;
+			width: 32pt;
+			height: 98.99pt;
+		}
+		&.arrow-7 {
+			top: 533.93pt;
+			left: 45.99pt;
+			width: 49.99pt;
+			height: 49.99pt;
+		}
+		&.arrow-8 {
+			top: 561.93pt;
+			left: 225.97pt;
+			width: 98.99pt;
+			height: 33pt;
+		}
+		&.arrow-9 {
+			top: 533.93pt;
+			left: 452.94pt;
+			width: 50.99pt;
+			height: 49.99pt;
+		}
+	}
+	.link-overlay {
+		position: absolute;
+		top: 145.98pt;
+		left: 65.99pt;
+		width: 417.95pt;
+		height: 417.95pt;
+		z-index: 1;
+	}
+}

@@ -104,7 +104,8 @@ export const ImageCropper = ({
             <div className="card-image-source-input">
                 <Radio.Group onChange={e => setSourceType(e.target.value)} value={sourceType}>
                     <Radio.Button value={'external'}>
-                        <Input key="key" placeholder="Card Picture Link" value={externalSource} onChange={onExternalSourceChange} maxLength={256} />
+                        <Input key="key"
+                            addonBefore="Picture Link" placeholder="https://my-online-image..." value={externalSource} onChange={onExternalSourceChange} maxLength={256} />
                     </Radio.Button>
                     <Radio.Button value={'internal'}>
                         <Input type="file" accept="image/*" onChange={onSelectFile} />

@@ -16,7 +16,7 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, Star, STSubFamily, TextBox, TypeAbilityLine } from './component';
+import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, LinkMarker, Star, STSubFamily, TextBox, TypeAbilityLine } from './component';
 import { checkLink, checkMonster, checkXyz, quoteConvert, scaleCalc } from './util';
 import { ExtractProps } from './type';
 
@@ -124,7 +124,7 @@ function App() {
         picture,
         effect,
         type_ability,
-        atk, def, link_count,
+        atk, def, link_map,
         attribute,
         subFamily,
         star,
@@ -151,12 +151,14 @@ function App() {
         Card filter here
             </div>
             <div className="card-info-panel">
-                <Radio.Group key="family" value={family} onChange={onFamilyChange}>
-                    {Object.keys(defaultCardFamily).map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
-                </Radio.Group>
+                <div className="card-info-line">
+                    <Radio.Group key="family" className="family-radio" value={family} onChange={onFamilyChange}>
+                        {Object.keys(defaultCardFamily).map(entry => <Radio.Button key={entry} value={entry}>{entry}</Radio.Button>)}
+                    </Radio.Group>
+                    <Input key="name" addonBefore="Name" placeholder="Card Name" value={name} onChange={onNameChange} />
+                </div>
                 <hr />
-                <Input key="name" placeholder="Card Name" value={name} onChange={onNameChange} />
-                <div className="card-info-line2">
+                <div className="card-info-line">
                     <div className="card-info-sub-family">
                         {family === 'Monster'
                             ? isLink
@@ -174,7 +176,11 @@ function App() {
                 </div>
                 <hr />
                 <div key="pic">
-                    <ImageCropper noRedrawNumber={scaleRatio} defaultExternalSource={picture} onSourceChange={onPictureChange} previewCanvasRef={previewCanvasRef.current} />
+                    <ImageCropper
+                        noRedrawNumber={scaleRatio}
+                        defaultExternalSource={picture}
+                        onSourceChange={onPictureChange}
+                        previewCanvasRef={previewCanvasRef.current} />
                 </div>
                 <Input key="set-id" />
                 <InputNumber key="pendulum-scale" />
@@ -202,14 +208,14 @@ function App() {
                 </div>
                 <Row>
                     <Col span={4}>
-                        <Input key="atk" placeholder="ATK" value={atk} onChange={onATKChange} />
+                        <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
                     </Col>
                     <Col span={4}>
-                        <Input key="def" placeholder="DEF" value={def} onChange={onDEFChange} />
+                        <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
                     </Col>
-                    <Col span={4}>
+                    {/* <Col span={4}>
                         <InputNumber key="link-number" value={link_count} />
-                    </Col>
+                    </Col> */}
                 </Row>
                 <Input key="passcode" />
             </div>
@@ -243,10 +249,11 @@ function App() {
                             <STSubFamily family={family} subFamily={subFamily} />
                         </div>}
                     <div className="preview preview-picture">
-                        {/* <CardPicture src={picture} /> */}
-                        <canvas className="card-frame" ref={previewCanvasRef}
-                        />
+                        <canvas className="card-frame" ref={previewCanvasRef} />
                     </div>
+                    {isLink && <div className="preview preview-link-marker">
+                        <LinkMarker arrow={link_map} />
+                    </div>}
                     <div className="effect-box">
                         {isMonster && <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
                             <TypeAbilityLine scaleRatio={scaleRatio} typeAbility={type_ability} size={typeAbilitySize} />
