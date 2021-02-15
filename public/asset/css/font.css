@@ -22,3 +22,7 @@
 	font-family: MatrixBoldSmallCaps, sans-serif;
 	src: url('/asset/font/Matrix Small Caps Bold.ttf');
 };
+@font-face {
+	font-family: EurostileW01, monospace;
+	src: url('/asset/font/Eurostile Candy W01 Semibold.ttf');
+};
