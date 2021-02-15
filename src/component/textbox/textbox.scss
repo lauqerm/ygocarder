@@ -37,3 +37,16 @@
 	width: 0;
 	height: 1px;
 }
+
+.resize-box {
+	position: relative;
+	.header,
+	.body,
+	.footer {
+		text-align: justify;
+		left: 0
+	}
+	.body {
+		white-space: pre-wrap;
+	}
+}

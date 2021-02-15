@@ -4,24 +4,20 @@
 		text-align: left;
 	}
 	.card-star-icon {
-		width: 34pt;
-		height: 34pt;
+		width: 34px;
+		height: 34px;
 		&.card-star-level:not(:first-child) {
-			margin-left: 2.359pt;
+			margin-left: 2.3636px;
 		}
 		&.card-star-rank:not(:last-child) {
-			margin-right: 2.359pt;
+			margin-right: 2.3636px;
 		}
 	}
 }
 .card-star-oversize {
 	display: flex;
 	justify-content: center;
-	column-gap: 2.359pt;
-	.card-star-icon {
-		width: 34pt;
-		height: 34pt;
-	}
+	column-gap: 2.3636px;
 }
 
 .card-st-subfamily {
@@ -31,13 +27,13 @@
 		position: absolute;
 	}
 	> .card-st-subfamily-container {
-		height: 26pt;
+		height: 26px;
 		right: 0;
 	}
 	> .card-st-subfamily-icon {
-		width: 29pt;
-		height: 30pt;
-		top: -2pt;
-		right: 10pt;
+		width: 29px;
+		height: 30px;
+		top: -2px;
+		right: 10px;
 	}
 }

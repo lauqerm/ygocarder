@@ -22,7 +22,8 @@ export const defaultCard = {
     subFamily: 'Level',
     def: '2000',
     type_ability: ['Machine', 'Link', 'Effect'] as string[],
-    effect: 'You cannot Special Summon from the Extra Deck, except Machine monsters. If this card is Normal or Special Summoned: You can send 1 Xyz Machine monster from your Extra Deck to the GY; add 1 “B.F.A” Spell/Trap from your Deck to your hand. If this card is in your GY: You can banish 1 Xyz Machine monster from your Extra Deck; add this card to your hand. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn.',
+    effect: `You cannot Special Summon from the Extra Deck, except Machine monsters. If this card is Normal or Special Summoned: You can send 1 Xyz Machine monster from your Extra Deck to the GY; add 1 “B.F.A” Spell/Trap from your Deck to your hand. If this card is in your GY: You can banish 1 Xyz Machine monster from your Extra Deck; add this card to your hand. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn. If this card is in your GY: You can banish 1 Xyz Machine monster from your Extra Deck; add this card to your hand. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn. You cannot Special Summon from the Extra Deck, except Machine monsters. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn. You cannot Special Summon from the Extra Deck, except Machine monsters.
+    (You cannot Special Summon from the Extra Deck, except Machine monsters.)`,
     link_map: ['1', '2', '3', '4', '6', '7', '8', '9'] as string[],
     name: 'B.F.A - U3 “Eden”',
     passcode: '',

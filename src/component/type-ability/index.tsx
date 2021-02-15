@@ -1,8 +1,6 @@
 import React from 'react';
-import { TextBox } from '../textbox';
+import { TextBox, TextBoxTitle } from '../textbox';
 import './type-ability.scss';
-
-const { Title } = TextBox;
 
 const TypeAbilitySpace = ({ type }: { type?: string }) => <span className={`type-ability-space ${type}-space`}> </span>;
 const TypeAbilitySlash = ({ type }: { type?: string }) => <span className={`type-ability-slash ${type}-slash`}>/</span>;
@@ -21,7 +19,7 @@ export const TypeAbilityLine = ({
     size = 'normal',
     typeAbility = [],
 }: TypeAbilityLine) => {
-    return <Title name="type-ability" zoom={scaleRatio} value={`[ ${typeAbility.join(' / ')} ]`}
+    return <TextBoxTitle name="type-ability" zoom={scaleRatio} value={`[ ${typeAbility.join(' / ')} ]`}
         defaultMaxScaleRatio={1.075}
         font={size === 'normal'
             ? {
@@ -43,8 +41,8 @@ export const TypeAbilityLine = ({
                 }
                 return acc;
             }, [])
-            .map(entry => {
-                if (entry === '/') return <React.Fragment key={`${entry}slash`}>
+            .map((entry, index) => {
+                if (entry === '/') return <React.Fragment key={`${index}slash`}>
                     <TypeAbilitySpace type={size} />
                     <TypeAbilitySlash type={size} />
                     <TypeAbilitySpace type={size} />
@@ -65,5 +63,5 @@ export const TypeAbilityLine = ({
             })}
         <TypeAbilitySpace type="small" />
         <TypeAbilityBracket type={size}>]</TypeAbilityBracket>
-    </Title>;
+    </TextBoxTitle>;
 };

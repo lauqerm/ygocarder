@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { px2pt, scaleCalc } from '../../util';
+import { scaleCalc } from '../../util';
 import { TextBoxFontSize } from '../../model';
 import './textbox.scss';
 
@@ -53,7 +53,7 @@ export const TextBoxTitle = ({
         if (parentRef) {
             // Container size is subjected to canvas zoom
             const { height: parentHeight } = parentRef.getBoundingClientRect();
-            const maxTextLine = Math.round(px2pt(parentHeight) / (lineHeight * zoom));
+            const maxTextLine = Math.round(parentHeight / (lineHeight * zoom));
 
             return maxTextLine;
         }
@@ -151,11 +151,11 @@ export const TextBoxTitle = ({
         style={{
             transform: `scaleX(${scaleRatio}) translateX(${translatePercent})`,
             width: `${100 / scaleRatio}%`,
-            fontSize: `${fontSize}pt`,
-            lineHeight: `${lineHeight}pt`,
+            fontSize: `${fontSize}px`,
+            lineHeight: `${lineHeight}px`,
             ...(atFoot ? {
-                height: `${lineHeight}pt`,
-                top: `calc(${(line - 1)} * ${lineHeight}pt)`
+                height: `${lineHeight}px`,
+                top: `calc(${(line - 1)} * ${lineHeight}px)`
             } : {}),
         }}
     >

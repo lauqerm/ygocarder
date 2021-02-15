@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './app.scss';
 import 'antd/dist/antd.css';
-import { Col, Input, InputNumber, Radio, Row, Select, Slider } from 'antd';
+import { Button, Col, Input, InputNumber, Radio, Row, Select, Slider } from 'antd';
 import {
     Card,
     CardFamily,
@@ -16,20 +16,20 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, LinkMarker, Star, STSubFamily, TextBox, TypeAbilityLine } from './component';
-import { checkLink, checkMonster, checkXyz, quoteConvert, scaleCalc } from './util';
+import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, LinkMarkChooser, LinkMarker, Star, STSubFamily, TextBox, TextBoxTitle, TypeAbilityLine } from './component';
+import { checkLink, checkMonster, checkXyz, scaleCalc } from './util';
 import { ExtractProps } from './type';
+import html2canvas from 'html2canvas';
 
 const { TextArea } = Input;
 const { Option } = Select;
-const { Title } = TextBox;
 type SelectValue = Parameters<NonNullable<ExtractProps<typeof Select>['onChange']>>[0];
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
 
 
 
 
-const defaultZoomScaleRatio = 50;
+const defaultZoomScaleRatio = 75;
 const defaultScale: Record<string, ScaleValue> = {
     zoom: {
         scaleRatio: 1,
@@ -48,9 +48,14 @@ const onChangeFactory = (
     return (e: any) => {
         mutateFunction(current => ({
             ...current,
-            [key]: valueTransform(typeof e === 'string' ? e : e?.target?.value),
+            [key]: valueTransform(typeof e === 'string' || Array.isArray(e) ? e : e?.target?.value),
         }));
     };
+};
+const prepareCanvas = async () => {
+    const findEl = document.getElementById('card-capture-container');
+    if (findEl !== null) return html2canvas(findEl, { scrollX: 0, scrollY: -window.scrollY });
+    else return null;
 };
 function App() {
     const [, setRefresh] = useState(0);
@@ -58,6 +63,31 @@ function App() {
         if (message !== undefined) console.log(message);
         setRefresh(cur => cur + 1);
     };
+
+    const [isPreparing, setPreparing] = useState(false);
+    const prepareForExport = () => {
+        $onZoomChange(100);
+        setPreparing(true);
+    };
+    useEffect(() => {
+        (async () => {
+            if (isPreparing) {
+                const canvas = await prepareCanvas();
+                
+                if (canvas) {
+                    const link = document.createElement('a');
+                    document.body.appendChild(link);
+                    link.download = 'cmp-image.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    link.remove();
+                } else alert('Could not export');
+                $onZoomChange(50);
+                setPreparing(false);
+            }
+        })();
+    }, [isPreparing]);
+
     const [selectedPage, setPage] = useState<CardFamily>('Monster');
     const [currentCardPage, setCardPage] = useState<Record<string, Card>>({
         Monster: defaultMonster,
@@ -88,7 +118,7 @@ function App() {
     const onFamilyChange = (e: RadioChangeEvent) => setPage(e.target.value as CardFamily);
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
-    const onNameChange = onChangeFactory('name', setCard, quoteConvert);
+    const onNameChange = onChangeFactory('name', setCard);
     const onStarChange = (value: string | number | undefined) => setCardPage(cur => {
         return {
             ...cur,
@@ -96,7 +126,8 @@ function App() {
         };
     });
     const onPictureChange = onChangeFactory('picture', setCard);
-    const onEffectChange = onChangeFactory('effect', setCard, quoteConvert);
+    const onLinkMapChange = onChangeFactory('link_map', setCard);
+    const onEffectChange = onChangeFactory('effect', setCard);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
     const onTypeAbilityChange = (value: (string | number)[]) => {
@@ -130,10 +161,6 @@ function App() {
         star,
     } = currentCard;
     const {
-        effectLine,
-    } = cardRef.current;
-    const typeAbilitySize = effectLine > 6 ? 'small' : 'normal';
-    const {
         attribute: familyAttributeList,
         name: familyName,
         subFamily: subFamilyList,
@@ -141,14 +168,20 @@ function App() {
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
+    const {
+        effectLine,
+    } = cardRef.current;
+    const effectSize = isMonster
+        ? effectLine > 6 ? 'small' : 'normal'
+        : effectLine > 8 ? 'small' : 'normal';
+    
     return (
-        <div className="app-container" style={{
+        <div className={`app-container ${isPreparing ? 'app-container-export' : ''}`} style={{
             '--zoom-ratio': zoomValue.scaleRatio,
             '--translate-percent': zoomValue.translatePercent,
         } as any}>
-            <div id="portal" />
             <div className="card-filter-panel">
-        Card filter here
+    Card filter here
             </div>
             <div className="card-info-panel">
                 <div className="card-info-line">
@@ -182,6 +215,7 @@ function App() {
                         onSourceChange={onPictureChange}
                         previewCanvasRef={previewCanvasRef.current} />
                 </div>
+                <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
                 <Input key="set-id" />
                 <InputNumber key="pendulum-scale" />
                 <TextArea key="pendulum-effect" />
@@ -229,13 +263,14 @@ function App() {
                             onChange={onZoomChange}
                         />
                         <span>{Math.round(zoomValue.scaleRatio * 100)}%</span>
+                        <Button type="primary" onClick={() => prepareForExport()}>Save As Image</Button>
                     </div>
                 </div>
-                <div className="card-preview">
+                <div id="card-capture-container" className="card-preview">
                     <div className="preview preview-name">
-                        <Title name="name" zoom={scaleRatio} value={name} font={{
-                            fontSize: 64.58,
-                            lineHeight: 46.44,
+                        <TextBoxTitle name="name" zoom={scaleRatio} value={name} font={{
+                            fontSize: 64.59,
+                            lineHeight: 46.45,
                         }} />
                     </div>
                     <div className="preview preview-attribute">
@@ -254,35 +289,36 @@ function App() {
                     {isLink && <div className="preview preview-link-marker">
                         <LinkMarker arrow={link_map} />
                     </div>}
-                    <div className="effect-box">
-                        {isMonster && <div className={`preview preview-type-ability preview-type-ability-${typeAbilitySize}`}>
-                            <TypeAbilityLine scaleRatio={scaleRatio} typeAbility={type_ability} size={typeAbilitySize} />
-                        </div>}
-                        <TextBox className="preview" zoom={scaleRatio} value={effect} onLineChange={onEffectLineChange}
-                            name={isMonster ? 'monster-effect' : 'st-effect'}
-                            fontList={isMonster ? defaultMonsterFontList : defaultSTFontList}
-                            size={isMonster
-                                ? {
-                                    width: 464.29,
-                                    height: 103.35,
-                                }
-                                : {
-                                    width: 464.37,
-                                    height: 145.73,
-                                }} />
-                    </div>
+                    <TextBox className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio} onLineChange={onEffectLineChange}
+                        value={effect}
+                        typeAbilityValue={type_ability}
+                        name={isMonster ? 'monster-effect' : 'st-effect'}
+                        type={isMonster ? 'monster' : 'st'}
+                        fontList={isMonster ? defaultMonsterFontList : defaultSTFontList}
+                        size={isMonster
+                            ? effectSize === 'normal' ? { width: 464.57, height: 102.36 } : { width: 463.90, height: 105.34 }
+                            : effectSize === 'normal' ? { width: 464.43, height: 139.68 } : { width: 463.90, height: 145.75 }} />
                     {isMonster && <div className="preview preview-atk">
-                        <Title name="atk" zoom={scaleRatio} value={atk} alignment="right" font={{
+                        <TextBoxTitle name="atk" zoom={scaleRatio} value={atk} alignment="right" font={{
                             fontSize: 24.61,
                             lineHeight: 29.532,
                         }} />
                     </div>}
-                    {isMonster && <div className="preview preview-def">
-                        <Title name="def" zoom={scaleRatio} value={def} alignment="right" font={{
-                            fontSize: 24.61,
-                            lineHeight: 29.532,
-                        }} />
-                    </div>}
+                    {isMonster && (
+                        !isLink
+                            ? <div className="preview preview-def">
+                                <TextBoxTitle name="def" zoom={scaleRatio} value={def} alignment="right" font={{
+                                    fontSize: 24.61,
+                                    lineHeight: 29.532,
+                                }} />
+                            </div>
+                            : <div className="preview preview-link">
+                                <TextBoxTitle name="link" zoom={scaleRatio} value={`${link_map.length}`} alignment="right" font={{
+                                    fontSize: 24.61,
+                                    lineHeight: 29.532,
+                                }} />
+                            </div>
+                    )}
                     <div className="preview preview-frame">
                         <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability} />
                     </div>
