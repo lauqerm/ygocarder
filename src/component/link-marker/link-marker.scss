@@ -6,60 +6,93 @@
 		position: absolute;
 		z-index: 2;
 		&.arrow-1 {
-			top: 125.98pt;
-			left: 45.99pt;
-			width: 49.99pt;
-			height: 50.99pt;
+			top: 126px;
+			left: 46px;
+			width: 50px;
+			height: 51px;
 		}
 		&.arrow-2 {
-			top: 115.99pt;
-			left: 225.97pt;
-			width: 98.99pt;
-			height: 32pt;
+			top: 116px;
+			left: 226px;
+			width: 99px;
+			height: 32px;
 		}
 		&.arrow-3 {
-			top: 125.98pt;
-			left: 452.94pt;
-			width: 50.99pt;
-			height: 50.99pt;
+			top: 126px;
+			left: 453px;
+			width: 51px;
+			height: 51px;
 		}
 		&.arrow-4 {
-			top: 304.96pt;
-			left: 35pt;
-			width: 33pt;
-			height: 98.99pt;
+			top: 305px;
+			left: 35px;
+			width: 33px;
+			height: 99px;
 		}
 		&.arrow-6 {
-			top: 304.96pt;
-			left: 481.94pt;
-			width: 32pt;
-			height: 98.99pt;
+			top: 305px;
+			left: 482px;
+			width: 32px;
+			height: 99px;
 		}
 		&.arrow-7 {
-			top: 533.93pt;
-			left: 45.99pt;
-			width: 49.99pt;
-			height: 49.99pt;
+			top: 534px;
+			left: 46px;
+			width: 50px;
+			height: 50px;
 		}
 		&.arrow-8 {
-			top: 561.93pt;
-			left: 225.97pt;
-			width: 98.99pt;
-			height: 33pt;
+			top: 562px;
+			left: 226px;
+			width: 99px;
+			height: 33px;
 		}
 		&.arrow-9 {
-			top: 533.93pt;
-			left: 452.94pt;
-			width: 50.99pt;
-			height: 49.99pt;
+			top: 534px;
+			left: 453px;
+			width: 51px;
+			height: 50px;
 		}
 	}
 	.link-overlay {
 		position: absolute;
-		top: 145.98pt;
-		left: 65.99pt;
-		width: 417.95pt;
-		height: 417.95pt;
+		top: 146px;
+		left: 66px;
+		width: 418px;
+		height: 418px;
 		z-index: 1;
+	}
+}
+
+.link-marker-chooser {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	width: 120px;
+	height: 120px;
+	.link-marker-reset,
+	.link-marker-button {
+		border: 1px solid #d9d9d9;
+		cursor: pointer;
+		&:hover {
+			border: 1px solid #40a9ff;
+		}
+	}
+	.link-marker-reset {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.link-marker-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		.anticon {
+			font-size: 20px;
+		}
+	}
+	.marker-checked {
+		color: #40a9ff;
 	}
 }
