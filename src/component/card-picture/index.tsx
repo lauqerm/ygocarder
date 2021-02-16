@@ -27,12 +27,14 @@ export type ImageCropper = {
 	defaultExternalSource?: string,
     onSourceChange?: (source: string) => void,
     previewCanvasRef?: HTMLCanvasElement | null,
+    children?: React.ReactNode,
 }
 export const ImageCropper = ({
     noRedrawNumber = 0,
     defaultExternalSource = '',
     onSourceChange = () => {},
     previewCanvasRef,
+    children,
 }: ImageCropper) => {
     const [sourceType, setSourceType] = useState('external');
     const [internalSource, setInternalSource] = useState('');
@@ -102,13 +104,16 @@ export const ImageCropper = ({
     return (
         <div className="card-image-cropper">
             <div className="card-image-source-input">
+                {children}
                 <Radio.Group onChange={e => setSourceType(e.target.value)} value={sourceType}>
                     <Radio.Button value={'external'}>
                         <Input key="key"
-                            addonBefore="Picture Link" placeholder="https://my-online-image..." value={externalSource} onChange={onExternalSourceChange} maxLength={256} />
+                            addonBefore="Link" placeholder="https://my-online-image..."
+                            value={externalSource}
+                            onChange={onExternalSourceChange} maxLength={256} />
                     </Radio.Button>
                     <Radio.Button value={'internal'}>
-                        <Input type="file" accept="image/*" onChange={onSelectFile} />
+                        <Input type="file"  accept="image/*" onChange={onSelectFile} />
                         <div>
                             {sourceType === 'internal' && <Button
                                 className="download-button"
@@ -122,7 +127,7 @@ export const ImageCropper = ({
                 </Radio.Group>
             </div>
             <div className="card-cropper">
-                <ReactCrop
+                <ReactCrop key={sourceType}
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
                     crop={crop}

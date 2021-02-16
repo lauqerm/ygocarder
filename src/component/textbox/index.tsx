@@ -9,6 +9,11 @@ export const defaultMonsterFontList: TextBoxFontSize[] = [
     { fontSize: 13.88, lineHeight: 14.53 },
     { fontSize: 11.5, lineHeight: 11.7 },
 ];
+export const defaultMonsterVanillaFontList: TextBoxFontSize[] = [
+    { fontSize: 16.74, lineHeight: 17.01 },
+    { fontSize: 16.74, lineHeight: 17.01 },
+    { fontSize: 16.74, lineHeight: 17.01 },
+];
 export const defaultMonsterSizeList: TextBoxSize[] = [
     { width: 464.57, height: 102.36, top: 624.41, left: 43.89 },
     { width: 463.90, height: 105.34, top: 622.43, left: 43.89 },
@@ -68,12 +73,12 @@ export const TextBox = ({
             }}>
             <TypeAbilityLine scaleRatio={zoom} typeAbility={typeAbilityValue} size={currentSize === 0 ? 'normal' : 'small'} />
         </div>}
-        <div className={`textbox-container textbox-container-${name} ${className ?? ''}`}
-            style={{ top, left }}
+        <div className={`textbox-container textbox-container-${name} ${isFlavorText ?? 'flavor-text'} ${className ?? ''}`}
+            style={{ top, left, paddingRight: 5 }}
         >
             <SelfResizeBox
                 isFlavorText={isFlavorText}
-                fontList={fontList}
+                fontList={isFlavorText ? defaultMonsterVanillaFontList : fontList}
                 sizeList={sizeList}
                 value={value}
                 onSizeChange={setSize}

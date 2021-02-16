@@ -1,5 +1,6 @@
 .app-container {
 	display: flex;
+	column-gap: 10px;
 	--zoom-ratio: 0.8;
 	--translate-percent: -12.5%;
 	&.app-container-export {
@@ -15,7 +16,7 @@
 		flex: 1;
 	}
 	.card-info-panel {
-		flex: 2;
+		flex: 3;
 	}
 	.card-preview-panel {
 		flex: 2;
@@ -29,6 +30,19 @@
 		.ant-radio-button-wrapper {
 			padding: 0 5px;
 			width: 70px;
+			text-align: center;
+		}
+	}
+	.main-info {
+		display: flex;
+		align-items: start;
+		margin-top: 0.5em;
+		column-gap: 1em;
+		.main-info-first {
+			flex: 1;
+		}
+		.main-info-second {
+			flex: 0 0 350px;
 			text-align: center;
 		}
 	}
@@ -57,7 +71,7 @@
 .control-board {
 	.control-zoom {
 		display: grid;
-		grid-template-columns: 1fr 100px;
+		grid-template-columns: 549px 1fr;
 		> span {
 			display: flex;
 			align-self: center;
@@ -163,6 +177,10 @@
 		position: absolute;
 		overflow: hidden;
 		z-index: 100;
+		&.flavor-text {
+			font-family: ITCStoneSerifMedium;
+			letter-spacing: 0.02em;
+		}
 		&.textbox-container-monster-effect {
 			font-family: MatrixBook;
 			opacity: 0.97;

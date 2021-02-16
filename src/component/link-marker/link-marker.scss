@@ -67,8 +67,11 @@
 .link-marker-chooser {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
-	width: 120px;
+	width: 90px;
 	height: 120px;
+	.title {
+		grid-column: span 3;
+	}
 	.link-marker-reset,
 	.link-marker-button {
 		border: 1px solid #d9d9d9;

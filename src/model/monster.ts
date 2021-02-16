@@ -42,6 +42,7 @@ export const defaultMonsterCardType = [
 
 export const defaultMonsterSubTypeAbility = [
     'Effect',
+    'Normal',
     'Tuner',
     'Special Summon',
     'Toon',

@@ -28,6 +28,9 @@ export const LinkMarkChooser = ({
     const rotateMap = [-45, 0, 45, -90, 0, 90, -135, 180, 135];
 
     return <div className="link-marker-chooser">
+        <div className="title">
+            Link Arrows
+        </div>
         {[...Array(9)].map((entry, index) => {
             const normalizedIndex = `${index + 1}`;
 

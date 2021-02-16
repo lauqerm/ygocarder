@@ -206,52 +206,56 @@ function App() {
                     </Radio.Group>
                 </div>
                 <hr />
-                <div key="pic">
-                    <ImageCropper
-                        noRedrawNumber={scaleRatio}
-                        defaultExternalSource={picture}
-                        onSourceChange={onPictureChange}
-                        previewCanvasRef={previewCanvasRef.current} />
-                </div>
-                <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
-                <Input key="set-id" />
-                <InputNumber key="pendulum-scale" />
-                <TextArea key="pendulum-effect" />
-                <div className="card-info-line">
-                    <Select
-                        allowClear
-                        className="hide-selected"
-                        mode="tags"
-                        onChange={onTypeAbilityChange}
-                        placeholder="Type / Ability"
-                        style={{ width: '100%' }}
-                        value={type_ability}
-                    >
-                        {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
-                            .filter(entry => !type_ability.includes(entry))
-                            .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
-                    </Select>
-                </div>
-                <div>
-                    <TextArea key="effect"
-                        placeholder="Card effect"
-                        value={effect}
-                        onChange={onEffectChange}
-                        rows={6}
-                    />
-                </div>
-                <Row>
-                    <Col span={4}>
-                        <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
-                    </Col>
-                    <Col span={4}>
-                        <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
-                    </Col>
-                    {/* <Col span={4}>
+                <div key="pic" className="main-info">
+                    <div className="main-info-first">
+                        <Input key="set-id" />
+                        <InputNumber key="pendulum-scale" />
+                        <TextArea key="pendulum-effect" />
+                        <Select
+                            allowClear
+                            className="hide-selected"
+                            mode="tags"
+                            onChange={onTypeAbilityChange}
+                            placeholder="Type / Ability"
+                            style={{ width: '100%' }}
+                            value={type_ability}
+                        >
+                            {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
+                                .filter(entry => !type_ability.includes(entry))
+                                .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
+                        </Select>
+                        <div>
+                            <TextArea key="effect"
+                                placeholder="Card effect"
+                                value={effect}
+                                onChange={onEffectChange}
+                                rows={6}
+                            />
+                        </div>
+                        <Row>
+                            <Col span={4}>
+                                <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
+                            </Col>
+                            <Col span={4}>
+                                <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
+                            </Col>
+                            {/* <Col span={4}>
                         <InputNumber key="link-number" value={link_count} />
                     </Col> */}
-                </Row>
-                <Input key="passcode" />
+                        </Row>
+                        <Input key="passcode" />
+                    </div>
+                    <div className="main-info-second">
+                        <ImageCropper
+                            noRedrawNumber={scaleRatio}
+                            defaultExternalSource={picture}
+                            onSourceChange={onPictureChange}
+                            previewCanvasRef={previewCanvasRef.current}
+                        >
+                            <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
+                        </ImageCropper>
+                    </div>
+                </div>
             </div>
             <div className="card-preview-panel">
                 <div className="control-board">

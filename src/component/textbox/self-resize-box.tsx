@@ -164,7 +164,7 @@ export const SelfResizeBox = ({
                 const bodyContainer = bodyContainerRef.current;
                 const sizeEntry = sizeList[index];
                 if (bodyContainer && relevant) {
-                    bodyContainer.style.width = `${sizeEntry.width}px`;
+                    bodyContainer.style.width = `${sizeEntry.width - (isFlavorText ? 5 : 0)}px`;
                     bodyContainer.style.height = `${sizeEntry.height}px`;
                 }
 
@@ -207,13 +207,13 @@ export const SelfResizeBox = ({
                     effectiveBodyRatio = autoResize(bodyMeasurer, fontEntry, (measurer) => isOverflow(bodyContainer, measurer, offset)) ?? 1000;
                 }
 
-                const isValid = effectiveBodyRatio >= 600 || index === fontList.length - 1;
+                const isValid = effectiveBodyRatio >= 645 || index === fontList.length - 1;
                 if (isValid) onSizeChange(index);
                 return isValid;
             });
         };
         resize();
-        console.log('EFFECT');
+
         return () => { relevant = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [internalCnt]);
@@ -240,7 +240,7 @@ export const SelfResizeBox = ({
         if (relevant) tokenRef.current.body = trialValue;
         setCnt(cnt => cnt + 1);
         return () => { relevant = false; };
-    }, 1000, [value]);
+    }, 500, [value]);
 
     const {
         body,
