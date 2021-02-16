@@ -36,11 +36,20 @@
 		display: flex;
 		align-items: center;
 		height: 2.5em;
-		column-gap: 1em;
 		margin-top: 0.5em;
+		column-gap: 1em;
+		&.custom-gap {
+			column-gap: unset;
+		}
 		.card-info-sub-family {
 			padding-right: 1em;
+			margin-right: 1em;
 			border-right: 1px solid #ccc;
+			&:empty {
+				padding: 0;
+				margin: 0;
+				border: none;
+			}
 		}
 	}
 }
@@ -149,16 +158,6 @@
 		font-variant: small-caps;
 		font-weight: bold;
 		opacity: 0.95;
-		left: 41.97px;
-		width: 465.06px;
-		&.preview-type-ability-normal {
-			top: 602.03px;
-			height: 24.77px;
-		}
-		&.preview-type-ability-small {
-			top: 601.80px;
-			height: 23.32px;
-		}
 	}
 	.preview-effect {
 		position: absolute;
@@ -167,27 +166,16 @@
 		&.textbox-container-monster-effect {
 			font-family: MatrixBook;
 			opacity: 0.97;
-			top: 624.41px;
-			left: 43.89px;
 		}
 		&.preview-effect-small {
 			&.textbox-container-monster-effect {
 				letter-spacing: -0.005em;
-				top: 622.43px;
-				left: 43.89px;
 			}
 		}
 	}
 	.textbox-container-st-effect {
 		font-family: MatrixBook;
 		opacity: 0.97;
-		top: 605.36px;
-		left: 43.89px;
-		&.preview-effect-small {
-			.textbox-container-monster-effect {
-				top: 605.64px;
-			}
-		}
 	}
 	.preview-atk {
 		font-family: MatrixBoldSmallCaps;

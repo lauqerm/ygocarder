@@ -17,9 +17,10 @@ import {
 } from './model';
 import { debounce } from 'lodash';
 import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, LinkMarkChooser, LinkMarker, Star, STSubFamily, TextBox, TextBoxTitle, TypeAbilityLine } from './component';
-import { checkLink, checkMonster, checkXyz, scaleCalc } from './util';
+import { checkLink, checkMonster, checkNormal, checkXyz, scaleCalc } from './util';
 import { ExtractProps } from './type';
 import html2canvas from 'html2canvas';
+import { defaultMonsterSizeList, defaultSTSizeList } from './component/textbox';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -136,10 +137,6 @@ function App() {
             type_ability: value.map(entry => `${entry}`),
         }));
     };
-    const onEffectLineChange = (lineCount: number) => {
-        cardRef.current.effectLine = lineCount;
-        refresh();
-    };
 
     useEffect(() => {
         $onZoomChange(defaultZoomScaleRatio);
@@ -165,6 +162,7 @@ function App() {
         name: familyName,
         subFamily: subFamilyList,
     } = defaultCardFamily[family];
+    const isNormal = checkNormal(currentCard);
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
@@ -191,7 +189,7 @@ function App() {
                     <Input key="name" addonBefore="Name" placeholder="Card Name" value={name} onChange={onNameChange} />
                 </div>
                 <hr />
-                <div className="card-info-line">
+                <div className="card-info-line custom-gap">
                     <div className="card-info-sub-family">
                         {family === 'Monster'
                             ? isLink
@@ -219,19 +217,21 @@ function App() {
                 <Input key="set-id" />
                 <InputNumber key="pendulum-scale" />
                 <TextArea key="pendulum-effect" />
-                <Select
-                    allowClear
-                    className="hide-selected"
-                    mode="tags"
-                    onChange={onTypeAbilityChange}
-                    placeholder="Type / Ability"
-                    style={{ width: '100%' }}
-                    value={type_ability}
-                >
-                    {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
-                        .filter(entry => !type_ability.includes(entry))
-                        .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
-                </Select>
+                <div className="card-info-line">
+                    <Select
+                        allowClear
+                        className="hide-selected"
+                        mode="tags"
+                        onChange={onTypeAbilityChange}
+                        placeholder="Type / Ability"
+                        style={{ width: '100%' }}
+                        value={type_ability}
+                    >
+                        {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
+                            .filter(entry => !type_ability.includes(entry))
+                            .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
+                    </Select>
+                </div>
                 <div>
                     <TextArea key="effect"
                         placeholder="Card effect"
@@ -290,20 +290,21 @@ function App() {
                         <LinkMarker arrow={link_map} />
                     </div>}
                     {isMonster
-                        ? <TextBox className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio} onLineChange={onEffectLineChange}
+                        ? <TextBox key="monster" className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio}
+                            isFlavorText={isNormal}
                             value={effect}
                             typeAbilityValue={type_ability}
                             name={'monster-effect'}
                             type={'monster'}
                             fontList={defaultMonsterFontList}
-                            size={effectSize === 'normal' ? { width: 464.57, height: 102.36 } : { width: 463.90, height: 105.34 }} />
-                        : <TextBox className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio} onLineChange={onEffectLineChange}
+                            sizeList={defaultMonsterSizeList} />
+                        : <TextBox key="s/t" className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio}
                             value={effect}
                             typeAbilityValue={type_ability}
                             name={'st-effect'}
                             type={'st'}
                             fontList={defaultSTFontList}
-                            size={effectSize === 'normal' ? { width: 464.43, height: 139.68 } : { width: 463.90, height: 145.75 }} />}
+                            sizeList={defaultSTSizeList} />}
                     {isMonster && <div className="preview preview-atk">
                         <TextBoxTitle name="atk" zoom={scaleRatio} value={atk} alignment="right" font={{
                             fontSize: 24.61,

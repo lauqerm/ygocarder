@@ -1,5 +1,3 @@
-import { clamp } from 'ramda';
-
 export const scaleCalc = (value: number, range = 1) => {
     const normalizedValue = Math.max(0.01, value / range);
     if (normalizedValue === 0) {

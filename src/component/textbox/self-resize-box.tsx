@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TextBoxFontSize } from '../../model';
 import { quoteConvert, scaleCalc } from '../../util';
+import { useDebouncedEffect } from './helper';
 import './textbox.scss';
 
 const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
@@ -69,16 +70,18 @@ const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
 export type SelfResizeBox = {
 	value: string,
     fontList: TextBoxFontSize[],
-	sizeData: { width: number, height: number },
-	zoom: number,
+	sizeList: { width: number, height: number }[],
+	isFlavorText?: boolean,
+    onSizeChange?: (sizeIndex: number) => void,
 }
 export const SelfResizeBox = ({
     fontList,
-    sizeData,
+    sizeList,
     value,
-    zoom,
+    isFlavorText = false,
+    onSizeChange = () => {},
 }: SelfResizeBox) => {
-    const { height, width } = sizeData;
+    const [internalCnt, setCnt] = useState(0);
     const bodyContainerRef = useRef<HTMLDivElement>(null);
     const bodyMeasurerRef = useRef<HTMLDivElement>(null);
     const headerContainerRef = useRef<HTMLDivElement>(null);
@@ -105,7 +108,6 @@ export const SelfResizeBox = ({
     useEffect(() => {
         let relevant = true;
         const autoResize = (measurer: HTMLDivElement | null, fontEntry: TextBoxFontSize, overflowCheck: (measurer: HTMLDivElement) => boolean) => {
-            console.log('🚀 ~ file: self-resize-box.tsx ~ line 107 ~ autoResize ~ measurer', measurer);
             let effective;
             const condenser = createCondenser();
             const resetMeasurer = (measurer: HTMLDivElement | null) => {
@@ -138,8 +140,6 @@ export const SelfResizeBox = ({
                         // When out of iteration, return the concluded median
                         const effectiveMedian = condenser.applyLastEffective();
                         applyScale(measurer, effectiveMedian);
-                        // effective = effectiveMedian;
-                        // console.log('🚀 ~ file: self-resize-box.tsx ~ line 143 ~ autoResize ~ effective', effective);
                         break;
                     } else {
                         if (overflowCheck(measurer)) {
@@ -160,7 +160,14 @@ export const SelfResizeBox = ({
             return effective;
         };
         const resize = async () => {
-            fontList.some(fontEntry => {
+            fontList.some((fontEntry, index) => {
+                const bodyContainer = bodyContainerRef.current;
+                const sizeEntry = sizeList[index];
+                if (bodyContainer && relevant) {
+                    bodyContainer.style.width = `${sizeEntry.width}px`;
+                    bodyContainer.style.height = `${sizeEntry.height}px`;
+                }
+
                 let offset = 0;
                 let effectiveBodyRatio = 1000;
                 const headerContainer = headerContainerRef.current;
@@ -199,33 +206,41 @@ export const SelfResizeBox = ({
 
                     effectiveBodyRatio = autoResize(bodyMeasurer, fontEntry, (measurer) => isOverflow(bodyContainer, measurer, offset)) ?? 1000;
                 }
-                return effectiveBodyRatio >= 600;
+
+                const isValid = effectiveBodyRatio >= 600 || index === fontList.length - 1;
+                if (isValid) onSizeChange(index);
+                return isValid;
             });
         };
         resize();
-
+        console.log('EFFECT');
         return () => { relevant = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value]);
+    }, [internalCnt]);
 
-    let trialValue = quoteConvert(value);
-
-    const materialRegex = /^(\[([^\]]*)\]\s*)/m;
-    const materialReplacement = materialRegex.exec(trialValue)?.[1];
-    const material = materialRegex.exec(trialValue)?.[2];
-    if (material && materialReplacement) {
-        tokenRef.current.header = material;
-        trialValue = trialValue.replace(materialReplacement, '');
-    } else tokenRef.current.header = '';
-
-    const flavorConditionRegex = /\n(^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
-    const flavorCondition = flavorConditionRegex.exec(trialValue)?.[1];
-    if (flavorCondition) {
-        tokenRef.current.footer = flavorCondition;
-        trialValue = trialValue.replace(flavorCondition, '');
-    } else tokenRef.current.footer = '';
-
-    tokenRef.current.body = trialValue;
+    useDebouncedEffect(() => {
+        let relevant = true;
+        let trialValue = quoteConvert(value);
+    
+        const materialRegex = /^(\[([^\]]*)\]\s*)/m;
+        const materialReplacement = materialRegex.exec(trialValue)?.[1];
+        const material = materialRegex.exec(trialValue)?.[2];
+        if (material && materialReplacement) {
+            tokenRef.current.header = material;
+            trialValue = trialValue.replace(materialReplacement, '');
+        } else tokenRef.current.header = '';
+    
+        const flavorConditionRegex = /\n(^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
+        const flavorCondition = flavorConditionRegex.exec(trialValue)?.[1];
+        if (flavorCondition && isFlavorText) {
+            tokenRef.current.footer = flavorCondition;
+            trialValue = trialValue.replace(flavorCondition, '');
+        } else tokenRef.current.footer = '';
+    
+        if (relevant) tokenRef.current.body = trialValue;
+        setCnt(cnt => cnt + 1);
+        return () => { relevant = false; };
+    }, 1000, [value]);
 
     const {
         body,
@@ -235,10 +250,9 @@ export const SelfResizeBox = ({
     return <div ref={bodyContainerRef}
         className="resize-box"
         style={{
-            width: `${width}px`,
-            height: `${height}px`,
             position: 'relative',
             zIndex: 100,
+            fontStyle: isFlavorText ? 'italic' : 'unset',
         }}
     >
         <div className="header" ref={headerContainerRef}>

@@ -21,13 +21,13 @@ export const defaultCard = {
     family: 'Monster' as CardFamily,
     subFamily: 'Level',
     def: '2000',
-    type_ability: ['Machine', 'Link', 'Effect'] as string[],
+    type_ability: ['Dragon', 'Link', 'Effect'] as string[],
     effect: `["Blue-Eyes White Dragon" + "Blue-Eyes White Dragon" + "Blue-Eyes White Dragon"]
 Your opponent cannot target or destroy this card with card effects. Once per turn: You can target 1 card your opponent controls; destroy it.
 * If this card was Fusion Summoned using a monster whose original name is "Blue-Eyes Alternative White Dragon" as material, you can target up to 3 cards your opponent controls instead.
 * This card cannot attack the turn this effect is activated.
 (This card is always treated as "Blue-Eyes Ultimate Dragon")`,
-    link_map: ['1', '2', '3', '4', '6', '7', '8', '9'] as string[],
+    link_map: ['1', '2', '3', '8', '9'] as string[],
     name: 'B.F.A - U3 “Eden”',
     passcode: '',
     pendulum_effect: '',
@@ -69,4 +69,7 @@ export {
     defaultTrapAttribute,
     trapFamily
 } from './trap';
-export type { TextBoxFontSize } from './textbox';
+export type {
+    TextBoxFontSize,
+    TextBoxSize,
+} from './textbox';
