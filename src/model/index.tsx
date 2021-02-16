@@ -22,8 +22,11 @@ export const defaultCard = {
     subFamily: 'Level',
     def: '2000',
     type_ability: ['Machine', 'Link', 'Effect'] as string[],
-    effect: `You cannot Special Summon from the Extra Deck, except Machine monsters. If this card is Normal or Special Summoned: You can send 1 Xyz Machine monster from your Extra Deck to the GY; add 1 “B.F.A” Spell/Trap from your Deck to your hand. If this card is in your GY: You can banish 1 Xyz Machine monster from your Extra Deck; add this card to your hand. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn. If this card is in your GY: You can banish 1 Xyz Machine monster from your Extra Deck; add this card to your hand. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn. You cannot Special Summon from the Extra Deck, except Machine monsters. You can only use each effect of “B.F.A - U3 ”Eden”” once per turn. You cannot Special Summon from the Extra Deck, except Machine monsters.
-    (You cannot Special Summon from the Extra Deck, except Machine monsters.)`,
+    effect: `["Blue-Eyes White Dragon" + "Blue-Eyes White Dragon" + "Blue-Eyes White Dragon"]
+Your opponent cannot target or destroy this card with card effects. Once per turn: You can target 1 card your opponent controls; destroy it.
+* If this card was Fusion Summoned using a monster whose original name is "Blue-Eyes Alternative White Dragon" as material, you can target up to 3 cards your opponent controls instead.
+* This card cannot attack the turn this effect is activated.
+(This card is always treated as "Blue-Eyes Ultimate Dragon")`,
     link_map: ['1', '2', '3', '4', '6', '7', '8', '9'] as string[],
     name: 'B.F.A - U3 “Eden”',
     passcode: '',

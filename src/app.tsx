@@ -29,7 +29,7 @@ type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onCha
 
 
 
-const defaultZoomScaleRatio = 75;
+const defaultZoomScaleRatio = 100;
 const defaultScale: Record<string, ScaleValue> = {
     zoom: {
         scaleRatio: 1,
@@ -289,15 +289,21 @@ function App() {
                     {isLink && <div className="preview preview-link-marker">
                         <LinkMarker arrow={link_map} />
                     </div>}
-                    <TextBox className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio} onLineChange={onEffectLineChange}
-                        value={effect}
-                        typeAbilityValue={type_ability}
-                        name={isMonster ? 'monster-effect' : 'st-effect'}
-                        type={isMonster ? 'monster' : 'st'}
-                        fontList={isMonster ? defaultMonsterFontList : defaultSTFontList}
-                        size={isMonster
-                            ? effectSize === 'normal' ? { width: 464.57, height: 102.36 } : { width: 463.90, height: 105.34 }
-                            : effectSize === 'normal' ? { width: 464.43, height: 139.68 } : { width: 463.90, height: 145.75 }} />
+                    {isMonster
+                        ? <TextBox className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio} onLineChange={onEffectLineChange}
+                            value={effect}
+                            typeAbilityValue={type_ability}
+                            name={'monster-effect'}
+                            type={'monster'}
+                            fontList={defaultMonsterFontList}
+                            size={effectSize === 'normal' ? { width: 464.57, height: 102.36 } : { width: 463.90, height: 105.34 }} />
+                        : <TextBox className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio} onLineChange={onEffectLineChange}
+                            value={effect}
+                            typeAbilityValue={type_ability}
+                            name={'st-effect'}
+                            type={'st'}
+                            fontList={defaultSTFontList}
+                            size={effectSize === 'normal' ? { width: 464.43, height: 139.68 } : { width: 463.90, height: 145.75 }} />}
                     {isMonster && <div className="preview preview-atk">
                         <TextBoxTitle name="atk" zoom={scaleRatio} value={atk} alignment="right" font={{
                             fontSize: 24.61,
@@ -313,10 +319,7 @@ function App() {
                                 }} />
                             </div>
                             : <div className="preview preview-link">
-                                <TextBoxTitle name="link" zoom={scaleRatio} value={`${link_map.length}`} alignment="right" font={{
-                                    fontSize: 24.61,
-                                    lineHeight: 29.532,
-                                }} />
+                                {link_map.length > 0 && <img src={`./asset/image/link-number/link-corner-${link_map.length}.png`} alt="link number" />}
                             </div>
                     )}
                     <div className="preview preview-frame">
