@@ -21,7 +21,7 @@ export const defaultCard = {
     family: 'Monster' as CardFamily,
     subFamily: 'Level',
     def: '2000',
-    type_ability: ['Dragon', 'Link', 'Effect'] as string[],
+    type_ability: ['Dragon', 'Pendulum', 'Effect'] as string[],
     effect: `["Blue-Eyes White Dragon" + "Blue-Eyes White Dragon" + "Blue-Eyes White Dragon"]
 Your opponent cannot target or destroy this card with card effects. Once per turn: You can target 1 card your opponent controls; destroy it.
 * If this card was Fusion Summoned using a monster whose original name is "Blue-Eyes Alternative White Dragon" as material, you can target up to 3 cards your opponent controls instead.
@@ -31,7 +31,7 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     name: 'B.F.A - U3 “Eden”',
     passcode: '',
     pendulum_effect: '',
-    pendulum_scale: -1,
+    pendulum_scale: '',
     picture: 'https://images2.imgbox.com/13/c5/dXPTEORX_o.jpg',
     set_id: '',
     st_type: '',

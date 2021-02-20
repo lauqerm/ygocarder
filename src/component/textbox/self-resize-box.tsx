@@ -208,7 +208,9 @@ export const SelfResizeBox = ({
                 }
 
                 const isValid = effectiveBodyRatio >= 645 || index === fontList.length - 1;
-                if (isValid) onSizeChange(index);
+                if (isValid) {
+                    onSizeChange(index);
+                }
                 return isValid;
             });
         };
@@ -240,7 +242,7 @@ export const SelfResizeBox = ({
         if (relevant) tokenRef.current.body = trialValue;
         setCnt(cnt => cnt + 1);
         return () => { relevant = false; };
-    }, 500, [value]);
+    }, 500, [value, isFlavorText]);
 
     const {
         body,

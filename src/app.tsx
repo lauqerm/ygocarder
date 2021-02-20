@@ -16,8 +16,22 @@ import {
     sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
-import { AttributeIcon, CardFrame, CardPicture, defaultMonsterFontList, defaultSTFontList, ImageCropper, LinkMarkChooser, LinkMarker, Star, STSubFamily, TextBox, TextBoxTitle, TypeAbilityLine } from './component';
-import { checkLink, checkMonster, checkNormal, checkXyz, scaleCalc } from './util';
+import {
+    AttributeIcon,
+    CardFrame,
+    CardPicture,
+    defaultMonsterFontList,
+    defaultSTFontList,
+    ImageCropper,
+    LinkMarkChooser,
+    LinkMarker,
+    Star,
+    STSubFamily,
+    TextBox,
+    TextBoxTitle,
+    TypeAbilityLine,
+} from './component';
+import { checkLink, checkMonster, checkNormal, checkPendulum, checkXyz, scaleCalc } from './util';
 import { ExtractProps } from './type';
 import html2canvas from 'html2canvas';
 import { defaultMonsterSizeList, defaultSTSizeList } from './component/textbox';
@@ -110,6 +124,7 @@ function App() {
     });
     const cardRef = useRef({
         effectLine: 0,
+        pendulumEffectLine: 0,
     });
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -126,6 +141,7 @@ function App() {
             [selectedPage]: { ...cur[selectedPage], star: parseInt(`${value ?? 0}`) },
         };
     });
+    const onScaleChange = onChangeFactory('pendulum_scale', setCard);
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('link_map', setCard);
     const onEffectChange = onChangeFactory('effect', setCard);
@@ -152,11 +168,13 @@ function App() {
         picture,
         effect,
         type_ability,
+        pendulum_scale,
         atk, def, link_map,
         attribute,
         subFamily,
         star,
     } = currentCard;
+    console.log('🚀 ~ file: app.tsx ~ line 177 ~ App ~ pendulum_scale', pendulum_scale);
     const {
         attribute: familyAttributeList,
         name: familyName,
@@ -166,12 +184,17 @@ function App() {
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
+    const isPendulum = checkPendulum(currentCard);
     const {
         effectLine,
+        pendulumEffectLine,
     } = cardRef.current;
     const effectSize = isMonster
         ? effectLine > 6 ? 'small' : 'normal'
         : effectLine > 8 ? 'small' : 'normal';
+    const pendulumSize = pendulumEffectLine <= 3
+        ? 'small'
+        : 'medium';
     
     return (
         <div className={`app-container ${isPreparing ? 'app-container-export' : ''}`} style={{
@@ -209,21 +232,23 @@ function App() {
                 <div key="pic" className="main-info">
                     <div className="main-info-first">
                         <Input key="set-id" />
-                        <InputNumber key="pendulum-scale" />
-                        <TextArea key="pendulum-effect" />
-                        <Select
-                            allowClear
-                            className="hide-selected"
-                            mode="tags"
-                            onChange={onTypeAbilityChange}
-                            placeholder="Type / Ability"
-                            style={{ width: '100%' }}
-                            value={type_ability}
-                        >
-                            {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
-                                .filter(entry => !type_ability.includes(entry))
-                                .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
-                        </Select>
+                        {isMonster && <>
+                            <Input key="pendulum-scale" addonBefore="Pendulum Scale" value={pendulum_scale} onChange={onScaleChange} />
+                            <TextArea key="pendulum-effect" />
+                            <Select
+                                allowClear
+                                className="hide-selected"
+                                mode="tags"
+                                onChange={onTypeAbilityChange}
+                                placeholder="Type / Ability"
+                                style={{ width: '100%' }}
+                                value={type_ability}
+                            >
+                                {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
+                                    .filter(entry => !type_ability.includes(entry))
+                                    .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
+                            </Select>
+                        </>}
                         <div>
                             <TextArea key="effect"
                                 placeholder="Card effect"
@@ -252,7 +277,9 @@ function App() {
                             onSourceChange={onPictureChange}
                             previewCanvasRef={previewCanvasRef.current}
                         >
-                            <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
+                            {isMonster
+                                ? <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
+                                : <div />}
                         </ImageCropper>
                     </div>
                 </div>
@@ -280,6 +307,10 @@ function App() {
                     <div className="preview preview-attribute">
                         <AttributeIcon type={attribute} />
                     </div>
+                    {isPendulum && <>
+                        <div className={`preview-scale-number left-scale size-${pendulumSize}`}>{pendulum_scale}</div>
+                        <div className={`preview-scale-number right-scale size-${pendulumSize}`}>{pendulum_scale}</div>
+                    </>}
                     {family === 'Monster'
                         ? <div className={`preview preview-star ${star > 12 ? 'preview-star-oversize' : ''}`}>
                             {!isLink && <Star count={star} type={isXyz ? 'rank' : 'level'} />}
@@ -287,9 +318,6 @@ function App() {
                         : <div className="preview preview-st-sub-family">
                             <STSubFamily family={family} subFamily={subFamily} />
                         </div>}
-                    <div className="preview preview-picture">
-                        <canvas className="card-frame" ref={previewCanvasRef} />
-                    </div>
                     {isLink && <div className="preview preview-link-marker">
                         <LinkMarker arrow={link_map} />
                     </div>}
@@ -328,7 +356,13 @@ function App() {
                             </div>
                     )}
                     <div className="preview preview-frame">
-                        <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability} />
+                        <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability}>
+                            <div className={`preview preview-picture ${isPendulum ? 'picture-pendulum' : ''}`}>
+                                <div className="canvas-container">
+                                    <canvas className="crop-canvas" ref={previewCanvasRef} />
+                                </div>
+                            </div>
+                        </CardFrame>
                     </div>
                 </div>
             </div>

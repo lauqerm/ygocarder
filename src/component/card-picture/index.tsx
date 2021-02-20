@@ -28,6 +28,7 @@ export type ImageCropper = {
     onSourceChange?: (source: string) => void,
     previewCanvasRef?: HTMLCanvasElement | null,
     children?: React.ReactNode,
+    ratio?: number,
 }
 export const ImageCropper = ({
     noRedrawNumber = 0,
@@ -35,12 +36,13 @@ export const ImageCropper = ({
     onSourceChange = () => {},
     previewCanvasRef,
     children,
+    ratio = 1,
 }: ImageCropper) => {
     const [sourceType, setSourceType] = useState('external');
     const [internalSource, setInternalSource] = useState('');
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
-    const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: '%', width: 30, aspect: 1 });
+    const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: '%', width: 50, aspect: ratio });
     const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
 
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +133,7 @@ export const ImageCropper = ({
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
                     crop={crop}
-                    onChange={cropData => setCrop(cropData)}
+                    onChange={cropData => setCrop({ ...cropData, aspect: ratio })}
                     onComplete={cropData => setCompletedCrop(cropData)}
                     ruleOfThirds={true}
                 />

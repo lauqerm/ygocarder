@@ -130,6 +130,26 @@
 			height: 100%;
 		}
 	}
+	.preview-scale-number {
+		position: absolute;
+		width: 39.84px;
+		height: 44.68px;
+		z-index: 300;
+		font-family: MatrixBoldSmallCaps;
+		line-height: 1.2;
+		font-size: 38.4px;
+		font-variant: small-caps;
+		text-align: center;
+		&.size-small {
+			top: 556.37px;
+		}
+		&.left-scale {
+			left: 37.14px;
+		}
+		&.right-scale {
+			left: 472.69px
+		}
+	}
 	.preview-link-marker {
 		top: 0;
 		left: 0;
@@ -141,6 +161,24 @@
 		left: 67px;
 		width: 416px;
 		height: 416px;
+		&.picture-pendulum {
+			top: 144px;
+			left: 38px;
+			width: 474px;
+			height: 470px;
+		}
+		.canvas-container {
+			position: relative;
+			width: 100%;
+			padding-top: 100%;
+		.crop-canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
 	}
 	.preview-st-sub-family {
 		top: 103px;
