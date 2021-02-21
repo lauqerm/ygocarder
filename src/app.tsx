@@ -34,7 +34,7 @@ import {
 import { checkLink, checkMonster, checkNormal, checkPendulum, checkXyz, scaleCalc } from './util';
 import { ExtractProps } from './type';
 import html2canvas from 'html2canvas';
-import { defaultMonsterSizeList, defaultSTSizeList } from './component/textbox';
+import { defaultMonsterSizeList, defaultPendulumFontList, defaultPendulumSizeList, defaultSTSizeList } from './component/textbox';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -142,6 +142,7 @@ function App() {
         };
     });
     const onScaleChange = onChangeFactory('pendulum_scale', setCard);
+    const onPendulumEffectChange = onChangeFactory('pendulum_effect', setCard);
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('link_map', setCard);
     const onEffectChange = onChangeFactory('effect', setCard);
@@ -168,13 +169,13 @@ function App() {
         picture,
         effect,
         type_ability,
+        pendulum_effect,
         pendulum_scale,
         atk, def, link_map,
         attribute,
         subFamily,
         star,
     } = currentCard;
-    console.log('🚀 ~ file: app.tsx ~ line 177 ~ App ~ pendulum_scale', pendulum_scale);
     const {
         attribute: familyAttributeList,
         name: familyName,
@@ -192,10 +193,11 @@ function App() {
     const effectSize = isMonster
         ? effectLine > 6 ? 'small' : 'normal'
         : effectLine > 8 ? 'small' : 'normal';
-    const pendulumSize = pendulumEffectLine <= 3
+    const pendulumSize = pendulumEffectLine === 0
         ? 'small'
         : 'medium';
     
+    console.log('🚀 ~ file: app.tsx ~ line 197 ~ App ~ pendulumSize', pendulumEffectLine, pendulumSize);
     return (
         <div className={`app-container ${isPreparing ? 'app-container-export' : ''}`} style={{
             '--zoom-ratio': zoomValue.scaleRatio,
@@ -234,7 +236,12 @@ function App() {
                         <Input key="set-id" />
                         {isMonster && <>
                             <Input key="pendulum-scale" addonBefore="Pendulum Scale" value={pendulum_scale} onChange={onScaleChange} />
-                            <TextArea key="pendulum-effect" />
+                            <TextArea key="pendulum-effect"
+                                placeholder="Pendulum effect"
+                                value={pendulum_effect}
+                                onChange={onPendulumEffectChange}
+                                rows={4}
+                            />
                             <Select
                                 allowClear
                                 className="hide-selected"
@@ -308,8 +315,20 @@ function App() {
                         <AttributeIcon type={attribute} />
                     </div>
                     {isPendulum && <>
-                        <div className={`preview-scale-number left-scale size-${pendulumSize}`}>{pendulum_scale}</div>
-                        <div className={`preview-scale-number right-scale size-${pendulumSize}`}>{pendulum_scale}</div>
+                        <div key="left" className={`preview-scale-number left-scale size-${pendulumSize}`}>{pendulum_scale}</div>
+                        <TextBox className={`preview-pendulum-effect preview-pendulum-effect-${pendulumSize}`} zoom={scaleRatio}
+                            value={pendulum_effect}
+                            sizeChangeThreshold={1000}
+                            name={'pendulum-effect'}
+                            type={'monster'}
+                            onSizeChange={value => {
+                                cardRef.current.pendulumEffectLine = value;
+                                refresh();
+                            }}
+                            fontList={defaultPendulumFontList}
+                            sizeList={defaultPendulumSizeList}
+                        />
+                        <div key="right" className={`preview-scale-number right-scale size-${pendulumSize}`}>{pendulum_scale}</div>
                     </>}
                     {family === 'Monster'
                         ? <div className={`preview preview-star ${star > 12 ? 'preview-star-oversize' : ''}`}>
@@ -356,7 +375,7 @@ function App() {
                             </div>
                     )}
                     <div className="preview preview-frame">
-                        <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability}>
+                        <CardFrame family={family} subFamily={subFamily} typeAbility={type_ability} size={pendulumSize}>
                             <div className={`preview preview-picture ${isPendulum ? 'picture-pendulum' : ''}`}>
                                 <div className="canvas-container">
                                     <canvas className="crop-canvas" ref={previewCanvasRef} />

@@ -70,6 +70,7 @@ const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
 export type SelfResizeBox = {
 	value: string,
     fontList: TextBoxFontSize[],
+    sizeChangeThreshold?: number,
 	sizeList: { width: number, height: number }[],
 	isFlavorText?: boolean,
     onSizeChange?: (sizeIndex: number) => void,
@@ -77,6 +78,7 @@ export type SelfResizeBox = {
 export const SelfResizeBox = ({
     fontList,
     sizeList,
+    sizeChangeThreshold = 645,
     value,
     isFlavorText = false,
     onSizeChange = () => {},
@@ -207,7 +209,9 @@ export const SelfResizeBox = ({
                     effectiveBodyRatio = autoResize(bodyMeasurer, fontEntry, (measurer) => isOverflow(bodyContainer, measurer, offset)) ?? 1000;
                 }
 
-                const isValid = effectiveBodyRatio >= 645 || index === fontList.length - 1;
+                const isValid = effectiveBodyRatio >= sizeChangeThreshold || index === fontList.length - 1;
+                console.log('🚀 ~ file: self-resize-box.tsx ~ line 213 ~ fontList.some ~ sizeChangeThreshold', sizeChangeThreshold);
+                console.log('🚀 ~ file: self-resize-box.tsx ~ line 213 ~ fontList.some ~ effectiveBodyRatio', effectiveBodyRatio);
                 if (isValid) {
                     onSizeChange(index);
                 }

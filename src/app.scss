@@ -130,6 +130,12 @@
 			height: 100%;
 		}
 	}
+	.preview-pendulum-effect {
+		position: absolute;
+		overflow: hidden;
+		z-index: 100;
+		letter-spacing: -0.001em;
+	}
 	.preview-scale-number {
 		position: absolute;
 		width: 39.84px;
@@ -142,6 +148,9 @@
 		text-align: center;
 		&.size-small {
 			top: 556.37px;
+		}
+		&.size-medium {
+			top: 542.19px;
 		}
 		&.left-scale {
 			left: 37.14px;

@@ -9,10 +9,20 @@ export const defaultMonsterFontList: TextBoxFontSize[] = [
     { fontSize: 13.88, lineHeight: 14.53 },
     { fontSize: 11.5, lineHeight: 11.7 },
 ];
+export const defaultPendulumFontList: TextBoxFontSize[] = [
+    { fontSize: 16.9, lineHeight: 18.05 },
+    { fontSize: 16.41, lineHeight: 16.44 },
+    // { fontSize: 13.88, lineHeight: 14.53 },
+];
 export const defaultMonsterVanillaFontList: TextBoxFontSize[] = [
     { fontSize: 16.74, lineHeight: 17.01 },
     { fontSize: 16.74, lineHeight: 17.01 },
     { fontSize: 16.74, lineHeight: 17.01 },
+];
+export const defaultPendulumSizeList: TextBoxSize[] = [
+    { width: 378, height: 58.63, top: 534.79, left: 87.05 },
+    { width: 375, height: 82, top: 504.5, left: 87.05 },
+    // { width: 378.17, height: 90.25, top: 507.89, left: 87.05 },
 ];
 export const defaultMonsterSizeList: TextBoxSize[] = [
     { width: 464.57, height: 102.36, top: 624.41, left: 43.89 },
@@ -45,6 +55,8 @@ export type TextBox = {
     sizeList?: TextBoxSize[],
     isFlavorText?: boolean,
     type?: 'st' | 'monster',
+    sizeChangeThreshold?: number,
+    onSizeChange?: (sizeIndex: number) => void,
 }
 export const TextBox = ({
     name,
@@ -58,13 +70,20 @@ export const TextBox = ({
     sizeList = defaultMonsterSizeList,
     isFlavorText = false,
     className = '',
+    sizeChangeThreshold = 645,
+    onSizeChange = () => {},
 }: TextBox) => {
     const [currentSize, setSize] = useState(0);
     const { top, left } = sizeList[currentSize];
-    const { top: typeTop, left: typeLeft, width: typeWidth, height: typeHeight } = defaultMonsterTypeAblitySizeList[currentSize];
+    const {
+        top: typeTop,
+        left: typeLeft,
+        width: typeWidth,
+        height: typeHeight,
+    } = defaultMonsterTypeAblitySizeList[currentSize];
 
     return <>
-        {type === 'monster' && <div className={'preview preview-type-ability'}
+        {(type === 'monster' && typeAbilityValue.length > 0) && <div className={'preview preview-type-ability'}
             style={{
                 top: typeTop,
                 left: typeLeft,
@@ -74,14 +93,18 @@ export const TextBox = ({
             <TypeAbilityLine scaleRatio={zoom} typeAbility={typeAbilityValue} size={currentSize === 0 ? 'normal' : 'small'} />
         </div>}
         <div className={`textbox-container textbox-container-${name} ${isFlavorText ?? 'flavor-text'} ${className ?? ''}`}
-            style={{ top, left, paddingRight: 5 }}
+            style={{ top, left, paddingRight: 5, paddingBottom: 5 }}
         >
             <SelfResizeBox
                 isFlavorText={isFlavorText}
                 fontList={isFlavorText ? defaultMonsterVanillaFontList : fontList}
                 sizeList={sizeList}
                 value={value}
-                onSizeChange={setSize}
+                sizeChangeThreshold={sizeChangeThreshold}
+                onSizeChange={value => {
+                    setSize(value);
+                    onSizeChange(value);
+                }}
             />
         </div>
     </>;
