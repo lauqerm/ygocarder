@@ -1,48 +1,32 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './app.scss';
 import 'antd/dist/antd.css';
-import { Button, Col, Input, InputNumber, Radio, Row, Select, Slider } from 'antd';
+import { Button, Slider } from 'antd';
 import {
     Card,
     CardFamily,
-    defaultCard,
-    defaultCardFamily,
     defaultMonster,
-    defaultMonsterCardType,
     defaultSpell,
     defaultTrap,
-    defaultTypeAbilityList,
     ScaleValue,
-    sequentialTypeAbility,
 } from './model';
 import { debounce } from 'lodash';
 import {
     AttributeIcon,
     CardFrame,
-    CardPicture,
     defaultMonsterFontList,
     defaultSTFontList,
-    ImageCropper,
-    LinkMarkChooser,
     LinkMarker,
     Star,
     STSubFamily,
     TextBox,
     TextBoxTitle,
-    TypeAbilityLine,
 } from './component';
 import { checkLink, checkMonster, checkNormal, checkPendulum, checkXyz, scaleCalc } from './util';
-import { ExtractProps } from './type';
 import html2canvas from 'html2canvas';
 import { defaultMonsterSizeList, defaultPendulumFontList, defaultPendulumSizeList, defaultSTSizeList } from './component/textbox';
-
-const { TextArea } = Input;
-const { Option } = Select;
-type SelectValue = Parameters<NonNullable<ExtractProps<typeof Select>['onChange']>>[0];
-type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
-
-
-
+import { getCardFrame } from './component/image';
+import { CardInputPanel } from './page';
 
 const defaultZoomScaleRatio = 100;
 const defaultScale: Record<string, ScaleValue> = {
@@ -55,23 +39,48 @@ const defaultScale: Record<string, ScaleValue> = {
         translatePercent: '0%',
     },
 };
-const onChangeFactory = (
-    key: string,
-    mutateFunction: (func: (card: Card) => Card) => void,
-    valueTransform: (value: any) => any = (value) => value,
-) => {
-    return (e: any) => {
-        mutateFunction(current => ({
-            ...current,
-            [key]: valueTransform(typeof e === 'string' || Array.isArray(e) ? e : e?.target?.value),
-        }));
-    };
-};
+
 const prepareCanvas = async () => {
     const findEl = document.getElementById('card-capture-container');
-    if (findEl !== null) return html2canvas(findEl, { scrollX: 0, scrollY: -window.scrollY });
+    if (findEl !== null) return html2canvas(findEl, {
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        imageTimeout: 20000,
+        removeContainer: false,
+        allowTaint: true,
+    });
     else return null;
 };
+
+const drawFromSource = async (ctx: CanvasRenderingContext2D | null | undefined, source: string, sx: number, sy: number) => {
+    if (!ctx) return new Promise<boolean>(resolve => resolve(false));
+    return new Promise<boolean>(resolve => {
+        const cardBorder = new Image();
+        cardBorder.onload = () => {
+            ctx.drawImage(cardBorder, sx, sy);
+            resolve(true);
+        };
+        cardBorder.onerror = () => {
+            resolve(false);
+        };
+        cardBorder.src = source;
+    });
+};
+const drawFromSourceWithSize = async (ctx: CanvasRenderingContext2D | null | undefined, source: string, sx: number, sy: number, dw: number, dh: number) => {
+    if (!ctx) return new Promise<boolean>(resolve => resolve(false));
+    return new Promise<boolean>(resolve => {
+        const cardBorder = new Image();
+        cardBorder.onload = () => {
+            ctx.drawImage(cardBorder, sx, sy, dw, dh);
+            resolve(true);
+        };
+        cardBorder.onerror = () => {
+            resolve(false);
+        };
+        cardBorder.src = source;
+    });
+};
+
 function App() {
     const [, setRefresh] = useState(0);
     const refresh = (message?: string | number) => {
@@ -97,7 +106,7 @@ function App() {
                     link.click();
                     link.remove();
                 } else alert('Could not export');
-                $onZoomChange(50);
+                $onZoomChange(100);
                 setPreparing(false);
             }
         })();
@@ -108,12 +117,6 @@ function App() {
         Monster: defaultMonster,
         Spell: defaultSpell,
         Trap: defaultTrap,
-    });
-    const setCard = (mutateFunc: (card: Card) => Card) => setCardPage(cur => {
-        return {
-            ...cur,
-            [selectedPage]: mutateFunc(cur[selectedPage]),
-        };
     });
     const [zoomValue, setZoom] = useState({
         scaleRatio: 1,
@@ -127,33 +130,10 @@ function App() {
         pendulumEffectLine: 0,
     });
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+    const drawCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const $onZoomChange = (value: number) => setZoom(scaleCalc(value, 100));
     const onZoomChange = debounce($onZoomChange, 100);
-
-    const onFamilyChange = (e: RadioChangeEvent) => setPage(e.target.value as CardFamily);
-    const onAttributeChange = onChangeFactory('attribute', setCard);
-    const onSubFamilyChange = onChangeFactory('subFamily', setCard);
-    const onNameChange = onChangeFactory('name', setCard);
-    const onStarChange = (value: string | number | undefined) => setCardPage(cur => {
-        return {
-            ...cur,
-            [selectedPage]: { ...cur[selectedPage], star: parseInt(`${value ?? 0}`) },
-        };
-    });
-    const onScaleChange = onChangeFactory('pendulum_scale', setCard);
-    const onPendulumEffectChange = onChangeFactory('pendulum_effect', setCard);
-    const onPictureChange = onChangeFactory('picture', setCard);
-    const onLinkMapChange = onChangeFactory('link_map', setCard);
-    const onEffectChange = onChangeFactory('effect', setCard);
-    const onATKChange = onChangeFactory('atk', setCard);
-    const onDEFChange = onChangeFactory('def', setCard);
-    const onTypeAbilityChange = (value: (string | number)[]) => {
-        setCard(current => ({
-            ...current,
-            type_ability: value.map(entry => `${entry}`),
-        }));
-    };
 
     useEffect(() => {
         $onZoomChange(defaultZoomScaleRatio);
@@ -166,7 +146,6 @@ function App() {
     const {
         family,
         name,
-        picture,
         effect,
         type_ability,
         pendulum_effect,
@@ -176,11 +155,6 @@ function App() {
         subFamily,
         star,
     } = currentCard;
-    const {
-        attribute: familyAttributeList,
-        name: familyName,
-        subFamily: subFamilyList,
-    } = defaultCardFamily[family];
     const isNormal = checkNormal(currentCard);
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
@@ -196,101 +170,70 @@ function App() {
     const pendulumSize = pendulumEffectLine === 0
         ? 'small'
         : 'medium';
-    
-    console.log('🚀 ~ file: app.tsx ~ line 197 ~ App ~ pendulumSize', pendulumEffectLine, pendulumSize);
+
+    useEffect(() => {
+
+    }, [currentCard.attribute]);
+
+    const drawCardFrame = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        const cardType = getCardFrame(family, subFamily, type_ability);
+
+        await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+    }, [family, subFamily, type_ability]);
+
+    const drawCardImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        const previewCtx = previewCanvasRef.current;
+        if (previewCtx && ctx) {
+            if (isPendulum) {
+                ctx.drawImage(previewCtx, 38, 144, 474, 470);
+            } else {
+                ctx.drawImage(previewCtx, 67, 147, 416, 416);
+            }
+        }
+    }, [isPendulum]);
+
+    const drawCardContentFrame  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        const cardType = getCardFrame(family, subFamily, type_ability);
+        if (isPendulum) {
+            await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
+            await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
+        }
+        await drawFromSource(ctx, '/asset/image/frame/frame-border.png', 0, 0);
+    }, [family, subFamily, type_ability, isPendulum, pendulumSize]);
+
+    const startDraw = useCallback(async () => {
+        const ctx = drawCanvasRef.current?.getContext('2d');
+        await drawCardFrame(ctx);
+        await drawCardImage(ctx);
+        await drawCardContentFrame(ctx);
+    }, [drawCardContentFrame, drawCardFrame, drawCardImage]);
+
+    useEffect(() => {
+        const ctx = drawCanvasRef.current?.getContext('2d');
+        if (ctx) {
+            const pixelRatio = window.devicePixelRatio;
+            ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            ctx.imageSmoothingQuality = 'high';
+            ctx.clearRect(0, 0, 549, 800);
+        }
+    }, []);
+
     return (
         <div className={`app-container ${isPreparing ? 'app-container-export' : ''}`} style={{
             '--zoom-ratio': zoomValue.scaleRatio,
             '--translate-percent': zoomValue.translatePercent,
         } as any}>
             <div className="card-filter-panel">
-    Card filter here
+                <canvas ref={drawCanvasRef} width={549} height={800} />
             </div>
-            <div className="card-info-panel">
-                <div className="card-info-line">
-                    <Radio.Group key="family" className="family-radio" value={family} onChange={onFamilyChange}>
-                        {Object.keys(defaultCardFamily).map(entry => <Radio.Button key={entry} value={entry}>{entry}</Radio.Button>)}
-                    </Radio.Group>
-                    <Input key="name" addonBefore="Name" placeholder="Card Name" value={name} onChange={onNameChange} />
-                </div>
-                <hr />
-                <div className="card-info-line custom-gap">
-                    <div className="card-info-sub-family">
-                        {family === 'Monster'
-                            ? isLink
-                                ? null
-                                : <div>
-                                    {isXyz ? 'Rank' : 'Level'}: <InputNumber key="level-rank" min={0} max={13} value={star} onChange={onStarChange} />
-                                </div>
-                            : <Radio.Group key="subFamily" value={subFamily} onChange={onSubFamilyChange}>
-                                {subFamilyList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
-                            </Radio.Group>}
-                    </div>
-                    <Radio.Group key="attribute" value={attribute} onChange={onAttributeChange}>
-                        {familyAttributeList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
-                    </Radio.Group>
-                </div>
-                <hr />
-                <div key="pic" className="main-info">
-                    <div className="main-info-first">
-                        <Input key="set-id" />
-                        {isMonster && <>
-                            <Input key="pendulum-scale" addonBefore="Pendulum Scale" value={pendulum_scale} onChange={onScaleChange} />
-                            <TextArea key="pendulum-effect"
-                                placeholder="Pendulum effect"
-                                value={pendulum_effect}
-                                onChange={onPendulumEffectChange}
-                                rows={4}
-                            />
-                            <Select
-                                allowClear
-                                className="hide-selected"
-                                mode="tags"
-                                onChange={onTypeAbilityChange}
-                                placeholder="Type / Ability"
-                                style={{ width: '100%' }}
-                                value={type_ability}
-                            >
-                                {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
-                                    .filter(entry => !type_ability.includes(entry))
-                                    .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
-                            </Select>
-                        </>}
-                        <div>
-                            <TextArea key="effect"
-                                placeholder="Card effect"
-                                value={effect}
-                                onChange={onEffectChange}
-                                rows={6}
-                            />
-                        </div>
-                        <Row>
-                            <Col span={4}>
-                                <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
-                            </Col>
-                            <Col span={4}>
-                                <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
-                            </Col>
-                            {/* <Col span={4}>
-                        <InputNumber key="link-number" value={link_count} />
-                    </Col> */}
-                        </Row>
-                        <Input key="passcode" />
-                    </div>
-                    <div className="main-info-second">
-                        <ImageCropper
-                            noRedrawNumber={scaleRatio}
-                            defaultExternalSource={picture}
-                            onSourceChange={onPictureChange}
-                            previewCanvasRef={previewCanvasRef.current}
-                        >
-                            {isMonster
-                                ? <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
-                                : <div />}
-                        </ImageCropper>
-                    </div>
-                </div>
-            </div>
+            <CardInputPanel
+                receivingCanvasRef={previewCanvasRef.current}
+                currentCard={currentCard}
+                currentPage={selectedPage}
+                onCardChange={setCardPage}
+                onCardPageChange={setPage}
+                zoomValue={zoomValue}
+            />
             <div className="card-preview-panel">
                 <div className="control-board">
                     <div className="control-zoom">
@@ -302,6 +245,10 @@ function App() {
                         />
                         <span>{Math.round(zoomValue.scaleRatio * 100)}%</span>
                         <Button type="primary" onClick={() => prepareForExport()}>Save As Image</Button>
+                        <Button type="primary" onClick={async () => {
+                            await startDraw();
+                            // await drawCardImage(drawCanvasRef.current?.getContext('2d'));
+                        }}>Draw</Button>
                     </div>
                 </div>
                 <div id="card-capture-container" className="card-preview">
@@ -318,7 +265,7 @@ function App() {
                         <div key="left" className={`preview-scale-number left-scale size-${pendulumSize}`}>{pendulum_scale}</div>
                         <TextBox className={`preview-pendulum-effect preview-pendulum-effect-${pendulumSize}`} zoom={scaleRatio}
                             value={pendulum_effect}
-                            sizeChangeThreshold={1000}
+                            sizeChangeThreshold={900}
                             name={'pendulum-effect'}
                             type={'monster'}
                             onSizeChange={value => {

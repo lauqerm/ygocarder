@@ -11,6 +11,17 @@ export const AttributeIcon = ({
     return <img className="card-attribute" src={`/asset/image/attribute/attr-${type.toLowerCase()}.png`} alt={type} />;
 };
 
+export const getCardFrame = (family: string, subFamily: string, typeAbility: string[]) => {
+    let type = 'Effect';
+    if (family !== 'Monster') return family;
+    // This list is sorted as the priority already
+    defaultMonsterCardType.forEach(entry => {
+        if (typeAbility.includes(entry)) type = entry;
+    });
+    
+    return type.toLowerCase();
+};
+
 export type CardFrame = {
     family: CardFamily,
     subFamily: string,
@@ -25,16 +36,6 @@ export const CardFrame = ({
     size = 'small',
     children,
 }: CardFrame) => {
-    const getCardFrame = (family: string, subFamily: string, typeAbility: string[]) => {
-        let type = 'Effect';
-        if (family !== 'Monster') return family;
-        // This list is sorted as the priority already
-        defaultMonsterCardType.forEach(entry => {
-            if (typeAbility.includes(entry)) type = entry;
-        });
-    
-        return type.toLowerCase();
-    };
     const isPendulum = checkPendulum({ family, type_ability: typeAbility });
     const frameType = getCardFrame(family, subFamily, typeAbility);
 
