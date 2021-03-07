@@ -172,7 +172,7 @@
 		width: 416.00px;
 	}
 	.preview-type-ability {
-		font-family: ITCStoneSerifMedium;
+		font-family: stone-serif-regular;
 		font-variant: small-caps;
 		font-weight: bold;
 		opacity: 0.95;
@@ -182,7 +182,7 @@
 		overflow: hidden;
 		z-index: 100;
 		&.flavor-text {
-			font-family: ITCStoneSerifMedium;
+			font-family: stone-serif-regular;
 			letter-spacing: 0.02em;
 		}
 		&.textbox-container-monster-effect {

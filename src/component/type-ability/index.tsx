@@ -52,7 +52,7 @@ export const TypeAbilityLine = ({
 
                 return <span key={entry}>
                     <span key={'first'} style={{
-                        fontSize: size === 'normal' ? '21pt' : '19.69pt',
+                        fontSize: size === 'normal' ? '21px' : '19.69px',
                     }}>
                         {firstChar}
                     </span>
