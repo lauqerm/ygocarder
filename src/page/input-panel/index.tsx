@@ -154,17 +154,17 @@ export const CardInputPanel = ({
                         placeholder="Card effect"
                         value={effect}
                         onChange={onEffectChange}
-                        rows={6}
+                        rows={10}
                     />
                 </div>
-                <Row>
+                {isMonster && <Row>
                     <Col span={8}>
                         <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
                     </Col>
                     <Col span={8}>
                         <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
                     </Col>
-                </Row>
+                </Row>}
                 <Input key="passcode" />
             </div>
             <div className="main-info-second">

@@ -29,7 +29,7 @@ import { defaultMonsterSizeList, defaultPendulumFontList, defaultPendulumSizeLis
 import { getCardFrame } from './component/image';
 import { CardInputPanel } from './page';
 import './asset/font.css';
-import { monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList } from './const';
+import { BoxSize, FontSize, monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList, stFontList, stSizeList } from './const';
 
 const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     let min = minThreshold;
@@ -126,31 +126,31 @@ const drawFromSource = async (
 ) => {
     if (!ctx) return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
-        const cardBorder = new Image();
-        cardBorder.onload = () => {
-            let normalizedX = typeof sx === 'number' ? sx : sx(cardBorder);
-            let normalizedY = typeof sy === 'number' ? sy : sy(cardBorder);
-            ctx.drawImage(cardBorder, normalizedX, normalizedY);
+        const img = new Image();
+        img.src = source;
+        img.onload = () => {
+            let normalizedX = typeof sx === 'number' ? sx : sx(img);
+            let normalizedY = typeof sy === 'number' ? sy : sy(img);
+            ctx.drawImage(img, normalizedX, normalizedY);
             resolve(true);
         };
-        cardBorder.onerror = () => {
+        img.onerror = () => {
             resolve(false);
         };
-        cardBorder.src = source;
     });
 };
 const drawFromSourceWithSize = async (ctx: CanvasRenderingContext2D | null | undefined, source: string, sx: number, sy: number, dw: number, dh: number) => {
     if (!ctx) return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
-        const cardBorder = new Image();
-        cardBorder.onload = () => {
-            ctx.drawImage(cardBorder, sx, sy, dw, dh);
+        const img = new Image();
+        img.src = source;
+        img.onload = () => {
+            ctx.drawImage(img, sx, sy, dw, dh);
             resolve(true);
         };
-        cardBorder.onerror = () => {
+        img.onerror = () => {
             resolve(false);
         };
-        cardBorder.src = source;
     });
 };
 
@@ -432,7 +432,7 @@ function App() {
     }, [name]);
 
     const drawAD  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
-        if (ctx) {
+        if (ctx && isMonster) {
             ctx.font = '25px MatrixBoldSmallCaps';
             ctx.textAlign = 'right';
             const top = 752 - 25 * 0.2;
@@ -456,7 +456,7 @@ function App() {
                 }
             }
         }
-    }, [atk, def, isLink]);
+    }, [atk, def, isLink, isMonster]);
 
     const splitEffect = useCallback((effect: string) => {
         let effectBody = effect;
@@ -488,14 +488,14 @@ function App() {
         ctx: CanvasRenderingContext2D | null | undefined,
         text: string,
         isPendulum = false,
-        fontList = monsterFontList,
-        sizeList = monsterSizeList,
+        fontList: FontSize[] = monsterFontList,
+        sizeList: BoxSize[] = monsterSizeList,
     ) => {
         if (ctx) {
             const tolerantPerSentence: Record<string, number> = {
                 '1': 645,
-                '2': 660,
-                '3': 675,
+                '2': 665,
+                '3': 685,
             };
             const {
                 body: effectBody,
@@ -510,15 +510,14 @@ function App() {
 
             const additionalLineCount = (effectMaterial.length > 0 ? 1 : 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
             const sentencizeText = effectBody.split('\n');
-            const defaultLineCount = Math.max(sentencizeText.length, isPendulum ? 5 : 6);
 
             let effectIndexSize = 0;
             while(effectIndexSize < fontList.length) {
+                const { fontSize, lineHeight, lineCount } = fontList[effectIndexSize];
+                const { left, width, top } = sizeList[effectIndexSize];
                 const condenser = createCondenser();
                 let effectiveRatio = 1000;
-                const maxLine = defaultLineCount + effectIndexSize;
-                const { fontSize, lineHeight } = fontList[effectIndexSize];
-                const { height, left, width, top } = sizeList[effectIndexSize];
+                const maxLine = Math.max(sentencizeText.length, lineCount);
                 ctx.font = `${fontSize}px MatrixBook`;
                 ctx.textAlign = 'left';
 
@@ -640,9 +639,18 @@ function App() {
             !isPendulum && await drawTypeAbility(ctx, effectIndexSize === 0 ? 'medium' : 'small');
         }
     }, [drawTypeAbility, splitEffect]);
-    const drawCardEffect = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
-        await drawCondenseText(ctx, effect, false);
-    }, [drawCondenseText, effect]);
+    const drawMonsterEffect = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        if (isMonster) await drawCondenseText(ctx, effect, false);
+    }, [drawCondenseText, effect, isMonster]);
+    const drawSTEffect = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        if (!isMonster) await drawCondenseText(
+            ctx,
+            effect,
+            false,
+            stFontList,
+            stSizeList,
+        );
+    }, [drawCondenseText, effect, isMonster]);
     const drawPendulumEffect = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         if (isPendulum) await drawCondenseText(
             ctx,
@@ -656,28 +664,32 @@ function App() {
     const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         // let leftOffset = -100;
         // let topOffset = 5;
-        let leftOffset = -4;
-        let topOffset = 220;
-        // let leftOffset = -300;
-        // let topOffset = -4;
-        await drawFromSourceWithSize(ctx, '/asset/image/LDS2-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
+        // let leftOffset = -4;
+        // let topOffset = 200;
+        let leftOffset = -300;
+        let topOffset = -7;
+        await drawFromSourceWithSize(ctx, '/asset/image/MP18-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
     }, []);
 
-    const startDraw = useCallback(async () => {
+    const startDraw = useCallback(async (isRelevant: () => boolean) => {
         const ctx = drawCanvasRef.current?.getContext('2d');
-        await drawCardFrame(ctx);
-        await drawCardImage(ctx);
-        await drawCardContentFrame(ctx);
-        await drawLinkMarker(ctx);
-        await drawAttribute(ctx);
-        await drawStar(ctx);
-        await drawPendulumScale(ctx);
-        await drawName(ctx);
-        await drawAD(ctx);
-        await drawCardEffect(ctx);
-        await drawPendulumEffect(ctx);
+
+        if (isRelevant()) await drawCardFrame(ctx);
+        if (isRelevant()) await drawCardImage(ctx);
+        if (isRelevant()) await drawCardContentFrame(ctx);
+        if (isRelevant()) await drawLinkMarker(ctx);
+        if (isRelevant()) await Promise.allSettled([
+            drawAttribute(ctx),
+            drawStar(ctx),
+            drawPendulumScale(ctx),
+            drawName(ctx),
+            drawAD(ctx),
+            drawSTEffect(ctx),
+            drawMonsterEffect(ctx),
+            drawPendulumEffect(ctx),
+        ]);
         // await drawRefrenceImage(ctx);
-    }, [drawAD, drawAttribute, drawCardContentFrame, drawCardEffect, drawCardFrame, drawCardImage, drawLinkMarker, drawName, drawPendulumEffect, drawPendulumScale, drawStar]);
+    }, [drawCardFrame, drawCardImage, drawCardContentFrame, drawLinkMarker, drawAttribute, drawStar, drawPendulumScale, drawName, drawAD, drawSTEffect, drawMonsterEffect, drawPendulumEffect]);
 
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
@@ -686,9 +698,17 @@ function App() {
             ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
             ctx.imageSmoothingQuality = 'high';
             ctx.clearRect(0, 0, 549, 800);
-            startDraw();
         }
     }, []);
+
+    useEffect(() => {
+        let relevant = true;
+        const ctx = drawCanvasRef.current?.getContext('2d');
+        if (ctx) {
+            startDraw(() => relevant);
+        }
+        return () => { relevant = false; };
+    }, [startDraw]);
 
     return (
         <div className={`app-container ${isPreparing ? 'app-container-export' : ''}`} style={{
@@ -718,7 +738,7 @@ function App() {
                         <span>{Math.round(zoomValue.scaleRatio * 100)}%</span>
                         <Button type="primary" onClick={() => prepareForExport()}>Save As Image</Button>
                         <Button type="primary" onClick={async () => {
-                            await startDraw();
+                            await startDraw(() => true);
                             // await drawCardImage(drawCanvasRef.current?.getContext('2d'));
                         }}>Draw</Button>
                     </div>
