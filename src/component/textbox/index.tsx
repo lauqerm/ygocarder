@@ -5,12 +5,12 @@ import { SelfResizeBox } from './self-resize-box';
 import './textbox.scss';
 
 export const defaultMonsterFontList: TextBoxFontSize[] = [
-    { fontSize: 16.41, lineHeight: 16.74 },
-    { fontSize: 13.88, lineHeight: 14.53 },
-    { fontSize: 11.5, lineHeight: 11.7 },
+    { fontSize: 17, lineHeight: 17 },
+    { fontSize: 14, lineHeight: 14 },
+    { fontSize: 11, lineHeight: 11 },
 ];
 export const defaultPendulumFontList: TextBoxFontSize[] = [
-    { fontSize: 16.9, lineHeight: 18.05 },
+    { fontSize: 16.41, lineHeight: 16.44 },
     { fontSize: 16.41, lineHeight: 16.44 },
     // { fontSize: 13.88, lineHeight: 14.53 },
 ];
@@ -20,14 +20,14 @@ export const defaultMonsterVanillaFontList: TextBoxFontSize[] = [
     { fontSize: 16.74, lineHeight: 17.01 },
 ];
 export const defaultPendulumSizeList: TextBoxSize[] = [
-    { width: 378, height: 58.63, top: 534.79, left: 87.05 },
+    { width: 375, height: 82, top: 504.5, left: 87.05 },
     { width: 375, height: 82, top: 504.5, left: 87.05 },
     // { width: 378.17, height: 90.25, top: 507.89, left: 87.05 },
 ];
 export const defaultMonsterSizeList: TextBoxSize[] = [
-    { width: 464.57, height: 102.36, top: 624.41, left: 43.89 },
-    { width: 463.90, height: 105.34, top: 622.43, left: 43.89 },
-    { width: 463.90, height: 105.34, top: 622.43, left: 43.89 },
+    { width: 464.57, height: 102.36, top: 621, left: 43.89 },
+    { width: 463.90, height: 105.34, top: 624, left: 43.89 },
+    { width: 463.90, height: 105.34, top: 624, left: 43.89 },
 ];
 export const defaultMonsterTypeAblitySizeList: TextBoxSize[] = [
     { width: 465.06, height: 24.77, top: 602.03, left: 41.97 },
@@ -56,8 +56,7 @@ export type TextBox = {
     isFlavorText?: boolean,
     type?: 'st' | 'monster',
     sizeChangeThreshold?: number,
-    onSizeChange?: (sizeIndex: number) => void,
-}
+} & Pick<SelfResizeBox, 'onRatioChange' | 'onSizeChange'>;
 export const TextBox = ({
     name,
     forceLine,
@@ -72,6 +71,7 @@ export const TextBox = ({
     className = '',
     sizeChangeThreshold = 645,
     onSizeChange = () => {},
+    onRatioChange = () => {},
 }: TextBox) => {
     const [currentSize, setSize] = useState(0);
     const { top, left } = sizeList[currentSize];
@@ -105,6 +105,7 @@ export const TextBox = ({
                     setSize(value);
                     onSizeChange(value);
                 }}
+                onRatioChange={onRatioChange}
             />
         </div>
     </>;

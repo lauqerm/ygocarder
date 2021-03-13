@@ -3,11 +3,13 @@
     font-family: stone-serif-bold;
     src: url('./font/stone-serif-bold-webfont.woff2') format('woff2'),
          url('./font/stone-serif-bold-webfont.woff') format('woff');
+	font-display: swap;
 };
 @font-face {
     font-family: stone-serif-regular;
     src: url('./font/stone-serif-regular-webfont.woff2') format('woff2'),
          url('./font/stone-serif-regular-webfont.woff') format('woff');
+	font-display: swap;
 };
 @font-face {
 	font-family: MatrixBook, sans-serif;

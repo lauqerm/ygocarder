@@ -4,7 +4,7 @@ import { quoteConvert, scaleCalc } from '../../util';
 import { useDebouncedEffect } from './helper';
 import './textbox.scss';
 
-const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
+export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     let min = minThreshold;
     let max = maxThreshold;
     let median = max;
@@ -74,6 +74,7 @@ export type SelfResizeBox = {
 	sizeList: { width: number, height: number }[],
 	isFlavorText?: boolean,
     onSizeChange?: (sizeIndex: number) => void,
+    onRatioChange?: (ratio: number) => void,
 }
 export const SelfResizeBox = ({
     fontList,
@@ -82,6 +83,7 @@ export const SelfResizeBox = ({
     value,
     isFlavorText = false,
     onSizeChange = () => {},
+    onRatioChange = () => {},
 }: SelfResizeBox) => {
     const [internalCnt, setCnt] = useState(0);
     const bodyContainerRef = useRef<HTMLDivElement>(null);
@@ -210,9 +212,9 @@ export const SelfResizeBox = ({
                 }
 
                 const isValid = effectiveBodyRatio >= sizeChangeThreshold || index === fontList.length - 1;
-                console.log('🚀 ~ file: self-resize-box.tsx ~ line 213 ~ fontList.some ~ sizeChangeThreshold', sizeChangeThreshold);
-                console.log('🚀 ~ file: self-resize-box.tsx ~ line 213 ~ fontList.some ~ effectiveBodyRatio', effectiveBodyRatio);
+
                 if (isValid) {
+                    onRatioChange(effectiveBodyRatio);
                     onSizeChange(index);
                 }
                 return isValid;

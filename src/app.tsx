@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './app.scss';
 import 'antd/dist/antd.css';
@@ -28,6 +29,70 @@ import { defaultMonsterSizeList, defaultPendulumFontList, defaultPendulumSizeLis
 import { getCardFrame } from './component/image';
 import { CardInputPanel } from './page';
 import './asset/font.css';
+import { monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList } from './const';
+
+const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
+    let min = minThreshold;
+    let max = maxThreshold;
+    let median = max;
+    let lastEffective = median;
+    let iterateCount = 30;
+    let magnitude = 100;
+
+    const reverseSearch = () => {
+        if (magnitude === 1) finish();
+        else {
+            median += magnitude;
+            magnitude /= 10;
+            median -= magnitude;
+        }
+
+        return Math.min(median, max);
+    };
+
+    const searchDown = () => {
+        median -= magnitude;
+        iterateCount -= 1;
+
+        return median;
+    };
+
+    const reset = (minThreshold = min, maxThreshold = max) => {
+        min = minThreshold;
+        max = maxThreshold;
+        median = maxThreshold;
+        iterateCount = 30;
+        magnitude = 100;
+        lastEffective = maxThreshold;
+    };
+
+    const getMedian = () => median;
+    const setMedian = (newMedian: number) => median = newMedian;
+	
+    const setLastEffective = (forceMedian = median) => lastEffective = forceMedian;
+    const getLastEffective = () => lastEffective;
+    const applyLastEffective = () => {
+        median = lastEffective;
+        iterateCount = -1;
+        return median;
+    };
+	
+    const getIterateCount = () => iterateCount;
+    const finish = () => iterateCount = -1;
+
+    return {
+        reset,
+        searchDown,
+        reverseSearch,
+        finish,
+        getMedian,
+        setMedian,
+        setLastEffective,
+        getLastEffective,
+        applyLastEffective,
+        getIterateCount,
+    };
+};
 
 const defaultZoomScaleRatio = 100;
 const defaultScale: Record<string, ScaleValue> = {
@@ -134,6 +199,8 @@ function App() {
         effect: defaultScale,
     });
     const cardRef = useRef({
+        effectIndexSize: 0,
+        effectRatio: 0,
         effectLine: 0,
         pendulumEffectLine: 0,
     });
@@ -168,16 +235,19 @@ function App() {
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
     const isPendulum = checkPendulum(currentCard);
+    const [effectRatio, setEffectRatio] = useState(1);
     const {
+        effectIndexSize,
         effectLine,
         pendulumEffectLine,
     } = cardRef.current;
     const effectSize = isMonster
         ? effectLine > 6 ? 'small' : 'normal'
         : effectLine > 8 ? 'small' : 'normal';
-    const pendulumSize = pendulumEffectLine === 0
-        ? 'small'
-        : 'medium';
+    // const pendulumSize = pendulumEffectLine === 0
+    //     ? 'small'
+    //     : 'medium';
+    const pendulumSize = 'medium';
 
     useEffect(() => {
 
@@ -268,22 +338,22 @@ function App() {
 
     const drawPendulumScale  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         if (ctx && isPendulum) {
-            let fontSize = pendulumSize === 'small' ? 41 : 43;
-            let top = (pendulumSize === 'small' ? 547 : 532) + fontSize;
+            let fontSize = 43;
+            let top = 532 + fontSize;
 
             ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
             ctx.textAlign = 'center';
             ctx.fillText(pendulum_scale, 57.06, top);
             ctx.fillText(pendulum_scale, 492.61, top);
         }
-    }, [isPendulum, pendulumSize, pendulum_scale]);
+    }, [isPendulum, pendulum_scale]);
 
-    const drawTypeAbility  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+    const drawTypeAbility  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined, size: 'medium' | 'small' = 'medium') => {
         if (ctx && isMonster) {
-            const defaultTop = 620.80;
+            const defaultTop = size === 'medium' ? 620.80 : 622;
             const drawBracketTemplate = (content: string, top: number = defaultTop) => {
                 return (left: number) => {
-                    ctx.font = 'bold 19.69px stone-serif-bold';
+                    ctx.font = `bold ${size === 'medium' ? 19.69 : 18.71}px stone-serif-bold`;
                     ctx.textAlign = 'left';
                     ctx.fillText(content, left, top);
                     return left + ctx.measureText(content).width;
@@ -304,29 +374,30 @@ function App() {
                     ctx.textAlign = 'left';
 
                     const firstLetter = upperCaseContent[0];
-                    ctx.font = 'bold 21px stone-serif-bold';
+                    ctx.font = `bold ${size === 'medium' ? 21 : 20}px stone-serif-bold`;
                     ctx.fillText(firstLetter, totalOffset, top);
                     totalOffset += ctx.measureText(firstLetter).width;
 
                     const restLetter = upperCaseContent.slice(1, upperCaseContent.length);
-                    ctx.font = 'bold 19px stone-serif-bold';
-                    ctx.scale(0.95, 1);
-                    ctx.fillText(restLetter, totalOffset / 0.95, top);
-                    totalOffset += ctx.measureText(restLetter).width * 0.95;
-                    ctx.scale(1 / 0.95, 1);
+                    const restScale = size === 'medium' ? 0.95 : 1.1;
+                    ctx.font = `bold ${size === 'medium' ? 19 : 16}px stone-serif-bold`;
+                    ctx.scale(restScale, 1);
+                    ctx.fillText(restLetter, totalOffset / restScale, top);
+                    totalOffset += ctx.measureText(restLetter).width * restScale;
+                    ctx.scale(1 / restScale, 1);
 
                     if (!isLast) {
-                        ctx.font = 'bold 5px stone-serif-bold';
+                        ctx.font = `bold ${size === 'medium' ? 5 : 5}px stone-serif-bold`;
                         ctx.fillText(' ', totalOffset, top);
                         totalOffset += ctx.measureText(' ').width;
 
-                        ctx.font = 'oblique bold 23px stone-serif-bold';
+                        ctx.font = `oblique bold ${size === 'medium' ? 23 : 21}px stone-serif-bold`;
                         ctx.scale(0.65, 1);
                         ctx.fillText('/', totalOffset / 0.65, top);
                         totalOffset += ctx.measureText('/').width * 0.65;
                         ctx.scale(1 / 0.65, 1);
 
-                        ctx.font = 'bold 15px stone-serif-bold';
+                        ctx.font = `bold ${size === 'medium' ? 15 : 15}px stone-serif-bold`;
                         ctx.fillText(' ', totalOffset, top);
                         totalOffset += ctx.measureText(' ').width;
                     }
@@ -345,12 +416,251 @@ function App() {
         }
     }, [isMonster, type_ability]);
 
+    const drawName  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        if (ctx) {
+            ctx.font = '64.59px MatrixRegularSmallCaps';
+            ctx.textAlign = 'left';
+            const nameWidth = ctx.measureText(name).width;
+
+            if (nameWidth > 0) {
+                const condenseRatio = Math.min(409 / nameWidth, 1);
+                ctx.scale(condenseRatio, 1);
+                ctx.fillText(name, 40.52 / condenseRatio, 81);
+                ctx.scale(1 / condenseRatio, 1);
+            }
+        }
+    }, [name]);
+
+    const drawAD  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        if (ctx) {
+            ctx.font = '25px MatrixBoldSmallCaps';
+            ctx.textAlign = 'right';
+            const top = 752 - 25 * 0.2;
+            const atkWidth = ctx.measureText(atk).width;
+
+            if (atkWidth > 0) {
+                const condenseRatio = Math.min(49.94 / atkWidth, 1);
+                ctx.scale(condenseRatio, 1);
+                ctx.fillText(atk, (343.51 + 49.94) / condenseRatio, top);
+                ctx.scale(1 / condenseRatio, 1);
+            }
+            
+            if (!isLink) {
+                const defWidth = ctx.measureText(def).width;
+
+                if (defWidth > 0) {
+                    const condenseRatio = Math.min(49.94 / defWidth, 1);
+                    ctx.scale(condenseRatio, 1);
+                    ctx.fillText(def, (454.93 + 49.94) / condenseRatio, top);
+                    ctx.scale(1 / condenseRatio, 1);
+                }
+            }
+        }
+    }, [atk, def, isLink]);
+
+    const splitEffect = useCallback((effect: string) => {
+        let effectBody = effect;
+
+        let effectMaterial = '';
+        const materialRegex = /^(\[([^\]]*)\]\s*)/m;
+        const materialReplacement = materialRegex.exec(effectBody)?.[1];
+        const material = materialRegex.exec(effectBody)?.[2];
+        if (material && materialReplacement) {
+            effectMaterial = material;
+            effectBody = effectBody.replace(materialReplacement, '');
+        } else effectMaterial = '';
+
+        let effectFlavorCondition = '';
+        const flavorConditionRegex = /\n(^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
+        const flavorCondition = flavorConditionRegex.exec(effect)?.[1];
+        if (flavorCondition && isNormal) {
+            effectFlavorCondition = flavorCondition;
+            effectBody = effectBody.replace(flavorCondition, '');
+        } else effectFlavorCondition = '';
+
+        return {
+            material: effectMaterial,
+            body: effectBody,
+            flavorCondition: effectFlavorCondition
+        };
+    }, [isNormal]);
+    const drawCondenseText = useCallback(async (
+        ctx: CanvasRenderingContext2D | null | undefined,
+        text: string,
+        isPendulum = false,
+        fontList = monsterFontList,
+        sizeList = monsterSizeList,
+    ) => {
+        if (ctx) {
+            const tolerantPerSentence: Record<string, number> = {
+                '1': 645,
+                '2': 660,
+                '3': 675,
+            };
+            const {
+                body: effectBody,
+                flavorCondition: effectFlavorCondition,
+                material: effectMaterial,
+            } = isPendulum
+                ? {
+                    body: text,
+                    flavorCondition: '',
+                    material: '',
+                } : splitEffect(text);
+
+            const additionalLineCount = (effectMaterial.length > 0 ? 1 : 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
+            const sentencizeText = effectBody.split('\n');
+            const defaultLineCount = Math.max(sentencizeText.length, isPendulum ? 5 : 6);
+
+            let effectIndexSize = 0;
+            while(effectIndexSize < fontList.length) {
+                const condenser = createCondenser();
+                let effectiveRatio = 1000;
+                const maxLine = defaultLineCount + effectIndexSize;
+                const { fontSize, lineHeight } = fontList[effectIndexSize];
+                const { height, left, width, top } = sizeList[effectIndexSize];
+                ctx.font = `${fontSize}px MatrixBook`;
+                ctx.textAlign = 'left';
+
+                let lineList: { text: string, width: number, isLast: boolean }[] = [];
+                const isOverflow = () => {
+                    lineList = [];
+
+                    return sentencizeText.reduce((prev, curr) => {
+                        const hypoWidth = width / (condenser.getMedian() / 1000);
+                        const tokenizeText = curr.split(/([\s-])/g);
+                        let currentLineCount = 1;
+                        let tokenSentence: string[] = [];
+                        let totalWidth = 0;
+                        for (let cnt = 0; cnt < tokenizeText.length; cnt++) {
+                            const tokenWidth = ctx.measureText(tokenizeText[cnt]).width;
+                            if (totalWidth + tokenWidth > hypoWidth) {
+                                const fullString = tokenSentence.join('').trim();
+                                lineList.push({
+                                    text: fullString,
+                                    width: ctx.measureText(fullString).width,
+                                    isLast: false,
+                                });
+                                totalWidth = tokenWidth;
+                                tokenSentence = [tokenizeText[cnt]];
+                                currentLineCount += 1;
+                            } else {
+                                totalWidth += tokenWidth;
+                                tokenSentence.push(tokenizeText[cnt]);
+                            }
+                        }
+
+                        const fullString = tokenSentence.join('').trim();
+                        lineList.push({
+                            text: fullString,
+                            width: ctx.measureText(fullString).width,
+                            isLast: true,
+                        });
+        
+                        return prev + currentLineCount;
+                    }, 0) + additionalLineCount;
+                };
+
+                while (condenser.getIterateCount() >= 0) {
+                    if (condenser.getIterateCount() <= 0) {
+                        // When out of iteration, return the concluded median
+                        effectiveRatio = condenser.getMedian();
+                        break;
+                    } else {
+                        const lineCount = isOverflow();
+
+                        if (lineCount > maxLine) {
+                            // If overflow, lower the median and apply it
+                            condenser.searchDown();
+                        } else {
+                            if (condenser.getMedian() === 1000) break;
+                            else effectiveRatio = condenser.reverseSearch();
+                        }
+                    }
+                }
+
+                if (effectiveRatio < (tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'])) {
+                    effectIndexSize += 1;
+                } else {
+                    let baseline = top + lineHeight;
+                    if (effectMaterial.length > 0) {
+                        let actualWidth = ctx.measureText(effectMaterial).width;
+                        let condenseRatio = Math.min(width / actualWidth, 1);
+
+                        ctx.scale(condenseRatio, 1);
+                        ctx.fillText(effectMaterial, left / condenseRatio, baseline);
+                        baseline += lineHeight;
+                        ctx.scale(1 / condenseRatio, 1);
+                    }
+
+                    const sigmoidRatio = effectiveRatio / 1000; // Fancy way to force ratio in to 0-1 range
+                    lineList.forEach(({ text, width: actualWidth, isLast }, index) => {
+                        const condenseRatio = isLast
+                            ? Math.min(sigmoidRatio, 1)
+                            : width / actualWidth;
+
+                        if (condenseRatio <= 1) {
+                            ctx.scale(condenseRatio, 1);
+                            ctx.fillText(text, left / condenseRatio, baseline);
+                            baseline += lineHeight;
+                            ctx.scale(1 / condenseRatio, 1);
+                        } else {
+                            const spaceSeparatedText = text.split(' ');
+                            ctx.scale(1, 1);
+                            let currentLeft = left;
+                            let widthPerEntry: number[] = [];
+
+                            spaceSeparatedText.forEach(entry => {
+                                widthPerEntry.push(ctx.measureText(entry).width);
+                            });
+                            // Split text by "space", then distribute remaining width to those spaces, resulting in "widen" space
+                            const spaceWidth = (width - widthPerEntry.reduce((prev, cur) => prev + cur, 0)) / (spaceSeparatedText.length - 1);
+
+                            spaceSeparatedText.forEach((entry, index) => {
+                                ctx.fillText(entry, currentLeft, baseline);
+                                currentLeft += widthPerEntry[index] + spaceWidth;
+                            });
+                            baseline += lineHeight;
+                        }
+                    });
+
+                    if (effectFlavorCondition.length > 0) {
+                        let actualWidth = ctx.measureText(effectFlavorCondition).width;
+                        let condenseRatio = Math.min(width / actualWidth, 1);
+
+                        ctx.scale(condenseRatio, 1);
+                        ctx.fillText(effectFlavorCondition, left / condenseRatio, baseline);
+                        baseline += lineHeight;
+                        ctx.scale(1 / condenseRatio, 1);
+                    }
+                    break;
+                }
+            }
+
+            !isPendulum && await drawTypeAbility(ctx, effectIndexSize === 0 ? 'medium' : 'small');
+        }
+    }, [drawTypeAbility, splitEffect]);
+    const drawCardEffect = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        await drawCondenseText(ctx, effect, false);
+    }, [drawCondenseText, effect]);
+    const drawPendulumEffect = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+        if (isPendulum) await drawCondenseText(
+            ctx,
+            pendulum_effect,
+            true,
+            pendulumFontList,
+            pendulumSizeList,
+        );
+    }, [drawCondenseText, isPendulum, pendulum_effect]);
+
     const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         // let leftOffset = -100;
         // let topOffset = 5;
         let leftOffset = -4;
         let topOffset = 220;
-        await drawFromSourceWithSize(ctx, '/asset/image/WBbt0jk.png', -leftOffset, -topOffset, 541, 800 / (541 / 549));
+        // let leftOffset = -300;
+        // let topOffset = -4;
+        await drawFromSourceWithSize(ctx, '/asset/image/LDS2-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
     }, []);
 
     const startDraw = useCallback(async () => {
@@ -362,9 +672,12 @@ function App() {
         await drawAttribute(ctx);
         await drawStar(ctx);
         await drawPendulumScale(ctx);
-        await drawTypeAbility(ctx);
-        await drawRefrenceImage(ctx);
-    }, [drawAttribute, drawCardContentFrame, drawCardFrame, drawCardImage, drawLinkMarker, drawPendulumScale, drawRefrenceImage, drawStar, drawTypeAbility]);
+        await drawName(ctx);
+        await drawAD(ctx);
+        await drawCardEffect(ctx);
+        await drawPendulumEffect(ctx);
+        // await drawRefrenceImage(ctx);
+    }, [drawAD, drawAttribute, drawCardContentFrame, drawCardEffect, drawCardFrame, drawCardImage, drawLinkMarker, drawName, drawPendulumEffect, drawPendulumScale, drawStar]);
 
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
@@ -454,7 +767,12 @@ function App() {
                             name={'monster-effect'}
                             type={'monster'}
                             fontList={defaultMonsterFontList}
-                            sizeList={defaultMonsterSizeList} />
+                            sizeList={defaultMonsterSizeList}
+                            onSizeChange={value => cardRef.current.effectIndexSize = value}
+                            onRatioChange={value => {
+                                console.log(value);
+                                setEffectRatio(value / 1000);
+                            }} />
                         : <TextBox key="s/t" className={`preview-effect preview-effect-${effectSize}`} zoom={scaleRatio}
                             value={effect}
                             typeAbilityValue={type_ability}
