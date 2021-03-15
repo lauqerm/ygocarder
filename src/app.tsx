@@ -548,6 +548,27 @@ function App() {
         }
     }, []);
 
+    useEffect(() => {
+        let abortExport = () => {};
+
+        (async () => {
+            if (drawCanvasRef.current) {
+                await Promise.any([
+                    onExport({
+                        isPendulum,
+                    }),
+                    new Promise((resolve, reject) => {
+                        abortExport = reject;
+                    }),
+                ]);
+            }
+        })();
+
+        return () => {
+            abortExport();
+        };
+    });
+
     const onExport = useRef(debounce(async (exportProps: {
         isPendulum: boolean,
     }) => {
@@ -586,8 +607,8 @@ function App() {
                     exportCtx.drawImage(previewCtx, 67, 147, 416, 416);
                 }
             }
+            await generateLayer(specialFrameCanvasRef, exportCtx);
             const layerList = [
-                specialFrameCanvasRef,
                 nameCanvasRef,
                 attributeCanvasRef,
                 subFamilyCanvasRef,

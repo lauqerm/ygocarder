@@ -12,10 +12,18 @@ export type BoxSize = {
 export const monsterFontList: FontSize[] = [
     { fontSize: 17, lineHeight: 17, lineCount: 6 },
     { fontSize: 14, lineHeight: 14, lineCount: 7 },
-    { fontSize: 11, lineHeight: 11, lineCount: 8 },
+    { fontSize: 12, lineHeight: 12, lineCount: 8 },
+    { fontSize: 11, lineHeight: 11, lineCount: 9 },
+    { fontSize: 10, lineHeight: 10, lineCount: 10 },
+    { fontSize: 9, lineHeight: 9, lineCount: 11 },
+    { fontSize: 8, lineHeight: 8, lineCount: 12 },
 ];
 export const monsterSizeList: BoxSize[] = [
     { width: 463, top: 621, left: 43.89 },
+    { width: 463, top: 624, left: 43.89 },
+    { width: 463, top: 624, left: 43.89 },
+    { width: 463, top: 621, left: 43.89 },
+    { width: 463, top: 624, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },
 ];
