@@ -25,18 +25,20 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
 export type ImageCropper = {
     noRedrawNumber?: number,
 	defaultExternalSource?: string,
-    onSourceChange?: (source: string) => void,
     previewCanvasRef?: HTMLCanvasElement | null,
     children?: React.ReactNode,
     ratio?: number,
+    onSourceChange?: (source: string) => void,
+    onImageChange?: () => void,
 }
 export const ImageCropper = ({
     noRedrawNumber = 0,
     defaultExternalSource = '',
-    onSourceChange = () => {},
     previewCanvasRef,
     children,
     ratio = 1,
+    onSourceChange = () => {},
+    onImageChange = () => {},
 }: ImageCropper) => {
     const [sourceType, setSourceType] = useState('external');
     const [internalSource, setInternalSource] = useState('');
@@ -101,6 +103,8 @@ export const ImageCropper = ({
             (boundingWidth ?? 0),
             (boundingHeight ?? 0)
         );
+        onImageChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, previewCanvasRef, noRedrawNumber]);
 
     return (

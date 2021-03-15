@@ -20,7 +20,42 @@
 	}
 	.card-preview-panel {
 		flex: 2;
+		min-width: 549px;
 		position: relative;
+		.export-button {
+			background-color: darkorange;
+			border-radius: 5px;
+			border: 0;
+			color: white;
+			cursor: pointer;
+			font-size: 30px;
+			line-height: 1.5;
+			margin: 5px 0;
+			max-width: 549px;
+			width: 100%;
+			outline: none!important;
+			&:hover {
+				background-color: orange;
+			}
+		}
+		.card-canvas-group {
+			position: relative;
+			canvas {
+				position: absolute;
+				left: 0;
+				z-index: 1;
+			}
+			.export-canvas {
+				z-index: 100;
+			}
+			.crop-canvas {
+				position: relative;
+				width: 416px;
+				height: 416px;
+				z-index: 0;
+				visibility: hidden;
+			}
+		}
 	}
 }
 

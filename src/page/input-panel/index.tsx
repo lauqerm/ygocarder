@@ -30,20 +30,17 @@ export type CardInputPanel = {
 	currentPage: CardFamily,
 	currentCard: Card,
     receivingCanvasRef: HTMLCanvasElement | null,
-	zoomValue: {
-		scaleRatio: number,
-		translatePercent: string,
-	},
 	onCardPageChange: (page: CardFamily) => void,
 	onCardChange: (value: React.SetStateAction<Record<string, Card>>) => void,
+    onImageChange?: () => void,
 }
 export const CardInputPanel = ({
     currentPage,
     currentCard,
     receivingCanvasRef,
-    zoomValue,
     onCardPageChange,
     onCardChange,
+    onImageChange,
 }: CardInputPanel) => {
     const setCard = (mutateFunc: (card: Card) => Card) => onCardChange(cur => {
         return {
@@ -75,9 +72,6 @@ export const CardInputPanel = ({
         }));
     };
 
-    const {
-        scaleRatio
-    } = zoomValue;
     const {
         family,
         name,
@@ -169,10 +163,11 @@ export const CardInputPanel = ({
             </div>
             <div className="main-info-second">
                 <ImageCropper
-                    noRedrawNumber={scaleRatio}
+                    noRedrawNumber={1}
                     defaultExternalSource={picture}
-                    onSourceChange={onPictureChange}
                     previewCanvasRef={receivingCanvasRef}
+                    onSourceChange={onPictureChange}
+                    onImageChange={onImageChange}
                 >
                     {isMonster
                         ? <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />

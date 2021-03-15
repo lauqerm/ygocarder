@@ -37,3 +37,5 @@ export const quoteConvert = (text?: string) => {
 };
 
 export * from './categorize';
+export * from './condenser';
+export * from './canvas';
