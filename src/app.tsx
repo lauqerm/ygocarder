@@ -25,6 +25,7 @@ import {
 import { CardInputPanel } from './page';
 import { BoxSize, FontSize, monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList, stFontList, stSizeList } from './const';
 import './asset/font.css';
+import { drawAD, fillTextLeftWithSpacing, fillTextRightWithSpacing } from './draw';
 
 function App() {
     const [selectedPage, setPage] = useState<CardFamily>('Monster');
@@ -45,6 +46,10 @@ function App() {
     const nameCanvasRef = useRef<HTMLCanvasElement>(null);
     const attributeCanvasRef = useRef<HTMLCanvasElement>(null);
     const ADCanvasRef = useRef<HTMLCanvasElement>(null);
+    const setIdRef = useRef<HTMLCanvasElement>(null);
+    const passcodeRef = useRef<HTMLCanvasElement>(null);
+    const firstEditionRef = useRef<HTMLCanvasElement>(null);
+    const creatorRef = useRef<HTMLCanvasElement>(null);
 
     const currentCard = currentCardPage[selectedPage];
     const {
@@ -58,6 +63,8 @@ function App() {
         attribute,
         subFamily,
         star,
+        set_id,
+        passcode, isFirstEdition, creator,
     } = currentCard;
     const isNormal = checkNormal(currentCard);
     const isXyz = checkXyz(currentCard);
@@ -191,9 +198,24 @@ function App() {
             let top = 532 + fontSize;
 
             ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
-            ctx.textAlign = 'center';
-            ctx.fillText(pendulum_scale, 57.06, top);
-            ctx.fillText(pendulum_scale, 492.61, top);
+            ctx.textAlign = 'left';
+
+            const fillScale = (value: string, left: number) => {
+                const digitList = `${value}`.split('');
+                let totalWidth = 0;
+
+                digitList.forEach(digit => {
+                    totalWidth += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
+                });
+                let accLeft = left - totalWidth / 2;
+
+                digitList.forEach(digit => {
+                    ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, top);
+                    accLeft += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
+                });
+            };
+            fillScale(pendulum_scale, 57);
+            fillScale(pendulum_scale, 493);
         }
     }, [isPendulum, pendulum_scale]);
 
@@ -286,32 +308,88 @@ function App() {
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');
-        if (ctx && isMonster) {
-            ctx.clearRect(0, 0, 549, 800);
-            ctx.font = '25px MatrixBoldSmallCaps';
-            ctx.textAlign = 'right';
-            const top = 752 - 25 * 0.2;
-            const atkWidth = ctx.measureText(atk).width;
-
-            if (atkWidth > 0) {
-                const condenseRatio = Math.min(49.94 / atkWidth, 1);
-                ctx.scale(condenseRatio, 1);
-                ctx.fillText(atk, (343.51 + 49.94) / condenseRatio, top);
-                ctx.scale(1 / condenseRatio, 1);
-            }
-            
+        ctx?.clearRect(0, 0, 549, 800);
+        if (isMonster) {
+            drawAD(ctx, atk, 343.51, 747);
             if (!isLink) {
-                const defWidth = ctx.measureText(def).width;
-
-                if (defWidth > 0) {
-                    const condenseRatio = Math.min(49.94 / defWidth, 1);
-                    ctx.scale(condenseRatio, 1);
-                    ctx.fillText(def, (454.93 + 49.94) / condenseRatio, top);
-                    ctx.scale(1 / condenseRatio, 1);
-                }
+                drawAD(ctx, def, 454.93, 747);
             }
         }
     }, [atk, def, isLink, isMonster]);
+
+    useEffect(() => {
+        const ctx = setIdRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 800);
+        if (ctx) {
+            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
+            else ctx.fillStyle = '#000';
+            ctx.font = '18px stone-serif-regular';
+
+            if (isPendulum) {
+                fillTextLeftWithSpacing(ctx, set_id, -0.15, 46, 746);
+            } else if (isLink) {
+                fillTextLeftWithSpacing(ctx, set_id, -0.15, 352, 590);
+            } else fillTextLeftWithSpacing(ctx, set_id, -0.15, 396, 589);
+        }
+    }, [isLink, isPendulum, isXyz, set_id]);
+
+    useEffect(() => {
+        const ctx = passcodeRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 800);
+        if (ctx) {
+            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
+            else ctx.fillStyle = '#000';
+            ctx.font = '18px stone-serif-regular';
+
+            fillTextLeftWithSpacing(ctx, passcode, -0.1, 25, 777);
+        }
+    }, [isLink, isPendulum, isXyz, passcode]);
+
+    useEffect(() => {
+        const ctx = firstEditionRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 800);
+        console.log('🚀 ~ file: app.tsx ~ line 352 ~ useEffect ~ isFirstEdition', isFirstEdition);
+        if (ctx && isFirstEdition === true) {
+            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
+            else ctx.fillStyle = '#000';
+            ctx.font = 'bold 17.5px palatino-linotype-bold';
+
+            let left = 106;
+            ctx.fillText('1', left, 777);
+            left += ctx.measureText('1').width - 2;
+
+            ctx.font = 'bold 12px palatino-linotype-bold';
+            ctx.fillText('st', left, 777 - 5);
+            left += ctx.measureText('st').width;
+
+            ctx.font = 'bold 17.5px palatino-linotype-bold';
+            ctx.fillText(' Edition', left, 777);
+        }
+    }, [isLink, isPendulum, isXyz, isFirstEdition]);
+
+    useEffect(() => {
+        const ctx = creatorRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 800);
+        if (ctx) {
+            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
+            else ctx.fillStyle = '#000';
+            ctx.font = '16px stone-serif-regular';
+            ctx.textAlign = 'right';
+
+            const textWidth = ctx.measureText(creator).width;
+
+            if (textWidth > 0) {
+                const condenseRatio = Math.min(257 / textWidth, 1);
+
+                if (condenseRatio < 1) {
+                    ctx.scale(condenseRatio, 1);
+                    ctx.fillText(creator, 496 / condenseRatio, 777);
+                    ctx.scale(1 / condenseRatio, 1);
+                } else fillTextRightWithSpacing(ctx, creator, -0.15, 496 / condenseRatio, 777);
+            }
+            ctx.textAlign = 'left';
+        }
+    }, [isLink, isPendulum, isXyz, creator]);
 
     const splitEffect = useCallback((effect: string) => {
         let effectBody = effect;
@@ -326,7 +404,7 @@ function App() {
         } else effectMaterial = '';
 
         let effectFlavorCondition = '';
-        const flavorConditionRegex = /\n(^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
+        const flavorConditionRegex = /(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
         const flavorCondition = flavorConditionRegex.exec(effect)?.[1];
         if (flavorCondition && isNormal) {
             effectFlavorCondition = flavorCondition;
@@ -343,6 +421,7 @@ function App() {
         ctx: CanvasRenderingContext2D | null | undefined,
         text: string,
         isPendulum = false,
+        isNormal = false,
         fontList: FontSize[] = monsterFontList,
         sizeList: BoxSize[] = monsterSizeList,
     ) => {
@@ -373,7 +452,7 @@ function App() {
                 const condenser = createCondenser();
                 let effectiveRatio = 1000;
                 const maxLine = Math.max(sentencizeText.length, lineCount);
-                ctx.font = `${fontSize}px MatrixBook`;
+                ctx.font = `${isNormal ? 'italic' : ''} ${fontSize}px MatrixBook`;
                 ctx.textAlign = 'left';
 
                 let lineList: { text: string, width: number, isLast: boolean }[] = [];
@@ -482,6 +561,7 @@ function App() {
                         let actualWidth = ctx.measureText(effectFlavorCondition).width;
                         let condenseRatio = Math.min(width / actualWidth, 1);
 
+                        ctx.font = `${fontSize}px MatrixBook`;
                         ctx.scale(condenseRatio, 1);
                         ctx.fillText(effectFlavorCondition, left / condenseRatio, baseline);
                         baseline += lineHeight;
@@ -498,9 +578,9 @@ function App() {
         const ctx = effectCanvasRef.current?.getContext('2d');
         if (isMonster) {
             ctx?.clearRect(0, 0, 549, 750);
-            drawCondenseText(ctx, effect, false);
+            drawCondenseText(ctx, effect, false, isNormal);
         }
-    }, [drawCondenseText, effect, isMonster]);
+    }, [drawCondenseText, effect, isMonster, isNormal]);
     useEffect(() => {
         const ctx = effectCanvasRef.current?.getContext('2d');
         if (!isMonster) {
@@ -508,6 +588,7 @@ function App() {
             drawCondenseText(
                 ctx,
                 effect,
+                false,
                 false,
                 stFontList,
                 stSizeList,
@@ -522,21 +603,24 @@ function App() {
                 ctx,
                 pendulum_effect,
                 true,
+                false,
                 pendulumFontList,
                 pendulumSizeList,
             );
         }
     }, [drawCondenseText, isPendulum, pendulum_effect]);
 
-    // const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+    const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
     // let leftOffset = -100;
     // let topOffset = 5;
-    // let leftOffset = -4;
-    // let topOffset = 200;
-    //     let leftOffset = -300;
-    //     let topOffset = -7;
-    //     await drawFromSourceWithSize(ctx, '/asset/image/MP18-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
-    // }, []);
+        // let leftOffset = -4;
+        // let topOffset = 300;
+        // let leftOffset = -300;
+        // let topOffset = -7;
+        // let leftOffset = -1;
+        // let topOffset = 100;
+        // await drawFromSourceWithSize(ctx, '/asset/image/LDS2-EN-C-1E3.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
+    }, []);
 
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
@@ -594,9 +678,9 @@ function App() {
             });
         };
 
-        exportCtx?.clearRect(0, 0, 549, 800);
         if (canvasRef && exportCtx) {
             canvasRef.style.display = 'none';
+            exportCtx.clearRect(0, 0, 549, 800);
             await Promise.all(Object.values(drawingStatus));
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
@@ -616,6 +700,10 @@ function App() {
                 pendulumEffectCanvasRef,
                 effectCanvasRef,
                 ADCanvasRef,
+                setIdRef,
+                firstEditionRef,
+                passcodeRef,
+                creatorRef,
             ];
             await Promise.all([
                 layerList.map(currentlayer => generateLayer(currentlayer, exportCtx)),
@@ -623,6 +711,7 @@ function App() {
                     setTimeout(() => resolve(true), 100);
                 }), // Avoid stutter
             ]);
+            await drawRefrenceImage(exportCtx);
             canvasRef.style.display = 'block';
         }
     }, 100)).current;
@@ -664,6 +753,10 @@ function App() {
                     <canvas ref={pendulumEffectCanvasRef} width={549} height={600} />
                     <canvas ref={effectCanvasRef} width={549} height={750} />
                     <canvas ref={ADCanvasRef} width={549} height={800} />
+                    <canvas ref={setIdRef} width={549} height={800} />
+                    <canvas ref={passcodeRef} width={549} height={800} />
+                    <canvas ref={firstEditionRef} width={549} height={800} />
+                    <canvas ref={creatorRef} width={549} height={800} />
                     <canvas className="crop-canvas" ref={previewCanvasRef} />
                 </div>
             </div>

@@ -33,9 +33,11 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     pendulum_effect: '',
     pendulum_scale: '',
     picture: 'https://images2.imgbox.com/13/c5/dXPTEORX_o.jpg',
-    set_id: '',
+    set_id: 'ROTD-EN081',
     st_type: '',
     star: 4,
+    isFirstEdition: false,
+    creator: '© 1996 KAZUKI TAKAHASHI',
 };
 export const defaultMonster = defaultCard;
 export const defaultSpell = {
@@ -54,7 +56,6 @@ export const defaultTrap = {
 export {
     defaultMonsterAttribute,
     defaultMonsterCardType,
-    sequentialTypeAbility,
     defaultMonsterSubFamily,
     defaultMonsterSubTypeAbility,
     defaultMonsterType,

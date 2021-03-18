@@ -53,11 +53,6 @@ export const defaultMonsterSubTypeAbility = [
 ];
 
 export const defaultTypeAbilityList = defaultMonsterSubTypeAbility;
-export const sequentialTypeAbility = [
-    defaultMonsterType,
-    defaultMonsterCardType,
-    defaultMonsterSubTypeAbility,
-];
 
 export const defaultMonsterAttribute = [
     'DARK',

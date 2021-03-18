@@ -19,10 +19,10 @@ export const monsterFontList: FontSize[] = [
     { fontSize: 8, lineHeight: 8, lineCount: 12 },
 ];
 export const monsterSizeList: BoxSize[] = [
-    { width: 463, top: 621, left: 43.89 },
+    { width: 463, top: 620, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },
-    { width: 463, top: 621, left: 43.89 },
+    { width: 463, top: 624, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },
     { width: 463, top: 624, left: 43.89 },

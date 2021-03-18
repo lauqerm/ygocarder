@@ -1,13 +1,12 @@
-import React from 'react';
-import { Radio, Input, InputNumber, Row, Col, Select } from 'antd';
-import { defaultCardFamily, sequentialTypeAbility, defaultTypeAbilityList, Card, CardFamily } from '../../model';
+import React, { useState } from 'react';
+import { Radio, Input, InputNumber, Row, Col, Checkbox } from 'antd';
+import { defaultCardFamily, Card, CardFamily } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster } from '../../util';
 import { ExtractProps } from '../../type';
 import './input-panel.scss';
 
 const { TextArea } = Input;
-const { Option } = Select;
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
 
 const onChangeFactory = (
@@ -71,6 +70,15 @@ export const CardInputPanel = ({
             type_ability: value.map(entry => `${entry}`),
         }));
     };
+    const onSetIDChange = onChangeFactory('set_id', setCard);
+    const onPasscodeChange = onChangeFactory('passcode', setCard);
+    const onCreatorChange = onChangeFactory('creator', setCard);
+    const onFirstEditionChange = (e: any) => onCardChange(cur => {
+        return {
+            ...cur,
+            [currentPage]: { ...cur[currentPage], isFirstEdition: !e.target.value },
+        };
+    });
 
     const {
         family,
@@ -84,6 +92,8 @@ export const CardInputPanel = ({
         attribute,
         subFamily,
         star,
+        set_id,
+        passcode, isFirstEdition, creator,
     } = currentCard;
     const {
         attribute: familyAttributeList,
@@ -92,6 +102,7 @@ export const CardInputPanel = ({
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
+    const [displayTypeAbility, setDisplayTypeAbility] = useState(type_ability.join('/'));
 
     return <div className="card-info-panel">
         <div className="card-info-line">
@@ -120,7 +131,12 @@ export const CardInputPanel = ({
         <hr />
         <div key="pic" className="main-info">
             <div className="main-info-first">
-                <Input key="set-id" />
+                <Input addonBefore="Set ID"
+                    allowClear
+                    onChange={onSetIDChange}
+                    placeholder="Set ID"
+                    value={set_id}
+                />
                 {isMonster && <>
                     <Input key="pendulum-scale" addonBefore="Pendulum Scale" value={pendulum_scale} onChange={onScaleChange} />
                     <TextArea key="pendulum-effect"
@@ -129,19 +145,22 @@ export const CardInputPanel = ({
                         onChange={onPendulumEffectChange}
                         rows={4}
                     />
-                    <Select
+                    <Input addonBefore="Type"
                         allowClear
                         className="hide-selected"
-                        mode="tags"
-                        onChange={onTypeAbilityChange}
+                        onChange={ev => {
+                            const value = ev.target.value;
+
+                            setDisplayTypeAbility(value);
+                            onTypeAbilityChange(value
+                                .split('/')
+                                .map(entry => entry.trim())
+                                .filter(entry => typeof entry === 'string' && entry.length > 0));
+                        }}
                         placeholder="Type / Ability"
                         style={{ width: '100%' }}
-                        value={type_ability}
-                    >
-                        {(sequentialTypeAbility[type_ability.length] ?? defaultTypeAbilityList)
-                            .filter(entry => !type_ability.includes(entry))
-                            .map(entry => <Option key={entry} value={entry}>{entry}</Option>)}
-                    </Select>
+                        value={displayTypeAbility}
+                    />
                 </>}
                 <div>
                     <TextArea key="effect"
@@ -151,6 +170,19 @@ export const CardInputPanel = ({
                         rows={10}
                     />
                 </div>
+                <Input addonBefore="Serial number"
+                    allowClear
+                    onChange={onPasscodeChange}
+                    placeholder="Serial number"
+                    value={passcode}
+                />
+                <Input addonBefore="Creator"
+                    allowClear
+                    onChange={onCreatorChange}
+                    placeholder="Creator"
+                    value={creator}
+                />
+                <Checkbox onChange={onFirstEditionChange} value={isFirstEdition}>Is 1st Edition?</Checkbox>
                 {isMonster && <Row>
                     <Col span={8}>
                         <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
