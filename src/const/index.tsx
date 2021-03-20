@@ -6,8 +6,11 @@ export {
     pendulumSizeList,
     stFontList,
     stSizeList,
+
+    typeSizeMap,
 } from './size';
 export type {
     BoxSize,
     FontSize,
+    TypeSize,
 } from './size';

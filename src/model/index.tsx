@@ -29,14 +29,14 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
 (This card is always treated as "Blue-Eyes Ultimate Dragon")`,
     link_map: ['1', '2', '3', '8', '9'] as string[],
     name: 'B.F.A - U3 “Eden”',
-    passcode: '',
+    passcode: '24907043',
     pendulum_effect: '',
     pendulum_scale: '',
     picture: 'https://images2.imgbox.com/13/c5/dXPTEORX_o.jpg',
     set_id: 'ROTD-EN081',
     st_type: '',
     star: 4,
-    isFirstEdition: false,
+    isFirstEdition: true,
     creator: '© 1996 KAZUKI TAKAHASHI',
 };
 export const defaultMonster = defaultCard;

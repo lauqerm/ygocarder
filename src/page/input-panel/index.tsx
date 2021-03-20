@@ -76,7 +76,7 @@ export const CardInputPanel = ({
     const onFirstEditionChange = (e: any) => onCardChange(cur => {
         return {
             ...cur,
-            [currentPage]: { ...cur[currentPage], isFirstEdition: !e.target.value },
+            [currentPage]: { ...cur[currentPage], isFirstEdition: e.target.checked },
         };
     });
 
@@ -145,23 +145,23 @@ export const CardInputPanel = ({
                         onChange={onPendulumEffectChange}
                         rows={4}
                     />
-                    <Input addonBefore="Type"
-                        allowClear
-                        className="hide-selected"
-                        onChange={ev => {
-                            const value = ev.target.value;
-
-                            setDisplayTypeAbility(value);
-                            onTypeAbilityChange(value
-                                .split('/')
-                                .map(entry => entry.trim())
-                                .filter(entry => typeof entry === 'string' && entry.length > 0));
-                        }}
-                        placeholder="Type / Ability"
-                        style={{ width: '100%' }}
-                        value={displayTypeAbility}
-                    />
                 </>}
+                <Input addonBefore="Type"
+                    allowClear
+                    className="hide-selected"
+                    onChange={ev => {
+                        const value = ev.target.value;
+
+                        setDisplayTypeAbility(value);
+                        onTypeAbilityChange(value
+                            .split('/')
+                            .map(entry => entry.trim())
+                            .filter(entry => typeof entry === 'string' && entry.length > 0));
+                    }}
+                    placeholder="Type / Ability"
+                    style={{ width: '100%' }}
+                    value={displayTypeAbility}
+                />
                 <div>
                     <TextArea key="effect"
                         placeholder="Card effect"
@@ -182,7 +182,7 @@ export const CardInputPanel = ({
                     placeholder="Creator"
                     value={creator}
                 />
-                <Checkbox onChange={onFirstEditionChange} value={isFirstEdition}>Is 1st Edition?</Checkbox>
+                <Checkbox onChange={onFirstEditionChange} checked={isFirstEdition}>Is 1st Edition?</Checkbox>
                 {isMonster && <Row>
                     <Col span={8}>
                         <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />

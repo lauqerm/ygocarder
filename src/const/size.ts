@@ -42,12 +42,6 @@ export const pendulumSizeList: BoxSize[] = [
     { width: 375, top: 504.5, left: 87.05 },
 ];
 
-// export const typeAbilityList: BoxSize[] = [
-//     { width: 465.06, top: 602.03, left: 41.97 },
-//     { width: 465.06, top: 601.80, left: 41.97 },
-//     { width: 465.06, top: 601.80, left: 41.97 },
-// ];
-
 export const stFontList: FontSize[] = [
     { fontSize: 16.41, lineHeight: 16.74, lineCount: 8 },
     { fontSize: 13.46, lineHeight: 14.28, lineCount: 10 },
@@ -56,3 +50,86 @@ export const stSizeList: BoxSize[] = [
     { width: 461, top: 601, left: 45 },
     { width: 461, top: 601, left: 45 },
 ];
+
+export type TypeSize = {
+	top: number,
+	left: number,
+    bracketSize: {
+        char: number,
+        bracketSpace: number,
+        bracketOffsetTop: number,
+    },
+    upperCaseSize: number,
+    upperCaseScale: number,
+    lowerCaseSize: number,
+    lowerCaseScale: number,
+    spaceScale: number,
+    spaceSize: {
+        frontSpace: number,
+        char: number,
+        behindSpace: number,
+    },
+    iconSpace: number,
+};
+export const typeSizeMap: Record<string, TypeSize> = {
+    small: {
+        top: 622,
+        left: 43,
+        bracketSize: {
+            char: 18.71,
+            bracketSpace: 8.51,
+            bracketOffsetTop: 1.64,
+        },
+        upperCaseSize: 20,
+        upperCaseScale: 1,
+        lowerCaseSize: 16,
+        lowerCaseScale: 1.1,
+        spaceScale: 1,
+        spaceSize: {
+            frontSpace: 5,
+            char: 21,
+            behindSpace: 15,
+        },
+        iconSpace: 0,
+    },
+    medium: {
+        top: 620.80,
+        left: 43,
+        bracketSize: {
+            char: 19.69,
+            bracketSpace: 8.51,
+            bracketOffsetTop: 1.64,
+        },
+        upperCaseSize: 21,
+        upperCaseScale: 1,
+        lowerCaseSize: 19,
+        lowerCaseScale: 0.95,
+        spaceScale: 1,
+        spaceSize: {
+            frontSpace: 5,
+            char: 23,
+            behindSpace: 15,
+        },
+        iconSpace: 0,
+    },
+    large: {
+        top: 126,
+        left: 494,
+        bracketSize: {
+            char: 25,
+            bracketSpace: 11,
+            bracketOffsetTop: 2,
+        },
+        upperCaseSize: 26,
+        upperCaseScale: 1.1,
+        lowerCaseSize: 23,
+        lowerCaseScale: 1,
+        spaceScale: 1.4,
+        spaceSize: {
+            frontSpace: 5,
+            char: 23,
+            behindSpace: 15,
+        },
+        iconSpace: 32,
+    },
+};

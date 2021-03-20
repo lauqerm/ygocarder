@@ -23,7 +23,7 @@ import {
     drawFromSourceWithSize,
 } from './util';
 import { CardInputPanel } from './page';
-import { BoxSize, FontSize, monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList, stFontList, stSizeList } from './const';
+import { BoxSize, FontSize, monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList, stFontList, stSizeList, TypeSize, typeSizeMap } from './const';
 import './asset/font.css';
 import { drawAD, fillTextLeftWithSpacing, fillTextRightWithSpacing } from './draw';
 
@@ -176,15 +176,16 @@ function App() {
             const hasIcon = normalizedSubFamily !== 'normal';
 
             drawingStatus.current.star = Promise.all([
-                drawFromSource(
-                    ctx, `/asset/image/sub-family/subfamily-container-${normalizedFamily}${hasIcon ? '-icon' : ''}.png`,
-                    (image) => 491 - image.naturalWidth,
-                    103,
-                ),
+                // drawFromSource(
+                //     ctx, `/asset/image/sub-family/subfamily-container-${normalizedFamily}${hasIcon ? '-icon' : ''}.png`,
+                //     (image) => 491 - image.naturalWidth,
+                //     103,
+                // ),
                 hasIcon
-                    ? drawFromSource(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
-                        (image) => 491 - image.naturalWidth - 10,
-                        103 - 2)
+                    ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
+                        (image) => 491 - image.naturalWidth - 7,
+                        103,
+                        29, 29)
                     : new Promise(resolve => resolve(true)),
             ]);
         }
@@ -219,73 +220,113 @@ function App() {
         }
     }, [isPendulum, pendulum_scale]);
 
-    const drawTypeAbility  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined, size: 'medium' | 'small' = 'medium') => {
-        if (ctx && isMonster) {
-            const defaultTop = size === 'medium' ? 620.80 : 622;
-            const drawBracketTemplate = (content: string, top: number = defaultTop) => {
+    const drawTypeAbility  = useCallback(async (
+        ctx: CanvasRenderingContext2D | null | undefined,
+        size: TypeSize = typeSizeMap['medium'],
+        alignment: 'left' | 'right' = 'left',
+    ) => {
+        if (ctx) {
+            const {
+                bracketSize: { char: bracketChar, bracketSpace, bracketOffsetTop },
+                spaceSize: { char: spaceChar, frontSpace, behindSpace },
+                left,
+                top,
+                lowerCaseScale,
+                lowerCaseSize,
+                upperCaseSize,
+                upperCaseScale,
+                spaceScale,
+                iconSpace,
+            } = size;
+            const alignmentOffset = alignment === 'left' ? 1 : -1;
+            const drawBracketTemplate = (content: string, bracketTop: number = top) => {
                 return (left: number) => {
-                    ctx.font = `bold ${size === 'medium' ? 19.69 : 18.71}px stone-serif-bold`;
-                    ctx.textAlign = 'left';
-                    ctx.fillText(content, left, top);
-                    return left + ctx.measureText(content).width;
+                    ctx.font = `bold ${bracketChar}px stone-serif-bold`;
+                    ctx.textAlign = alignment;
+                    ctx.fillText(content, left, bracketTop);
+                    return left + ctx.measureText(content).width * alignmentOffset;
                 };
             };
-            const drawBracketSpaceTemplate = (content: string, top: number = defaultTop) => {
+            const drawIconSpaceTemplate = () => {
                 return (left: number) => {
-                    ctx.font = 'bold 8.51px stone-serif-bold';
-                    ctx.textAlign = 'left';
-                    ctx.fillText(content, left, top);
-                    return left + ctx.measureText(content).width;
+                    return left + iconSpace * alignmentOffset;
                 };
             };
-            const drawTextTemplate = (content: string, top: number = defaultTop, isLast = false) => {
+            const drawBracketSpaceTemplate = (content: string) => {
+                return (left: number) => {
+                    ctx.font = `bold ${bracketSpace}px stone-serif-bold`;
+                    ctx.textAlign = alignment;
+                    ctx.fillText(content, left, top);
+                    return left + ctx.measureText(content).width * alignmentOffset;
+                };
+            };
+            const drawSlashTemplate = (baseOffset: number) => {
+                let totalOffset = baseOffset;
+                ctx.font = `bold ${frontSpace}px stone-serif-bold`;
+                ctx.fillText(' ', totalOffset, top);
+                totalOffset += ctx.measureText(' ').width * alignmentOffset;
+
+                ctx.font = `oblique bold ${spaceChar}px stone-serif-bold`;
+                ctx.scale(0.65, 1);
+                ctx.fillText('/', totalOffset / 0.65, top);
+                totalOffset += ctx.measureText('/').width * 0.65 * alignmentOffset;
+                ctx.scale(1 / 0.65, 1);
+
+                ctx.font = `bold ${behindSpace}px stone-serif-bold`;
+                ctx.fillText(' ', totalOffset, top);
+                totalOffset += ctx.measureText(' ').width * alignmentOffset;
+                return totalOffset;
+            };
+            const drawTextTemplate = (content: string, isLast = false) => {
                 return (left: number) => {
                     let totalOffset = left;
-                    const upperCaseContent = content.toLocaleUpperCase();
-                    ctx.textAlign = 'left';
+                    ctx.textAlign = alignment;
 
-                    const firstLetter = upperCaseContent[0];
-                    ctx.font = `bold ${size === 'medium' ? 21 : 20}px stone-serif-bold`;
-                    ctx.fillText(firstLetter, totalOffset, top);
-                    totalOffset += ctx.measureText(firstLetter).width;
-
-                    const restLetter = upperCaseContent.slice(1, upperCaseContent.length);
-                    const restScale = size === 'medium' ? 0.95 : 1.1;
-                    ctx.font = `bold ${size === 'medium' ? 19 : 16}px stone-serif-bold`;
-                    ctx.scale(restScale, 1);
-                    ctx.fillText(restLetter, totalOffset / restScale, top);
-                    totalOffset += ctx.measureText(restLetter).width * restScale;
-                    ctx.scale(1 / restScale, 1);
-
-                    if (!isLast) {
-                        ctx.font = `bold ${size === 'medium' ? 5 : 5}px stone-serif-bold`;
-                        ctx.fillText(' ', totalOffset, top);
-                        totalOffset += ctx.measureText(' ').width;
-
-                        ctx.font = `oblique bold ${size === 'medium' ? 23 : 21}px stone-serif-bold`;
-                        ctx.scale(0.65, 1);
-                        ctx.fillText('/', totalOffset / 0.65, top);
-                        totalOffset += ctx.measureText('/').width * 0.65;
-                        ctx.scale(1 / 0.65, 1);
-
-                        ctx.font = `bold ${size === 'medium' ? 15 : 15}px stone-serif-bold`;
-                        ctx.fillText(' ', totalOffset, top);
-                        totalOffset += ctx.measureText(' ').width;
-                    }
+                    if (!isLast && alignment === 'right') totalOffset = drawSlashTemplate(totalOffset);
+                    content
+                        .split('')
+                        .forEach((c, index, arr) => {
+                            const char = alignment === 'left' ? arr[index] : arr[arr.length - 1 - index];
+                            if (/[A-Z]/.test(char)) {
+                                ctx.font = `bold ${upperCaseSize}px stone-serif-bold`;
+                                ctx.scale(upperCaseScale, 1);
+                                ctx.fillText(char, totalOffset / upperCaseScale, top);
+                                totalOffset += ctx.measureText(char).width * upperCaseScale * alignmentOffset;
+                                ctx.scale(1 / upperCaseScale, 1);
+                            } else if (/\s/.test(char)) {
+                                ctx.font = `bold ${lowerCaseSize}px stone-serif-bold`;
+                                ctx.scale(spaceScale, 1);
+                                ctx.fillText(char, totalOffset / spaceScale, top);
+                                totalOffset += ctx.measureText(char).width * spaceScale * alignmentOffset;
+                                ctx.scale(1 / spaceScale, 1);
+                            } else {
+                                const upperChar = char.toLocaleUpperCase();
+                                ctx.font = `bold ${lowerCaseSize}px stone-serif-bold`;
+                                ctx.scale(lowerCaseScale, 1);
+                                ctx.fillText(upperChar, totalOffset / lowerCaseScale, top);
+                                totalOffset += ctx.measureText(upperChar).width * lowerCaseScale * alignmentOffset;
+                                ctx.scale(1 / lowerCaseScale, 1);
+                            }
+                        });
+                    if (!isLast && alignment === 'left') totalOffset = drawSlashTemplate(totalOffset);
                     return totalOffset;
                 };
             };
             const instructionList = [
-                drawBracketTemplate('[', defaultTop - 1.64),
+                drawBracketTemplate('[', top - bracketOffsetTop),
                 drawBracketSpaceTemplate(' '),
-                ...type_ability.map((entry, index) => drawTextTemplate(entry, undefined, index === type_ability.length - 1)),
-                drawBracketTemplate(']', defaultTop - 1.64),
+                ...type_ability.map((entry, index) => drawTextTemplate(entry, index === type_ability.length - 1)),
+                drawIconSpaceTemplate(),
+                drawBracketTemplate(']', top - bracketOffsetTop),
             ];
-            instructionList.reduce((prev, curr) => {
+            (alignment === 'left'
+                ? instructionList
+                : instructionList.reverse()).reduce((prev, curr) => {
                 return curr(prev);
-            }, 43);
+            }, left);
+            ctx.textAlign = 'left';
         }
-    }, [isMonster, type_ability]);
+    }, [type_ability]);
 
     useEffect(() => {
         const ctx = nameCanvasRef.current?.getContext('2d');
@@ -348,7 +389,6 @@ function App() {
     useEffect(() => {
         const ctx = firstEditionRef.current?.getContext('2d');
         ctx?.clearRect(0, 0, 549, 800);
-        console.log('🚀 ~ file: app.tsx ~ line 352 ~ useEffect ~ isFirstEdition', isFirstEdition);
         if (ctx && isFirstEdition === true) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
@@ -420,7 +460,7 @@ function App() {
     const drawCondenseText = useCallback(async (
         ctx: CanvasRenderingContext2D | null | undefined,
         text: string,
-        isPendulum = false,
+        isPendulumEffect = false,
         isNormal = false,
         fontList: FontSize[] = monsterFontList,
         sizeList: BoxSize[] = monsterSizeList,
@@ -435,7 +475,7 @@ function App() {
                 body: effectBody,
                 flavorCondition: effectFlavorCondition,
                 material: effectMaterial,
-            } = isPendulum
+            } = isPendulumEffect
                 ? {
                     body: text,
                     flavorCondition: '',
@@ -571,9 +611,15 @@ function App() {
                 }
             }
 
-            !isPendulum && await drawTypeAbility(ctx, effectIndexSize === 0 ? 'medium' : 'small');
+            if (!isMonster) {
+                await drawTypeAbility(ctx, typeSizeMap['large'], 'right');
+            } else if (!isPendulumEffect) {
+                await drawTypeAbility(ctx, effectIndexSize === 0
+                    ? typeSizeMap['medium']
+                    : typeSizeMap['small']);
+            }
         }
-    }, [drawTypeAbility, splitEffect]);
+    }, [drawTypeAbility, isMonster, splitEffect]);
     useEffect(() => {
         const ctx = effectCanvasRef.current?.getContext('2d');
         if (isMonster) {
@@ -611,15 +657,15 @@ function App() {
     }, [drawCondenseText, isPendulum, pendulum_effect]);
 
     const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
-    // let leftOffset = -100;
-    // let topOffset = 5;
+        let leftOffset = -5;
+        let topOffset = -150;
         // let leftOffset = -4;
         // let topOffset = 300;
         // let leftOffset = -300;
         // let topOffset = -7;
         // let leftOffset = -1;
         // let topOffset = 100;
-        // await drawFromSourceWithSize(ctx, '/asset/image/LDS2-EN-C-1E3.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
+        // await drawFromSourceWithSize(ctx, '/asset/image/MP18-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
     }, []);
 
     useEffect(() => {
