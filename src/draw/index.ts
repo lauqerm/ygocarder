@@ -21,3 +21,5 @@ export const drawAD = (
 };
 
 export * from './util';
+export * from './predefine';
+export * from './type-ability';

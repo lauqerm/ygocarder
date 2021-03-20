@@ -9,23 +9,40 @@ import {
     defaultMonster,
     defaultSpell,
     defaultTrap,
+    frameType,
 } from './model';
 import { debounce } from 'lodash';
 import {
     checkLink,
     checkMonster,
     checkNormal,
-    checkPendulum,
     checkXyz,
-    createCondenser,
     getCardFrame,
     drawFromSource,
     drawFromSourceWithSize,
 } from './util';
 import { CardInputPanel } from './page';
-import { BoxSize, FontSize, monsterFontList, monsterSizeList, pendulumFontList, pendulumSizeList, stFontList, stSizeList, TypeSize, typeSizeMap } from './const';
+import {
+    arrowPositionList,
+    pendulumFontList,
+    pendulumSizeList,
+    stFontList,
+    stSizeList,
+    TypeSize,
+    typeSizeMap,
+} from './const';
 import './asset/font.css';
-import { drawAD, fillTextLeftWithSpacing, fillTextRightWithSpacing } from './draw';
+import { draw1stEdition,
+    drawAD,
+    drawBracketSpaceTemplate,
+    drawBracketTemplate,
+    drawCreatorText,
+    drawEffect,
+    drawIconSpaceTemplate,
+    drawTextTemplate,
+    fillTextLeftWithLimit,
+    fillTextLeftWithSpacing,
+} from './draw';
 
 function App() {
     const [selectedPage, setPage] = useState<CardFamily>('Monster');
@@ -53,12 +70,12 @@ function App() {
 
     const currentCard = currentCardPage[selectedPage];
     const {
+        frame,
         family,
         name,
         effect,
         type_ability,
-        pendulum_effect,
-        pendulum_scale,
+        isPendulum, pendulum_effect, pendulum_scale,
         atk, def, link_map,
         attribute,
         subFamily,
@@ -70,12 +87,7 @@ function App() {
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
-    const isPendulum = checkPendulum(currentCard);
     const pendulumSize = 'medium';
-
-    useEffect(() => {
-
-    }, [currentCard.attribute]);
 
     const drawingStatus = useRef<Record<string, Promise<any>>>({
         frame: Promise.resolve(),
@@ -87,11 +99,11 @@ function App() {
 
     useEffect(() => {
         const ctx = frameCanvasRef.current?.getContext('2d');
-        const cardType = getCardFrame(family, subFamily, type_ability);
+        const cardType = getCardFrame(frame);
         
         ctx?.clearRect(0, 0, 549, 800);
         drawingStatus.current.frame = drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
-    }, [family, subFamily, type_ability]);
+    }, [frame]);
 
     useEffect(() => {
         const ctx = artCanvasRef.current?.getContext('2d');
@@ -108,23 +120,12 @@ function App() {
     }, [isPendulum, imageChangeCount]);
 
     useEffect(() => {
-        const arrowPositionList = [
-            { top: 126, left: 46, width: 50, height: 51 },
-            { top: 116, left: 226, width: 99, height: 32 },
-            { top: 126, left: 453, width: 51, height: 51 },
-            { top: 305, left: 35, width: 33, height: 99 },
-            { top: 0, left: 0, width: 0, height: 0 },   // Middle
-            { top: 305, left: 482, width: 32, height: 99 },
-            { top: 534, left: 46, width: 50, height: 50 },
-            { top: 562, left: 226, width: 99, height: 33 },
-            { top: 534, left: 453, width: 51, height: 50 },
-        ];
         const ctx = specialFrameCanvasRef.current?.getContext('2d');
         ctx?.clearRect(0, 0, 549, 800);
         
-        const cardType = getCardFrame(family, subFamily, type_ability);
+        const cardType = getCardFrame(frame);
         drawingStatus.current.specialFrame = (async () => {
-            if (isPendulum) {
+            if (isPendulum && !isLink) {
                 await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
                 await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
             }
@@ -140,7 +141,7 @@ function App() {
                 if (link_map.length > 0) await drawFromSource(ctx, `./asset/image/link-number/link-corner-${link_map.length}.png`, 549 - 61, 800 - 69);
             }
         })();
-    }, [family, isLink, isPendulum, link_map, subFamily, type_ability]);
+    }, [frame, isLink, isPendulum, link_map]);
 
     useEffect(() => {
         const ctx = attributeCanvasRef.current?.getContext('2d');
@@ -171,25 +172,17 @@ function App() {
                 })
             );
         } else if (!isMonster) {
-            const normalizedFamily = family.toLowerCase();
             const normalizedSubFamily = subFamily.toLowerCase();
             const hasIcon = normalizedSubFamily !== 'normal';
 
-            drawingStatus.current.star = Promise.all([
-                // drawFromSource(
-                //     ctx, `/asset/image/sub-family/subfamily-container-${normalizedFamily}${hasIcon ? '-icon' : ''}.png`,
-                //     (image) => 491 - image.naturalWidth,
-                //     103,
-                // ),
-                hasIcon
-                    ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
-                        (image) => 491 - image.naturalWidth - 7,
-                        103,
-                        29, 29)
-                    : new Promise(resolve => resolve(true)),
-            ]);
+            drawingStatus.current.star = hasIcon
+                ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
+                    (image) => 491 - image.naturalWidth - 7,
+                    103,
+                    29, 29)
+                : new Promise(resolve => resolve(true));
         }
-    }, [family, isLink, isMonster, isXyz, star, subFamily]);
+    }, [isLink, isMonster, isXyz, star, subFamily]);
 
     useEffect(() => {
         const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
@@ -220,114 +213,6 @@ function App() {
         }
     }, [isPendulum, pendulum_scale]);
 
-    const drawTypeAbility  = useCallback(async (
-        ctx: CanvasRenderingContext2D | null | undefined,
-        size: TypeSize = typeSizeMap['medium'],
-        alignment: 'left' | 'right' = 'left',
-    ) => {
-        if (ctx) {
-            const {
-                bracketSize: { char: bracketChar, bracketSpace, bracketOffsetTop },
-                spaceSize: { char: spaceChar, frontSpace, behindSpace },
-                left,
-                top,
-                lowerCaseScale,
-                lowerCaseSize,
-                upperCaseSize,
-                upperCaseScale,
-                spaceScale,
-                iconSpace,
-            } = size;
-            const alignmentOffset = alignment === 'left' ? 1 : -1;
-            const drawBracketTemplate = (content: string, bracketTop: number = top) => {
-                return (left: number) => {
-                    ctx.font = `bold ${bracketChar}px stone-serif-bold`;
-                    ctx.textAlign = alignment;
-                    ctx.fillText(content, left, bracketTop);
-                    return left + ctx.measureText(content).width * alignmentOffset;
-                };
-            };
-            const drawIconSpaceTemplate = () => {
-                return (left: number) => {
-                    return left + iconSpace * alignmentOffset;
-                };
-            };
-            const drawBracketSpaceTemplate = (content: string) => {
-                return (left: number) => {
-                    ctx.font = `bold ${bracketSpace}px stone-serif-bold`;
-                    ctx.textAlign = alignment;
-                    ctx.fillText(content, left, top);
-                    return left + ctx.measureText(content).width * alignmentOffset;
-                };
-            };
-            const drawSlashTemplate = (baseOffset: number) => {
-                let totalOffset = baseOffset;
-                ctx.font = `bold ${frontSpace}px stone-serif-bold`;
-                ctx.fillText(' ', totalOffset, top);
-                totalOffset += ctx.measureText(' ').width * alignmentOffset;
-
-                ctx.font = `oblique bold ${spaceChar}px stone-serif-bold`;
-                ctx.scale(0.65, 1);
-                ctx.fillText('/', totalOffset / 0.65, top);
-                totalOffset += ctx.measureText('/').width * 0.65 * alignmentOffset;
-                ctx.scale(1 / 0.65, 1);
-
-                ctx.font = `bold ${behindSpace}px stone-serif-bold`;
-                ctx.fillText(' ', totalOffset, top);
-                totalOffset += ctx.measureText(' ').width * alignmentOffset;
-                return totalOffset;
-            };
-            const drawTextTemplate = (content: string, isLast = false) => {
-                return (left: number) => {
-                    let totalOffset = left;
-                    ctx.textAlign = alignment;
-
-                    if (!isLast && alignment === 'right') totalOffset = drawSlashTemplate(totalOffset);
-                    content
-                        .split('')
-                        .forEach((c, index, arr) => {
-                            const char = alignment === 'left' ? arr[index] : arr[arr.length - 1 - index];
-                            if (/[A-Z]/.test(char)) {
-                                ctx.font = `bold ${upperCaseSize}px stone-serif-bold`;
-                                ctx.scale(upperCaseScale, 1);
-                                ctx.fillText(char, totalOffset / upperCaseScale, top);
-                                totalOffset += ctx.measureText(char).width * upperCaseScale * alignmentOffset;
-                                ctx.scale(1 / upperCaseScale, 1);
-                            } else if (/\s/.test(char)) {
-                                ctx.font = `bold ${lowerCaseSize}px stone-serif-bold`;
-                                ctx.scale(spaceScale, 1);
-                                ctx.fillText(char, totalOffset / spaceScale, top);
-                                totalOffset += ctx.measureText(char).width * spaceScale * alignmentOffset;
-                                ctx.scale(1 / spaceScale, 1);
-                            } else {
-                                const upperChar = char.toLocaleUpperCase();
-                                ctx.font = `bold ${lowerCaseSize}px stone-serif-bold`;
-                                ctx.scale(lowerCaseScale, 1);
-                                ctx.fillText(upperChar, totalOffset / lowerCaseScale, top);
-                                totalOffset += ctx.measureText(upperChar).width * lowerCaseScale * alignmentOffset;
-                                ctx.scale(1 / lowerCaseScale, 1);
-                            }
-                        });
-                    if (!isLast && alignment === 'left') totalOffset = drawSlashTemplate(totalOffset);
-                    return totalOffset;
-                };
-            };
-            const instructionList = [
-                drawBracketTemplate('[', top - bracketOffsetTop),
-                drawBracketSpaceTemplate(' '),
-                ...type_ability.map((entry, index) => drawTextTemplate(entry, index === type_ability.length - 1)),
-                drawIconSpaceTemplate(),
-                drawBracketTemplate(']', top - bracketOffsetTop),
-            ];
-            (alignment === 'left'
-                ? instructionList
-                : instructionList.reverse()).reduce((prev, curr) => {
-                return curr(prev);
-            }, left);
-            ctx.textAlign = 'left';
-        }
-    }, [type_ability]);
-
     useEffect(() => {
         const ctx = nameCanvasRef.current?.getContext('2d');
         if (ctx) {
@@ -335,15 +220,8 @@ function App() {
             ctx.font = '64.59px MatrixRegularSmallCaps';
             ctx.textAlign = 'left';
             ctx.fillStyle = isXyz ? '#ffffff' : '#000000';
-            const nameWidth = ctx.measureText(name).width;
 
-            if (nameWidth > 0) {
-                const condenseRatio = Math.min(409 / nameWidth, 1);
-                ctx.scale(condenseRatio, 1);
-                ctx.fillText(name, 40.52 / condenseRatio, 81);
-                ctx.scale(1 / condenseRatio, 1);
-                ctx.fillStyle = '#000000';
-            }
+            fillTextLeftWithLimit(ctx, name, 40.52, 81, 409);
         }
     }, [isXyz, name]);
 
@@ -392,18 +270,8 @@ function App() {
         if (ctx && isFirstEdition === true) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
-            ctx.font = 'bold 17.5px palatino-linotype-bold';
 
-            let left = 106;
-            ctx.fillText('1', left, 777);
-            left += ctx.measureText('1').width - 2;
-
-            ctx.font = 'bold 12px palatino-linotype-bold';
-            ctx.fillText('st', left, 777 - 5);
-            left += ctx.measureText('st').width;
-
-            ctx.font = 'bold 17.5px palatino-linotype-bold';
-            ctx.fillText(' Edition', left, 777);
+            draw1stEdition(ctx);
         }
     }, [isLink, isPendulum, isXyz, isFirstEdition]);
 
@@ -413,225 +281,50 @@ function App() {
         if (ctx) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
-            ctx.font = '16px stone-serif-regular';
-            ctx.textAlign = 'right';
-
-            const textWidth = ctx.measureText(creator).width;
-
-            if (textWidth > 0) {
-                const condenseRatio = Math.min(257 / textWidth, 1);
-
-                if (condenseRatio < 1) {
-                    ctx.scale(condenseRatio, 1);
-                    ctx.fillText(creator, 496 / condenseRatio, 777);
-                    ctx.scale(1 / condenseRatio, 1);
-                } else fillTextRightWithSpacing(ctx, creator, -0.15, 496 / condenseRatio, 777);
-            }
-            ctx.textAlign = 'left';
+            
+            drawCreatorText(ctx, creator);
         }
     }, [isLink, isPendulum, isXyz, creator]);
 
-    const splitEffect = useCallback((effect: string) => {
-        let effectBody = effect;
-
-        let effectMaterial = '';
-        const materialRegex = /^(\[([^\]]*)\]\s*)/m;
-        const materialReplacement = materialRegex.exec(effectBody)?.[1];
-        const material = materialRegex.exec(effectBody)?.[2];
-        if (material && materialReplacement) {
-            effectMaterial = material;
-            effectBody = effectBody.replace(materialReplacement, '');
-        } else effectMaterial = '';
-
-        let effectFlavorCondition = '';
-        const flavorConditionRegex = /(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
-        const flavorCondition = flavorConditionRegex.exec(effect)?.[1];
-        if (flavorCondition && isNormal) {
-            effectFlavorCondition = flavorCondition;
-            effectBody = effectBody.replace(flavorCondition, '');
-        } else effectFlavorCondition = '';
-
-        return {
-            material: effectMaterial,
-            body: effectBody,
-            flavorCondition: effectFlavorCondition
-        };
-    }, [isNormal]);
-    const drawCondenseText = useCallback(async (
+    const drawTypeAbility  = useCallback((
         ctx: CanvasRenderingContext2D | null | undefined,
-        text: string,
-        isPendulumEffect = false,
-        isNormal = false,
-        fontList: FontSize[] = monsterFontList,
-        sizeList: BoxSize[] = monsterSizeList,
+        size: TypeSize = typeSizeMap['medium'],
+        alignment: 'left' | 'right' = 'left',
     ) => {
         if (ctx) {
-            const tolerantPerSentence: Record<string, number> = {
-                '1': 645,
-                '2': 665,
-                '3': 685,
-            };
-            const {
-                body: effectBody,
-                flavorCondition: effectFlavorCondition,
-                material: effectMaterial,
-            } = isPendulumEffect
-                ? {
-                    body: text,
-                    flavorCondition: '',
-                    material: '',
-                } : splitEffect(text);
-
-            const additionalLineCount = (effectMaterial.length > 0 ? 1 : 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
-            const sentencizeText = effectBody.split('\n');
-
-            let effectIndexSize = 0;
-            while(effectIndexSize < fontList.length) {
-                const { fontSize, lineHeight, lineCount } = fontList[effectIndexSize];
-                const { left, width, top } = sizeList[effectIndexSize];
-                const condenser = createCondenser();
-                let effectiveRatio = 1000;
-                const maxLine = Math.max(sentencizeText.length, lineCount);
-                ctx.font = `${isNormal ? 'italic' : ''} ${fontSize}px MatrixBook`;
-                ctx.textAlign = 'left';
-
-                let lineList: { text: string, width: number, isLast: boolean }[] = [];
-                const isOverflow = () => {
-                    lineList = [];
-
-                    return sentencizeText.reduce((prev, curr) => {
-                        const hypoWidth = width / (condenser.getMedian() / 1000);
-                        const tokenizeText = curr.split(/([\s-])/g);
-                        let currentLineCount = 1;
-                        let tokenSentence: string[] = [];
-                        let totalWidth = 0;
-                        for (let cnt = 0; cnt < tokenizeText.length; cnt++) {
-                            const tokenWidth = ctx.measureText(tokenizeText[cnt]).width;
-                            if (totalWidth + tokenWidth > hypoWidth) {
-                                const fullString = tokenSentence.join('').trim();
-                                lineList.push({
-                                    text: fullString,
-                                    width: ctx.measureText(fullString).width,
-                                    isLast: false,
-                                });
-                                totalWidth = tokenWidth;
-                                tokenSentence = [tokenizeText[cnt]];
-                                currentLineCount += 1;
-                            } else {
-                                totalWidth += tokenWidth;
-                                tokenSentence.push(tokenizeText[cnt]);
-                            }
-                        }
-
-                        const fullString = tokenSentence.join('').trim();
-                        lineList.push({
-                            text: fullString,
-                            width: ctx.measureText(fullString).width,
-                            isLast: true,
-                        });
-        
-                        return prev + currentLineCount;
-                    }, 0) + additionalLineCount;
-                };
-
-                while (condenser.getIterateCount() >= 0) {
-                    if (condenser.getIterateCount() <= 0) {
-                        // When out of iteration, return the concluded median
-                        effectiveRatio = condenser.getMedian();
-                        break;
-                    } else {
-                        const lineCount = isOverflow();
-
-                        if (lineCount > maxLine) {
-                            // If overflow, lower the median and apply it
-                            condenser.searchDown();
-                        } else {
-                            if (condenser.getMedian() === 1000) break;
-                            else effectiveRatio = condenser.reverseSearch();
-                        }
-                    }
-                }
-
-                if (effectiveRatio < (tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'])) {
-                    effectIndexSize += 1;
-                } else {
-                    let baseline = top + lineHeight;
-                    if (effectMaterial.length > 0) {
-                        let actualWidth = ctx.measureText(effectMaterial).width;
-                        let condenseRatio = Math.min(width / actualWidth, 1);
-
-                        ctx.scale(condenseRatio, 1);
-                        ctx.fillText(effectMaterial, left / condenseRatio, baseline);
-                        baseline += lineHeight;
-                        ctx.scale(1 / condenseRatio, 1);
-                    }
-
-                    const sigmoidRatio = effectiveRatio / 1000; // Fancy way to force ratio in to 0-1 range
-                    lineList.forEach(({ text, width: actualWidth, isLast }, index) => {
-                        const condenseRatio = isLast
-                            ? Math.min(sigmoidRatio, 1)
-                            : width / actualWidth;
-
-                        if (condenseRatio <= 1) {
-                            ctx.scale(condenseRatio, 1);
-                            ctx.fillText(text, left / condenseRatio, baseline);
-                            baseline += lineHeight;
-                            ctx.scale(1 / condenseRatio, 1);
-                        } else {
-                            const spaceSeparatedText = text.split(' ');
-                            ctx.scale(1, 1);
-                            let currentLeft = left;
-                            let widthPerEntry: number[] = [];
-
-                            spaceSeparatedText.forEach(entry => {
-                                widthPerEntry.push(ctx.measureText(entry).width);
-                            });
-                            // Split text by "space", then distribute remaining width to those spaces, resulting in "widen" space
-                            const spaceWidth = (width - widthPerEntry.reduce((prev, cur) => prev + cur, 0)) / (spaceSeparatedText.length - 1);
-
-                            spaceSeparatedText.forEach((entry, index) => {
-                                ctx.fillText(entry, currentLeft, baseline);
-                                currentLeft += widthPerEntry[index] + spaceWidth;
-                            });
-                            baseline += lineHeight;
-                        }
-                    });
-
-                    if (effectFlavorCondition.length > 0) {
-                        let actualWidth = ctx.measureText(effectFlavorCondition).width;
-                        let condenseRatio = Math.min(width / actualWidth, 1);
-
-                        ctx.font = `${fontSize}px MatrixBook`;
-                        ctx.scale(condenseRatio, 1);
-                        ctx.fillText(effectFlavorCondition, left / condenseRatio, baseline);
-                        baseline += lineHeight;
-                        ctx.scale(1 / condenseRatio, 1);
-                    }
-                    break;
-                }
-            }
-
-            if (!isMonster) {
-                await drawTypeAbility(ctx, typeSizeMap['large'], 'right');
-            } else if (!isPendulumEffect) {
-                await drawTypeAbility(ctx, effectIndexSize === 0
-                    ? typeSizeMap['medium']
-                    : typeSizeMap['small']);
-            }
+            const { left } = size;
+            const normalizedSubFamily = subFamily.toLowerCase();
+            const instructionList = [
+                drawBracketTemplate(ctx, '[', size, alignment),
+                drawBracketSpaceTemplate(ctx, ' ', size, alignment),
+                ...type_ability.map((entry, index) => drawTextTemplate(
+                    ctx,
+                    entry,
+                    index === type_ability.length - 1,
+                    size, alignment)),
+                normalizedSubFamily === 'normal'
+                    ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1)
+                    : drawIconSpaceTemplate(ctx, size, alignment),
+                drawBracketTemplate(ctx, ']', size, alignment),
+            ];
+            (alignment === 'left'
+                ? instructionList
+                : instructionList.reverse()).reduce((prev, curr) => {
+                return curr(prev);
+            }, left);
+            ctx.textAlign = 'left';
         }
-    }, [drawTypeAbility, isMonster, splitEffect]);
+    }, [subFamily, type_ability]);
     useEffect(() => {
         const ctx = effectCanvasRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 750);
         if (isMonster) {
-            ctx?.clearRect(0, 0, 549, 750);
-            drawCondenseText(ctx, effect, false, isNormal);
-        }
-    }, [drawCondenseText, effect, isMonster, isNormal]);
-    useEffect(() => {
-        const ctx = effectCanvasRef.current?.getContext('2d');
-        if (!isMonster) {
-            ctx?.clearRect(0, 0, 549, 750);
-            drawCondenseText(
+            const effectIndexSize = drawEffect(ctx, effect, false, isNormal);
+            drawTypeAbility(ctx, effectIndexSize === 0
+                ? typeSizeMap['medium']
+                : typeSizeMap['small']);
+        } else {
+            drawEffect(
                 ctx,
                 effect,
                 false,
@@ -639,13 +332,14 @@ function App() {
                 stFontList,
                 stSizeList,
             );
+            drawTypeAbility(ctx, typeSizeMap['large'], 'right');
         }
-    }, [drawCondenseText, effect, isMonster]);
+    }, [drawTypeAbility, effect, isMonster, isNormal]);
     useEffect(() => {
         const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
-        if (isPendulum) {
-            ctx?.clearRect(0, 0, 549, 600);
-            drawCondenseText(
+        ctx?.clearRect(0, 0, 549, 600);
+        if (isMonster && isPendulum) {
+            drawEffect(
                 ctx,
                 pendulum_effect,
                 true,
@@ -654,7 +348,7 @@ function App() {
                 pendulumSizeList,
             );
         }
-    }, [drawCondenseText, isPendulum, pendulum_effect]);
+    }, [isMonster, isPendulum, pendulum_effect]);
 
     const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         let leftOffset = -5;
@@ -684,12 +378,8 @@ function App() {
         (async () => {
             if (drawCanvasRef.current) {
                 await Promise.any([
-                    onExport({
-                        isPendulum,
-                    }),
-                    new Promise((resolve, reject) => {
-                        abortExport = reject;
-                    }),
+                    onExport({ isPendulum }),
+                    new Promise((resolve, reject) => abortExport = reject),
                 ]);
             }
         })();
@@ -786,7 +476,7 @@ function App() {
                         description: 'Right click the card and choose "Save image as..."',
                         duration: 3,
                     });
-                }}>Generate</button>
+                }}>Generate {frame}</button>
                 <div className="card-canvas-group">
                     <canvas className="export-canvas" ref={drawCanvasRef} width={549} height={800} />
                     <canvas ref={frameCanvasRef} width={549} height={800} />

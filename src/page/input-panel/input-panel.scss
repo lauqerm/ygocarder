@@ -1,4 +1,24 @@
 .card-info-panel {
+	.frame-radio {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 5px;
+		row-gap: 5px;
+		.ant-radio-button-wrapper {
+			text-transform: capitalize;
+			padding: 0 5px;
+			width: 80px;
+			text-align: center;
+			border-width: 0 !important;
+			&::before {
+				display: none;
+			}
+		}
+		.ant-radio-button-wrapper-checked {
+			outline: 2px solid #1890ff;
+			outline-offset: 1px;
+		}
+	}
 	.family-radio {
 		display: flex;
 		.ant-radio-button-wrapper {
@@ -14,6 +34,9 @@
 		column-gap: 1em;
 		.main-info-first {
 			flex: 1;
+			display: flex;
+			flex-direction: column;
+			row-gap: 10px;
 		}
 		.main-info-second {
 			flex: 0 0 350px;

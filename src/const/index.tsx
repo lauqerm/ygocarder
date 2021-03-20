@@ -14,3 +14,7 @@ export type {
     FontSize,
     TypeSize,
 } from './size';
+
+export {
+    arrowPositionList
+} from './position';
