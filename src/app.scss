@@ -1,6 +1,21 @@
 #root {
 	background-color: #fff;
 }
+.full-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(45deg, #333, #333);
+    z-index: 1000;
+    color: white;
+    text-shadow: 0 1px #333, 0 2px #111;
+    font-size: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .app-container {
 	display: flex;
 	column-gap: 10px;
@@ -34,6 +49,11 @@
 		flex: 2;
 		min-width: 549px;
 		position: relative;
+		&:hover {
+			.export-canvas {
+				display: inline-block !important;
+			}
+		}
 		.export-button {
 			background-color: #00000044;
 			border-radius: 5px;
@@ -54,12 +74,14 @@
 			box-shadow: 0 0 3px 2px #333, 0 0 8px 3px #444;
 			width: 549px;
 			height: 800px;
+			margin-bottom: 10px;
 			canvas {
 				position: absolute;
 				left: 0;
 				z-index: 1;
 			}
 			.export-canvas {
+				display: none;
 				z-index: 100;
 			}
 			.crop-canvas {
@@ -109,9 +131,6 @@
 		background-color: #333;
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
-		.anticon {
-			color: #ffffffcc;
-		}
 	}
 	.ant-input,
 	.ant-radio-button-wrapper {
@@ -144,6 +163,9 @@
 				border-color: #222;
 			}
 		}
+	}
+	.anticon {
+		color: #ffffffcc;
 	}
 }
 .ant-input-group {

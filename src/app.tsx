@@ -28,19 +28,23 @@ import {
     typeSizeMap,
 } from './const';
 import './asset/font.css';
-import { draw1stEdition,
+import {
+    draw1stEdition,
     drawAD,
     drawBracketSpaceTemplate,
     drawBracketTemplate,
     drawCreatorText,
     drawEffect,
     drawIconSpaceTemplate,
+    drawScale,
     drawTextTemplate,
     fillTextLeftWithLimit,
     fillTextLeftWithSpacing,
 } from './draw';
+import WebFont from 'webfontloader';
 
 function App() {
+    const [isInitializing, setInitializing] = useState(true);
     const [currentCard, setCard] = useState<Card>(defaultMonster);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -50,6 +54,7 @@ function App() {
     const subFamilyCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumScaleCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumEffectCanvasRef = useRef<HTMLCanvasElement>(null);
+    const typeCanvasRef = useRef<HTMLCanvasElement>(null);
     const effectCanvasRef = useRef<HTMLCanvasElement>(null);
     const nameCanvasRef = useRef<HTMLCanvasElement>(null);
     const attributeCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -188,24 +193,10 @@ function App() {
             ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
             ctx.textAlign = 'left';
 
-            const fillScale = (value: string, left: number) => {
-                const digitList = `${value}`.split('');
-                let totalWidth = 0;
-
-                digitList.forEach(digit => {
-                    totalWidth += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
-                });
-                let accLeft = left - totalWidth / 2;
-
-                digitList.forEach(digit => {
-                    ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, top);
-                    accLeft += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
-                });
-            };
-            fillScale(blue_scale ?? 0, 57);
-            fillScale(red_scale ?? 0, 493);
+            drawScale(ctx, blue_scale ?? 0, 57, top);
+            drawScale(ctx, red_scale ?? 0, 493, top);
         }
-    }, [blue_scale, isPendulum, red_scale]);
+    }, [isInitializing, blue_scale, isPendulum, red_scale]);
 
     useEffect(() => {
         const ctx = nameCanvasRef.current?.getContext('2d');
@@ -217,7 +208,7 @@ function App() {
 
             fillTextLeftWithLimit(ctx, name, 40.52, 81, 409);
         }
-    }, [isXyz, name]);
+    }, [isInitializing, isXyz, name]);
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');
@@ -228,7 +219,7 @@ function App() {
                 drawAD(ctx, def, 454.93, 747);
             }
         }
-    }, [atk, def, isLink, isMonster]);
+    }, [isInitializing, atk, def, isLink, isMonster]);
 
     useEffect(() => {
         const ctx = setIdRef.current?.getContext('2d');
@@ -244,7 +235,7 @@ function App() {
                 fillTextLeftWithSpacing(ctx, set_id, -0.15, 352, 590);
             } else fillTextLeftWithSpacing(ctx, set_id, -0.15, 396, 589);
         }
-    }, [isLink, isPendulum, isXyz, set_id]);
+    }, [isInitializing, isLink, isPendulum, isXyz, set_id]);
 
     useEffect(() => {
         const ctx = passcodeRef.current?.getContext('2d');
@@ -256,7 +247,7 @@ function App() {
 
             fillTextLeftWithSpacing(ctx, passcode, -0.1, 25, 777);
         }
-    }, [isLink, isPendulum, isXyz, passcode]);
+    }, [isInitializing, isLink, isPendulum, isXyz, passcode]);
 
     useEffect(() => {
         const ctx = firstEditionRef.current?.getContext('2d');
@@ -267,7 +258,7 @@ function App() {
 
             draw1stEdition(ctx);
         }
-    }, [isLink, isPendulum, isXyz, isFirstEdition]);
+    }, [isInitializing, isLink, isPendulum, isXyz, isFirstEdition]);
 
     useEffect(() => {
         const ctx = creatorRef.current?.getContext('2d');
@@ -278,7 +269,7 @@ function App() {
             
             drawCreatorText(ctx, creator);
         }
-    }, [isLink, isPendulum, isXyz, creator]);
+    }, [isInitializing, isLink, isPendulum, isXyz, creator]);
 
     const drawTypeAbility  = useCallback((
         ctx: CanvasRenderingContext2D | null | undefined,
@@ -286,6 +277,7 @@ function App() {
         alignment: 'left' | 'right' = 'left',
     ) => {
         if (ctx) {
+            ctx?.clearRect(0, 0, 549, 700);
             const { left } = size;
             const normalizedSubFamily = subFamily.toUpperCase();
             const instructionList = [
@@ -311,10 +303,10 @@ function App() {
     }, [subFamily, type_ability]);
     useEffect(() => {
         const ctx = effectCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 750);
+        const typeCtx = typeCanvasRef.current?.getContext('2d');
         if (isMonster) {
             const effectIndexSize = drawEffect(ctx, effect, false, isNormal);
-            drawTypeAbility(ctx, effectIndexSize === 0
+            drawTypeAbility(typeCtx, effectIndexSize === 0
                 ? typeSizeMap['medium']
                 : typeSizeMap['small']);
         } else {
@@ -326,12 +318,11 @@ function App() {
                 stFontList,
                 stSizeList,
             );
-            drawTypeAbility(ctx, typeSizeMap['large'], 'right');
+            drawTypeAbility(typeCtx, typeSizeMap['large'], 'right');
         }
-    }, [drawTypeAbility, effect, isMonster, isNormal]);
+    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal]);
     useEffect(() => {
         const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 600);
         if (isMonster && isPendulum) {
             drawEffect(
                 ctx,
@@ -342,7 +333,7 @@ function App() {
                 pendulumSizeList,
             );
         }
-    }, [isMonster, isPendulum, pendulum_effect]);
+    }, [isInitializing, isMonster, isPendulum, pendulum_effect]);
 
     const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         let leftOffset = -5;
@@ -364,13 +355,38 @@ function App() {
             ctx.imageSmoothingQuality = 'high';
             ctx.clearRect(0, 0, 549, 800);
         }
+        
+        // let fontLoaded = false;
+        WebFont.load({
+            custom: {
+                families: [
+                    'stone-serif-bold',
+                    'stone-serif-bold',
+                    'stone-serif-regular',
+                    'palatino-linotype-bold',
+                    'MatrixBook',
+                    'ITCStoneSerifMedium',
+                    'ITCStoneSerifBold',
+                    'ITCStoneSerifSmallCapsBold',
+                    'MatrixBoldSmallCaps',
+                    'MatrixRegularSmallCaps',
+                ],
+                urls: ['./asset/font.css']
+            },
+            active: () => {
+                // fontLoaded = true;
+                setInitializing(false);
+            }
+        });
     }, []);
 
     useEffect(() => {
+        // let relevant = true;
         let abortExport = () => {};
 
         (async () => {
-            if (drawCanvasRef.current) {
+            const canvasRef = drawCanvasRef.current;
+            if (canvasRef) {
                 await Promise.any([
                     onExport({ isPendulum }),
                     new Promise((resolve, reject) => abortExport = reject),
@@ -379,6 +395,7 @@ function App() {
         })();
 
         return () => {
+            // relevant = false;
             abortExport();
         };
     });
@@ -409,7 +426,6 @@ function App() {
         };
 
         if (canvasRef && exportCtx) {
-            canvasRef.style.display = 'none';
             exportCtx.clearRect(0, 0, 549, 800);
             await Promise.all(Object.values(drawingStatus));
             await generateLayer(frameCanvasRef, exportCtx);
@@ -428,6 +444,7 @@ function App() {
                 subFamilyCanvasRef,
                 pendulumScaleCanvasRef,
                 pendulumEffectCanvasRef,
+                typeCanvasRef,
                 effectCanvasRef,
                 ADCanvasRef,
                 setIdRef,
@@ -437,19 +454,18 @@ function App() {
             ];
             await Promise.all([
                 layerList.map(currentlayer => generateLayer(currentlayer, exportCtx)),
-                new Promise(function(resolve) { 
-                    setTimeout(() => resolve(true), 100);
-                }), // Avoid stutter
             ]);
             await drawRefrenceImage(exportCtx);
-            canvasRef.style.display = 'block';
         }
     }, 100)).current;
 
     return (
         <div className={'app-container'} style={{
-            backgroundImage: 'url("/asset/image/texture/debut-dark.png")',
+            backgroundImage: 'url("/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)',
         }}>
+            {isInitializing && <div className="full-loading">
+                Initializing...
+            </div>}
             <div className="card-filter-panel">
             </div>
             <CardInputPanel
@@ -461,34 +477,24 @@ function App() {
                 }}
             />
             <div className="card-preview-panel">
-                <button className="export-button"
-                // onClick={async () => {
-                //     await onExport({
-                //         isPendulum
-                //     });
-                //     notification.success({
-                //         message: 'Your card is ready to save',
-                //         description: 'Right click the card and choose "Save image as..."',
-                //         duration: 3,
-                //     });
-                // }}
-                >Generate</button>
+                <button className="export-button">Save Card: Right click → "Save image as..."</button>
                 <div className="card-canvas-group">
                     <canvas className="export-canvas" ref={drawCanvasRef} width={549} height={800} />
-                    <canvas ref={frameCanvasRef} width={549} height={800} />
-                    <canvas ref={artCanvasRef} width={549} height={650} />
-                    <canvas ref={specialFrameCanvasRef} width={549} height={800} />
-                    <canvas ref={nameCanvasRef} width={549} height={100} />
-                    <canvas ref={attributeCanvasRef} width={549} height={100} />
-                    <canvas ref={subFamilyCanvasRef} width={549} height={150} />
-                    <canvas ref={pendulumScaleCanvasRef} width={549} height={600} />
-                    <canvas ref={pendulumEffectCanvasRef} width={549} height={600} />
-                    <canvas ref={effectCanvasRef} width={549} height={750} />
-                    <canvas ref={ADCanvasRef} width={549} height={800} />
-                    <canvas ref={setIdRef} width={549} height={800} />
-                    <canvas ref={passcodeRef} width={549} height={800} />
-                    <canvas ref={firstEditionRef} width={549} height={800} />
-                    <canvas ref={creatorRef} width={549} height={800} />
+                    <canvas id="frameCanvas" ref={frameCanvasRef} width={549} height={800} />
+                    <canvas id="artCanvas" ref={artCanvasRef} width={549} height={650} />
+                    <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={549} height={800} />
+                    <canvas id="nameCanvas" ref={nameCanvasRef} width={549} height={100} />
+                    <canvas id="attributeCanvas" ref={attributeCanvasRef} width={549} height={100} />
+                    <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={549} height={150} />
+                    <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={549} height={600} />
+                    <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={549} height={600} />
+                    <canvas id="typeCanvas" ref={typeCanvasRef} width={549} height={700} />
+                    <canvas id="effectCanvas" ref={effectCanvasRef} width={549} height={750} />
+                    <canvas id="ADCanvas" ref={ADCanvasRef} width={549} height={800} />
+                    <canvas id="setId" ref={setIdRef} width={549} height={800} />
+                    <canvas id="passcode" ref={passcodeRef} width={549} height={800} />
+                    <canvas id="firstEdition" ref={firstEditionRef} width={549} height={800} />
+                    <canvas id="creator" ref={creatorRef} width={549} height={800} />
                     <canvas className="crop-canvas" ref={previewCanvasRef} />
                 </div>
             </div>

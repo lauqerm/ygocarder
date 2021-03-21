@@ -5,6 +5,7 @@ import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster } from '../../util';
 import { ExtractProps } from '../../type';
 import './input-panel.scss';
+import { debounce } from 'lodash';
 
 const { TextArea } = Input;
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
@@ -49,7 +50,7 @@ export const CardInputPanel = ({
             return {
                 ...currentCard,
                 frame: value,
-                isPendulum: value === 'link' ? false : currentCard.isPendulum,
+                isPendulum: value === 'link' || value === 'token' || isST ? false : currentCard.isPendulum,
                 subFamily: isST ? 'NO ICON' : currentCard.subFamily,
             };
         });
@@ -61,12 +62,12 @@ export const CardInputPanel = ({
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isPendulum: e.target.checked };
     });
-    const onRedScaleChange = onChangeFactory('red_scale', setCard);
-    const onBlueScaleChange = onChangeFactory('blue_scale', setCard);
-    const onPendulumEffectChange = onChangeFactory('pendulum_effect', setCard);
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('link_map', setCard);
-    const onEffectChange = onChangeFactory('effect', setCard);
+    const onRedScaleChange = onChangeFactory('red_scale', setCard);
+    const onBlueScaleChange = onChangeFactory('blue_scale', setCard);
+    const onPendulumEffectChange = debounce(onChangeFactory('pendulum_effect', setCard));
+    const onEffectChange = debounce(onChangeFactory('effect', setCard), 250);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
     const onTypeAbilityChange = (value: (string | number)[]) => {
@@ -100,6 +101,8 @@ export const CardInputPanel = ({
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
     const [displayTypeAbility, setDisplayTypeAbility] = useState(type_ability.join('/'));
+    const [displayEffect, setDisplayEffect] = useState(effect);
+    const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulum_effect);
 
     return <div className="card-info-panel">
         <Radio.Group key="frame" className="frame-radio" value={frame} onChange={onFrameChange}>
@@ -114,7 +117,13 @@ export const CardInputPanel = ({
         </Radio.Group>
         <hr />
         <div className="card-header custom-gap">
-            <Input key="name" addonBefore="Name" placeholder="Card Name" value={name} onChange={onNameChange} />
+            <Input key="name"
+                allowClear
+                addonBefore="Name"
+                placeholder="Card Name"
+                value={name}
+                onChange={onNameChange}
+            />
             {(isMonster && !isLink)
                 ? <Radio.Group key="star" className="checkbox-train" value={`${star}`} onChange={onStarChange}>
                     <label className="standalone-addon ant-input-group-addon">
@@ -145,7 +154,7 @@ export const CardInputPanel = ({
                     placeholder="Set ID"
                     value={set_id}
                 />
-                {(isMonster && frame !== 'link') && <div className="pendulum-container">
+                {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
                     <Row gutter={[10, 10]}>
                         <Col span={24}>
                             <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
@@ -170,9 +179,13 @@ export const CardInputPanel = ({
                             </Col>
                             <Col span={24}>
                                 <TextArea key="pendulum-effect"
+                                    allowClear
                                     placeholder="Pendulum effect"
-                                    value={pendulum_effect}
-                                    onChange={onPendulumEffectChange}
+                                    value={displayPendulumEffect}
+                                    onChange={ev => {
+                                        onPendulumEffectChange(ev);
+                                        setDisplayPendulumEffect(ev.target.value);
+                                    }}
                                     rows={4}
                                 />
                             </Col>
@@ -197,19 +210,23 @@ export const CardInputPanel = ({
                 />
                 <div>
                     <TextArea key="effect"
+                        allowClear
                         placeholder="Card effect"
-                        value={effect}
-                        onChange={onEffectChange}
+                        value={displayEffect}
+                        onChange={ev => {
+                            onEffectChange(ev);
+                            setDisplayEffect(ev.target.value);
+                        }}
                         rows={10}
                     />
                 </div>
                 <Row gutter={[10, 10]} >
                     {isMonster && <>
                         <Col span={12}>
-                            <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
+                            <Input key="atk" addonBefore="ATK" allowClear value={atk} onChange={onATKChange} />
                         </Col>
                         <Col span={12}>
-                            <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
+                            <Input key="def" addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
                         </Col>
                     </>}
                     <Col span={12}>

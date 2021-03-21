@@ -54,7 +54,7 @@ export const frameType = [
     { name: 'link', color: '#fff', backgroundColor: '#0c8ac6' },
     { name: 'ritual', color: '#fff', backgroundColor: '#5e85c9' },
     { name: 'spell', color: '#fff', backgroundColor: '#1b8f83' },
-    { name: 'trap', color: '#fff', backgroundColor: '#98186a' },
+    { name: 'trap', color: '#fff', backgroundColor: '#c32a8c' },
     { name: 'token', color: '#fff', backgroundColor: '#6f6c6b' },
 ];
 
@@ -68,7 +68,7 @@ export const iconList = [
 ];
 
 export const attributeList = [
-    { name: 'DARK', color: '#950db7' },
+    { name: 'DARK', color: '#b41dda' },
     { name: 'EARTH', color: '#8d8e8e' },
     { name: 'FIRE', color: '#e51b23' },
     { name: 'LIGHT', color: '#bfae32' },
@@ -76,5 +76,5 @@ export const attributeList = [
     { name: 'WIND', color: '#28ab35' },
     { name: 'DIVINE', color: '#ef6300' },
     { name: 'SPELL', color: '#1b8f83' },
-    { name: 'TRAP', color: '#98186a' },
+    { name: 'TRAP', color: '#c32a8c' },
 ];

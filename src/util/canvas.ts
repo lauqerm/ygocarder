@@ -1,3 +1,8 @@
+const imageCacheMap: Record<string, {
+    image: HTMLImageElement,
+    ready: boolean,
+}> = {};
+
 export const drawFromSource = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
@@ -6,17 +11,30 @@ export const drawFromSource = async (
 ) => {
     if (!ctx) return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
-        const img = new Image();
-        img.src = source;
-        img.onload = () => {
+        if (imageCacheMap[source]?.ready === true) {
+            const img = imageCacheMap[source].image;
             let normalizedX = typeof sx === 'number' ? sx : sx(img);
             let normalizedY = typeof sy === 'number' ? sy : sy(img);
             ctx.drawImage(img, normalizedX, normalizedY);
             resolve(true);
-        };
-        img.onerror = () => {
-            resolve(false);
-        };
+        } else {
+            const img = new Image();
+            img.src = source;
+            img.onload = () => {
+                let normalizedX = typeof sx === 'number' ? sx : sx(img);
+                let normalizedY = typeof sy === 'number' ? sy : sy(img);
+                ctx.drawImage(img, normalizedX, normalizedY);
+                imageCacheMap[source].ready = true;
+                resolve(true);
+            };
+            img.onerror = () => {
+                resolve(false);
+            };
+            imageCacheMap[source] = {
+                image: img,
+                ready: false,
+            };
+        }
     });
 };
 
@@ -29,16 +47,29 @@ export const drawFromSourceWithSize = async (
 ) => {
     if (!ctx) return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
-        const img = new Image();
-        img.src = source;
-        img.onload = () => {
+        if (imageCacheMap[source]?.ready === true) {
+            const img = imageCacheMap[source].image;
             let normalizedX = typeof sx === 'number' ? sx : sx(img);
             let normalizedY = typeof sy === 'number' ? sy : sy(img);
             ctx.drawImage(img, normalizedX, normalizedY, dw, dh);
             resolve(true);
-        };
-        img.onerror = () => {
-            resolve(false);
-        };
+        } else {
+            const img = new Image();
+            img.src = source;
+            img.onload = () => {
+                let normalizedX = typeof sx === 'number' ? sx : sx(img);
+                let normalizedY = typeof sy === 'number' ? sy : sy(img);
+                ctx.drawImage(img, normalizedX, normalizedY, dw, dh);
+                imageCacheMap[source].ready = true;
+                resolve(true);
+            };
+            img.onerror = () => {
+                resolve(false);
+            };
+            imageCacheMap[source] = {
+                image: img,
+                ready: false,
+            };
+        }
     });
 };
