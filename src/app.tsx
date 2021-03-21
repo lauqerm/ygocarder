@@ -2,14 +2,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './app.scss';
 import 'antd/dist/antd.css';
-import { notification } from 'antd';
 import {
     Card,
-    CardFamily,
     defaultMonster,
-    defaultSpell,
-    defaultTrap,
-    frameType,
+    iconList,
 } from './model';
 import { debounce } from 'lodash';
 import {
@@ -45,12 +41,7 @@ import { draw1stEdition,
 } from './draw';
 
 function App() {
-    const [selectedPage, setPage] = useState<CardFamily>('Monster');
-    const [currentCardPage, setCardPage] = useState<Record<string, Card>>({
-        Monster: defaultMonster,
-        Spell: defaultSpell,
-        Trap: defaultTrap,
-    });
+    const [currentCard, setCard] = useState<Card>(defaultMonster);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -68,14 +59,12 @@ function App() {
     const firstEditionRef = useRef<HTMLCanvasElement>(null);
     const creatorRef = useRef<HTMLCanvasElement>(null);
 
-    const currentCard = currentCardPage[selectedPage];
     const {
         frame,
-        family,
         name,
         effect,
         type_ability,
-        isPendulum, pendulum_effect, pendulum_scale,
+        isPendulum, pendulum_effect, blue_scale, red_scale,
         atk, def, link_map,
         attribute,
         subFamily,
@@ -158,24 +147,29 @@ function App() {
             let offset = 0 - (34 + 2.3636);
             let totalWidth = 34 * counter + 2.3636 * (counter - 1);
             let startPoint = counter <= 12
-                ? isXyz ? 57 - 34 : 492
-                : (549 - totalWidth) / 2 + totalWidth;
+                ? isXyz
+                    ? 57 - 34
+                    : 492
+                : isXyz
+                    ? (549 - totalWidth) / 2 - 34
+                    : (549 - totalWidth) / 2 + totalWidth;
             drawingStatus.current.star = Promise.all([...Array(counter)]
                 .map(() => {
                     offset += (34 + 2.3636);
                     return drawFromSource(
                         ctx,
                         `/asset/image/sub-family/subfamily-${type}.png`,
-                        isXyz ? startPoint + (34 + offset) : startPoint - (34 + offset),
+                        startPoint + (34 + offset) * (isXyz ? 1 : -1),
                         99,
                     );
                 })
             );
         } else if (!isMonster) {
-            const normalizedSubFamily = subFamily.toLowerCase();
-            const hasIcon = normalizedSubFamily !== 'normal';
+            const normalizedSubFamily = subFamily.toUpperCase();
+            const hasSTIcon = normalizedSubFamily !== 'no icon'
+                && iconList.includes(normalizedSubFamily);
 
-            drawingStatus.current.star = hasIcon
+            drawingStatus.current.star = hasSTIcon
                 ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
                     (image) => 491 - image.naturalWidth - 7,
                     103,
@@ -208,10 +202,10 @@ function App() {
                     accLeft += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
                 });
             };
-            fillScale(pendulum_scale, 57);
-            fillScale(pendulum_scale, 493);
+            fillScale(blue_scale ?? 0, 57);
+            fillScale(red_scale ?? 0, 493);
         }
-    }, [isPendulum, pendulum_scale]);
+    }, [blue_scale, isPendulum, red_scale]);
 
     useEffect(() => {
         const ctx = nameCanvasRef.current?.getContext('2d');
@@ -293,7 +287,7 @@ function App() {
     ) => {
         if (ctx) {
             const { left } = size;
-            const normalizedSubFamily = subFamily.toLowerCase();
+            const normalizedSubFamily = subFamily.toUpperCase();
             const instructionList = [
                 drawBracketTemplate(ctx, '[', size, alignment),
                 drawBracketSpaceTemplate(ctx, ' ', size, alignment),
@@ -302,7 +296,7 @@ function App() {
                     entry,
                     index === type_ability.length - 1,
                     size, alignment)),
-                normalizedSubFamily === 'normal'
+                normalizedSubFamily === 'NO ICON'
                     ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1)
                     : drawIconSpaceTemplate(ctx, size, alignment),
                 drawBracketTemplate(ctx, ']', size, alignment),
@@ -453,30 +447,32 @@ function App() {
     }, 100)).current;
 
     return (
-        <div className={'app-container'}>
+        <div className={'app-container'} style={{
+            backgroundImage: 'url("/asset/image/texture/debut-dark.png")',
+        }}>
             <div className="card-filter-panel">
             </div>
             <CardInputPanel
                 receivingCanvasRef={previewCanvasRef.current}
                 currentCard={currentCard}
-                currentPage={selectedPage}
-                onCardChange={setCardPage}
-                onCardPageChange={setPage}
+                onCardChange={setCard}
                 onImageChange={() => {
                     setImageChangeCount(cnt => cnt + 1);
                 }}
             />
             <div className="card-preview-panel">
-                <button className="export-button" onClick={async () => {
-                    await onExport({
-                        isPendulum
-                    });
-                    notification.success({
-                        message: 'Your card is ready to save',
-                        description: 'Right click the card and choose "Save image as..."',
-                        duration: 3,
-                    });
-                }}>Generate {frame}</button>
+                <button className="export-button"
+                // onClick={async () => {
+                //     await onExport({
+                //         isPendulum
+                //     });
+                //     notification.success({
+                //         message: 'Your card is ready to save',
+                //         description: 'Right click the card and choose "Save image as..."',
+                //         duration: 3,
+                //     });
+                // }}
+                >Generate</button>
                 <div className="card-canvas-group">
                     <canvas className="export-canvas" ref={drawCanvasRef} width={549} height={800} />
                     <canvas ref={frameCanvasRef} width={549} height={800} />

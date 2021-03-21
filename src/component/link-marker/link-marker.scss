@@ -1,83 +1,43 @@
-.link-marker-container {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	.link-marker-arrow {
-		position: absolute;
-		z-index: 2;
-		&.arrow-1 {
-			top: 126px;
-			left: 46px;
-			width: 50px;
-			height: 51px;
-		}
-		&.arrow-2 {
-			top: 116px;
-			left: 226px;
-			width: 99px;
-			height: 32px;
-		}
-		&.arrow-3 {
-			top: 126px;
-			left: 453px;
-			width: 51px;
-			height: 51px;
-		}
-		&.arrow-4 {
-			top: 305px;
-			left: 35px;
-			width: 33px;
-			height: 99px;
-		}
-		&.arrow-6 {
-			top: 305px;
-			left: 482px;
-			width: 32px;
-			height: 99px;
-		}
-		&.arrow-7 {
-			top: 534px;
-			left: 46px;
-			width: 50px;
-			height: 50px;
-		}
-		&.arrow-8 {
-			top: 562px;
-			left: 226px;
-			width: 99px;
-			height: 33px;
-		}
-		&.arrow-9 {
-			top: 534px;
-			left: 453px;
-			width: 51px;
-			height: 50px;
-		}
-	}
-	.link-overlay {
-		position: absolute;
-		top: 146px;
-		left: 66px;
-		width: 418px;
-		height: 418px;
-		z-index: 1;
-	}
-}
-
 .link-marker-chooser {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	width: 90px;
-	height: 120px;
+    font-weight: bold;
+    color: #ffffffcc;
+    text-shadow: 0 1px #222;
+    padding: 10px;
+	padding-top: 5px;
+    background-color: #4f4f4f;
+    box-shadow: 0 0 2px 1px #212121 inset;
+    border-radius: 3px;
+    border: 1px solid #484848;
 	.title {
-		grid-column: span 3;
+		line-height: 1.45;
+	}
+	.container {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-rows: 1fr 1fr 1fr;
+		width: 92px;
+		height: 92px;
+		column-gap: 1px;
+		row-gap: 1px;
+		background-color: #222;
+		.link-marker-icon {
+			width: 0;
+			height: 0;
+			border-style: solid;
+			position: absolute;
+			margin: 10px 5px;
+			border-width: 0 10px 10px 10px;
+			border-color: transparent transparent #484848 transparent;
+		}
+		.link-marker-button.marker-checked .link-marker-icon {
+			border-color: transparent transparent #40a9ff transparent;
+		}
 	}
 	.link-marker-reset,
 	.link-marker-button {
-		border: 1px solid #d9d9d9;
 		cursor: pointer;
 		&:hover {
-			border: 1px solid #40a9ff;
+			outline: #40a9ff solid 1px;
 		}
 	}
 	.link-marker-reset {

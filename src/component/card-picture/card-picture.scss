@@ -9,12 +9,20 @@
 	}
 	.ant-radio-group {
 		width: 100%;
+		.ant-input-group-addon {
+			min-width: unset;
+		}
 	}
 	.card-image-source-input {
 		flex: 1;
 		display: grid;
 		grid-template-columns: max-content 1fr;
-		column-gap: 10px;
+		> *:first-child {
+			margin-right: 10px;
+			&:empty {
+				margin-right: 0;
+			}
+		}
 		.ant-radio-button-wrapper {
 			display: block;
 			height: unset;
@@ -25,7 +33,7 @@
 			margin-top: 10px
 		}
 		.ant-radio-button-wrapper-checked {
-			background-color: #1890ff;
+			border-color: #1890ff !important;
 			color: white;
 		}
 	}
@@ -35,5 +43,8 @@
 	.ReactCrop__image {
 		max-width: 100%;
 		max-height: 300px;
+	}
+	.ReactCrop {
+		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	}
 }

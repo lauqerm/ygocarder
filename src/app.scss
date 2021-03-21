@@ -1,6 +1,10 @@
+#root {
+	background-color: #fff;
+}
 .app-container {
 	display: flex;
 	column-gap: 10px;
+	min-height: 100vh;
 	--zoom-ratio: 0.8;
 	--translate-percent: -12.5%;
 	&.app-container-export {
@@ -17,29 +21,39 @@
 	}
 	.card-info-panel {
 		flex: 3;
+		padding: 10px;
+		background-color: #404040;
+		border: 2px solid #444040;
+		margin: 10px 0;
+		border-radius: 8px;
+		box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+		color: #ffffffcc;
+		text-shadow: 0 1px #222;
 	}
 	.card-preview-panel {
 		flex: 2;
 		min-width: 549px;
 		position: relative;
 		.export-button {
-			background-color: darkorange;
+			background-color: #00000044;
 			border-radius: 5px;
 			border: 0;
-			color: white;
-			cursor: pointer;
-			font-size: 30px;
+			color: #e6e6e6;
+			font-size: 20px;
 			line-height: 1.5;
-			margin: 5px 0;
+			margin: 10px 0;
 			max-width: 549px;
+			outline: none !important;
+			padding: 5px 10px;
+			text-align: left;
+			text-shadow: 0px 1px 2px black;
 			width: 100%;
-			outline: none!important;
-			&:hover {
-				background-color: orange;
-			}
 		}
 		.card-canvas-group {
 			position: relative;
+			box-shadow: 0 0 3px 2px #333, 0 0 8px 3px #444;
+			width: 549px;
+			height: 800px;
 			canvas {
 				position: absolute;
 				left: 0;
@@ -87,7 +101,64 @@
 }
 
 // [OVERWRITE]
-.ant-input-group-addon:first-child {
-    font-weight: bold;
-    color: #5f5f5f;
+.card-info-panel {
+	.ant-input-group-addon,
+	.ant-input,
+	.ant-radio-button-wrapper,
+	.ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
+		background-color: #333;
+		color: #ffffffcc;
+		text-shadow: 0 1px #222;
+		.anticon {
+			color: #ffffffcc;
+		}
+	}
+	.ant-input,
+	.ant-radio-button-wrapper {
+		border-color: #222;
+	}
+	.ant-radio-button-wrapper:not(:first-child):not(.ant-radio-button-wrapper-checked)::before {
+		background-color: #222;
+	}
+	.ant-checkbox-wrapper {
+		color: #ffffffcc;
+		text-shadow: 0 1px #222;
+	}
+	.ant-btn.download-button,
+	.ant-input-group-addon {
+		font-weight: bold;
+		border-color: #222;
+		background-color: #4a4a4d;
+		color: #ffffffcc;
+		text-shadow: 0 1px #222;
+	}
+	textarea,
+	.ant-radio-group:not(.frame-radio),
+	.ant-input-wrapper {
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	}
+	.card-image-source-input {
+		.ant-radio-group {
+			box-shadow: none;
+			.ant-radio-button-wrapper:first-child {
+				border-color: #222;
+			}
+		}
+	}
+}
+.ant-input-group {
+	.ant-radio-button-wrapper,
+	.ant-input,
+	.ant-input-affix-wrapper {
+		background-color: #333;
+		color: #ffffffcc;
+		text-shadow: 0 1px #222;
+		.anticon {
+			color: #ffffffcc;
+		}
+	}
+	.ant-input,
+	.ant-input-affix-wrapper {
+		border-color: #222;
+	}
 }

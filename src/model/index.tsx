@@ -1,24 +1,12 @@
-import { monsterFamily } from './monster';
-import { spellFamily } from './spell';
-import { trapFamily } from './trap';
-
 export type ScaleValue = {
 	scaleRatio: number,
 	translatePercent: string,
-}
-
-export type CardFamily = keyof typeof defaultCardFamily;
-export const defaultCardFamily = {
-    Monster: monsterFamily,
-    Spell: spellFamily,
-    Trap: trapFamily,
 };
 
 export type Card = typeof defaultCard;
 export const defaultCard = {
     atk: '100',
     attribute: 'DARK',
-    family: 'Monster' as CardFamily,
     frame: 'effect',
     subFamily: 'Level',
     def: '2000',
@@ -33,7 +21,8 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     passcode: '24907043',
     isPendulum: true,
     pendulum_effect: '',
-    pendulum_scale: '',
+    red_scale: '0',
+    blue_scale: '0',
     picture: 'https://images2.imgbox.com/13/c5/dXPTEORX_o.jpg',
     set_id: 'ROTD-EN081',
     star: 4,
@@ -41,18 +30,6 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     creator: '©1996 KAZUKI TAKAHASHI',
 };
 export const defaultMonster = defaultCard;
-export const defaultSpell = {
-    ...defaultCard,
-    family: 'Spell' as CardFamily,
-    attribute: 'Spell',
-    subFamily: 'NORMAL',
-};
-export const defaultTrap = {
-    ...defaultCard,
-    family: 'Trap' as CardFamily,
-    attribute: 'Trap',
-    subFamily: 'NORMAL',
-};
 
 export {
     defaultMonsterAttribute,
@@ -63,14 +40,6 @@ export {
     defaultTypeAbilityList,
     monsterFamily,
 } from './monster';
-export {
-    defaultSpellSubFamily,
-    spellFamily,
-} from './spell';
-export {
-    defaultTrapAttribute,
-    trapFamily
-} from './trap';
 export type {
     TextBoxFontSize,
     TextBoxSize,
@@ -87,4 +56,25 @@ export const frameType = [
     { name: 'spell', color: '#fff', backgroundColor: '#1b8f83' },
     { name: 'trap', color: '#fff', backgroundColor: '#98186a' },
     { name: 'token', color: '#fff', backgroundColor: '#6f6c6b' },
+];
+
+export const iconList = [
+    'NO ICON',
+    'FIELD',
+    'CONTINUOUS',
+    'QUICK-PLAY',
+    'RITUAL',
+    'COUNTER',
+];
+
+export const attributeList = [
+    { name: 'DARK', color: '#950db7' },
+    { name: 'EARTH', color: '#8d8e8e' },
+    { name: 'FIRE', color: '#e51b23' },
+    { name: 'LIGHT', color: '#bfae32' },
+    { name: 'WATER', color: '#008ecd' },
+    { name: 'WIND', color: '#28ab35' },
+    { name: 'DIVINE', color: '#ef6300' },
+    { name: 'SPELL', color: '#1b8f83' },
+    { name: 'TRAP', color: '#98186a' },
 ];

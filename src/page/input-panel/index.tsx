@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Radio, Input, InputNumber, Row, Col, Checkbox } from 'antd';
-import { defaultCardFamily, Card, CardFamily, frameType } from '../../model';
+import { Radio, Input, Row, Col, Checkbox } from 'antd';
+import { Card, frameType, iconList, attributeList } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster } from '../../util';
 import { ExtractProps } from '../../type';
@@ -26,56 +26,43 @@ export type CardInputPanelRef = {
     getCroppedImageCanvasRef: () => HTMLCanvasElement | null
 }
 export type CardInputPanel = {
-	currentPage: CardFamily,
 	currentCard: Card,
     receivingCanvasRef: HTMLCanvasElement | null,
-	onCardPageChange: (page: CardFamily) => void,
-	onCardChange: (value: React.SetStateAction<Record<string, Card>>) => void,
+	onCardChange: React.Dispatch<React.SetStateAction<Card>>,
     onImageChange?: () => void,
 }
 export const CardInputPanel = ({
-    currentPage,
     currentCard,
     receivingCanvasRef,
-    onCardPageChange,
     onCardChange,
     onImageChange,
 }: CardInputPanel) => {
-    const setCard = (mutateFunc: (card: Card) => Card) => onCardChange(cur => {
-        return {
-            ...cur,
-            [currentPage]: mutateFunc(cur[currentPage]),
-        };
-    });
-    const onFrameChange = (e: RadioChangeEvent) => onCardChange(cur => {
-        const value = e?.target?.value;
-
-        return {
-            ...cur,
-            [currentPage]: {
-                ...cur[currentPage],
+    const [isMirrorScale, setMirrorScale] = useState(true);
+    const setCard = (mutateFunc: (card: Card) => Card) => {
+        onCardChange(currentCard => mutateFunc(currentCard));
+    };
+    const onFrameChange = (e: RadioChangeEvent) => {
+        onCardChange(currentCard => {
+            const value = e?.target?.value;
+            const isST = value === 'spell' || value === 'trap';
+    
+            return {
+                ...currentCard,
                 frame: value,
-                isPendulum: value === 'link' ? false : cur[currentPage].isPendulum,
-            },
-        };
-    });
-    const onFamilyChange = (e: RadioChangeEvent) => onCardPageChange(e.target.value as CardFamily);
+                isPendulum: value === 'link' ? false : currentCard.isPendulum,
+                subFamily: isST ? 'NO ICON' : currentCard.subFamily,
+            };
+        });
+    };
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
     const onNameChange = onChangeFactory('name', setCard);
-    const onStarChange = (value: string | number | undefined) => onCardChange(cur => {
-        return {
-            ...cur,
-            [currentPage]: { ...cur[currentPage], star: parseInt(`${value ?? 0}`) },
-        };
+    const onStarChange = onChangeFactory('star', setCard);
+    const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
+        return { ...currentCard, isPendulum: e.target.checked };
     });
-    const onIsPendulumChange = (e: any) => onCardChange(cur => {
-        return {
-            ...cur,
-            [currentPage]: { ...cur[currentPage], isPendulum: e.target.checked },
-        };
-    });
-    const onScaleChange = onChangeFactory('pendulum_scale', setCard);
+    const onRedScaleChange = onChangeFactory('red_scale', setCard);
+    const onBlueScaleChange = onChangeFactory('blue_scale', setCard);
     const onPendulumEffectChange = onChangeFactory('pendulum_effect', setCard);
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('link_map', setCard);
@@ -91,21 +78,17 @@ export const CardInputPanel = ({
     const onSetIDChange = onChangeFactory('set_id', setCard);
     const onPasscodeChange = onChangeFactory('passcode', setCard);
     const onCreatorChange = onChangeFactory('creator', setCard);
-    const onFirstEditionChange = (e: any) => onCardChange(cur => {
-        return {
-            ...cur,
-            [currentPage]: { ...cur[currentPage], isFirstEdition: e.target.checked },
-        };
+    const onFirstEditionChange = (e: any) => onCardChange(currentCard => {
+        return { ...currentCard, isFirstEdition: e.target.checked };
     });
 
     const {
         frame,
-        family,
         name,
         picture,
         effect,
         type_ability,
-        isPendulum, pendulum_effect, pendulum_scale,
+        isPendulum, pendulum_effect, red_scale, blue_scale,
         atk, def, link_map,
         attribute,
         subFamily,
@@ -113,10 +96,6 @@ export const CardInputPanel = ({
         set_id,
         passcode, isFirstEdition, creator,
     } = currentCard;
-    const {
-        attribute: familyAttributeList,
-        subFamily: subFamilyList,
-    } = defaultCardFamily[family];
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
@@ -133,30 +112,31 @@ export const CardInputPanel = ({
                 </Radio.Button>;
             })}
         </Radio.Group>
-        <div className="card-info-line">
-            <Radio.Group key="family" className="family-radio" value={family} onChange={onFamilyChange}>
-                {Object.keys(defaultCardFamily).map(entry => <Radio.Button key={entry} value={entry}>{entry}</Radio.Button>)}
-            </Radio.Group>
+        <hr />
+        <div className="card-header custom-gap">
             <Input key="name" addonBefore="Name" placeholder="Card Name" value={name} onChange={onNameChange} />
-        </div>
-        <hr />
-        <div className="card-info-line custom-gap">
-            <div className="card-info-sub-family">
-                {family === 'Monster'
-                    ? isLink
-                        ? null
-                        : <div>
-                            {isXyz ? 'Rank' : 'Level'}: <InputNumber key="level-rank" min={0} max={13} value={star} onChange={onStarChange} />
-                        </div>
-                    : <Radio.Group key="subFamily" value={subFamily} onChange={onSubFamilyChange}>
-                        {subFamilyList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
-                    </Radio.Group>}
-            </div>
-            <Radio.Group key="attribute" value={attribute} onChange={onAttributeChange}>
-                {familyAttributeList.map(entry => <Radio key={entry} value={entry}>{entry}</Radio>)}
+            {(isMonster && !isLink)
+                ? <Radio.Group key="star" className="checkbox-train" value={`${star}`} onChange={onStarChange}>
+                    <label className="standalone-addon ant-input-group-addon">
+                        <span>{isXyz ? 'Rank' : 'Level'}</span>
+                    </label>
+                    {[...Array(14)].map((e, index) => <Radio.Button key={`${index}`} value={`${index}`}>{`${index}`}</Radio.Button>)}
+                </Radio.Group>
+                : <Radio.Group key="subFamily" className="checkbox-train" value={subFamily} onChange={onSubFamilyChange}>
+                    <label className="standalone-addon ant-input-group-addon">
+                        <span>Icon</span>
+                    </label>
+                    {iconList.map(entry => <Radio.Button key={entry} value={entry}>{entry}</Radio.Button>)}
+                </Radio.Group>}
+            <Radio.Group key="attribute" className="checkbox-train" value={attribute} onChange={onAttributeChange}>
+                <label className="standalone-addon ant-input-group-addon">
+                    <span>Attribute</span>
+                </label>
+                {attributeList.map(({ color, name }) => <Radio.Button key={name} value={name}>
+                    <span style={{ color, fontWeight: 'bold' }}>{name}</span>
+                </Radio.Button>)}
             </Radio.Group>
         </div>
-        <hr />
         <div key="pic" className="main-info">
             <div className="main-info-first">
                 <Input addonBefore="Set ID"
@@ -165,16 +145,40 @@ export const CardInputPanel = ({
                     placeholder="Set ID"
                     value={set_id}
                 />
-                {(isMonster && frame !== 'link') && <>
-                    <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
-                    <Input key="pendulum-scale" addonBefore="Pendulum Scale" value={pendulum_scale} onChange={onScaleChange} />
-                    <TextArea key="pendulum-effect"
-                        placeholder="Pendulum effect"
-                        value={pendulum_effect}
-                        onChange={onPendulumEffectChange}
-                        rows={4}
-                    />
-                </>}
+                {(isMonster && frame !== 'link') && <div className="pendulum-container">
+                    <Row gutter={[10, 10]}>
+                        <Col span={24}>
+                            <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
+                            {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale?</Checkbox>}
+                        </Col>
+                        {isPendulum && <>
+                            <Col span={12}>
+                                <Input key="blue-scale" addonBefore={<span>
+                                    <span style={{ color: '#3b9dff' }}>Blue</span> Scale
+                                </span>} value={blue_scale} onChange={e => {
+                                    onBlueScaleChange(e);
+                                    if (isMirrorScale) onRedScaleChange(e);
+                                }} />
+                            </Col>
+                            <Col span={12}>
+                                <Input key="red-scale" addonBefore={<span>
+                                    <span style={{ color: '#ff6f6f' }}>Red</span> Scale
+                                </span>} value={red_scale} onChange={e => {
+                                    if (isMirrorScale) onBlueScaleChange(e);
+                                    onRedScaleChange(e);
+                                }} />
+                            </Col>
+                            <Col span={24}>
+                                <TextArea key="pendulum-effect"
+                                    placeholder="Pendulum effect"
+                                    value={pendulum_effect}
+                                    onChange={onPendulumEffectChange}
+                                    rows={4}
+                                />
+                            </Col>
+                        </>}
+                    </Row>
+                </div>}
                 <Input addonBefore="Type"
                     allowClear
                     className="hide-selected"
@@ -200,6 +204,14 @@ export const CardInputPanel = ({
                     />
                 </div>
                 <Row gutter={[10, 10]} >
+                    {isMonster && <>
+                        <Col span={12}>
+                            <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
+                        </Col>
+                        <Col span={12}>
+                            <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
+                        </Col>
+                    </>}
                     <Col span={12}>
                         <Input addonBefore="Serial Number"
                             allowClear
@@ -219,14 +231,6 @@ export const CardInputPanel = ({
                             value={creator}
                         />
                     </Col>
-                    {isMonster && <>
-                        <Col span={12}>
-                            <Input key="atk" addonBefore="ATK" value={atk} onChange={onATKChange} />
-                        </Col>
-                        <Col span={12}>
-                            <Input key="def" addonBefore="DEF" value={def} onChange={onDEFChange} />
-                        </Col>
-                    </>}
                 </Row>
             </div>
             <div className="main-info-second">
@@ -237,7 +241,7 @@ export const CardInputPanel = ({
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}
                 >
-                    {isMonster
+                    {isLink
                         ? <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
                         : <div />}
                 </ImageCropper>
