@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Radio, Input, Row, Col, Checkbox } from 'antd';
 import { Card, frameType, iconList, attributeList } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster } from '../../util';
 import { ExtractProps } from '../../type';
-import './input-panel.scss';
 import { debounce } from 'lodash';
+import { CharPicker } from './char-picker';
+import './input-panel.scss';
 
 const { TextArea } = Input;
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
@@ -66,7 +67,7 @@ export const CardInputPanel = ({
     const onLinkMapChange = onChangeFactory('link_map', setCard);
     const onRedScaleChange = onChangeFactory('red_scale', setCard);
     const onBlueScaleChange = onChangeFactory('blue_scale', setCard);
-    const onPendulumEffectChange = debounce(onChangeFactory('pendulum_effect', setCard));
+    const onPendulumEffectChange = debounce(onChangeFactory('pendulum_effect', setCard), 250);
     const onEffectChange = debounce(onChangeFactory('effect', setCard), 250);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
@@ -103,8 +104,18 @@ export const CardInputPanel = ({
     const [displayTypeAbility, setDisplayTypeAbility] = useState(type_ability.join('/'));
     const [displayEffect, setDisplayEffect] = useState(effect);
     const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulum_effect);
+    const [onlineCharPicker, setOnlineCharPicker] = useState('');
+    const ref = useRef();
 
     return <div className="card-info-panel">
+        <CharPicker
+            targetId={onlineCharPicker}
+            onPick={value => {
+                if (ref.current) (ref.current as any).props.onChange({
+                    target: { value }
+                });
+            }}
+        />
         <Radio.Group key="frame" className="frame-radio" value={frame} onChange={onFrameChange}>
             {frameType.map(({ color, name, backgroundColor }) => {
                 return <Radio.Button key={name} value={name} style={{
@@ -118,6 +129,9 @@ export const CardInputPanel = ({
         <hr />
         <div className="card-header custom-gap">
             <Input key="name"
+                id="name"
+                ref={onlineCharPicker === 'name' ? ref as any : null}
+                onFocus={() => setOnlineCharPicker('name')}
                 allowClear
                 addonBefore="Name"
                 placeholder="Card Name"
@@ -149,6 +163,9 @@ export const CardInputPanel = ({
         <div key="pic" className="main-info">
             <div className="main-info-first">
                 <Input addonBefore="Set ID"
+                    id="set-id"
+                    ref={onlineCharPicker === 'set-id' ? ref as any : null}
+                    onFocus={() => setOnlineCharPicker('set-id')}
                     allowClear
                     onChange={onSetIDChange}
                     placeholder="Set ID"
@@ -164,7 +181,9 @@ export const CardInputPanel = ({
                             <Col span={12}>
                                 <Input key="blue-scale" addonBefore={<span>
                                     <span style={{ color: '#3b9dff' }}>Blue</span> Scale
-                                </span>} value={blue_scale} onChange={e => {
+                                </span>}
+                                value={blue_scale}
+                                onChange={e => {
                                     onBlueScaleChange(e);
                                     if (isMirrorScale) onRedScaleChange(e);
                                 }} />
@@ -172,27 +191,37 @@ export const CardInputPanel = ({
                             <Col span={12}>
                                 <Input key="red-scale" addonBefore={<span>
                                     <span style={{ color: '#ff6f6f' }}>Red</span> Scale
-                                </span>} value={red_scale} onChange={e => {
+                                </span>}
+                                value={red_scale}
+                                onChange={e => {
                                     if (isMirrorScale) onBlueScaleChange(e);
                                     onRedScaleChange(e);
                                 }} />
                             </Col>
                             <Col span={24}>
-                                <TextArea key="pendulum-effect"
-                                    allowClear
-                                    placeholder="Pendulum effect"
-                                    value={displayPendulumEffect}
-                                    onChange={ev => {
-                                        onPendulumEffectChange(ev);
-                                        setDisplayPendulumEffect(ev.target.value);
-                                    }}
-                                    rows={4}
-                                />
+                                <div style={{ position: 'relative' }}>
+                                    <TextArea key="pendulum-effect"
+                                        id="pendulum-effect"
+                                        ref={onlineCharPicker === 'pendulum-effect' ? ref as any : null}
+                                        onFocus={() => setOnlineCharPicker('pendulum-effect')}
+                                        allowClear
+                                        placeholder="Pendulum effect"
+                                        value={displayPendulumEffect}
+                                        onChange={ev => {
+                                            onPendulumEffectChange(ev);
+                                            setDisplayPendulumEffect(ev.target.value);
+                                        }}
+                                        rows={4}
+                                    />
+                                </div>
                             </Col>
                         </>}
                     </Row>
                 </div>}
                 <Input addonBefore="Type"
+                    id="type"
+                    ref={onlineCharPicker === 'type' ? ref as any : null}
+                    onFocus={() => setOnlineCharPicker('type')}
                     allowClear
                     className="hide-selected"
                     onChange={ev => {
@@ -208,32 +237,44 @@ export const CardInputPanel = ({
                     style={{ width: '100%' }}
                     value={displayTypeAbility}
                 />
-                <div>
-                    <TextArea key="effect"
-                        allowClear
-                        placeholder="Card effect"
-                        value={displayEffect}
-                        onChange={ev => {
-                            onEffectChange(ev);
-                            setDisplayEffect(ev.target.value);
-                        }}
-                        rows={10}
-                    />
-                </div>
+                <TextArea key="effect"
+                    id="card-effect"
+                    ref={onlineCharPicker === 'card-effect' ? ref as any : null}
+                    onFocus={() => setOnlineCharPicker('card-effect')}
+                    allowClear
+                    placeholder="Card effect"
+                    value={displayEffect}
+                    rows={10}
+                    onChange={ev => {
+                        onEffectChange(ev);
+                        setDisplayEffect(ev.target.value);
+                    }}
+                />
                 <Row gutter={[10, 10]} >
                     {isMonster && <>
                         <Col span={12}>
-                            <Input key="atk" addonBefore="ATK" allowClear value={atk} onChange={onATKChange} />
+                            <Input key="atk"
+                                id="atk"
+                                ref={onlineCharPicker === 'atk' ? ref as any : null}
+                                onFocus={() => setOnlineCharPicker('atk')}
+                                addonBefore="ATK" allowClear value={atk} onChange={onATKChange} />
                         </Col>
                         <Col span={12}>
-                            <Input key="def" addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
+                            <Input key="def"
+                                id="def"
+                                ref={onlineCharPicker === 'def' ? ref as any : null}
+                                onFocus={() => setOnlineCharPicker('def')}
+                                addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
                         </Col>
                     </>}
                     <Col span={12}>
-                        <Input addonBefore="Serial Number"
+                        <Input addonBefore="Password"
+                            id="password"
+                            ref={onlineCharPicker === 'password' ? ref as any : null}
+                            onFocus={() => setOnlineCharPicker('password')}
                             allowClear
                             onChange={onPasscodeChange}
-                            placeholder="Serial Number"
+                            placeholder="Password"
                             value={passcode}
                         />
                     </Col>
@@ -242,6 +283,9 @@ export const CardInputPanel = ({
                     </Col>
                     <Col span={24}>
                         <Input addonBefore="Creator"
+                            id="creator"
+                            ref={onlineCharPicker === 'creator' ? ref as any : null}
+                            onFocus={() => setOnlineCharPicker('creator')}
                             allowClear
                             onChange={onCreatorChange}
                             placeholder="Creator"

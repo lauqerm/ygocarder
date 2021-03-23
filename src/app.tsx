@@ -120,7 +120,7 @@ function App() {
         const cardType = getCardFrame(frame);
         drawingStatus.current.specialFrame = (async () => {
             if (isPendulum && !isLink) {
-                await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
+                if (!isXyz) await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
                 await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
             }
             await drawFromSource(ctx, '/asset/image/frame/frame-border.png', 0, 0);
@@ -135,7 +135,7 @@ function App() {
                 if (link_map.length > 0) await drawFromSource(ctx, `./asset/image/link-number/link-corner-${link_map.length}.png`, 549 - 61, 800 - 69);
             }
         })();
-    }, [frame, isLink, isPendulum, link_map]);
+    }, [frame, isLink, isPendulum, isXyz, link_map]);
 
     useEffect(() => {
         const ctx = attributeCanvasRef.current?.getContext('2d');
@@ -400,7 +400,7 @@ function App() {
         };
     });
 
-    const onExport = useRef(debounce(async (exportProps: {
+    const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
     }) => {
         const {
@@ -420,8 +420,8 @@ function App() {
                             ctx.drawImage(layer, 0, 0);
                             resolve(true);
                         };
-                    }
-                }
+                    } else resolve(false);
+                } else resolve(false);
             });
         };
 
@@ -457,7 +457,7 @@ function App() {
             ]);
             await drawRefrenceImage(exportCtx);
         }
-    }, 100)).current;
+    }).current;
 
     return (
         <div className={'app-container'} style={{

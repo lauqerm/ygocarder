@@ -8,7 +8,7 @@
     width: 100%;
     height: 100%;
     background-image: linear-gradient(45deg, #333, #333);
-    z-index: 1000;
+    z-index: 4000;
     color: white;
     text-shadow: 0 1px #333, 0 2px #111;
     font-size: 40px;
@@ -44,6 +44,7 @@
 		box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
+		position: relative;
 	}
 	.card-preview-panel {
 		flex: 2;
@@ -152,6 +153,7 @@
 		text-shadow: 0 1px #222;
 	}
 	textarea,
+	.ant-checkbox,
 	.ant-radio-group:not(.frame-radio),
 	.ant-input-wrapper {
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);

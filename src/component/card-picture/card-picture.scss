@@ -6,6 +6,9 @@
 	.download-button {
 		margin-top: 5px;
 		width: 100%;
+		&:hover {
+			background-color: #585863;
+		}
 	}
 	.ant-radio-group {
 		width: 100%;
