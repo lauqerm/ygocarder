@@ -62,9 +62,6 @@
 		margin-top: 0.5em;
 		flex-wrap: wrap;
 		row-gap: 1em;
-		&.custom-gap {
-			column-gap: unset;
-		}
 		.checkbox-train {
 			display: flex;
 		}
@@ -77,6 +74,18 @@
 				margin: 0;
 				border: none;
 			}
+		}
+	}
+	.card-footer-input {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 10px;
+		column-gap: 10px;
+		.input-1st {
+			align-self: center;
+		}
+		.input-creator {
+			grid-column: span 2;
 		}
 	}
 	.pendulum-container {

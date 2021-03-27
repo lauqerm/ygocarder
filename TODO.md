@@ -1,5 +1,5 @@
 Manual mode
-Special symbol
+Color picker
 Foil
 Different pendulum frame
 Auto save?

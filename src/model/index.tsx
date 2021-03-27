@@ -13,21 +13,21 @@ export const defaultCard = {
     type_ability: ['Dragon', 'Pendulum', 'Effect'] as string[],
     effect: `["Blue-Eyes White Dragon" + "Blue-Eyes White Dragon" + "Blue-Eyes White Dragon"]
 Your opponent cannot target or destroy this card with card effects. Once per turn: You can target 1 card your opponent controls; destroy it.
-* If this card was Fusion Summoned using a monster whose original name is "Blue-Eyes Alternative White Dragon" as material, you can target up to 3 cards your opponent controls instead.
-* This card cannot attack the turn this effect is activated.
+● If this card was Fusion Summoned using a monster whose original name is "Blue-Eyes Alternative White Dragon" as material, you can target up to 3 cards your opponent controls instead.
+● This card cannot attack the turn this effect is activated.
 (This card is always treated as "Blue-Eyes Ultimate Dragon")`,
     link_map: ['1', '2', '3', '8', '9'] as string[],
     name: 'B.F.A - U3 “Eden”',
     passcode: '24907043',
     isPendulum: true,
-    pendulum_effect: '',
+    pendulum_effect: 'You can pay 1000 LP; add 1 "Abyss Actor" Pendulum Monster from your Deck to your hand, except "Abyss Actor - Mellow Madonna", also you cannot Special Summon monsters for the rest of this turn, except "Abyss Actor" Pendulum Monsters (even if this card leaves the field). You can only use this effect of "Abyss Actor - Mellow Madonna" once per turn.',
     red_scale: '0',
-    blue_scale: '0',
+    blue_scale: '13',
     picture: 'https://images2.imgbox.com/13/c5/dXPTEORX_o.jpg',
     set_id: 'ROTD-EN081',
     star: 4,
     isFirstEdition: true,
-    creator: '©1996 KAZUKI TAKAHASHI',
+    creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
 };
 export const defaultMonster = defaultCard;
 

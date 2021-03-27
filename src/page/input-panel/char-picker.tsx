@@ -1,5 +1,4 @@
-import { Button } from 'antd';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Moveable from 'react-moveable';
 import { EllipsisOutlined } from '@ant-design/icons';
 import './char-picker.scss';
@@ -51,9 +50,9 @@ export const CharPicker = ({
 }: CharPicker) => {
     const [target, setTarget] = useState<HTMLElement | null>(null);
     const internalOnPick = (char: string) => {
-        const target = document.getElementById(targetId) as HTMLTextAreaElement;
-        if (target) {
-            const { value } = insertAtCursor(target, char);
+        const inputTarget = document.getElementById(targetId) as HTMLTextAreaElement;
+        if (inputTarget) {
+            const { value } = insertAtCursor(inputTarget, char);
 
             onPick(value);
         }
@@ -61,6 +60,16 @@ export const CharPicker = ({
 
     useEffect(() => {
         setTarget(document.getElementById('char-picker'));
+    }, []);
+
+    const onDrag = useCallback(({
+        target,
+        left, top,
+        transform,
+    }) => {
+        target!.style.left = `${left}px`;
+        target!.style.top = `${top}px`;
+        target!.style.transform = transform;
     }, []);
 
     return <div className="char-picker-container">
@@ -71,12 +80,12 @@ export const CharPicker = ({
             {[
                 '∞',
                 '☆',
-                '⚫',
+                '•',
                 '©',
                 '™',
                 'Ɐ',
             ].map(entry => {
-                return <Button key={entry} onClick={() => internalOnPick(entry)}>{entry}</Button>;
+                return <button key={entry} className="ant-btn" onClick={() => internalOnPick(entry)}>{entry}</button>;
             })}
         </div>}
         <Moveable
@@ -89,15 +98,7 @@ export const CharPicker = ({
             /* draggable */
             draggable={true}
             throttleDrag={0}
-            onDrag={({
-                target,
-                left, top,
-                transform,
-            }) => {
-                target!.style.left = `${left}px`;
-                target!.style.top = `${top}px`;
-                target!.style.transform = transform;
-            }}
+            onDrag={onDrag}
         />
     </div>;
 };

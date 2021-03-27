@@ -9,6 +9,7 @@ import { CharPicker } from './char-picker';
 import './input-panel.scss';
 
 const { TextArea } = Input;
+const { Button: RadioButton } = Radio;
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
 
 const onChangeFactory = (
@@ -23,6 +24,20 @@ const onChangeFactory = (
         }));
     };
 };
+
+const frameButton = frameType.map(({ color, name, backgroundColor }) => {
+    return <RadioButton key={name} value={name} style={{
+        backgroundColor,
+        color,
+    }}>
+        {name}
+    </RadioButton>;
+});
+const attributeButton = attributeList.map(({ color, name }) => <RadioButton key={name} value={name}>
+    <span style={{ color, fontWeight: 'bold' }}>{name}</span>
+</RadioButton>);
+const iconButton = iconList.map(entry => <RadioButton key={entry} value={entry}>{entry}</RadioButton>);
+const starButton = [...Array(14)].map((e, index) => <RadioButton key={`${index}`} value={`${index}`}>{`${index}`}</RadioButton>);
 
 export type CardInputPanelRef = {
     getCroppedImageCanvasRef: () => HTMLCanvasElement | null
@@ -58,7 +73,7 @@ export const CardInputPanel = ({
     };
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
-    const onNameChange = onChangeFactory('name', setCard);
+    const onNameChange = debounce(onChangeFactory('name', setCard), 250);
     const onStarChange = onChangeFactory('star', setCard);
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isPendulum: e.target.checked };
@@ -102,6 +117,7 @@ export const CardInputPanel = ({
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
     const [displayTypeAbility, setDisplayTypeAbility] = useState(type_ability.join('/'));
+    const [displayName, setDisplayName] = useState(name);
     const [displayEffect, setDisplayEffect] = useState(effect);
     const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulum_effect);
     const [onlineCharPicker, setOnlineCharPicker] = useState('');
@@ -116,48 +132,44 @@ export const CardInputPanel = ({
                 });
             }}
         />
-        <Radio.Group key="frame" className="frame-radio" value={frame} onChange={onFrameChange}>
-            {frameType.map(({ color, name, backgroundColor }) => {
-                return <Radio.Button key={name} value={name} style={{
-                    backgroundColor,
-                    color,
-                }}>
-                    {name}
-                </Radio.Button>;
-            })}
+        <Radio.Group className="frame-radio" value={frame} onChange={onFrameChange}>
+            {frameButton}
         </Radio.Group>
         <hr />
         <div className="card-header custom-gap">
-            <Input key="name"
+            <Input
                 id="name"
                 ref={onlineCharPicker === 'name' ? ref as any : null}
                 onFocus={() => setOnlineCharPicker('name')}
                 allowClear
                 addonBefore="Name"
                 placeholder="Card Name"
-                value={name}
-                onChange={onNameChange}
+                value={displayName}
+                onChange={ev => {
+                    onNameChange(ev);
+                    setDisplayName(ev.target.value);
+                }}
             />
-            {(isMonster && !isLink)
-                ? <Radio.Group key="star" className="checkbox-train" value={`${star}`} onChange={onStarChange}>
-                    <label className="standalone-addon ant-input-group-addon">
-                        <span>{isXyz ? 'Rank' : 'Level'}</span>
-                    </label>
-                    {[...Array(14)].map((e, index) => <Radio.Button key={`${index}`} value={`${index}`}>{`${index}`}</Radio.Button>)}
-                </Radio.Group>
-                : <Radio.Group key="subFamily" className="checkbox-train" value={subFamily} onChange={onSubFamilyChange}>
+            {isMonster
+                ? !isLink
+                    ? <Radio.Group className="checkbox-train" value={`${star}`} onChange={onStarChange}>
+                        <label className="standalone-addon ant-input-group-addon">
+                            <span>{isXyz ? 'Rank' : 'Level'}</span>
+                        </label>
+                        {starButton}
+                    </Radio.Group>
+                    : null
+                : <Radio.Group className="checkbox-train" value={subFamily} onChange={onSubFamilyChange}>
                     <label className="standalone-addon ant-input-group-addon">
                         <span>Icon</span>
                     </label>
-                    {iconList.map(entry => <Radio.Button key={entry} value={entry}>{entry}</Radio.Button>)}
+                    {iconButton}
                 </Radio.Group>}
-            <Radio.Group key="attribute" className="checkbox-train" value={attribute} onChange={onAttributeChange}>
+            <Radio.Group className="checkbox-train" value={attribute} onChange={onAttributeChange}>
                 <label className="standalone-addon ant-input-group-addon">
                     <span>Attribute</span>
                 </label>
-                {attributeList.map(({ color, name }) => <Radio.Button key={name} value={name}>
-                    <span style={{ color, fontWeight: 'bold' }}>{name}</span>
-                </Radio.Button>)}
+                {attributeButton}
             </Radio.Group>
         </div>
         <div key="pic" className="main-info">
@@ -250,49 +262,49 @@ export const CardInputPanel = ({
                         setDisplayEffect(ev.target.value);
                     }}
                 />
-                <Row gutter={[10, 10]} >
-                    {isMonster && <>
-                        <Col span={12}>
-                            <Input key="atk"
-                                id="atk"
-                                ref={onlineCharPicker === 'atk' ? ref as any : null}
-                                onFocus={() => setOnlineCharPicker('atk')}
-                                addonBefore="ATK" allowClear value={atk} onChange={onATKChange} />
-                        </Col>
-                        <Col span={12}>
-                            <Input key="def"
-                                id="def"
-                                ref={onlineCharPicker === 'def' ? ref as any : null}
-                                onFocus={() => setOnlineCharPicker('def')}
-                                addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
-                        </Col>
-                    </>}
-                    <Col span={12}>
-                        <Input addonBefore="Password"
-                            id="password"
-                            ref={onlineCharPicker === 'password' ? ref as any : null}
-                            onFocus={() => setOnlineCharPicker('password')}
-                            allowClear
-                            onChange={onPasscodeChange}
-                            placeholder="Password"
-                            value={passcode}
-                        />
-                    </Col>
-                    <Col span={12} style={{ alignSelf: 'center' }}>
-                        <Checkbox onChange={onFirstEditionChange} checked={isFirstEdition}>Is 1st Edition?</Checkbox>
-                    </Col>
-                    <Col span={24}>
-                        <Input addonBefore="Creator"
-                            id="creator"
-                            ref={onlineCharPicker === 'creator' ? ref as any : null}
-                            onFocus={() => setOnlineCharPicker('creator')}
-                            allowClear
-                            onChange={onCreatorChange}
-                            placeholder="Creator"
-                            value={creator}
-                        />
-                    </Col>
-                </Row>
+                <div className="card-footer-input">
+                    {isMonster
+                        ? <Input key="atk"
+                            id="atk"
+                            ref={onlineCharPicker === 'atk' ? ref as any : null}
+                            onFocus={() => setOnlineCharPicker('atk')}
+                            addonBefore="ATK" allowClear value={atk} onChange={onATKChange} />
+                        : <div />}
+                    {isMonster
+                        ? <Input key="def"
+                            id="def"
+                            ref={onlineCharPicker === 'def' ? ref as any : null}
+                            onFocus={() => setOnlineCharPicker('def')}
+                            addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
+                        : <div />
+                    }
+                    <Input addonBefore="Password"
+                        id="password"
+                        ref={onlineCharPicker === 'password' ? ref as any : null}
+                        onFocus={() => setOnlineCharPicker('password')}
+                        allowClear
+                        onChange={onPasscodeChange}
+                        placeholder="Password"
+                        value={passcode}
+                    />
+                    <Checkbox
+                        className="input-1st"
+                        onChange={onFirstEditionChange}
+                        checked={isFirstEdition}
+                    >
+                        Is 1st Edition?
+                    </Checkbox>
+                    <Input addonBefore="Creator"
+                        id="creator"
+                        className="input-creator"
+                        ref={onlineCharPicker === 'creator' ? ref as any : null}
+                        onFocus={() => setOnlineCharPicker('creator')}
+                        allowClear
+                        onChange={onCreatorChange}
+                        placeholder="Creator"
+                        value={creator}
+                    />
+                </div>
             </div>
             <div className="main-info-second">
                 <ImageCropper

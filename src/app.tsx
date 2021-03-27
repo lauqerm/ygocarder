@@ -7,7 +7,6 @@ import {
     defaultMonster,
     iconList,
 } from './model';
-import { debounce } from 'lodash';
 import {
     checkLink,
     checkMonster,
@@ -36,12 +35,13 @@ import {
     drawCreatorText,
     drawEffect,
     drawIconSpaceTemplate,
+    drawName,
     drawScale,
     drawTextTemplate,
-    fillTextLeftWithLimit,
     fillTextLeftWithSpacing,
 } from './draw';
 import WebFont from 'webfontloader';
+import { LoadingOutlined } from '@ant-design/icons';
 
 function App() {
     const [isInitializing, setInitializing] = useState(true);
@@ -83,20 +83,23 @@ function App() {
     const isMonster = checkMonster(currentCard);
     const pendulumSize = 'medium';
 
-    const drawingStatus = useRef<Record<string, Promise<any>>>({
-        frame: Promise.resolve(),
-        star: Promise.resolve(),
-        attribute: Promise.resolve(),
-        specialFrame: Promise.resolve(),
+    const drawingPipeline = useRef<Record<string, () => Promise<any>>>({
+        frame: () => Promise.resolve(),
+        star: () => Promise.resolve(),
+        attribute: () => Promise.resolve(),
+        specialFrame: () => Promise.resolve(),
     });
     const [imageChangeCount, setImageChangeCount] = useState(0);
 
     useEffect(() => {
         const ctx = frameCanvasRef.current?.getContext('2d');
-        const cardType = getCardFrame(frame);
-        
-        ctx?.clearRect(0, 0, 549, 800);
-        drawingStatus.current.frame = drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+
+        drawingPipeline.current.frame = () => {
+            ctx?.clearRect(0, 0, 549, 800);
+            const cardType = getCardFrame(frame);
+
+            return drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+        };
     }, [frame]);
 
     useEffect(() => {
@@ -115,10 +118,10 @@ function App() {
 
     useEffect(() => {
         const ctx = specialFrameCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 800);
         
-        const cardType = getCardFrame(frame);
-        drawingStatus.current.specialFrame = (async () => {
+        drawingPipeline.current.specialFrame = async () => {
+            ctx?.clearRect(0, 0, 549, 800);
+            const cardType = getCardFrame(frame);
             if (isPendulum && !isLink) {
                 if (!isXyz) await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
                 await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
@@ -134,53 +137,60 @@ function App() {
                 );
                 if (link_map.length > 0) await drawFromSource(ctx, `./asset/image/link-number/link-corner-${link_map.length}.png`, 549 - 61, 800 - 69);
             }
-        })();
+        };
     }, [frame, isLink, isPendulum, isXyz, link_map]);
 
     useEffect(() => {
         const ctx = attributeCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 100);
-        drawingStatus.current.attribute = drawFromSource(ctx, `/asset/image/attribute/attr-${attribute.toLowerCase()}.png`, 458, 37);
+        drawingPipeline.current.attribute = () => {
+            ctx?.clearRect(0, 0, 549, 100);
+
+            return drawFromSource(ctx, `/asset/image/attribute/attr-${attribute.toLowerCase()}.png`, 458, 37);
+        };
     }, [attribute]);
 
     useEffect(() => {
         const ctx = subFamilyCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 150);
-        if (isMonster && !isLink) {
-            let counter = Math.min(13, star ?? 0);
-            let type = isXyz ? 'rank' : 'level';
-            let offset = 0 - (34 + 2.3636);
-            let totalWidth = 34 * counter + 2.3636 * (counter - 1);
-            let startPoint = counter <= 12
-                ? isXyz
-                    ? 57 - 34
-                    : 492
-                : isXyz
-                    ? (549 - totalWidth) / 2 - 34
-                    : (549 - totalWidth) / 2 + totalWidth;
-            drawingStatus.current.star = Promise.all([...Array(counter)]
-                .map(() => {
-                    offset += (34 + 2.3636);
-                    return drawFromSource(
-                        ctx,
-                        `/asset/image/sub-family/subfamily-${type}.png`,
-                        startPoint + (34 + offset) * (isXyz ? 1 : -1),
-                        99,
-                    );
-                })
-            );
-        } else if (!isMonster) {
-            const normalizedSubFamily = subFamily.toUpperCase();
-            const hasSTIcon = normalizedSubFamily !== 'no icon'
-                && iconList.includes(normalizedSubFamily);
-
-            drawingStatus.current.star = hasSTIcon
-                ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
-                    (image) => 491 - image.naturalWidth - 7,
-                    103,
-                    29, 29)
-                : new Promise(resolve => resolve(true));
-        }
+        drawingPipeline.current.star = () => {
+            ctx?.clearRect(0, 0, 549, 150);
+            if (isMonster && !isLink) {
+                let counter = Math.min(13, star ?? 0);
+                let type = isXyz ? 'rank' : 'level';
+                let offset = 0 - (34 + 2.3636);
+                let totalWidth = 34 * counter + 2.3636 * (counter - 1);
+                let edge = counter <= 12
+                    ? isXyz
+                        ? 57 - 34
+                        : 492
+                    : isXyz
+                        ? (549 - totalWidth) / 2 - 34
+                        : (549 - totalWidth) / 2 + totalWidth;
+    
+                return Promise.all([...Array(counter)]
+                    .map(() => {
+                        offset += (34 + 2.3636);
+                        return drawFromSource(
+                            ctx,
+                            `/asset/image/sub-family/subfamily-${type}.png`,
+                            edge + (34 + offset) * (isXyz ? 1 : -1),
+                            99,
+                        );
+                    })
+                );
+            } else if (!isMonster) {
+                const normalizedSubFamily = subFamily.toUpperCase();
+                const hasSTIcon = normalizedSubFamily !== 'no icon'
+                        && iconList.includes(normalizedSubFamily);
+    
+                return hasSTIcon
+                    ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
+                        (image) => 491 - image.naturalWidth - 7,
+                        103,
+                        29, 29)
+                    : new Promise(resolve => resolve(true));
+            };
+            return new Promise(resolve => resolve(true));
+        };
     }, [isLink, isMonster, isXyz, star, subFamily]);
 
     useEffect(() => {
@@ -202,11 +212,10 @@ function App() {
         const ctx = nameCanvasRef.current?.getContext('2d');
         if (ctx) {
             ctx.clearRect(0, 0, 549, 100);
-            ctx.font = '64.59px MatrixRegularSmallCaps';
             ctx.textAlign = 'left';
             ctx.fillStyle = isXyz ? '#ffffff' : '#000000';
 
-            fillTextLeftWithLimit(ctx, name, 40.52, 81, 409);
+            drawName(ctx, name, 40.52, 78, 409);
         }
     }, [isInitializing, isXyz, name]);
 
@@ -304,6 +313,7 @@ function App() {
     useEffect(() => {
         const ctx = effectCanvasRef.current?.getContext('2d');
         const typeCtx = typeCanvasRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 750);
         if (isMonster) {
             const effectIndexSize = drawEffect(ctx, effect, false, isNormal);
             drawTypeAbility(typeCtx, effectIndexSize === 0
@@ -323,6 +333,7 @@ function App() {
     }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal]);
     useEffect(() => {
         const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
+        ctx?.clearRect(0, 0, 549, 600);
         if (isMonster && isPendulum) {
             drawEffect(
                 ctx,
@@ -335,16 +346,16 @@ function App() {
         }
     }, [isInitializing, isMonster, isPendulum, pendulum_effect]);
 
-    const drawRefrenceImage  = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+    const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
         let leftOffset = -5;
-        let topOffset = -150;
+        let topOffset = 150;
         // let leftOffset = -4;
         // let topOffset = 300;
         // let leftOffset = -300;
         // let topOffset = -7;
         // let leftOffset = -1;
         // let topOffset = 100;
-        // await drawFromSourceWithSize(ctx, '/asset/image/MP18-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
+        // await drawFromSourceWithSize(ctx, '/asset/image/MP19-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
     }, []);
 
     useEffect(() => {
@@ -363,6 +374,7 @@ function App() {
                     'stone-serif-bold',
                     'stone-serif-bold',
                     'stone-serif-regular',
+                    'matrix',
                     'palatino-linotype-bold',
                     'MatrixBook',
                     'ITCStoneSerifMedium',
@@ -380,23 +392,40 @@ function App() {
         });
     }, []);
 
+    const exportRef = useRef({
+        currentPipeline: Promise.resolve(),
+        queuedPipeline: false,
+    });
     useEffect(() => {
-        // let relevant = true;
-        let abortExport = () => {};
+        let relevant = true;
 
+        /**
+         * Run export pipeline
+         * - While it is running, every effect just mark pipeline as queued, then wait the current pipeline
+         * - If the pipeline is complete and there is no effect, run another pipeline and remove the queue
+         */
         (async () => {
             const canvasRef = drawCanvasRef.current;
             if (canvasRef) {
-                await Promise.any([
-                    onExport({ isPendulum }),
-                    new Promise((resolve, reject) => abortExport = reject),
-                ]);
+                document.querySelector('#export-canvas-guard')?.setAttribute('style', '');
+                exportRef.current.queuedPipeline = true;
+                await exportRef.current.currentPipeline;
+
+                if (relevant) {
+                    exportRef.current.currentPipeline = onExport({ isPendulum });
+                    exportRef.current.queuedPipeline = false;
+
+                    await exportRef.current.currentPipeline;
+                    if (relevant) {
+                        document.querySelector('#export-canvas-guard')?.setAttribute('style', 'display: none');
+                    }
+                }
+                // onExport({ isPendulum })
             }
         })();
 
         return () => {
-            // relevant = false;
-            abortExport();
+            relevant = false;
         };
     });
 
@@ -420,6 +449,7 @@ function App() {
                             ctx.drawImage(layer, 0, 0);
                             resolve(true);
                         };
+                        layer.onerror = () => resolve(false);
                     } else resolve(false);
                 } else resolve(false);
             });
@@ -427,7 +457,11 @@ function App() {
 
         if (canvasRef && exportCtx) {
             exportCtx.clearRect(0, 0, 549, 800);
-            await Promise.all(Object.values(drawingStatus));
+            await Promise.all(Object
+                .values(drawingPipeline.current)
+                .map(callDraw => {
+                    return callDraw();
+                }));
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
             if (previewCtx && exportCtx) {
@@ -479,7 +513,11 @@ function App() {
             <div className="card-preview-panel">
                 <button className="export-button">Save Card: Right click → "Save image as..."</button>
                 <div className="card-canvas-group">
-                    <canvas className="export-canvas" ref={drawCanvasRef} width={549} height={800} />
+                    <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
+                    <div id="export-canvas-guard">
+                        <div className="canvas-guard-alert">Generating...</div>
+                        <LoadingOutlined />
+                    </div>
                     <canvas id="frameCanvas" ref={frameCanvasRef} width={549} height={800} />
                     <canvas id="artCanvas" ref={artCanvasRef} width={549} height={650} />
                     <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={549} height={800} />

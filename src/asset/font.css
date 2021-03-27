@@ -22,6 +22,11 @@
 	src: url('./font/Matrix Book.ttf');
 };
 @font-face {
+	font-family: matrix, sans-serif;
+    src: url('./font/matrix.woff2') format('woff2'),
+         url('./font/matrix.woff') format('woff');
+};
+@font-face {
 	font-family: ITCStoneSerifMedium;
 	src: url('./font/Stone Serif ITC Medium.ttf') format('truetype');
 };

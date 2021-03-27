@@ -50,11 +50,6 @@
 		flex: 2;
 		min-width: 549px;
 		position: relative;
-		&:hover {
-			.export-canvas {
-				display: inline-block !important;
-			}
-		}
 		.export-button {
 			background-color: #00000044;
 			border-radius: 5px;
@@ -81,9 +76,40 @@
 				left: 0;
 				z-index: 1;
 			}
-			.export-canvas {
+			&:hover {
+				#export-canvas {
+					display: inline-block !important;
+				}
+				#export-canvas-guard {
+					display: flex;
+				}
+			}
+			#export-canvas {
 				display: none;
 				z-index: 100;
+			}
+			#export-canvas-guard {
+				position: absolute;
+				left: 0;
+				display: none;
+				align-items: center;
+				justify-content: center;
+				z-index: 101;
+				background-color: #ffffff44;
+				width: 549px;
+				height: 800px;
+				.anticon {
+					font-size: 50px;
+				}
+				.canvas-guard-alert {
+					position: absolute;
+					transform: translateY(-60px);
+					color: white;
+					padding: 5px 10px;
+					border-radius: 5px;
+					background-color: #1890ff;
+					box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+				}
 			}
 			.crop-canvas {
 				position: relative;
