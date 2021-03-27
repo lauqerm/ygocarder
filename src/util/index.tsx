@@ -1,20 +1,19 @@
-// export const scaleCalc = (value: number, range = 1) => {
-//     const normalizedValue = Math.max(0.01, value / range);
-//     if (normalizedValue === 0) {
-//         console.warn('Divided by Zero');
-//         return {
-//             scaleRatio: 1,
-//             translatePercent: '-0%'
-//         };
-//     }
-//     const newRatio = normalizedValue;
-//     const newTranslatePercent = Math.round((1 - normalizedValue) / 2 / normalizedValue * 10000) / 100;
+export const randomCharacter = (charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', length = 1) => {
+    let result           = '';
+    const charactersLength = charSet.length;
+    for ( let i = 0; i < length; i++) {
+        result += charSet.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+};
 
-//     return {
-//         scaleRatio: newRatio,
-//         translatePercent: `${newTranslatePercent * -1}%`,
-//     };
-// };
+export const randomSetID = () => {
+    return `${randomCharacter('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4)}-EN${randomCharacter('0123456789', 2)}`;
+};
+
+export const randomPassword = () => {
+    return `${randomCharacter('0123456789', 8)}`;
+};
 
 export const splitEffect = (effect: string, isNormal = false) => {
     let effectBody = effect;

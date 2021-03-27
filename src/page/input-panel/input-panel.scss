@@ -49,6 +49,10 @@
 	.name-input .ant-input-group-addon {
 		min-width: 135px;
 	}
+	.set-id-input .ant-input-group-addon,
+	.password-input .ant-input-group-addon {
+		width: 120px;
+	}
 
 	.ant-input-group-addon {
 		min-width: 85px;

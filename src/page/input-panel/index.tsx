@@ -2,12 +2,13 @@ import React, { useRef, useState } from 'react';
 import { Radio, Input, Row, Col, Checkbox } from 'antd';
 import { Card, frameType, iconList, attributeList } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
-import { checkXyz, checkLink, checkMonster } from '../../util';
+import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { ExtractProps } from '../../type';
 import { debounce } from 'lodash';
 import { CharPicker } from './char-picker';
-import './input-panel.scss';
 import { ColorPicker } from './color-picker';
+import { SyncOutlined } from '@ant-design/icons';
+import './input-panel.scss';
 
 const { TextArea } = Input;
 const { Button: RadioButton } = Radio;
@@ -24,6 +25,17 @@ const onChangeFactory = (
             [key]: valueTransform(typeof e === 'string' || Array.isArray(e) ? e : e?.target?.value),
         }));
     };
+};
+
+type RandomButton = {
+    seeder: () => string,
+    onGenerate: (value: string) => void,
+}
+const RandomButton = ({
+    seeder,
+    onGenerate,
+}: RandomButton) => {
+    return <SyncOutlined style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #222' }} onClick={() => onGenerate(seeder())} />;
 };
 
 const frameButton = frameType.map(({ color, name, backgroundColor }) => {
@@ -177,11 +189,13 @@ export const CardInputPanel = ({
         </div>
         <div key="pic" className="main-info">
             <div className="main-info-first">
-                <Input addonBefore="Set ID"
+                <Input
                     id="set-id"
                     ref={onlineCharPicker === 'set-id' ? ref as any : null}
                     onFocus={() => setOnlineCharPicker('set-id')}
                     allowClear
+                    className="set-id-input"
+                    addonBefore={<>Set ID<RandomButton seeder={randomSetID} onGenerate={onSetIDChange} /></>}
                     onChange={onSetIDChange}
                     placeholder="Set ID"
                     value={set_id}
@@ -281,11 +295,13 @@ export const CardInputPanel = ({
                             addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
                         : <div />
                     }
-                    <Input addonBefore="Password"
+                    <Input
                         id="password"
                         ref={onlineCharPicker === 'password' ? ref as any : null}
                         onFocus={() => setOnlineCharPicker('password')}
                         allowClear
+                        className="password-input"
+                        addonBefore={<>Password<RandomButton seeder={randomPassword} onGenerate={onPasscodeChange} /></>}
                         onChange={onPasscodeChange}
                         placeholder="Password"
                         value={passcode}
