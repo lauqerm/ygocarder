@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Yugioh Carder",
+  "name": "Yugioh Card Maker",
   "icons": [
     {
       "src": "favicon.ico",
