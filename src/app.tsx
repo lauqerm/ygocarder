@@ -346,17 +346,17 @@ function App() {
         }
     }, [isInitializing, isMonster, isPendulum, pendulum_effect]);
 
-    const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
-        let leftOffset = -5;
-        let topOffset = 150;
-        // let leftOffset = -4;
-        // let topOffset = 300;
-        // let leftOffset = -300;
-        // let topOffset = -7;
-        // let leftOffset = -1;
-        // let topOffset = 100;
-        // await drawFromSourceWithSize(ctx, '/asset/image/MP19-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
-    }, []);
+    // const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
+    //     let leftOffset = -5;
+    //     let topOffset = 150;
+    // let leftOffset = -4;
+    // let topOffset = 300;
+    // let leftOffset = -300;
+    // let topOffset = -7;
+    // let leftOffset = -1;
+    // let topOffset = 100;
+    // await drawFromSourceWithSize(ctx, '/asset/image/MP19-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
+    // }, []);
 
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
@@ -489,7 +489,7 @@ function App() {
             await Promise.all([
                 layerList.map(currentlayer => generateLayer(currentlayer, exportCtx)),
             ]);
-            await drawRefrenceImage(exportCtx);
+            // await drawRefrenceImage(exportCtx);
         }
     }).current;
 
