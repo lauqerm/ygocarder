@@ -18,6 +18,7 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
 (This card is always treated as "Blue-Eyes Ultimate Dragon")`,
     link_map: ['1', '2', '3', '8', '9'] as string[],
     name: 'B.F.A - U3 “Eden”',
+    nameColor: 'auto',
     passcode: '24907043',
     isPendulum: true,
     pendulum_effect: 'You can pay 1000 LP; add 1 "Abyss Actor" Pendulum Monster from your Deck to your hand, except "Abyss Actor - Mellow Madonna", also you cannot Special Summon monsters for the rest of this turn, except "Abyss Actor" Pendulum Monsters (even if this card leaves the field). You can only use this effect of "Abyss Actor - Mellow Madonna" once per turn.',
@@ -30,20 +31,6 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
 };
 export const defaultMonster = defaultCard;
-
-export {
-    defaultMonsterAttribute,
-    defaultMonsterCardType,
-    defaultMonsterSubFamily,
-    defaultMonsterSubTypeAbility,
-    defaultMonsterType,
-    defaultTypeAbilityList,
-    monsterFamily,
-} from './monster';
-export type {
-    TextBoxFontSize,
-    TextBoxSize,
-} from './textbox';
 
 export const frameType = [
     { name: 'normal', color: '#fff', backgroundColor: '#c49c5e' },

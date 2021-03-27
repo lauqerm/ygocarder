@@ -7,6 +7,7 @@ import { ExtractProps } from '../../type';
 import { debounce } from 'lodash';
 import { CharPicker } from './char-picker';
 import './input-panel.scss';
+import { ColorPicker } from './color-picker';
 
 const { TextArea } = Input;
 const { Button: RadioButton } = Radio;
@@ -74,6 +75,7 @@ export const CardInputPanel = ({
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
     const onNameChange = debounce(onChangeFactory('name', setCard), 250);
+    const onNameColorChange = onChangeFactory('nameColor', setCard);
     const onStarChange = onChangeFactory('star', setCard);
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isPendulum: e.target.checked };
@@ -86,12 +88,12 @@ export const CardInputPanel = ({
     const onEffectChange = debounce(onChangeFactory('effect', setCard), 250);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
-    const onTypeAbilityChange = (value: (string | number)[]) => {
+    const onTypeAbilityChange = debounce((value: (string | number)[]) => {
         setCard(current => ({
             ...current,
             type_ability: value.map(entry => `${entry}`),
         }));
-    };
+    }, 250);
     const onSetIDChange = onChangeFactory('set_id', setCard);
     const onPasscodeChange = onChangeFactory('passcode', setCard);
     const onCreatorChange = onChangeFactory('creator', setCard);
@@ -101,7 +103,7 @@ export const CardInputPanel = ({
 
     const {
         frame,
-        name,
+        name, nameColor,
         picture,
         effect,
         type_ability,
@@ -142,9 +144,10 @@ export const CardInputPanel = ({
                 ref={onlineCharPicker === 'name' ? ref as any : null}
                 onFocus={() => setOnlineCharPicker('name')}
                 allowClear
-                addonBefore="Name"
+                addonBefore={<>Name <ColorPicker defaultValue={nameColor} onChange={onNameColorChange} /></>}
                 placeholder="Card Name"
                 value={displayName}
+                className="name-input"
                 onChange={ev => {
                     onNameChange(ev);
                     setDisplayName(ev.target.value);
@@ -223,7 +226,7 @@ export const CardInputPanel = ({
                                             onPendulumEffectChange(ev);
                                             setDisplayPendulumEffect(ev.target.value);
                                         }}
-                                        rows={4}
+                                        rows={6}
                                     />
                                 </div>
                             </Col>

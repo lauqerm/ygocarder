@@ -1,5 +1,5 @@
 import { FontSize, monsterFontList, BoxSize, monsterSizeList } from '../const';
-import { splitEffect, createCondenser } from '../util';
+import { splitEffect, createCondenser, quoteConvert } from '../util';
 
 export const drawName = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -9,7 +9,7 @@ export const drawName = (
     maxWidth: number,
 ) => {
     if (ctx) {
-        const splittedText = value.split(/([^&A-Za-z0-9\-/\s()])/g);
+        const splittedText = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()])/g);
         const contentWidth = splittedText
             .reduce((prev, cur, index) => {
                 if (index % 2 === 0) ctx.font = '64.59px MatrixRegularSmallCaps';
@@ -18,6 +18,7 @@ export const drawName = (
                 return prev + ctx.measureText(cur).width;
             }, 0);
 
+        // ctx.fillText(value, edge, baseline, maxWidth);
         if (contentWidth > 0) {
             const condenseRatio = Math.min(maxWidth / contentWidth, 1);
             ctx.scale(condenseRatio, 1);
@@ -65,6 +66,7 @@ export const drawEffect = (
     fontList: FontSize[] = monsterFontList,
     sizeList: BoxSize[] = monsterSizeList,
 ) => {
+    const normalizedContent = quoteConvert(content);
     let effectIndexSize = 0;
     if (ctx) {
         const tolerantPerSentence: Record<string, number> = {
@@ -78,10 +80,10 @@ export const drawEffect = (
             material: effectMaterial,
         } = isPendulumEffect
             ? {
-                body: content,
+                body: normalizedContent,
                 flavorCondition: '',
                 material: '',
-            } : splitEffect(content, isNormal);
+            } : splitEffect(normalizedContent, isNormal);
 
         const additionalLineCount = (effectMaterial.length > 0 ? 1 : 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
         const sentencizeText = effectBody.split('\n');

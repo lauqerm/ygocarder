@@ -45,6 +45,11 @@
 			text-align: center;
 		}
 	}
+
+	.name-input .ant-input-group-addon {
+		min-width: 135px;
+	}
+
 	.ant-input-group-addon {
 		min-width: 85px;
 		text-align: right;
@@ -93,6 +98,6 @@
 		border: 1px solid #484848;
 		border-radius: 3px;
 		box-shadow: 0 0 2px 1px #212121 inset;
-		background-color: #4f4f4f;
+		background-color: #48484b;
 	}
 }

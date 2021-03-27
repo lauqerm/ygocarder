@@ -66,7 +66,7 @@ function App() {
 
     const {
         frame,
-        name,
+        name, nameColor,
         effect,
         type_ability,
         isPendulum, pendulum_effect, blue_scale, red_scale,
@@ -213,11 +213,14 @@ function App() {
         if (ctx) {
             ctx.clearRect(0, 0, 549, 100);
             ctx.textAlign = 'left';
-            ctx.fillStyle = isXyz ? '#ffffff' : '#000000';
+            ctx.fillStyle = nameColor === 'auto'
+                ? isXyz ? '#ffffff' : '#000000'
+                : nameColor;
+            ctx.strokeStyle = '#ffffff';
 
             drawName(ctx, name, 40.52, 78, 409);
         }
-    }, [isInitializing, isXyz, name]);
+    }, [isInitializing, isXyz, name, nameColor]);
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');
