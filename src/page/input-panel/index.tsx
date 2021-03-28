@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Radio, Input, Row, Col, Checkbox } from 'antd';
-import { Card, frameType, iconList, attributeList } from '../../model';
+import { Radio, Input, Row, Col, Checkbox, Tooltip } from 'antd';
+import { Card, frameType, iconList, attributeList, stickerList, foilList } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { ExtractProps } from '../../type';
@@ -35,9 +35,21 @@ const RandomButton = ({
     seeder,
     onGenerate,
 }: RandomButton) => {
-    return <SyncOutlined style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #222' }} onClick={() => onGenerate(seeder())} />;
+    return <span style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #222' }}>
+        <Tooltip overlay="Random">
+            <SyncOutlined onClick={() => onGenerate(seeder())} />
+        </Tooltip>
+    </span>;
 };
 
+const foilButton = foilList.map(({ color, name }) => {
+    return <RadioButton key={name} value={name} style={{
+        color,
+        fontWeight: 'bold',
+    }}>
+        {name.toLocaleUpperCase()}
+    </RadioButton>;
+});
 const frameButton = frameType.map(({ color, name, backgroundColor }) => {
     return <RadioButton key={name} value={name} style={{
         backgroundColor,
@@ -46,11 +58,14 @@ const frameButton = frameType.map(({ color, name, backgroundColor }) => {
         {name}
     </RadioButton>;
 });
-const attributeButton = attributeList.map(({ color, name }) => <RadioButton key={name} value={name}>
-    <span style={{ color, fontWeight: 'bold' }}>{name}</span>
+const attributeButton = attributeList.map(({ name }) => <RadioButton key={name} value={name}>
+    <img alt={name} src={`/asset/image/attribute/attr-${name.toLowerCase()}.png`} />
 </RadioButton>);
 const iconButton = iconList.map(entry => <RadioButton key={entry} value={entry}>{entry}</RadioButton>);
 const starButton = [...Array(14)].map((e, index) => <RadioButton key={`${index}`} value={`${index}`}>{`${index}`}</RadioButton>);
+const stickerButton = stickerList.map(name => <RadioButton key={name} value={name}>
+    <img alt={name} src={`/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />
+</RadioButton>);
 
 export type CardInputPanelRef = {
     getCroppedImageCanvasRef: () => HTMLCanvasElement | null
@@ -71,6 +86,7 @@ export const CardInputPanel = ({
     const setCard = (mutateFunc: (card: Card) => Card) => {
         onCardChange(currentCard => mutateFunc(currentCard));
     };
+    const onFoilChange = onChangeFactory('foil', setCard);
     const onFrameChange = (e: RadioChangeEvent) => {
         onCardChange(currentCard => {
             const value = e?.target?.value;
@@ -108,13 +124,14 @@ export const CardInputPanel = ({
     }, 250);
     const onSetIDChange = onChangeFactory('set_id', setCard);
     const onPasscodeChange = onChangeFactory('passcode', setCard);
+    const onStickerChange = onChangeFactory('sticker', setCard);
     const onCreatorChange = onChangeFactory('creator', setCard);
     const onFirstEditionChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isFirstEdition: e.target.checked };
     });
 
     const {
-        frame,
+        frame, foil,
         name, nameColor,
         picture,
         effect,
@@ -125,7 +142,7 @@ export const CardInputPanel = ({
         subFamily,
         star,
         set_id,
-        passcode, isFirstEdition, creator,
+        passcode, isFirstEdition, creator, sticker,
     } = currentCard;
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
@@ -146,6 +163,12 @@ export const CardInputPanel = ({
                 });
             }}
         />
+        <Radio.Group className="foil-radio checkbox-train" value={foil} onChange={onFoilChange}>
+            <label className="standalone-addon ant-input-group-addon">
+                <span>Foil</span>
+            </label>
+            {foilButton}
+        </Radio.Group>
         <Radio.Group className="frame-radio" value={frame} onChange={onFrameChange}>
             {frameButton}
         </Radio.Group>
@@ -180,7 +203,7 @@ export const CardInputPanel = ({
                     </label>
                     {iconButton}
                 </Radio.Group>}
-            <Radio.Group className="checkbox-train" value={attribute} onChange={onAttributeChange}>
+            <Radio.Group className="checkbox-image-train checkbox-train" value={attribute} onChange={onAttributeChange}>
                 <label className="standalone-addon ant-input-group-addon">
                     <span>Attribute</span>
                 </label>
@@ -315,14 +338,20 @@ export const CardInputPanel = ({
                     </Checkbox>
                     <Input addonBefore="Creator"
                         id="creator"
-                        className="input-creator"
                         ref={onlineCharPicker === 'creator' ? ref as any : null}
                         onFocus={() => setOnlineCharPicker('creator')}
                         allowClear
+                        className="creator-input"
                         onChange={onCreatorChange}
                         placeholder="Creator"
                         value={creator}
                     />
+                    <Radio.Group className="sticker-input checkbox-image-train checkbox-train" value={sticker} onChange={onStickerChange}>
+                        <label className="standalone-addon ant-input-group-addon">
+                            <span>Sticker</span>
+                        </label>
+                        {stickerButton}
+                    </Radio.Group>
                 </div>
             </div>
             <div className="main-info-second">

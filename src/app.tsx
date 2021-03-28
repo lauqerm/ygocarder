@@ -19,6 +19,7 @@ import {
 import { CardInputPanel } from './page';
 import {
     arrowPositionList,
+    foilPosition,
     pendulumFontList,
     pendulumSizeList,
     stFontList,
@@ -63,9 +64,10 @@ function App() {
     const passcodeRef = useRef<HTMLCanvasElement>(null);
     const firstEditionRef = useRef<HTMLCanvasElement>(null);
     const creatorRef = useRef<HTMLCanvasElement>(null);
+    const stickerRef = useRef<HTMLCanvasElement>(null);
 
     const {
-        frame,
+        frame, foil,
         name, nameColor,
         effect,
         type_ability,
@@ -75,7 +77,7 @@ function App() {
         subFamily,
         star,
         set_id,
-        passcode, isFirstEdition, creator,
+        passcode, isFirstEdition, creator, sticker,
     } = currentCard;
     const isNormal = checkNormal(currentCard);
     const isXyz = checkXyz(currentCard);
@@ -88,19 +90,27 @@ function App() {
         star: () => Promise.resolve(),
         attribute: () => Promise.resolve(),
         specialFrame: () => Promise.resolve(),
+        sticker: () => Promise.resolve(),
     });
     const [imageChangeCount, setImageChangeCount] = useState(0);
 
     useEffect(() => {
         const ctx = frameCanvasRef.current?.getContext('2d');
 
-        drawingPipeline.current.frame = () => {
+        drawingPipeline.current.frame = async () => {
             ctx?.clearRect(0, 0, 549, 800);
             const cardType = getCardFrame(frame);
+            const hasFoil = foil !== 'normal';
 
-            return drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+            await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+            if (hasFoil) {
+                const { art } = foilPosition[foil];
+
+                await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, art.left, 120);
+                await drawFromSource(ctx, `/asset/image/frame/frame-effect-${foil}.png`, 0, 580);
+            }
         };
-    }, [frame]);
+    }, [foil, frame]);
 
     useEffect(() => {
         const ctx = artCanvasRef.current?.getContext('2d');
@@ -121,24 +131,40 @@ function App() {
         
         drawingPipeline.current.specialFrame = async () => {
             ctx?.clearRect(0, 0, 549, 800);
+            const hasFoil = foil !== 'normal';
+
             const cardType = getCardFrame(frame);
             if (isPendulum && !isLink) {
                 if (!isXyz) await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
                 await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
+                if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}.png`, 0, 0);
             }
-            await drawFromSource(ctx, '/asset/image/frame/frame-border.png', 0, 0);
+
+            const foiledBorder = !hasFoil ? '/asset/image/frame/frame-border.png' : `/asset/image/frame/frame-border-${foil}.png`;
+            await drawFromSource(ctx, foiledBorder, 0, 0);
             if (!isPendulum && isLink) {
-                await drawFromSource(ctx, '/asset/image/link/link-overlay.png', 66, 146);
+                if (hasFoil) await drawFromSource(ctx, `./asset/image/link/link-overlay-${foil}.png`, 0, 110);
+                else await drawFromSource(ctx, '/asset/image/link/link-overlay.png', 66, 146);
+                if (hasFoil) await drawFromSource(ctx, `/asset/image/link/link-overlay-arrow-${foil}.png`, 0, 110);
+
                 await Promise.all(link_map
                     .map(entry => {
                         const { left, top, height, width } = arrowPositionList[parseInt(entry) - 1];
-                        return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}.png`, left, top, width, height);
+                        if (hasFoil) return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}-${foil}.png`, left, top, width, height);
+                        else return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}.png`, left, top, width, height);
                     })
                 );
-                if (link_map.length > 0) await drawFromSource(ctx, `./asset/image/link-number/link-corner-${link_map.length}.png`, 549 - 61, 800 - 69);
+                if (ctx) {
+                    ctx.textAlign = 'right';
+                    ctx.scale(1.2, 1);
+                    ctx.font = 'bold 24px Yugioh Rush Duel Numbers V4';
+                    ctx.fillText(`${link_map.length}`, 505 / 1.2, 746);
+                    ctx.scale(1 / 1.2, 1);
+                    ctx.textAlign = 'left';
+                }
             }
         };
-    }, [frame, isLink, isPendulum, isXyz, link_map]);
+    }, [foil, frame, isLink, isPendulum, isXyz, link_map]);
 
     useEffect(() => {
         const ctx = attributeCanvasRef.current?.getContext('2d');
@@ -283,6 +309,15 @@ function App() {
         }
     }, [isInitializing, isLink, isPendulum, isXyz, creator]);
 
+    useEffect(() => {
+        const ctx = stickerRef.current?.getContext('2d');
+        drawingPipeline.current.sticker = () => {
+            ctx?.clearRect(0, 0, 549, 800);
+
+            return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499, 750);
+        };
+    }, [sticker]);
+
     const drawTypeAbility  = useCallback((
         ctx: CanvasRenderingContext2D | null | undefined,
         size: TypeSize = typeSizeMap['medium'],
@@ -385,6 +420,7 @@ function App() {
                     'ITCStoneSerifSmallCapsBold',
                     'MatrixBoldSmallCaps',
                     'MatrixRegularSmallCaps',
+                    'Yugioh Rush Duel Numbers V4',
                 ],
                 urls: ['./asset/font.css']
             },
@@ -488,6 +524,7 @@ function App() {
                 firstEditionRef,
                 passcodeRef,
                 creatorRef,
+                stickerRef,
             ];
             await Promise.all([
                 layerList.map(currentlayer => generateLayer(currentlayer, exportCtx)),
@@ -536,6 +573,7 @@ function App() {
                     <canvas id="passcode" ref={passcodeRef} width={549} height={800} />
                     <canvas id="firstEdition" ref={firstEditionRef} width={549} height={800} />
                     <canvas id="creator" ref={creatorRef} width={549} height={800} />
+                    <canvas id="sticker" ref={stickerRef} width={549} height={800} />
                     <canvas className="crop-canvas" ref={previewCanvasRef} />
                 </div>
             </div>

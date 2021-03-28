@@ -20,6 +20,8 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     name: 'B.F.A - U3 “Eden”',
     nameColor: 'auto',
     passcode: '24907043',
+    foil: 'gold',
+    sticker: 'gold',
     isPendulum: true,
     pendulum_effect: 'You can pay 1000 LP; add 1 "Abyss Actor" Pendulum Monster from your Deck to your hand, except "Abyss Actor - Mellow Madonna", also you cannot Special Summon monsters for the rest of this turn, except "Abyss Actor" Pendulum Monsters (even if this card leaves the field). You can only use this effect of "Abyss Actor - Mellow Madonna" once per turn.',
     red_scale: '0',
@@ -52,6 +54,23 @@ export const iconList = [
     'QUICK-PLAY',
     'RITUAL',
     'COUNTER',
+];
+
+export const foilList = [
+    { name: 'normal', color: '#747b95' },
+    { name: 'gold', color: '#cfa65f' },
+    { name: 'platinum', color: '#b1b1b1' },
+];
+
+export const stickerList = [
+    'gold',
+    'silver',
+    'beta',
+    'holo5',
+    'holo4',
+    'holo3',
+    'holo2',
+    'holo1',
 ];
 
 export const attributeList = [

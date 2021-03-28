@@ -1,4 +1,8 @@
 .card-info-panel {
+	.foil-radio.checkbox-train {
+		display: inline-flex;
+		margin-bottom: 10px;
+	}
 	.frame-radio {
 		display: flex;
 		flex-wrap: wrap;
@@ -46,6 +50,24 @@
 		}
 	}
 
+	.checkbox-train {
+		display: flex;
+	}
+	.checkbox-image-train label {
+		padding: 0 10px;
+		flex: 1;
+		span:nth-child(2) {
+			width: 100%;
+			height: 100%;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			img {
+				width: 26px;
+				height: 26px;
+			}
+		}
+	}
 	.name-input .ant-input-group-addon {
 		min-width: 135px;
 	}
@@ -71,9 +93,6 @@
 		margin-top: 0.5em;
 		flex-wrap: wrap;
 		row-gap: 1em;
-		.checkbox-train {
-			display: flex;
-		}
 		.card-info-sub-family {
 			padding-right: 1em;
 			margin-right: 1em;
@@ -93,7 +112,8 @@
 		.input-1st {
 			align-self: center;
 		}
-		.input-creator {
+		.sticker-input,
+		.creator-input {
 			grid-column: span 2;
 		}
 	}

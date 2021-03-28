@@ -16,5 +16,6 @@ export type {
 } from './size';
 
 export {
-    arrowPositionList
+    arrowPositionList,
+    foilPosition,
 } from './position';

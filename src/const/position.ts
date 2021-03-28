@@ -9,3 +9,18 @@ export const arrowPositionList = [
     { top: 562, left: 226, width: 99, height: 33 },
     { top: 534, left: 453, width: 51, height: 50 },
 ];
+
+export const foilPosition: Record<string, {
+    art: { left: number }
+}> = {
+    gold: {
+        art: {
+            left: 2,
+        }
+    },
+    platinum: {
+        art: {
+            left: 1,
+        }
+    },
+};

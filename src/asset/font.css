@@ -12,6 +12,14 @@
 	font-display: swap;
 };
 @font-face {
+    font-family: 'Yugioh Rush Duel Numbers V4';
+    src: url('./font/YugiohRushDuelNumbersV4-Rg.woff2') format('woff2'),
+        url('./font/YugiohRushDuelNumbersV4-Rg.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
     font-family: palatino-linotype-bold;
     src: url('./font/palatino-linotype-bold-webfont.woff2') format('woff2'),
          url('./font/palatino-linotype-bold-webfont.woff') format('woff');
