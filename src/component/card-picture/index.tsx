@@ -28,8 +28,9 @@ export type ImageCropper = {
     previewCanvasRef?: HTMLCanvasElement | null,
     children?: React.ReactNode,
     ratio?: number,
+    defaultCropInfo: Partial<ReactCrop.Crop>,
     onSourceChange?: (source: string) => void,
-    onImageChange?: () => void,
+    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
 }
 export const ImageCropper = ({
     noRedrawNumber = 0,
@@ -37,6 +38,7 @@ export const ImageCropper = ({
     previewCanvasRef,
     children,
     ratio = 1,
+    defaultCropInfo,
     onSourceChange = () => {},
     onImageChange = () => {},
 }: ImageCropper) => {
@@ -44,7 +46,7 @@ export const ImageCropper = ({
     const [internalSource, setInternalSource] = useState('');
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
-    const [crop, setCrop] = useState<ReactCrop.Crop>({ unit: '%', width: 50, aspect: ratio });
+    const [crop, setCrop] = useState<ReactCrop.Crop>(defaultCropInfo);
     const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
 
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +105,7 @@ export const ImageCropper = ({
             (boundingWidth ?? 0),
             (boundingHeight ?? 0)
         );
-        onImageChange();
+        onImageChange(crop);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, previewCanvasRef, noRedrawNumber]);
 
@@ -121,13 +123,16 @@ export const ImageCropper = ({
                     <Radio.Button value={'internal'}>
                         <Input type="file"  accept="image/*" onChange={onSelectFile} />
                         <div>
-                            {sourceType === 'internal' && <Button
-                                className="download-button"
-                                disabled={!completedCrop?.width || !completedCrop?.height}
-                                onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
-                            >
+                            {sourceType === 'internal' && <>
+                                <Button
+                                    className="download-button"
+                                    disabled={!completedCrop?.width || !completedCrop?.height}
+                                    onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
+                                >
                                 Download cropped image
-                            </Button>}
+                                </Button>
+                                <span style={{ color: '#FF6F6F' }}>Offline images are not auto saved!</span>
+                            </>}
                         </div>
                     </Radio.Button>
                 </Radio.Group>

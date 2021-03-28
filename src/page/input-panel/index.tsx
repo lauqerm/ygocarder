@@ -73,12 +73,14 @@ export type CardInputPanelRef = {
 export type CardInputPanel = {
 	currentCard: Card,
     receivingCanvasRef: HTMLCanvasElement | null,
+    defaultCropInfo: Partial<ReactCrop.Crop>,
 	onCardChange: React.Dispatch<React.SetStateAction<Card>>,
-    onImageChange?: () => void,
+    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
 }
 export const CardInputPanel = ({
     currentCard,
     receivingCanvasRef,
+    defaultCropInfo,
     onCardChange,
     onImageChange,
 }: CardInputPanel) => {
@@ -358,6 +360,7 @@ export const CardInputPanel = ({
                 <ImageCropper
                     noRedrawNumber={1}
                     defaultExternalSource={picture}
+                    defaultCropInfo={defaultCropInfo}
                     previewCanvasRef={receivingCanvasRef}
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}

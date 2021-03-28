@@ -69,6 +69,7 @@ function App() {
     const {
         frame, foil,
         name, nameColor,
+        pictureCrop,
         effect,
         type_ability,
         isPendulum, pendulum_effect, blue_scale, red_scale,
@@ -425,7 +426,12 @@ function App() {
                 urls: ['./asset/font.css']
             },
             active: () => {
-                // fontLoaded = true;
+                const localCardData = window.localStorage.getItem('card-data');
+
+                if (localCardData !== null) {
+                    console.log(JSON.parse(localCardData));
+                    setCard(JSON.parse(localCardData));
+                }
                 setInitializing(false);
             }
         });
@@ -437,6 +443,8 @@ function App() {
     });
     useEffect(() => {
         let relevant = true;
+        if (isInitializing === false) localStorage.setItem('card-data', JSON.stringify(currentCard));
+        // localStorage.setItem('card-created', new Date().toISOString());
 
         /**
          * Run export pipeline
@@ -542,14 +550,19 @@ function App() {
             </div>}
             <div className="card-filter-panel">
             </div>
-            <CardInputPanel
+            {isInitializing === false && <CardInputPanel
                 receivingCanvasRef={previewCanvasRef.current}
                 currentCard={currentCard}
                 onCardChange={setCard}
-                onImageChange={() => {
+                defaultCropInfo={pictureCrop}
+                onImageChange={cropInfo => {
                     setImageChangeCount(cnt => cnt + 1);
+                    if (cropInfo) setCard(curr => ({
+                        ...curr,
+                        pictureCrop: cropInfo,
+                    }));
                 }}
-            />
+            />}
             <div className="card-preview-panel">
                 <button className="export-button">Save Card: Right click → "Save image as..."</button>
                 <div className="card-canvas-group">
