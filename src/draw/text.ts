@@ -114,8 +114,9 @@ export const drawEffect = (
                 ctx.font = tempFont;
             };
 
+            // [CREATE SENTENCE ON EACH LINE]
             let lineList: { text: string, width: number, isLast: boolean }[] = [];
-            const isOverflow = () => {
+            const createSentence = () => {
                 lineList = [];
 
                 return sentencizeText.reduce((prev, curr) => {
@@ -176,13 +177,14 @@ export const drawEffect = (
                 }, 0) + additionalLineCount;
             };
 
+            // [FIND SUITABLE CONDENSE RATIO]
             while (condenser.getIterateCount() >= 0) {
                 if (condenser.getIterateCount() <= 0) {
                     // When out of iteration, return the concluded median
                     effectiveRatio = condenser.getMedian();
                     break;
                 } else {
-                    const lineCount = isOverflow();
+                    const lineCount = createSentence();
 
                     if (lineCount > maxLine) {
                         // If overflow, lower the median and apply it
@@ -194,6 +196,15 @@ export const drawEffect = (
                 }
             }
 
+            // [START DRAWING]
+            const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline: number) => {
+                ctx.beginPath();
+                ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
+                ctx.fill();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#003300';
+                ctx.stroke();
+            };
             if (effectiveRatio < (tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'])) {
                 effectIndexSize += 1;
             } else {
@@ -235,14 +246,9 @@ export const drawEffect = (
                                 // Special bullet
                                 if (cur === bulletSymbol) {
                                     ctx.scale(1 / condenseRatio, 1);
-                                    ctx.beginPath();
-                                    ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
-                                    ctx.fill();
-                                    ctx.lineWidth = 1;
-                                    ctx.strokeStyle = '#003300';
-                                    ctx.stroke();
-                                    ctx.scale(condenseRatio, 1);
+                                    drawBullet(ctx, edge, baseline);
                                     edge += 15;
+                                    ctx.scale(condenseRatio, 1);
                                 } else {
                                     switchFont(() => {
                                         ctx.fillText(cur, edge / condenseRatio, baseline);
@@ -282,12 +288,7 @@ export const drawEffect = (
                             } else {
                                 // Special bullet
                                 if (cur === bulletSymbol) {
-                                    ctx.beginPath();
-                                    ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
-                                    ctx.fill();
-                                    ctx.lineWidth = 1;
-                                    ctx.strokeStyle = '#003300';
-                                    ctx.stroke();
+                                    drawBullet(ctx, edge, baseline);
                                     edge += 15;
                                 } else if (cur === ' ') {
                                     edge += spaceWidth;

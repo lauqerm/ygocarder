@@ -47,8 +47,12 @@
 	src: url('./font/Yu-Gi-Oh ITC Stone Serif Small Caps Bold.ttf');
 };
 @font-face {
-	font-family: MatrixBoldSmallCaps, sans-serif;
-	src: url('./font/Matrix Small Caps Bold.ttf');
+    font-family: 'MatrixBoldSmallCaps';
+    src: url('./font/MatrixBoldSmallCaps.woff2') format('woff2'),
+        url('./font/MatrixBoldSmallCaps.woff') format('woff');
+        font-weight: 100;
+    font-style: normal;
+    font-display: swap;
 };
 @font-face {
 	font-family: MatrixRegularSmallCaps, sans-serif;
