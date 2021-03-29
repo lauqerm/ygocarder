@@ -93,8 +93,7 @@ export const drawEffect = (
         const breakableSymbol = '\\s-';
         
         const tokenizeR = new RegExp(`([${specialSymbol}${breakableSymbol}])`, 'g');
-        const difFontR = new RegExp(specialSymbol, 'g');
-        const diffDrawR = new RegExp(`([${bulletSymbol}${specialSymbol}])`, 'g');
+        const specialSymbolReg = new RegExp(specialSymbol, 'g');
 
         while(effectIndexSize < fontList.length) {
             const { fontSize, lineHeight, lineCount } = fontList[effectIndexSize];
@@ -112,7 +111,7 @@ export const drawEffect = (
                 const largeSize = fontSize * 1.15;
                 ctx.font = tempFont.replace('MatrixBook', 'matrix').replace(`${fontSize}`, `${largeSize}`);
                 func();
-                ctx.font = tempFont.replace('matrix', 'MatrixBook').replace(`${largeSize}`, `${fontSize}`);
+                ctx.font = tempFont;
             };
 
             let lineList: { text: string, width: number, isLast: boolean }[] = [];
@@ -139,7 +138,7 @@ export const drawEffect = (
                         /**
                          * Some special symbol required different font
                          */
-                        else if (difFontR.test(tokenizedText[cnt])) {
+                        else if (specialSymbolReg.test(tokenizedText[cnt])) {
                             switchFont(() => {
                                 tokenWidth = ctx.measureText(tokenizedText[cnt]).width;
                             });
@@ -218,11 +217,12 @@ export const drawEffect = (
                 }) => {
                     const condenseRatio = isLast
                         ? Math.min(sigmoidRatio, 1)
-                        : Math.min(width / actualWidth, 1);
+                        : width / actualWidth;
 
                     if (condenseRatio <= 1) {
                         ctx.scale(condenseRatio, 1);
-                        const splittedText = text.split(diffDrawR);
+                        const splitter = new RegExp(`([${bulletSymbol}${specialSymbol}])`, 'g');
+                        const splittedText = text.split(splitter);
 
                         splittedText.reduce((prev, cur, index) => {
                             let edge = prev;
@@ -256,21 +256,51 @@ export const drawEffect = (
                         baseline += lineHeight;
                         ctx.scale(1 / condenseRatio, 1);
                     } else {
-                        const spaceSeparatedText = text.split(' ');
+                        const splitter = new RegExp(`([${bulletSymbol}${specialSymbol} ])`, 'g');
+                        const spaceSeparatedText = text.split(splitter);
                         ctx.scale(1, 1);
-                        let currentLeft = left;
-                        let widthPerEntry: number[] = [];
+                        let nonSpaceWidth = 0;
+                        let spaceCount = 0;
 
                         spaceSeparatedText.forEach(entry => {
-                            widthPerEntry.push(ctx.measureText(entry).width);
+                            if (entry === ' ') spaceCount += 1;
+                            else if (entry === bulletSymbol) nonSpaceWidth += 15;
+                            else if (specialSymbolReg.test(entry)) {
+                                switchFont(() => nonSpaceWidth += ctx.measureText(entry).width);
+                            } else nonSpaceWidth += ctx.measureText(entry).width;
                         });
                         // Split text by "space", then distribute remaining width to those spaces, resulting in "widen" space
-                        const spaceWidth = (width - widthPerEntry.reduce((prev, cur) => prev + cur, 0)) / (spaceSeparatedText.length - 1);
+                        const spaceWidth = spaceCount > 0 ? (width - nonSpaceWidth) / spaceCount : 0;
 
-                        spaceSeparatedText.forEach((entry, index) => {
-                            ctx.fillText(entry, currentLeft, baseline);
-                            currentLeft += widthPerEntry[index] + spaceWidth;
-                        });
+                        spaceSeparatedText.reduce((prev, cur, index) => {
+                            let edge = prev;
+
+                            // Normal text
+                            if (index % 2 === 0) {
+                                ctx.fillText(cur, edge, baseline);
+                                edge += ctx.measureText(cur).width;
+                            } else {
+                                // Special bullet
+                                if (cur === bulletSymbol) {
+                                    ctx.beginPath();
+                                    ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
+                                    ctx.fill();
+                                    ctx.lineWidth = 1;
+                                    ctx.strokeStyle = '#003300';
+                                    ctx.stroke();
+                                    edge += 15;
+                                } else if (cur === ' ') {
+                                    edge += spaceWidth;
+                                } else {
+                                    switchFont(() => {
+                                        ctx.fillText(cur, edge, baseline);
+                                        edge += ctx.measureText(cur).width;
+                                    });
+                                }
+                            }
+
+                            return edge;
+                        }, left);
                         baseline += lineHeight;
                     }
                 });
