@@ -69,7 +69,7 @@ export const drawAD = (
     baseline: number,
 ) => {
     if (ctx) {
-        ctx.textAlign = 'right';
+        ctx.textAlign = 'left';
         const tokenizedText = `${$value}`.split('?');
 
         let totalWidth = tokenizedText.reduce((prev, curr, index) => {
@@ -88,20 +88,21 @@ export const drawAD = (
             const condenseRatio = Math.min(49.94 / totalWidth, 1);
 
             ctx.scale(condenseRatio, 1);
-            tokenizedText.reduce((prev, curr, index) => {
+            tokenizedText.reduce((prev, curr, index, arr) => {
+                const curText = arr[arr.length - 1 - index];
                 let nextEdge = prev;
                 ctx.font = '25px MatrixBoldSmallCaps';
-                nextEdge += ctx.measureText(curr).width * condenseRatio;
-                ctx.fillText(curr, nextEdge / condenseRatio, baseline);
+                nextEdge -= ctx.measureText(curText).width * condenseRatio;
+                ctx.fillText(curText, nextEdge / condenseRatio, baseline);
 
                 if (index < tokenizedText.length - 1) {
                     ctx.font = '25px matrix';
-                    nextEdge += ctx.measureText('?').width * condenseRatio;
+                    nextEdge -= ctx.measureText('?').width * condenseRatio;
                     ctx.fillText('?', nextEdge / condenseRatio, baseline);
                 }
     
                 return nextEdge;
-            }, edge);
+            }, edge + 49.94);
             ctx.scale(1 / condenseRatio, 1);
         }
     }
