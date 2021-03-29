@@ -416,9 +416,6 @@ function App() {
                     'matrix',
                     'palatino-linotype-bold',
                     'MatrixBook',
-                    'ITCStoneSerifMedium',
-                    'ITCStoneSerifBold',
-                    'ITCStoneSerifSmallCapsBold',
                     'MatrixBoldSmallCaps',
                     'MatrixRegularSmallCaps',
                     'Yugioh Rush Duel Numbers V4',
@@ -561,7 +558,18 @@ function App() {
                         pictureCrop: cropInfo,
                     }));
                 }}
-            />}
+            >
+                <div className="app-header">
+                    <img alt="app-logo" src="./logo192.png" width={48} />
+                    <div className="app-description">
+                        <h1>Yugioh Carder</h1>
+                    Credit to someone
+                    Make by someone
+                    Special thank to anyone
+                    </div>
+                </div>
+                <br />
+            </CardInputPanel>}
             <div className="card-preview-panel">
                 <button className="export-button">Save Card: Right click → "Save image as..."</button>
                 <div className="card-canvas-group">

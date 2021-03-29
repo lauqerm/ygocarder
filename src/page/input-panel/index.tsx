@@ -1,17 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { Radio, Input, Row, Col, Checkbox, Tooltip } from 'antd';
-import { Card, frameType, iconList, attributeList, stickerList, foilList } from '../../model';
+import { Card } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { ExtractProps } from '../../type';
 import { debounce } from 'lodash';
-import { CharPicker } from './char-picker';
 import { ColorPicker } from './color-picker';
 import { SyncOutlined } from '@ant-design/icons';
+import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton } from './const';
+import { CharPicker } from './char-picker';
 import './input-panel.scss';
 
 const { TextArea } = Input;
-const { Button: RadioButton } = Radio;
 type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
 
 const onChangeFactory = (
@@ -42,31 +42,6 @@ const RandomButton = ({
     </span>;
 };
 
-const foilButton = foilList.map(({ color, name }) => {
-    return <RadioButton key={name} value={name} style={{
-        color,
-        fontWeight: 'bold',
-    }}>
-        {name.toLocaleUpperCase()}
-    </RadioButton>;
-});
-const frameButton = frameType.map(({ color, name, backgroundColor }) => {
-    return <RadioButton key={name} value={name} style={{
-        backgroundColor,
-        color,
-    }}>
-        {name}
-    </RadioButton>;
-});
-const attributeButton = attributeList.map(({ name }) => <RadioButton key={name} value={name}>
-    <img alt={name} src={`/asset/image/attribute/attr-${name.toLowerCase()}.png`} />
-</RadioButton>);
-const iconButton = iconList.map(entry => <RadioButton key={entry} value={entry}>{entry}</RadioButton>);
-const starButton = [...Array(14)].map((e, index) => <RadioButton key={`${index}`} value={`${index}`}>{`${index}`}</RadioButton>);
-const stickerButton = stickerList.map(name => <RadioButton key={name} value={name}>
-    <img alt={name} src={`/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />
-</RadioButton>);
-
 export type CardInputPanelRef = {
     getCroppedImageCanvasRef: () => HTMLCanvasElement | null
 }
@@ -76,6 +51,7 @@ export type CardInputPanel = {
     defaultCropInfo: Partial<ReactCrop.Crop>,
 	onCardChange: React.Dispatch<React.SetStateAction<Card>>,
     onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
+    children?: React.ReactNode,
 }
 export const CardInputPanel = ({
     currentCard,
@@ -83,6 +59,7 @@ export const CardInputPanel = ({
     defaultCropInfo,
     onCardChange,
     onImageChange,
+    children,
 }: CardInputPanel) => {
     const [isMirrorScale, setMirrorScale] = useState(true);
     const setCard = (mutateFunc: (card: Card) => Card) => {
@@ -157,6 +134,7 @@ export const CardInputPanel = ({
     const ref = useRef();
 
     return <div className="card-info-panel">
+        {children}
         <CharPicker
             targetId={onlineCharPicker}
             onPick={value => {

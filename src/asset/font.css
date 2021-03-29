@@ -35,18 +35,6 @@
          url('./font/matrix.woff') format('woff');
 };
 @font-face {
-	font-family: ITCStoneSerifMedium;
-	src: url('./font/Stone Serif ITC Medium.ttf') format('truetype');
-};
-@font-face {
-	font-family: ITCStoneSerifBold, sans-serif;
-	src: url('./font/Stone Serif ITC Bold.otf');
-};
-@font-face {
-	font-family: ITCStoneSerifSmallCapsBold, sans-serif;
-	src: url('./font/Yu-Gi-Oh ITC Stone Serif Small Caps Bold.ttf');
-};
-@font-face {
     font-family: 'MatrixBoldSmallCaps';
     src: url('./font/MatrixBoldSmallCaps.woff2') format('woff2'),
         url('./font/MatrixBoldSmallCaps.woff') format('woff');
