@@ -69,16 +69,39 @@ export const drawAD = (
     baseline: number,
 ) => {
     if (ctx) {
-        ctx.font = '25px MatrixBoldSmallCaps';
         ctx.textAlign = 'right';
-        const value = `${$value}`;
-        const atkWidth = ctx.measureText(value).width;
+        const tokenizedText = `${$value}`.split('?');
 
-        if (atkWidth > 0) {
-            const condenseRatio = Math.min(49.94 / atkWidth, 1);
+        let totalWidth = tokenizedText.reduce((prev, curr, index) => {
+            ctx.font = '25px MatrixBoldSmallCaps';
+            let nextWidth = prev + ctx.measureText(curr).width;
+
+            if (index < tokenizedText.length - 1) {
+                ctx.font = '25px matrix';
+                nextWidth += ctx.measureText('?').width;
+            }
+
+            return nextWidth;
+        }, 0);
+
+        if (totalWidth > 0) {
+            const condenseRatio = Math.min(49.94 / totalWidth, 1);
 
             ctx.scale(condenseRatio, 1);
-            ctx.fillText(value, (edge + 49.94) / condenseRatio, baseline);
+            tokenizedText.reduce((prev, curr, index) => {
+                let nextEdge = prev;
+                ctx.font = '25px MatrixBoldSmallCaps';
+                nextEdge += ctx.measureText(curr).width * condenseRatio;
+                ctx.fillText(curr, nextEdge / condenseRatio, baseline);
+
+                if (index < tokenizedText.length - 1) {
+                    ctx.font = '25px matrix';
+                    nextEdge += ctx.measureText('?').width * condenseRatio;
+                    ctx.fillText('?', nextEdge / condenseRatio, baseline);
+                }
+    
+                return nextEdge;
+            }, edge);
             ctx.scale(1 / condenseRatio, 1);
         }
     }

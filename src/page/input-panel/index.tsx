@@ -160,7 +160,7 @@ export const CardInputPanel = ({
         <CharPicker
             targetId={onlineCharPicker}
             onPick={value => {
-                if (ref.current) (ref.current as any).props.onChange({
+                if (ref.current) (ref.current as any)?.props?.onChange?.({
                     target: { value }
                 });
             }}

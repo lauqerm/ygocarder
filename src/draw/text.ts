@@ -89,6 +89,12 @@ export const drawEffect = (
         const sentencizeText = effectBody.split('\n');
         const bulletSymbol = '●';
         const bulletSymbolWidth = 15;
+        const specialSymbol = '#@∞';
+        const breakableSymbol = '\\s-';
+        
+        const tokenizeR = new RegExp(`([${specialSymbol}${breakableSymbol}])`, 'g');
+        const difFontR = new RegExp(specialSymbol, 'g');
+        const diffDrawR = new RegExp(`([${bulletSymbol}${specialSymbol}])`, 'g');
 
         while(effectIndexSize < fontList.length) {
             const { fontSize, lineHeight, lineCount } = fontList[effectIndexSize];
@@ -101,6 +107,14 @@ export const drawEffect = (
             ctx.font = `${isNormal ? 'italic' : ''} ${fontSize}px MatrixBook`;
             ctx.textAlign = 'left';
 
+            const switchFont = (func: () => void) => {
+                const tempFont = ctx.font;
+                const largeSize = fontSize * 1.15;
+                ctx.font = tempFont.replace('MatrixBook', 'matrix').replace(`${fontSize}`, `${largeSize}`);
+                func();
+                ctx.font = tempFont.replace('matrix', 'MatrixBook').replace(`${largeSize}`, `${fontSize}`);
+            };
+
             let lineList: { text: string, width: number, isLast: boolean }[] = [];
             const isOverflow = () => {
                 lineList = [];
@@ -109,20 +123,27 @@ export const drawEffect = (
                     // The width is "expand" based on condense ratio so all the calculate does not need to be scaled
                     const condenseRatio = condenser.getMedian() / 1000;
                     const hypoWidth = width / condenseRatio;
-                    const tokenizeText = curr.split(/([\s-])/g);
+                    const tokenizedText = curr.split(tokenizeR);
                     let currentLineCount = 1;
                     let tokenSentence: string[] = [];
                     let totalWidth = 0;
 
-                    for (let cnt = 0; cnt < tokenizeText.length; cnt++) {
+                    for (let cnt = 0; cnt < tokenizedText.length; cnt++) {
+                        let tokenWidth = 0;
                         /**
                          * If bullet symbol is met, it will become "wider" based on condense ratio
                          * so that when the whole line is condense, bullet symbol's width become
                          * "normal", as if it were not condensed
                          */
-                        const tokenWidth = tokenizeText[cnt] === bulletSymbol
-                            ? bulletSymbolWidth / condenseRatio
-                            : ctx.measureText(tokenizeText[cnt]).width;
+                        if (tokenizedText[cnt] === bulletSymbol) tokenWidth = bulletSymbolWidth / condenseRatio;
+                        /**
+                         * Some special symbol required different font
+                         */
+                        else if (difFontR.test(tokenizedText[cnt])) {
+                            switchFont(() => {
+                                tokenWidth = ctx.measureText(tokenizedText[cnt]).width;
+                            });
+                        } else tokenWidth = ctx.measureText(tokenizedText[cnt]).width;
                         if (totalWidth + tokenWidth > hypoWidth) {
                             // If the next token cause overflow, wrap it down
                             const fullString = tokenSentence.join('').trim();
@@ -135,11 +156,11 @@ export const drawEffect = (
                                 isLast: false,
                             });
                             totalWidth = tokenWidth;
-                            tokenSentence = [tokenizeText[cnt]];
+                            tokenSentence = [tokenizedText[cnt]];
                             currentLineCount += 1;
                         } else {
                             totalWidth += tokenWidth;
-                            tokenSentence.push(tokenizeText[cnt]);
+                            tokenSentence.push(tokenizedText[cnt]);
                         }
                     }
 
@@ -201,25 +222,34 @@ export const drawEffect = (
 
                     if (condenseRatio <= 1) {
                         ctx.scale(condenseRatio, 1);
-                        const splittedText = text.split(bulletSymbol);
+                        const splittedText = text.split(diffDrawR);
 
                         splittedText.reduce((prev, cur, index) => {
                             let edge = prev;
-                            ctx.fillText(cur, edge / condenseRatio, baseline);
-                            edge += ctx.measureText(cur).width * condenseRatio;
 
-                            // Draw special bullet
-                            if (index < splittedText.length - 1) {
-                                ctx.scale(1 / condenseRatio, 1);
-                                ctx.beginPath();
-                                ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
-                                ctx.fill();
-                                ctx.lineWidth = 1;
-                                ctx.strokeStyle = '#003300';
-                                ctx.stroke();
-                                ctx.scale(condenseRatio, 1);
-                                edge += 15;
-                            };
+                            // Normal text
+                            if (index % 2 === 0) {
+                                ctx.fillText(cur, edge / condenseRatio, baseline);
+                                edge += ctx.measureText(cur).width * condenseRatio;
+                            } else {
+                                // Special bullet
+                                if (cur === bulletSymbol) {
+                                    ctx.scale(1 / condenseRatio, 1);
+                                    ctx.beginPath();
+                                    ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
+                                    ctx.fill();
+                                    ctx.lineWidth = 1;
+                                    ctx.strokeStyle = '#003300';
+                                    ctx.stroke();
+                                    ctx.scale(condenseRatio, 1);
+                                    edge += 15;
+                                } else {
+                                    switchFont(() => {
+                                        ctx.fillText(cur, edge / condenseRatio, baseline);
+                                        edge += ctx.measureText(cur).width * condenseRatio;
+                                    });
+                                }
+                            }
 
                             return edge;
                         }, left);

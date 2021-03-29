@@ -429,7 +429,6 @@ function App() {
                 const localCardData = window.localStorage.getItem('card-data');
 
                 if (localCardData !== null) {
-                    console.log(JSON.parse(localCardData));
                     setCard(JSON.parse(localCardData));
                 }
                 setInitializing(false);
