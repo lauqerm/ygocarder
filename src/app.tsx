@@ -27,7 +27,6 @@ import {
     TypeSize,
     typeSizeMap,
 } from './const';
-import './asset/font.css';
 import {
     draw1stEdition,
     drawAD,
@@ -46,6 +45,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 function App() {
     const [isInitializing, setInitializing] = useState(true);
+    const [error, setError] = useState('');
     const [currentCard, setCard] = useState<Card>(defaultMonster);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -420,7 +420,7 @@ function App() {
                     'MatrixRegularSmallCaps',
                     'Yugioh Rush Duel Numbers V4',
                 ],
-                urls: ['./asset/font.css']
+                urls: ['asset/font.css']
             },
             active: () => {
                 const localCardData = window.localStorage.getItem('card-data');
@@ -429,7 +429,11 @@ function App() {
                     setCard(JSON.parse(localCardData));
                 }
                 setInitializing(false);
-            }
+            },
+            inactive: () => {
+                setError('Font could not be loaded');
+                setInitializing(false);
+            },
         });
     }, []);
 
@@ -542,7 +546,9 @@ function App() {
             backgroundImage: 'url("/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)',
         }}>
             {isInitializing && <div className="full-loading">
-                Initializing...
+                {error.length > 0 ? <span style={{ color: '#e04040' }}>
+                    {error}
+                </span> : 'Initializing...'}
             </div>}
             <div className="card-filter-panel">
             </div>

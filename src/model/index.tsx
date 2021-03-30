@@ -30,10 +30,10 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     pictureCrop: {
         x: 0,
         y: 0,
-        width: 50,
-        height: 50,
+        width: 100,
+        height: 100,
         aspect: 1,
-        unit: '%',
+        unit: 'px',
     } as Partial<ReactCrop.Crop>,
     set_id: 'ROTD-EN081',
     star: 4,
