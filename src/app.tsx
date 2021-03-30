@@ -39,6 +39,7 @@ import {
     drawScale,
     drawTextTemplate,
     fillTextLeftWithSpacing,
+    fillTextRightWithSpacing,
 } from './draw';
 import WebFont from 'webfontloader';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -266,13 +267,13 @@ function App() {
         if (ctx) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
-            ctx.font = '18px stone-serif-regular';
+            ctx.font = '15px stone-serif-regular';
 
             if (isPendulum) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.15, 46, 746);
+                fillTextLeftWithSpacing(ctx, set_id, -0.1, 42, 746);
             } else if (isLink) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.15, 352, 590);
-            } else fillTextLeftWithSpacing(ctx, set_id, -0.15, 396, 589);
+                fillTextLeftWithSpacing(ctx, set_id, -0.1, 367, 590);
+            } else fillTextRightWithSpacing(ctx, set_id, -0.1, 492, 589);
         }
     }, [isInitializing, isLink, isPendulum, isXyz, set_id]);
 
@@ -282,7 +283,7 @@ function App() {
         if (ctx) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
-            ctx.font = '18px stone-serif-regular';
+            ctx.font = '15px stone-serif-regular';
 
             fillTextLeftWithSpacing(ctx, passcode, -0.1, 25, 777);
         }

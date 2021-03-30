@@ -4,9 +4,9 @@ export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
 ) => {
     if (ctx) {
-        ctx.font = 'bold 17.5px palatino-linotype-bold';
+        ctx.font = 'bold 16px palatino-linotype-bold';
 
-        let left = 106;
+        let left = 95;
         ctx.fillText('1', left, 777);
         left += ctx.measureText('1').width - 2;
 
@@ -14,7 +14,7 @@ export const draw1stEdition = (
         ctx.fillText('st', left, 777 - 5);
         left += ctx.measureText('st').width;
 
-        ctx.font = 'bold 17.5px palatino-linotype-bold';
+        ctx.font = 'bold 15px palatino-linotype-bold';
         ctx.fillText(' Edition', left, 777);
     }
 };
@@ -96,7 +96,7 @@ export const drawAD = (
                 ctx.fillText(curText, nextEdge / condenseRatio, baseline);
 
                 if (index < tokenizedText.length - 1) {
-                    ctx.font = '25px matrix';
+                    ctx.font = 'bold 25px matrix';
                     nextEdge -= ctx.measureText('?').width * condenseRatio;
                     ctx.fillText('?', nextEdge / condenseRatio, baseline);
                 }

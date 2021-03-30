@@ -8,7 +8,7 @@ export const randomCharacter = (charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', length =
 };
 
 export const randomSetID = () => {
-    return `${randomCharacter('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4)}-EN${randomCharacter('0123456789', 2)}`;
+    return `${randomCharacter('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4)}-EN${randomCharacter('0123456789', 3)}`;
 };
 
 export const randomPassword = () => {
