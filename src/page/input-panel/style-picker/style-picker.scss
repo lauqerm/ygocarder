@@ -7,12 +7,17 @@
 		border-radius: 2px;
 		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 		display: inline-block;
-		transform: translateY(3px);
+		transform: translateY(-1px);
 		cursor: pointer;
 		.style-picker-display {
 			width: 36px;
 			height: 14px;
 			border-radius: 2px;
+			font-size: 10px;
+			line-height: 12px;
+			text-align: center;
+			color: #333;
+			text-shadow: none;
 		}
 	}
 	.style-picker-overlay {
@@ -37,19 +42,29 @@
 				cursor: pointer;
 			}
 		}
-		.compact-picker {
-			border-top: 1px solid #9a9a9a;
-			background-color: #48484b;
-			color: #ffffffcc;
-			> div > span > div {
-				outline: 1px solid #9a9a9a !important;
+		.custom-style-picker {
+			h2 {
+				text-align: left;
+				background-color: #48484b;
+				margin: 0;
+				padding: 2px 5px;
+				font-size: 13px;
+				color: #d3d3d6;
+				border-bottom: 1px solid #9a9a9a;
 			}
-		}
-		.flexbox-fix {
-			column-gap: 5px;
-			input {
-				color: #ffffffcc !important;
-				padding: 0 0 0 3px !important;
+			.compact-picker {
+				background-color: #48484b;
+				color: #ffffffcc;
+				> div > span > div {
+					outline: 1px solid #9a9a9a !important;
+				}
+			}
+			.flexbox-fix {
+				column-gap: 5px;
+				input {
+					color: #ffffffcc !important;
+					padding: 0 0 0 3px !important;
+				}
 			}
 		}
 	}

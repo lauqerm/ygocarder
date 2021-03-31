@@ -1,4 +1,5 @@
 import { FontSize, monsterFontList, BoxSize, monsterSizeList } from '../const';
+import { defaultTextStyle, TextStyle } from '../model';
 import { splitEffect, createCondenser, quoteConvert } from '../util';
 
 export const drawName = (
@@ -7,8 +8,10 @@ export const drawName = (
     edge: number,
     baseline: number,
     maxWidth: number,
+    style: TextStyle,
 ) => {
     if (ctx) {
+        ctx.fillStyle = style.fillStyle;
         const splittedText = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()])/g);
         const contentWidth = splittedText
             .reduce((prev, cur, index) => {
@@ -24,19 +27,19 @@ export const drawName = (
             ctx.scale(condenseRatio, 1);
             splittedText
                 .reduce((prev, cur, index) => {
-                    ctx.shadowColor = 'black';
-                    ctx.shadowOffsetY = 1;
-                    ctx.shadowBlur = 3;
-                    ctx.globalAlpha = 0.8;
+                    // ctx.shadowColor = 'black';
+                    // ctx.shadowOffsetY = 1;
+                    // ctx.shadowBlur = 3;
+                    // ctx.globalAlpha = 0.8;
                     if (index % 2 === 0) ctx.font = '64.59px MatrixRegularSmallCaps';
                     else ctx.font = 'small-caps 54.59px matrix';
     
                     ctx.fillText(cur, prev / condenseRatio, baseline);
                     return prev + ctx.measureText(cur).width * condenseRatio;
                 }, edge);
-            ctx.globalAlpha = 1;
+            // ctx.globalAlpha = 1;
             ctx.scale(1 / condenseRatio, 1);
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = defaultTextStyle.fillStyle;
         }
     }
 };

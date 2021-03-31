@@ -5,6 +5,7 @@ import 'antd/dist/antd.css';
 import {
     Card,
     defaultMonster,
+    defaultTextStyle,
     iconList,
 } from './model';
 import {
@@ -42,7 +43,8 @@ import {
     fillTextRightWithSpacing,
 } from './draw';
 import WebFont from 'webfontloader';
-import { LoadingOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
 
 function App() {
     const [isInitializing, setInitializing] = useState(true);
@@ -69,7 +71,7 @@ function App() {
 
     const {
         frame, foil,
-        name, nameStyleType,
+        name, nameStyleType, nameStyle,
         pictureCrop,
         effect,
         type_ability,
@@ -241,14 +243,13 @@ function App() {
         if (ctx) {
             ctx.clearRect(0, 0, 549, 100);
             ctx.textAlign = 'left';
-            ctx.fillStyle = nameStyleType === 'auto'
-                ? isXyz ? '#ffffff' : '#000000'
-                : nameStyleType;
-            ctx.strokeStyle = '#ffffff';
+            const style = nameStyleType === 'auto'
+                ? { ...defaultTextStyle, fillStyle: isXyz ? '#ffffff' : '#000000' }
+                : nameStyle;
 
-            drawName(ctx, name, 40.52, 78, 409);
+            drawName(ctx, name, 40.52, 78, 409, style);
         }
-    }, [isInitializing, isXyz, name, nameStyleType]);
+    }, [isInitializing, isXyz, name, nameStyle, nameStyleType]);
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');
@@ -427,7 +428,7 @@ function App() {
                 const localCardVersion = window.localStorage.getItem('card-version');
                 const localCardData = window.localStorage.getItem('card-data');
 
-                if (localCardData !== null) {
+                if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
                     setCard(JSON.parse(localCardData));
                 }
                 setInitializing(false);
@@ -447,7 +448,7 @@ function App() {
         let relevant = true;
         if (isInitializing === false) {
             localStorage.setItem('card-data', JSON.stringify(currentCard));
-            localStorage.setItem('card-version', process.env.VERSION ?? 'unknown');
+            localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
         }
         // localStorage.setItem('card-created', new Date().toISOString());
 
@@ -480,7 +481,6 @@ function App() {
             relevant = false;
         };
     });
-    console.log('🚀 ~ file: app.tsx ~ line 462 ~ useEffect ~ process.env.VERSION', process.env.VERSION);
 
     const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
@@ -574,10 +574,24 @@ function App() {
                 <div className="app-header">
                     <img alt="app-logo" src="./logo192.png" width={48} />
                     <div className="app-description">
-                        <h1>Yugioh Carder <small>v1.0</small></h1>
-                    Credit to someone
-                    Make by someone
-                    Special thank to anyone
+                        <h1>Yugioh Carder <small>v{process.env.REACT_APP_VERSION ?? 'unknown'}</small></h1>
+                        <div className="app-contribution">
+                            <span>GUI: <b>Lauqerm</b></span>
+                            <span>Template: <b>Grezar</b> (<a
+                                href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
+                                target="_blank"
+                                rel="noreferrer">Deviant Art</a>)</span>
+                            <Popover overlayClassName="disclaimer-overlay" content={<div className="disclaimer">
+                                <h2>Disclaimer</h2>
+                                <ul>
+                                    <li>This is a personal project, not an "official" card maker.</li>
+                                    <li>I holds no liability for cards created by this app, including picture, card text and any product that related to it.</li>
+                                    <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project.</li>
+                                </ul>
+                            </div>}>
+                                <ExclamationCircleOutlined className="disclaimer-icon" />
+                            </Popover>
+                        </div>
                     </div>
                 </div>
                 <br />

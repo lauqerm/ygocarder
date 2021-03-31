@@ -15,6 +15,7 @@ export const StylePicker = React.memo(({
     defaultValue,
     onChange,
 }: StylePicker) => {
+    // const [isExpand, setExpand] = useState(false);
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
     const [isVisible, setVisible] = useState(false);
@@ -22,7 +23,7 @@ export const StylePicker = React.memo(({
     return <div className="style-picker">
         <div className="style-picker-preview" onClick={() => setVisible(cur => !cur)}>
 	  		<div className="style-picker-display" style={{ background: `${type === 'auto' ? 'white' : value.fillStyle}` }}>
-                {type === 'auto' ? 'Auto' : ''}
+                {type === 'auto' ? 'Auto' : <>&nbsp;</>}
             </div>
         </div>
         {isVisible
@@ -36,6 +37,7 @@ export const StylePicker = React.memo(({
                     <CloseOutlined className="style-picker-close" onClick={() => setVisible(false)} />
                 </div>
                 <div className={`custom-style-picker ${type === 'auto' ? 'disabled-picker' : ''}`}>
+                    <h2>Text Color</h2>
                     <CompactPicker color={value.fillStyle} onChange={color => {
                         setType('custom');
                         setValue(cur => {

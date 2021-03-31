@@ -16,6 +16,30 @@
     align-items: center;
     justify-content: center;
 }
+.disclaimer-overlay {
+	.ant-popover-inner-content {
+		padding: 5px;
+		background-color: #464646;
+		color: #ffffffcc;
+		text-shadow: 0 1px #222;
+	}
+	.disclaimer {
+		font-size: 12px;
+		line-height: 1;
+		h2 {
+			line-height: 1;
+			font-size: 1.2em;
+			color: #ffffffbb;
+		}
+		ul {
+			padding-inline-start: 20px;
+			margin-block-end: 0;
+			li {
+				line-height: 1.25;
+			}
+		}
+	}
+}
 .app-container {
 	display: flex;
 	column-gap: 10px;
@@ -64,8 +88,33 @@
 					font-family: MatrixBoldSmallCaps;
 					margin: 0;
 					line-height: 1;
+					font-size: 30px;
 					color: #e6e6e6;
 					text-shadow: -1px 1px 2px #1b1b1b;
+					small {
+						font-size: 20px;
+					}
+				}
+				.app-contribution {
+					display: grid;
+					grid-template-columns: max-content 1fr max-content;
+					column-gap: 10px;
+					font-size: 12px;
+					b {
+						font-size: 15px;
+						color: #2badea;
+					}
+					.disclaimer-icon {
+						font-size: 15px;
+						color: #e6e6e6;
+						cursor: pointer;
+					}
+					> * {
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						min-width: 0;
+					}
 				}
 			}
 		}

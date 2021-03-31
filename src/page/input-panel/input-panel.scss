@@ -118,10 +118,17 @@
 		}
 	}
 	.pendulum-container {
-		padding: 10px 10px 0 10px;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 10px;
+		row-gap: 10px;
+		padding: 10px;
 		border: 1px solid #484848;
 		border-radius: 3px;
 		box-shadow: 0 0 2px 1px #212121 inset;
 		background-color: #48484b;
+		.joined-row {
+			grid-column: span 2;
+		}
 	}
 }

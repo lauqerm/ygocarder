@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { Radio, Input, Row, Col, Checkbox, Tooltip } from 'antd';
+import { Radio, Input, Checkbox, Tooltip } from 'antd';
 import { Card, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { ExtractProps } from '../../type';
 import { debounce } from 'lodash';
-import { StylePicker } from './style-picker';
 import { SyncOutlined } from '@ant-design/icons';
 import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton } from './const';
 import { CharPicker } from './char-picker';
+import { StylePicker } from './style-picker';
 import './input-panel.scss';
 
 const { TextArea } = Input;
@@ -86,7 +86,7 @@ export const CardInputPanel = ({
         onCardChange(currentCard => {
             return {
                 ...currentCard,
-                nameStyleType: 'auto',
+                nameStyleType: type,
                 nameStyle: value,
             };
         });
@@ -213,51 +213,47 @@ export const CardInputPanel = ({
                     value={set_id}
                 />
                 {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
-                    <Row gutter={[10, 10]}>
-                        <Col span={24}>
-                            <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
-                            {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale?</Checkbox>}
-                        </Col>
-                        {isPendulum && <>
-                            <Col span={12}>
-                                <Input key="blue-scale" addonBefore={<span>
-                                    <span style={{ color: '#3b9dff' }}>Blue</span> Scale
-                                </span>}
-                                value={blue_scale}
-                                onChange={e => {
-                                    onBlueScaleChange(e);
-                                    if (isMirrorScale) onRedScaleChange(e);
-                                }} />
-                            </Col>
-                            <Col span={12}>
-                                <Input key="red-scale" addonBefore={<span>
-                                    <span style={{ color: '#ff6f6f' }}>Red</span> Scale
-                                </span>}
-                                value={red_scale}
-                                onChange={e => {
-                                    if (isMirrorScale) onBlueScaleChange(e);
-                                    onRedScaleChange(e);
-                                }} />
-                            </Col>
-                            <Col span={24}>
-                                <div style={{ position: 'relative' }}>
-                                    <TextArea key="pendulum-effect"
-                                        id="pendulum-effect"
-                                        ref={onlineCharPicker === 'pendulum-effect' ? ref as any : null}
-                                        onFocus={() => setOnlineCharPicker('pendulum-effect')}
-                                        allowClear
-                                        placeholder="Pendulum effect"
-                                        value={displayPendulumEffect}
-                                        onChange={ev => {
-                                            onPendulumEffectChange(ev);
-                                            setDisplayPendulumEffect(ev.target.value);
-                                        }}
-                                        rows={6}
-                                    />
-                                </div>
-                            </Col>
-                        </>}
-                    </Row>
+                    <div className="joined-row">
+                        <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
+                        {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale?</Checkbox>}
+                    </div>
+                    {isPendulum && <>
+                        <div>
+                            <Input key="blue-scale" addonBefore={<span>
+                                <span style={{ color: '#3b9dff' }}>Blue</span> Scale
+                            </span>}
+                            value={blue_scale}
+                            onChange={e => {
+                                onBlueScaleChange(e);
+                                if (isMirrorScale) onRedScaleChange(e);
+                            }} />
+                        </div>
+                        <div>
+                            <Input key="red-scale" addonBefore={<span>
+                                <span style={{ color: '#ff6f6f' }}>Red</span> Scale
+                            </span>}
+                            value={red_scale}
+                            onChange={e => {
+                                if (isMirrorScale) onBlueScaleChange(e);
+                                onRedScaleChange(e);
+                            }} />
+                        </div>
+                        <div className="joined-row" style={{ position: 'relative' }}>
+                            <TextArea key="pendulum-effect"
+                                id="pendulum-effect"
+                                ref={onlineCharPicker === 'pendulum-effect' ? ref as any : null}
+                                onFocus={() => setOnlineCharPicker('pendulum-effect')}
+                                allowClear
+                                placeholder="Pendulum effect"
+                                value={displayPendulumEffect}
+                                onChange={ev => {
+                                    onPendulumEffectChange(ev);
+                                    setDisplayPendulumEffect(ev.target.value);
+                                }}
+                                rows={6}
+                            />
+                        </div>
+                    </>}
                 </div>}
                 <Input addonBefore="Type"
                     id="type"
