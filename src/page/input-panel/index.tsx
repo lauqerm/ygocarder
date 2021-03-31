@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Radio, Input, Row, Col, Checkbox, Tooltip } from 'antd';
-import { Card } from '../../model';
+import { Card, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { ExtractProps } from '../../type';
 import { debounce } from 'lodash';
-import { ColorPicker } from './color-picker';
+import { StylePicker } from './style-picker';
 import { SyncOutlined } from '@ant-design/icons';
 import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton } from './const';
 import { CharPicker } from './char-picker';
@@ -82,7 +82,15 @@ export const CardInputPanel = ({
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
     const onNameChange = debounce(onChangeFactory('name', setCard), 250);
-    const onNameColorChange = onChangeFactory('nameColor', setCard);
+    const onNameColorChange = (type: TextStyleType, value: TextStyle) => {
+        onCardChange(currentCard => {
+            return {
+                ...currentCard,
+                nameStyleType: 'auto',
+                nameStyle: value,
+            };
+        });
+    };
     const onStarChange = onChangeFactory('star', setCard);
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isPendulum: e.target.checked };
@@ -111,7 +119,7 @@ export const CardInputPanel = ({
 
     const {
         frame, foil,
-        name, nameColor,
+        name, nameStyleType, nameStyle,
         picture,
         effect,
         type_ability,
@@ -132,6 +140,7 @@ export const CardInputPanel = ({
     const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulum_effect);
     const [onlineCharPicker, setOnlineCharPicker] = useState('');
     const ref = useRef();
+    
 
     return <div className="card-info-panel">
         {children}
@@ -159,7 +168,7 @@ export const CardInputPanel = ({
                 ref={onlineCharPicker === 'name' ? ref as any : null}
                 onFocus={() => setOnlineCharPicker('name')}
                 allowClear
-                addonBefore={<>Name <ColorPicker defaultValue={nameColor} onChange={onNameColorChange} /></>}
+                addonBefore={<>Name <StylePicker defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} /></>}
                 placeholder="Card Name"
                 value={displayName}
                 className="name-input"

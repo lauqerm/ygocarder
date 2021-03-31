@@ -1,5 +1,6 @@
-Different pendulum frame
+-Different pendulum frame-
 Save by click
-Layer size reduce / Minor improvement
-Foil
+-Foil-
 -Manual mode-
+
+=Set manager=

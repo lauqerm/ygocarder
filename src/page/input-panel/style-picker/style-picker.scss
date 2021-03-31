@@ -1,7 +1,7 @@
-.color-picker {
+.style-picker {
 	display: inline-block;
 	margin-left: 5px;
-	.color-picker-preview {
+	.style-picker-preview {
 		padding: 2px;
 		background-color: #222222;
 		border-radius: 2px;
@@ -9,29 +9,29 @@
 		display: inline-block;
 		transform: translateY(3px);
 		cursor: pointer;
-		.color-picker-display {
+		.style-picker-display {
 			width: 36px;
 			height: 14px;
 			border-radius: 2px;
 		}
 	}
-	.color-picker-overlay {
+	.style-picker-overlay {
 		border: 1px solid #222;
 		border-radius: 2px;
-		.color-picker-mask {
+		.style-picker-mask {
 			position: fixed;
 			top: 0px;
 			right: 0px;
 			bottom: 0px;
 			left: 0px;
 		}
-		.color-picker-auto {
+		.style-picker-auto {
 			background-color: #48484b;
 			text-align: left;
 			padding: 5px;
 			display: grid;
 			grid-template-columns: 1fr min-content;
-			.color-picker-close {
+			.style-picker-close {
 				color: #f45c52;
 				font-size: 20px;
 				cursor: pointer;

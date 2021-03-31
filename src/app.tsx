@@ -69,7 +69,7 @@ function App() {
 
     const {
         frame, foil,
-        name, nameColor,
+        name, nameStyleType,
         pictureCrop,
         effect,
         type_ability,
@@ -241,14 +241,14 @@ function App() {
         if (ctx) {
             ctx.clearRect(0, 0, 549, 100);
             ctx.textAlign = 'left';
-            ctx.fillStyle = nameColor === 'auto'
+            ctx.fillStyle = nameStyleType === 'auto'
                 ? isXyz ? '#ffffff' : '#000000'
-                : nameColor;
+                : nameStyleType;
             ctx.strokeStyle = '#ffffff';
 
             drawName(ctx, name, 40.52, 78, 409);
         }
-    }, [isInitializing, isXyz, name, nameColor]);
+    }, [isInitializing, isXyz, name, nameStyleType]);
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');
@@ -270,7 +270,7 @@ function App() {
             ctx.font = '15px stone-serif-regular';
 
             if (isPendulum) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.1, 42, 746);
+                fillTextLeftWithSpacing(ctx, set_id, -0.1, 44, 746);
             } else if (isLink) {
                 fillTextLeftWithSpacing(ctx, set_id, -0.1, 367, 590);
             } else fillTextRightWithSpacing(ctx, set_id, -0.1, 492, 589);
@@ -424,6 +424,7 @@ function App() {
                 urls: ['asset/font.css']
             },
             active: () => {
+                const localCardVersion = window.localStorage.getItem('card-version');
                 const localCardData = window.localStorage.getItem('card-data');
 
                 if (localCardData !== null) {
@@ -444,7 +445,10 @@ function App() {
     });
     useEffect(() => {
         let relevant = true;
-        if (isInitializing === false) localStorage.setItem('card-data', JSON.stringify(currentCard));
+        if (isInitializing === false) {
+            localStorage.setItem('card-data', JSON.stringify(currentCard));
+            localStorage.setItem('card-version', process.env.VERSION ?? 'unknown');
+        }
         // localStorage.setItem('card-created', new Date().toISOString());
 
         /**
@@ -476,6 +480,7 @@ function App() {
             relevant = false;
         };
     });
+    console.log('🚀 ~ file: app.tsx ~ line 462 ~ useEffect ~ process.env.VERSION', process.env.VERSION);
 
     const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
@@ -569,7 +574,7 @@ function App() {
                 <div className="app-header">
                     <img alt="app-logo" src="./logo192.png" width={48} />
                     <div className="app-description">
-                        <h1>Yugioh Carder</h1>
+                        <h1>Yugioh Carder <small>v1.0</small></h1>
                     Credit to someone
                     Make by someone
                     Special thank to anyone
