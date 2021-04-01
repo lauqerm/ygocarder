@@ -40,7 +40,7 @@ Your opponent cannot target or destroy this card with card effects. Once per tur
     pendulum_effect: 'You can pay 1000 LP; add 1 "Abyss Actor" Pendulum Monster from your Deck to your hand, except "Abyss Actor - Mellow Madonna", also you cannot Special Summon monsters for the rest of this turn, except "Abyss Actor" Pendulum Monsters (even if this card leaves the field). You can only use this effect of "Abyss Actor - Mellow Madonna" once per turn.',
     red_scale: '0',
     blue_scale: '13',
-    picture: 'https://scontent.fsgn2-6.fna.fbcdn.net/v/t1.0-9/165851102_3703072819802446_2677153091621164666_o.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=qA4t3mN92dQAX_RST5K&_nc_ht=scontent.fsgn2-6.fna&oh=16d439f4c142f27cf716c1d70bc80b22&oe=6085E577',
+    picture: 'https://i.imgur.com/h5kXZeC.png',
     pictureCrop: {
         x: 0,
         y: 0,
