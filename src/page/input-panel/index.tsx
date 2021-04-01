@@ -1,18 +1,17 @@
 import React, { useRef, useState } from 'react';
-import { Radio, Input, Checkbox, Tooltip } from 'antd';
+import { Input, Checkbox, Tooltip } from 'antd';
 import { Card, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
-import { ExtractProps } from '../../type';
 import { debounce } from 'lodash';
 import { SyncOutlined } from '@ant-design/icons';
 import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton } from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
+import { CheckboxTrain } from './input-train';
 import './input-panel.scss';
 
 const { TextArea } = Input;
-type RadioChangeEvent = Parameters<NonNullable<ExtractProps<typeof Radio>['onChange']>>[0];
 
 const onChangeFactory = (
     key: string,
@@ -22,7 +21,7 @@ const onChangeFactory = (
     return (e: any) => {
         mutateFunction(current => ({
             ...current,
-            [key]: valueTransform(typeof e === 'string' || Array.isArray(e) ? e : e?.target?.value),
+            [key]: valueTransform(typeof e === 'string' || typeof e === 'number' || Array.isArray(e) ? e : e?.target?.value),
         }));
     };
 };
@@ -66,16 +65,26 @@ export const CardInputPanel = ({
         onCardChange(currentCard => mutateFunc(currentCard));
     };
     const onFoilChange = onChangeFactory('foil', setCard);
-    const onFrameChange = (e: RadioChangeEvent) => {
+    const onFrameChange = (frameValue: number | string) => {
         onCardChange(currentCard => {
-            const value = e?.target?.value;
+            const value = `${frameValue}`;
             const isST = value === 'spell' || value === 'trap';
+            const newTypeAbility = value === 'spell'
+                ? ['Spell Card']
+                : value === 'trap' ? ['Trap Card'] : currentCard.type_ability;
+            if (isST) setDisplayTypeAbility(newTypeAbility[0]);
     
             return {
                 ...currentCard,
                 frame: value,
                 isPendulum: value === 'link' || value === 'token' || isST ? false : currentCard.isPendulum,
                 subFamily: isST ? 'NO ICON' : currentCard.subFamily,
+                attribute: isST
+                    ? `${value}`.toUpperCase()
+                    : currentCard.attribute,
+                type_ability: value === 'spell'
+                    ? ['Spell Card']
+                    : value === 'trap' ? ['Trap Card'] : currentCard.type_ability,
             };
         });
     };
@@ -152,15 +161,10 @@ export const CardInputPanel = ({
                 });
             }}
         />
-        <Radio.Group className="foil-radio checkbox-train" value={foil} onChange={onFoilChange}>
-            <label className="standalone-addon ant-input-group-addon">
-                <span>Foil</span>
-            </label>
-            {foilButton}
-        </Radio.Group>
-        <Radio.Group className="frame-radio" value={frame} onChange={onFrameChange}>
-            {frameButton}
-        </Radio.Group>
+        <CheckboxTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={foilButton}>
+            <span>Foil</span>
+        </CheckboxTrain>
+        <CheckboxTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameButton} />
         <hr />
         <div className="card-header custom-gap">
             <Input
@@ -179,25 +183,17 @@ export const CardInputPanel = ({
             />
             {isMonster
                 ? !isLink
-                    ? <Radio.Group className="checkbox-train" value={`${star}`} onChange={onStarChange}>
-                        <label className="standalone-addon ant-input-group-addon">
-                            <span>{isXyz ? 'Rank' : 'Level'}</span>
-                        </label>
-                        {starButton}
-                    </Radio.Group>
+                    ? <CheckboxTrain value={`${star}`} onChange={onStarChange} optionList={starButton}>
+                        <span>{isXyz ? 'Rank' : 'Level'}</span>
+                    </CheckboxTrain>
                     : null
-                : <Radio.Group className="checkbox-train" value={subFamily} onChange={onSubFamilyChange}>
-                    <label className="standalone-addon ant-input-group-addon">
-                        <span>Icon</span>
-                    </label>
-                    {iconButton}
-                </Radio.Group>}
-            <Radio.Group className="checkbox-image-train checkbox-train" value={attribute} onChange={onAttributeChange}>
-                <label className="standalone-addon ant-input-group-addon">
-                    <span>Attribute</span>
-                </label>
-                {attributeButton}
-            </Radio.Group>
+                : <CheckboxTrain value={subFamily} onChange={onSubFamilyChange} optionList={iconButton}>
+                    <span>Icon</span>
+                </CheckboxTrain>
+            }
+            <CheckboxTrain className="checkbox-image-train" value={attribute} onChange={onAttributeChange} optionList={attributeButton}>
+                <span>Attribute</span>
+            </CheckboxTrain>
         </div>
         <div key="pic" className="main-info">
             <div className="main-info-first">
@@ -331,12 +327,9 @@ export const CardInputPanel = ({
                         placeholder="Creator"
                         value={creator}
                     />
-                    <Radio.Group className="sticker-input checkbox-image-train checkbox-train" value={sticker} onChange={onStickerChange}>
-                        <label className="standalone-addon ant-input-group-addon">
-                            <span>Sticker</span>
-                        </label>
-                        {stickerButton}
-                    </Radio.Group>
+                    <CheckboxTrain className="sticker-input checkbox-image-train" value={sticker} onChange={onStickerChange} optionList={stickerButton}>
+                        <span>Sticker</span>
+                    </CheckboxTrain>
                 </div>
             </div>
             <div className="main-info-second">

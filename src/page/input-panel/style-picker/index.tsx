@@ -58,7 +58,7 @@ export const StylePicker = React.memo(({
                 </div>
                 <div className={'custom-style-picker'}>
                     <div className="custom-style-text">
-                        {type === 'auto' && <div className="disable-overlay" />}
+                        {/* {type === 'auto' && <div className="disable-overlay" />} */}
                         <h2>Text Color</h2>
                         <CompactPicker color={value.fillStyle} onChange={color => {
                             setType('custom');
@@ -79,7 +79,7 @@ export const StylePicker = React.memo(({
                         Shadow {isExpand ? <CaretUpOutlined /> : <CaretDownOutlined />}
                     </h3>
                     {isExpand && <div className="custom-style-shadow">
-                        {type === 'auto' && <div className="disable-overlay" />}
+                        {/* {type === 'auto' && <div className="disable-overlay" />} */}
                         <h2>Position</h2>
                         <div className="shadow-position">
                             <PowerSlider axis="xy"

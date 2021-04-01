@@ -3,7 +3,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import './app-header.scss';
 
-export const AppHeader = () => {
+export const AppHeader = React.memo(() => {
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={48} />
         <div className="app-description">
@@ -31,4 +31,4 @@ export const AppHeader = () => {
             </div>
         </div>
     </div>;
-};
+}, () => true);

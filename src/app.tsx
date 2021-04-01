@@ -272,7 +272,7 @@ function App() {
             ctx.font = '15px stone-serif-regular';
 
             if (isPendulum) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.1, 44, 746);
+                fillTextLeftWithSpacing(ctx, set_id, -0.1, 45, 746);
             } else if (isLink) {
                 fillTextLeftWithSpacing(ctx, set_id, -0.1, 367, 590);
             } else fillTextRightWithSpacing(ctx, set_id, -0.1, 492, 589);
@@ -327,7 +327,6 @@ function App() {
         size: TypeSize = typeSizeMap['medium'],
         alignment: 'left' | 'right' = 'left',
     ) => {
-        console.log('🚀 ~ file: app.tsx ~ line 330 ~ App ~ size', size);
         if (ctx) {
             ctx?.clearRect(0, 0, 549, 700);
             const { left } = size;

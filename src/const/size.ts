@@ -102,7 +102,7 @@ export const typeSizeMap: Record<string, TypeSize> = {
         },
         upperCaseSize: 21,
         upperCaseScale: 1,
-        lowerCaseSize: 18,
+        lowerCaseSize: 19,
         lowerCaseScale: 0.95,
         spaceScale: 1,
         spaceSize: {
