@@ -21,10 +21,10 @@ export const frameButton = frameType.map(({ color, name, backgroundColor }) => {
     </RadioButton>;
 });
 export const attributeButton = attributeList.map(({ name }) => <RadioButton key={name} value={name}>
-    <img alt={name} src={`/asset/image/attribute/attr-${name.toLowerCase()}.png`} />
+    <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${name.toLowerCase()}.png`} />
 </RadioButton>);
 export const iconButton = iconList.map(entry => <RadioButton key={entry} value={entry}>{entry}</RadioButton>);
 export const starButton = [...Array(14)].map((e, index) => <RadioButton key={`${index}`} value={`${index}`}>{`${index}`}</RadioButton>);
 export const stickerButton = stickerList.map(name => <RadioButton key={name} value={name}>
-    <img alt={name} src={`/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />
+    <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />
 </RadioButton>);

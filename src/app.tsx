@@ -14,8 +14,6 @@ import {
     checkNormal,
     checkXyz,
     getCardFrame,
-    drawFromSource,
-    drawFromSourceWithSize,
 } from './util';
 import { CardInputPanel } from './page';
 import {
@@ -41,6 +39,8 @@ import {
     drawTextTemplate,
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing,
+    drawFromSource,
+    drawFromSourceWithSize,
 } from './draw';
 import WebFont from 'webfontloader';
 import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -549,12 +549,12 @@ function App() {
 
     return (
         <div className={'app-container'} style={{
-            backgroundImage: 'url("/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)',
+            backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
         }}>
             {isInitializing && <div className="full-loading">
                 {error.length > 0 ? <span style={{ color: '#e04040' }}>
                     {error}
-                </span> : 'Initializing...'}
+                </span> : 'Loading fonts and scripts...'}
             </div>}
             <div className="card-filter-panel">
             </div>
@@ -572,12 +572,12 @@ function App() {
                 }}
             >
                 <div className="app-header">
-                    <img alt="app-logo" src="./logo192.png" width={48} />
+                    <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={48} />
                     <div className="app-description">
                         <h1>Yugioh Carder <small>v{process.env.REACT_APP_VERSION ?? 'unknown'}</small></h1>
                         <div className="app-contribution">
                             <span>GUI: <b>Lauqerm</b></span>
-                            <span>Template: <b>Grezar</b> (<a
+                            <span>Template: <b>Grezar</b> and others (<a
                                 href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
                                 target="_blank"
                                 rel="noreferrer">Deviant Art</a>)</span>
@@ -597,7 +597,7 @@ function App() {
                 <br />
             </CardInputPanel>}
             <div className="card-preview-panel">
-                <button className="export-button">Save Card: Right click → "Save image as..."</button>
+                <button className="export-button">Save Card:<br />Right click the card → "Save image as..." / "Copy Image"</button>
                 <div className="card-canvas-group">
                     <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
                     <div id="export-canvas-guard">

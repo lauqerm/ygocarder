@@ -31,12 +31,14 @@ export const StylePicker = React.memo(({
                 <div className="style-picker-mask" onClick={() => setVisible(false)} />
                 <div className="style-picker-auto">
                     <Checkbox value={'auto'} checked={type === 'auto'} onChange={() => {
-                        setType('auto');
-                        onChange('auto', value);
+                        const newType = type === 'auto' ? 'custom' : 'auto';
+                        setType(newType);
+                        onChange(newType, value);
                     }}>Auto</Checkbox>
                     <CloseOutlined className="style-picker-close" onClick={() => setVisible(false)} />
                 </div>
-                <div className={`custom-style-picker ${type === 'auto' ? 'disabled-picker' : ''}`}>
+                <div className={'custom-style-picker'}>
+                    {type === 'auto' && <div className="disable-overlay" />}
                     <h2>Text Color</h2>
                     <CompactPicker color={value.fillStyle} onChange={color => {
                         setType('custom');

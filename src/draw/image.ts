@@ -19,7 +19,7 @@ export const drawFromSource = async (
             resolve(true);
         } else {
             const img = new Image();
-            img.src = source;
+            img.src = process.env.PUBLIC_URL + source;
             img.onload = () => {
                 let normalizedX = typeof sx === 'number' ? sx : sx(img);
                 let normalizedY = typeof sy === 'number' ? sy : sy(img);
@@ -55,7 +55,7 @@ export const drawFromSourceWithSize = async (
             resolve(true);
         } else {
             const img = new Image();
-            img.src = source;
+            img.src = process.env.PUBLIC_URL + source;
             img.onload = () => {
                 let normalizedX = typeof sx === 'number' ? sx : sx(img);
                 let normalizedY = typeof sy === 'number' ? sy : sy(img);
