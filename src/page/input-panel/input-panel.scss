@@ -53,6 +53,9 @@
 
 	.checkbox-train {
 		display: flex;
+		.ant-radio-button-wrapper-checked {
+			border-color: #1890ff;
+		}
 	}
 	.checkbox-image-train label {
 		padding: 0 10px;
