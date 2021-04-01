@@ -78,8 +78,26 @@ export const iconList = [
     'COUNTER',
 ];
 
+export const foilStyleMap: Record<string, TextStyle> = {
+    gold: {
+        fillStyle: '#b88c43',
+        shadowColor: '#FCC400',
+        shadowOffsetY: 1,
+        shadowOffsetX: 0,
+        shadowBlur: 1,
+        globalAlpha: 1,
+    },
+    platinum: {
+        fillStyle: '#CCCCCC',
+        shadowColor: '#FFFFFF',
+        shadowOffsetY: 1,
+        shadowOffsetX: 0,
+        shadowBlur: 1,
+        globalAlpha: 1,
+    },
+};
 export const foilList = [
-    { name: 'normal', color: '#747b95' },
+    { name: 'normal', color: '#747b95', textStyle: defaultTextStyle },
     { name: 'gold', color: '#cfa65f' },
     { name: 'platinum', color: '#b1b1b1' },
 ];

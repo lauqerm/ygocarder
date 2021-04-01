@@ -6,6 +6,7 @@ import {
     Card,
     defaultMonster,
     defaultTextStyle,
+    foilStyleMap,
     iconList,
 } from './model';
 import {
@@ -244,12 +245,14 @@ function App() {
             ctx.clearRect(0, 0, 549, 100);
             ctx.textAlign = 'left';
             const style = nameStyleType === 'auto'
-                ? { ...defaultTextStyle, fillStyle: isXyz ? '#ffffff' : '#000000' }
+                ? foil !== 'normal'
+                    ? foilStyleMap[foil] ?? defaultTextStyle
+                    : { ...defaultTextStyle, fillStyle: isXyz ? '#ffffff' : '#000000' }
                 : nameStyle;
 
             drawName(ctx, name, 40.52, 78, 409, style);
         }
-    }, [isInitializing, isXyz, name, nameStyle, nameStyleType]);
+    }, [foil, isInitializing, isXyz, name, nameStyle, nameStyleType]);
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');

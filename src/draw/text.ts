@@ -12,6 +12,11 @@ export const drawName = (
 ) => {
     if (ctx) {
         ctx.fillStyle = style.fillStyle;
+        ctx.shadowColor = style.shadowColor;
+        ctx.shadowOffsetY = style.shadowOffsetY;
+        ctx.shadowOffsetX = style.shadowOffsetX;
+        ctx.shadowBlur = style.shadowBlur;
+        ctx.globalAlpha = style.globalAlpha;
         const splittedText = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()])/g);
         const contentWidth = splittedText
             .reduce((prev, cur, index) => {
@@ -27,20 +32,20 @@ export const drawName = (
             ctx.scale(condenseRatio, 1);
             splittedText
                 .reduce((prev, cur, index) => {
-                    // ctx.shadowColor = 'black';
-                    // ctx.shadowOffsetY = 1;
-                    // ctx.shadowBlur = 3;
-                    // ctx.globalAlpha = 0.8;
                     if (index % 2 === 0) ctx.font = '64.59px MatrixRegularSmallCaps';
                     else ctx.font = 'small-caps 54.59px matrix';
     
                     ctx.fillText(cur, prev / condenseRatio, baseline);
                     return prev + ctx.measureText(cur).width * condenseRatio;
                 }, edge);
-            // ctx.globalAlpha = 1;
             ctx.scale(1 / condenseRatio, 1);
-            ctx.fillStyle = defaultTextStyle.fillStyle;
         }
+        ctx.fillStyle = defaultTextStyle.fillStyle;
+        ctx.shadowColor = defaultTextStyle.shadowColor;
+        ctx.shadowOffsetY = defaultTextStyle.shadowOffsetY;
+        ctx.shadowOffsetX = defaultTextStyle.shadowOffsetX;
+        ctx.shadowBlur = defaultTextStyle.shadowBlur;
+        ctx.globalAlpha = defaultTextStyle.globalAlpha;
     }
 };
 
