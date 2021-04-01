@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './app.scss';
 import 'antd/dist/antd.css';
@@ -16,7 +15,7 @@ import {
     checkXyz,
     getCardFrame,
 } from './util';
-import { CardInputPanel } from './page';
+import { AppHeader, CardInputPanel } from './page';
 import {
     arrowPositionList,
     foilPosition,
@@ -44,8 +43,7 @@ import {
     drawFromSourceWithSize,
 } from './draw';
 import WebFont from 'webfontloader';
-import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Popover } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 function App() {
     const [isInitializing, setInitializing] = useState(true);
@@ -210,11 +208,11 @@ function App() {
                 );
             } else if (!isMonster) {
                 const normalizedSubFamily = subFamily.toUpperCase();
-                const hasSTIcon = normalizedSubFamily !== 'no icon'
+                const hasSTIcon = normalizedSubFamily !== 'NO ICON'
                         && iconList.includes(normalizedSubFamily);
     
                 return hasSTIcon
-                    ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily}.png`,
+                    ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
                         (image) => 491 - image.naturalWidth - 7,
                         103,
                         29, 29)
@@ -329,6 +327,7 @@ function App() {
         size: TypeSize = typeSizeMap['medium'],
         alignment: 'left' | 'right' = 'left',
     ) => {
+        console.log('🚀 ~ file: app.tsx ~ line 330 ~ App ~ size', size);
         if (ctx) {
             ctx?.clearRect(0, 0, 549, 700);
             const { left } = size;
@@ -574,30 +573,7 @@ function App() {
                     }));
                 }}
             >
-                <div className="app-header">
-                    <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={48} />
-                    <div className="app-description">
-                        <h1>Yugioh Carder <small>v{process.env.REACT_APP_VERSION ?? 'unknown'}</small></h1>
-                        <div className="app-contribution">
-                            <span>GUI: <b>Lauqerm</b></span>
-                            <span>Template: <b>Grezar</b> and others (<a
-                                href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
-                                target="_blank"
-                                rel="noreferrer">Deviant Art</a>)</span>
-                            <Popover overlayClassName="disclaimer-overlay" content={<div className="disclaimer">
-                                <h2>Disclaimer</h2>
-                                <ul>
-                                    <li>This is a personal project, not an "official" card maker.</li>
-                                    <li>I holds no liability for cards created by this app, including picture, card text and any product that related to it.</li>
-                                    <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project.</li>
-                                </ul>
-                            </div>}>
-                                <ExclamationCircleOutlined className="disclaimer-icon" />
-                            </Popover>
-                        </div>
-                    </div>
-                </div>
-                <br />
+                <AppHeader /><br />
             </CardInputPanel>}
             <div className="card-preview-panel">
                 <button className="export-button">Save Card:<br />Right click the card → "Save image as..." / "Copy Image"</button>

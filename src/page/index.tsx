@@ -4,3 +4,6 @@ export {
 export type {
     CardInputPanelRef
 } from './input-panel';
+export {
+    AppHeader
+} from './app-header';

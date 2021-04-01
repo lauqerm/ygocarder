@@ -69,55 +69,6 @@
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 		position: relative;
-		.app-header {
-			display: inline-grid;
-			grid-template-columns: max-content 1fr;
-			margin-bottom: 10px;
-			background-color: #333333;
-			padding: 4px 10px 4px 4px;
-			border-radius: 3px;
-			box-shadow: 0 0 2px 1px #212121 inset;
-			img {
-				padding: 3px;
-			}
-			.app-description {
-				border-left: 1px dashed #b1b1b1;
-				padding-left: 10px;
-				margin-left: 5px;
-				h1 {
-					font-family: MatrixBoldSmallCaps;
-					margin: 0;
-					line-height: 1;
-					font-size: 30px;
-					color: #e6e6e6;
-					text-shadow: -1px 1px 2px #1b1b1b;
-					small {
-						font-size: 20px;
-					}
-				}
-				.app-contribution {
-					display: grid;
-					grid-template-columns: max-content 1fr max-content;
-					column-gap: 10px;
-					font-size: 12px;
-					b {
-						font-size: 15px;
-						color: #2badea;
-					}
-					.disclaimer-icon {
-						font-size: 15px;
-						color: #e6e6e6;
-						cursor: pointer;
-					}
-					> * {
-						white-space: nowrap;
-						text-overflow: ellipsis;
-						overflow: hidden;
-						min-width: 0;
-					}
-				}
-			}
-		}
 	}
 	.card-preview-panel {
 		flex: 2;
