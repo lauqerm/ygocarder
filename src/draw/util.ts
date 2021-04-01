@@ -40,7 +40,10 @@ export const fillTextLeftWithSpacing = (
             ctx.fillText(char, curLeft, baseline);
             curLeft += ctx.measureText(char).width * (1 + (letterSpacingRatio / 2));
         });
+
+        return curLeft;
     }
+    return 0;
 };
 export const fillTextRightWithSpacing = (
     ctx: CanvasRenderingContext2D | null | undefined,

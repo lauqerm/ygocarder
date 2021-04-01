@@ -2,11 +2,12 @@ import { fillTextRightWithSpacing, measureWithSymbol } from './util';
 
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
+    edge = 99,
 ) => {
     if (ctx) {
         ctx.font = 'bold 16px palatino-linotype-bold';
 
-        let left = 95;
+        let left = edge;
         ctx.fillText('1', left, 777);
         left += ctx.measureText('1').width - 2;
 

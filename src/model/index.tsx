@@ -6,12 +6,12 @@ export const defaultTextStyle = {
     shadowOffsetY: 0,
     shadowOffsetX: 0,
     shadowBlur: 0,
-    globalAlpha: 1,
+    hasShadow: false,
 };
 
 export type Card = typeof defaultCard;
 export const defaultCard = {
-    frame: 'effect',
+    frame: 'fusion',
     foil: 'normal',
     name: 'Junko',
     nameStyleType: 'auto' as TextStyleType,
@@ -21,11 +21,11 @@ export const defaultCard = {
         shadowOffsetY: 0,
         shadowOffsetX: 0,
         shadowBlur: 0,
-        globalAlpha: 1,
+        hasShadow: false,
     } as TextStyle,
     attribute: 'LIGHT',
     subFamily: 'NO ICON',
-    star: 4,
+    star: 6,
     picture: 'https://i.imgur.com/h5kXZeC.png',
     pictureCrop: {
         x: 0,
@@ -38,13 +38,14 @@ export const defaultCard = {
     link_map: ['1', '3', '7', '9'] as string[],
     isPendulum: false,
     pendulum_effect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
-    red_scale: '0',
-    blue_scale: '13',
-    type_ability: ['Fairy', 'Effect'] as string[],
-    effect: 'Each time an opponent\'s monster activates its effect, place 1 Pure Counter on that opponent\'s monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.',
+    red_scale: '4',
+    blue_scale: '4',
+    type_ability: ['Fairy', 'Fusion', 'Effect'] as string[],
+    effect: `[2+ Effect Monsters]
+Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
     set_id: 'YGOC-EN001',
-    atk: '1500',
-    def: '1500',
+    atk: '2000',
+    def: '2000',
     passcode: '18111996',
     sticker: 'holo5',
     isFirstEdition: true,
@@ -81,7 +82,7 @@ export const foilStyleMap: Record<string, TextStyle> = {
         shadowOffsetY: 1,
         shadowOffsetX: 0,
         shadowBlur: 1,
-        globalAlpha: 1,
+        hasShadow: true,
     },
     platinum: {
         fillStyle: '#CCCCCC',
@@ -89,7 +90,7 @@ export const foilStyleMap: Record<string, TextStyle> = {
         shadowOffsetY: 1,
         shadowOffsetX: 0,
         shadowBlur: 1,
-        globalAlpha: 1,
+        hasShadow: true,
     },
 };
 export const foilList = [

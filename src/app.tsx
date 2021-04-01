@@ -23,7 +23,6 @@ import {
     pendulumSizeList,
     stFontList,
     stSizeList,
-    TypeSize,
     typeSizeMap,
 } from './const';
 import {
@@ -64,7 +63,6 @@ function App() {
     const ADCanvasRef = useRef<HTMLCanvasElement>(null);
     const setIdRef = useRef<HTMLCanvasElement>(null);
     const passcodeRef = useRef<HTMLCanvasElement>(null);
-    const firstEditionRef = useRef<HTMLCanvasElement>(null);
     const creatorRef = useRef<HTMLCanvasElement>(null);
     const stickerRef = useRef<HTMLCanvasElement>(null);
 
@@ -274,7 +272,7 @@ function App() {
             if (isPendulum) {
                 fillTextLeftWithSpacing(ctx, set_id, -0.1, 45, 746);
             } else if (isLink) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.1, 367, 590);
+                fillTextLeftWithSpacing(ctx, set_id, -0.1, 364, 590);
             } else fillTextRightWithSpacing(ctx, set_id, -0.1, 492, 589);
         }
     }, [isInitializing, isLink, isPendulum, isXyz, set_id]);
@@ -287,20 +285,15 @@ function App() {
             else ctx.fillStyle = '#000';
             ctx.font = '15px stone-serif-regular';
 
-            fillTextLeftWithSpacing(ctx, passcode, -0.1, 25, 777);
-        }
-    }, [isInitializing, isLink, isPendulum, isXyz, passcode]);
+            const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 25, 777);
+            if (isFirstEdition) {
+                if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
+                else ctx.fillStyle = '#000';
 
-    useEffect(() => {
-        const ctx = firstEditionRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 800);
-        if (ctx && isFirstEdition === true) {
-            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
-            else ctx.fillStyle = '#000';
-
-            draw1stEdition(ctx);
+                draw1stEdition(ctx, endOfPasscode + 10);
+            }
         }
-    }, [isInitializing, isLink, isPendulum, isXyz, isFirstEdition]);
+    }, [isFirstEdition, isInitializing, isLink, isPendulum, isXyz, passcode]);
 
     useEffect(() => {
         const ctx = creatorRef.current?.getContext('2d');
@@ -324,11 +317,12 @@ function App() {
 
     const drawTypeAbility  = useCallback((
         ctx: CanvasRenderingContext2D | null | undefined,
-        size: TypeSize = typeSizeMap['medium'],
+        textSize: 'small' | 'medium' | 'large',
         alignment: 'left' | 'right' = 'left',
     ) => {
         if (ctx) {
             ctx?.clearRect(0, 0, 549, 700);
+            const size = typeSizeMap[textSize] ?? typeSizeMap['medium'];
             const { left } = size;
             const normalizedSubFamily = subFamily.toUpperCase();
             const instructionList = [
@@ -339,17 +333,20 @@ function App() {
                     entry,
                     index === type_ability.length - 1,
                     size, alignment)),
-                normalizedSubFamily === 'NO ICON'
-                    ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1)
-                    : drawIconSpaceTemplate(ctx, size, alignment),
+                textSize === 'large'
+                    ? normalizedSubFamily === 'NO ICON'
+                        ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1)
+                        : drawIconSpaceTemplate(ctx, size, alignment)
+                    : (edge: number) => edge,
                 drawBracketTemplate(ctx, ']', size, alignment),
             ];
-            (alignment === 'left'
+            const totalLeft = (alignment === 'left'
                 ? instructionList
                 : instructionList.reverse()).reduce((prev, curr) => {
                 return curr(prev);
             }, left);
             ctx.textAlign = 'left';
+            if (totalLeft > 508 && textSize === 'medium') drawTypeAbility(ctx, 'small', alignment);
         }
     }, [subFamily, type_ability]);
     useEffect(() => {
@@ -359,8 +356,8 @@ function App() {
         if (isMonster) {
             const effectIndexSize = drawEffect(ctx, effect, false, isNormal);
             drawTypeAbility(typeCtx, effectIndexSize === 0
-                ? typeSizeMap['medium']
-                : typeSizeMap['small']);
+                ? 'medium'
+                : 'small');
         } else {
             drawEffect(
                 ctx,
@@ -370,7 +367,7 @@ function App() {
                 stFontList,
                 stSizeList,
             );
-            drawTypeAbility(typeCtx, typeSizeMap['large'], 'right');
+            drawTypeAbility(typeCtx, 'large', 'right');
         }
     }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal]);
     useEffect(() => {
@@ -536,7 +533,6 @@ function App() {
                 effectCanvasRef,
                 ADCanvasRef,
                 setIdRef,
-                firstEditionRef,
                 passcodeRef,
                 creatorRef,
                 stickerRef,
@@ -595,7 +591,6 @@ function App() {
                     <canvas id="ADCanvas" ref={ADCanvasRef} width={549} height={800} />
                     <canvas id="setId" ref={setIdRef} width={549} height={800} />
                     <canvas id="passcode" ref={passcodeRef} width={549} height={800} />
-                    <canvas id="firstEdition" ref={firstEditionRef} width={549} height={800} />
                     <canvas id="creator" ref={creatorRef} width={549} height={800} />
                     <canvas id="sticker" ref={stickerRef} width={549} height={800} />
                     <canvas className="crop-canvas" ref={previewCanvasRef} />

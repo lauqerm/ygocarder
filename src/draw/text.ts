@@ -12,11 +12,12 @@ export const drawName = (
 ) => {
     if (ctx) {
         ctx.fillStyle = style.fillStyle;
-        ctx.shadowColor = style.shadowColor;
-        ctx.shadowOffsetY = style.shadowOffsetY;
-        ctx.shadowOffsetX = style.shadowOffsetX;
-        ctx.shadowBlur = style.shadowBlur;
-        ctx.globalAlpha = style.globalAlpha;
+        if (style.hasShadow) {
+            ctx.shadowColor = style.shadowColor;
+            ctx.shadowOffsetY = style.shadowOffsetY;
+            ctx.shadowOffsetX = style.shadowOffsetX;
+            ctx.shadowBlur = style.shadowBlur;
+        }
         const splittedText = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()])/g);
         const contentWidth = splittedText
             .reduce((prev, cur, index) => {
@@ -45,7 +46,6 @@ export const drawName = (
         ctx.shadowOffsetY = defaultTextStyle.shadowOffsetY;
         ctx.shadowOffsetX = defaultTextStyle.shadowOffsetX;
         ctx.shadowBlur = defaultTextStyle.shadowBlur;
-        ctx.globalAlpha = defaultTextStyle.globalAlpha;
     }
 };
 
@@ -110,7 +110,8 @@ export const drawEffect = (
 
         while(effectIndexSize < fontList.length) {
             const { fontSize, lineHeight, lineCount } = fontList[effectIndexSize];
-            const { left, width, top } = sizeList[effectIndexSize];
+            const { left, width: basedWidth, top } = sizeList[effectIndexSize];
+            const width = isNormal ? basedWidth - 2 : basedWidth;
             const condenser = createCondenser();
             let effectiveRatio = 1000;
 
@@ -218,7 +219,8 @@ export const drawEffect = (
                 ctx.strokeStyle = '#003300';
                 ctx.stroke();
             };
-            if (effectiveRatio < (tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'])) {
+            if ((effectiveRatio < (tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3']))
+            && effectIndexSize < fontList.length - 1) {
                 effectIndexSize += 1;
             } else {
                 ctx?.clearRect(0, 0, 549, 750);

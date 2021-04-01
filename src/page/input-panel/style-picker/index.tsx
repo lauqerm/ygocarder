@@ -1,11 +1,11 @@
 import { Checkbox, InputNumber, Slider } from 'antd';
 import React, { useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
-import { CloseOutlined, CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import { TextStyle, TextStyleType } from '../../../model';
 import PowerSlider from 'react-input-slider';
-import './style-picker.scss';
 import { debounce } from 'lodash';
+import './style-picker.scss';
 
 export type StylePicker = {
     defaultType: TextStyleType,
@@ -17,7 +17,6 @@ export const StylePicker = React.memo(({
     defaultValue,
     onChange: undebouncedOnChange,
 }: StylePicker) => {
-    const [isExpand, setExpand] = useState(false);
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
     const [isVisible, setVisible] = useState(false);
@@ -70,15 +69,18 @@ export const StylePicker = React.memo(({
                             });
                         }} />
                     </div>
-                    <h3 className="custom-style-expand" onClick={e => {
-                        setExpand(cur => !cur);
-                        // e.stopPropagation();
-                        // e.preventDefault();
-                        // return false;
-                    }}>
-                        Shadow {isExpand ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                    <h3 className="custom-style-expand">
+                        <Checkbox value={'has-shadow'} checked={value.hasShadow} onChange={() => {
+                            setType('custom');
+                            setValue(cur => {
+                                const newStyle = { ...cur, hasShadow: !cur.hasShadow };
+
+                                onChange('custom', newStyle);
+                                return newStyle;
+                            });
+                        }}>Has Shadow?</Checkbox>
                     </h3>
-                    {isExpand && <div className="custom-style-shadow">
+                    {value.hasShadow && <div className="custom-style-shadow">
                         {/* {type === 'auto' && <div className="disable-overlay" />} */}
                         <h2>Position</h2>
                         <div className="shadow-position">
