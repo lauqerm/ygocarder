@@ -39,6 +39,7 @@
 		align-items: flex-start;
 		margin-top: 1em;
 		column-gap: 1em;
+		row-gap: 1em;
 		.main-info-first {
 			flex: 1;
 			display: flex;
@@ -134,5 +135,45 @@
 		.joined-row {
 			grid-column: span 2;
 		}
+		.ant-input-group-addon {
+			width: 100px;
+		}
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+	.card-info-panel {
+		.frame-radio {
+			flex-wrap: wrap;
+		}
+		.checkbox-star-train {
+			.ant-radio-button-wrapper {
+				width: 30px;
+				padding: 0;
+				text-align: center;
+			}
+		}
+		.main-info {
+			flex-wrap: wrap-reverse;
+			.main-info-second {
+				flex: 1 1 375px;
+			}
+		}
+		// .pendulum-container {
+		// 	grid-template-columns: 1fr;
+		// 	.joined-row {
+		// 		grid-column: span 1;
+		// 	}
+		// }
+		// .card-footer-input {
+		// 	grid-template-columns: 1fr;
+		// 	.creator-input,
+		// 	.sticker-input {
+		// 		grid-column: span 1;
+		// 	}
+		// 	.sticker-input {
+		// 		flex-wrap: wrap;
+		// 	}
+		// }
 	}
 }

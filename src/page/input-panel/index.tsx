@@ -35,7 +35,7 @@ const RandomButton = ({
     onGenerate,
 }: RandomButton) => {
     return <span style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #222' }}>
-        <Tooltip overlay="Random">
+        <Tooltip overlay="Randomize">
             <SyncOutlined onClick={() => onGenerate(seeder())} />
         </Tooltip>
     </span>;
@@ -183,7 +183,7 @@ export const CardInputPanel = ({
             />
             {isMonster
                 ? !isLink
-                    ? <CheckboxTrain value={`${star}`} onChange={onStarChange} optionList={starButton}>
+                    ? <CheckboxTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButton}>
                         <span>{isXyz ? 'Rank' : 'Level'}</span>
                     </CheckboxTrain>
                     : null

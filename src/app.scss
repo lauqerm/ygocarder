@@ -44,8 +44,8 @@
 	display: flex;
 	column-gap: 10px;
 	min-height: 100vh;
-	--zoom-ratio: 0.8;
-	--translate-percent: -12.5%;
+	max-width: 1600px;
+	margin: auto;
 	&.app-container-export {
 		flex-direction: row-reverse;
 		> .card-filter-panel {
@@ -56,7 +56,7 @@
 		}
 	}
 	.card-filter-panel {
-		flex: 1;
+		flex: 0 0 0;
 	}
 	.card-info-panel {
 		flex: 3;
@@ -71,9 +71,9 @@
 		position: relative;
 	}
 	.card-preview-panel {
-		flex: 2;
-		min-width: 549px;
+		flex: 0 0 560px;
 		position: relative;
+		overflow: hidden;
 		.export-button {
 			background-color: #00000044;
 			border-radius: 5px;
@@ -82,7 +82,7 @@
 			font-size: 20px;
 			line-height: 1.5;
 			margin: 10px 0;
-			max-width: 549px;
+			max-width: 560px;
 			outline: none !important;
 			padding: 5px 10px;
 			text-align: left;
@@ -94,6 +94,7 @@
 			box-shadow: 0 0 3px 2px #333, 0 0 8px 3px #444;
 			width: 549px;
 			height: 800px;
+			margin: auto;
 			margin-bottom: 10px;
 			canvas {
 				position: absolute;
@@ -158,13 +159,6 @@
 	}
 }
 
-#portal {
-	position: absolute;
-	top: 0;
-	left: 0;
-	transform: scale(var(--zoom-ratio)) translateY(var(--translate-percent)) translateX(var(--translate-percent));
-}
-
 .hidden {
 	visibility: hidden;
 }
@@ -220,6 +214,9 @@
 	.anticon {
 		color: #ffffffcc;
 	}
+	input[type="file"] {
+		overflow: hidden;
+	}
 }
 .ant-input-group {
 	.ant-radio-button-wrapper,
@@ -235,5 +232,34 @@
 	.ant-input,
 	.ant-input-affix-wrapper {
 		border-color: #222;
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+	.app-container {
+		.card-preview-panel {
+			flex: 0 0 430px;
+			.card-canvas-group {
+				transform: scale(0.75) translateY(-133px) translateX(-78px);
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 800px) {
+	.app-container {
+		flex-wrap: wrap;
+		.card-preview-panel {
+			flex: 1 1 430px;
+			.export-button {
+				max-width: unset;
+			}
+			.card-canvas-group {
+				transform: scale(1);
+			}
+		}
+		.card-info-panel {
+			margin: 10px 15px;
+		}
 	}
 }

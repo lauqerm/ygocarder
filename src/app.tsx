@@ -275,7 +275,7 @@ function App() {
             if (isPendulum) {
                 fillTextLeftWithSpacing(ctx, set_id, -0.1, 45, 746);
             } else if (isLink) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.1, 364, 590);
+                fillTextRightWithSpacing(ctx, set_id, -0.1, 450, 590);
             } else fillTextRightWithSpacing(ctx, set_id, -0.1, 492, 589);
         }
     }, [isInitializing, isLink, isPendulum, isXyz, set_id]);
@@ -340,7 +340,7 @@ function App() {
                     ? normalizedSubFamily === 'NO ICON'
                         ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1)
                         : drawIconSpaceTemplate(ctx, size, alignment)
-                    : (edge: number) => edge,
+                    : (edge: number) => edge + 2,
                 drawBracketTemplate(ctx, ']', size, alignment),
             ];
             const totalLeft = (alignment === 'left'
@@ -556,56 +556,58 @@ function App() {
     }).current;
 
     return (
-        <div className={'app-container'} style={{
+        <div id="app" style={{
             backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
         }}>
-            {isInitializing && <div className="full-loading">
-                {error.length > 0 ? <span style={{ color: '#e04040' }}>
-                    {error}
-                </span> : 'Loading fonts and scripts...'}
-            </div>}
-            <div className="card-filter-panel">
-            </div>
-            {isInitializing === false && <CardInputPanel
-                receivingCanvasRef={previewCanvasRef.current}
-                currentCard={currentCard}
-                onCardChange={setCard}
-                defaultCropInfo={pictureCrop}
-                onImageChange={cropInfo => {
-                    setImageChangeCount(cnt => cnt + 1);
-                    if (cropInfo) setCard(curr => ({
-                        ...curr,
-                        pictureCrop: cropInfo,
-                    }));
-                }}
-            >
-                <AppHeader /><br />
-            </CardInputPanel>}
-            <div className="card-preview-panel">
-                <button className="export-button">Save Card:<br />Right click the card → "Save image as..." / "Copy Image"</button>
-                <div className="card-canvas-group">
-                    <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
-                    <div id="export-canvas-guard">
-                        <div className="canvas-guard-alert">Generating...</div>
-                        <LoadingOutlined />
+            <div className={'app-container'}>
+                {isInitializing && <div className="full-loading">
+                    {error.length > 0 ? <span style={{ color: '#e04040' }}>
+                        {error}
+                    </span> : 'Loading fonts and scripts...'}
+                </div>}
+                {/* <div className="card-filter-panel">
+                </div> */}
+                <div className="card-preview-panel">
+                    <button className="export-button">Save Card:<br />Right click the card → "Save image as..."</button>
+                    <div className="card-canvas-group">
+                        <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
+                        <div id="export-canvas-guard">
+                            <div className="canvas-guard-alert">Generating...</div>
+                            <LoadingOutlined />
+                        </div>
+                        <canvas id="frameCanvas" ref={frameCanvasRef} width={549} height={800} />
+                        <canvas id="artCanvas" ref={artCanvasRef} width={549} height={650} />
+                        <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={549} height={800} />
+                        <canvas id="nameCanvas" ref={nameCanvasRef} width={549} height={100} />
+                        <canvas id="attributeCanvas" ref={attributeCanvasRef} width={549} height={100} />
+                        <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={549} height={150} />
+                        <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={549} height={600} />
+                        <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={549} height={600} />
+                        <canvas id="typeCanvas" ref={typeCanvasRef} width={549} height={700} />
+                        <canvas id="effectCanvas" ref={effectCanvasRef} width={549} height={750} />
+                        <canvas id="ADCanvas" ref={ADCanvasRef} width={549} height={800} />
+                        <canvas id="setId" ref={setIdRef} width={549} height={800} />
+                        <canvas id="passcode" ref={passcodeRef} width={549} height={800} />
+                        <canvas id="creator" ref={creatorRef} width={549} height={800} />
+                        <canvas id="sticker" ref={stickerRef} width={549} height={800} />
+                        <canvas className="crop-canvas" ref={previewCanvasRef} />
                     </div>
-                    <canvas id="frameCanvas" ref={frameCanvasRef} width={549} height={800} />
-                    <canvas id="artCanvas" ref={artCanvasRef} width={549} height={650} />
-                    <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={549} height={800} />
-                    <canvas id="nameCanvas" ref={nameCanvasRef} width={549} height={100} />
-                    <canvas id="attributeCanvas" ref={attributeCanvasRef} width={549} height={100} />
-                    <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={549} height={150} />
-                    <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={549} height={600} />
-                    <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={549} height={600} />
-                    <canvas id="typeCanvas" ref={typeCanvasRef} width={549} height={700} />
-                    <canvas id="effectCanvas" ref={effectCanvasRef} width={549} height={750} />
-                    <canvas id="ADCanvas" ref={ADCanvasRef} width={549} height={800} />
-                    <canvas id="setId" ref={setIdRef} width={549} height={800} />
-                    <canvas id="passcode" ref={passcodeRef} width={549} height={800} />
-                    <canvas id="creator" ref={creatorRef} width={549} height={800} />
-                    <canvas id="sticker" ref={stickerRef} width={549} height={800} />
-                    <canvas className="crop-canvas" ref={previewCanvasRef} />
                 </div>
+                {isInitializing === false && <CardInputPanel
+                    receivingCanvasRef={previewCanvasRef.current}
+                    currentCard={currentCard}
+                    onCardChange={setCard}
+                    defaultCropInfo={pictureCrop}
+                    onImageChange={cropInfo => {
+                        setImageChangeCount(cnt => cnt + 1);
+                        if (cropInfo) setCard(curr => ({
+                            ...curr,
+                            pictureCrop: cropInfo,
+                        }));
+                    }}
+                >
+                    <AppHeader /><br />
+                </CardInputPanel>}
             </div>
         </div>
     );
