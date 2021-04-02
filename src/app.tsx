@@ -3,17 +3,20 @@ import './app.scss';
 import 'antd/dist/antd.css';
 import {
     Card,
-    defaultMonster,
+    defaultCard,
     defaultTextStyle,
     foilStyleMap,
     iconList,
 } from './model';
 import {
+    cardDataCondenser,
     checkLink,
     checkMonster,
     checkNormal,
     checkXyz,
     getCardFrame,
+    insertUrlParam,
+    reverseCardDataCondenser,
 } from './util';
 import { AppHeader, CardInputPanel } from './page';
 import {
@@ -47,7 +50,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 function App() {
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
-    const [currentCard, setCard] = useState<Card>(defaultMonster);
+    const [currentCard, setCard] = useState<Card>(defaultCard);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -423,11 +426,19 @@ function App() {
                 urls: ['asset/font.css']
             },
             active: () => {
-                const localCardVersion = window.localStorage.getItem('card-version');
-                const localCardData = window.localStorage.getItem('card-data');
+                try {
+                    const localCardVersion = window.localStorage.getItem('card-version');
+                    const localCardData = window.localStorage.getItem('card-data');
 
-                if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-                    setCard(JSON.parse(localCardData));
+                    const urlParam = (new URLSearchParams(window.location.search)).get('data');
+                    if (urlParam) {
+                        console.log('🚀 ~ file: app.tsx ~ line 512 ~ useEffect ~ reverseCardDataCondenser(urlParam)', reverseCardDataCondenser(urlParam));
+                        setCard(reverseCardDataCondenser(urlParam) as any);
+                    } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
+                        setCard(JSON.parse(localCardData));
+                    }
+                } catch (e) {
+                    setCard(defaultCard);
                 }
                 setInitializing(false);
             },
@@ -447,33 +458,33 @@ function App() {
         if (isInitializing === false) {
             localStorage.setItem('card-data', JSON.stringify(currentCard));
             localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
-        }
-        // localStorage.setItem('card-created', new Date().toISOString());
 
-        /**
-         * Run export pipeline
-         * - While it is running, every effect just mark pipeline as queued, then wait the current pipeline
-         * - If the pipeline is complete and there is no effect, run another pipeline and remove the queue
-         */
-        (async () => {
-            const canvasRef = drawCanvasRef.current;
-            if (canvasRef) {
-                document.querySelector('#export-canvas-guard')?.setAttribute('style', '');
-                exportRef.current.queuedPipeline = true;
-                await exportRef.current.currentPipeline;
-
-                if (relevant) {
-                    exportRef.current.currentPipeline = onExport({ isPendulum });
-                    exportRef.current.queuedPipeline = false;
-
+            /**
+             * Run export pipeline
+             * - While it is running, every effect just mark pipeline as queued, then wait the current pipeline
+             * - If the pipeline is complete and there is no effect, run another pipeline and remove the queue
+             */
+            (async () => {
+                const canvasRef = drawCanvasRef.current;
+                if (canvasRef) {
+                    document.querySelector('#export-canvas-guard')?.setAttribute('style', '');
+                    exportRef.current.queuedPipeline = true;
                     await exportRef.current.currentPipeline;
+
                     if (relevant) {
-                        document.querySelector('#export-canvas-guard')?.setAttribute('style', 'display: none');
+                        exportRef.current.currentPipeline = onExport({ isPendulum });
+                        exportRef.current.queuedPipeline = false;
+
+                        await exportRef.current.currentPipeline;
+                        if (relevant) {
+                            const condensedCard = cardDataCondenser(currentCard);
+                            if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
+                            document.querySelector('#export-canvas-guard')?.setAttribute('style', 'display: none');
+                        }
                     }
                 }
-                // onExport({ isPendulum })
-            }
-        })();
+            })();
+        }
 
         return () => {
             relevant = false;

@@ -256,7 +256,6 @@ export const CardInputPanel = ({
                     ref={onlineCharPicker === 'type' ? ref as any : null}
                     onFocus={() => setOnlineCharPicker('type')}
                     allowClear
-                    className="hide-selected"
                     onChange={ev => {
                         const value = ev.target.value;
 

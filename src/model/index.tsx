@@ -51,7 +51,6 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     isFirstEdition: true,
     creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
 };
-export const defaultMonster = defaultCard;
 
 export const frameType = [
     { name: 'normal', color: '#fff', backgroundColor: '#c49c5e' },
