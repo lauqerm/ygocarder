@@ -7,7 +7,7 @@ export const AppHeader = React.memo(() => {
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={48} />
         <div className="app-description">
-            <h1>Yugioh Carder <small>v{process.env.REACT_APP_VERSION ?? 'unknown'} TCG</small></h1>
+            <h1>Yugioh Carder <small style={{ fontFamily: 'serif' }}>v{process.env.REACT_APP_VERSION ?? 'unknown'} TCG</small></h1>
             <div className="app-contribution">
                 <span>GUI: <b>Lauqerm</b></span>
                 <span>Template: <b>Grezar</b> and others (<a

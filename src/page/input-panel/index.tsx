@@ -51,6 +51,8 @@ export type CardInputPanel = {
 	onCardChange: React.Dispatch<React.SetStateAction<Card>>,
     onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
     children?: React.ReactNode,
+} & {
+    onTainted: ImageCropper['onTainted']
 }
 export const CardInputPanel = ({
     currentCard,
@@ -58,6 +60,7 @@ export const CardInputPanel = ({
     defaultCropInfo,
     onCardChange,
     onImageChange,
+    onTainted,
     children,
 }: CardInputPanel) => {
     const [isMirrorScale, setMirrorScale] = useState(true);
@@ -339,6 +342,7 @@ export const CardInputPanel = ({
                     previewCanvasRef={receivingCanvasRef}
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}
+                    onTainted={onTainted}
                 >
                     {isLink
                         ? <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />

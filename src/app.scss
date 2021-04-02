@@ -71,18 +71,34 @@
 		position: relative;
 	}
 	.card-preview-panel {
-		flex: 0 0 560px;
+		flex: 0 0 570px;
 		position: relative;
 		overflow: hidden;
+		&.export-tainted {
+			.card-canvas-group {
+				cursor: default;
+			}
+			.export-button {
+				color: #ff6f6f;
+			}
+		}
+		&.export-normal {
+			.card-canvas-group {
+				cursor: pointer;
+			}
+			.export-button {
+				color: #3b9dff;
+			}
+		}
 		.export-button {
-			background-color: #00000044;
+			background-color: #404040;
 			border-radius: 5px;
 			border: 0;
 			color: #e6e6e6;
 			font-size: 20px;
 			line-height: 1.5;
 			margin: 10px 0;
-			max-width: 560px;
+			max-width: 570px;
 			outline: none !important;
 			padding: 5px 10px;
 			text-align: left;
@@ -134,6 +150,9 @@
 					border-radius: 5px;
 					background-color: #1890ff;
 					box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+				}
+				&.guard-on {
+					display: flex !important;
 				}
 			}
 			.crop-canvas {
@@ -241,6 +260,9 @@
 			flex: 0 0 430px;
 			.card-canvas-group {
 				transform: scale(0.75) translateY(-133px) translateX(-78px);
+			}
+			.export-button {
+				font-size: 15px;
 			}
 		}
 	}

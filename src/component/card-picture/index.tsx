@@ -31,6 +31,7 @@ export type ImageCropper = {
     defaultCropInfo: Partial<ReactCrop.Crop>,
     onSourceChange?: (source: string) => void,
     onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
+    onTainted: () => void,
 }
 export const ImageCropper = ({
     noRedrawNumber = 0,
@@ -41,7 +42,9 @@ export const ImageCropper = ({
     defaultCropInfo,
     onSourceChange = () => {},
     onImageChange = () => {},
+    onTainted = () => {},
 }: ImageCropper) => {
+    const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [sourceType, setSourceType] = useState('external');
     const [internalSource, setInternalSource] = useState('');
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
@@ -69,6 +72,7 @@ export const ImageCropper = ({
     const onExternalSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
 
+        setSourceType('external');
         onSourceChange(source);
         setExternalSource(source);
     };
@@ -129,7 +133,7 @@ export const ImageCropper = ({
                                     disabled={!completedCrop?.width || !completedCrop?.height}
                                     onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
                                 >
-                                Download cropped image
+                                Download cropped image#3b9dff
                                 </Button>
                                 <span style={{ color: '#FF6F6F' }}>Offline images are not auto saved!</span>
                             </>}
@@ -142,13 +146,14 @@ export const ImageCropper = ({
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
                     onImageError={() => {
-                        console.log('ERROR');
+                        onTainted();
+                        setCrossOrigin(undefined);
                     }}
                     crop={crop}
                     onChange={cropData => setCrop({ ...cropData, aspect: ratio })}
                     onComplete={cropData => setCompletedCrop(cropData)}
                     ruleOfThirds={true}
-                    crossorigin="anonymous"
+                    crossorigin={crossorigin}
                 />
             </div>
         </div>

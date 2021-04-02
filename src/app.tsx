@@ -448,10 +448,34 @@ function App() {
         });
     }, []);
 
+    const pendingSave = useRef(false);
     const exportRef = useRef({
         currentPipeline: Promise.resolve(),
         queuedPipeline: false,
     });
+
+    const download = useCallback(() => {
+        const canvasRef = drawCanvasRef.current;
+        if (canvasRef) try {
+            var link = document.createElement('a');
+            link.download = `${name}.png`;
+            link.href = canvasRef.toDataURL('image/png');
+            link.click();
+        } catch (e) {
+            setTainted(true);
+            alert('Could not save card, please manually save it by right click the card → Choose "Save image as..."');
+        }
+        document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
+    }, [name]);
+    const [isTainted, setTainted] = useState(false);
+    const onSave = () => {
+        document.querySelector('#export-canvas-guard')?.classList.add('guard-on');
+        if (exportRef.current.queuedPipeline === false) {
+            console.log('NO PIPELINE');
+            download();
+        } else pendingSave.current = true;
+    };
+
     useEffect(() => {
         let relevant = true;
         if (isInitializing === false) {
@@ -479,6 +503,10 @@ function App() {
                             const condensedCard = cardDataCondenser(currentCard);
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
                             document.querySelector('#export-canvas-guard')?.setAttribute('style', 'display: none');
+                            if (pendingSave.current) {
+                                pendingSave.current = false;
+                                download();
+                            }
                         }
                     }
                 }
@@ -566,8 +594,14 @@ function App() {
                 </div>}
                 {/* <div className="card-filter-panel">
                 </div> */}
-                <div className="card-preview-panel">
-                    <button className="export-button">Save Card:<br />Right click the card → "Save image as..."</button>
+                <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`} onClick={() => onSave()}>
+                    <button className="export-button">
+                        {!isTainted
+                            ? <>Auto save is enabled<br />
+                        Click the card to save it</>
+                            : <>Canvas is tainted<br />
+                        Manually save by right click the card → "Save image as..."</>}
+                    </button>
                     <div className="card-canvas-group">
                         <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
                         <div id="export-canvas-guard">
@@ -604,6 +638,7 @@ function App() {
                             pictureCrop: cropInfo,
                         }));
                     }}
+                    onTainted={() => setTainted(true)}
                 >
                     <AppHeader /><br />
                 </CardInputPanel>}
