@@ -129,7 +129,6 @@ export const cardDataCondenser = (
 
     if (crush) {
         const curshedCard = JSONCrush(JSON.stringify(condensedCard));
-        console.log('🚀 ~ file: condenser.ts ~ line 132 ~ curshedCard', condensedCard, curshedCard);
 
         return curshedCard;
     }

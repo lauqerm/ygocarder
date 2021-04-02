@@ -432,7 +432,6 @@ function App() {
 
                     const urlParam = (new URLSearchParams(window.location.search)).get('data');
                     if (urlParam) {
-                        console.log('🚀 ~ file: app.tsx ~ line 512 ~ useEffect ~ reverseCardDataCondenser(urlParam)', reverseCardDataCondenser(urlParam));
                         setCard(reverseCardDataCondenser(urlParam) as any);
                     } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
                         setCard(JSON.parse(localCardData));

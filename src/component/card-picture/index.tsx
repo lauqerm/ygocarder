@@ -141,10 +141,14 @@ export const ImageCropper = ({
                 <ReactCrop key={sourceType}
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
+                    onImageError={() => {
+                        console.log('ERROR');
+                    }}
                     crop={crop}
                     onChange={cropData => setCrop({ ...cropData, aspect: ratio })}
                     onComplete={cropData => setCompletedCrop(cropData)}
                     ruleOfThirds={true}
+                    crossorigin="anonymous"
                 />
             </div>
         </div>
