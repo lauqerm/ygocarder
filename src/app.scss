@@ -1,6 +1,9 @@
 #root {
 	background-color: #fff;
 }
+#app {
+	width: 100%;
+}
 .full-loading {
 	position: fixed;
 	top: 0;
@@ -15,30 +18,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
-.disclaimer-overlay {
-	.ant-popover-inner-content {
-		padding: 5px;
-		background-color: #464646;
-		color: #ffffffcc;
-		text-shadow: 0 1px #222;
-	}
-	.disclaimer {
-		font-size: 12px;
-		line-height: 1;
-		h2 {
-			line-height: 1;
-			font-size: 1.2em;
-			color: #ffffffbb;
-		}
-		ul {
-			padding-inline-start: 20px;
-			margin-block-end: 0;
-			li {
-				line-height: 1.25;
-			}
-		}
-	}
 }
 .app-container {
 	display: flex;
@@ -75,35 +54,59 @@
 		position: relative;
 		overflow: hidden;
 		&.export-tainted {
-			.card-canvas-group {
-				cursor: default;
-			}
 			.export-button {
 				color: #ff6f6f;
 			}
 		}
 		&.export-normal {
-			.card-canvas-group {
-				cursor: pointer;
-			}
 			.export-button {
 				color: #3b9dff;
 			}
 		}
 		.export-button {
+			display: flex;
+			flex-direction: column;
 			background-color: #404040;
 			border-radius: 5px;
-			border: 0;
-			color: #e6e6e6;
-			font-size: 20px;
+			font-size: 19px;
 			line-height: 1.5;
-			margin: 10px 0;
+			margin: auto;
+			margin-top: 10px;
+			margin-bottom: 15px;
 			max-width: 570px;
 			outline: none !important;
 			padding: 5px 10px;
 			text-align: left;
 			text-shadow: 0px 1px 2px black;
-			width: 100%;
+			width: 90%;
+			border: 1px solid #383838;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+			.anticon {
+				cursor: pointer;
+			}
+			button {
+				width: 90%;
+				margin: auto;
+				margin-top: 5px;
+				background-color: #3098ff;
+				color: white;
+				border: 1px solid #3b9dff;
+				border-radius: 4px;
+			}
+			#save-button-waiting {
+				cursor: wait;
+				opacity: 0.8;
+				border: 1px solid #2b8ddf;
+			}
+			#save-button-ready {
+				cursor: pointer;
+				font-weight: bold;
+				box-shadow: 0 0 2px 1px #333;
+				&:hover {
+					background-color: #3b9dff;
+					box-shadow: none;
+				}
+			}
 		}
 		.card-canvas-group {
 			position: relative;

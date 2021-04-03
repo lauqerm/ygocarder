@@ -65,7 +65,8 @@ export const ImageCropper = ({
         }
     };
 
-    const onLoad = useCallback((img) => {
+    const onLoad = useCallback((img: HTMLImageElement) => {
+        img.crossOrigin = 'anonymous';
         imgRef.current = img;
     }, []);
 	
@@ -145,7 +146,7 @@ export const ImageCropper = ({
                 <ReactCrop key={sourceType}
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
-                    onImageError={() => {
+                    onImageError={e => {
                         onTainted();
                         setCrossOrigin(undefined);
                     }}

@@ -32,3 +32,25 @@ export const AppHeader = React.memo(() => {
         </div>
     </div>;
 }, () => true);
+
+export const taintedCanvasWarning = <Popover
+    overlayClassName="disclaimer-overlay"
+    style={{ display: 'inline-block' }}
+    content={<div className="disclaimer">
+        <h2>What is a tainted canvas?</h2>
+        <p>
+        You are using an image host that does not get the "approval" needed to be draw to the app. Browsers see it as a potential security risk (even if it is not the case).
+        </p>
+        <h2>How does it affect me?</h2>
+        <p>
+        A "tainted canvas" prevent all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully as your concern.<br />
+        Furthemore, once it get tainted, it will remains tainted even if you switch to other "safe" image host.
+        </p>
+        <h2>How do I fix it?</h2>
+        <p>
+        Change to other host ("imgur" for example, Facebook and Twitter will also work just fine) THEN refresh the page.<br />
+        If you cannot afford to do that, the app will also work mostly just fine, you only need to manually save the card (and keep cautious).
+        </p>
+    </div>}>
+    <ExclamationCircleOutlined className="disclaimer-icon" />
+</Popover>;

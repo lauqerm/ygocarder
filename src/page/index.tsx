@@ -5,5 +5,6 @@ export type {
     CardInputPanelRef
 } from './input-panel';
 export {
-    AppHeader
+    AppHeader,
+    taintedCanvasWarning,
 } from './app-header';
