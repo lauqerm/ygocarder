@@ -2,6 +2,7 @@ import { Button, Input, Radio } from 'antd';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { Loading } from '../loading';
 import './card-picture.scss';
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
@@ -47,6 +48,7 @@ export const ImageCropper = ({
     const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [sourceType, setSourceType] = useState('external');
     const [internalSource, setInternalSource] = useState('');
+    const [isLoading, setLoading] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
     const [crop, setCrop] = useState<ReactCrop.Crop>(defaultCropInfo);
@@ -54,6 +56,7 @@ export const ImageCropper = ({
 
     const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
+            setLoading(true);
             const reader = new FileReader();
             reader.addEventListener('load', () => {
                 if (typeof reader.result === 'string') {
@@ -66,13 +69,14 @@ export const ImageCropper = ({
     };
 
     const onLoad = useCallback((img: HTMLImageElement) => {
-        img.crossOrigin = 'anonymous';
+        setLoading(false);
         imgRef.current = img;
     }, []);
 	
     const onExternalSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
 
+        setLoading(true);
         setSourceType('external');
         onSourceChange(source);
         setExternalSource(source);
@@ -143,10 +147,11 @@ export const ImageCropper = ({
                 </Radio.Group>
             </div>
             <div className="card-cropper">
+                {isLoading && <Loading.FullView />}
                 <ReactCrop key={sourceType}
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
-                    onImageError={e => {
+                    onImageError={() => {
                         onTainted();
                         setCrossOrigin(undefined);
                     }}

@@ -602,7 +602,7 @@ function App() {
                 <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                     <div className="export-button">
                         {!isTainted
-                            ? <>Canvas is safe { window.devicePixelRatio}<br />
+                            ? <>Canvas is safe<br />
                                 <button id="save-button-waiting" disabled>Generating...</button>
                                 <button id="save-button-ready" onClick={() => onSave()}>Save</button></>
                             : <><div>Canvas is tainted {taintedCanvasWarning}</div>

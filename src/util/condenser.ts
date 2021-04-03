@@ -133,7 +133,6 @@ export const cardDataCondenser = (
         return curshedCard;
     }
     return condensedCard;
-    // return condensedCard;
 };
 export const reverseCardDataCondenser = (
     condensedCard: Record<string, any> | string,

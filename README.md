@@ -1,3 +1,3 @@
 # YGO Carder
 
-No README yet, who want to fork this app anyway?
+No README yet, who want to read it anyway?

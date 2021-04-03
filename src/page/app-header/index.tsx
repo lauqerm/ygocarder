@@ -39,7 +39,7 @@ export const taintedCanvasWarning = <Popover
     content={<div className="disclaimer">
         <h2>What is a tainted canvas?</h2>
         <p>
-        You are using an image host that does not get the "approval" needed to be draw to the app. Browsers see it as a potential security risk (even if it is not the case).
+        You are using an image host that does not get the "approval" needed to be draw to the app. Browsers see it as a potential security risk (even if it is not the case), and mark the canvas as "tainted".
         </p>
         <h2>How does it affect me?</h2>
         <p>
