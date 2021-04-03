@@ -1,5 +1,6 @@
 #root {
 	background-color: #fff;
+    min-width: 570px;
 }
 #app {
 	width: 100%;
@@ -273,9 +274,10 @@
 
 @media only screen and (max-width: 800px) {
 	.app-container {
+		flex-direction: column;
 		flex-wrap: wrap;
 		.card-preview-panel {
-			flex: 1 1 430px;
+			flex: 1 1;
 			.export-button {
 				max-width: unset;
 			}

@@ -403,8 +403,7 @@ function App() {
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
         if (ctx) {
-            const pixelRatio = window.devicePixelRatio;
-            ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.imageSmoothingQuality = 'high';
             ctx.clearRect(0, 0, 549, 800);
         }
@@ -603,7 +602,7 @@ function App() {
                 <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                     <div className="export-button">
                         {!isTainted
-                            ? <>Canvas is safe<br />
+                            ? <>Canvas is safe { window.devicePixelRatio}<br />
                                 <button id="save-button-waiting" disabled>Generating...</button>
                                 <button id="save-button-ready" onClick={() => onSave()}>Save</button></>
                             : <><div>Canvas is tainted {taintedCanvasWarning}</div>
