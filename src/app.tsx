@@ -51,6 +51,7 @@ function App() {
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
     const [currentCard, setCard] = useState<Card>(defaultCard);
+    const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -314,6 +315,7 @@ function App() {
         drawingPipeline.current.sticker = () => {
             ctx?.clearRect(0, 0, 549, 800);
 
+            if (sticker === 'no-sticker') return Promise.resolve();
             return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499, 750);
         };
     }, [sticker]);
@@ -588,9 +590,12 @@ function App() {
     }).current;
 
     return (
-        <div id="app" style={{
-            backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
-        }}>
+        <div id="app"
+            onDrop={() => {}}
+            style={{
+                backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+            }}
+        >
             <div className={'app-container'}>
                 {isInitializing && <div className="full-loading">
                     {error.length > 0 ? <span style={{ color: '#e04040' }}>
@@ -607,6 +612,18 @@ function App() {
                                 <button id="save-button-ready" onClick={() => onSave()}>Save</button></>
                             : <><div>Canvas is tainted {taintedCanvasWarning}</div>
                         Manually save by right click the card → "Save image as..."</>}
+                        <div className="imexport">
+                            <button onClick={() => {
+                                if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
+
+                                window.prompt('Save card data for later use', `${cardDataCondenser(currentCard)}`);
+                            }}>Export Card Data</button>
+                            <button onClick={() => {
+                                const cardData = window.prompt('Paste your card data');
+
+                                if (cardData) setCard(reverseCardDataCondenser(cardData) as any);
+                            }}>Import Card Data</button>
+                        </div>
                     </div>
                     <div className="card-canvas-group">
                         <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
@@ -637,8 +654,9 @@ function App() {
                     currentCard={currentCard}
                     onCardChange={setCard}
                     defaultCropInfo={pictureCrop}
-                    onImageChange={cropInfo => {
+                    onImageChange={(cropInfo, sourceType) => {
                         setImageChangeCount(cnt => cnt + 1);
+                        setSourceType(sourceType);
                         if (cropInfo) setCard(curr => ({
                             ...curr,
                             pictureCrop: cropInfo,

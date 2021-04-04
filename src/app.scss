@@ -86,13 +86,17 @@
 				cursor: pointer;
 			}
 			button {
-				width: 90%;
-				margin: auto;
-				margin-top: 5px;
 				background-color: #3098ff;
 				color: white;
 				border: 1px solid #3b9dff;
 				border-radius: 4px;
+				outline: none !important;
+				cursor: pointer;
+			}
+			> button {
+				width: 90%;
+				margin: auto;
+				margin-top: 5px;
 			}
 			#save-button-waiting {
 				cursor: wait;
@@ -106,6 +110,24 @@
 				&:hover {
 					background-color: #3b9dff;
 					box-shadow: none;
+				}
+			}
+			.imexport {
+				width: 90%;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				column-gap: 10px;
+				margin: auto;
+				margin-top: 5px;
+				button {
+					font-size: 15px;
+					background-color: #5e85c9;
+					border: 1px solid #5e85e9;
+					box-shadow: 0 0 2px 1px #333;
+					&:hover {
+						background-color: #5e85e9;
+						box-shadow: none;
+					}
 				}
 			}
 		}

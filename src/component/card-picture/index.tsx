@@ -31,7 +31,7 @@ export type ImageCropper = {
     ratio?: number,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     onSourceChange?: (source: string) => void,
-    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
+    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     onTainted: () => void,
 }
 export const ImageCropper = ({
@@ -46,7 +46,7 @@ export const ImageCropper = ({
     onTainted = () => {},
 }: ImageCropper) => {
     const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
-    const [sourceType, setSourceType] = useState('external');
+    const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
     const [isLoading, setLoading] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
@@ -114,7 +114,7 @@ export const ImageCropper = ({
             (boundingWidth ?? 0),
             (boundingHeight ?? 0)
         );
-        onImageChange(crop);
+        onImageChange(crop, sourceType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, previewCanvasRef, noRedrawNumber]);
 

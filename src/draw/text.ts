@@ -10,7 +10,7 @@ export const drawName = (
     maxWidth: number,
     style: TextStyle,
 ) => {
-    if (ctx) {
+    if (ctx && value) {
         ctx.fillStyle = style.fillStyle;
         if (style.hasShadow) {
             ctx.shadowColor = style.shadowColor;
@@ -55,7 +55,7 @@ export const drawScale = (
     edge: number,
     baseline: number,
 ) => {
-    if (ctx) {
+    if (ctx && value) {
         const digitList = `${value}`.split('');
         let totalWidth = 0;
 
@@ -81,7 +81,7 @@ export const drawEffect = (
 ) => {
     const normalizedContent = quoteConvert(content);
     let effectIndexSize = 0;
-    if (ctx) {
+    if (ctx && content) {
         const tolerantPerSentence: Record<string, number> = {
             '1': 645,
             '2': 665,

@@ -31,7 +31,7 @@ export const fillTextLeftWithSpacing = (
     edge: number,
     baseline: number,
 ) => {
-    if (ctx) {
+    if (ctx && str) {
         ctx.textAlign = 'left';
         const charList = str.split('');
         let curLeft = edge;
@@ -52,7 +52,7 @@ export const fillTextRightWithSpacing = (
     edge: number,
     baseline: number,
 ) => {
-    if (ctx) {
+    if (ctx && str) {
         ctx.textAlign = 'right';
         const charList = str.split('');
         let curRight = edge;

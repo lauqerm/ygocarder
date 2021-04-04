@@ -99,6 +99,7 @@ export const foilList = [
 ];
 
 export const stickerList = [
+    'no-sticker',
     'gold',
     'silver',
     'beta',

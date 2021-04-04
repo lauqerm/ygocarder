@@ -24,7 +24,7 @@ export const drawCreatorText = (
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
 ) => {
-    if (ctx) {
+    if (ctx && content) {
         ctx.font = '16px stone-serif-regular';
 
         const uncondensableSymbol = '©';
@@ -69,7 +69,7 @@ export const drawAD = (
     edge: number,
     baseline: number,
 ) => {
-    if (ctx) {
+    if (ctx && $value !== undefined) {
         ctx.textAlign = 'left';
         const tokenizedText = `${$value}`.split('?');
 

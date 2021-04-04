@@ -49,7 +49,7 @@ export type CardInputPanel = {
     receivingCanvasRef: HTMLCanvasElement | null,
     defaultCropInfo: Partial<ReactCrop.Crop>,
 	onCardChange: React.Dispatch<React.SetStateAction<Card>>,
-    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>) => void,
+    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     children?: React.ReactNode,
 } & {
     onTainted: ImageCropper['onTainted']

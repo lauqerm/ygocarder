@@ -31,6 +31,8 @@ export const iconButton = iconList.map(entry => ({
 }));
 export const starButton = [...Array(14)].map((e, index) => ({ label: index, value: index }));
 export const stickerButton = stickerList.map(name => ({
-    label: <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
+    label: name === 'no-sticker'
+        ? <span>NONE</span>
+        : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));
