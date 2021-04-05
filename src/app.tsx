@@ -247,12 +247,12 @@ function App() {
             const style = nameStyleType === 'auto'
                 ? foil !== 'normal'
                     ? foilStyleMap[foil] ?? defaultTextStyle
-                    : { ...defaultTextStyle, fillStyle: isXyz ? '#ffffff' : '#000000' }
+                    : { ...defaultTextStyle, fillStyle: (!isMonster || isLink || isXyz) ? '#ffffff' : '#000000' }
                 : nameStyle;
 
             drawName(ctx, name, 40.52, 78, 409, style);
         }
-    }, [foil, isInitializing, isXyz, name, nameStyle, nameStyleType]);
+    }, [foil, isInitializing, isLink, isMonster, isXyz, name, nameStyle, nameStyleType]);
 
     useEffect(() => {
         const ctx = ADCanvasRef.current?.getContext('2d');

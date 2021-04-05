@@ -175,7 +175,7 @@ export const CardInputPanel = ({
                 ref={onlineCharPicker === 'name' ? ref as any : null}
                 onFocus={() => setOnlineCharPicker('name')}
                 allowClear
-                addonBefore={<>Name <StylePicker defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} /></>}
+                addonBefore={'Name'}
                 placeholder="Card Name"
                 value={displayName}
                 className="name-input"
@@ -184,6 +184,7 @@ export const CardInputPanel = ({
                     setDisplayName(ev.target.value);
                 }}
             />
+            <StylePicker defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} />
             {isMonster
                 ? !isLink
                     ? <CheckboxTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButton}>

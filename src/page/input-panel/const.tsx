@@ -11,13 +11,13 @@ export const foilButton = foilList.map(({ color, name }) => ({
         } as React.CSSProperties,
     }
 }));
-export const frameButton = frameType.map(({ color, name, backgroundColor }) => ({
+export const frameButton = frameType.map(({ labelColor, name, labelBackgroundColor }) => ({
     label: name,
     value: name,
     props: {
         style: {
-            backgroundColor,
-            color,
+            backgroundColor: labelBackgroundColor,
+            color: labelColor,
         } as React.CSSProperties,
     }
 }));

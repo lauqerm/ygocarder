@@ -51,7 +51,23 @@
 			text-align: center;
 		}
 	}
-
+	.name-color-input {
+		width: 100%;
+		position: relative;
+		z-index: 3;
+		.ant-input-affix-wrapper {
+			outline: none !important;
+			&:hover {
+				border-color: #222;
+			}
+		}
+		.ant-radio-group {
+			box-shadow: none;
+			.ant-radio-wrapper {
+				color: #ffffffcc;
+			}
+		}
+	}
 	.checkbox-train {
 		display: flex;
 		.ant-radio-button-wrapper-checked {
@@ -74,21 +90,21 @@
 		}
 	}
 	.name-input .ant-input-group-addon {
-		min-width: 135px;
+		min-width: 105px;
 	}
 	.set-id-input .ant-input-group-addon,
 	.password-input .ant-input-group-addon {
-		width: 120px;
+		width: 140px;
 	}
 
 	.ant-input-group-addon {
-		min-width: 85px;
+		min-width: 105px;
 		text-align: right;
 	}
 	.standalone-addon.ant-input-group-addon {
 		display: inline-block;
 		height: 32px;
-		width: 85px;
+		width: 105px;
 		line-height: 30px;
 		position: relative;
 	}
@@ -136,7 +152,7 @@
 			grid-column: span 2;
 		}
 		.ant-input-group-addon {
-			width: 100px;
+			width: 105px;
 			text-align: left;
 		}
 	}
@@ -160,21 +176,5 @@
 				flex: 1 1 375px;
 			}
 		}
-		// .pendulum-container {
-		// 	grid-template-columns: 1fr;
-		// 	.joined-row {
-		// 		grid-column: span 1;
-		// 	}
-		// }
-		// .card-footer-input {
-		// 	grid-template-columns: 1fr;
-		// 	.creator-input,
-		// 	.sticker-input {
-		// 		grid-column: span 1;
-		// 	}
-		// 	.sticker-input {
-		// 		flex-wrap: wrap;
-		// 	}
-		// }
 	}
 }

@@ -53,16 +53,16 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
 };
 
 export const frameType = [
-    { name: 'normal', color: '#fff', backgroundColor: '#c49c5e' },
-    { name: 'effect', color: '#fff', backgroundColor: '#b96c49' },
-    { name: 'fusion', color: '#fff', backgroundColor: '#8948a4' },
-    { name: 'synchro', color: '#000', backgroundColor: '#efefef' },
-    { name: 'xyz', color: '#fff', backgroundColor: '#000' },
-    { name: 'link', color: '#fff', backgroundColor: '#0c8ac6' },
-    { name: 'ritual', color: '#fff', backgroundColor: '#5e85c9' },
-    { name: 'spell', color: '#fff', backgroundColor: '#1b8f83' },
-    { name: 'trap', color: '#fff', backgroundColor: '#c32a8c' },
-    { name: 'token', color: '#fff', backgroundColor: '#6f6c6b' },
+    { name: 'normal', labelColor: '#fff', labelBackgroundColor: '#c49c5e' },
+    { name: 'effect', labelColor: '#fff', labelBackgroundColor: '#b96c49' },
+    { name: 'fusion', labelColor: '#fff', labelBackgroundColor: '#8948a4' },
+    { name: 'synchro', labelColor: '#000', labelBackgroundColor: '#efefef' },
+    { name: 'xyz', labelColor: '#fff', labelBackgroundColor: '#000' },
+    { name: 'link', labelColor: '#fff', labelBackgroundColor: '#0c8ac6' },
+    { name: 'ritual', labelColor: '#fff', labelBackgroundColor: '#5e85c9' },
+    { name: 'spell', labelColor: '#fff', labelBackgroundColor: '#1b8f83' },
+    { name: 'trap', labelColor: '#fff', labelBackgroundColor: '#c32a8c' },
+    { name: 'token', labelColor: '#fff', labelBackgroundColor: '#6f6c6b' },
 ];
 
 export const iconList = [
