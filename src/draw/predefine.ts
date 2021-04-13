@@ -65,46 +65,52 @@ export const drawCreatorText = (
 
 export const drawAD = (
     ctx: CanvasRenderingContext2D | null | undefined,
-    $value: string | number,
+    value: string | number,
     edge: number,
     baseline: number,
 ) => {
-    if (ctx && $value !== undefined) {
-        ctx.textAlign = 'left';
-        const tokenizedText = `${$value}`.split('?');
+    if (ctx && value !== undefined) {
+        if (value === '∞') {
+            ctx.textAlign = 'right';
+            ctx.font = 'bold 25px matrix';
+            ctx.fillText(value, edge + 49.94, baseline);
+        } else {
+            ctx.textAlign = 'left';
+            const tokenizedText = `${value}`.split('?');
 
-        let totalWidth = tokenizedText.reduce((prev, curr, index) => {
-            ctx.font = '25px MatrixBoldSmallCaps';
-            let nextWidth = prev + ctx.measureText(curr).width;
-
-            if (index < tokenizedText.length - 1) {
-                ctx.font = '25px matrix';
-                nextWidth += ctx.measureText('?').width;
-            }
-
-            return nextWidth;
-        }, 0);
-
-        if (totalWidth > 0) {
-            const condenseRatio = Math.min(49.94 / totalWidth, 1);
-
-            ctx.scale(condenseRatio, 1);
-            tokenizedText.reduce((prev, curr, index, arr) => {
-                const curText = arr[arr.length - 1 - index];
-                let nextEdge = prev;
+            let totalWidth = tokenizedText.reduce((prev, curr, index) => {
                 ctx.font = '25px MatrixBoldSmallCaps';
-                nextEdge -= ctx.measureText(curText).width * condenseRatio;
-                ctx.fillText(curText, nextEdge / condenseRatio, baseline);
+                let nextWidth = prev + ctx.measureText(curr).width;
 
                 if (index < tokenizedText.length - 1) {
-                    ctx.font = 'bold 25px matrix';
-                    nextEdge -= ctx.measureText('?').width * condenseRatio;
-                    ctx.fillText('?', nextEdge / condenseRatio, baseline);
+                    ctx.font = '25px matrix';
+                    nextWidth += ctx.measureText('?').width;
                 }
+
+                return nextWidth;
+            }, 0);
+
+            if (totalWidth > 0) {
+                const condenseRatio = Math.min(49.94 / totalWidth, 1);
+
+                ctx.scale(condenseRatio, 1);
+                tokenizedText.reduce((prev, curr, index, arr) => {
+                    const curText = arr[arr.length - 1 - index];
+                    let nextEdge = prev;
+                    ctx.font = '25px MatrixBoldSmallCaps';
+                    nextEdge -= ctx.measureText(curText).width * condenseRatio;
+                    ctx.fillText(curText, nextEdge / condenseRatio, baseline);
+
+                    if (index < tokenizedText.length - 1) {
+                        ctx.font = 'bold 25px matrix';
+                        nextEdge -= ctx.measureText('?').width * condenseRatio;
+                        ctx.fillText('?', nextEdge / condenseRatio, baseline);
+                    }
     
-                return nextEdge;
-            }, edge + 49.94);
-            ctx.scale(1 / condenseRatio, 1);
+                    return nextEdge;
+                }, edge + 49.94);
+                ctx.scale(1 / condenseRatio, 1);
+            }
         }
     }
 };

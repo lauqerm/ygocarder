@@ -294,7 +294,7 @@ function App() {
                 if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
                 else ctx.fillStyle = '#000';
 
-                draw1stEdition(ctx, endOfPasscode + 10);
+                draw1stEdition(ctx, Math.max(endOfPasscode + 10, 96));
             }
         }
     }, [isFirstEdition, isInitializing, isLink, isPendulum, isXyz, passcode]);
