@@ -18,7 +18,7 @@ import {
     insertUrlParam,
     reverseCardDataCondenser,
 } from './util';
-import { AppHeader, CardInputPanel, taintedCanvasWarning } from './page';
+import { AppHeader, CardInputPanel, CardInputPanelRef, taintedCanvasWarning } from './page';
 import {
     arrowPositionList,
     foilPosition,
@@ -52,6 +52,7 @@ function App() {
     const [error, setError] = useState('');
     const [currentCard, setCard] = useState<Card>(defaultCard);
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
+    const cardInputRef = useRef<CardInputPanelRef>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -621,7 +622,11 @@ function App() {
                             <button onClick={() => {
                                 const cardData = window.prompt('Paste your card data');
 
-                                if (cardData) setCard(reverseCardDataCondenser(cardData) as any);
+                                if (cardData) {
+                                    const decodedCard = reverseCardDataCondenser(cardData) as Card;
+                                    setCard(decodedCard);
+                                    cardInputRef.current?.forceCardData(decodedCard);
+                                }
                             }}>Import Card Data</button>
                         </div>
                     </div>
@@ -650,6 +655,7 @@ function App() {
                     </div>
                 </div>
                 {isInitializing === false && <CardInputPanel
+                    ref={cardInputRef}
                     receivingCanvasRef={previewCanvasRef.current}
                     currentCard={currentCard}
                     onCardChange={setCard}

@@ -1,5 +1,5 @@
 import { Button, Input, Radio } from 'antd';
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { Loading } from '../loading';
@@ -23,6 +23,9 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
     );
 }
 
+export type ImageCropperRef = {
+    forceExternalSource: (pictureLink: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+}
 export type ImageCropper = {
     noRedrawNumber?: number,
 	defaultExternalSource?: string,
@@ -34,7 +37,7 @@ export type ImageCropper = {
     onImageChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     onTainted: () => void,
 }
-export const ImageCropper = ({
+export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     noRedrawNumber = 0,
     defaultExternalSource = '',
     previewCanvasRef,
@@ -44,7 +47,7 @@ export const ImageCropper = ({
     onSourceChange = () => {},
     onImageChange = () => {},
     onTainted = () => {},
-}: ImageCropper) => {
+}: ImageCropper, forwardedRef) => {
     const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
@@ -118,6 +121,16 @@ export const ImageCropper = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, previewCanvasRef, noRedrawNumber]);
 
+    useImperativeHandle(forwardedRef, () => ({
+        forceExternalSource: (source, cropInfo) => {
+            setLoading(true);
+            setSourceType('external');
+            onSourceChange(source);
+            setExternalSource(source);
+            setCrop(cropInfo);
+        }
+    }));
+
     return (
         <div className="card-image-cropper">
             <div className="card-image-source-input">
@@ -164,4 +177,4 @@ export const ImageCropper = ({
             </div>
         </div>
     );
-};
+});

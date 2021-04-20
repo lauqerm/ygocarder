@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import { Input, Checkbox, Tooltip } from 'antd';
 import { Card, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
@@ -9,6 +9,7 @@ import { foilButton, frameButton, starButton, iconButton, attributeButton, stick
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
 import { CheckboxTrain } from './input-train';
+import { ImageCropperRef } from '../../component/card-picture';
 import './input-panel.scss';
 
 const { TextArea } = Input;
@@ -42,7 +43,7 @@ const RandomButton = ({
 };
 
 export type CardInputPanelRef = {
-    getCroppedImageCanvasRef: () => HTMLCanvasElement | null
+    forceCardData: (card: Card) => void,
 }
 export type CardInputPanel = {
 	currentCard: Card,
@@ -54,7 +55,7 @@ export type CardInputPanel = {
 } & {
     onTainted: ImageCropper['onTainted']
 }
-export const CardInputPanel = ({
+export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel>(({
     currentCard,
     receivingCanvasRef,
     defaultCropInfo,
@@ -62,8 +63,9 @@ export const CardInputPanel = ({
     onImageChange,
     onTainted,
     children,
-}: CardInputPanel) => {
+}: CardInputPanel, forwardedRef) => {
     const [isMirrorScale, setMirrorScale] = useState(true);
+    const imageCropperRef = useRef<ImageCropperRef>(null);
     const setCard = (mutateFunc: (card: Card) => Card) => {
         onCardChange(currentCard => mutateFunc(currentCard));
     };
@@ -93,7 +95,7 @@ export const CardInputPanel = ({
     };
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
-    const onNameChange = debounce(onChangeFactory('name', setCard), 250);
+    const onNameChange = debounce(onChangeFactory('name', setCard), 350);
     const onNameColorChange = (type: TextStyleType, value: TextStyle) => {
         onCardChange(currentCard => {
             return {
@@ -111,8 +113,8 @@ export const CardInputPanel = ({
     const onLinkMapChange = onChangeFactory('link_map', setCard);
     const onRedScaleChange = onChangeFactory('red_scale', setCard);
     const onBlueScaleChange = onChangeFactory('blue_scale', setCard);
-    const onPendulumEffectChange = debounce(onChangeFactory('pendulum_effect', setCard), 250);
-    const onEffectChange = debounce(onChangeFactory('effect', setCard), 250);
+    const onPendulumEffectChange = debounce(onChangeFactory('pendulum_effect', setCard), 350);
+    const onEffectChange = debounce(onChangeFactory('effect', setCard), 350);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
     const onTypeAbilityChange = debounce((value: (string | number)[]) => {
@@ -120,7 +122,7 @@ export const CardInputPanel = ({
             ...current,
             type_ability: value.map(entry => `${entry}`),
         }));
-    }, 250);
+    }, 350);
     const onSetIDChange = onChangeFactory('set_id', setCard);
     const onPasscodeChange = onChangeFactory('passcode', setCard);
     const onStickerChange = onChangeFactory('sticker', setCard);
@@ -153,6 +155,15 @@ export const CardInputPanel = ({
     const [onlineCharPicker, setOnlineCharPicker] = useState('');
     const ref = useRef();
     
+    useImperativeHandle(forwardedRef, () => ({
+        forceCardData: (card) => {
+            setDisplayTypeAbility(card.type_ability.join('/'));
+            setDisplayName(card.name);
+            setDisplayEffect(card.effect);
+            setDisplayPendulumEffect(card.pendulum_effect);
+            imageCropperRef.current?.forceExternalSource(card.picture, card.pictureCrop);
+        }
+    }));
 
     return <div className="card-info-panel">
         {children}
@@ -337,6 +348,7 @@ export const CardInputPanel = ({
             </div>
             <div className="main-info-second">
                 <ImageCropper
+                    ref={imageCropperRef}
                     noRedrawNumber={1}
                     defaultExternalSource={picture}
                     defaultCropInfo={defaultCropInfo}
@@ -352,4 +364,4 @@ export const CardInputPanel = ({
             </div>
         </div>
     </div>;
-};
+});
