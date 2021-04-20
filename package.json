@@ -1,7 +1,7 @@
 {
   "name": "ygocarder",
   "homepage": "http://lauqerm.github.io/ygocarder",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.6",
