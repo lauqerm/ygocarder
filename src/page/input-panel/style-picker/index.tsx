@@ -1,8 +1,8 @@
 import { Checkbox, InputNumber, Popover, Slider } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { TextStyle, TextStyleType } from '../../../model';
+import { defaultTextStyle, TextStyle, TextStyleType } from '../../../model';
 import PowerSlider from 'react-input-slider';
 import { debounce } from 'lodash';
 import './style-picker.scss';
@@ -21,6 +21,8 @@ export const StylePicker = React.memo(({
     const [value, setValue] = useState(defaultValue);
     const [isColorPickerVisble, setColorPickerVisible] = useState(false);
     const [isShadowPickerVisble, setShadowPickerVisible] = useState(false);
+    const [changeSignal, setChangeSignal] = useState(0);
+    const updateSignal = () => setChangeSignal(cnt => cnt + 1);
     const onChange = useRef(debounce(undebouncedOnChange, 250)).current;
 
     const setCustomValue = <ValueType extends any>(key: keyof TextStyle) => {
@@ -33,6 +35,11 @@ export const StylePicker = React.memo(({
             });
         };
     };
+
+    useEffect(() => {
+        onChange('custom', value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [changeSignal]);
 
     return <div className="ant-input-group-wrapper name-color-input">
         <span className="ant-input-wrapper ant-input-group">
@@ -71,9 +78,9 @@ export const StylePicker = React.memo(({
                                                 setValue(cur => {
                                                     const newStyle = { ...cur, fillStyle: color.hex };
 
-                                                    onChange('custom', newStyle);
                                                     return newStyle;
                                                 });
+                                                updateSignal();
                                             }} />
                                         </div>
                                     </div>
@@ -96,9 +103,9 @@ export const StylePicker = React.memo(({
                                                 setValue(cur => {
                                                     const newStyle = { ...cur, hasShadow: !cur.hasShadow };
                     
-                                                    onChange('custom', newStyle);
                                                     return newStyle;
                                                 });
+                                                updateSignal();
                                             }}>Has Shadow?</Checkbox>
                                         </h3>
                                         {value.hasShadow && <div className="custom-style-shadow">
@@ -130,9 +137,9 @@ export const StylePicker = React.memo(({
                                                                 shadowOffsetY: y,
                                                             };
 
-                                                            onChange('custom', newStyle);
                                                             return newStyle;
                                                         });
+                                                        updateSignal();
                                                     }} />
                                                 <div className="single-slider">
                                                     X Offset: <InputNumber size="small" value={value.shadowOffsetX} onChange={setCustomValue('shadowOffsetX')} />
@@ -142,24 +149,27 @@ export const StylePicker = React.memo(({
                                                 </div>
                                                 <div className="single-slider">
                                                     Blur: <Slider value={value.shadowBlur} min={0} max={10} onChange={(value: number) => {
-                                                        if (typeof value === 'number') setValue(cur => {
-                                                            const newStyle = { ...cur, shadowBlur: value };
+                                                        if (typeof value === 'number') {
+                                                            setValue(cur => {
+                                                                const newStyle = { ...cur, shadowBlur: value };
 
-                                                            onChange('custom', newStyle);
-                                                            return newStyle;
-                                                        });
+                                                                return newStyle;
+                                                            });
+                                                            updateSignal();
+                                                        }
                                                     }} />
                                                 </div>
                                                 <div />
                                             </div>
                                             <h2>Color</h2>
                                             <CompactPicker color={value.shadowColor} onChange={color => {
+                                                let newStyle: TextStyle = defaultTextStyle;
                                                 setValue(cur => {
-                                                    const newStyle = { ...cur, shadowColor: color.hex };
+                                                    newStyle = { ...cur, shadowColor: color.hex };
 
-                                                    onChange('custom', newStyle);
                                                     return newStyle;
                                                 });
+                                                updateSignal();
                                             }} />
                                         </div>}
                                     </div>
