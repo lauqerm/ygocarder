@@ -235,6 +235,16 @@ export const drawEffect = (
                     ctx.scale(1 / condenseRatio, 1);
                 }
 
+                /**
+                 * Is it last line?
+                 * * Yes:
+                 *   * Draw text with predefined ratio (factor in special symbol and effect bullet)
+                 * * No:
+                 *   * Calculate total meaningful content width (text, special symbol, effect bullet)
+                 *   * Calculate space content by subtract total width with meaningful content width
+                 *   * Distribute space content to each individual space
+                 *   * Draw text with predefined ratio and widened space
+                 */
                 const sigmoidRatio = effectiveRatio / 1000; // Fancy way to force ratio in to 0-1 range
                 lineList.forEach(({
                     text,
@@ -243,10 +253,10 @@ export const drawEffect = (
                 }) => {
                     const condenseRatio = isLast
                         ? Math.min(sigmoidRatio, 1)
-                        : width / actualWidth;
+                        : sigmoidRatio;
 
-                    if (condenseRatio <= 1) {
-                        ctx.scale(condenseRatio, 1);
+                    ctx.scale(condenseRatio, 1);
+                    if (isLast) {
                         const splitter = new RegExp(`([${bulletSymbol}${specialSymbol}])`, 'g');
                         const splittedText = text.split(splitter);
 
@@ -274,12 +284,9 @@ export const drawEffect = (
 
                             return edge;
                         }, left);
-                        baseline += lineHeight;
-                        ctx.scale(1 / condenseRatio, 1);
                     } else {
                         const splitter = new RegExp(`([${bulletSymbol}${specialSymbol} ])`, 'g');
                         const spaceSeparatedText = text.split(splitter);
-                        ctx.scale(1, 1);
                         let nonSpaceWidth = 0;
                         let spaceCount = 0;
 
@@ -287,8 +294,8 @@ export const drawEffect = (
                             if (entry === ' ') spaceCount += 1;
                             else if (entry === bulletSymbol) nonSpaceWidth += 15;
                             else if (specialSymbolReg.test(entry)) {
-                                switchFont(() => nonSpaceWidth += ctx.measureText(entry).width);
-                            } else nonSpaceWidth += ctx.measureText(entry).width;
+                                switchFont(() => nonSpaceWidth += ctx.measureText(entry).width * condenseRatio);
+                            } else nonSpaceWidth += ctx.measureText(entry).width * condenseRatio;
                         });
                         // Split text by "space", then distribute remaining width to those spaces, resulting in "widen" space
                         const spaceWidth = spaceCount > 0 ? (width - nonSpaceWidth) / spaceCount : 0;
@@ -298,27 +305,30 @@ export const drawEffect = (
 
                             // Normal text
                             if (index % 2 === 0) {
-                                ctx.fillText(cur, edge, baseline);
-                                edge += ctx.measureText(cur).width;
+                                ctx.fillText(cur, edge / condenseRatio, baseline);
+                                edge += ctx.measureText(cur).width * condenseRatio;
                             } else {
                                 // Special bullet
                                 if (cur === bulletSymbol) {
+                                    ctx.scale(1 / condenseRatio, 1);
                                     drawBullet(ctx, edge, baseline);
                                     edge += 15;
+                                    ctx.scale(condenseRatio, 1);
                                 } else if (cur === ' ') {
                                     edge += spaceWidth;
                                 } else {
                                     switchFont(() => {
-                                        ctx.fillText(cur, edge, baseline);
-                                        edge += ctx.measureText(cur).width;
+                                        ctx.fillText(cur, edge / condenseRatio, baseline);
+                                        edge += ctx.measureText(cur).width * condenseRatio;
                                     });
                                 }
                             }
 
                             return edge;
                         }, left);
-                        baseline += lineHeight;
                     }
+                    ctx.scale(1 / condenseRatio, 1);
+                    baseline += lineHeight;
                 });
 
                 if (effectFlavorCondition.length > 0) {
