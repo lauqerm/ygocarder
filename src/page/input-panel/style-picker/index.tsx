@@ -37,7 +37,7 @@ export const StylePicker = React.memo(({
     };
 
     useEffect(() => {
-        onChange('custom', value);
+        if (changeSignal !== 0) onChange('custom', value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [changeSignal]);
 
