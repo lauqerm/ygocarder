@@ -71,6 +71,7 @@ export const iconList = [
     'CONTINUOUS',
     'QUICK-PLAY',
     'RITUAL',
+    'EQUIP',
     'COUNTER',
 ];
 
