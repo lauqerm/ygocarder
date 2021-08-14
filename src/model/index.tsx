@@ -9,6 +9,8 @@ export const defaultTextStyle = {
     hasShadow: false,
 };
 
+export type CondenseType = 'strict' | 'loose';
+
 export type Card = typeof defaultCard;
 export const defaultCard = {
     frame: 'fusion',
@@ -41,6 +43,9 @@ export const defaultCard = {
     red_scale: '4',
     blue_scale: '4',
     type_ability: ['Fairy', 'Fusion', 'Effect'] as string[],
+    effectStyle: {
+        condenseTolerant: 'strict' as CondenseType,
+    },
     effect: `[2+ Effect Monsters]
 Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
     set_id: 'YGOC-EN001',

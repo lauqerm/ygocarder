@@ -39,12 +39,12 @@
 		align-items: flex-start;
 		margin-top: 1em;
 		column-gap: 1em;
-		row-gap: 1em;
+		row-gap: 0.5em;
 		.main-info-first {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
-			row-gap: 10px;
+			row-gap: 0.5em;
 		}
 		.main-info-second {
 			flex: 0 0 375px;
@@ -96,6 +96,15 @@
 	.password-input .ant-input-group-addon {
 		width: 140px;
 	}
+	.checkbox-condense-train {
+		display: inline-flex;
+		.standalone-addon.ant-input-group-addon {
+			width: unset;
+		}
+		.ant-radio-button-wrapper {
+			flex: 1;
+		}
+	}
 
 	.ant-input-group-addon {
 		min-width: 105px;
@@ -113,7 +122,7 @@
 		align-items: center;
 		margin-top: 0.5em;
 		flex-wrap: wrap;
-		row-gap: 1em;
+		row-gap: 0.5em;
 		.card-info-sub-family {
 			padding-right: 1em;
 			margin-right: 1em;
@@ -128,7 +137,7 @@
 	.card-footer-input {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		row-gap: 10px;
+		row-gap: 0.5em;
 		column-gap: 10px;
 		.input-1st {
 			align-self: center;
@@ -142,7 +151,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		column-gap: 10px;
-		row-gap: 10px;
+		row-gap: 0.5em;
 		padding: 10px;
 		border: 1px solid #484848;
 		border-radius: 3px;

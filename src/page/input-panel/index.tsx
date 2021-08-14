@@ -1,11 +1,11 @@
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import { Input, Checkbox, Tooltip } from 'antd';
-import { Card, TextStyle, TextStyleType } from '../../model';
+import { Card, CondenseType, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { debounce } from 'lodash';
 import { SyncOutlined } from '@ant-design/icons';
-import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton } from './const';
+import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton, condenseButton } from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
 import { CheckboxTrain } from './input-train';
@@ -105,6 +105,17 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             };
         });
     };
+    const onCondenseTolerantChange = (value: CondenseType) => {
+        onCardChange(currentCard => {
+            return {
+                ...currentCard,
+                effectStyle: {
+                    ...currentCard.effectStyle,
+                    condenseTolerant: value,
+                }
+            };
+        });
+    };
     const onStarChange = onChangeFactory('star', setCard);
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isPendulum: e.target.checked };
@@ -136,6 +147,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         name, nameStyleType, nameStyle,
         picture,
         effect,
+        effectStyle,
         type_ability,
         isPendulum, pendulum_effect, red_scale, blue_scale,
         atk, def, link_map,
@@ -284,6 +296,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     style={{ width: '100%' }}
                     value={displayTypeAbility}
                 />
+                <CheckboxTrain className="checkbox-condense-train" value={`${effectStyle?.condenseTolerant}`}
+                    onChange={value => onCondenseTolerantChange(value as CondenseType)}
+                    optionList={condenseButton}
+                >
+                    <span>Condense Threshold</span>
+                </CheckboxTrain>
                 <TextArea key="effect"
                     id="card-effect"
                     ref={onlineCharPicker === 'card-effect' ? ref as any : null}

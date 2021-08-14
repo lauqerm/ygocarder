@@ -1,5 +1,5 @@
 import { FontSize, monsterFontList, BoxSize, monsterSizeList } from '../const';
-import { defaultTextStyle, TextStyle } from '../model';
+import { CondenseType, defaultTextStyle, TextStyle } from '../model';
 import { splitEffect, createCondenser, quoteConvert } from '../util';
 
 export const drawName = (
@@ -78,15 +78,22 @@ export const drawEffect = (
     isNormal = false,
     fontList: FontSize[] = monsterFontList,
     sizeList: BoxSize[] = monsterSizeList,
+    condenseTolerant: CondenseType = 'strict',
 ) => {
     const normalizedContent = quoteConvert(content);
     let effectIndexSize = 0;
     if (ctx && content) {
-        const tolerantPerSentence: Record<string, number> = {
-            '1': 645,
-            '2': 665,
-            '3': 685,
-        };
+        const tolerantPerSentence: Record<string, number> = condenseTolerant === 'strict'
+            ? {
+                '1': 645,
+                '2': 665,
+                '3': 685,
+            }
+            : {
+                '1': 700,
+                '2': 710,
+                '3': 720,
+            };
         const {
             body: effectBody,
             flavorCondition: effectFlavorCondition,
@@ -219,7 +226,8 @@ export const drawEffect = (
                 ctx.strokeStyle = '#003300';
                 ctx.stroke();
             };
-            if ((effectiveRatio < (tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3']))
+            const tolerantValue = tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'];
+            if ((effectiveRatio < tolerantValue)
             && effectIndexSize < fontList.length - 1) {
                 effectIndexSize += 1;
             } else {

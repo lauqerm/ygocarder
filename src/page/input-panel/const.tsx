@@ -36,3 +36,7 @@ export const stickerButton = stickerList.map(name => ({
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));
+export const condenseButton = [
+    { label: 'Strict', value: 'strict' },
+    { label: 'Loose', value: 'loose' }
+];

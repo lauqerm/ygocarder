@@ -1,4 +1,5 @@
 import { JSONCrush, JSONUncrush } from '../3rd';
+import { defaultCard } from '../model';
 
 export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     let min = minThreshold;
@@ -105,6 +106,7 @@ const cardFieldShortenMap: Record<string, string | Record<string, string>> = {
     isFirstEdition: 'ife',
     creator: 'cr',
 };
+
 export const cardDataCondenser = (
     card: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
@@ -134,6 +136,7 @@ export const cardDataCondenser = (
     }
     return condensedCard;
 };
+
 export const reverseCardDataCondenser = (
     condensedCard: Record<string, any> | string,
     shortenMap: Record<string, any> = cardFieldShortenMap,
@@ -158,5 +161,27 @@ export const reverseCardDataCondenser = (
             }
         }
     });
+    return fullCard;
+};
+
+export const rebuildCardData = (
+    card: Record<string, any> | string,
+    isCondensed = false,
+) => {
+    let fullCard: Record<string, any>;
+    if (isCondensed) {
+        fullCard = reverseCardDataCondenser(card);
+    } else {
+        fullCard = typeof card === 'string'
+            ? JSON.parse(card)
+            : card;
+    }
+
+    // Adapter, try to match old version card data with newer model
+    if (fullCard.effectStyle === undefined) {
+        fullCard.effectStyle = {
+            ...defaultCard.effectStyle
+        };
+    }
     return fullCard;
 };

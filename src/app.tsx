@@ -16,7 +16,7 @@ import {
     checkXyz,
     getCardFrame,
     insertUrlParam,
-    reverseCardDataCondenser,
+    rebuildCardData,
 } from './util';
 import { AppHeader, CardInputPanel, CardInputPanelRef, taintedCanvasWarning } from './page';
 import {
@@ -52,6 +52,7 @@ function App() {
     const [error, setError] = useState('');
     const [currentCard, setCard] = useState<Card>(defaultCard);
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
+
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -76,6 +77,7 @@ function App() {
         name, nameStyleType, nameStyle,
         pictureCrop,
         effect,
+        effectStyle,
         type_ability,
         isPendulum, pendulum_effect, blue_scale, red_scale,
         atk, def, link_map,
@@ -360,7 +362,7 @@ function App() {
         const typeCtx = typeCanvasRef.current?.getContext('2d');
         ctx?.clearRect(0, 0, 549, 750);
         if (isMonster) {
-            const effectIndexSize = drawEffect(ctx, effect, false, isNormal);
+            const effectIndexSize = drawEffect(ctx, effect, false, isNormal, undefined, undefined, effectStyle?.condenseTolerant);
             drawTypeAbility(typeCtx, effectIndexSize === 0
                 ? 'medium'
                 : 'small');
@@ -372,10 +374,11 @@ function App() {
                 false,
                 stFontList,
                 stSizeList,
+                effectStyle?.condenseTolerant,
             );
             drawTypeAbility(typeCtx, 'large', 'right');
         }
-    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal]);
+    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal, effectStyle?.condenseTolerant]);
     useEffect(() => {
         const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
         ctx?.clearRect(0, 0, 549, 600);
@@ -387,9 +390,10 @@ function App() {
                 false,
                 pendulumFontList,
                 pendulumSizeList,
+                effectStyle?.condenseTolerant,
             );
         }
-    }, [isInitializing, isMonster, isPendulum, pendulum_effect]);
+    }, [effectStyle?.condenseTolerant, isInitializing, isMonster, isPendulum, pendulum_effect]);
 
     // const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
     //     let leftOffset = -5;
@@ -434,9 +438,9 @@ function App() {
 
                     const urlParam = (new URLSearchParams(window.location.search)).get('data');
                     if (urlParam) {
-                        setCard(reverseCardDataCondenser(urlParam) as any);
+                        setCard(rebuildCardData(urlParam, true) as any);
                     } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-                        setCard(JSON.parse(localCardData));
+                        setCard(rebuildCardData(localCardData) as any);
                     }
                 } catch (e) {
                     setCard(defaultCard);
@@ -623,7 +627,7 @@ function App() {
                                 const cardData = window.prompt('Paste your card data');
 
                                 if (cardData) {
-                                    const decodedCard = reverseCardDataCondenser(cardData) as Card;
+                                    const decodedCard = rebuildCardData(cardData, true) as Card;
                                     setCard(decodedCard);
                                     cardInputRef.current?.forceCardData(decodedCard);
                                 }
