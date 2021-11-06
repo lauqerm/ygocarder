@@ -38,5 +38,6 @@ export const stickerButton = stickerList.map(name => ({
 }));
 export const condenseButton = [
     { label: 'Strict', value: 'strict' },
-    { label: 'Loose', value: 'loose' }
+    { label: 'Loose', value: 'loose' },
+    { label: 'Very Loose', value: 'veryLoose' },
 ];

@@ -71,6 +71,23 @@ export const drawScale = (
     }
 };
 
+const CondenseTolerantMap = {
+    strict: {
+        '1': 645,
+        '2': 665,
+        '3': 685,
+    },
+    loose: {
+        '1': 700,
+        '2': 710,
+        '3': 720,
+    },
+    veryLoose: {
+        '1': 740,
+        '2': 770,
+        '3': 800,
+    }
+};
 export const drawEffect = (
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
@@ -80,20 +97,10 @@ export const drawEffect = (
     sizeList: BoxSize[] = monsterSizeList,
     condenseTolerant: CondenseType = 'strict',
 ) => {
-    const normalizedContent = quoteConvert(content);
+    const normalizedContent = quoteConvert(content.trim());
     let effectIndexSize = 0;
     if (ctx && content) {
-        const tolerantPerSentence: Record<string, number> = condenseTolerant === 'strict'
-            ? {
-                '1': 645,
-                '2': 665,
-                '3': 685,
-            }
-            : {
-                '1': 700,
-                '2': 710,
-                '3': 720,
-            };
+        const tolerantPerSentence: Record<string, number> = CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict'];
         const {
             body: effectBody,
             flavorCondition: effectFlavorCondition,
