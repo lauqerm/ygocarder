@@ -1,5 +1,5 @@
 import { JSONCrush, JSONUncrush } from '../3rd';
-import { defaultCard } from '../model';
+import { Card, defaultCard } from '../model';
 
 export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     let min = minThreshold;
@@ -64,11 +64,15 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     };
 };
 
-const cardFieldShortenMap: Record<string, string | Record<string, string>> = {
+const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     frame: 'fr',
     foil: 'fo',
     name: 'na',
     nameStyleType: 'nst',
+    effectStyle: {
+        _newKey: 'es',
+        condenseTolerant: 'cdtl',
+    },
     nameStyle: {
         _newKey: 'ns',
         fillStyle: 'nsfs',
