@@ -9,14 +9,16 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
     if (!crop || !canvas) return;
     canvas.toBlob(
         (blob) => {
-            const previewUrl = window.URL.createObjectURL(blob);
+            if (blob) {
+                const previewUrl = window.URL.createObjectURL(blob);
 
-            const anchor = document.createElement('a');
-            anchor.download = 'cropPreview.png';
-            anchor.href = URL.createObjectURL(blob);
-            anchor.click();
+                const anchor = document.createElement('a');
+                anchor.download = 'cropPreview.png';
+                anchor.href = URL.createObjectURL(blob);
+                anchor.click();
 
-            window.URL.revokeObjectURL(previewUrl);
+                window.URL.revokeObjectURL(previewUrl);
+            }
         },
         'image/png',
         1
