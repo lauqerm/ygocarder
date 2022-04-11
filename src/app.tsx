@@ -2,9 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './app.scss';
 import 'antd/dist/antd.css';
 import {
+    CanvasConst,
     Card,
     defaultCard,
     defaultTextStyle,
+    DrawDirective,
     foilStyleMap,
     iconList,
 } from './model';
@@ -46,6 +48,15 @@ import {
 } from './draw';
 import WebFont from 'webfontloader';
 import { LoadingOutlined } from '@ant-design/icons';
+
+const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const clearCanvas = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+) => {
+    if (ctx) {
+        ctx.clearRect(0, 0, CanvasWidth, CanvasHeight);
+    };
+};
 
 function App() {
     const [isInitializing, setInitializing] = useState(true);
@@ -106,7 +117,7 @@ function App() {
         const ctx = frameCanvasRef.current?.getContext('2d');
 
         drawingPipeline.current.frame = async () => {
-            ctx?.clearRect(0, 0, 549, 800);
+            clearCanvas(ctx);
             const cardType = getCardFrame(frame);
             const hasFoil = foil !== 'normal';
 
@@ -138,7 +149,7 @@ function App() {
         const ctx = specialFrameCanvasRef.current?.getContext('2d');
         
         drawingPipeline.current.specialFrame = async () => {
-            ctx?.clearRect(0, 0, 549, 800);
+            clearCanvas(ctx);
             const hasFoil = foil !== 'normal';
 
             const cardType = getCardFrame(frame);
@@ -228,17 +239,17 @@ function App() {
     }, [isLink, isMonster, isXyz, star, subFamily]);
 
     useEffect(() => {
+        const { fontSize, fontFamily, textAlign } = DrawDirective.pendulumScale;
         const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
+
         ctx?.clearRect(0, 0, 549, 600);
         if (ctx && isPendulum) {
-            let fontSize = 43;
-            let top = 532 + fontSize;
+            ctx.font = `${fontSize}px ${fontFamily}`;
+            ctx.textAlign = textAlign;
 
-            ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
-            ctx.textAlign = 'left';
-
-            drawScale(ctx, blue_scale ?? 0, 57, top);
-            drawScale(ctx, red_scale ?? 0, 493, top);
+            const { blueScale, redScale } = DrawDirective;
+            drawScale(ctx, blue_scale ?? 0, blueScale.left, blueScale.offsetTop + fontSize);
+            drawScale(ctx, red_scale ?? 0, redScale.left, redScale.offsetTop + fontSize);
         }
     }, [isInitializing, blue_scale, isPendulum, red_scale]);
 
@@ -258,19 +269,20 @@ function App() {
     }, [foil, isInitializing, isLink, isMonster, isXyz, name, nameStyle, nameStyleType]);
 
     useEffect(() => {
+        const { atk: atkDirective, def: defDirective } = DrawDirective;
         const ctx = ADCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 800);
+        clearCanvas(ctx);
         if (isMonster) {
-            drawAD(ctx, atk, 343.51, 747);
+            drawAD(ctx, atk, atkDirective.left, atkDirective.top);
             if (!isLink) {
-                drawAD(ctx, def, 454.93, 747);
+                drawAD(ctx, def, defDirective.left, defDirective.top);
             }
         }
     }, [isInitializing, atk, def, isLink, isMonster]);
 
     useEffect(() => {
         const ctx = setIdRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 800);
+        clearCanvas(ctx);
         if (ctx) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
@@ -286,7 +298,7 @@ function App() {
 
     useEffect(() => {
         const ctx = passcodeRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 800);
+        clearCanvas(ctx);
         if (ctx) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
@@ -304,7 +316,7 @@ function App() {
 
     useEffect(() => {
         const ctx = creatorRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 800);
+        clearCanvas(ctx);
         if (ctx) {
             if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
             else ctx.fillStyle = '#000';
@@ -316,7 +328,7 @@ function App() {
     useEffect(() => {
         const ctx = stickerRef.current?.getContext('2d');
         drawingPipeline.current.sticker = () => {
-            ctx?.clearRect(0, 0, 549, 800);
+            clearCanvas(ctx);
 
             if (sticker === 'no-sticker') return Promise.resolve();
             return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499, 750);
@@ -412,7 +424,7 @@ function App() {
         if (ctx) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.imageSmoothingQuality = 'high';
-            ctx.clearRect(0, 0, 549, 800);
+            clearCanvas(ctx);
         }
         
         // let fontLoaded = false;
@@ -635,26 +647,26 @@ function App() {
                         </div>
                     </div>
                     <div className="card-canvas-group">
-                        <canvas id="export-canvas" ref={drawCanvasRef} width={549} height={800} />
+                        <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                         <div id="export-canvas-guard">
                             <div className="canvas-guard-alert">Generating...</div>
                             <LoadingOutlined />
                         </div>
-                        <canvas id="frameCanvas" ref={frameCanvasRef} width={549} height={800} />
-                        <canvas id="artCanvas" ref={artCanvasRef} width={549} height={650} />
-                        <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={549} height={800} />
-                        <canvas id="nameCanvas" ref={nameCanvasRef} width={549} height={100} />
-                        <canvas id="attributeCanvas" ref={attributeCanvasRef} width={549} height={100} />
-                        <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={549} height={150} />
-                        <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={549} height={600} />
-                        <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={549} height={600} />
-                        <canvas id="typeCanvas" ref={typeCanvasRef} width={549} height={700} />
-                        <canvas id="effectCanvas" ref={effectCanvasRef} width={549} height={750} />
-                        <canvas id="ADCanvas" ref={ADCanvasRef} width={549} height={800} />
-                        <canvas id="setId" ref={setIdRef} width={549} height={800} />
-                        <canvas id="passcode" ref={passcodeRef} width={549} height={800} />
-                        <canvas id="creator" ref={creatorRef} width={549} height={800} />
-                        <canvas id="sticker" ref={stickerRef} width={549} height={800} />
+                        <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={650} />
+                        <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100} />
+                        <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100} />
+                        <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150} />
+                        <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600} />
+                        <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600} />
+                        <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700} />
+                        <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750} />
+                        <canvas id="ADCanvas" ref={ADCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="setId" ref={setIdRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="passcode" ref={passcodeRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="creator" ref={creatorRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="sticker" ref={stickerRef} width={CanvasWidth} height={CanvasHeight} />
                         <canvas className="crop-canvas" ref={previewCanvasRef} />
                     </div>
                 </div>
