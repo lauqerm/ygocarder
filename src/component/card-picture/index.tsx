@@ -30,7 +30,7 @@ export type ImageCropperRef = {
 }
 export type ImageCropper = {
     noRedrawNumber?: number,
-	defaultExternalSource?: string,
+    defaultExternalSource?: string,
     previewCanvasRef?: HTMLCanvasElement | null,
     children?: React.ReactNode,
     ratio?: number,
@@ -46,9 +46,9 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     children,
     ratio = 1,
     defaultCropInfo,
-    onSourceChange = () => {},
-    onImageChange = () => {},
-    onTainted = () => {},
+    onSourceChange = () => { },
+    onImageChange = () => { },
+    onTainted = () => { },
 }: ImageCropper, forwardedRef) => {
     const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
@@ -77,7 +77,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         setLoading(false);
         imgRef.current = img;
     }, []);
-	
+
     const onExternalSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
 
@@ -120,16 +120,18 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             (boundingHeight ?? 0)
         );
         onImageChange(crop, sourceType);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, previewCanvasRef, noRedrawNumber]);
 
     useImperativeHandle(forwardedRef, () => ({
         forceExternalSource: (source, cropInfo) => {
-            console.log('🚀 ~ file: index.tsx ~ line 128 ~ useImperativeHandle ~ source', source, cropInfo);
-            setLoading(true);
-            setSourceType('external');
-            onSourceChange(source);
-            setExternalSource(source);
+            const inUseSource = sourceType === 'internal' ? internalSource : externalSource;
+            if (inUseSource !== source) {
+                setLoading(true);
+                setSourceType('external');
+                onSourceChange(source);
+                setExternalSource(source);
+            }
             setCrop(cropInfo);
         }
     }));
@@ -146,7 +148,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             onChange={onExternalSourceChange} maxLength={256} />
                     </Radio.Button>
                     <Radio.Button value={'internal'}>
-                        <Input type="file"  accept="image/*" onChange={onSelectFile} />
+                        <Input type="file" accept="image/*" onChange={onSelectFile} />
                         <div>
                             {sourceType === 'internal' && <>
                                 <Button
@@ -154,7 +156,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                     disabled={!completedCrop?.width || !completedCrop?.height}
                                     onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
                                 >
-                                Download cropped image#3b9dff
+                                    Download cropped image#3b9dff
                                 </Button>
                                 <span style={{ color: '#FF6F6F' }}>Offline images are not auto saved!</span>
                             </>}
