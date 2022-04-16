@@ -42,10 +42,7 @@
             "error",
             "single"
         ],
-        "semi": [
-            2,
-            "always"
-        ],
+        "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
         "no-use-before-define": [
             0,
             {
