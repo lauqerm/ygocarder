@@ -76,7 +76,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             const isST = value === 'spell' || value === 'trap';
             const newTypeAbility = value === 'spell'
                 ? ['Spell Card']
-                : value === 'trap' ? ['Trap Card'] : currentCard.type_ability;
+                : value === 'trap' ? ['Trap Card'] : currentCard.typeAbility;
             if (isST) setDisplayTypeAbility(newTypeAbility[0]);
     
             return {
@@ -87,9 +87,9 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 attribute: isST
                     ? `${value}`.toUpperCase()
                     : currentCard.attribute,
-                type_ability: value === 'spell'
+                typeAbility: value === 'spell'
                     ? ['Spell Card']
-                    : value === 'trap' ? ['Trap Card'] : currentCard.type_ability,
+                    : value === 'trap' ? ['Trap Card'] : currentCard.typeAbility,
             };
         });
     };
@@ -121,20 +121,20 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         return { ...currentCard, isPendulum: e.target.checked };
     });
     const onPictureChange = onChangeFactory('picture', setCard);
-    const onLinkMapChange = onChangeFactory('link_map', setCard);
-    const onRedScaleChange = onChangeFactory('red_scale', setCard);
-    const onBlueScaleChange = onChangeFactory('blue_scale', setCard);
-    const onPendulumEffectChange = debounce(onChangeFactory('pendulum_effect', setCard), 350);
+    const onLinkMapChange = onChangeFactory('linkMap', setCard);
+    const onRedScaleChange = onChangeFactory('pendulumScaleRed', setCard);
+    const onBlueScaleChange = onChangeFactory('pendulumScaleBlue', setCard);
+    const onPendulumEffectChange = debounce(onChangeFactory('pendulumEffect', setCard), 350);
     const onEffectChange = debounce(onChangeFactory('effect', setCard), 350);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
     const onTypeAbilityChange = debounce((value: (string | number)[]) => {
         setCard(current => ({
             ...current,
-            type_ability: value.map(entry => `${entry}`),
+            typeAbility: value.map(entry => `${entry}`),
         }));
     }, 350);
-    const onSetIDChange = onChangeFactory('set_id', setCard);
+    const onSetIDChange = onChangeFactory('setId', setCard);
     const onPasscodeChange = onChangeFactory('passcode', setCard);
     const onStickerChange = onChangeFactory('sticker', setCard);
     const onCreatorChange = onChangeFactory('creator', setCard);
@@ -148,31 +148,31 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         picture,
         effect,
         effectStyle,
-        type_ability,
-        isPendulum, pendulum_effect, red_scale, blue_scale,
-        atk, def, link_map,
+        typeAbility,
+        isPendulum, pendulumEffect, pendulumScaleRed, pendulumScaleBlue,
+        atk, def, linkMap,
         attribute,
         subFamily,
         star,
-        set_id,
+        setId,
         passcode, isFirstEdition, creator, sticker,
     } = currentCard;
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
-    const [displayTypeAbility, setDisplayTypeAbility] = useState(type_ability.join('/'));
+    const [displayTypeAbility, setDisplayTypeAbility] = useState(typeAbility.join('/'));
     const [displayName, setDisplayName] = useState(name);
     const [displayEffect, setDisplayEffect] = useState(effect);
-    const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulum_effect);
+    const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulumEffect);
     const [onlineCharPicker, setOnlineCharPicker] = useState('');
     const ref = useRef();
     
     useImperativeHandle(forwardedRef, () => ({
         forceCardData: (card) => {
-            setDisplayTypeAbility(card.type_ability.join('/'));
+            setDisplayTypeAbility(card.typeAbility.join('/'));
             setDisplayName(card.name);
             setDisplayEffect(card.effect);
-            setDisplayPendulumEffect(card.pendulum_effect);
+            setDisplayPendulumEffect(card.pendulumEffect);
             imageCropperRef.current?.forceExternalSource(card.picture, card.pictureCrop);
         }
     }));
@@ -233,7 +233,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     addonBefore={<>Set ID<RandomButton seeder={randomSetID} onGenerate={onSetIDChange} /></>}
                     onChange={onSetIDChange}
                     placeholder="Set ID"
-                    value={set_id}
+                    value={setId}
                 />
                 {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
                     <div className="joined-row">
@@ -245,7 +245,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             <Input key="blue-scale" addonBefore={<span>
                                 <span style={{ color: '#3b9dff' }}>Blue</span> Scale
                             </span>}
-                            value={blue_scale}
+                            value={pendulumScaleBlue}
                             onChange={e => {
                                 onBlueScaleChange(e);
                                 if (isMirrorScale) onRedScaleChange(e);
@@ -255,7 +255,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             <Input key="red-scale" addonBefore={<span>
                                 <span style={{ color: '#ff6f6f' }}>Red</span> Scale
                             </span>}
-                            value={red_scale}
+                            value={pendulumScaleRed}
                             onChange={e => {
                                 if (isMirrorScale) onBlueScaleChange(e);
                                 onRedScaleChange(e);
@@ -376,7 +376,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onTainted={onTainted}
                 >
                     {isLink
-                        ? <LinkMarkChooser defaultValue={link_map} onChange={onLinkMapChange} />
+                        ? <LinkMarkChooser defaultValue={linkMap} onChange={onLinkMapChange} />
                         : <div />}
                 </ImageCropper>
             </div>

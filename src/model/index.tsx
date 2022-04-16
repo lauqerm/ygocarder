@@ -37,18 +37,18 @@ export const defaultCard = {
         unit: 'px',
         aspect: 1,
     } as Partial<ReactCrop.Crop>,
-    link_map: ['1', '3', '7', '9'] as string[],
+    linkMap: ['1', '3', '7', '9'] as string[],
     isPendulum: false,
-    pendulum_effect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
-    red_scale: '4',
-    blue_scale: '4',
-    type_ability: ['Fairy', 'Fusion', 'Effect'] as string[],
+    pendulumEffect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
+    pendulumScaleRed: '4',
+    pendulumScaleBlue: '4',
+    typeAbility: ['Fairy', 'Fusion', 'Effect'] as string[],
     effectStyle: {
         condenseTolerant: 'strict' as CondenseType,
     },
-    effect: `[2+ Effect Monsters]
+    effect: `[2+ Effect Monsters on your field]
 Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
-    set_id: 'YGOC-EN001',
+    setId: 'YGOC-EN001',
     atk: '2000',
     def: '2000',
     passcode: '18111996',
@@ -129,4 +129,6 @@ export const attributeList = [
 ];
 
 export * from './canvas';
-export * from './draw';
+export type {
+    MasterDuelCanvas
+} from './card-seri';

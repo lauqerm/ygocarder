@@ -1,3 +1,7 @@
+import { CanvasConst } from 'src/model';
+
+const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+
 export const measureWithSymbol = (
     ctx: CanvasRenderingContext2D,
     content: string,
@@ -85,4 +89,12 @@ export const fillTextLeftWithLimit = (
             ctx.fillStyle = '#000000';
         }
     }
+};
+
+export const clearCanvas = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+) => {
+    if (ctx) {
+        ctx.clearRect(0, 0, CanvasWidth, CanvasHeight);
+    };
 };

@@ -5,49 +5,16 @@ import {
     CanvasConst,
     Card,
     defaultCard,
-    defaultTextStyle,
-    DrawDirective,
-    foilStyleMap,
-    iconList,
 } from './model';
 import {
     cardDataCondenser,
-    checkLink,
-    checkMonster,
-    checkNormal,
-    checkXyz,
-    getCardFrame,
     insertUrlParam,
     rebuildCardData,
 } from './util';
 import { AppHeader, CardInputPanel, CardInputPanelRef, taintedCanvasWarning } from './page';
-import {
-    arrowPositionList,
-    foilPosition,
-    pendulumFontList,
-    pendulumSizeList,
-    stFontList,
-    stSizeList,
-    typeSizeMap,
-} from './const';
-import {
-    draw1stEdition,
-    drawAD,
-    drawBracketSpaceTemplate,
-    drawBracketTemplate,
-    drawCreatorText,
-    drawEffect,
-    drawIconSpaceTemplate,
-    drawName,
-    drawScale,
-    drawTextTemplate,
-    fillTextLeftWithSpacing,
-    fillTextRightWithSpacing,
-    drawFromSource,
-    drawFromSourceWithSize,
-} from './draw';
 import WebFont from 'webfontloader';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useMasterSeriDrawer } from './service';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 const clearCanvas = (
@@ -77,335 +44,42 @@ function App() {
     const effectCanvasRef = useRef<HTMLCanvasElement>(null);
     const nameCanvasRef = useRef<HTMLCanvasElement>(null);
     const attributeCanvasRef = useRef<HTMLCanvasElement>(null);
-    const ADCanvasRef = useRef<HTMLCanvasElement>(null);
-    const setIdRef = useRef<HTMLCanvasElement>(null);
-    const passcodeRef = useRef<HTMLCanvasElement>(null);
-    const creatorRef = useRef<HTMLCanvasElement>(null);
-    const stickerRef = useRef<HTMLCanvasElement>(null);
+    const statCanvasRef = useRef<HTMLCanvasElement>(null);
+    const setIdCanvasRef = useRef<HTMLCanvasElement>(null);
+    const passcodeCanvasRef = useRef<HTMLCanvasElement>(null);
+    const creatorCanvasRef = useRef<HTMLCanvasElement>(null);
+    const stickerCanvasRef = useRef<HTMLCanvasElement>(null);
+    const [canvasMap] = useState({
+        previewCanvas: previewCanvasRef,
+        drawCanvas: drawCanvasRef,
+        frameCanvas: frameCanvasRef,
+        artCanvas: artCanvasRef,
+        specialFrameCanvas: specialFrameCanvasRef,
+        subFamilyCanvas: subFamilyCanvasRef,
+        pendulumScaleCanvas: pendulumScaleCanvasRef,
+        pendulumEffectCanvas: pendulumEffectCanvasRef,
+        typeCanvas: typeCanvasRef,
+        effectCanvas: effectCanvasRef,
+        nameCanvas: nameCanvasRef,
+        attributeCanvas: attributeCanvasRef,
+        statCanvas: statCanvasRef,
+        setIdCanvas: setIdCanvasRef,
+        passcodeCanvas: passcodeCanvasRef,
+        creatorCanvas: creatorCanvasRef,
+        stickerCanvas: stickerCanvasRef,
+    });
 
     const {
-        frame, foil,
-        name, nameStyleType, nameStyle,
+        name,
         pictureCrop,
-        effect,
-        effectStyle,
-        type_ability,
-        isPendulum, pendulum_effect, blue_scale, red_scale,
-        atk, def, link_map,
-        attribute,
-        subFamily,
-        star,
-        set_id,
-        passcode, isFirstEdition, creator, sticker,
+        isPendulum,
     } = currentCard;
-    const isNormal = checkNormal(currentCard);
-    const isXyz = checkXyz(currentCard);
-    const isLink = checkLink(currentCard);
-    const isMonster = checkMonster(currentCard);
-    const pendulumSize = 'medium';
 
-    const drawingPipeline = useRef<Record<string, () => Promise<any>>>({
-        frame: () => Promise.resolve(),
-        star: () => Promise.resolve(),
-        attribute: () => Promise.resolve(),
-        specialFrame: () => Promise.resolve(),
-        sticker: () => Promise.resolve(),
-    });
     const [imageChangeCount, setImageChangeCount] = useState(0);
-
-    useEffect(() => {
-        const ctx = frameCanvasRef.current?.getContext('2d');
-
-        drawingPipeline.current.frame = async () => {
-            clearCanvas(ctx);
-            const cardType = getCardFrame(frame);
-            const hasFoil = foil !== 'normal';
-
-            await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
-            if (hasFoil) {
-                const { art } = foilPosition[foil];
-
-                await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, art.left, 120);
-                await drawFromSource(ctx, `/asset/image/frame/frame-effect-${foil}.png`, 0, 580);
-            }
-        };
-    }, [foil, frame]);
-
-    useEffect(() => {
-        const ctx = artCanvasRef.current?.getContext('2d');
-        const previewCtx = previewCanvasRef.current;
-        if (previewCtx && ctx) {
-            ctx.clearRect(0, 0, 548, 650);
-            if (isPendulum) {
-                ctx.drawImage(previewCtx, 38, 144, 474, 470);
-            } else {
-                ctx.drawImage(previewCtx, 67, 147, 416, 416);
-            }
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isPendulum, imageChangeCount]);
-
-    useEffect(() => {
-        const ctx = specialFrameCanvasRef.current?.getContext('2d');
-        
-        drawingPipeline.current.specialFrame = async () => {
-            clearCanvas(ctx);
-            const hasFoil = foil !== 'normal';
-
-            const cardType = getCardFrame(frame);
-            if (isPendulum && !isLink) {
-                if (!isXyz) await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
-                await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
-                if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}.png`, 0, 0);
-            }
-
-            const foiledBorder = !hasFoil ? '/asset/image/frame/frame-border.png' : `/asset/image/frame/frame-border-${foil}.png`;
-            await drawFromSource(ctx, foiledBorder, 0, 0);
-            if (!isPendulum && isLink) {
-                if (hasFoil) await drawFromSource(ctx, `./asset/image/link/link-overlay-${foil}.png`, 0, 110);
-                else await drawFromSource(ctx, '/asset/image/link/link-overlay.png', 66, 146);
-                if (hasFoil) await drawFromSource(ctx, `/asset/image/link/link-overlay-arrow-${foil}.png`, 0, 110);
-
-                await Promise.all(link_map
-                    .map(entry => {
-                        const { left, top, height, width } = arrowPositionList[parseInt(entry) - 1];
-                        if (hasFoil) return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}-${foil}.png`, left, top, width, height);
-                        else return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}.png`, left, top, width, height);
-                    })
-                );
-                if (ctx) {
-                    ctx.textAlign = 'right';
-                    ctx.scale(1.2, 1);
-                    ctx.font = 'bold 24px Yugioh Rush Duel Numbers V4';
-                    ctx.fillText(`${link_map.length}`, 505 / 1.2, 746);
-                    ctx.scale(1 / 1.2, 1);
-                    ctx.textAlign = 'left';
-                }
-            }
-        };
-    }, [foil, frame, isLink, isPendulum, isXyz, link_map]);
-
-    useEffect(() => {
-        const ctx = attributeCanvasRef.current?.getContext('2d');
-        drawingPipeline.current.attribute = () => {
-            ctx?.clearRect(0, 0, 549, 100);
-
-            return drawFromSource(ctx, `/asset/image/attribute/attr-${attribute.toLowerCase()}.png`, 458, 37);
-        };
-    }, [attribute]);
-
-    useEffect(() => {
-        const ctx = subFamilyCanvasRef.current?.getContext('2d');
-        drawingPipeline.current.star = () => {
-            ctx?.clearRect(0, 0, 549, 150);
-            if (isMonster && !isLink) {
-                let counter = Math.min(13, star ?? 0);
-                let type = isXyz ? 'rank' : 'level';
-                let offset = 0 - (34 + 2.3636);
-                let totalWidth = 34 * counter + 2.3636 * (counter - 1);
-                let edge = counter <= 12
-                    ? isXyz
-                        ? 57 - 34
-                        : 492
-                    : isXyz
-                        ? (549 - totalWidth) / 2 - 34
-                        : (549 - totalWidth) / 2 + totalWidth;
-    
-                return Promise.all([...Array(counter)]
-                    .map(() => {
-                        offset += (34 + 2.3636);
-                        return drawFromSource(
-                            ctx,
-                            `/asset/image/sub-family/subfamily-${type}.png`,
-                            edge + (34 + offset) * (isXyz ? 1 : -1),
-                            99,
-                        );
-                    })
-                );
-            } else if (!isMonster) {
-                const normalizedSubFamily = subFamily.toUpperCase();
-                const hasSTIcon = normalizedSubFamily !== 'NO ICON'
-                        && iconList.includes(normalizedSubFamily);
-    
-                return hasSTIcon
-                    ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                        (image) => 491 - image.naturalWidth - 7,
-                        103,
-                        29, 29)
-                    : new Promise(resolve => resolve(true));
-            };
-            return new Promise(resolve => resolve(true));
-        };
-    }, [isLink, isMonster, isXyz, star, subFamily]);
-
-    useEffect(() => {
-        const { fontSize, fontFamily, textAlign } = DrawDirective.pendulumScale;
-        const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
-
-        ctx?.clearRect(0, 0, 549, 600);
-        if (ctx && isPendulum) {
-            ctx.font = `${fontSize}px ${fontFamily}`;
-            ctx.textAlign = textAlign;
-
-            const { blueScale, redScale } = DrawDirective;
-            drawScale(ctx, blue_scale ?? 0, blueScale.left, blueScale.offsetTop + fontSize);
-            drawScale(ctx, red_scale ?? 0, redScale.left, redScale.offsetTop + fontSize);
-        }
-    }, [isInitializing, blue_scale, isPendulum, red_scale]);
-
-    useEffect(() => {
-        const ctx = nameCanvasRef.current?.getContext('2d');
-        if (ctx) {
-            ctx.clearRect(0, 0, 549, 100);
-            ctx.textAlign = 'left';
-            const style = nameStyleType === 'auto'
-                ? foil !== 'normal'
-                    ? foilStyleMap[foil] ?? defaultTextStyle
-                    : { ...defaultTextStyle, fillStyle: (!isMonster || isLink || isXyz) ? '#ffffff' : '#000000' }
-                : nameStyle;
-
-            drawName(ctx, name, 40.52, 78, 409, style);
-        }
-    }, [foil, isInitializing, isLink, isMonster, isXyz, name, nameStyle, nameStyleType]);
-
-    useEffect(() => {
-        const { atk: atkDirective, def: defDirective } = DrawDirective;
-        const ctx = ADCanvasRef.current?.getContext('2d');
-        clearCanvas(ctx);
-        if (isMonster) {
-            drawAD(ctx, atk, atkDirective.left, atkDirective.top);
-            if (!isLink) {
-                drawAD(ctx, def, defDirective.left, defDirective.top);
-            }
-        }
-    }, [isInitializing, atk, def, isLink, isMonster]);
-
-    useEffect(() => {
-        const ctx = setIdRef.current?.getContext('2d');
-        clearCanvas(ctx);
-        if (ctx) {
-            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
-            else ctx.fillStyle = '#000';
-            ctx.font = '15px stone-serif-regular';
-
-            if (isPendulum) {
-                fillTextLeftWithSpacing(ctx, set_id, -0.1, 45, 746);
-            } else if (isLink) {
-                fillTextRightWithSpacing(ctx, set_id, -0.1, 450, 590);
-            } else fillTextRightWithSpacing(ctx, set_id, -0.1, 492, 589);
-        }
-    }, [isInitializing, isLink, isPendulum, isXyz, set_id]);
-
-    useEffect(() => {
-        const ctx = passcodeRef.current?.getContext('2d');
-        clearCanvas(ctx);
-        if (ctx) {
-            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
-            else ctx.fillStyle = '#000';
-            ctx.font = '15px stone-serif-regular';
-
-            const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 25, 777);
-            if (isFirstEdition) {
-                if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
-                else ctx.fillStyle = '#000';
-
-                draw1stEdition(ctx, Math.max(endOfPasscode + 10, 96));
-            }
-        }
-    }, [isFirstEdition, isInitializing, isLink, isPendulum, isXyz, passcode]);
-
-    useEffect(() => {
-        const ctx = creatorRef.current?.getContext('2d');
-        clearCanvas(ctx);
-        if (ctx) {
-            if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
-            else ctx.fillStyle = '#000';
-            
-            drawCreatorText(ctx, creator);
-        }
-    }, [isInitializing, isLink, isPendulum, isXyz, creator]);
-
-    useEffect(() => {
-        const ctx = stickerRef.current?.getContext('2d');
-        drawingPipeline.current.sticker = () => {
-            clearCanvas(ctx);
-
-            if (sticker === 'no-sticker') return Promise.resolve();
-            return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499, 750);
-        };
-    }, [sticker]);
-
-    const drawTypeAbility  = useCallback((
-        ctx: CanvasRenderingContext2D | null | undefined,
-        textSize: 'small' | 'medium' | 'large',
-        alignment: 'left' | 'right' = 'left',
-    ) => {
-        if (ctx) {
-            ctx?.clearRect(0, 0, 549, 700);
-            const size = typeSizeMap[textSize] ?? typeSizeMap['medium'];
-            const { left } = size;
-            const normalizedSubFamily = subFamily.toUpperCase();
-            const instructionList = [
-                drawBracketTemplate(ctx, '[', size, alignment),
-                drawBracketSpaceTemplate(ctx, ' ', size, alignment),
-                ...type_ability.map((entry, index) => drawTextTemplate(
-                    ctx,
-                    entry,
-                    index === type_ability.length - 1,
-                    size, alignment)),
-                textSize === 'large'
-                    ? normalizedSubFamily === 'NO ICON'
-                        ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1)
-                        : drawIconSpaceTemplate(ctx, size, alignment)
-                    : (edge: number) => edge + 2,
-                drawBracketTemplate(ctx, ']', size, alignment),
-            ];
-            const totalLeft = (alignment === 'left'
-                ? instructionList
-                : instructionList.reverse()).reduce((prev, curr) => {
-                return curr(prev);
-            }, left);
-            ctx.textAlign = 'left';
-            if (totalLeft > 508 && textSize === 'medium') drawTypeAbility(ctx, 'small', alignment);
-        }
-    }, [subFamily, type_ability]);
-    useEffect(() => {
-        const ctx = effectCanvasRef.current?.getContext('2d');
-        const typeCtx = typeCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 750);
-        if (isMonster) {
-            const effectIndexSize = drawEffect(ctx, effect, false, isNormal, undefined, undefined, effectStyle?.condenseTolerant);
-            drawTypeAbility(typeCtx, effectIndexSize === 0
-                ? 'medium'
-                : 'small');
-        } else {
-            drawEffect(
-                ctx,
-                effect,
-                false,
-                false,
-                stFontList,
-                stSizeList,
-                effectStyle?.condenseTolerant,
-            );
-            drawTypeAbility(typeCtx, 'large', 'right');
-        }
-    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal, effectStyle?.condenseTolerant]);
-    useEffect(() => {
-        const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
-        ctx?.clearRect(0, 0, 549, 600);
-        if (isMonster && isPendulum) {
-            drawEffect(
-                ctx,
-                pendulum_effect,
-                true,
-                false,
-                pendulumFontList,
-                pendulumSizeList,
-                effectStyle?.condenseTolerant,
-            );
-        }
-    }, [effectStyle?.condenseTolerant, isInitializing, isMonster, isPendulum, pendulum_effect]);
+    const { drawingPipeline } = useMasterSeriDrawer(true, canvasMap, currentCard, {
+        imageChangeCount,
+        isInitializing,
+    });
 
     // const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
     //     let leftOffset = -5;
@@ -585,7 +259,7 @@ function App() {
                 }
             }
             await generateLayer(specialFrameCanvasRef, exportCtx);
-            const layerList = [
+            await Promise.all([
                 nameCanvasRef,
                 attributeCanvasRef,
                 subFamilyCanvasRef,
@@ -593,15 +267,12 @@ function App() {
                 pendulumEffectCanvasRef,
                 typeCanvasRef,
                 effectCanvasRef,
-                ADCanvasRef,
-                setIdRef,
-                passcodeRef,
-                creatorRef,
-                stickerRef,
-            ];
-            await Promise.all([
-                layerList.map(currentlayer => generateLayer(currentlayer, exportCtx)),
-            ]);
+                statCanvasRef,
+                setIdCanvasRef,
+                passcodeCanvasRef,
+                creatorCanvasRef,
+                stickerCanvasRef,
+            ].map(currentlayer => generateLayer(currentlayer, exportCtx)));
             // await drawRefrenceImage(exportCtx);
         }
     }).current;
@@ -662,11 +333,11 @@ function App() {
                         <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600} />
                         <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700} />
                         <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750} />
-                        <canvas id="ADCanvas" ref={ADCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="setId" ref={setIdRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="passcode" ref={passcodeRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="creator" ref={creatorRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="sticker" ref={stickerRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="passcode" ref={passcodeCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="creator" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                        <canvas id="sticker" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                         <canvas className="crop-canvas" ref={previewCanvasRef} />
                     </div>
                 </div>

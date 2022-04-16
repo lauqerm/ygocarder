@@ -6,7 +6,7 @@ export const checkNormal = (card: Pick<Card, 'frame'>) => {
 export const checkXyz = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'xyz';
 };
-export const checkLink = (card: Pick<Card, 'frame' | 'type_ability'>) => {
+export const checkLink = (card: Pick<Card, 'frame' | 'typeAbility'>) => {
     return card.frame === 'link' && checkMonster(card);
 };
 export const checkMonster = (card: Pick<Card, 'frame'>) => {

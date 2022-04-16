@@ -1,3 +1,4 @@
+import { clone } from 'ramda';
 import { JSONCrush, JSONUncrush } from '../3rd';
 import { Card, defaultCard } from '../model';
 
@@ -38,7 +39,7 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
 
     const getMedian = () => median;
     const setMedian = (newMedian: number) => median = newMedian;
-	
+
     const setLastEffective = (forceMedian = median) => lastEffective = forceMedian;
     const getLastEffective = () => lastEffective;
     const applyLastEffective = () => {
@@ -46,7 +47,7 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
         iterateCount = -1;
         return median;
     };
-	
+
     const getIterateCount = () => iterateCount;
     const finish = () => iterateCount = -1;
 
@@ -95,14 +96,14 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
         unit: 'ptu',
         aspect: 'pta',
     },
-    link_map: 'lm',
+    linkMap: 'lm',
     isPendulum: 'ip',
-    pendulum_effect: 'pe',
-    red_scale: 'rs',
-    blue_scale: 'bs',
-    type_ability: 'ta',
+    pendulumEffect: 'pe',
+    pendulumScaleRed: 'rs',
+    pendulumScaleBlue: 'bs',
+    typeAbility: 'ta',
     effect: 'ef',
-    set_id: 'si',
+    setId: 'si',
     atk: 'atk',
     def: 'def',
     passcode: 'pc',
@@ -181,11 +182,21 @@ export const rebuildCardData = (
             : card;
     }
 
-    // Adapter, try to match old version card data with newer model
-    if (fullCard.effectStyle === undefined) {
-        fullCard.effectStyle = {
+    return migrateCardData(fullCard);
+};
+
+// Try to match old version card data with newer model
+const migrateCardData = (card: Record<string, any>) => {
+    const migratedCard = clone(card);
+
+    if (migratedCard.effectStyle === undefined) {
+        migratedCard.effectStyle = {
             ...defaultCard.effectStyle
         };
     }
-    return fullCard;
+
+    if (migratedCard.version === undefined) {
+        migratedCard.version = 1;
+    }
+    return migratedCard;
 };

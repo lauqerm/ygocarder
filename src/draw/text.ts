@@ -97,7 +97,7 @@ export const drawEffect = (
     sizeList: BoxSize[] = monsterSizeList,
     condenseTolerant: CondenseType = 'strict',
 ) => {
-    const normalizedContent = quoteConvert(content.trim());
+    const normalizedContent = quoteConvert(content?.trim());
     let effectIndexSize = 0;
     if (ctx && content) {
         const tolerantPerSentence: Record<string, number> = CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict'];
