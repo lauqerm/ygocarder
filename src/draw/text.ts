@@ -97,7 +97,12 @@ export const drawEffect = (
     sizeList: BoxSize[] = monsterSizeList,
     condenseTolerant: CondenseType = 'strict',
 ) => {
-    let effectIndexSize = 0;
+    let effectSizeLevel = 0;
+    const bulletSymbol = '●';
+    const bulletSymbolWidth = 15;
+    const specialSymbol = '#@∞';
+    const breakableSymbol = '\\s-';
+    const spaceSymbol = ' ';
     if (ctx && content) {
         const normalizedContent = quoteConvert(content.trim());
         const tolerantPerSentence: Record<string, number> = CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict'];
@@ -110,21 +115,18 @@ export const drawEffect = (
                 body: normalizedContent,
                 flavorCondition: '',
                 material: '',
-            } : splitEffect(normalizedContent, isNormal);
+            }
+            : splitEffect(normalizedContent, isNormal);
 
         const additionalLineCount = (effectMaterial.length > 0 ? 1 : 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
         const sentencizeText = effectBody.split('\n');
-        const bulletSymbol = '●';
-        const bulletSymbolWidth = 15;
-        const specialSymbol = '#@∞';
-        const breakableSymbol = '\\s-';
         
-        const tokenizeR = new RegExp(`([${specialSymbol}${breakableSymbol}])`, 'g');
+        const tokenizer = new RegExp(`([${specialSymbol}${breakableSymbol}])`, 'g');
         const specialSymbolReg = new RegExp(specialSymbol, 'g');
 
-        while(effectIndexSize < fontList.length) {
-            const { fontSize, lineHeight, lineCount } = fontList[effectIndexSize];
-            const { left, width: basedWidth, top } = sizeList[effectIndexSize];
+        while (effectSizeLevel < fontList.length) {
+            const { fontSize, lineHeight, lineCount } = fontList[effectSizeLevel];
+            const { left, width: basedWidth, top } = sizeList[effectSizeLevel];
             const width = isNormal ? basedWidth - 2 : basedWidth;
             const condenser = createCondenser();
             let effectiveRatio = 1000;
@@ -151,7 +153,7 @@ export const drawEffect = (
                     // The width is "expand" based on condense ratio so all the calculate does not need to be scaled
                     const condenseRatio = condenser.getMedian() / 1000;
                     const hypoWidth = width / condenseRatio;
-                    const tokenizedText = curr.split(tokenizeR);
+                    const tokenizedText = curr.split(tokenizer);
                     let currentLineCount = 1;
                     let tokenSentence: string[] = [];
                     let totalWidth = 0;
@@ -235,8 +237,8 @@ export const drawEffect = (
             };
             const tolerantValue = tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'];
             if ((effectiveRatio < tolerantValue)
-            && effectIndexSize < fontList.length - 1) {
-                effectIndexSize += 1;
+            && effectSizeLevel < fontList.length - 1) {
+                effectSizeLevel += 1;
             } else {
                 ctx?.clearRect(0, 0, 549, 750);
                 let baseline = top + lineHeight;
@@ -300,17 +302,42 @@ export const drawEffect = (
                             return edge;
                         }, left);
                     } else {
-                        const splitter = new RegExp(`([${bulletSymbol}${specialSymbol} ])`, 'g');
+                        /**
+                         * This regex split string into two types:
+                         * * Normal text, that is, any words or characters (EVEN empty string) that can be draw normally without any proccessing
+                         * * Special character that need special procession before they can be draw
+                         * 
+                         * By nature of the regex, the result will guaranteed to look like this:
+                         * 
+                         * `[normal, special, normal, special, normal, special, ...]`
+                         * 
+                         * It is easy to see that normal text will always stand at odd indices, while special text stand at even ones
+                         */
+                        const splitter = new RegExp(`([${bulletSymbol}${specialSymbol}${spaceSymbol}])`, 'g');
                         const spaceSeparatedText = text.split(splitter);
+                        const spaceNextToBulletSet: Set<number> = new Set();
                         let nonSpaceWidth = 0;
                         let spaceCount = 0;
 
-                        spaceSeparatedText.forEach(entry => {
-                            if (entry === ' ') spaceCount += 1;
-                            else if (entry === bulletSymbol) nonSpaceWidth += 15;
-                            else if (specialSymbolReg.test(entry)) {
+                        spaceSeparatedText.forEach((entry, index) => {
+                            if (entry === spaceSymbol) {
+                                /**
+                                 * Space right next to bullet is treated differently and do not count toward space counter, also their position is
+                                 * saved
+                                 */
+                                if (spaceSeparatedText[index - 2] === bulletSymbol) {
+                                    spaceNextToBulletSet.add(index - 2);
+                                    nonSpaceWidth += ctx.measureText(entry).width * condenseRatio;
+                                } else {
+                                    spaceCount += 1;
+                                }
+                            } else if (entry === bulletSymbol) {
+                                nonSpaceWidth += 15;
+                            } else if (specialSymbolReg.test(entry)) {
                                 switchFont(() => nonSpaceWidth += ctx.measureText(entry).width * condenseRatio);
-                            } else nonSpaceWidth += ctx.measureText(entry).width * condenseRatio;
+                            } else {
+                                nonSpaceWidth += ctx.measureText(entry).width * condenseRatio;
+                            }
                         });
                         // Split text by "space", then distribute remaining width to those spaces, resulting in "widen" space
                         const spaceWidth = spaceCount > 0 ? (width - nonSpaceWidth) / spaceCount : 0;
@@ -329,8 +356,20 @@ export const drawEffect = (
                                     drawBullet(ctx, edge, baseline);
                                     edge += 15;
                                     ctx.scale(condenseRatio, 1);
-                                } else if (cur === ' ') {
-                                    edge += spaceWidth;
+                                    /**
+                                     * If this bullet is followed by a white space, we draw this white space with normal condensed font size instead of
+                                     * auto-distributed size because bullet naturally form a list. So we must guarantee the space between bullet and
+                                     * the text next to it must be the same accross all the line so it look perfectly aligned.
+                                     */
+                                    if (spaceNextToBulletSet.has(index)) {
+                                        ctx.fillText(spaceSymbol, edge / condenseRatio, baseline);
+                                        edge += ctx.measureText(spaceSymbol).width * condenseRatio;
+                                    }
+                                } else if (cur === spaceSymbol) {
+                                    /**
+                                     * Since we already has special treatment for space next to bullet, ignore it for normal space processing.
+                                     */
+                                    if (!spaceNextToBulletSet.has(index - 2)) edge += spaceWidth;
                                 } else {
                                     switchFont(() => {
                                         ctx.fillText(cur, edge / condenseRatio, baseline);
@@ -360,7 +399,7 @@ export const drawEffect = (
             }
         }
 
-        return effectIndexSize;
+        return effectSizeLevel;
     }
-    return effectIndexSize;
+    return effectSizeLevel;
 };

@@ -1,8 +1,8 @@
 import { Button, Input, Radio } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
 import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
 import { Loading } from '../loading';
+import 'react-image-crop/dist/ReactCrop.css';
 import './card-picture.scss';
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
