@@ -65,7 +65,7 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     };
 };
 
-const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
+const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, string>> = {
     frame: 'fr',
     foil: 'fo',
     name: 'na',
