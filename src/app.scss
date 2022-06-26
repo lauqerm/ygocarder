@@ -74,12 +74,11 @@
 			margin: auto;
 			margin-top: 10px;
 			margin-bottom: 15px;
-			max-width: 570px;
+			max-width: 549px;
 			outline: none !important;
-			padding: 5px 10px;
+			padding: 10px;
 			text-align: left;
 			text-shadow: 0px 1px 2px black;
-			width: 90%;
 			border: 1px solid #383838;
 			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 			.anticon {
@@ -92,11 +91,6 @@
 				border-radius: 4px;
 				outline: none !important;
 				cursor: pointer;
-			}
-			> button {
-				width: 90%;
-				margin: auto;
-				margin-top: 5px;
 			}
 			#save-button-waiting {
 				cursor: wait;
@@ -112,13 +106,15 @@
 					box-shadow: none;
 				}
 			}
+			#save-button-tainted {
+				border: 1px solid transparent;
+				padding: 1px 0;
+			}
 			.imexport {
-				width: 90%;
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				column-gap: 10px;
-				margin: auto;
-				margin-top: 5px;
+				margin-top: 10px;
 				button {
 					font-size: 15px;
 					background-color: #5e85c9;

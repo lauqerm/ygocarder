@@ -100,7 +100,7 @@ function App() {
             ctx.imageSmoothingQuality = 'high';
             clearCanvas(ctx);
         }
-        
+
         // let fontLoaded = false;
         WebFont.load({
             custom: {
@@ -279,7 +279,7 @@ function App() {
 
     return (
         <div id="app"
-            onDrop={() => {}}
+            onDrop={() => { }}
             style={{
                 backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
             }}
@@ -295,11 +295,13 @@ function App() {
                 <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                     <div className="export-button">
                         {!isTainted
-                            ? <>Canvas is safe<br />
+                            ? <>
                                 <button id="save-button-waiting" disabled>Generating...</button>
-                                <button id="save-button-ready" onClick={() => onSave()}>Save</button></>
-                            : <><div>Canvas is tainted {taintedCanvasWarning}</div>
-                        Manually save by right click the card → "Save image as..."</>}
+                                <button id="save-button-ready" onClick={() => onSave()}>Save</button>
+                            </>
+                            : <div id="save-button-tainted">
+                                Manually save by right click the card → "Save image as..." {taintedCanvasWarning}
+                            </div>}
                         <div className="imexport">
                             <button onClick={() => {
                                 if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
