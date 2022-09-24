@@ -374,6 +374,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}
                     onTainted={onTainted}
+                    ratio={isPendulum ? 1.325 : 1}
                 >
                     {isLink
                         ? <LinkMarkChooser defaultValue={linkMap} onChange={onLinkMapChange} />

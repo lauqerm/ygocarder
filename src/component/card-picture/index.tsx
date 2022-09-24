@@ -101,6 +101,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const pixelRatio = window.devicePixelRatio;
         const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
         const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
+        const renderRatio = crop.aspect ?? 0;
 
         canvas.width = (boundingWidth ?? 0) * pixelRatio;
         canvas.height = (boundingHeight ?? 0) * pixelRatio;
@@ -117,7 +118,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             0,
             0,
             (boundingWidth ?? 0),
-            (boundingHeight ?? 0)
+            (boundingHeight ?? 0) / (renderRatio > 0 ? renderRatio : 1),
         );
         onImageChange(crop, sourceType);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,6 +136,18 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             setCrop(cropInfo);
         }
     }));
+
+    useEffect(() => {
+        const { height, aspect, width } = completedCrop ?? {};
+        if (typeof height === 'number' && typeof aspect === 'number' && typeof width === 'number' && (ratio > 0 && ratio !== aspect)) {
+            setCrop({
+                ...completedCrop,
+                aspect: ratio,
+                height: width / ratio,
+            });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ratio]);
 
     return (
         <div className="card-image-cropper">
@@ -166,7 +179,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             </div>
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
-                <ReactCrop key={sourceType}
+                <ReactCrop key={`${sourceType}${ratio}`}
                     src={sourceType === 'internal' ? internalSource : externalSource}
                     onImageLoaded={onLoad}
                     onImageError={() => {
