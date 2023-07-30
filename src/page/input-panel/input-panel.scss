@@ -37,14 +37,17 @@
 	.main-info {
 		display: flex;
 		align-items: flex-start;
-		margin-top: 1em;
-		column-gap: 1em;
+		margin-top: 0.5em;
+		column-gap: 0.5em;
 		row-gap: 0.5em;
 		.main-info-first {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
 			row-gap: 0.5em;
+			#card-effect {
+				min-height: 15rem;
+			}
 		}
 		.main-info-second {
 			flex: 0 0 375px;
@@ -153,9 +156,8 @@
 		column-gap: 10px;
 		row-gap: 0.5em;
 		padding: 10px;
-		border: 1px solid #484848;
+		border: 1px solid #222;
 		border-radius: 3px;
-		box-shadow: 0 0 2px 1px #212121 inset;
 		background-color: #48484b;
 		.joined-row {
 			grid-column: span 2;

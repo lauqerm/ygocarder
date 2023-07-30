@@ -296,8 +296,8 @@ function App() {
                     <div className="export-button">
                         {!isTainted
                             ? <>
-                                <button id="save-button-waiting" disabled>Generating...</button>
-                                <button id="save-button-ready" onClick={() => onSave()}>Save</button>
+                                <button className="save-button" id="save-button-waiting" disabled>Save</button>
+                                <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Save</button>
                             </>
                             : <div id="save-button-tainted">
                                 Manually save by right click the card → "Save image as..." {taintedCanvasWarning}

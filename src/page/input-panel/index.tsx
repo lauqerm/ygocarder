@@ -191,7 +191,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             <span>Foil</span>
         </CheckboxTrain>
         <CheckboxTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameButton} />
-        <hr />
         <div className="card-header custom-gap">
             <Input
                 id="name"

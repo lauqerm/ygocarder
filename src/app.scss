@@ -92,15 +92,15 @@
 				outline: none !important;
 				cursor: pointer;
 			}
+			.save-button {
+				font-weight: bold;
+				box-shadow: 0 0 2px 1px #333;
+			}
 			#save-button-waiting {
 				cursor: wait;
-				opacity: 0.8;
-				border: 1px solid #2b8ddf;
 			}
 			#save-button-ready {
 				cursor: pointer;
-				font-weight: bold;
-				box-shadow: 0 0 2px 1px #333;
 				&:hover {
 					background-color: #3b9dff;
 					box-shadow: none;
@@ -242,7 +242,8 @@
 	textarea,
 	.ant-checkbox,
 	.ant-radio-group:not(.frame-radio),
-	.ant-input-wrapper {
+	.ant-input-wrapper,
+	.pendulum-container {
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	}
 	.card-image-source-input {
