@@ -13,7 +13,6 @@ import {
 } from './util';
 import { AppHeader, CardInputPanel, CardInputPanelRef, taintedCanvasWarning } from './page';
 import WebFont from 'webfontloader';
-import { LoadingOutlined } from '@ant-design/icons';
 import { useMasterSeriDrawer } from './service';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
@@ -181,11 +180,13 @@ function App() {
             (async () => {
                 const canvasRef = drawCanvasRef.current;
                 if (canvasRef) {
+                    document.getElementById('export-canvas')?.classList.remove('js-export-available');
                     document.getElementById('export-canvas-guard')?.setAttribute('style', '');
                     document.getElementById('save-button-waiting')?.setAttribute('style', 'display: block');
                     document.getElementById('save-button-ready')?.setAttribute('style', 'display: none');
 
                     exportRef.current.queuedPipeline = true;
+                    // await new Promise(resolve => setTimeout(() => resolve(true), 3000));
                     await exportRef.current.currentPipeline;
 
                     if (relevant) {
@@ -197,6 +198,7 @@ function App() {
                             const condensedCard = cardDataCondenser(currentCard);
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
+                            document.getElementById('export-canvas')?.classList.add('js-export-available');
                             document.getElementById('export-canvas-guard')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-ready')?.setAttribute('style', 'display: block');
@@ -243,7 +245,7 @@ function App() {
         };
 
         if (canvasRef && exportCtx) {
-            exportCtx.clearRect(0, 0, 549, 800);
+            exportCtx.clearRect(0, 0, CanvasConst.width, CanvasConst.height);
             await Promise.all(Object
                 .values(drawingPipeline.current)
                 .map(callDraw => {
@@ -282,6 +284,10 @@ function App() {
             onDrop={() => { }}
             style={{
                 backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                ...({
+                    '--card-height': `${CanvasConst.height}px`,
+                    '--card-width': `${CanvasConst.width}px`,
+                })
             }}
         >
             <div className={'app-container'}>
@@ -321,9 +327,8 @@ function App() {
                     </div>
                     <div className="card-canvas-group">
                         <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <div id="export-canvas-guard">
-                            <div className="canvas-guard-alert">Generating...</div>
-                            <LoadingOutlined />
+                        <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
+                            {/* <div className="canvas-guard-alert">Generating...</div> */}
                         </div>
                         <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                         <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={650} />

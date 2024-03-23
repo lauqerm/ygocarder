@@ -1,6 +1,8 @@
 #root {
 	background-color: #fff;
     min-width: 570px;
+	--card-width: 549px;
+	--card-height: 800px;
 }
 #app {
 	width: 100%;
@@ -74,7 +76,7 @@
 			margin: auto;
 			margin-top: 10px;
 			margin-bottom: 15px;
-			max-width: 549px;
+			max-width: var(--card-width);
 			outline: none !important;
 			padding: 10px;
 			text-align: left;
@@ -130,8 +132,8 @@
 		.card-canvas-group {
 			position: relative;
 			box-shadow: 0 0 3px 2px #333, 0 0 8px 3px #444;
-			width: 549px;
-			height: 800px;
+			width: var(--card-width);
+			height: var(--card-height);
 			margin: auto;
 			margin-bottom: 10px;
 			canvas {
@@ -140,11 +142,13 @@
 				z-index: 1;
 			}
 			&:hover {
-				#export-canvas {
+				#export-canvas.js-export-available {
 					display: inline-block !important;
 				}
 				#export-canvas-guard {
 					display: flex;
+					cursor: wait;
+					transition: all 2s;
 				}
 			}
 			#export-canvas {
@@ -158,9 +162,9 @@
 				align-items: center;
 				justify-content: center;
 				z-index: 101;
-				background-color: #ffffff44;
-				width: 549px;
-				height: 800px;
+				// background-color: #ffffff08;
+				width: var(--card-width);
+				height: var(--card-height);
 				.anticon {
 					font-size: 50px;
 				}
@@ -191,7 +195,7 @@
 .control-board {
 	.control-zoom {
 		display: grid;
-		grid-template-columns: 549px 1fr;
+		grid-template-columns: var(--card-width) 1fr;
 		> span {
 			display: flex;
 			align-self: center;
