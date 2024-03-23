@@ -9,7 +9,7 @@ export const defaultTextStyle = {
     hasShadow: false,
 };
 
-export type CondenseType = 'strict' | 'loose';
+export type CondenseType = 'veryLoose' | 'strict' | 'loose';
 
 export type Card = typeof defaultCard;
 export const defaultCard = {

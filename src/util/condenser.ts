@@ -182,6 +182,7 @@ export const rebuildCardData = (
             : card;
     }
 
+    console.log('🚀 ~ fullCard:', fullCard);
     return migrateCardData(fullCard);
 };
 

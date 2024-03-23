@@ -1,7 +1,7 @@
 export const randomCharacter = (charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', length = 1) => {
-    let result           = '';
+    let result = '';
     const charactersLength = charSet.length;
-    for ( let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         result += charSet.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -63,3 +63,4 @@ export function insertUrlParam(key: string, value: string) {
 
 export * from './categorize';
 export * from './condenser';
+export * from './hook';
