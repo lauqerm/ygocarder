@@ -56,7 +56,7 @@
 		flex: 0 0 570px;
 		position: relative;
 		overflow: hidden;
-		min-height: 900px;
+		min-height: 1200px;
 		&.export-tainted {
 			.export-button {
 				color: #ff6f6f;
@@ -138,7 +138,7 @@
 			margin-bottom: 10px;
 			transform: scale(0.66) translateZ(0);
 			position: absolute;
-			top: -90px;
+			top: -85px;
 			left: -120px;
 			canvas {
 				position: absolute;

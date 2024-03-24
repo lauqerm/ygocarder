@@ -25,7 +25,7 @@ import {
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing
 } from 'src/draw';
-import { CanvasConst, Card, CardArtCanvasConst, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, UpscaleRatio } from 'src/model';
+import { ADJUSTMENT_PIXEL, ADJUSTMENT_PIXEL_2, CanvasConst, Card, CardArtCanvasConst, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, UP_RATIO } from 'src/model';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkXyz, getCardFrame } from 'src/util';
 
 const {
@@ -96,7 +96,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = artCanvas.current?.getContext('2d');
             const previewCtx = previewCanvas.current;
             if (previewCtx && ctx) {
-                ctx.clearRect(0, 0, 548 * UpscaleRatio, 650 * UpscaleRatio);
+                ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
                 const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
 
                 ctx.drawImage(previewCtx, x, y, w, h);
@@ -117,8 +117,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 if (hasFoil) {
                     const { art } = foilPosition[foil];
 
-                    await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, art.left, 120);
-                    await drawFromSource(ctx, `/asset/image/frame/frame-effect-${foil}.png`, 0, 580);
+                    await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, art.left * UP_RATIO - ADJUSTMENT_PIXEL_2, 120 * UP_RATIO);
+                    await drawFromSource(ctx, `/asset/image/frame/frame-effect-${foil}.png`, 0 * UP_RATIO, 580 * UP_RATIO - ADJUSTMENT_PIXEL);
                 }
             };
         }
@@ -184,12 +184,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         if (active) {
             const ctx = attributeCanvas.current?.getContext('2d');
             drawingPipeline.current.attribute = () => {
-                ctx?.clearRect(0, 0, CanvasWidth, 100 * UpscaleRatio);
+                ctx?.clearRect(0, 0, CanvasWidth, 100 * UP_RATIO);
 
                 return drawFromSource(
                     ctx,
                     `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
-                    458 * UpscaleRatio, 37 * UpscaleRatio,
+                    458 * UP_RATIO, 37 * UP_RATIO,
                 );
             };
         }
@@ -200,18 +200,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         if (active) {
             const ctx = subFamilyCanvas.current?.getContext('2d');
             drawingPipeline.current.star = () => {
-                ctx?.clearRect(0, 0, CanvasWidth, 150 * UpscaleRatio);
+                ctx?.clearRect(0, 0, CanvasWidth, 150 * UP_RATIO);
                 if (isMonster && !isLink) {
-                    const starWidth = 34 * UpscaleRatio;
-                    const startSpacing = 2.3636 * UpscaleRatio;
+                    const starWidth = 34 * UP_RATIO;
+                    const startSpacing = 2.3636 * UP_RATIO;
                     const starCount = Math.min(13, star ?? 0);
                     const starType = isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level';
                     const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
                     /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
                     const leftEdge = starCount <= 12
                         ? (isXyz || isDarkSynchro)
-                            ? (57 - starWidth) * UpscaleRatio
-                            : 492 * UpscaleRatio
+                            ? (57 - starWidth) * UP_RATIO
+                            : 492 * UP_RATIO
                         : (isXyz || isDarkSynchro)
                             ? (CanvasWidth - totalWidth) / 2 - starWidth
                             : (CanvasWidth - totalWidth) / 2 + totalWidth;
@@ -224,19 +224,19 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                                 ctx,
                                 `/asset/image/sub-family/subfamily-${starType}.png`,
                                 leftEdge + (starWidth + offset) * (isXyz || isDarkSynchro ? 1 : -1),
-                                99 * UpscaleRatio,
+                                99 * UP_RATIO,
                             );
                         })
                     );
                 } else if (!isMonster) {
                     const normalizedSubFamily = subFamily.toUpperCase();
                     const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconList.includes(normalizedSubFamily);
-                    const stIconSpacing = 7 * UpscaleRatio;
+                    const stIconSpacing = 7 * UP_RATIO;
 
                     return hasSTIcon
                         ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                            image => 491 * UpscaleRatio - image.naturalWidth - stIconSpacing,
-                            103 * UpscaleRatio,
+                            image => 491 * UP_RATIO - image.naturalWidth - stIconSpacing,
+                            103 * UP_RATIO,
                             image => image.naturalWidth,
                             image => image.naturalWidth,
                         )
@@ -352,7 +352,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 clearCanvas(ctx);
 
                 if (sticker === 'no-sticker') return Promise.resolve();
-                return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499 * UpscaleRatio, 750 * UpscaleRatio);
+                return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499 * UP_RATIO, 750 * UP_RATIO);
             };
         }
     }, [active, sticker, stickerCanvas]);

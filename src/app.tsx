@@ -5,7 +5,7 @@ import {
     CanvasConst,
     Card,
     CardArtCanvasConst,
-    UpscaleRatio,
+    UP_RATIO,
     defaultCard,
 } from './model';
 import {
@@ -332,11 +332,11 @@ function App() {
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
                             </div>
                             <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963 /** 650 * UpscaleRatio */} />
+                            <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963 /** 650 * UP_RATIO */} />
                             <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100} />
-                            <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UpscaleRatio} />
-                            <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UpscaleRatio} />
+                            <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
+                            <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UP_RATIO} />
                             <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600} />
                             <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600} />
                             <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700} />
