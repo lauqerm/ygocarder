@@ -98,14 +98,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         if (!ctx) return;
 
         const { naturalHeight, naturalWidth } = image;
-        const { aspect } = cropData;
         const zoomX = naturalWidth / image.width;
         const zoomY = naturalHeight / image.height;
         const cropUnit = cropData.unit ?? 'px';
         const pixelRatio = window.devicePixelRatio;
         const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
         const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
-        const aspectRatio = typeof aspect === 'number' && aspect > 0 ? aspect : 1;
 
         canvas.width = (boundingWidth ?? 0) * pixelRatio;
         canvas.height = (boundingHeight ?? 0) * pixelRatio;
@@ -123,32 +121,15 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             (cropData.x ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100),
             (cropData.y ?? 0) * (cropUnit === 'px' ? zoomY : naturalHeight / 100),
             drawWidth,
-            drawWidth / aspectRatio,
+            drawWidth / ratio,
             0,
             0,
             (boundingWidth ?? 0),
-            (boundingHeight ?? 0) / aspectRatio,
+            (boundingHeight ?? 0) / ratio,
         );
         onImageChange(cropData, sourceType);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [completedCrop, previewCanvasRef, noRedrawNumber]);
-
-    useEffect(() => {
-        const image = imgRef.current;
-        const { height, aspect, width } = completedCrop ?? {};
-        if (image
-            && typeof height === 'number'
-            && typeof aspect === 'number'
-            && typeof width === 'number'
-            && (ratio > 0 && ratio !== aspect)
-        ) {
-            setCrop(crop => ({
-                ...crop,
-                aspect: ratio,
-            }));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ratio]);
+    }, [ratio, completedCrop, previewCanvasRef, noRedrawNumber]);
 
     useImperativeHandle(forwardedRef, () => ({
         forceExternalSource: (source, cropInfo) => {

@@ -19,7 +19,8 @@
     "react-scripts": "4.0.1",
     "typescript": "^4.1.3",
     "web-vitals": "^0.2.4",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "zustand": "^4.5.2"
   },
   "scripts": {
     "predeploy": "npm run build",
