@@ -94,6 +94,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const cropData = completedCrop;
         if (!cropData || !canvas || !image) return;
 
+        /** Upsize canvas để nâng cao chất lượng ảnh */
+        canvas.style.transform = 'scale(2)';
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 

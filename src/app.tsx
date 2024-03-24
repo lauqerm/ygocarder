@@ -4,6 +4,8 @@ import 'antd/dist/antd.css';
 import {
     CanvasConst,
     Card,
+    CardArtCanvasConst,
+    UpscaleRatio,
     defaultCard,
 } from './model';
 import {
@@ -254,11 +256,9 @@ function App() {
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
             if (previewCtx && exportCtx) {
-                if (isPendulum) {
-                    exportCtx.drawImage(previewCtx, 38, 144, 474, 470);
-                } else {
-                    exportCtx.drawImage(previewCtx, 67, 147, 416, 416);
-                }
+                const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+
+                exportCtx.drawImage(previewCtx, x, y, w, h);
             }
             await generateLayer(specialFrameCanvasRef, exportCtx);
             await Promise.all([
@@ -325,27 +325,29 @@ function App() {
                             }}>Import Card Data</button>
                         </div>
                     </div>
-                    <div className="card-canvas-group">
-                        <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
-                            {/* <div className="canvas-guard-alert">Generating...</div> */}
+                    <div className="card-canvas-container">
+                        <div className="card-canvas-group">
+                            <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
+                                {/* <div className="canvas-guard-alert">Generating...</div> */}
+                            </div>
+                            <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963 /** 650 * UpscaleRatio */} />
+                            <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100} />
+                            <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UpscaleRatio} />
+                            <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UpscaleRatio} />
+                            <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600} />
+                            <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600} />
+                            <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700} />
+                            <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750} />
+                            <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="passcode" ref={passcodeCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="creator" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="sticker" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas className="crop-canvas" ref={previewCanvasRef} />
                         </div>
-                        <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={650} />
-                        <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100} />
-                        <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100} />
-                        <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150} />
-                        <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600} />
-                        <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600} />
-                        <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700} />
-                        <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750} />
-                        <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="passcode" ref={passcodeCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="creator" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas id="sticker" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                        <canvas className="crop-canvas" ref={previewCanvasRef} />
                     </div>
                 </div>
                 {isInitializing === false && <CardInputPanel

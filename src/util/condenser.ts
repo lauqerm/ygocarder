@@ -66,6 +66,7 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
 };
 
 const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, string>> = {
+    format: 'fm',
     frame: 'fr',
     foil: 'fo',
     name: 'na',
@@ -198,6 +199,10 @@ const migrateCardData = (card: Record<string, any>) => {
 
     if (migratedCard.version === undefined) {
         migratedCard.version = 1;
+    }
+
+    if (migratedCard.format === undefined) {
+        migratedCard.format = 'tcg';
     }
     return migratedCard;
 };

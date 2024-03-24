@@ -45,8 +45,8 @@ export const drawFromSourceWithSize = async (
     source: string,
     sx: number | ((image: HTMLImageElement) => number),
     sy: number | ((image: HTMLImageElement) => number),
-    dw: number,
-    dh: number,
+    dw: number | ((image: HTMLImageElement) => number),
+    dh: number | ((image: HTMLImageElement) => number),
 ) => {
     if (!ctx) return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
@@ -54,8 +54,10 @@ export const drawFromSourceWithSize = async (
             const img = imageCacheMap[source].image;
             const normalizedX = typeof sx === 'number' ? sx : sx(img);
             const normalizedY = typeof sy === 'number' ? sy : sy(img);
+            const normalizedW = typeof dw === 'number' ? dw : dw(img);
+            const normalizedH = typeof dh === 'number' ? dh : dh(img);
 
-            ctx.drawImage(img, normalizedX, normalizedY, dw, dh);
+            ctx.drawImage(img, normalizedX, normalizedY, normalizedW, normalizedH);
             resolve(true);
         } else {
             const img = new Image();
@@ -63,8 +65,10 @@ export const drawFromSourceWithSize = async (
             img.onload = () => {
                 const normalizedX = typeof sx === 'number' ? sx : sx(img);
                 const normalizedY = typeof sy === 'number' ? sy : sy(img);
-
-                ctx.drawImage(img, normalizedX, normalizedY, dw, dh);
+                const normalizedW = typeof dw === 'number' ? dw : dw(img);
+                const normalizedH = typeof dh === 'number' ? dh : dh(img);
+    
+                ctx.drawImage(img, normalizedX, normalizedY, normalizedW, normalizedH);
                 imageCacheMap[source].ready = true;
                 resolve(true);
             };

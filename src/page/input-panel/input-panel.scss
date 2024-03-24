@@ -11,8 +11,9 @@
 		.ant-radio-button-wrapper {
 			flex: 1;
 			text-transform: capitalize;
+			white-space: nowrap;
 			padding: 0 5px;
-			width: 80px;
+			min-width: 90px;
 			text-align: center;
 			border-width: 0 !important;
 			text-shadow: none;
@@ -148,6 +149,10 @@
 		.sticker-input,
 		.creator-input {
 			grid-column: span 2;
+		}
+		.sticker-input .ant-radio-button-wrapper {
+			padding-left: 8px;
+			padding-right: 8px;
 		}
 	}
 	.pendulum-container {

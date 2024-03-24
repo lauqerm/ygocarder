@@ -11,18 +11,19 @@ export const foilButton = foilList.map(({ color, name }) => ({
         } as React.CSSProperties,
     }
 }));
-export const frameButton = frameType.map(({ labelColor, name, labelBackgroundColor }) => ({
-    label: name,
+export const frameButton = frameType.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage }) => ({
+    label: name.replaceAll('-', ' '),
     value: name,
     props: {
         style: {
-            backgroundColor: labelBackgroundColor,
+            background: labelBackgroundColor,
+            backgroundImage: labelBackgroundImage,
             color: labelColor,
         } as React.CSSProperties,
     }
 }));
-export const attributeButton = attributeList.map(({ name }) => ({
-    label: <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${name.toLowerCase()}.png`} />,
+export const getAttributeList = (format: string) => attributeList.map(({ name }) => ({
+    label: <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
     value: name,
 }));
 export const iconButton = iconList.map(entry => ({
@@ -32,7 +33,7 @@ export const iconButton = iconList.map(entry => ({
 export const starButton = [...Array(14)].map((e, index) => ({ label: index, value: index }));
 export const stickerButton = stickerList.map(name => ({
     label: name === 'no-sticker'
-        ? <span>NONE</span>
+        ? <span className="no-sticker">NONE</span>
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));

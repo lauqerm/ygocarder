@@ -6,6 +6,9 @@ export const checkNormal = (card: Pick<Card, 'frame'>) => {
 export const checkXyz = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'xyz';
 };
+export const checkDarkSynchro = (card: Pick<Card, 'frame'>) => {
+    return card.frame === 'dark-synchro';
+};
 export const checkLink = (card: Pick<Card, 'frame' | 'typeAbility'>) => {
     return card.frame === 'link' && checkMonster(card);
 };

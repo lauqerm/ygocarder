@@ -25,10 +25,13 @@ import {
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing
 } from 'src/draw';
-import { Card, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas } from 'src/model';
-import { checkLink, checkMonster, checkNormal, checkXyz, getCardFrame } from 'src/util';
+import { CanvasConst, Card, CardArtCanvasConst, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, UpscaleRatio } from 'src/model';
+import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkXyz, getCardFrame } from 'src/util';
 
-
+const {
+    // height: CanvasHeight,
+    width: CanvasWidth,
+} = CanvasConst;
 type DrawerProp = {
     imageChangeCount: number,
     pendulumSize?: 'medium',
@@ -54,6 +57,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         typeCanvas,
     } = canvasMap;
     const {
+        format,
         frame, foil,
         name, nameStyleType, nameStyle,
         effect,
@@ -69,6 +73,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     } = card;
     const isNormal = checkNormal(card);
     const isXyz = checkXyz(card);
+    const isDarkSynchro = checkDarkSynchro(card);
     const isLink = checkLink(card);
     const isMonster = checkMonster(card);
     const {
@@ -85,17 +90,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         sticker: () => Promise.resolve(),
     });
 
+    /** DRAW CARD ART */
     useEffect(() => {
         if (active) {
             const ctx = artCanvas.current?.getContext('2d');
             const previewCtx = previewCanvas.current;
             if (previewCtx && ctx) {
-                ctx.clearRect(0, 0, 548, 650);
-                if (isPendulum) {
-                    ctx.drawImage(previewCtx, 38, 144, 474, 470);
-                } else {
-                    ctx.drawImage(previewCtx, 67, 147, 416, 416);
-                }
+                ctx.clearRect(0, 0, 548 * UpscaleRatio, 650 * UpscaleRatio);
+                const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+
+                ctx.drawImage(previewCtx, x, y, w, h);
             }
         }
     }, [active, isPendulum, imageChangeCount, artCanvas, previewCanvas]);
@@ -175,63 +179,73 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         }
     }, [active, foil, frame, isLink, isPendulum, isXyz, linkMap, pendulumSize, specialFrameCanvas]);
 
+    /** DRAW ATTRIBUTE */
     useEffect(() => {
         if (active) {
             const ctx = attributeCanvas.current?.getContext('2d');
             drawingPipeline.current.attribute = () => {
-                ctx?.clearRect(0, 0, 549, 100);
+                ctx?.clearRect(0, 0, CanvasWidth, 100 * UpscaleRatio);
 
-                return drawFromSource(ctx, `/asset/image/attribute/attr-${attribute.toLowerCase()}.png`, 458, 37);
+                return drawFromSource(
+                    ctx,
+                    `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
+                    458 * UpscaleRatio, 37 * UpscaleRatio,
+                );
             };
         }
-    }, [active, attribute, attributeCanvas]);
+    }, [active, attribute, attributeCanvas, format]);
 
+    /** DRAW LEVEL - RANK - ST ICON */
     useEffect(() => {
         if (active) {
             const ctx = subFamilyCanvas.current?.getContext('2d');
             drawingPipeline.current.star = () => {
-                ctx?.clearRect(0, 0, 549, 150);
+                ctx?.clearRect(0, 0, CanvasWidth, 150 * UpscaleRatio);
                 if (isMonster && !isLink) {
-                    let counter = Math.min(13, star ?? 0);
-                    let type = isXyz ? 'rank' : 'level';
-                    let offset = 0 - (34 + 2.3636);
-                    let totalWidth = 34 * counter + 2.3636 * (counter - 1);
-                    let edge = counter <= 12
-                        ? isXyz
-                            ? 57 - 34
-                            : 492
-                        : isXyz
-                            ? (549 - totalWidth) / 2 - 34
-                            : (549 - totalWidth) / 2 + totalWidth;
+                    const starWidth = 34 * UpscaleRatio;
+                    const startSpacing = 2.3636 * UpscaleRatio;
+                    const starCount = Math.min(13, star ?? 0);
+                    const starType = isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level';
+                    const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
+                    /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
+                    const leftEdge = starCount <= 12
+                        ? (isXyz || isDarkSynchro)
+                            ? (57 - starWidth) * UpscaleRatio
+                            : 492 * UpscaleRatio
+                        : (isXyz || isDarkSynchro)
+                            ? (CanvasWidth - totalWidth) / 2 - starWidth
+                            : (CanvasWidth - totalWidth) / 2 + totalWidth;
 
-                    return Promise.all([...Array(counter)]
+                    let offset = 0 - (starWidth + startSpacing);
+                    return Promise.all([...Array(starCount)]
                         .map(() => {
-                            offset += (34 + 2.3636);
+                            offset += (starWidth + startSpacing);
                             return drawFromSource(
                                 ctx,
-                                `/asset/image/sub-family/subfamily-${type}.png`,
-                                edge + (34 + offset) * (isXyz ? 1 : -1),
-                                99,
+                                `/asset/image/sub-family/subfamily-${starType}.png`,
+                                leftEdge + (starWidth + offset) * (isXyz || isDarkSynchro ? 1 : -1),
+                                99 * UpscaleRatio,
                             );
                         })
                     );
                 } else if (!isMonster) {
                     const normalizedSubFamily = subFamily.toUpperCase();
                     const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconList.includes(normalizedSubFamily);
+                    const stIconSpacing = 7 * UpscaleRatio;
 
                     return hasSTIcon
                         ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                            (image) => 491 - image.naturalWidth - 7,
-                            103,
-                            29,
-                            29,
+                            image => 491 * UpscaleRatio - image.naturalWidth - stIconSpacing,
+                            103 * UpscaleRatio,
+                            image => image.naturalWidth,
+                            image => image.naturalWidth,
                         )
                         : new Promise(resolve => resolve(true));
                 };
                 return new Promise(resolve => resolve(true));
             };
         }
-    }, [active, isLink, isMonster, isXyz, star, subFamily, subFamilyCanvas]);
+    }, [active, isDarkSynchro, isLink, isMonster, isXyz, star, subFamily, subFamilyCanvas]);
 
     useEffect(() => {
         if (active) {
@@ -330,6 +344,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         }
     }, [isInitializing, isLink, isPendulum, isXyz, creator, active, creatorCanvas]);
 
+    /** DRAW STICKER */
     useEffect(() => {
         if (active) {
             const ctx = stickerCanvas.current?.getContext('2d');
@@ -337,7 +352,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 clearCanvas(ctx);
 
                 if (sticker === 'no-sticker') return Promise.resolve();
-                return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499, 750);
+                return drawFromSource(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499 * UpscaleRatio, 750 * UpscaleRatio);
             };
         }
     }, [active, sticker, stickerCanvas]);

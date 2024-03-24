@@ -56,6 +56,7 @@
 		flex: 0 0 570px;
 		position: relative;
 		overflow: hidden;
+		min-height: 900px;
 		&.export-tainted {
 			.export-button {
 				color: #ff6f6f;
@@ -130,13 +131,15 @@
 			}
 		}
 		.card-canvas-group {
-			position: relative;
 			box-shadow: 0 0 3px 2px #333, 0 0 8px 3px #444;
 			width: var(--card-width);
 			height: var(--card-height);
 			margin: auto;
 			margin-bottom: 10px;
-			// transform: scale(0.25);
+			transform: scale(0.66) translateZ(0);
+			position: absolute;
+			top: -90px;
+			left: -120px;
 			canvas {
 				position: absolute;
 				left: 0;

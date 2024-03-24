@@ -1,11 +1,19 @@
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Tooltip } from 'antd';
 import { Card, CondenseType, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
 import { debounce } from 'lodash';
 import { SyncOutlined } from '@ant-design/icons';
-import { foilButton, frameButton, starButton, iconButton, attributeButton, stickerButton, condenseButton } from './const';
+import {
+    foilButton,
+    frameButton,
+    starButton,
+    iconButton,
+    getAttributeList,
+    stickerButton,
+    condenseButton
+} from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
 import { CheckboxTrain } from './input-train';
@@ -143,6 +151,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     });
 
     const {
+        format,
         frame, foil,
         name, nameStyleType, nameStyle,
         picture,
@@ -166,6 +175,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulumEffect);
     const [onlineCharPicker, setOnlineCharPicker] = useState('');
     const ref = useRef();
+
+    const attributeList = useMemo(() => getAttributeList(format), [format]);
     
     useImperativeHandle(forwardedRef, () => ({
         forceCardData: (card) => {
@@ -217,7 +228,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     <span>Icon</span>
                 </CheckboxTrain>
             }
-            <CheckboxTrain className="checkbox-image-train" value={attribute} onChange={onAttributeChange} optionList={attributeButton}>
+            <CheckboxTrain className="checkbox-image-train" value={attribute} onChange={onAttributeChange} optionList={attributeList}>
                 <span>Attribute</span>
             </CheckboxTrain>
         </div>
