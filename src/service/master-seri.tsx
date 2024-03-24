@@ -11,7 +11,7 @@ import {
 import {
     clearCanvas,
     draw1stEdition,
-    drawAD,
+    drawStat,
     drawBracketSpaceTemplate,
     drawBracketTemplate,
     drawCreatorText,
@@ -145,8 +145,21 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     await Promise.all(linkMap
                         .map(entry => {
                             const { left, top, height, width } = arrowPositionList[parseInt(entry) - 1];
-                            if (hasFoil) return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}-${foil}.png`, left, top, width, height);
-                            else return drawFromSourceWithSize(ctx, `/asset/image/link/link-arrow-${entry}.png`, left, top, width, height);
+                            if (hasFoil) {
+                                return drawFromSourceWithSize(
+                                    ctx,
+                                    `/asset/image/link/link-arrow-${entry}-${foil}.png`,
+                                    left, top,
+                                    width, height,
+                                );
+                            } else {
+                                return drawFromSourceWithSize(
+                                    ctx,
+                                    `/asset/image/link/link-arrow-${entry}.png`,
+                                    left, top,
+                                    width, height,
+                                );
+                            }
                         })
                     );
                     if (ctx) {
@@ -210,7 +223,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                         ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
                             (image) => 491 - image.naturalWidth - 7,
                             103,
-                            29, 29)
+                            29,
+                            29,
+                        )
                         : new Promise(resolve => resolve(true));
                 };
                 return new Promise(resolve => resolve(true));
@@ -256,9 +271,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = statCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (isMonster) {
-                drawAD(ctx, atk, 343.51, 747);
+                drawStat(ctx, atk, 343.51, 747);
                 if (!isLink) {
-                    drawAD(ctx, def, 454.93, 747);
+                    drawStat(ctx, def, 454.93, 747);
                 }
             }
         }

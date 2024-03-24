@@ -63,7 +63,7 @@ export const drawCreatorText = (
     }
 };
 
-export const drawAD = (
+export const drawStat = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string | number,
     edge: number,

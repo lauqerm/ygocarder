@@ -89,7 +89,7 @@ function App() {
     // let topOffset = -7;
     // let leftOffset = -1;
     // let topOffset = 100;
-    // await drawFromSourceWithSize(ctx, '/asset/image/MP19-EN-C-1E.png', -leftOffset, -topOffset, 541, 800 * (541 / 549));
+    // await drawFromSourceWithSize(ctx, '/asset/image/MP19-EN-C-1E.png', () => -leftOffset, () => -topOffset, 541, 800 * (541 / 549));
     // }, []);
 
     useEffect(() => {
