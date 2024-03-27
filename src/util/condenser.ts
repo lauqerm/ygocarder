@@ -69,6 +69,7 @@ const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, s
     format: 'fm',
     frame: 'fr',
     foil: 'fo',
+    finish: 'fn',
     name: 'na',
     nameStyleType: 'nst',
     effectStyle: {

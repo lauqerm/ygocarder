@@ -12,8 +12,11 @@ export const checkDarkSynchro = (card: Pick<Card, 'frame'>) => {
 export const checkLink = (card: Pick<Card, 'frame' | 'typeAbility'>) => {
     return card.frame === 'link' && checkMonster(card);
 };
+export const checkSpeedSkill = (card: Pick<Card, 'frame' | 'typeAbility'>) => {
+    return card.frame === 'speed-skill' && !checkMonster(card);
+};
 export const checkMonster = (card: Pick<Card, 'frame'>) => {
-    return card.frame !== 'spell' && card.frame !== 'trap';
+    return card.frame !== 'spell' && card.frame !== 'trap' && card.frame !== 'speed-skill';
 };
 
 export const getCardFrame = (frame: string) => {

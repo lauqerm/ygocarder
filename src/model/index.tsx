@@ -76,7 +76,8 @@ export const frameType = [
     {name: 'hamon', labelColor: '#fff', labelBackgroundColor: '#534a19' },
     {name: 'raviel', labelColor: '#fff', labelBackgroundColor: '#b96c49' },
     {name: 'uria', labelColor: '#fff', labelBackgroundColor: '#623320' },
-    {name: 'legend-dragon', labelColor: '#fff', labelBackgroundColor: '#4e84a4' },
+    {name: 'lg-dragon', labelColor: '#fff', labelBackgroundColor: '#4e84a4' },
+    {name: 'speed-skill', labelColor: '#fff', labelBackgroundColor: '#199cd5' },
     {name: 'zarc', labelColor: '#000', labelBackgroundImage: 'linear-gradient(90deg, rgba(185,108,73,1) 23%, rgba(137,72,164,1) 27%, rgba(137,72,164,1) 48%, rgba(239,239,239,1) 52%, rgba(239,239,239,1) 73%, rgba(0,0,0,1) 77%)' },
 ];
 

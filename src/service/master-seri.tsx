@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import {
     arrowPositionList,
-    foilPosition,
     pendulumFontList,
     pendulumSizeList,
     stFontList,
@@ -25,8 +24,8 @@ import {
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing
 } from 'src/draw';
-import { ADJUSTMENT_PIXEL, ADJUSTMENT_PIXEL_2, CanvasConst, Card, CardArtCanvasConst, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, UP_RATIO } from 'src/model';
-import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkXyz, getCardFrame } from 'src/util';
+import { CanvasConst, Card, CardArtCanvasConst, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, UP_RATIO } from 'src/model';
+import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
 
 const {
     // height: CanvasHeight,
@@ -76,6 +75,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const isDarkSynchro = checkDarkSynchro(card);
     const isLink = checkLink(card);
     const isMonster = checkMonster(card);
+    const isSpeedSkill = checkSpeedSkill(card);
     const {
         isInitializing,
         imageChangeCount,
@@ -91,19 +91,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     });
 
     /** DRAW CARD ART */
-    useEffect(() => {
-        if (active) {
-            const ctx = artCanvas.current?.getContext('2d');
-            const previewCtx = previewCanvas.current;
-            if (previewCtx && ctx) {
-                ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
-                const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+    // useEffect(() => {
+    //     if (active) {
+    //         const ctx = artCanvas.current?.getContext('2d');
+    //         const previewCtx = previewCanvas.current;
+    //         if (previewCtx && ctx) {
+    //             ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
+    //             const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
 
-                ctx.drawImage(previewCtx, x, y, w, h);
-            }
-        }
-    }, [active, isPendulum, imageChangeCount, artCanvas, previewCanvas]);
+    //             ctx.drawImage(previewCtx, x, y, w, h);
+    //         }
+    //     }
+    // }, [active, isPendulum, imageChangeCount, artCanvas, previewCanvas]);
 
+    /** GOLD / PLATINUM FOIL + MAIN FRAME */
     useEffect(() => {
         if (active) {
             const ctx = frameCanvas.current?.getContext('2d');
@@ -111,30 +112,62 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.frame = async () => {
                 clearCanvas(ctx);
                 const cardType = getCardFrame(frame);
-                const hasFoil = foil !== 'normal';
 
                 await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
-                if (hasFoil) {
-                    const { art } = foilPosition[foil];
-
-                    await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, art.left * UP_RATIO - ADJUSTMENT_PIXEL_2, 120 * UP_RATIO);
-                    await drawFromSource(ctx, `/asset/image/frame/frame-effect-${foil}.png`, 0 * UP_RATIO, 580 * UP_RATIO - ADJUSTMENT_PIXEL);
-                }
             };
         }
     }, [active, foil, frame, frameCanvas]);
 
+    /** DRAW CARD STRUCTURE */
     useEffect(() => {
         if (active) {
             const ctx = specialFrameCanvas.current?.getContext('2d');
+            const previewCtx = previewCanvas.current;
+            const effectBoxY = 860, effectBoxX = 0;
+            const artBoxY = 170, artBoxX = 60;
 
             drawingPipeline.current.specialFrame = async () => {
                 clearCanvas(ctx);
                 const hasFoil = foil !== 'normal';
 
-                const cardType = getCardFrame(frame);
+                if (!isPendulum) {
+                    if (hasFoil) {
+                        await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, artBoxX, artBoxY);
+                        await drawFromSource(ctx, `/asset/image/frame/frame-effect-box-${foil}.png`, effectBoxX, effectBoxY);
+                    } else {
+                        if (isXyz || isSpeedSkill) {
+                            await drawFromSource(ctx, `/asset/image/frame/frame-art-${frame}.png`, artBoxX, artBoxY);
+                        } else if (isLink || ['zarc', 'hamon', 'uria', 'raviel'].includes(frame)) {
+                            await drawFromSource(ctx, '/asset/image/frame/frame-art-special.png', artBoxX, artBoxY);
+                        } else {
+                            await drawFromSource(ctx, '/asset/image/frame/frame-art.png', artBoxX, artBoxY);
+                        }
+
+                        if (isSpeedSkill) {
+                            await drawFromSource(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
+                        } else {
+                            await drawFromSource(ctx, '/asset/image/frame/frame-effect-box.png', effectBoxX, effectBoxY);
+                        }
+                    }
+
+                    if (isMonster) {
+                        await drawFromSource(ctx, '/asset/image/frame/frame-stat-border.png', 0, 1070);
+                    }
+                }
+
                 if (isPendulum && !isLink) {
-                    if (!isXyz) await drawFromSource(ctx, `/asset/image/pendulum/overlay-pendulum-${cardType}.png`, 0, 0);
+                    await drawFromSource(ctx, '/asset/image/frame/frame-pendulum-base.png', 0, 0);
+                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-monster-effect-${pendulumSize}.png`, effectBoxX, effectBoxY);
+                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-pend-effect-${pendulumSize}.png`, 0, 600);
+                }
+                if (previewCtx && ctx) {
+                    // ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
+                    const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+            
+                    ctx.drawImage(previewCtx, x, y, w, h);
+                }
+                if (isPendulum && !isLink) {
+                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-scale-${pendulumSize}.png`, 0, 750);
                     await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
                     if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}.png`, 0, 0);
                 }
@@ -142,42 +175,54 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const foiledBorder = !hasFoil ? '/asset/image/frame/frame-border.png' : `/asset/image/frame/frame-border-${foil}.png`;
                 await drawFromSource(ctx, foiledBorder, 0, 0);
                 if (!isPendulum && isLink) {
-                    if (hasFoil) await drawFromSource(ctx, `./asset/image/link/link-overlay-${foil}.png`, 0, 110);
-                    else await drawFromSource(ctx, '/asset/image/link/link-overlay.png', 66, 146);
-                    if (hasFoil) await drawFromSource(ctx, `/asset/image/link/link-overlay-arrow-${foil}.png`, 0, 110);
+                    await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
+                        .map(async entry => {
+                            const { left, top, height, width } = arrowPositionList[entry - 1];
+                            const isActive = linkMap.includes(`${entry}`);
+                            const baseLink = `/asset/image/link/link-${isActive ? 'active' : 'inactive'}-${entry}`;
+                            const positionalArugmentList: [number, number, number, number] = [left, top, width, height];
 
-                    await Promise.all(linkMap
-                        .map(entry => {
-                            const { left, top, height, width } = arrowPositionList[parseInt(entry) - 1];
-                            if (hasFoil) {
-                                return drawFromSourceWithSize(
-                                    ctx,
-                                    `/asset/image/link/link-arrow-${entry}-${foil}.png`,
-                                    left, top,
-                                    width, height,
-                                );
-                            } else {
-                                return drawFromSourceWithSize(
-                                    ctx,
-                                    `/asset/image/link/link-arrow-${entry}.png`,
-                                    left, top,
-                                    width, height,
-                                );
-                            }
+                            await drawFromSourceWithSize(ctx, `${baseLink}-base.png`, ...positionalArugmentList);
+                            return drawFromSourceWithSize(ctx, `${baseLink}-core.png`, ...positionalArugmentList);
                         })
                     );
+                    if (hasFoil) await drawFromSource(ctx, `/asset/image/link/link-overlay-arrow-${foil}.png`, 0, 175);
+
                     if (ctx) {
                         ctx.textAlign = 'right';
                         ctx.scale(1.2, 1);
                         ctx.font = 'bold 24px Yugioh Rush Duel Numbers V4';
-                        ctx.fillText(`${linkMap.length}`, 505 / 1.2, 746);
+                        ctx.fillText(`${linkMap.length}`, 505 / 1.2 * UP_RATIO, 746 * UP_RATIO);
                         ctx.scale(1 / 1.2, 1);
                         ctx.textAlign = 'left';
                     }
                 }
+
+                if (isXyz || isSpeedSkill) {
+                    await drawFromSource(ctx, `/asset/image/frame/frame-name-bevel-${frame}.png`, 0, 0);
+                    await drawFromSource(ctx, `/asset/image/frame/frame-border-bevel-${frame}.png`, 0, 0);
+                } else {
+                    await drawFromSource(ctx, '/asset/image/frame/frame-name-bevel.png', 0, 0);
+                    await drawFromSource(ctx, '/asset/image/frame/frame-border-bevel.png', 0, 0);
+                }
             };
         }
-    }, [active, foil, frame, isLink, isPendulum, isXyz, linkMap, pendulumSize, specialFrameCanvas]);
+    }, [
+        active,
+        imageChangeCount,
+        artCanvas,
+        foil,
+        frame,
+        isLink,
+        isPendulum,
+        isXyz,
+        linkMap,
+        pendulumSize,
+        previewCanvas,
+        specialFrameCanvas,
+        isMonster,
+        isSpeedSkill,
+    ]);
 
     /** DRAW ATTRIBUTE */
     useEffect(() => {
@@ -186,14 +231,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.attribute = () => {
                 ctx?.clearRect(0, 0, CanvasWidth, 100 * UP_RATIO);
 
-                return drawFromSource(
-                    ctx,
-                    `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
-                    458 * UP_RATIO, 37 * UP_RATIO,
-                );
+                if (!isSpeedSkill) {
+                    return drawFromSource(
+                        ctx,
+                        `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
+                        458 * UP_RATIO, 37 * UP_RATIO,
+                    );
+                } else {
+                    return Promise.resolve();
+                }
             };
         }
-    }, [active, attribute, attributeCanvas, format]);
+    }, [active, attribute, attributeCanvas, format, isSpeedSkill]);
 
     /** DRAW LEVEL - RANK - ST ICON */
     useEffect(() => {
@@ -228,7 +277,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             );
                         })
                     );
-                } else if (!isMonster) {
+                } else if (!isMonster && !isSpeedSkill) {
                     const normalizedSubFamily = subFamily.toUpperCase();
                     const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconList.includes(normalizedSubFamily);
                     const stIconSpacing = 7 * UP_RATIO;
@@ -245,7 +294,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 return new Promise(resolve => resolve(true));
             };
         }
-    }, [active, isDarkSynchro, isLink, isMonster, isXyz, star, subFamily, subFamilyCanvas]);
+    }, [active, isDarkSynchro, isLink, isMonster, isSpeedSkill, isXyz, star, subFamily, subFamilyCanvas]);
 
     useEffect(() => {
         if (active) {
@@ -388,6 +437,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 return curr(prev);
             }, left);
             ctx.textAlign = 'left';
+
             if (totalLeft > 508 && textSize === 'medium') drawTypeAbility(ctx, 'small', alignment);
         }
     }, [subFamily, typeAbility]);
@@ -399,10 +449,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             ctx?.clearRect(0, 0, 549, 750);
             if (isMonster) {
                 const effectIndexSize = drawEffect(ctx, effect, false, isNormal, undefined, undefined, effectStyle?.condenseTolerant);
-                drawTypeAbility(typeCtx, effectIndexSize === 0
-                    ? 'medium'
-                    : 'small');
-            } else {
+                drawTypeAbility(
+                    typeCtx,
+                    effectIndexSize === 0 ? 'medium' : 'small'
+                );
+            } else if (!isSpeedSkill) {
                 drawEffect(
                     ctx,
                     effect,
@@ -415,7 +466,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 drawTypeAbility(typeCtx, 'large', 'right');
             }
         }
-    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal, effectStyle?.condenseTolerant, active, effectCanvas, typeCanvas]);
+    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal, effectStyle?.condenseTolerant, active, effectCanvas, typeCanvas, isSpeedSkill]);
 
     useEffect(() => {
         if (active) {

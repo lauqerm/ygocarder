@@ -17,5 +17,4 @@ export type {
 
 export {
     arrowPositionList,
-    foilPosition,
 } from './position';
