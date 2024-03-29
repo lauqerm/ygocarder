@@ -24,7 +24,7 @@ import {
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing
 } from 'src/draw';
-import { CanvasConst, Card, CardArtCanvasConst, defaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, UP_RATIO } from 'src/model';
+import { CanvasConst, Card, CardArtCanvasConst, getDefaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, NO_ATTRIBUTE, UP_RATIO } from 'src/model';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
 
 const {
@@ -231,15 +231,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.attribute = () => {
                 ctx?.clearRect(0, 0, CanvasWidth, 100 * UP_RATIO);
 
-                if (!isSpeedSkill) {
-                    return drawFromSource(
-                        ctx,
-                        `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
-                        458 * UP_RATIO, 37 * UP_RATIO,
-                    );
-                } else {
-                    return Promise.resolve();
-                }
+                return drawFromSource(
+                    ctx,
+                    `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
+                    458 * UP_RATIO, 37 * UP_RATIO,
+                );
             };
         }
     }, [active, attribute, attributeCanvas, format, isSpeedSkill]);
@@ -314,9 +310,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     useEffect(() => {
         if (active) {
+            const defaultTextStyle = getDefaultTextStyle();
             const ctx = nameCanvas.current?.getContext('2d');
             if (ctx) {
-                ctx.clearRect(0, 0, 549, 100);
+                const maxWidth = attribute === NO_ATTRIBUTE ? 686 : 606;
+                ctx.clearRect(0, 0, 549 * UP_RATIO, 100 * UP_RATIO);
                 ctx.textAlign = 'left';
                 const style = nameStyleType === 'auto'
                     ? foil !== 'normal'
@@ -324,10 +322,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                         : { ...defaultTextStyle, fillStyle: (!isMonster || isLink || isXyz) ? '#ffffff' : '#000000' }
                     : nameStyle;
 
-                drawName(ctx, name, 40.52, 78, 409, style);
+                drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, style, { isSpeedSkill: isSpeedSkill });
             }
         }
-    }, [active, foil, isInitializing, isLink, isMonster, isXyz, name, nameCanvas, nameStyle, nameStyleType]);
+    }, [active, attribute, foil, isInitializing, isLink, isMonster, isSpeedSkill, isXyz, name, nameCanvas, nameStyle, nameStyleType]);
 
     useEffect(() => {
         if (active) {
@@ -347,7 +345,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = setIdCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if (isXyz && !isPendulum) ctx.fillStyle = '#fff';
+                if ((isXyz || isSpeedSkill) && !isPendulum) ctx.fillStyle = '#fff';
                 else ctx.fillStyle = '#000';
                 ctx.font = '15px stone-serif-regular';
 
@@ -358,7 +356,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 } else fillTextRightWithSpacing(ctx, setId, -0.1, 492, 589);
             }
         }
-    }, [active, isInitializing, isLink, isPendulum, isXyz, setIdCanvas, setId]);
+    }, [active, isInitializing, isLink, isPendulum, isXyz, setIdCanvas, setId, isSpeedSkill]);
 
     useEffect(() => {
         if (active) {

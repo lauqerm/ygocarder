@@ -23,7 +23,9 @@ export const frameButton = frameType.map(({ labelColor, name, labelBackgroundCol
     }
 }));
 export const getAttributeList = (format: string) => attributeList.map(({ name }) => ({
-    label: <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
+    label: name === 'NONE'
+        ? 'NONE'
+        : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
     value: name,
 }));
 export const iconButton = iconList.map(entry => ({

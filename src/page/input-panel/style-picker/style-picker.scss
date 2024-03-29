@@ -44,7 +44,8 @@
 		}
 	}
 	.custom-style-text,
-	.custom-style-shadow {
+	.custom-style-shadow,
+	.custom-style-line {
 		position: relative;
 	}
 	.custom-style-picker {
@@ -88,7 +89,8 @@
 				line-height: 18px;
 			}
 		}
-		.shadow-position {
+		.shadow-position,
+		.line-position {
 			display: grid;
 			grid-template-columns: max-content 1fr;
 			grid-template-rows: max-content max-content max-content 1fr;

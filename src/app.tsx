@@ -334,7 +334,7 @@ function App() {
                             <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963 /** 650 * UP_RATIO */} />
                             <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100} />
+                            <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
                             <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
                             <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UP_RATIO} />
                             <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600} />

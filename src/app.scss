@@ -148,6 +148,7 @@
 			&:hover {
 				#export-canvas.js-export-available {
 					display: inline-block !important;
+					cursor: default;
 				}
 				#export-canvas-guard {
 					display: flex;

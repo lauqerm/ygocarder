@@ -1,13 +1,18 @@
-export type TextStyleType = 'auto' | 'custom';
-export type TextStyle = typeof defaultTextStyle;
-export const defaultTextStyle = {
+export type TextStyleType = 'auto' | 'custom' | 'predefined';
+export type TextStyle = ReturnType<typeof getDefaultTextStyle>;
+export const getDefaultTextStyle = () => ({
     fillStyle: '#000000',
     shadowColor: '#000000',
     shadowOffsetY: 0,
     shadowOffsetX: 0,
     shadowBlur: 0,
     hasShadow: false,
-};
+    lineColor: '#000000',
+    lineWidth: 0,
+    lineOffsetY: 0,
+    lineOffsetX: 0,
+    hasOutline: false,
+});
 
 export type CondenseType = 'veryLoose' | 'strict' | 'loose';
 
@@ -25,7 +30,12 @@ export const defaultCard = {
         shadowOffsetX: 0,
         shadowBlur: 0,
         hasShadow: false,
-    } as TextStyle,
+        lineColor: '#000000',
+        lineWidth: 0,
+        lineOffsetY: 0,
+        lineOffsetX: 0,
+        hasOutline: false,
+    } as Partial<TextStyle>,
     attribute: 'LIGHT',
     subFamily: 'NO ICON',
     star: 6,
@@ -74,7 +84,7 @@ export const frameType = [
     {name: 'osiris', labelColor: '#fff', labelBackgroundColor: '#bd5044' },
     {name: 'ra', labelColor: '#000', labelBackgroundColor: '#b9ad34' },
     {name: 'hamon', labelColor: '#fff', labelBackgroundColor: '#534a19' },
-    {name: 'raviel', labelColor: '#fff', labelBackgroundColor: '#b96c49' },
+    {name: 'raviel', labelColor: '#fff', labelBackgroundColor: '#2b344e' },
     {name: 'uria', labelColor: '#fff', labelBackgroundColor: '#623320' },
     {name: 'lg-dragon', labelColor: '#fff', labelBackgroundColor: '#4e84a4' },
     {name: 'speed-skill', labelColor: '#fff', labelBackgroundColor: '#199cd5' },
@@ -99,6 +109,11 @@ export const foilStyleMap: Record<string, TextStyle> = {
         shadowOffsetX: 0,
         shadowBlur: 1,
         hasShadow: true,
+        lineColor: '#000000',
+        lineWidth: 0,
+        lineOffsetY: 0,
+        lineOffsetX: 0,
+        hasOutline: false,
     },
     platinum: {
         fillStyle: '#CCCCCC',
@@ -107,10 +122,15 @@ export const foilStyleMap: Record<string, TextStyle> = {
         shadowOffsetX: 0,
         shadowBlur: 1,
         hasShadow: true,
+        lineColor: '#000000',
+        lineWidth: 0,
+        lineOffsetY: 0,
+        lineOffsetX: 0,
+        hasOutline: false,
     },
 };
 export const foilList = [
-    { name: 'normal', color: '#747b95', textStyle: defaultTextStyle },
+    { name: 'normal', color: '#747b95', textStyle: getDefaultTextStyle() },
     { name: 'gold', color: '#cfa65f' },
     { name: 'platinum', color: '#b1b1b1' },
 ];
@@ -129,7 +149,9 @@ export const stickerList = [
     'unlimited',
 ];
 
+export const NO_ATTRIBUTE = 'NONE';
 export const attributeList = [
+    { name: NO_ATTRIBUTE, color: '#000000' },
     { name: 'DARK', color: '#b41dda' },
     { name: 'EARTH', color: '#8d8e8e' },
     { name: 'FIRE', color: '#e51b23' },

@@ -69,6 +69,9 @@
 			box-shadow: none;
 			.ant-radio-wrapper {
 				color: #ffffffcc;
+				&:hover .ant-radio-label {
+					color: #2badea;
+				}
 			}
 		}
 	}

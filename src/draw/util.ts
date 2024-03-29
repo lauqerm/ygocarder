@@ -28,6 +28,12 @@ export const measureWithSymbol = (
     return returnBundle;
 };
 
+/** Nguyên tắc về letterSpacing:
+ * * LetterSpacing được tính theo tỷ lệ độ dài chữ cái. Default là 0.
+ * * 2 chữ cái liên tiếp nhau có độ dài là x và y, nếu LetterSpacing là 0 thì chúng đứng sát nhau.
+ * * Với LetterSpacing =/= 0, mỗi chữ được tăng (giảm) chiều dài bằng một nửa tỷ lệ LetterSpacing, như vậy hai chữ ghép lại sẽ tạo thành
+ * tỷ lệ LetterSpacing chuẩn. Ví dụ LetterSpacing là 0.5, thì mỗi chữ sẽ có thêm khoảng cách bằng 50% độ dài con chữ.
+ */
 export const fillTextLeftWithSpacing = (
     ctx: CanvasRenderingContext2D | null | undefined,
     str: string,
@@ -42,7 +48,28 @@ export const fillTextLeftWithSpacing = (
 
         charList.forEach(char => {
             ctx.fillText(char, curLeft, baseline);
-            curLeft += ctx.measureText(char).width * (1 + (letterSpacingRatio / 2));
+            curLeft += ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
+        });
+
+        return curLeft;
+    }
+    return 0;
+};
+export const strokeTextLeftWithSpacing = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    str: string,
+    letterSpacingRatio: number,
+    edge: number,
+    baseline: number,
+) => {
+    if (ctx && str) {
+        ctx.textAlign = 'left';
+        const charList = str.split('');
+        let curLeft = edge;
+
+        charList.forEach(char => {
+            ctx.strokeText(char, curLeft, baseline);
+            curLeft += ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
         });
 
         return curLeft;
@@ -64,7 +91,7 @@ export const fillTextRightWithSpacing = (
         charList.forEach((c, index) => {
             const char = charList[charList.length - index - 1];
             ctx.fillText(char, curRight, baseline);
-            curRight -= ctx.measureText(char).width * (1 + (letterSpacingRatio / 2));
+            curRight -= ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
         });
         return curRight;
     };

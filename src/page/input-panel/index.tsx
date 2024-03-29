@@ -2,7 +2,7 @@ import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Tooltip } from 'antd';
 import { Card, CondenseType, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
-import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID } from '../../util';
+import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import { debounce } from 'lodash';
 import { SyncOutlined } from '@ant-design/icons';
 import {
@@ -104,7 +104,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
     const onNameChange = debounce(onChangeFactory('name', setCard), 350);
-    const onNameColorChange = (type: TextStyleType, value: TextStyle) => {
+    const onNameColorChange = (type: TextStyleType, value: Partial<TextStyle>) => {
         onCardChange(currentCard => {
             return {
                 ...currentCard,
@@ -169,6 +169,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
+    const isDarkSynchro = checkDarkSynchro(currentCard);
     const [displayTypeAbility, setDisplayTypeAbility] = useState(typeAbility.join('/'));
     const [displayName, setDisplayName] = useState(name);
     const [displayEffect, setDisplayEffect] = useState(effect);
@@ -221,7 +222,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             {isMonster
                 ? !isLink
                     ? <CheckboxTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButton}>
-                        <span>{isXyz ? 'Rank' : 'Level'}</span>
+                        <span>{isXyz ? 'Rank' : isDarkSynchro ? 'Neg. Level' : 'Level'}</span>
                     </CheckboxTrain>
                     : null
                 : <CheckboxTrain value={subFamily} onChange={onSubFamilyChange} optionList={iconButton}>
