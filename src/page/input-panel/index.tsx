@@ -3,7 +3,7 @@ import { Input, Checkbox, Tooltip } from 'antd';
 import { Card, CondenseType, TextStyle, TextStyleType } from '../../model';
 import { ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
-import { debounce } from 'lodash';
+import debounce from 'lodash.debounce';
 import { SyncOutlined } from '@ant-design/icons';
 import {
     foilButton,

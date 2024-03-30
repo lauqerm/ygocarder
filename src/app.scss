@@ -286,6 +286,22 @@
 		border-color: #222;
 	}
 }
+.ant-dropdown.ant-dropdown-placement-bottomLeft > .ant-dropdown-arrow {
+	border-top-color: #48484b;
+	border-left-color: #48484b;
+}
+ul.ant-dropdown-menu {
+	background: #48484b;
+	.ant-dropdown-menu-item {
+		color: #ffffff;
+		&:hover {
+			background: #68686b;
+		}
+	}
+}
+.menu-active {
+	background-color: #1890ff;
+}
 
 @media only screen and (max-width: 1024px) {
 	.app-container {

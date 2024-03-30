@@ -63,4 +63,5 @@ export function insertUrlParam(key: string, value: string) {
 
 export * from './categorize';
 export * from './condenser';
+export * from './gradient';
 export * from './hook';

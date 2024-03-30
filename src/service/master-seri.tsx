@@ -24,7 +24,7 @@ import {
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing
 } from 'src/draw';
-import { CanvasConst, Card, CardArtCanvasConst, getDefaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, NO_ATTRIBUTE, UP_RATIO } from 'src/model';
+import { CanvasConst, Card, CardArtCanvasConst, getDefaultTextStyle, foilStyleMap, iconList, MasterDuelCanvas, NO_ATTRIBUTE, UP_RATIO, PresetMap } from 'src/model';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
 
 const {
@@ -308,6 +308,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         }
     }, [isInitializing, pendulumScaleBlue, isPendulum, pendulumScaleRed, active, pendulumScaleCanvas]);
 
+    /** DRAW NAME */
     useEffect(() => {
         if (active) {
             const defaultTextStyle = getDefaultTextStyle();
@@ -320,9 +321,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     ? foil !== 'normal'
                         ? foilStyleMap[foil] ?? defaultTextStyle
                         : { ...defaultTextStyle, fillStyle: (!isMonster || isLink || isXyz) ? '#ffffff' : '#000000' }
-                    : nameStyle;
+                    : nameStyleType === 'predefined'
+                        ? PresetMap[nameStyle.preset as keyof typeof PresetMap ?? 'commonB'].value
+                        : nameStyle;
 
-                drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, style, { isSpeedSkill: isSpeedSkill });
+                drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, style, { isSpeedSkill, nameStyleType });
             }
         }
     }, [active, attribute, foil, isInitializing, isLink, isMonster, isSpeedSkill, isXyz, name, nameCanvas, nameStyle, nameStyleType]);

@@ -1,0 +1,76 @@
+.controls-wrapper.gradient-picker-container {
+    .angle-picker-container {
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        margin-bottom: 5px;
+        h2 {
+            padding: 0;
+        }
+        .ai {
+            margin: 0;
+            background: #009ce0;
+            justify-content: space-between;
+            span {
+                background: #307bc9;
+                padding-left: 10px;
+                padding-right: 10px;
+                &:hover {
+                    background: #0c8ac6;
+                }
+            }
+            span, input {
+                color: #ffffff;
+            }
+        }
+    }
+    .csh {
+        margin-bottom: 5px;
+    }
+    .stop-color-picker-container {
+        padding: 10px;
+    }
+    .chrome-picker {
+        input {
+            background: #333333;
+        }
+        svg {
+            filter: invert(1);
+        }
+    }
+    .stop-point-control-panel {
+        color: #ffffff;
+        .stop-point-offset-input {
+            margin-bottom: 5px;
+        }
+        .ant-btn.remove-stop-color {
+            font-size: 12px;
+            color: #ffffff;
+            background: #c95e5e;
+            border: 1px solid #e95e5e;
+            margin-left: 5px;
+            &:hover {
+                background-color: #e95e5e;
+                box-shadow: none;
+            }
+        }
+    }
+    .ant-btn.add-stop-color {
+        font-size: 12px;
+        color: #ffffff;
+        background: #5e85c9;
+        border: 1px solid #5e85e9;
+        &:hover {
+            background-color: #5e85e9;
+            box-shadow: none;
+        }
+    }
+    .ant-btn-primary {
+        width: 100%;
+    }
+}
+
+.preset-item {
+    padding: 5px 5px;
+}

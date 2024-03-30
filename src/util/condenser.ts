@@ -78,6 +78,7 @@ const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, s
     },
     nameStyle: {
         _newKey: 'ns',
+        font: 'nsft',
         fillStyle: 'nsfs',
         shadowColor: 'nssc',
         shadowOffsetY: 'nssoy',
@@ -89,6 +90,10 @@ const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, s
         lineOffsetY: 'nsloy',
         lineOffsetX: 'nslox',
         hasOutline: 'nshl',
+        gradientAngle: 'nsgd',
+        gradientColor: 'nscg',
+        hasGradient: 'nshg',
+        preset: 'nspr',
     },
     attribute: 'at',
     subFamily: 'sf',

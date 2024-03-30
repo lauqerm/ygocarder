@@ -1,6 +1,7 @@
 .style-picker {
 	display: inline-flex;
 	column-gap: 5px;
+	line-height: 1.15;
 	.disable-overlay {
 		position: absolute;
 		top: 0;
@@ -21,6 +22,9 @@
 			background-color: #505870;
 		}
 	}
+}
+.preset-preview {
+	max-width: 110px;
 }
 .style-picker-overlay {
 	.style-picker-mask {
@@ -45,7 +49,8 @@
 	}
 	.custom-style-text,
 	.custom-style-shadow,
-	.custom-style-line {
+	.custom-style-line,
+	.custom-style-gradient {
 		position: relative;
 	}
 	.custom-style-picker {
