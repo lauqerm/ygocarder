@@ -1,3 +1,4 @@
+import { CondenseTolerantLabelMap } from 'src/const';
 import { frameType, iconList, attributeList, stickerList, foilList } from '../../model';
 import './input-panel.scss';
 
@@ -39,8 +40,13 @@ export const stickerButton = stickerList.map(name => ({
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));
-export const condenseButton = [
-    { label: 'Strict', value: 'strict' },
-    { label: 'Loose', value: 'loose' },
-    { label: 'Very Loose', value: 'veryLoose' },
-];
+export const condenseButton = Object
+    .entries(CondenseTolerantLabelMap)
+    .map(([key, { label, order }]) => {
+        return {
+            label,
+            value: key,
+            order
+        };
+    })
+    .sort((l, r) => l.order - r.order);

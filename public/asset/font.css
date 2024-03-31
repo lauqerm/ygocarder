@@ -39,6 +39,13 @@
     font-display: swap;
 }
 @font-face {
+	font-family: 'Matrix-Bold';
+	src: url('./font/Matrix-Bold.otf') format('opentype');
+	font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
 	font-family: 'matrix';
     src: url('./font/matrix.woff2') format('woff2'),
          url('./font/matrix.woff') format('woff');

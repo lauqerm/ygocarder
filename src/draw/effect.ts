@@ -1,24 +1,11 @@
-import { FontSize, monsterFontList, BoxSize, monsterSizeList } from '../const';
-import { CondenseType } from '../model';
+import { FontSize, monsterFontList, BoxSize, monsterSizeList, CondenseTolerantMap } from '../const';
+import { CanvasConst, CondenseType, UP_RATIO } from '../model';
 import { splitEffect, createCondenser, quoteConvert } from '../util';
 
-const CondenseTolerantMap = {
-    strict: {
-        '1': 645,
-        '2': 665,
-        '3': 685,
-    },
-    loose: {
-        '1': 700,
-        '2': 710,
-        '3': 720,
-    },
-    veryLoose: {
-        '1': 740,
-        '2': 770,
-        '3': 800,
-    }
-};
+const {
+    // height: CanvasHeight,
+    width: CanvasWidth,
+} = CanvasConst;
 export const drawEffect = (
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
@@ -30,7 +17,7 @@ export const drawEffect = (
 ) => {
     let effectSizeLevel = 0;
     const bulletSymbol = '●';
-    const bulletSymbolWidth = 15;
+    const bulletSymbolWidth = 15 * UP_RATIO;
     const specialSymbol = '#@∞';
     const breakableSymbol = '\\s-/';
     const spaceSymbol = ' ';
@@ -165,7 +152,7 @@ export const drawEffect = (
         // [START DRAWING]
         const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline: number) => {
             ctx.beginPath();
-            ctx.arc(edge + 7, baseline - 5.5, 5.5, 0, 2 * Math.PI, false);
+            ctx.arc(edge + 7 * UP_RATIO, baseline - 5.5 * UP_RATIO, 5.5 * UP_RATIO, 0, 2 * Math.PI, false);
             ctx.fill();
             ctx.lineWidth = 1;
             ctx.strokeStyle = '#003300';
@@ -177,7 +164,7 @@ export const drawEffect = (
         ) {
             effectSizeLevel += 1;
         } else {
-            ctx.clearRect(0, 0, 549, 750);
+            ctx.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
             let baseline = top + lineHeight;
             /** Material luôn nằm trong 1 dòng duy nhất và có hệ số condense riêng so với phần còn lại của effect, tham
              * khảo "Galaxy-Eyes Cipher X Dragon"

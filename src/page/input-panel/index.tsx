@@ -149,6 +149,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const onFirstEditionChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isFirstEdition: e.target.checked };
     });
+    const onDuelTerminalCardChange = (e: any) => onCardChange(currentCard => {
+        return { ...currentCard, isDuelTerminalCard: e.target.checked };
+    });
+    const onSpeedCardChange = (e: any) => onCardChange(currentCard => {
+        return { ...currentCard, isSpeedCard: e.target.checked };
+    });
 
     const {
         format,
@@ -164,7 +170,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         subFamily,
         star,
         setId,
-        passcode, isFirstEdition, creator, sticker,
+        passcode, creator, sticker,
+        isSpeedCard, isDuelTerminalCard, isFirstEdition,
     } = currentCard;
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
@@ -311,7 +318,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onChange={value => onCondenseTolerantChange(value as CondenseType)}
                     optionList={condenseButton}
                 >
-                    <span>Condense Threshold</span>
+                    <span>Condense</span>
                 </CheckboxTrain>
                 <TextArea key="effect"
                     id="card-effect"
@@ -353,13 +360,29 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         placeholder="Password"
                         value={passcode}
                     />
-                    <Checkbox
-                        className="input-1st"
-                        onChange={onFirstEditionChange}
-                        checked={isFirstEdition}
-                    >
-                        Is 1st Edition?
-                    </Checkbox>
+                    <div className="checkbox-input">
+                        <Checkbox
+                            className="input-1st"
+                            onChange={onFirstEditionChange}
+                            checked={isFirstEdition}
+                        >
+                            {'1st Edition'}
+                        </Checkbox>
+                        <Checkbox
+                            className="input-speed"
+                            onChange={onSpeedCardChange}
+                            checked={isSpeedCard}
+                        >
+                            {'Speed'}
+                        </Checkbox>
+                        <Checkbox
+                            className="input-terminal"
+                            onChange={onDuelTerminalCardChange}
+                            checked={isDuelTerminalCard}
+                        >
+                            {'Duel Terminal'}
+                        </Checkbox>
+                    </div>
                     <Input addonBefore="Creator"
                         id="creator"
                         ref={onlineCharPicker === 'creator' ? ref as any : null}

@@ -199,7 +199,7 @@ export const PresetMap = {
 };
 export const PresetList = Object.values(PresetMap);
 
-export type CondenseType = 'veryLoose' | 'strict' | 'loose';
+export type CondenseType = 'veryLoose' | 'strict' | 'loose' | 'relaxed';
 
 export type Card = typeof defaultCard;
 export const defaultCard = {
@@ -238,6 +238,8 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     passcode: '18111996',
     sticker: 'holo5',
     isFirstEdition: true,
+    isSpeedCard: false,
+    isDuelTerminalCard: false,
     creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
 };
 

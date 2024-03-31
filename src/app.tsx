@@ -110,6 +110,7 @@ function App() {
                     'stone-serif-bold',
                     'stone-serif-regular',
                     'matrix',
+                    'Matrix-Bold',
                     'palatino-linotype-bold',
                     'MatrixBook',
                     'MatrixBoldSmallCaps',
@@ -337,10 +338,10 @@ function App() {
                             <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
                             <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
                             <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UP_RATIO} />
-                            <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600} />
-                            <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600} />
-                            <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700} />
-                            <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750} />
+                            <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600 * UP_RATIO} />
+                            <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600 * UP_RATIO} />
+                            <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700 * UP_RATIO} />
+                            <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750 * UP_RATIO} />
                             <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="passcode" ref={passcodeCanvasRef} width={CanvasWidth} height={CanvasHeight} />

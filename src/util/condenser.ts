@@ -121,6 +121,8 @@ const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, s
     passcode: 'pc',
     sticker: 'sti',
     isFirstEdition: 'ife',
+    isSpeedCard: 'isp',
+    isDuelTerminalCard: 'idt',
     creator: 'cr',
 };
 

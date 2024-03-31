@@ -7,7 +7,9 @@ export {
     stFontList,
     stSizeList,
 
-    typeSizeMap,
+    CardTypeSizeMap,
+    CondenseTolerantMap,
+    CondenseTolerantLabelMap,
 } from './size';
 export type {
     BoxSize,

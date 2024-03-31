@@ -17,7 +17,7 @@ export const drawBracketTemplate = (
 
             ctx.font = `bold ${bracketChar}px stone-serif-bold`;
             ctx.textAlign = alignment;
-            ctx.fillText(content, edge, baseline - bracketOffsetTop);
+            ctx.fillText(content, edge, (baseline - bracketOffsetTop));
             return edge + ctx.measureText(content).width * alignmentOffset;
         }
         return edge;
@@ -46,7 +46,10 @@ export const drawBracketSpaceTemplate = (
 ) => {
     return (edge: number) => {
         if (ctx) {
-            const { top: baseline, bracketSize: { bracketSpace } } = size;
+            const {
+                top: baseline,
+                bracketSize: { bracketSpace },
+            } = size;
             const alignmentOffset = alignment === 'left' ? 1 : -1;
 
             ctx.font = `bold ${bracketSpace}px stone-serif-bold`;

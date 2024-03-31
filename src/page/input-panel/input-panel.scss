@@ -146,8 +146,11 @@
 		grid-template-columns: 1fr 1fr;
 		row-gap: 0.5em;
 		column-gap: 10px;
-		.input-1st {
+		.checkbox-input {
 			align-self: center;
+			.ant-checkbox + span {
+				user-select: none;
+			}
 		}
 		.sticker-input,
 		.creator-input {
