@@ -303,6 +303,11 @@ ul.ant-dropdown-menu {
 	background-color: #1890ff;
 }
 
+/** Avoid annoying user agent style */
+input:-internal-autofill-selected {
+	background-color: unset !important;
+}
+
 @media only screen and (max-width: 1024px) {
 	.app-container {
 		.card-preview-panel {

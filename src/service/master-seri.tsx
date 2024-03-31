@@ -89,6 +89,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const isLink = checkLink(card);
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
+    const lightHeader = isXyz || isDarkSynchro || isSpeedSkill || (isMonster && ['hamon', 'uria', 'raviel'].includes(frame));
+    const lightFooter = lightHeader && !isPendulum;
     const {
         isInitializing,
         imageChangeCount,
@@ -225,12 +227,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
 
                 if (isDuelTerminalCard) {
-                    const textColor = (isXyz || isDarkSynchro) && !isPendulum ? 'white' : 'black';
+                    const textColor = lightFooter ? 'white' : 'black';
 
                     await drawFromSource(ctx, `/asset/image/text/text-duel-terminal-${textColor}.png`, 160, 1120);
                 }
                 if (isSpeedCard) {
-                    const textColor = (isXyz || isDarkSynchro) && !isPendulum ? 'white' : 'black';
+                    const textColor = lightFooter ? 'white' : 'black';
                     const coordinate: [number, number, number, number] = isPendulum
                         ? [200, 1088, 196, 20]
                         : isLink
@@ -250,9 +252,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         isLink,
         isPendulum,
         isXyz,
-        isDarkSynchro,
         isSpeedCard,
         linkMap,
+        lightFooter,
         pendulumSize,
         previewCanvas,
         specialFrameCanvas,
@@ -288,13 +290,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     const startSpacing = 2.3636 * UP_RATIO;
                     const starCount = Math.min(13, star ?? 0);
                     const starType = isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level';
+                    const reverseAlign = isXyz || isDarkSynchro;
                     const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
                     /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
                     const leftEdge = starCount <= 12
-                        ? (isXyz || isDarkSynchro)
+                        ? reverseAlign
                             ? (57 - starWidth) * UP_RATIO
                             : 492 * UP_RATIO
-                        : (isXyz || isDarkSynchro)
+                        : reverseAlign
                             ? (CanvasWidth - totalWidth) / 2 - starWidth
                             : (CanvasWidth - totalWidth) / 2 + totalWidth;
 
@@ -305,7 +308,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             return drawFromSource(
                                 ctx,
                                 `/asset/image/sub-family/subfamily-${starType}.png`,
-                                leftEdge + (starWidth + offset) * (isXyz || isDarkSynchro ? 1 : -1),
+                                leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
                                 99 * UP_RATIO,
                             );
                         })
@@ -358,7 +361,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const style = nameStyleType === 'auto'
                     ? foil !== 'normal'
                         ? foilStyleMap[foil] ?? defaultTextStyle
-                        : { ...defaultTextStyle, fillStyle: (!isMonster || isLink || isXyz || isDarkSynchro) ? '#ffffff' : '#000000' }
+                        : frame === 'zarc'
+                            ? PresetMap['animeGold'].value
+                            : {
+                                ...defaultTextStyle,
+                                fillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                            }
                     : nameStyleType === 'predefined'
                         ? PresetMap[nameStyle.preset as keyof typeof PresetMap ?? 'commonB'].value
                         : nameStyle;
@@ -366,7 +374,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, style, { isSpeedSkill, nameStyleType });
             }
         }
-    }, [active, attribute, foil, isInitializing, isLink, isMonster, isSpeedSkill, isXyz, isDarkSynchro, name, nameCanvas, nameStyle, nameStyleType]);
+    }, [active, attribute, foil, isInitializing, isMonster, isSpeedSkill, frame, lightHeader, name, nameCanvas, nameStyle, nameStyleType]);
 
     /** DRAW STAT */
     useEffect(() => {
@@ -392,7 +400,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = setIdCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if ((isXyz || isSpeedSkill || isDarkSynchro) && !isPendulum) ctx.fillStyle = '#fff';
+                if (lightFooter) ctx.fillStyle = '#fff';
                 else ctx.fillStyle = '#000';
                 ctx.font = `${15 * UP_RATIO}px stone-serif-regular`;
 
@@ -403,7 +411,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 } else fillTextRightWithSpacing(ctx, setId, -0.1, 492 * UP_RATIO, 589 * UP_RATIO);
             }
         }
-    }, [active, isInitializing, isLink, isPendulum, isXyz, isDarkSynchro, setIdCanvas, setId, isSpeedSkill]);
+    }, [active, isInitializing, isLink, isPendulum, lightFooter, setIdCanvas, setId, isSpeedSkill]);
 
     /** DRAW FIRST EDITION NOTICE AND PASSCODE */
     useEffect(() => {
@@ -411,20 +419,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = passcodeCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if ((isXyz || isDarkSynchro) && !isPendulum) ctx.fillStyle = '#fff';
+                if (lightFooter) ctx.fillStyle = '#fff';
                 else ctx.fillStyle = '#000';
                 ctx.font = `${15 * UP_RATIO}px stone-serif-regular`;
 
                 const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 25 * UP_RATIO, 777 * UP_RATIO);
                 if (isFirstEdition && !isDuelTerminalCard) {
-                    if ((isXyz || isDarkSynchro) && !isPendulum) ctx.fillStyle = '#fff';
+                    if (lightFooter) ctx.fillStyle = '#fff';
                     else ctx.fillStyle = '#000';
 
                     draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO));
                 }
             }
         }
-    }, [active, isDuelTerminalCard, isFirstEdition, isInitializing, isLink, isPendulum, isXyz, isDarkSynchro, passcode, passcodeCanvas]);
+    }, [active, isDuelTerminalCard, isFirstEdition, isInitializing, passcode, passcodeCanvas, lightFooter]);
 
     /** DRAW CREATOR TEXT */
     useEffect(() => {
@@ -432,13 +440,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = creatorCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if ((isXyz || isDarkSynchro) && !isPendulum) ctx.fillStyle = '#fff';
+                if (lightFooter) ctx.fillStyle = '#fff';
                 else ctx.fillStyle = '#000';
 
                 drawCreatorText(ctx, creator);
             }
         }
-    }, [isInitializing, isLink, isPendulum, isXyz, isDarkSynchro, creator, active, creatorCanvas]);
+    }, [isInitializing, isLink, isPendulum, lightFooter, creator, active, creatorCanvas]);
 
     /** DRAW STICKER */
     useEffect(() => {

@@ -1,4 +1,4 @@
-import { TextStyle, TextStyleType, UP_RATIO, getDefaultTextStyle } from 'src/model';
+import { TextStyle, TextStyleType, getDefaultTextStyle } from 'src/model';
 import { parsePalette, quoteConvert } from 'src/util';
 import { fillTextLeftWithSpacing, strokeTextLeftWithSpacing } from './util';
 
@@ -124,13 +124,13 @@ export const drawName = (
             ctx.strokeStyle = '#000';
         }
 
-        const splittedText = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()!])/g);
+        const tokenList = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()!,])/g);
         let maxAscent = 0;
         let maxDescent = 0;
-        const contentWidth = splittedText
+        const contentWidth = tokenList
             .reduce((prev, cur, index) => {
                 if (index % 2 === 0) ctx.font = fontStyle;
-                else ctx.font = `${54.59 * UP_RATIO}px matrix`;
+                else ctx.font = 'small-caps 64px matrix';
                 const metric = ctx.measureText(cur);
                 maxAscent = Math.max(maxAscent, metric.actualBoundingBoxAscent);
                 maxDescent = Math.max(maxDescent, metric.actualBoundingBoxDescent);
@@ -151,31 +151,31 @@ export const drawName = (
             ctx.fillStyle = gradient ?? fillStyle;
 
             ctx.scale(condenseRatio, 1);
-            splittedText
-                .reduce((prev, cur, index) => {
+            tokenList
+                .reduce((prev, token, index) => {
                     if (index % 2 === 0) ctx.font = fontStyle;
-                    else ctx.font = `small-caps ${54.59 * UP_RATIO}px matrix`;
+                    else ctx.font = 'small-caps 64px matrix';
 
                     if (hasOutline) {
                         ctx.lineJoin = 'round';
                         strokeTextLeftWithSpacing(
                             ctx,
-                            cur,
+                            token,
                             letterSpacingRatio,
                             prev / condenseRatio + lineOffsetX,
                             baseline - (isSpeedSkill ? offset : 0) + lineOffsetY,
                         );
                         fillTextLeftWithSpacing(
                             ctx,
-                            cur,
+                            token,
                             letterSpacingRatio,
                             prev / condenseRatio,
                             baseline - (isSpeedSkill ? offset : 0),
                         );
                     } else {
-                        ctx.fillText(cur, prev / condenseRatio, baseline - (isSpeedSkill ? offset : 0));
+                        ctx.fillText(token, prev / condenseRatio, baseline - (isSpeedSkill ? offset : 0));
                     }
-                    return prev + ctx.measureText(cur).width * condenseRatio;
+                    return prev + ctx.measureText(token).width * condenseRatio;
                 }, edge + (isSpeedSkill ? offset : 0));
             ctx.scale(1 / condenseRatio, 1);
         }

@@ -147,10 +147,22 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const onStickerChange = onChangeFactory('sticker', setCard);
     const onCreatorChange = onChangeFactory('creator', setCard);
     const onFirstEditionChange = (e: any) => onCardChange(currentCard => {
-        return { ...currentCard, isFirstEdition: e.target.checked };
+        const nextValue = e.target.checked;
+
+        return {
+            ...currentCard,
+            isFirstEdition: nextValue,
+            isDuelTerminalCard: nextValue ? false : currentCard.isDuelTerminalCard,
+        };
     });
     const onDuelTerminalCardChange = (e: any) => onCardChange(currentCard => {
-        return { ...currentCard, isDuelTerminalCard: e.target.checked };
+        const nextValue = e.target.checked;
+
+        return {
+            ...currentCard,
+            isDuelTerminalCard: nextValue,
+            isFirstEdition: nextValue ? false : currentCard.isFirstEdition,
+        };
     });
     const onSpeedCardChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isSpeedCard: e.target.checked };
