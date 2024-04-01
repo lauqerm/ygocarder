@@ -138,7 +138,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         if (active) {
             const ctx = specialFrameCanvas.current?.getContext('2d');
             const previewCtx = previewCanvas.current;
-            const effectBoxY = 860, effectBoxX = 0;
+            const effectBoxY = 860, effectBoxX = 35;
             const artBoxY = 170, artBoxX = 60;
 
             drawingPipeline.current.specialFrame = async () => {
@@ -182,8 +182,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
                 if (isPendulum && !isLink) {
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-scale-${pendulumSize}.png`, 0, 750);
-                    await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 0, 0);
-                    if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}.png`, 0, 0);
+                    await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 30, 185);
+                    if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}.png`, 30, 185);
                 }
 
                 const foiledBorder = !hasFoil ? '/asset/image/frame/frame-border.png' : `/asset/image/frame/frame-border-${foil}.png`;
