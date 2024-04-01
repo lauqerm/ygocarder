@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
+import { Explanation } from 'src/component';
 import './app-header.scss';
 
 export const AppHeader = React.memo(() => {
@@ -19,23 +20,25 @@ export const AppHeader = React.memo(() => {
                         target="_blank"
                         rel="noreferrer">DeviantArt</a>) and others
                 </span>
-                <Popover overlayClassName="disclaimer-overlay" content={<div className="disclaimer">
-                    <h2>Disclaimer</h2>
-                    <ul>
-                        <li>This is a personal project, not an "official" card maker.</li>
-                        <li>I hold no liability for cards created by this app, including pictures, card text and any product that related to it.</li>
-                        <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project. They belong to their respective template creators.</li>
-                        <li>If you want to modify card layers, or use it in any public project, please contact <a
-                            href="https://www.deviantart.com/grezar"
-                            target="_blank"
-                            rel="noreferrer">Grezar</a> or <a
-                            href="https://www.deviantart.com/9558able"
-                            target="_blank"
-                            rel="noreferrer">9558able</a> directly.</li>
-                    </ul>
-                </div>}>
-                    <ExclamationCircleOutlined className="disclaimer-icon" />
-                </Popover>
+                <Explanation
+                    content={<div className="disclaimer">
+                        <h2>Disclaimer</h2>
+                        <ul>
+                            <li>This is a personal project, not an "official" card maker.</li>
+                            <li>I hold no liability for cards created by this app, including pictures, card text and any product that related to it.</li>
+                            <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project. They belong to their respective creators.</li>
+                            <li>If you want to modify card layers, or use it in any public project, please contact <a
+                                href="https://www.deviantart.com/grezar"
+                                target="_blank"
+                                rel="noreferrer">Grezar</a> or <a
+                                href="https://www.deviantart.com/9558able"
+                                target="_blank"
+                                rel="noreferrer">9558able</a> directly.
+                            </li>
+                            <li>I do not charge any kind of fee, require donation or embed ads, and hold no liability for any other parties that use my code in their websites.</li>
+                        </ul>
+                    </div>}
+                />
             </div>
         </div>
     </div>;

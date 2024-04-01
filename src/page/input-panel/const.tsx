@@ -34,13 +34,13 @@ export const iconButton = iconList.map(entry => ({
     value: entry,
 }));
 export const starButton = [...Array(14)].map((e, index) => ({ label: index, value: index }));
-export const stickerButton = stickerList.map(name => ({
+export const stickerButtonList = stickerList.map(name => ({
     label: name === 'no-sticker'
         ? <span className="no-sticker">NONE</span>
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));
-export const condenseButton = Object
+export const condenseButtonList = Object
     .entries(CondenseTolerantLabelMap)
     .map(([key, { label, order }]) => {
         return {

@@ -1,8 +1,8 @@
 import { Button, InputNumber } from 'antd';
-import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ChromePicker } from 'react-color';
 import { AnglePicker, ColorPoint, GradientPicker } from 'react-linear-gradient-picker';
-import { getDefaultGradientPalette } from 'src/util';
+import { getDefaultGradientPalette, parsePalette, stringifyPalette } from 'src/util';
 import debounce from 'lodash.debounce';
 import 'react-linear-gradient-picker/dist/index.css';
 import './gradient-picker.scss';
@@ -46,8 +46,8 @@ const WrappedColorPicker = forwardRef(({
 
     useEffect(() => {
         if (internalId > 0) onOffsetChange?.(internalId, `${internalOffset / 100}`);
-    /** @todo Kiểm tra và loại bỏ warning */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        /** @todo Kiểm tra và loại bỏ warning */
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [internalOffset]);
 
     return <div className="stop-point-control-panel">
@@ -57,7 +57,7 @@ const WrappedColorPicker = forwardRef(({
                 size="small"
                 max={100} min={0}
                 onChange={value => debouncedOnChange(typeof value === 'string' ? parseInt(value) : value ?? 0)}
-            />
+            />&nbsp;%&nbsp;
             <Button className="remove-stop-color" size="small" onClick={() => onRemove?.(internalId)}>Remove</Button>
         </div>
         <ChromePicker
@@ -86,30 +86,44 @@ const WrappedColorPicker = forwardRef(({
 
 const MAX_STOP_POINT = 12;
 export type TextGradientPicker = {
-    palette?: ColorPoint[],
+    palette?: string,
     angle?: number,
     onChange: (palette: ColorPoint[], angle: number) => void,
 };
 export const TextGradientPicker = ({
-    palette: externalPalette = getDefaultGradientPalette(),
+    palette: externalPalette = stringifyPalette(getDefaultGradientPalette()),
     angle: externalAngle = 180,
     onChange,
 }: TextGradientPicker) => {
     const pickerRef = useRef<WrappedColorPickerRef>(null);
     const [angle, setAngle] = useState(externalAngle);
-    const [palette, setPalette] = useState({
-        colorList: externalPalette,
-        currentControlId: externalPalette[0]?.id ?? -1,
+    const [palette, setPalette] = useState(() => {
+        const intialPalette = parsePalette(externalPalette);
+
+        return {
+            raw: externalPalette,
+            colorList: intialPalette,
+            currentControlId: intialPalette[0]?.id ?? -1,
+        };
     });
+    const getPaletteInfo = useCallback((newColorList: ColorPoint[]) => {
+        return {
+            colorList: newColorList,
+            raw: stringifyPalette(newColorList),
+        };
+    }, []);
 
     useEffect(() => {
         setAngle(externalAngle);
     }, [externalAngle]);
 
     useEffect(() => {
+        const newPalette = parsePalette(externalPalette);
+
         setPalette({
-            colorList: externalPalette,
-            currentControlId: externalPalette[0]?.id ?? -1,
+            raw: externalPalette,
+            colorList: newPalette,
+            currentControlId: newPalette[0]?.id ?? -1,
         });
     }, [externalPalette]);
 
@@ -137,48 +151,69 @@ export const TextGradientPicker = ({
         };
     }, [palette]);
 
+    useEffect(() => {
+        let relevant = true;
+        setTimeout(() => {
+            if (relevant) {
+                onChange(palette.colorList, angle);
+            }
+        }, 200);
+
+        return () => {
+            relevant = false;
+        };
+    }, [palette, angle]);
+
     /** "controls-wrapper" là class định danh của GradientPicker, không được bỏ */
     return <div className="controls-wrapper gradient-picker-container">
-        <div className="angle-picker-container">
-            <h2>Angle</h2>
-            <AnglePicker angle={angle} setAngle={setAngle} />
-        </div>
-        <h2>
-            Gradient <Button
-                size="small"
-                className="add-stop-color"
-                disabled={(palette.colorList?.length ?? 10000) > MAX_STOP_POINT}
-                onClick={() => {
-                    setPalette(cur => {
-                        return {
-                            ...cur,
-                            colorList: [
+        <div className="gradient-angle-control">
+            <h2>
+                Color Points
+                <br />
+                <Button
+                    size="small"
+                    className="add-stop-color"
+                    disabled={(palette.colorList?.length ?? 10000) > MAX_STOP_POINT}
+                    onClick={() => {
+                        setPalette(cur => {
+                            const nextColorList = [
                                 ...cur.colorList,
                                 { offset: '0.5', color: '#ffffff', id: cur.colorList.length + 1 },
-                            ].sort((l, r) => Number(l.offset) - Number(r.offset))
-                        };
-                    });
-                }}
-            >Add Stop Point ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
-        </h2>
+                            ].sort((l, r) => Number(l.offset) - Number(r.offset));
+
+                            return {
+                                ...cur,
+                                ...getPaletteInfo(nextColorList)
+                            };
+                        });
+                    }}
+                >Add Point ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
+            </h2>
+            <div className="angle-picker-container">
+                <h2>Angle</h2>
+                <AnglePicker angle={angle} size={120} setAngle={setAngle} />
+            </div>
+        </div>
         <div className="stop-color-picker-container">
             <GradientPicker {...{
-                width: 230,
+                width: 370,
                 paletteHeight: 32,
                 maxStops: MAX_STOP_POINT,
                 minStops: 2,
                 stopRemovalDrop: 99999,
                 palette: palette.colorList,
-                onPaletteChange: colorList => setPalette(cur => ({ ...cur, colorList })),
+                onPaletteChange: colorList => setPalette(cur => ({ ...cur, ...getPaletteInfo(colorList) })),
                 onColorStopSelect: stopColor => {
-                    setPalette(cur => ({ ...cur, currentControlId: stopColor.id}));
+                    setPalette(cur => ({ ...cur, currentControlId: stopColor.id }));
                     pickerRef.current?.setColor(stopColor);
                 },
             }}>
                 {/** Children được clone để populate props, vậy nên không cần pass props ở đây */}
                 <WrappedColorPicker ref={pickerRef}
                     onOffsetChange={(id, offset) => setPalette(cur => {
-                        return { ...cur, colorList: cur.colorList.map(entry => entry.id === id ? { ...entry, offset } : entry) };
+                        const nextColorList = cur.colorList.map(entry => entry.id === id ? { ...entry, offset } : entry);
+
+                        return { ...cur, ...getPaletteInfo(nextColorList) };
                     })}
                     onRemove={id => {
                         setPalette(cur => {
@@ -187,14 +222,13 @@ export const TextGradientPicker = ({
                             if (nextId > 0) pickerRef.current?.setColor(palette.colorList[nextId]);
 
                             return {
-                                colorList: nextColorList,
+                                ...getPaletteInfo(nextColorList),
                                 currentControlId: nextId,
                             };
                         });
                     }}
                 />
             </GradientPicker>
-            <Button type="primary" onClick={() => onChange(palette.colorList, angle)}>Submit</Button>
         </div>
     </div>;
 };

@@ -97,7 +97,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         /** Upsize canvas để nâng cao chất lượng ảnh */
         canvas.style.transform = 'scale(2)';
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx || ratio <= 0) return;
 
         const { naturalHeight, naturalWidth } = image;
         const zoomX = naturalWidth / image.width;
@@ -112,24 +112,62 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         /** Làm mượt thông số crop để image không bị vỡ */
-        const drawWidth = Math.min(
+        let drawWidth = Math.min(
             naturalWidth,
             Math.round((cropData.width ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100)),
         );
+        let drawHeight = drawWidth / ratio;
+        let drawCoordinateX = (cropData.x ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100);
+        let drawCoordinateY = (cropData.y ?? 0) * (cropUnit === 'px' ? zoomY : naturalHeight / 100);
         ctx.imageSmoothingQuality = 'high';
+        let fitCropData: Partial<ReactCrop.Crop> | undefined = undefined;
+        /** Fit crop frame vào ảnh nếu nó bị tràn (ví dụ do thay đổi về ratio). Ta cố gắng để crop frame lớn nhất có thể. */
+        if (drawWidth > naturalWidth || drawHeight > naturalHeight) {
+            /** Xác định chiều mà frame có thể extend tối đa */
+            const prominentSide = ratio * naturalHeight > naturalWidth ? 'width' : 'height';
+            /** Canh giữa lại crop frame */
+            if (prominentSide === 'width') {
+                drawWidth = naturalWidth;
+                drawHeight = drawWidth / ratio;
+                drawCoordinateX = 0;
+                drawCoordinateY = (naturalHeight - drawHeight) / 2;
+                fitCropData = {
+                    unit: '%',
+                    aspect: ratio,
+                    height: drawHeight / naturalHeight * 100,
+                    width: drawWidth / naturalWidth * 100,
+                    x: 0,
+                    y: drawCoordinateY / naturalHeight * 100,
+                };
+            } else {
+                drawWidth = naturalHeight * ratio;
+                drawHeight = naturalHeight;
+                drawCoordinateX = (naturalWidth - drawWidth) / 2;
+                drawCoordinateY = 0;
+                fitCropData = {
+                    unit: '%',
+                    aspect: ratio,
+                    height: drawHeight / naturalHeight * 100,
+                    width: drawWidth / naturalWidth * 100,
+                    x: drawCoordinateX / naturalWidth * 100,
+                    y: 0,
+                };
+            }
+        }
 
         ctx.drawImage(
             image,
-            (cropData.x ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100),
-            (cropData.y ?? 0) * (cropUnit === 'px' ? zoomY : naturalHeight / 100),
+            drawCoordinateX,
+            drawCoordinateY,
             drawWidth,
-            drawWidth / ratio,
+            drawHeight,
             0,
             0,
             (boundingWidth ?? 0),
             (boundingHeight ?? 0) / ratio,
         );
         onImageChange(cropData, sourceType);
+        if (fitCropData) setCrop(fitCropData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ratio, completedCrop, previewCanvasRef, noRedrawNumber]);
 
@@ -188,17 +226,29 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     crop={crop}
                     onChange={(cropData, percentCropData) => {
                         const image = imgRef.current;
-                        
+
                         if (isMigrated) {
                             setCrop(() => {
                                 if (!image) return percentCropData;
-                                const width = percentCropData.width ?? 0;
+                                const { width: cropWidth, height: cropHeight, x = 0, y = 0 } = percentCropData;
+                                if (x < 0) return { ...percentCropData, x: 0 };
+                                if (y < 0) return { ...percentCropData, y: 0 };
+                                const { naturalHeight, naturalWidth } = image;
+                                const width = cropWidth ?? 0;
+                                const height = cropHeight ?? 0;
+                                /** Kiểm tra ratio hiện tại, nếu width và height đã ở ratio chuẩn, ta không tính toán lại để tránh tích lũy sai số */
+                                const acceptableError = (naturalHeight > naturalWidth ? naturalHeight : naturalWidth) * 0.05;
+                                const isRatioAcceptable = Math.abs(height * naturalHeight * ratio - width * naturalWidth) <= acceptableError;
 
                                 return {
                                     ...percentCropData,
-                                    height: width * image.naturalWidth /** Restore original size */
-                                        / ratio /** Get height with corresponding aspect ratio */
-                                        / image.naturalHeight /** Convert back to percent */,
+                                    x: x < 0 ? 0 : x,
+                                    y: y < 0 ? 0 : y,
+                                    height: isRatioAcceptable
+                                        ? height
+                                        : width * image.naturalWidth /** Restore original size */
+                                            / ratio /** Get height with corresponding aspect ratio */
+                                            / image.naturalHeight /** Convert back to percent */,
                                     aspect: ratio,
                                 };
                             });
@@ -217,7 +267,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 const newHeightToWidthRatio = 400 / 300;
                                 const { width: imageWidth, height: imageHeight } = image;
                                 const isHeightRestricted = (imageHeight / imageWidth) >= oldHeightToWidthRatio;
-    
+
                                 if (!isHeightRestricted) return percentCropData;
                                 const newX = Math.min((cropData.x ?? 0) * newHeightToWidthRatio, imageWidth);
                                 const newY = Math.min((cropData.y ?? 0) * newHeightToWidthRatio, imageHeight);

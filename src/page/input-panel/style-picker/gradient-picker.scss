@@ -1,12 +1,18 @@
 .controls-wrapper.gradient-picker-container {
+    position: relative;
     .angle-picker-container {
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-        margin-bottom: 5px;
         h2 {
             padding: 0;
+        }
+        .ap {
+            background-color: #eeeeee;
+            .apc {
+                width: 8px;
+            }
+            .aph {
+                width: 8px;
+                height: 8px;
+            }
         }
         .ai {
             margin: 0;
@@ -28,6 +34,9 @@
     .csh {
         margin-bottom: 5px;
     }
+    .cs.active > div {
+        box-shadow: 0 0 0px 3px #ffffffaa;
+    }
     .stop-color-picker-container {
         padding: 10px;
     }
@@ -39,8 +48,21 @@
             filter: invert(1);
         }
     }
+    .gradient-angle-control {
+        position: absolute;
+        top: 59px;
+        padding: 10px;
+        border-right: 2px solid #1890ff;
+        h2 {
+            padding: 0;
+        }
+    }
     .stop-point-control-panel {
         color: #ffffff;
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-self: end;
         .stop-point-offset-input {
             margin-bottom: 5px;
         }
@@ -61,6 +83,7 @@
         color: #ffffff;
         background: #5e85c9;
         border: 1px solid #5e85e9;
+        margin: 5px 0;
         &:hover {
             background-color: #5e85e9;
             box-shadow: none;

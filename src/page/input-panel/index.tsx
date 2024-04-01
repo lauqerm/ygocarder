@@ -11,14 +11,15 @@ import {
     starButton,
     iconButton,
     getAttributeList,
-    stickerButton,
-    condenseButton
+    stickerButtonList,
+    condenseButtonList
 } from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
 import { CheckboxTrain } from './input-train';
 import { ImageCropperRef } from '../../component/card-picture';
 import './input-panel.scss';
+import { Explanation } from 'src/component/explanation';
 
 const { TextArea } = Input;
 
@@ -328,9 +329,13 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 />
                 <CheckboxTrain className="checkbox-condense-train" value={`${effectStyle?.condenseTolerant}`}
                     onChange={value => onCondenseTolerantChange(value as CondenseType)}
-                    optionList={condenseButton}
+                    optionList={condenseButtonList}
                 >
-                    <span>Condense</span>
+                    <span>
+                        Condense <Explanation
+                            content={'Stricter condense limit will favor compressing letters instead of creating a new line'}
+                        />
+                    </span>
                 </CheckboxTrain>
                 <TextArea key="effect"
                     id="card-effect"
@@ -405,7 +410,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         placeholder="Creator"
                         value={creator}
                     />
-                    <CheckboxTrain className="sticker-input checkbox-image-train" value={sticker} onChange={onStickerChange} optionList={stickerButton}>
+                    <CheckboxTrain className="sticker-input checkbox-image-train" value={sticker} onChange={onStickerChange} optionList={stickerButtonList}>
                         <span>Sticker</span>
                     </CheckboxTrain>
                 </div>

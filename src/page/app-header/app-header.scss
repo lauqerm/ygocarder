@@ -33,11 +33,6 @@
                 font-size: 15px;
                 color: #2badea;
             }
-            .disclaimer-icon {
-                font-size: 15px;
-                color: #e6e6e6;
-                cursor: pointer;
-            }
             > * {
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -47,23 +42,7 @@
         }
     }
 }
-
-.disclaimer-overlay {
-    .ant-popover-inner {
-        background-color: transparent;
-    }
-	.ant-popover-inner-content {
-		padding: 5px;
-		background-color: #464646;
-		color: #ffffffcc;
-		text-shadow: 0 1px #222;
-        max-width: 500px;
-        border-radius: 4px;
-	}
-    > .ant-popover-content > .ant-popover-arrow {
-		border-top-color: #464646;
-		border-left-color: #464646;
-    }
+.explanation-overlay {
 	.disclaimer {
 		font-size: 12px;
 		line-height: 1.25;

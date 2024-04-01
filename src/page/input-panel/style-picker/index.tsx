@@ -2,10 +2,10 @@ import { Checkbox, Dropdown, InputNumber, Menu, Popover, Slider, Tooltip } from 
 import React, { useEffect, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import { PresetList, TextStyle, TextStyleType } from '../../../model';
+import { PresetList, PresetMap, TextStyle, TextStyleType } from '../../../model';
 import PowerSlider from 'react-input-slider';
 import debounce from 'lodash.debounce';
-import { parsePalette, stringifyPalette, useRefresh } from 'src/util';
+import { stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import './style-picker.scss';
 
@@ -80,8 +80,19 @@ export const StylePicker = React.memo(({
                                     return <Menu.Item key={key}
                                         className={`preset-item ${value.preset === key ? 'menu-active' : ''}`}
                                         onClick={() => {
-                                            setValue(cur => ({ ...cur, preset: key }));
-                                            onChange('predefined', { ...value, preset: key });
+                                            setValue(cur => ({
+                                                ...cur,
+                                                preset: key,
+                                                ...PresetMap[key as keyof typeof PresetMap]?.value ?? {},
+                                            }));
+                                            onChange(
+                                                'predefined',
+                                                {
+                                                    ...value,
+                                                    preset: key,
+                                                    ...PresetMap[key as keyof typeof PresetMap]?.value ?? {},
+                                                },
+                                            );
                                         }}
                                     >
                                         <Tooltip title={label} placement="right">
@@ -301,7 +312,7 @@ export const StylePicker = React.memo(({
                                         {hasGradient && <div className="custom-style-gradient">
                                             <TextGradientPicker
                                                 angle={gradientAngle}
-                                                palette={parsePalette(gradientColor)}
+                                                palette={gradientColor}
                                                 onChange={(palette, gradientAngle) => {
                                                     setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
                                                     requestSendStyle();

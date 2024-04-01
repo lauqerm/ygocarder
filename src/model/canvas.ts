@@ -6,10 +6,10 @@ export const CanvasConst = {
 };
 export const CardArtCanvasConst = {
     normal: {
-        x: 99, // 67 * UP_RATIO,
-        y: 218, // 147* UP_RATIO,
-        w: 616, // 416 * UP_RATIO,
-        h: 616, // 416 * UP_RATIO,
+        x: 100, // 67 * UP_RATIO,
+        y: 219, // 147* UP_RATIO,
+        w: 614, // 416 * UP_RATIO,
+        h: 614, // 416 * UP_RATIO,
     },
     pendulum: {
         x: 56, // 38 * UP_RATIO,
