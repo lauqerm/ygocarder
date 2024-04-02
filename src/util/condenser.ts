@@ -110,6 +110,7 @@ const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, s
     },
     linkMap: 'lm',
     isPendulum: 'ip',
+    pendulumFrame: 'pf',
     pendulumEffect: 'pe',
     pendulumScaleRed: 'rs',
     pendulumScaleBlue: 'bs',
@@ -215,6 +216,10 @@ const migrateCardData = (card: Record<string, any>) => {
 
     if (migratedCard.format === undefined) {
         migratedCard.format = 'tcg';
+    }
+
+    if (migratedCard.pendulumFrame === undefined) {
+        migratedCard.pendulumFrame = 'spell';
     }
     return migratedCard;
 };

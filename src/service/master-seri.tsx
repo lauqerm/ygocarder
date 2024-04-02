@@ -30,7 +30,6 @@ import {
     Card,
     CardArtCanvasConst,
     getDefaultTextStyle,
-    foilStyleMap,
     iconList,
     MasterDuelCanvas,
     NO_ATTRIBUTE,
@@ -74,7 +73,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
+        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
         atk, def, linkMap,
         attribute,
         subFamily,
@@ -83,6 +82,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         passcode, creator, sticker,
         isFirstEdition, isDuelTerminalCard, isSpeedCard,
     } = card;
+    console.log('🚀 ~ useMasterSeriDrawer ~ card:', card);
     const isNormal = checkNormal(card);
     const isXyz = checkXyz(card);
     const isDarkSynchro = checkDarkSynchro(card);
@@ -146,18 +146,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const hasFoil = foil !== 'normal';
 
                 if (!isPendulum) {
+                    if (isXyz || isSpeedSkill) {
+                        await drawFromSource(ctx, `/asset/image/frame/frame-art-${frame}.png`, artBoxX, artBoxY);
+                    } else if (isLink || ['zarc', 'hamon', 'uria', 'raviel'].includes(frame)) {
+                        await drawFromSource(ctx, '/asset/image/frame/frame-art-special.png', artBoxX, artBoxY);
+                    } else {
+                        await drawFromSource(ctx, '/asset/image/frame/frame-art.png', artBoxX, artBoxY);
+                    }
+
                     if (hasFoil) {
                         await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, artBoxX, artBoxY);
                         await drawFromSource(ctx, `/asset/image/frame/frame-effect-box-${foil}.png`, effectBoxX, effectBoxY);
                     } else {
-                        if (isXyz || isSpeedSkill) {
-                            await drawFromSource(ctx, `/asset/image/frame/frame-art-${frame}.png`, artBoxX, artBoxY);
-                        } else if (isLink || ['zarc', 'hamon', 'uria', 'raviel'].includes(frame)) {
-                            await drawFromSource(ctx, '/asset/image/frame/frame-art-special.png', artBoxX, artBoxY);
-                        } else {
-                            await drawFromSource(ctx, '/asset/image/frame/frame-art.png', artBoxX, artBoxY);
-                        }
-
                         if (isSpeedSkill) {
                             await drawFromSource(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
                         } else {
@@ -167,7 +167,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
 
                 if (isPendulum && !isLink) {
-                    await drawFromSource(ctx, '/asset/image/frame/frame-pendulum-base.png', 0, 0);
+                    await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-monster-effect-${pendulumSize}.png`, effectBoxX, effectBoxY);
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-pend-effect-${pendulumSize}.png`, 0, 600);
                 }
@@ -255,6 +255,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         isSpeedCard,
         linkMap,
         lightFooter,
+        pendulumFrame,
         pendulumSize,
         previewCanvas,
         specialFrameCanvas,
@@ -360,7 +361,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 ctx.textAlign = 'left';
                 const style = nameStyleType === 'auto'
                     ? foil !== 'normal'
-                        ? foilStyleMap[foil] ?? defaultTextStyle
+                        ? PresetMap[foil as keyof typeof PresetMap ?? 'commonB'].value
                         : frame === 'zarc'
                             ? PresetMap['animeGold'].value
                             : {

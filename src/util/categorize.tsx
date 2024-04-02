@@ -1,4 +1,4 @@
-import { Card, frameType } from '../model';
+import { Card, frameList } from '../model';
 
 export const checkNormal = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'normal' && checkMonster(card);
@@ -20,5 +20,5 @@ export const checkMonster = (card: Pick<Card, 'frame'>) => {
 };
 
 export const getCardFrame = (frame: string) => {
-    return frameType.find(entry => entry.name === frame.toLowerCase())?.name ?? 'effect';
+    return frameList.find(entry => entry.name === frame.toLowerCase())?.name ?? 'effect';
 };

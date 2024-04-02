@@ -1,15 +1,15 @@
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Input, Checkbox, Tooltip } from 'antd';
-import { Card, CondenseType, TextStyle, TextStyleType } from '../../model';
-import { ImageCropper, LinkMarkChooser } from '../../component';
+import { Input, Checkbox, Tooltip, Dropdown } from 'antd';
+import { Card, CondenseType, TextStyle, TextStyleType, frameMap } from '../../model';
+import { FrameInfoBlock, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import debounce from 'lodash.debounce';
 import { SyncOutlined } from '@ant-design/icons';
 import {
-    foilButton,
-    frameButton,
-    starButton,
-    iconButton,
+    foilButtonList,
+    frameButtonList,
+    starButtonList,
+    stIconButtonList,
     getAttributeList,
     stickerButtonList,
     condenseButtonList
@@ -18,8 +18,8 @@ import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
 import { CheckboxTrain } from './input-train';
 import { ImageCropperRef } from '../../component/card-picture';
-import './input-panel.scss';
 import { Explanation } from 'src/component/explanation';
+import './input-panel.scss';
 
 const { TextArea } = Input;
 
@@ -55,10 +55,10 @@ export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
 }
 export type CardInputPanel = {
-	currentCard: Card,
+    currentCard: Card,
     receivingCanvasRef: HTMLCanvasElement | null,
     defaultCropInfo: Partial<ReactCrop.Crop>,
-	onCardChange: React.Dispatch<React.SetStateAction<Card>>,
+    onCardChange: React.Dispatch<React.SetStateAction<Card>>,
     onImageChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     children?: React.ReactNode,
 } & {
@@ -87,7 +87,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 ? ['Spell Card']
                 : value === 'trap' ? ['Trap Card'] : currentCard.typeAbility;
             if (isST) setDisplayTypeAbility(newTypeAbility[0]);
-    
+
             return {
                 ...currentCard,
                 frame: value,
@@ -131,6 +131,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     });
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('linkMap', setCard);
+    const onPendulumFrameChange = onChangeFactory('pendulumFrame', setCard);
     const onRedScaleChange = onChangeFactory('pendulumScaleRed', setCard);
     const onBlueScaleChange = onChangeFactory('pendulumScaleBlue', setCard);
     const onPendulumEffectChange = debounce(onChangeFactory('pendulumEffect', setCard), 350);
@@ -177,7 +178,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumEffect, pendulumScaleRed, pendulumScaleBlue,
+        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleRed, pendulumScaleBlue,
         atk, def, linkMap,
         attribute,
         subFamily,
@@ -198,7 +199,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const ref = useRef();
 
     const attributeList = useMemo(() => getAttributeList(format), [format]);
-    
+
     useImperativeHandle(forwardedRef, () => ({
         forceCardData: (card) => {
             setDisplayTypeAbility(card.typeAbility.join('/'));
@@ -209,6 +210,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         }
     }));
 
+    const currentPendulumFrame = frameMap[pendulumFrame];
     return <div className="card-info-panel">
         {children}
         <CharPicker
@@ -219,10 +221,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 });
             }}
         />
-        <CheckboxTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={foilButton}>
+        <CheckboxTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={foilButtonList}>
             <span>Foil</span>
         </CheckboxTrain>
-        <CheckboxTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameButton} />
+        <CheckboxTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameButtonList} />
         <div className="card-header custom-gap">
             <Input
                 id="name"
@@ -241,11 +243,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             <StylePicker defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} />
             {isMonster
                 ? !isLink
-                    ? <CheckboxTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButton}>
+                    ? <CheckboxTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButtonList}>
                         <span>{isXyz ? 'Rank' : isDarkSynchro ? 'Neg. Level' : 'Level'}</span>
                     </CheckboxTrain>
                     : null
-                : <CheckboxTrain value={subFamily} onChange={onSubFamilyChange} optionList={iconButton}>
+                : <CheckboxTrain value={subFamily} onChange={onSubFamilyChange} optionList={stIconButtonList}>
                     <span>Icon</span>
                 </CheckboxTrain>
             }
@@ -270,27 +272,45 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     <div className="joined-row">
                         <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
                         {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale?</Checkbox>}
+                        {isPendulum && <Dropdown
+                            arrow
+                            overlayClassName="pendulum-frame-picker-overlay"
+                            overlay={<div className="pendulum-frame-picker">
+                                <CheckboxTrain
+                                    className="frame-radio"
+                                    value={pendulumFrame}
+                                    onChange={onPendulumFrameChange}
+                                    optionList={frameButtonList}
+                                />
+                            </div>}
+                        >
+                            <div className="pendulum-frame-input">
+                                Pendulum Frame {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
+                            </div>
+                        </Dropdown>}
                     </div>
                     {isPendulum && <>
                         <div>
-                            <Input key="blue-scale" addonBefore={<span>
-                                <span style={{ color: '#3b9dff' }}>Blue</span> Scale
-                            </span>}
-                            value={pendulumScaleBlue}
-                            onChange={e => {
-                                onBlueScaleChange(e);
-                                if (isMirrorScale) onRedScaleChange(e);
-                            }} />
+                            <Input key="blue-scale"
+                                addonBefore={<span>
+                                    <span style={{ color: '#3b9dff' }}>Blue</span> Scale
+                                </span>}
+                                value={pendulumScaleBlue}
+                                onChange={e => {
+                                    onBlueScaleChange(e);
+                                    if (isMirrorScale) onRedScaleChange(e);
+                                }} />
                         </div>
                         <div>
-                            <Input key="red-scale" addonBefore={<span>
-                                <span style={{ color: '#ff6f6f' }}>Red</span> Scale
-                            </span>}
-                            value={pendulumScaleRed}
-                            onChange={e => {
-                                if (isMirrorScale) onBlueScaleChange(e);
-                                onRedScaleChange(e);
-                            }} />
+                            <Input key="red-scale"
+                                addonBefore={<span>
+                                    <span style={{ color: '#ff6f6f' }}>Red</span> Scale
+                                </span>}
+                                value={pendulumScaleRed}
+                                onChange={e => {
+                                    if (isMirrorScale) onBlueScaleChange(e);
+                                    onRedScaleChange(e);
+                                }} />
                         </div>
                         <div className="joined-row" style={{ position: 'relative' }}>
                             <TextArea key="pendulum-effect"
@@ -333,7 +353,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 >
                     <span>
                         Condense <Explanation
-                            content={'Stricter condense limit will favor compressing letters instead of creating a new line'}
+                            content={'Stricter condense limit will favor compressing words instead of adding new lines'}
                         />
                     </span>
                 </CheckboxTrain>

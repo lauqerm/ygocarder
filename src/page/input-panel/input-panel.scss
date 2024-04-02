@@ -3,30 +3,6 @@
 		display: inline-flex;
 		margin-bottom: 10px;
 	}
-	.frame-radio {
-		display: flex;
-		flex-wrap: wrap;
-		column-gap: 5px;
-		row-gap: 5px;
-		.ant-radio-button-wrapper {
-			flex: 1;
-			text-transform: capitalize;
-			white-space: nowrap;
-			padding: 0 5px;
-			min-width: 90px;
-			text-align: center;
-			border-width: 0 !important;
-			text-shadow: none;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-			&::before {
-				display: none;
-			}
-		}
-		.ant-radio-button-wrapper-checked {
-			outline: 2px solid #1890ff;
-			outline-offset: 1px;
-		}
-	}
 	.family-radio {
 		display: flex;
 		.ant-radio-button-wrapper {
@@ -161,6 +137,11 @@
 			padding-right: 8px;
 		}
 	}
+	.pendulum-frame-input {
+		display: inline-block;
+		padding: 0 5px;
+		cursor: pointer;
+	}
 	.pendulum-container {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -180,11 +161,46 @@
 	}
 }
 
+.frame-radio {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 5px;
+	row-gap: 5px;
+	.ant-radio-button-wrapper {
+		flex: 1;
+		text-transform: capitalize;
+		white-space: nowrap;
+		padding: 0 5px;
+		min-width: 90px;
+		text-align: center;
+		border-width: 0 !important;
+		text-shadow: none;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+		&:hover {
+			outline: 2px solid #2badea;
+			outline-offset: 1px;
+		}
+		&::before {
+			display: none;
+		}
+	}
+	.ant-radio-button-wrapper-checked {
+		outline: 2px solid #1890ff;
+		outline-offset: 1px;
+	}
+}
+.pendulum-frame-picker {
+	background-color: #48484b;
+	padding: 5px;
+	.checkbox-train {
+		display: flex;
+		flex-wrap: wrap;
+		max-width: 500px;
+	}
+}
+
 @media only screen and (max-width: 1024px) {
 	.card-info-panel {
-		.frame-radio {
-			flex-wrap: wrap;
-		}
 		.checkbox-star-train {
 			.ant-radio-button-wrapper {
 				width: 30px;

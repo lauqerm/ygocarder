@@ -93,8 +93,8 @@ export const PresetMap = {
             fillStyle: '#8a8381',
         }),
     },
-    platinum: {
-        key: 'platinum',
+    platinum2: {
+        key: 'platinum2',
         label: 'Platinum',
         image: '/asset/image/other/name-platinum.png',
         value: createPreset({
@@ -115,6 +115,32 @@ export const PresetMap = {
         image: '/asset/image/other/name-ultra-2.png',
         value: createPreset({
             fillStyle: '#fee002',
+        }),
+    },
+    platinum: {
+        key: 'platinum',
+        label: 'Foil Platinum',
+        image: '/asset/image/other/name-foil-platinum.png',
+        value: createPreset({
+            fillStyle: '#CCCCCC',
+            shadowColor: '#FFFFFF',
+            shadowOffsetY: 1,
+            shadowOffsetX: 0,
+            shadowBlur: 1,
+            hasShadow: true,
+        }),
+    },
+    gold: {
+        key: 'gold',
+        label: 'Foil Gold',
+        image: '/asset/image/other/name-foil-gold.png',
+        value: createPreset({
+            fillStyle: '#b88c43',
+            shadowColor: '#FCC400',
+            shadowOffsetY: 1,
+            shadowOffsetX: 0,
+            shadowBlur: 1,
+            hasShadow: true,
         }),
     },
     animeRed: {
@@ -223,6 +249,7 @@ export const defaultCard = {
     } as Partial<ReactCrop.Crop>,
     linkMap: ['1', '3', '7', '9'] as string[],
     isPendulum: false,
+    pendulumFrame: 'spell',
     pendulumEffect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
     pendulumScaleRed: '4',
     pendulumScaleBlue: '4',
@@ -243,28 +270,30 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
 };
 
-export const frameType = [
-    { name: 'normal', labelColor: '#ffffff', labelBackgroundColor: '#c49c5e' },
-    { name: 'effect', labelColor: '#ffffff', labelBackgroundColor: '#b96c49' },
-    { name: 'fusion', labelColor: '#ffffff', labelBackgroundColor: '#8948a4' },
-    { name: 'synchro', labelColor: '#000', labelBackgroundColor: '#efefef' },
-    { name: 'xyz', labelColor: '#ffffff', labelBackgroundColor: '#000000' },
-    { name: 'link', labelColor: '#ffffff', labelBackgroundColor: '#0c8ac6' },
-    { name: 'ritual', labelColor: '#ffffff', labelBackgroundColor: '#5e85c9' },
-    { name: 'spell', labelColor: '#ffffff', labelBackgroundColor: '#1b8f83' },
-    { name: 'trap', labelColor: '#ffffff', labelBackgroundColor: '#c32a8c' },
-    { name: 'token', labelColor: '#ffffff', labelBackgroundColor: '#6f6c6b' },
-    { name: 'dark-synchro', labelColor: '#ffffff', labelBackgroundColor: '#4d4543' },
-    { name: 'obelisk', labelColor: '#ffffff', labelBackgroundColor: '#515eb0' },
-    { name: 'osiris', labelColor: '#ffffff', labelBackgroundColor: '#bd5044' },
-    { name: 'ra', labelColor: '#000', labelBackgroundColor: '#b9ad34' },
-    { name: 'raviel', labelColor: '#ffffff', labelBackgroundColor: '#2b344e' },
-    { name: 'uria', labelColor: '#ffffff', labelBackgroundColor: '#623320' },
-    { name: 'hamon', labelColor: '#ffffff', labelBackgroundColor: '#534a19' },
-    { name: 'lg-dragon', labelColor: '#ffffff', labelBackgroundColor: '#4e84a4' },
-    { name: 'speed-skill', labelColor: '#ffffff', labelBackgroundColor: '#199cd5' },
-    { name: 'zarc', labelColor: '#000', labelBackgroundImage: 'linear-gradient(90deg, rgba(185,108,73,1) 23%, rgba(137,72,164,1) 27%, rgba(137,72,164,1) 48%, rgba(239,239,239,1) 52%, rgba(239,239,239,1) 73%, rgba(0,0,0,1) 77%)' },
-];
+export type FrameInfo = { name: string, labelColor: string, labelBackgroundColor?: string, labelBackgroundImage?: string };
+export const frameMap: Record<string, FrameInfo> = {
+    'normal': { name: 'normal', labelColor: '#ffffff', labelBackgroundColor: '#c49c5e' },
+    'effect': { name: 'effect', labelColor: '#ffffff', labelBackgroundColor: '#b96c49' },
+    'fusion': { name: 'fusion', labelColor: '#ffffff', labelBackgroundColor: '#8948a4' },
+    'synchro': { name: 'synchro', labelColor: '#000', labelBackgroundColor: '#efefef' },
+    'xyz': { name: 'xyz', labelColor: '#ffffff', labelBackgroundColor: '#000000' },
+    'link': { name: 'link', labelColor: '#ffffff', labelBackgroundColor: '#0c8ac6' },
+    'ritual': { name: 'ritual', labelColor: '#ffffff', labelBackgroundColor: '#5e85c9' },
+    'spell': { name: 'spell', labelColor: '#ffffff', labelBackgroundColor: '#1b8f83' },
+    'trap': { name: 'trap', labelColor: '#ffffff', labelBackgroundColor: '#c32a8c' },
+    'token': { name: 'token', labelColor: '#ffffff', labelBackgroundColor: '#6f6c6b' },
+    'dark-synchro': { name: 'dark-synchro', labelColor: '#ffffff', labelBackgroundColor: '#4d4543' },
+    'obelisk': { name: 'obelisk', labelColor: '#ffffff', labelBackgroundColor: '#515eb0' },
+    'osiris': { name: 'osiris', labelColor: '#ffffff', labelBackgroundColor: '#bd5044' },
+    'ra': { name: 'ra', labelColor: '#000', labelBackgroundColor: '#b9ad34' },
+    'raviel': { name: 'raviel', labelColor: '#ffffff', labelBackgroundColor: '#2b344e' },
+    'uria': { name: 'uria', labelColor: '#ffffff', labelBackgroundColor: '#623320' },
+    'hamon': { name: 'hamon', labelColor: '#ffffff', labelBackgroundColor: '#534a19' },
+    'lg-dragon': { name: 'lg-dragon', labelColor: '#ffffff', labelBackgroundColor: '#4e84a4' },
+    'speed-skill': { name: 'speed-skill', labelColor: '#ffffff', labelBackgroundColor: '#199cd5' },
+    'zarc': { name: 'zarc', labelColor: '#000', labelBackgroundImage: 'linear-gradient(90deg, rgba(185,108,73,1) 23%, rgba(137,72,164,1) 27%, rgba(137,72,164,1) 48%, rgba(239,239,239,1) 52%, rgba(239,239,239,1) 73%, rgba(0,0,0,1) 77%)' },
+};
+export const frameList = Object.values(frameMap);
 
 export const iconList = [
     'NO ICON',
@@ -276,28 +305,8 @@ export const iconList = [
     'COUNTER',
 ];
 
-export const foilStyleMap: Record<string, TextStyle> = {
-    gold: {
-        ...getDefaultTextStyle(),
-        fillStyle: '#b88c43',
-        shadowColor: '#FCC400',
-        shadowOffsetY: 1,
-        shadowOffsetX: 0,
-        shadowBlur: 1,
-        hasShadow: true,
-    },
-    platinum: {
-        ...getDefaultTextStyle(),
-        fillStyle: '#CCCCCC',
-        shadowColor: '#FFFFFF',
-        shadowOffsetY: 1,
-        shadowOffsetX: 0,
-        shadowBlur: 1,
-        hasShadow: true,
-    },
-};
 export const foilList = [
-    { name: 'normal', color: '#747b95', textStyle: getDefaultTextStyle() },
+    { name: 'normal', color: '#747b95' },
     { name: 'gold', color: '#cfa65f' },
     { name: 'platinum', color: '#b1b1b1' },
 ];
