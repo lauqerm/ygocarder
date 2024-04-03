@@ -1,0 +1,14 @@
+.checkbox-train {
+    display: flex;
+    .checkbox-train-input-group {
+        display: flex;
+        flex: 1 1 auto;
+    }
+    .ant-radio-button-wrapper:first-child,
+    .ant-radio-button-wrapper:last-child {
+        border-radius: 0;
+    }
+    .ant-radio-button-wrapper:not(.ant-radio-button-wrapper-checked):first-child {
+        border-left-color: #222222;
+    }
+}

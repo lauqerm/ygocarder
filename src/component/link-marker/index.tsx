@@ -1,5 +1,6 @@
 import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import './link-marker.scss';
 
 export type LinkMarkChooser = {
@@ -30,7 +31,9 @@ export const LinkMarkChooser = ({
                 if (normalizedIndex === '5') return <Tooltip key="5" overlay="Reset">
                     <div className="link-marker-reset" onClick={() => {
                         setChoosenArrow([]);
-                    }}>R</div>
+                    }}>
+                        <CloseCircleOutlined />
+                    </div>
                 </Tooltip>;
 
                 return <div key={normalizedIndex}

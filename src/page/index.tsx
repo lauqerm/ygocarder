@@ -6,5 +6,5 @@ export type {
 } from './input-panel';
 export {
     AppHeader,
-    taintedCanvasWarning,
+    TaintedCanvasWarning,
 } from './app-header';

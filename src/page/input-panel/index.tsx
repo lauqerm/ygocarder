@@ -1,10 +1,10 @@
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Tooltip, Dropdown } from 'antd';
-import { Card, CondenseType, TextStyle, TextStyleType, frameMap } from '../../model';
+import { Card, CardArtCanvasConst, CondenseType, TextStyle, TextStyleType, frameMap } from '../../model';
 import { FrameInfoBlock, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import debounce from 'lodash.debounce';
-import { SyncOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
 import {
     foilButtonList,
     frameButtonList,
@@ -44,7 +44,7 @@ const RandomButton = ({
     seeder,
     onGenerate,
 }: RandomButton) => {
-    return <span style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #222' }}>
+    return <span className="random-button">
         <Tooltip overlay="Randomize">
             <SyncOutlined onClick={() => onGenerate(seeder())} />
         </Tooltip>
@@ -263,7 +263,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onFocus={() => setOnlineCharPicker('set-id')}
                     allowClear
                     className="set-id-input"
-                    addonBefore={<>Set ID<RandomButton seeder={randomSetID} onGenerate={onSetIDChange} /></>}
+                    addonBefore={<div className="input-label-with-button">
+                        <div className="input-label">Set ID</div>
+                        <RandomButton seeder={randomSetID} onGenerate={onSetIDChange} />
+                    </div>}
                     onChange={onSetIDChange}
                     placeholder="Set ID"
                     value={setId}
@@ -285,7 +288,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             </div>}
                         >
                             <div className="pendulum-frame-input">
-                                Pendulum Frame {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
+                                Pendulum Frame <CaretDownOutlined /> {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
                             </div>
                         </Dropdown>}
                     </div>
@@ -392,7 +395,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         onFocus={() => setOnlineCharPicker('password')}
                         allowClear
                         className="password-input"
-                        addonBefore={<>Password<RandomButton seeder={randomPassword} onGenerate={onPasscodeChange} /></>}
+                        addonBefore={<div className="input-label-with-button">
+                            <div className="input-label">Password</div>
+                            <RandomButton seeder={randomPassword} onGenerate={onPasscodeChange} />
+                        </div>}
                         onChange={onPasscodeChange}
                         placeholder="Password"
                         value={passcode}
@@ -445,7 +451,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}
                     onTainted={onTainted}
-                    ratio={isPendulum ? 1.325 : 1}
+                    ratio={CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'].ratio}
                 >
                     {isLink
                         ? <LinkMarkChooser defaultValue={linkMap} onChange={onLinkMapChange} />

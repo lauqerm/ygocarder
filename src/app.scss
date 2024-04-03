@@ -226,10 +226,14 @@
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 	}
+	.ant-input-group-addon {
+		padding-left: 0;
+	}
 	.ant-input,
 	.ant-input-number,
 	.ant-input-number-handler-wrap,
-	.ant-radio-button-wrapper {
+	.ant-radio-button-wrapper,
+	.ant-radio-button-wrapper:first-child {
 		border-color: #222;
 	}
 	.ant-radio-button-wrapper:not(:first-child):not(.ant-radio-button-wrapper-checked)::before {
@@ -239,29 +243,38 @@
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 	}
+	.field-title,
 	.ant-btn.download-button,
 	.ant-input-group-addon {
 		font-weight: bold;
-		border-color: #222;
-		background-color: #4a4a4d;
+		border-color: transparent;
+		background-color: transparent;
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 		user-select: none;
 	}
 	textarea,
 	.ant-checkbox,
-	.ant-radio-group:not(.frame-radio),
-	.ant-input-wrapper,
+	.checkbox-train-input-group,
+	.ant-input-affix-wrapper,
 	.pendulum-container {
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	}
-	.card-image-source-input {
-		.ant-radio-group {
-			box-shadow: none;
-			.ant-radio-button-wrapper:first-child {
-				border-color: #222;
-			}
-		}
+	.checkbox-train .ant-radio-button-wrapper:first-child {
+		border-radius: 20px 0 0 20px;
+	}
+	.checkbox-train .ant-radio-button-wrapper:last-child {
+		border-radius: 0 20px 20px 0;
+	}
+	.checkbox-train-input-group,
+	.ant-input-affix-wrapper,
+	.ant-input-wrapper .ant-input:first-child,
+	.ant-input-wrapper .ant-input:last-child,
+	textarea.ant-input,
+	.ant-input-group > .ant-input-affix-wrapper:not(:first-child) {
+		border-radius: 20px;
+		border-top-left-radius: 20px;
+		border-bottom-left-radius: 20px;
 	}
 	.anticon {
 		color: #ffffffcc;
@@ -269,6 +282,10 @@
 	input[type="file"] {
 		overflow: hidden;
 	}
+}
+
+span.ant-input-affix-wrapper {
+	background-color: transparent;
 }
 .ant-input-group {
 	.ant-radio-button-wrapper,

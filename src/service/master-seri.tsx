@@ -154,15 +154,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                         await drawFromSource(ctx, '/asset/image/frame/frame-art.png', artBoxX, artBoxY);
                     }
 
+                    await drawFromSource(ctx, '/asset/image/frame/frame-effect-box.png', effectBoxX, effectBoxY);
                     if (hasFoil) {
                         await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, artBoxX, artBoxY);
                         await drawFromSource(ctx, `/asset/image/frame/frame-effect-box-${foil}.png`, effectBoxX, effectBoxY);
-                    } else {
-                        if (isSpeedSkill) {
-                            await drawFromSource(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
-                        } else {
-                            await drawFromSource(ctx, '/asset/image/frame/frame-effect-box.png', effectBoxX, effectBoxY);
-                        }
+                    } else if (isSpeedSkill) {
+                        await drawFromSource(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
                     }
                 }
 
@@ -176,9 +173,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
                 if (previewCtx && ctx) {
                     // ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
-                    const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+                    const { x, y, w } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+                    const { width: imageWidth, height: imageHeight } = previewCtx;
 
-                    ctx.drawImage(previewCtx, x, y, w, h);
+                    if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
                 }
                 if (isPendulum && !isLink) {
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-scale-${pendulumSize}.png`, 0, 750);

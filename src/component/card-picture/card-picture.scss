@@ -3,42 +3,52 @@
     flex-direction: column;
     grid-column-gap: 10px;
     row-gap: 0.5em;
+	/** Avoid flashing when switching mode **/
+	.card-image-source-input-container {
+		min-height: 115px;
+	}
 	.download-button {
-		margin-top: 5px;
-		width: 100%;
+		padding: 0;
 		&:hover {
-			background-color: #585863;
+			color: #3b9dff;
 		}
 	}
+	.card-image-source-input-title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
 	.ant-radio-group {
-		width: 100%;
 		.ant-input-group-addon {
 			min-width: unset;
+		}
+	}
+	.card-image-input {
+		margin-top: 5px;
+		&.input-inactive {
+			display: none;
 		}
 	}
 	.card-image-source-input {
 		flex: 1;
 		display: grid;
 		grid-template-columns: max-content 1fr;
-		> *:first-child {
-			margin-right: 10px;
-			&:empty {
-				margin-right: 0;
-			}
+		column-gap: 10px;
+		.card-image-source-input-title {
+			grid-column: span 2;
 		}
-		.ant-radio-button-wrapper {
-			display: block;
-			height: unset;
-			padding: 10px;
-			width: 100%;
+		input[type="file"] {
+			cursor: pointer;
 		}
-		.ant-radio-button-wrapper + .ant-radio-button-wrapper {
-			margin-top: 10px
-		}
-		.ant-radio-button-wrapper-checked {
-			border-color: #1890ff !important;
-			color: white;
-		}
+	}
+	.offline-image-warning {
+		margin-top: 5px;
+		color: #FF6F6F;
+		line-height: 1.25;
+	}
+	.online-image-tip {
+		margin-top: 5px;
+		line-height: 1.25;
 	}
 	.card-cropper {
 		height: 400px;
@@ -49,6 +59,6 @@
 		max-height: 400px;
 	}
 	.ReactCrop {
-		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+		box-shadow: 0 1px 3px rgba(0,0,0,0.36), 0 1px 2px rgba(0,0,0,0.48);
 	}
 }

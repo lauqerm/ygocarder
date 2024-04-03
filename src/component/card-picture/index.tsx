@@ -52,7 +52,9 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 }: ImageCropper, forwardedRef) => {
     const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
+    const [inputMode, setInputMode] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
+    console.log('🚀 ~ internalSource:', typeof internalSource);
     const [isLoading, setLoading] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
@@ -60,7 +62,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
     const [isMigrated, setMigrated] = useState(defaultCropInfo.unit === '%');
 
-    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const applyInternalSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setLoading(true);
             const reader = new FileReader();
@@ -68,6 +70,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 if (typeof reader.result === 'string') {
                     setInternalSource(reader.result);
                     setSourceType('internal');
+                    setInputMode('internal');
                 }
             });
             reader.readAsDataURL(e.target.files[0]);
@@ -79,11 +82,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         imgRef.current = img;
     }, []);
 
-    const useExternalSource = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const applyExternalSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
 
         setLoading(true);
         setSourceType('external');
+        setInputMode('external');
         onSourceChange(source);
         setExternalSource(source);
     };
@@ -104,11 +108,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const zoomY = naturalHeight / image.height;
         const cropUnit = cropData.unit ?? 'px';
         const pixelRatio = window.devicePixelRatio;
-        const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
-        const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
-
-        canvas.width = (boundingWidth ?? 0) * pixelRatio;
-        canvas.height = (boundingHeight ?? 0) * pixelRatio;
 
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         /** Làm mượt thông số crop để image không bị vỡ */
@@ -122,7 +121,13 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         ctx.imageSmoothingQuality = 'high';
         let fitCropData: Partial<ReactCrop.Crop> | undefined = undefined;
         /** Fit crop frame vào ảnh nếu nó bị tràn (ví dụ do thay đổi về ratio). Ta cố gắng để crop frame lớn nhất có thể. */
-        if (drawWidth > naturalWidth || drawHeight > naturalHeight) {
+        console.log(drawCoordinateX, drawWidth, naturalWidth, drawCoordinateY, drawHeight, naturalHeight);
+        if (
+            (drawCoordinateX + drawWidth) > naturalWidth
+            || (drawCoordinateY + drawHeight) > naturalHeight
+            || drawCoordinateX < 0
+            || drawCoordinateY < 0
+        ) {
             /** Xác định chiều mà frame có thể extend tối đa */
             const prominentSide = ratio * naturalHeight > naturalWidth ? 'width' : 'height';
             /** Canh giữa lại crop frame */
@@ -154,6 +159,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 };
             }
         }
+        // const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
+        // const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
+
+        canvas.width = (drawWidth ?? 0) * pixelRatio;
+        canvas.height = (drawHeight ?? 0) * pixelRatio;
 
         ctx.drawImage(
             image,
@@ -163,10 +173,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             drawHeight,
             0,
             0,
-            (boundingWidth ?? 0),
-            (boundingHeight ?? 0) / ratio,
+            drawWidth,
+            drawHeight,
         );
-        onImageChange(cropData, sourceType);
+        if (sourceType === 'internal' && (internalSource ?? '').length <= 0) { }
+        else onImageChange(cropData, sourceType);
         if (fitCropData) setCrop(fitCropData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ratio, completedCrop, previewCanvasRef, noRedrawNumber]);
@@ -177,6 +188,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             if (inUseSource !== source) {
                 setLoading(true);
                 setSourceType('external');
+                setInputMode('external');
                 onSourceChange(source);
                 setExternalSource(source);
             }
@@ -189,31 +201,55 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         <div className="card-image-cropper">
             <div className="card-image-source-input">
                 {children}
-                <Radio.Group onChange={e => setSourceType(e.target.value)} value={sourceType}>
-                    <Radio.Button value={'external'}>
+                <div className="card-image-source-input-container">
+                    <div className="card-image-source-input-title">
+                        <span className="field-title">Card Image</span>
+                        <Radio.Group
+                            onChange={e => {
+                                const value = e.target.value;
+                                setInputMode(value);
+                                if (
+                                    ((internalSource ?? '').length > 0 && value === 'internal')
+                                    || ((externalSource ?? '').length > 0 && value === 'external')
+                                ) setSourceType(value);
+                            }}
+                            value={inputMode}
+                        >
+                            <Radio.Button value={'external'} checked={inputMode === 'external'}>
+                                Online
+                            </Radio.Button>
+                            <Radio.Button value={'internal'} checked={inputMode === 'internal'}>
+                                Offline
+                            </Radio.Button>
+                        </Radio.Group>
+                    </div>
+                    <div className={['card-image-input', inputMode === 'external' ? '' : 'input-inactive'].join(' ')}>
                         <Input key="key"
-                            addonBefore="Link" placeholder="https://my-online-image..."
+                            placeholder="https://my-online-image..."
                             value={externalSource}
-                            onChange={useExternalSource} maxLength={256}
+                            onChange={applyExternalSource} maxLength={512}
                         />
-                    </Radio.Button>
-                    <Radio.Button value={'internal'}>
-                        <Input type="file" accept="image/*" onChange={onSelectFile} />
-                        <div>
-                            {sourceType === 'internal' && <>
-                                <Button
-                                    className="download-button"
-                                    disabled={!completedCrop?.width || !completedCrop?.height}
-                                    onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
-                                >
-                                    <span style={{ color: '#3b9dff' }}>Download cropped image</span>
-                                </Button>
-                                <span style={{ color: '#FF6F6F' }}>Offline images are not auto saved!</span>
-                            </>}
+                        <div className="online-image-tip">
+                            Recommended. Please use direct image link from popular sites such as imgur, discord or twitter.
                         </div>
-                    </Radio.Button>
-                </Radio.Group>
+                    </div>
+                    <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
+                        <Input type="file" accept="image/*" onChange={applyInternalSource} />
+                        <div className="offline-image-warning">
+                            Offline images are not auto saved!<br />
+                            Card data with offline image cannot be exported.
+                        </div>
+                    </div>
+                </div>
             </div>
+            {(previewCanvasRef && !isLoading) && <Button
+                size="small"
+                className="download-button"
+                disabled={!completedCrop?.width || !completedCrop?.height}
+                onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
+            >
+                {'Download cropped image'}
+            </Button>}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
                 <ReactCrop key={`${sourceType}${ratio}${isMigrated}`}
@@ -247,8 +283,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                     height: isRatioAcceptable
                                         ? height
                                         : width * image.naturalWidth /** Restore original size */
-                                            / ratio /** Get height with corresponding aspect ratio */
-                                            / image.naturalHeight /** Convert back to percent */,
+                                        / ratio /** Get height with corresponding aspect ratio */
+                                        / image.naturalHeight /** Convert back to percent */,
                                     aspect: ratio,
                                 };
                             });

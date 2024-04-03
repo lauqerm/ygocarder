@@ -13,7 +13,7 @@ import {
     insertUrlParam,
     rebuildCardData,
 } from './util';
-import { AppHeader, CardInputPanel, CardInputPanelRef, taintedCanvasWarning } from './page';
+import { AppHeader, CardInputPanel, CardInputPanelRef, TaintedCanvasWarning } from './page';
 import WebFont from 'webfontloader';
 import { useMasterSeriDrawer } from './service';
 
@@ -232,7 +232,12 @@ function App() {
         const generateLayer = (canvasLayer: React.RefObject<HTMLCanvasElement>, ctx: CanvasRenderingContext2D | null | undefined) => {
             return new Promise<boolean>(resolve => {
                 if (canvasLayer.current && ctx) {
-                    const layerData = canvasLayer.current.toDataURL('image/png');
+                    let layerData = '';
+                    try {
+                        layerData = canvasLayer.current.toDataURL('image/png');
+                    } catch (e) {
+                        console.error(e);
+                    }
 
                     if (layerData) {
                         var layer = new Image();
@@ -242,7 +247,7 @@ function App() {
                             resolve(true);
                         };
                         layer.onerror = () => resolve(false);
-                    } else resolve(false);
+                    } else resolve(true);
                 } else resolve(false);
             });
         };
@@ -257,9 +262,10 @@ function App() {
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
             if (previewCtx && exportCtx) {
-                const { x, y, w, h } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+                const { x, y, w } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+                const { width: imageWidth, height: imageHeight } = previewCtx;
 
-                exportCtx.drawImage(previewCtx, x, y, w, h);
+                if (imageHeight > 0) exportCtx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
             }
             await generateLayer(specialFrameCanvasRef, exportCtx);
             await Promise.all([
@@ -307,7 +313,7 @@ function App() {
                                 <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Save</button>
                             </>
                             : <div id="save-button-tainted">
-                                Manually save by right click the card → "Save image as..." {taintedCanvasWarning}
+                                Manually save by right click the card → "Save image as..." {TaintedCanvasWarning}
                             </div>}
                         <div className="imexport">
                             <button onClick={() => {

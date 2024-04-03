@@ -52,7 +52,6 @@
 		}
 	}
 	.checkbox-train {
-		display: flex;
 		.ant-radio-button-wrapper-checked {
 			border-color: #1890ff;
 		}
@@ -75,12 +74,7 @@
 	.name-input .ant-input-group-addon {
 		min-width: 105px;
 	}
-	.set-id-input .ant-input-group-addon,
-	.password-input .ant-input-group-addon {
-		width: 140px;
-	}
 	.checkbox-condense-train {
-		display: inline-flex;
 		.standalone-addon.ant-input-group-addon {
 			width: unset;
 		}
@@ -162,31 +156,34 @@
 }
 
 .frame-radio {
-	display: flex;
-	flex-wrap: wrap;
-	column-gap: 5px;
-	row-gap: 5px;
-	.ant-radio-button-wrapper {
-		flex: 1;
-		text-transform: capitalize;
-		white-space: nowrap;
-		padding: 0 5px;
-		min-width: 90px;
-		text-align: center;
-		border-width: 0 !important;
-		text-shadow: none;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-		&:hover {
-			outline: 2px solid #2badea;
+	.checkbox-train-input-group {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 5px;
+		row-gap: 5px;
+		box-shadow: none;
+		.ant-radio-button-wrapper {
+			flex: 1;
+			text-transform: capitalize;
+			white-space: nowrap;
+			padding: 0 5px;
+			min-width: 90px;
+			text-align: center;
+			border-width: 0 !important;
+			text-shadow: none;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+			&:hover {
+				outline: 2px solid #35b9f7;
+				outline-offset: 1px;
+			}
+			&::before {
+				display: none;
+			}
+		}
+		.ant-radio-button-wrapper-checked {
+			outline: 2px solid #1890ff;
 			outline-offset: 1px;
 		}
-		&::before {
-			display: none;
-		}
-	}
-	.ant-radio-button-wrapper-checked {
-		outline: 2px solid #1890ff;
-		outline-offset: 1px;
 	}
 }
 .pendulum-frame-picker {
@@ -196,6 +193,29 @@
 		display: flex;
 		flex-wrap: wrap;
 		max-width: 500px;
+	}
+}
+.random-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #222;
+    background-color: #5b626e;
+    border-radius: 4px;
+    box-shadow: 0 0 3px 0 #333;
+	cursor: pointer;
+	&:hover {
+		background-color: #707681;
+	}
+}
+.input-label-with-button {
+	display: flex;
+    align-items: center;
+	.input-label {
+		flex: 1;
 	}
 }
 

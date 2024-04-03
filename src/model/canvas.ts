@@ -9,13 +9,13 @@ export const CardArtCanvasConst = {
         x: 100, // 67 * UP_RATIO,
         y: 219, // 147* UP_RATIO,
         w: 614, // 416 * UP_RATIO,
-        h: 614, // 416 * UP_RATIO,
+        ratio: 1,
     },
     pendulum: {
         x: 56, // 38 * UP_RATIO,
         y: 213, // 144 * UP_RATIO,
         w: 702, // 474 * UP_RATIO,
-        h: 696, // 470 * UP_RATIO,
+        ratio: 1.325
     }
 };
 /** Tính năng này liên quan đến việc giữ UP_RATIO hay không.

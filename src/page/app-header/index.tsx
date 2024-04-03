@@ -1,6 +1,4 @@
 import React from 'react';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Popover } from 'antd';
 import { Explanation } from 'src/component';
 import './app-header.scss';
 
@@ -44,7 +42,7 @@ export const AppHeader = React.memo(() => {
     </div>;
 }, () => true);
 
-export const taintedCanvasWarning = <Popover
+export const TaintedCanvasWarning = <Explanation
     overlayClassName="disclaimer-overlay"
     style={{ display: 'inline-block' }}
     content={<div className="disclaimer">
@@ -62,6 +60,5 @@ export const taintedCanvasWarning = <Popover
             Change to other safe and popular image host ("imgur" for example) <b>then refresh the page</b>.<br />
             If you cannot afford to do that, the app will also work mostly just fine, you only need to manually save the card (and keep cautious).
         </p>
-    </div>}>
-    <ExclamationCircleOutlined className="disclaimer-icon" />
-</Popover>;
+    </div>}
+/>;
