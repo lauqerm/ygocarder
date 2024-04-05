@@ -23,7 +23,7 @@
 			flex-direction: column;
 			row-gap: 0.5em;
 			#card-effect {
-				min-height: 15rem;
+				min-height: 13rem;
 			}
 		}
 		.main-info-second {
@@ -79,7 +79,7 @@
 			width: unset;
 		}
 		.ant-radio-button-wrapper {
-			flex: 1;
+			flex: 1 1 90px;
 		}
 	}
 
@@ -133,7 +133,6 @@
 	}
 	.pendulum-frame-input {
 		display: inline-block;
-		padding: 0 5px;
 		cursor: pointer;
 	}
 	.pendulum-container {
@@ -147,11 +146,23 @@
 		background-color: #48484b;
 		.joined-row {
 			grid-column: span 2;
+			.ant-checkbox-wrapper {
+				margin-right: 5px;
+			}
+			.ant-checkbox-wrapper + .ant-checkbox-wrapper {
+				margin-left: 0;
+			}
 		}
 		.ant-input-group-addon {
 			width: 105px;
 			text-align: left;
 		}
+	}
+	.ant-checkbox-wrapper + .ant-checkbox-wrapper {
+		margin-left: 5px;
+	}
+	.checkbox-input {
+		text-align: right;
 	}
 }
 
@@ -162,6 +173,11 @@
 		column-gap: 5px;
 		row-gap: 5px;
 		box-shadow: none;
+		border-radius: none;
+		.ant-radio-button-wrapper:first-child,
+		.ant-radio-button-wrapper:last-child {
+			border-radius: 0;
+		}
 		.ant-radio-button-wrapper {
 			flex: 1;
 			text-transform: capitalize;
@@ -172,6 +188,7 @@
 			border-width: 0 !important;
 			text-shadow: none;
 			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+			font-size: 13px;
 			&:hover {
 				outline: 2px solid #35b9f7;
 				outline-offset: 1px;
@@ -195,44 +212,10 @@
 		max-width: 500px;
 	}
 }
-.random-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 5px;
-    width: 24px;
-    height: 24px;
-    border: 1px solid #222;
-    background-color: #5b626e;
-    border-radius: 4px;
-    box-shadow: 0 0 3px 0 #333;
-	cursor: pointer;
-	&:hover {
-		background-color: #707681;
-	}
-}
 .input-label-with-button {
 	display: flex;
     align-items: center;
 	.input-label {
 		flex: 1;
-	}
-}
-
-@media only screen and (max-width: 1024px) {
-	.card-info-panel {
-		.checkbox-star-train {
-			.ant-radio-button-wrapper {
-				width: 30px;
-				padding: 0;
-				text-align: center;
-			}
-		}
-		.main-info {
-			flex-wrap: wrap-reverse;
-			.main-info-second {
-				flex: 1 1 375px;
-			}
-		}
 	}
 }

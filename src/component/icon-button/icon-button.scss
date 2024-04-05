@@ -1,0 +1,16 @@
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #222;
+    background-color: #5b626e;
+    border-radius: 4px;
+    box-shadow: 0 0 3px 0 #333;
+	cursor: pointer;
+	&:hover {
+		background-color: #707681;
+	}
+}

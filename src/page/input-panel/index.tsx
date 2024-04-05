@@ -1,7 +1,7 @@
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Input, Checkbox, Tooltip, Dropdown } from 'antd';
+import { Input, Checkbox, Dropdown } from 'antd';
 import { Card, CardArtCanvasConst, CondenseType, TextStyle, TextStyleType, frameMap } from '../../model';
-import { FrameInfoBlock, ImageCropper, LinkMarkChooser } from '../../component';
+import { FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
@@ -34,21 +34,6 @@ const onChangeFactory = (
             [key]: valueTransform(typeof e === 'string' || typeof e === 'number' || Array.isArray(e) ? e : e?.target?.value),
         }));
     };
-};
-
-type RandomButton = {
-    seeder: () => string,
-    onGenerate: (value: string) => void,
-}
-const RandomButton = ({
-    seeder,
-    onGenerate,
-}: RandomButton) => {
-    return <span className="random-button">
-        <Tooltip overlay="Randomize">
-            <SyncOutlined onClick={() => onGenerate(seeder())} />
-        </Tooltip>
-    </span>;
 };
 
 export type CardInputPanelRef = {
@@ -251,7 +236,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     <span>Icon</span>
                 </CheckboxTrain>
             }
-            <CheckboxTrain className="checkbox-image-train" value={attribute} onChange={onAttributeChange} optionList={attributeList}>
+            <CheckboxTrain className="checkbox-image-train attribute-input" value={attribute} onChange={onAttributeChange} optionList={attributeList}>
                 <span>Attribute</span>
             </CheckboxTrain>
         </div>
@@ -265,16 +250,20 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     className="set-id-input"
                     addonBefore={<div className="input-label-with-button">
                         <div className="input-label">Set ID</div>
-                        <RandomButton seeder={randomSetID} onGenerate={onSetIDChange} />
+                        <IconButton
+                            iconProps={{ onClick: () => onPasscodeChange(randomSetID()) }}
+                            Icon={SyncOutlined}
+                            tooltipProps={{ overlay: 'Randomize' }}
+                        />
                     </div>}
                     onChange={onSetIDChange}
                     placeholder="Set ID"
                     value={setId}
                 />
                 {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
-                    <div className="joined-row">
-                        <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum?</Checkbox>
-                        {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale?</Checkbox>}
+                    <div className="joined-row pendulum-option">
+                        <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum</Checkbox>
+                        {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
                         {isPendulum && <Dropdown
                             arrow
                             overlayClassName="pendulum-frame-picker-overlay"
@@ -367,7 +356,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     allowClear
                     placeholder="Card effect"
                     value={displayEffect}
-                    rows={10}
+                    rows={9}
                     onChange={ev => {
                         onEffectChange(ev);
                         setDisplayEffect(ev.target.value);
@@ -397,7 +386,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         className="password-input"
                         addonBefore={<div className="input-label-with-button">
                             <div className="input-label">Password</div>
-                            <RandomButton seeder={randomPassword} onGenerate={onPasscodeChange} />
+                            <IconButton
+                                iconProps={{ onClick: () => onPasscodeChange(randomPassword()) }}
+                                Icon={SyncOutlined}
+                                tooltipProps={{ overlay: 'Randomize' }}
+                            />
                         </div>}
                         onChange={onPasscodeChange}
                         placeholder="Password"

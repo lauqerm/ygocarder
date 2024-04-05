@@ -213,6 +213,6 @@ const migrateCardData = (card: Record<string, any>) => {
     if (migratedCard.version === undefined) migratedCard.version = 1;
     if (migratedCard.format === undefined) migratedCard.format = 'tcg';
     if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'spell';
-    if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/h5kXZeC.png';
+    if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
     return migratedCard;
 };

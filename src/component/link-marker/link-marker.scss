@@ -3,11 +3,10 @@
     color: #ffffffcc;
     text-shadow: 0 1px #222;
     padding: 10px;
-	padding-top: 5px;
+    padding-top: 5px;
     background-color: #4f4f4f;
-    box-shadow: 0 0 2px 1px #212121 inset;
+    box-shadow: 0 0 2px 1px #212121;
     border-radius: 3px;
-    border: 1px solid #484848;
 	.title {
 		line-height: 1.45;
 		margin-bottom: 5px;
@@ -20,7 +19,9 @@
 		height: 92px;
 		column-gap: 1px;
 		row-gap: 1px;
-		background-color: #222;
+		background-color: #333333;
+		box-shadow: 0 0 4px 1px #141414 inset;
+		border-radius: 4px;
 		.link-marker-icon {
 			width: 0;
 			height: 0;

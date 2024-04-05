@@ -40,11 +40,14 @@
                 min-width: 0;
             }
         }
+        .explanation-icon {
+            margin: 3px 0;
+        }
     }
 }
 .explanation-overlay {
 	.disclaimer {
-		font-size: 12px;
+		font-size: 13px;
 		line-height: 1.25;
 		h2 {
 			line-height: 1;

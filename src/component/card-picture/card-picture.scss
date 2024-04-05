@@ -7,11 +7,10 @@
 	.card-image-source-input-container {
 		min-height: 115px;
 	}
-	.download-button {
-		padding: 0;
-		&:hover {
-			color: #3b9dff;
-		}
+	.disabled,
+	.disabled .anticon {
+		cursor: not-allowed;
+		filter: opacity(0.8);
 	}
 	.card-image-source-input-title {
 		display: flex;

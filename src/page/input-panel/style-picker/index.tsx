@@ -75,6 +75,7 @@ export const StylePicker = React.memo(({
                         <Dropdown
                             arrow
                             placement="bottomLeft"
+                            overlayClassName="predefined-picker-overlay"
                             overlay={<Menu>
                                 {PresetList.map(({ key, image, label }) => {
                                     return <Menu.Item key={key}

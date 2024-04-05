@@ -1,11 +1,15 @@
 #root {
 	background-color: #fff;
-    min-width: 570px;
+    min-width: 600px;
 	--card-width: 549px;
 	--card-height: 800px;
+	--resize-ratio: 0.7;
+	--translate-ratio: -15%;
 }
 #app {
 	width: 100%;
+	min-height: 100vh;
+	padding: 10px 0;
 }
 .full-loading {
 	position: fixed;
@@ -24,10 +28,11 @@
 }
 .app-container {
 	display: flex;
-	column-gap: 10px;
-	min-height: 100vh;
 	max-width: 1600px;
+	background-color: #404040;
+	box-shadow: 0 0 2px 2px #202020;
 	margin: auto;
+	border-radius: 8px;
 	&.app-container-export {
 		flex-direction: row-reverse;
 		> .card-filter-panel {
@@ -43,20 +48,22 @@
 	.card-info-panel {
 		flex: 3;
 		padding: 10px;
-		background-color: #404040;
-		border: 2px solid #444040;
-		margin: 10px 0;
-		border-radius: 8px;
-		box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 		position: relative;
 	}
 	.card-preview-panel {
-		flex: 0 0 570px;
+		flex: 0 0 580px;
 		position: relative;
 		overflow: hidden;
-		min-height: 1200px;
+		.card-canvas-container {
+			position: relative;
+			display: block;
+			width: calc(var(--card-width) * var(--resize-ratio));
+			height: calc(var(--card-height) * var(--resize-ratio));
+			margin: 10px;
+			margin-top: 0;
+		}
 		&.export-tainted {
 			.export-button {
 				color: #ff6f6f;
@@ -67,23 +74,24 @@
 				color: #3b9dff;
 			}
 		}
+		#save-button-tainted {
+			text-align: center;
+			justify-content: space-around;
+		}
 		.export-button {
 			display: flex;
-			flex-direction: column;
-			background-color: #404040;
+			column-gap: 10px;
 			border-radius: 5px;
 			font-size: 19px;
 			line-height: 1.5;
 			margin: auto;
-			margin-top: 10px;
-			margin-bottom: 15px;
 			max-width: var(--card-width);
+			min-height: 59px;
 			outline: none !important;
 			padding: 10px;
-			text-align: left;
+			padding-right: 0;
+			text-align: center;
 			text-shadow: 0px 1px 2px black;
-			border: 1px solid #383838;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 			.anticon {
 				cursor: pointer;
 			}
@@ -96,7 +104,10 @@
 				cursor: pointer;
 			}
 			.save-button {
-				font-weight: bold;
+				flex: 1;
+				font-size: 20px;
+				border: 1px solid #0c8ac6;
+				font-weight: 500;
 				box-shadow: 0 0 2px 1px #333;
 			}
 			#save-button-waiting {
@@ -109,17 +120,19 @@
 					box-shadow: none;
 				}
 			}
-			#save-button-tainted {
-				border: 1px solid transparent;
-				padding: 1px 0;
+			.save-button-container {
+				display: flex;
+				flex: 1;
+				font-size: 14px;
+				line-height: 1.35;
 			}
 			.imexport {
+				flex: 0 0 200px;
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				column-gap: 10px;
-				margin-top: 10px;
 				button {
-					font-size: 15px;
+					font-size: 13px;
 					background-color: #5e85c9;
 					border: 1px solid #5e85e9;
 					box-shadow: 0 0 2px 1px #333;
@@ -131,15 +144,13 @@
 			}
 		}
 		.card-canvas-group {
-			box-shadow: 0 0 3px 2px #333, 0 0 8px 3px #444;
 			width: var(--card-width);
 			height: var(--card-height);
-			margin: auto;
 			margin-bottom: 10px;
-			transform: scale(0.66) translateZ(0);
+			transform: translateX(var(--translate-ratio)) translateY(var(--translate-ratio)) scale(var(--resize-ratio)) translateZ(0);
 			position: absolute;
-			top: -85px;
-			left: -120px;
+			top: 0;
+			left: 0;
 			canvas {
 				position: absolute;
 				left: 0;
@@ -246,7 +257,7 @@
 	.field-title,
 	.ant-btn.download-button,
 	.ant-input-group-addon {
-		font-weight: bold;
+		font-weight: 500;
 		border-color: transparent;
 		background-color: transparent;
 		color: #ffffffcc;
@@ -260,11 +271,12 @@
 	.pendulum-container {
 		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	}
+	--border-radius: 2px;
 	.checkbox-train .ant-radio-button-wrapper:first-child {
-		border-radius: 20px 0 0 20px;
+		border-radius: var(--border-radius) 0 0 var(--border-radius);
 	}
 	.checkbox-train .ant-radio-button-wrapper:last-child {
-		border-radius: 0 20px 20px 0;
+		border-radius: 0 var(--border-radius) var(--border-radius) 0;
 	}
 	.checkbox-train-input-group,
 	.ant-input-affix-wrapper,
@@ -272,9 +284,9 @@
 	.ant-input-wrapper .ant-input:last-child,
 	textarea.ant-input,
 	.ant-input-group > .ant-input-affix-wrapper:not(:first-child) {
-		border-radius: 20px;
-		border-top-left-radius: 20px;
-		border-bottom-left-radius: 20px;
+		border-radius: var(--border-radius);
+		border-top-left-radius: var(--border-radius);
+		border-bottom-left-radius: var(--border-radius);
 	}
 	.anticon {
 		color: #ffffffcc;
@@ -325,35 +337,32 @@ input:-internal-autofill-selected {
 	background-color: unset !important;
 }
 
-@media only screen and (max-width: 1024px) {
-	.app-container {
-		.card-preview-panel {
-			flex: 0 0 430px;
-			.card-canvas-group {
-				transform: scale(0.75) translateY(-133px) translateX(-78px);
-			}
-			.export-button {
-				font-size: 15px;
-			}
-		}
-	}
+/** Custom Scrollbar **/
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }
 
-@media only screen and (max-width: 800px) {
-	.app-container {
-		flex-direction: column;
-		flex-wrap: wrap;
-		.card-preview-panel {
-			flex: 1 1;
-			.export-button {
-				max-width: unset;
-			}
-			.card-canvas-group {
-				transform: scale(1);
-			}
-		}
-		.card-info-panel {
-			margin: 10px 15px;
-		}
-	}
+/** Slow animation for download button **/
+.export-button .save-button {
+    background: linear-gradient(135deg, rgba(34, 193, 195, 1) 0%, rgba(41, 138, 233, 1) 50%, rgba(34, 193, 195, 1) 100%);
+    background-size: 300% 300%;
+    animation: SlowPulsating 10s ease infinite;
+}
+@keyframes SlowPulsating {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }

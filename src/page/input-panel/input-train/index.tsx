@@ -31,7 +31,7 @@ export const CheckboxTrain = ({
                     <span className={`ant-radio-button ${isChecked ? 'ant-radio-button-checked' : ''}`}>
                         <span className="ant-radio-button-inner"></span>
                     </span>
-                    <span>{entry.label}</span>
+                    <span className="label">{entry.label}</span>
                 </label>;
             })}
         </div>

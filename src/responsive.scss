@@ -1,0 +1,153 @@
+@media only screen and (max-width: 1440px) {
+	.app-container {
+		border-radius: 0;
+		.password-input,
+		.checkbox-input {
+			grid-column: span 2;
+		}
+		.checkbox-input {
+			.input-terminal span {
+				padding-right: 0;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 1368px) {
+	.app-container {
+		--resize-ratio: 0.60;
+		--translate-ratio: -20%;
+		.card-preview-panel {
+			flex: 0 0 500px;
+		}
+		.name-color-input .ant-radio-group label {
+			display: block;
+			.ant-radio-label {
+				display: inline-block;
+				width: 100%;
+			}
+		}
+		.password-input,
+		.checkbox-input {
+			grid-column: span 1;
+		}
+		.name-color-input {
+			.style-picker {
+				flex-wrap: wrap;
+				row-gap: 5px;
+				column-gap: 5px;
+			}
+			.anticon-caret-down,
+			.anticon-caret-up {
+				display: none;
+			}
+			.picker-dropdown {
+				margin: 0;
+				margin-left: 0;
+			}
+		}
+		.checkbox-train-input-group {
+			flex-wrap: wrap;
+			row-gap: 5px;
+			column-gap: 5px;
+			box-shadow: none;
+		}
+		&.checkbox-train .ant-radio-button-wrapper {
+			border-radius: 0;
+			border-left-width: 1px;
+		}
+		.card-info-panel .main-info {
+			flex-wrap: wrap;
+			flex-direction: column-reverse;
+			.main-info-first {
+				width: 100%;
+			}
+			.main-info-second {
+				flex: 1;
+				align-self: self-end;
+			}
+			.card-image-cropper {
+				align-items: center;
+				.card-cropper {
+					max-width: 375px;
+					max-height: 400px;
+					height: unset;
+					position: relative;
+				}
+			}
+		}
+	}
+}
+
+
+@media only screen and (max-width: 1200px) {
+	.app-container {
+		.password-input,
+		.checkbox-input {
+			grid-column: span 2;
+		}
+		.card-info-panel .main-info {
+			.main-info-second {
+				align-self: self-end;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+	.app-container {
+		--resize-ratio: 0.5;
+		--translate-ratio: -25%;
+		.card-preview-panel {
+			flex: 0 0 415px;
+		}
+	}
+	.app-container .card-preview-panel {
+		.card-canvas-group {
+			margin: 0;
+		}
+	}
+	.app-header .app-description .app-contribution {
+		.template-creator,
+		.app-creator {
+			grid-column: -1 / 1;
+			white-space: normal;
+		}
+	}
+	.char-picker-container {
+		top: 910px;
+	}
+}
+
+@media only screen and (max-width: 860px) {
+	.app-container {
+		--resize-ratio: 0.60;
+		--translate-ratio: -20%;
+		flex-wrap: wrap;
+		.card-info-panel,
+		.card-preview-panel {
+			flex: 1 1 auto;
+		}
+		.card-canvas-container {
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		.card-preview-panel {
+			min-height: unset;
+			.export-button {
+				padding-right: 10px;
+			}
+		}
+		.card-info-panel {
+			padding-top: 0;
+		}
+		.password-input,
+		.checkbox-input {
+			grid-column: span 1;
+		}
+	}
+	.char-picker-container {
+		top: 765px;
+		left: 10px;
+	}
+}

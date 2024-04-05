@@ -1,7 +1,9 @@
-import { Button, Input, Radio } from 'antd';
+import { Input, Radio } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
 import ReactCrop from 'react-image-crop';
+import { DownloadOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
+import { IconButton } from '../icon-button';
 import 'react-image-crop/dist/ReactCrop.css';
 import './card-picture.scss';
 
@@ -197,13 +199,19 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         }
     }));
 
+    const isDownloadable = previewCanvasRef && !isLoading && completedCrop?.width && completedCrop?.height;
     return (
         <div className="card-image-cropper">
             <div className="card-image-source-input">
                 {children}
                 <div className="card-image-source-input-container">
                     <div className="card-image-source-input-title">
-                        <span className="field-title">Card Image</span>
+                        <span className="field-title">Card Art <IconButton
+                            Icon={DownloadOutlined}
+                            containerProps={{ className: isDownloadable ? '' : 'disabled' }}
+                            tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
+                            iconProps={{ onClick: () => (isDownloadable && previewCanvasRef) && generateDownload(previewCanvasRef, completedCrop) }}
+                        /></span>
                         <Radio.Group
                             onChange={e => {
                                 const value = e.target.value;
@@ -230,7 +238,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             onChange={applyExternalSource} maxLength={512}
                         />
                         <div className="online-image-tip">
-                            Recommended. Please use direct image link from popular sites such as imgur, discord or twitter.
+                            Recommended. Direct image links from imgur, discord or twitter are acceptable.
                         </div>
                     </div>
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
@@ -242,14 +250,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     </div>
                 </div>
             </div>
-            {(previewCanvasRef && !isLoading) && <Button
-                size="small"
-                className="download-button"
-                disabled={!completedCrop?.width || !completedCrop?.height}
-                onClick={() => previewCanvasRef && generateDownload(previewCanvasRef, completedCrop)}
-            >
-                {'Download cropped image'}
-            </Button>}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
                 <ReactCrop key={`${sourceType}${ratio}${isMigrated}`}

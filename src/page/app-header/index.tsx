@@ -8,17 +8,7 @@ export const AppHeader = React.memo(() => {
         <div className="app-description">
             <h1>Yugioh Carder <small style={{ fontFamily: 'serif' }}>v{process.env.REACT_APP_VERSION ?? 'unknown'} TCG</small></h1>
             <div className="app-contribution">
-                <span>GUI: <b>Lauqerm</b></span>
-                <span>
-                    Template: <b>Grezar</b> (<a
-                        href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
-                        target="_blank"
-                        rel="noreferrer">DeviantArt</a>), <b>9558able</b> (<a
-                        href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
-                        target="_blank"
-                        rel="noreferrer">DeviantArt</a>) and others
-                </span>
-                <Explanation
+                <span className="app-creator">GUI: <b>Lauqerm</b> <Explanation
                     content={<div className="disclaimer">
                         <h2>Disclaimer</h2>
                         <ul>
@@ -36,7 +26,16 @@ export const AppHeader = React.memo(() => {
                             <li>I do not charge any kind of fee, require donation or embed ads, and hold no liability for any other parties that use my code in their websites.</li>
                         </ul>
                     </div>}
-                />
+                /></span>
+                <span className="template-creator">
+                    Template: <b>Grezar</b> (<a
+                        href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
+                        target="_blank"
+                        rel="noreferrer">DeviantArt</a>), <b>9558able</b> (<a
+                        href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
+                        target="_blank"
+                        rel="noreferrer">DeviantArt</a>) and others
+                </span>
             </div>
         </div>
     </div>;
@@ -57,7 +56,7 @@ export const TaintedCanvasWarning = <Explanation
         </p>
         <h2>How do I fix it?</h2>
         <p>
-            Change to other safe and popular image host ("imgur" for example) <b>then refresh the page</b>.<br />
+            Change to other safe and popular image host ("imgur" for example) <u>then refresh the page</u>.<br />
             If you cannot afford to do that, the app will also work mostly just fine, you only need to manually save the card (and keep cautious).
         </p>
     </div>}

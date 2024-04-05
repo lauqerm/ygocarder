@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './app.scss';
+import './responsive.scss';
 import 'antd/dist/antd.css';
 import {
     CanvasConst,
@@ -307,30 +308,30 @@ function App() {
                 </div> */}
                 <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                     <div className="export-button">
-                        {!isTainted
-                            ? <>
-                                <button className="save-button" id="save-button-waiting" disabled>Save</button>
-                                <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Save</button>
-                            </>
-                            : <div id="save-button-tainted">
-                                Manually save by right click the card → "Save image as..." {TaintedCanvasWarning}
-                            </div>}
                         <div className="imexport">
                             <button onClick={() => {
                                 if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
 
                                 window.prompt('Save card data for later use', `${cardDataCondenser(currentCard)}`);
-                            }}>Export Card Data</button>
+                            }}>Export Data</button>
                             <button onClick={() => {
-                                const cardData = window.prompt('Paste your card data');
+                                const cardData = window.prompt('Paste your card data here');
 
                                 if (cardData) {
                                     const decodedCard = rebuildCardData(cardData, true) as Card;
                                     setCard(decodedCard);
                                     cardInputRef.current?.forceCardData(decodedCard);
                                 }
-                            }}>Import Card Data</button>
+                            }}>Import Data</button>
                         </div>
+                        {!isTainted
+                            ? <div className="save-button-container">
+                                <button className="save-button" id="save-button-waiting" disabled>Download</button>
+                                <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Download</button>
+                            </div>
+                            : <div id="save-button-tainted" className="save-button-container">
+                                <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
+                            </div>}
                     </div>
                     <div className="card-canvas-container">
                         <div className="card-canvas-group">
