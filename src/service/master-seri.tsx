@@ -294,7 +294,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
                     const leftEdge = starCount <= 12
                         ? reverseAlign
-                            ? (57 - starWidth) * UP_RATIO
+                            ? (58 * UP_RATIO - starWidth)
                             : 492 * UP_RATIO
                         : reverseAlign
                             ? (CanvasWidth - totalWidth) / 2 - starWidth
