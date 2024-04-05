@@ -187,7 +187,6 @@ function App() {
                     document.getElementById('export-canvas')?.classList.remove('js-export-available');
                     document.getElementById('export-canvas-guard')?.setAttribute('style', '');
                     document.getElementById('save-button-waiting')?.setAttribute('style', 'display: block');
-                    document.getElementById('save-button-ready')?.setAttribute('style', 'display: none');
 
                     exportRef.current.queuedPipeline = true;
                     // await new Promise(resolve => setTimeout(() => resolve(true), 3000));
@@ -205,7 +204,6 @@ function App() {
                             document.getElementById('export-canvas')?.classList.add('js-export-available');
                             document.getElementById('export-canvas-guard')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
-                            document.getElementById('save-button-ready')?.setAttribute('style', 'display: block');
 
                             if (pendingSave.current) {
                                 pendingSave.current = false;
@@ -326,7 +324,7 @@ function App() {
                         </div>
                         {!isTainted
                             ? <div className="save-button-container">
-                                <button className="save-button" id="save-button-waiting" disabled>Download</button>
+                                <div id="save-button-waiting" />
                                 <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Download</button>
                             </div>
                             : <div id="save-button-tainted" className="save-button-container">

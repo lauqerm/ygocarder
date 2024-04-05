@@ -4,6 +4,9 @@
         display: flex;
         flex: 1 1 auto;
     }
+    .ant-radio-button-wrapper {
+        user-select: none;
+    }
     .ant-radio-button-wrapper:first-child,
     .ant-radio-button-wrapper:last-child {
         border-radius: 0;

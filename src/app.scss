@@ -112,6 +112,11 @@
 			}
 			#save-button-waiting {
 				cursor: wait;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
 			}
 			#save-button-ready {
 				cursor: pointer;
@@ -125,6 +130,7 @@
 				flex: 1;
 				font-size: 14px;
 				line-height: 1.35;
+				position: relative;
 			}
 			.imexport {
 				flex: 0 0 200px;
