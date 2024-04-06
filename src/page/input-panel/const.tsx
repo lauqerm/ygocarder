@@ -1,5 +1,7 @@
 import { CondenseTolerantLabelMap } from 'src/const';
 import { frameList, iconList, attributeList, stickerList, foilList } from '../../model';
+import { ArtFinishMap, FinishMap } from 'src/model/finish';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import './input-panel.scss';
 
 export const foilButtonList = foilList.map(({ color, name }) => ({
@@ -12,6 +14,19 @@ export const foilButtonList = foilList.map(({ color, name }) => ({
         } as React.CSSProperties,
     }
 }));
+
+export const finishButtonList = Object.values(FinishMap).map(({ value, label }) => ({
+    label,
+    value,
+}));
+
+export const artFinishButtonList = [
+    { value: 'normal', label: <CloseCircleOutlined /> },
+    ...Object.values(ArtFinishMap).map(({ value, label }) => ({
+        label,
+        value,
+    })),
+];
 
 export const frameButtonList = frameList.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage }) => ({
     label: name.replaceAll('-', ' '),
@@ -27,7 +42,7 @@ export const frameButtonList = frameList.map(({ labelColor, name, labelBackgroun
 
 export const getAttributeList = (format: string) => attributeList.map(({ name }) => ({
     label: name === 'NONE'
-        ? 'NONE'
+        ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
     value: name,
 }));
@@ -41,7 +56,7 @@ export const starButtonList = [...Array(14)].map((e, index) => ({ label: index, 
 
 export const stickerButtonList = stickerList.map(name => ({
     label: name === 'no-sticker'
-        ? <span className="no-sticker">NONE</span>
+        ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));

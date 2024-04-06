@@ -1,5 +1,5 @@
 import { Checkbox, Dropdown, InputNumber, Menu, Popover, Slider, Tooltip } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { PresetList, PresetMap, TextStyle, TextStyleType } from '../../../model';
@@ -27,6 +27,10 @@ export const StylePicker = React.memo(({
     const [isGradientPickerVisble, setGradientPickerVisible] = useState(false);
     const [requestSendStyle, requestSendStyleSignal] = useRefresh();
     const onChange = useRef(debounce(undebouncedOnChange, 250)).current;
+    const memoizedOnGradientChange = useCallback((palette, gradientAngle) => {
+        setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
+        requestSendStyle();
+    }, [requestSendStyle]);
 
     const setCustomValue = <ValueType extends any>(key: keyof TextStyle) => {
         return (inputValue: ValueType) => {
@@ -314,10 +318,7 @@ export const StylePicker = React.memo(({
                                             <TextGradientPicker
                                                 angle={gradientAngle}
                                                 palette={gradientColor}
-                                                onChange={(palette, gradientAngle) => {
-                                                    setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
-                                                    requestSendStyle();
-                                                }}
+                                                memoizedOnChange={memoizedOnGradientChange}
                                             />
                                         </div>}
                                     </div>

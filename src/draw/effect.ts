@@ -38,7 +38,7 @@ export const drawEffect = (
         : splitEffect(normalizedContent, isNormal);
 
     const additionalLineCount = (effectMaterial.length > 0 ? 1 : 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
-    const sentencizeText = effectBody.split('\n');
+    const paragraphList = effectBody.split('\n');
 
     const tokenizer = new RegExp(`([${specialSymbol}${breakableSymbol}])`, 'g');
     const specialSymbolReg = new RegExp(specialSymbol, 'g');
@@ -50,7 +50,7 @@ export const drawEffect = (
         const condenser = createCondenser();
         let effectiveRatio = 1000;
 
-        const maxLine = Math.max(sentencizeText.length, lineCount);
+        const maxLine = Math.max(paragraphList.length, lineCount);
 
         ctx.font = `${isNormal ? 'italic' : ''} ${fontSize}px MatrixBook`;
         ctx.textAlign = 'left';
@@ -68,7 +68,7 @@ export const drawEffect = (
         const createSentence = () => {
             lineList = [];
 
-            return sentencizeText.reduce((prev, curr) => {
+            return paragraphList.reduce((prev, curr) => {
                 // The width is "expand" based on condense ratio so all the calculation does not need to be scaled
                 const condenseRatio = condenser.getMedian() / 1000;
                 const hypoWidth = width / condenseRatio;
@@ -158,7 +158,7 @@ export const drawEffect = (
             ctx.strokeStyle = '#003300';
             ctx.stroke();
         };
-        const tolerantValue = tolerantPerSentence[`${sentencizeText.length}`] ?? tolerantPerSentence['3'];
+        const tolerantValue = tolerantPerSentence[`${paragraphList.length}`] ?? tolerantPerSentence['3'];
         if ((effectiveRatio < tolerantValue)
             && effectSizeLevel < fontList.length - 1
         ) {

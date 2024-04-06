@@ -65,11 +65,12 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     };
 };
 
-const cardFieldShortenMap: Record<keyof Card | string, string | Record<string, string>> = {
+const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     format: 'fm',
     frame: 'fr',
     foil: 'fo',
     finish: 'fn',
+    artFinish: 'afn',
     name: 'na',
     nameStyleType: 'nst',
     effectStyle: {
@@ -213,6 +214,8 @@ const migrateCardData = (card: Record<string, any>) => {
     if (migratedCard.version === undefined) migratedCard.version = 1;
     if (migratedCard.format === undefined) migratedCard.format = 'tcg';
     if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'spell';
+    if (migratedCard.finish === undefined) migratedCard.finish = [];
+    if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
     if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
     return migratedCard;
 };

@@ -35,6 +35,7 @@ export type ImageCropper = {
     defaultExternalSource?: string,
     previewCanvasRef?: HTMLCanvasElement | null,
     children?: React.ReactNode,
+    beforeCropper?: React.ReactNode,
     ratio?: number,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     onSourceChange?: (source: string) => void,
@@ -46,6 +47,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     defaultExternalSource = '',
     previewCanvasRef,
     children,
+    beforeCropper,
     ratio = 1,
     defaultCropInfo,
     onSourceChange = () => { },
@@ -56,7 +58,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [inputMode, setInputMode] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
-    console.log('🚀 ~ internalSource:', typeof internalSource);
     const [isLoading, setLoading] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
@@ -123,7 +124,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         ctx.imageSmoothingQuality = 'high';
         let fitCropData: Partial<ReactCrop.Crop> | undefined = undefined;
         /** Fit crop frame vào ảnh nếu nó bị tràn (ví dụ do thay đổi về ratio). Ta cố gắng để crop frame lớn nhất có thể. */
-        console.log(drawCoordinateX, drawWidth, naturalWidth, drawCoordinateY, drawHeight, naturalHeight);
         if (
             (drawCoordinateX + drawWidth) > naturalWidth
             || (drawCoordinateY + drawHeight) > naturalHeight
@@ -206,12 +206,16 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 {children}
                 <div className="card-image-source-input-container">
                     <div className="card-image-source-input-title">
-                        <span className="field-title">Card Art <IconButton
-                            Icon={DownloadOutlined}
-                            containerProps={{ className: isDownloadable ? '' : 'disabled' }}
-                            tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
-                            iconProps={{ onClick: () => (isDownloadable && previewCanvasRef) && generateDownload(previewCanvasRef, completedCrop) }}
-                        /></span>
+                        <span className="field-title">
+                            Card Art <IconButton
+                                Icon={DownloadOutlined}
+                                containerProps={{ className: isDownloadable ? '' : 'disabled' }}
+                                tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
+                                iconProps={{
+                                    onClick: () => (isDownloadable && previewCanvasRef) && generateDownload(previewCanvasRef, completedCrop)
+                                }}
+                            />
+                        </span>
                         <Radio.Group
                             onChange={e => {
                                 const value = e.target.value;
@@ -244,12 +248,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
                         <Input type="file" accept="image/*" onChange={applyInternalSource} />
                         <div className="offline-image-warning">
-                            Offline images are not auto saved!<br />
-                            Card data with offline image cannot be exported.
+                            Card data with offline image cannot be exported or auto-saved.
                         </div>
                     </div>
                 </div>
             </div>
+            {beforeCropper}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
                 <ReactCrop key={`${sourceType}${ratio}${isMigrated}`}

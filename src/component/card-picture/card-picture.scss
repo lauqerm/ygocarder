@@ -32,7 +32,9 @@
 		flex: 1;
 		display: grid;
 		grid-template-columns: max-content 1fr;
-		column-gap: 10px;
+		.link-marker-chooser {
+			margin-right: 0.5em;
+		}
 		.card-image-source-input-title {
 			grid-column: span 2;
 		}
@@ -50,7 +52,7 @@
 		line-height: 1.25;
 	}
 	.card-cropper {
-		height: 400px;
+		max-height: 400px;
 		position: relative;
 	}
 	.ReactCrop__image {

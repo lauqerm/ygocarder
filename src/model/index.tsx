@@ -232,6 +232,8 @@ export const defaultCard = {
     format: 'tcg',
     frame: 'fusion',
     foil: 'normal',
+    finish: [] as string[],
+    artFinish: 'normal',
     name: 'Junko',
     nameStyleType: 'auto' as TextStyleType,
     nameStyle: getDefaultTextStyle() as Partial<TextStyle>,

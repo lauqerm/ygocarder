@@ -1,9 +1,28 @@
-@media only screen and (max-width: 1440px) {
+@media only screen and (max-width: 1600px) {
 	.app-container {
 		border-radius: 0;
 		.password-input,
 		.checkbox-input {
 			grid-column: span 2;
+		}
+		.card-image-source-input-title,
+		.radio-train:not(.frame-radio) {
+			.ant-radio-group,
+			.radio-train-input-group {
+				flex-wrap: wrap;
+				row-gap: 2px;
+				column-gap: 2px;
+				box-shadow: none;
+				.ant-radio-button-wrapper {
+					flex: 1;
+					border-radius: 0;
+					border-left-width: 1px;
+					text-align: center;
+				}
+			}
+		}
+		.card-image-source-input-title .ant-radio-group {
+			display: inline-flex;
 		}
 		.checkbox-input {
 			.input-terminal span {
@@ -46,16 +65,6 @@
 				margin-left: 0;
 			}
 		}
-		.checkbox-train-input-group {
-			flex-wrap: wrap;
-			row-gap: 5px;
-			column-gap: 5px;
-			box-shadow: none;
-		}
-		&.checkbox-train .ant-radio-button-wrapper {
-			border-radius: 0;
-			border-left-width: 1px;
-		}
 		.card-info-panel .main-info {
 			flex-wrap: wrap;
 			flex-direction: column-reverse;
@@ -70,7 +79,6 @@
 				align-items: center;
 				.card-cropper {
 					max-width: 375px;
-					max-height: 400px;
 					height: unset;
 					position: relative;
 				}

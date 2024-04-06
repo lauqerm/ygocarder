@@ -53,6 +53,16 @@ export const stSizeList: BoxSize[] = [
     { width: 461 * UP_RATIO, top: 601 * UP_RATIO, left: 45 * UP_RATIO },
 ];
 
+/** Speed skill không có dòng ATK / DEF, nhưng lại có dòng type / ability */
+export const specialFontList: FontSize[] = [
+    { fontSize: 16.41 * UP_RATIO, lineHeight: 16.74 * UP_RATIO, lineCount: 7 },
+    { fontSize: 13.46 * UP_RATIO, lineHeight: 14.28 * UP_RATIO, lineCount: 8 },
+];
+export const specialSizeList: BoxSize[] = [
+    { width: 461 * UP_RATIO, top: 620 * UP_RATIO, left: 45 * UP_RATIO },
+    { width: 461 * UP_RATIO, top: 624 * UP_RATIO, left: 45 * UP_RATIO },
+];
+
 export type TypeSize = {
 	top: number,
 	left: number,

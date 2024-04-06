@@ -6,6 +6,8 @@ export {
     pendulumSizeList,
     stFontList,
     stSizeList,
+    specialSizeList,
+    specialFontList,
 
     CardTypeSizeMap,
     CondenseTolerantMap,

@@ -51,6 +51,7 @@ function App() {
     const passcodeCanvasRef = useRef<HTMLCanvasElement>(null);
     const creatorCanvasRef = useRef<HTMLCanvasElement>(null);
     const stickerCanvasRef = useRef<HTMLCanvasElement>(null);
+    const finishCanvasRef = useRef<HTMLCanvasElement>(null);
     const [canvasMap] = useState({
         previewCanvas: previewCanvasRef,
         drawCanvas: drawCanvasRef,
@@ -69,6 +70,7 @@ function App() {
         passcodeCanvas: passcodeCanvasRef,
         creatorCanvas: creatorCanvasRef,
         stickerCanvas: stickerCanvasRef,
+        finishCanvas: finishCanvasRef,
     });
 
     const {
@@ -255,8 +257,9 @@ function App() {
             exportCtx.clearRect(0, 0, CanvasConst.width, CanvasConst.height);
             await Promise.all(Object
                 .values(drawingPipeline.current)
-                .map(callDraw => {
-                    return callDraw();
+                .sort((l, r) => l.order - r.order)
+                .map(({ instructor }) => {
+                    return instructor();
                 }));
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
@@ -280,6 +283,7 @@ function App() {
                 passcodeCanvasRef,
                 creatorCanvasRef,
                 stickerCanvasRef,
+                finishCanvasRef,
             ].map(currentlayer => generateLayer(currentlayer, exportCtx)));
             // await drawRefrenceImage(exportCtx);
         }
@@ -333,7 +337,7 @@ function App() {
                     </div>
                     <div className="card-canvas-container">
                         <div className="card-canvas-group">
-                            <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} style={{ visibility: 'hidden' }} />
                             <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
                             </div>
@@ -352,6 +356,7 @@ function App() {
                             <canvas id="passcode" ref={passcodeCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="creator" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="sticker" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="finish" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas className="crop-canvas" ref={previewCanvasRef} />
                         </div>
                     </div>

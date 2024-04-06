@@ -272,19 +272,19 @@
 	}
 	textarea,
 	.ant-checkbox,
-	.checkbox-train-input-group,
+	.radio-train-input-group,
 	.ant-input-affix-wrapper,
 	.pendulum-container {
 		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	}
 	--border-radius: 2px;
-	.checkbox-train .ant-radio-button-wrapper:first-child {
+	.radio-train .ant-radio-button-wrapper:first-child {
 		border-radius: var(--border-radius) 0 0 var(--border-radius);
 	}
-	.checkbox-train .ant-radio-button-wrapper:last-child {
+	.radio-train .ant-radio-button-wrapper:last-child {
 		border-radius: 0 var(--border-radius) var(--border-radius) 0;
 	}
-	.checkbox-train-input-group,
+	.radio-train-input-group,
 	.ant-input-affix-wrapper,
 	.ant-input-wrapper .ant-input:first-child,
 	.ant-input-wrapper .ant-input:last-child,

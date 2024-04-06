@@ -88,12 +88,12 @@ const MAX_STOP_POINT = 12;
 export type TextGradientPicker = {
     palette?: string,
     angle?: number,
-    onChange: (palette: ColorPoint[], angle: number) => void,
+    memoizedOnChange: (palette: ColorPoint[], angle: number) => void,
 };
 export const TextGradientPicker = ({
     palette: externalPalette = stringifyPalette(getDefaultGradientPalette()),
     angle: externalAngle = 180,
-    onChange,
+    memoizedOnChange,
 }: TextGradientPicker) => {
     const pickerRef = useRef<WrappedColorPickerRef>(null);
     const [angle, setAngle] = useState(externalAngle);
@@ -151,18 +151,19 @@ export const TextGradientPicker = ({
         };
     }, [palette]);
 
+    /** Callback này yêu cầu memoize từ bên ngoài */
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {
             if (relevant) {
-                onChange(palette.colorList, angle);
+                memoizedOnChange(palette.colorList, angle);
             }
         }, 200);
 
         return () => {
             relevant = false;
         };
-    }, [palette, angle]);
+    }, [palette, angle, memoizedOnChange]);
 
     /** "controls-wrapper" là class định danh của GradientPicker, không được bỏ */
     return <div className="controls-wrapper gradient-picker-container">

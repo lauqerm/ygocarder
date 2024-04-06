@@ -16,4 +16,5 @@ export type MasterDuelCanvas = {
     passcodeCanvas: React.RefObject<HTMLCanvasElement>,
     creatorCanvas: React.RefObject<HTMLCanvasElement>,
     stickerCanvas: React.RefObject<HTMLCanvasElement>,
+    finishCanvas: React.RefObject<HTMLCanvasElement>,
 };

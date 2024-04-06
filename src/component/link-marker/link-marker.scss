@@ -2,8 +2,7 @@
     font-weight: bold;
     color: #ffffffcc;
     text-shadow: 0 1px #222;
-    padding: 10px;
-    padding-top: 5px;
+    padding: 0.5em;
     background-color: #4f4f4f;
     box-shadow: 0 0 2px 1px #212121;
     border-radius: 3px;
@@ -15,10 +14,10 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
 		grid-template-rows: 1fr 1fr 1fr;
-		width: 92px;
-		height: 92px;
-		column-gap: 1px;
-		row-gap: 1px;
+		width: 90px;
+		height: 90px;
+		column-gap: 0;
+		row-gap: 0;
 		background-color: #333333;
 		box-shadow: 0 0 4px 1px #141414 inset;
 		border-radius: 4px;
@@ -39,7 +38,7 @@
 	.link-marker-button {
 		cursor: pointer;
 		&:hover {
-			outline: #40a9ff solid 1px;
+			background-color: #dddddd33;
 		}
 	}
 	.link-marker-reset {

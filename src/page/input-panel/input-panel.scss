@@ -1,7 +1,12 @@
 .card-info-panel {
-	.foil-radio.checkbox-train {
-		display: inline-flex;
+	.card-overlay-input {
+		display: flex;
+		flex-wrap: wrap;
 		margin-bottom: 10px;
+		row-gap: 0.5em;
+	}
+	.foil-radio.radio-train {
+		display: inline-flex;
 	}
 	.family-radio {
 		display: flex;
@@ -51,12 +56,12 @@
 			}
 		}
 	}
-	.checkbox-train {
+	.radio-train {
 		.ant-radio-button-wrapper-checked {
 			border-color: #1890ff;
 		}
 	}
-	.checkbox-image-train label {
+	.image-input-train label {
 		padding: 0 10px;
 		flex: 1;
 		span:nth-child(2) {
@@ -74,7 +79,7 @@
 	.name-input .ant-input-group-addon {
 		min-width: 105px;
 	}
-	.checkbox-condense-train {
+	.condense-input {
 		.standalone-addon.ant-input-group-addon {
 			width: unset;
 		}
@@ -164,10 +169,13 @@
 	.checkbox-input {
 		text-align: right;
 	}
+	.art-finish-checkbox .ant-input-group-addon {
+		padding-left: 0;
+	}
 }
 
 .frame-radio {
-	.checkbox-train-input-group {
+	.radio-train-input-group {
 		display: flex;
 		flex-wrap: wrap;
 		column-gap: 5px;
@@ -206,7 +214,7 @@
 .pendulum-frame-picker {
 	background-color: #48484b;
 	padding: 5px;
-	.checkbox-train {
+	.radio-train {
 		display: flex;
 		flex-wrap: wrap;
 		max-width: 500px;

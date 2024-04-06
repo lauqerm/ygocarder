@@ -12,11 +12,13 @@ import {
     stIconButtonList,
     getAttributeList,
     stickerButtonList,
-    condenseButtonList
+    condenseButtonList,
+    finishButtonList,
+    artFinishButtonList
 } from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
-import { CheckboxTrain } from './input-train';
+import { CheckboxTrain, RadioTrain } from './input-train';
 import { ImageCropperRef } from '../../component/card-picture';
 import { Explanation } from 'src/component/explanation';
 import './input-panel.scss';
@@ -64,6 +66,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         onCardChange(currentCard => mutateFunc(currentCard));
     };
     const onFoilChange = onChangeFactory('foil', setCard);
+    const onFinishChange = onChangeFactory('finish', setCard);
+    const onArtFinishChange = onChangeFactory('artFinish', setCard);
     const onFrameChange = (frameValue: number | string) => {
         onCardChange(currentCard => {
             const value = `${frameValue}`;
@@ -157,7 +161,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
     const {
         format,
-        frame, foil,
+        frame, foil, finish, artFinish,
         name, nameStyleType, nameStyle,
         picture,
         effect,
@@ -206,10 +210,15 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 });
             }}
         />
-        <CheckboxTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={foilButtonList}>
-            <span>Foil</span>
-        </CheckboxTrain>
-        <CheckboxTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameButtonList} />
+        <div className="card-overlay-input">
+            <RadioTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={foilButtonList}>
+                <span>Foil</span>
+            </RadioTrain>
+            <CheckboxTrain className="finish-checkbox" value={finish} onChange={onFinishChange} optionList={finishButtonList}>
+                <span>Finish Type</span>
+            </CheckboxTrain>
+        </div>
+        <RadioTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameButtonList} />
         <div className="card-header custom-gap">
             <Input
                 id="name"
@@ -228,20 +237,25 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             <StylePicker defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} />
             {isMonster
                 ? !isLink
-                    ? <CheckboxTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButtonList}>
+                    ? <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={starButtonList}>
                         <span>{isXyz ? 'Rank' : isDarkSynchro ? 'Neg. Level' : 'Level'}</span>
-                    </CheckboxTrain>
+                    </RadioTrain>
                     : null
-                : <CheckboxTrain value={subFamily} onChange={onSubFamilyChange} optionList={stIconButtonList}>
+                : <RadioTrain value={subFamily} onChange={onSubFamilyChange} optionList={stIconButtonList}>
                     <span>Icon</span>
-                </CheckboxTrain>
+                </RadioTrain>
             }
-            <CheckboxTrain className="checkbox-image-train attribute-input" value={attribute} onChange={onAttributeChange} optionList={attributeList}>
-                <span>Attribute</span>
-            </CheckboxTrain>
         </div>
         <div key="pic" className="main-info">
             <div className="main-info-first">
+                <RadioTrain
+                    className="image-input-train attribute-input"
+                    value={attribute}
+                    onChange={onAttributeChange}
+                    optionList={attributeList}
+                >
+                    <span>Attribute</span>
+                </RadioTrain>
                 <Input
                     id="set-id"
                     ref={onlineCharPicker === 'set-id' ? ref as any : null}
@@ -268,7 +282,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             arrow
                             overlayClassName="pendulum-frame-picker-overlay"
                             overlay={<div className="pendulum-frame-picker">
-                                <CheckboxTrain
+                                <RadioTrain
                                     className="frame-radio"
                                     value={pendulumFrame}
                                     onChange={onPendulumFrameChange}
@@ -339,7 +353,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     style={{ width: '100%' }}
                     value={displayTypeAbility}
                 />
-                <CheckboxTrain className="checkbox-condense-train" value={`${effectStyle?.condenseTolerant}`}
+                <RadioTrain className="condense-input" value={`${effectStyle?.condenseTolerant}`}
                     onChange={value => onCondenseTolerantChange(value as CondenseType)}
                     optionList={condenseButtonList}
                 >
@@ -348,7 +362,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             content={'Stricter condense limit will favor compressing words instead of adding new lines'}
                         />
                     </span>
-                </CheckboxTrain>
+                </RadioTrain>
                 <TextArea key="effect"
                     id="card-effect"
                     ref={onlineCharPicker === 'card-effect' ? ref as any : null}
@@ -429,9 +443,14 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         placeholder="Creator"
                         value={creator}
                     />
-                    <CheckboxTrain className="sticker-input checkbox-image-train" value={sticker} onChange={onStickerChange} optionList={stickerButtonList}>
+                    <RadioTrain
+                        className="sticker-input image-input-train"
+                        value={sticker}
+                        onChange={onStickerChange}
+                        optionList={stickerButtonList}
+                    >
                         <span>Sticker</span>
-                    </CheckboxTrain>
+                    </RadioTrain>
                 </div>
             </div>
             <div className="main-info-second">
@@ -445,6 +464,16 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onImageChange={onImageChange}
                     onTainted={onTainted}
                     ratio={CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'].ratio}
+                    beforeCropper={
+                        <RadioTrain
+                            className="art-finish-checkbox image-input-train"
+                            value={artFinish}
+                            onChange={onArtFinishChange}
+                            optionList={artFinishButtonList}
+                        >
+                            <span>Art Finish Type</span>
+                        </RadioTrain>
+                    }
                 >
                     {isLink
                         ? <LinkMarkChooser defaultValue={linkMap} onChange={onLinkMapChange} />
