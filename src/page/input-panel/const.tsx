@@ -1,5 +1,4 @@
-import { CondenseTolerantLabelMap } from 'src/const';
-import { frameList, iconList, attributeList, stickerList, foilList } from '../../model';
+import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap } from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import './input-panel.scss';

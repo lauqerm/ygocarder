@@ -18,8 +18,3 @@ export const CardArtCanvasConst = {
         ratio: 1.325
     }
 };
-/** Tính năng này liên quan đến việc giữ UP_RATIO hay không.
- * Một số thông số khi nhân với UP_RATIO gây ra sai lệch (thường là 1px), ta tạm dùng biến này như cách gợi nhớ việc cần giải quyết chúng.
- */
-export const ADJUSTMENT_PIXEL = 1;
-export const ADJUSTMENT_PIXEL_2 = 2;

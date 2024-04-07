@@ -1,0 +1,1 @@
+export type CondenseType = 'veryLoose' | 'strict' | 'loose' | 'relaxed';

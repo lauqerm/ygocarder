@@ -1,4 +1,4 @@
-import { TypeSize } from '../const';
+import { TypeSize } from 'src/model';
 
 type Aligment = 'left' | 'right';
 export const drawBracketTemplate = (

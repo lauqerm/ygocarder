@@ -1,27 +1,32 @@
-export const FinishMap: Record<string, { value: string, label: React.ReactNode, blendMode: CanvasRenderingContext2D['globalCompositeOperation'] }> = {
+type FinishInformation = {
+    value: string,
+    label: React.ReactNode,
+    blendMode: CanvasRenderingContext2D['globalCompositeOperation'],
+};
+export const FinishMap: Record<string, FinishInformation> = {
     type1: {
         value: 'type1',
-        label: 'Type 1',
+        label: '1',
         blendMode: 'source-over',
     },
     type2: {
         value: 'type2',
-        label: 'Type 2',
+        label: '2',
         blendMode: 'source-over',
     },
     type3: {
         value: 'type3',
-        label: 'Type 3',
+        label: '3',
         blendMode: 'overlay',
     },
     type4: {
         value: 'type4',
-        label: 'Type 4',
+        label: '4',
         blendMode: 'source-over',
     },
     type5: {
         value: 'type5',
-        label: 'Type 5',
+        label: '5',
         blendMode: 'source-over',
     },
 };

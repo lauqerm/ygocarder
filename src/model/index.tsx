@@ -1,3 +1,5 @@
+import { CondenseType } from './text';
+
 export type TextStyleType = 'auto' | 'custom' | 'predefined';
 export type TextStyle = ReturnType<typeof getDefaultTextStyle>;
 export const getDefaultTextStyle = () => ({
@@ -225,8 +227,6 @@ export const PresetMap = {
 };
 export const PresetList = Object.values(PresetMap);
 
-export type CondenseType = 'veryLoose' | 'strict' | 'loose' | 'relaxed';
-
 export type Card = typeof defaultCard;
 export const defaultCard = {
     format: 'tcg',
@@ -342,6 +342,8 @@ export const attributeList = [
 ];
 
 export * from './canvas';
-export type {
-    MasterDuelCanvas
-} from './card-seri';
+export * from './card-seri';
+export * from './effect';
+export * from './link';
+export * from './text';
+export * from './type';

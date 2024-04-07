@@ -1,5 +1,13 @@
-import { FontSize, monsterFontList, BoxSize, monsterSizeList, CondenseTolerantMap } from '../const';
-import { CanvasConst, CondenseType, UP_RATIO } from '../model';
+import {
+    CanvasConst,
+    CondenseType,
+    UP_RATIO,
+    FontSize,
+    monsterFontList,
+    BoxSize,
+    monsterSizeList,
+    CondenseTolerantMap,
+} from '../model';
 import { splitEffect, createCondenser, quoteConvert } from '../util';
 
 const {

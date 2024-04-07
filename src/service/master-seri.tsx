@@ -1,15 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
 import {
-    arrowPositionList,
-    pendulumFontList,
-    pendulumSizeList,
-    stFontList,
-    stSizeList,
-    CardTypeSizeMap,
-    specialSizeList,
-    specialFontList
-} from 'src/const';
-import {
     clearCanvas,
     draw1stEdition,
     drawStat,
@@ -28,6 +18,13 @@ import {
     drawStatText
 } from 'src/draw';
 import {
+    pendulumFontList,
+    pendulumSizeList,
+    stFontList,
+    stSizeList,
+    CardTypeSizeMap,
+    specialSizeList,
+    specialFontList,
     CanvasConst,
     Card,
     CardArtCanvasConst,
@@ -36,7 +33,8 @@ import {
     MasterDuelCanvas,
     NO_ATTRIBUTE,
     UP_RATIO,
-    PresetMap
+    PresetMap,
+    arrowPositionList
 } from 'src/model';
 import { FinishMap } from 'src/model/finish';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
