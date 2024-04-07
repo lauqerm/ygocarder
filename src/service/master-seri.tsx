@@ -223,10 +223,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
                 const foiledBorder = !hasFoil ? '/asset/image/frame/frame-border.png' : `/asset/image/frame/frame-border-${foil}.png`;
                 await drawFromSource(ctx, foiledBorder, 0, 0);
-                await loopFinish(
-                    ctx,
-                    type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-border.png`, 0, 0)
-                );
+                await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-border.png`, 0, 0));
                 /** Link map */
                 if (!isPendulum && isLink) {
                     await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
@@ -234,14 +231,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             const { left, top, height, width } = arrowPositionList[entry - 1];
                             const isActive = linkMap.includes(`${entry}`);
                             const baseLink = `/asset/image/link/link-inactive-${entry}`;
-                            const positionalArugmentList: [number, number, number, number] = [left, top, width, height];
-                            await drawFromSourceWithSize(ctx, `${baseLink}-base.png`, ...positionalArugmentList);
-                            await drawFromSourceWithSize(ctx, `${baseLink}-core.png`, ...positionalArugmentList);
-                            if (isActive) {
-                                const activeLink = `/asset/image/link/link-active-${entry}`;
+                            const activeLink = `/asset/image/link/link-active-${entry}`;
+                            const coordinate: [number, number, number, number] = [left, top, width, height];
 
-                                await drawFromSourceWithSize(ctx, `${activeLink}-base.png`, ...positionalArugmentList);
-                                return drawFromSourceWithSize(ctx, `${activeLink}-core.png`, ...positionalArugmentList);
+                            await drawFromSourceWithSize(ctx, `${baseLink}-base.png`, ...coordinate);
+                            await drawFromSourceWithSize(ctx, `${baseLink}-core.png`, ...coordinate);
+                            if (isActive) {
+                                await drawFromSourceWithSize(ctx, `${activeLink}-base.png`, ...coordinate);
+                                return drawFromSourceWithSize(ctx, `${activeLink}-core.png`, ...coordinate);
                             } else return;
                         })
                     );
@@ -268,27 +265,28 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                         drawFromSource(ctx, '/asset/image/frame/frame-name-bevel.png', 0, 0),
                         drawFromSource(ctx, '/asset/image/frame/frame-border-bevel.png', 0, 0),
                     ]);
-                if (!isPendulum) {
-                    await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-frame.png`, 0, 0));
-                } else {
-                    await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-frame-pendulum-${pendulumSize}.png`, 0, 0));
-                }
+                /** Overlay frame */
+                await loopFinish(ctx, type => {
+                    const source = !isPendulum
+                        ? `/asset/image/finish/finish-${type}-frame.png`
+                        : `/asset/image/finish/finish-${type}-frame-pendulum-${pendulumSize}.png`;
+
+                    return drawFromSource(ctx, source, 0, 0);
+                });
 
                 /** Predefined text */
+                const predefinedTextColor = lightFooter ? 'white' : 'black';
                 if (isDuelTerminalCard) {
-                    const textColor = lightFooter ? 'white' : 'black';
-
-                    await drawFromSource(ctx, `/asset/image/text/text-duel-terminal-${textColor}.png`, 160, 1120);
+                    await drawFromSource(ctx, `/asset/image/text/text-duel-terminal-${predefinedTextColor}.png`, 160, 1120);
                 }
                 if (isSpeedCard) {
-                    const textColor = lightFooter ? 'white' : 'black';
                     const coordinate: [number, number, number, number] = isPendulum
                         ? [200, 1088, 196, 20]
                         : isLink
                             ? [155, 855, 196, 20]
                             : [80, 850, 245, 25];
 
-                    await drawFromSourceWithSize(ctx, `/asset/image/text/text-speed-duel-${textColor}.png`, ...coordinate);
+                    await drawFromSourceWithSize(ctx, `/asset/image/text/text-speed-duel-${predefinedTextColor}.png`, ...coordinate);
                 }
             };
         }
@@ -322,12 +320,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 if (!ctx) return;
                 ctx.clearRect(0, 0, CanvasWidth, 100 * UP_RATIO);
 
-                await drawFromSource(
-                    ctx,
-                    `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`,
-                    678,
-                    55,
-                );
+                await drawFromSource(ctx, `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
                 await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-attribute.png`, 678, 55));
             };
         }
@@ -340,8 +333,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.star.instructor = () => {
                 ctx?.clearRect(0, 0, CanvasWidth, 150 * UP_RATIO);
                 if (isMonster && !isLink) {
-                    const starWidth = 50;
-                    const startSpacing = 3.5;
+                    const starWidth = 50, startSpacing = 3.5;
                     const starCount = Math.min(13, star ?? 0);
                     const starType = isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level';
                     const reverseAlign = isXyz || isDarkSynchro;
@@ -363,11 +355,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                                 leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
                                 99 * UP_RATIO,
                             ];
-                            await drawFromSource(
-                                ctx,
-                                `/asset/image/sub-family/subfamily-${starType}.png`,
-                                ...coordinate,
-                            );
+                            await drawFromSource(ctx, `/asset/image/sub-family/subfamily-${starType}.png`, ...coordinate);
                             return loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate));
                         })
                     );
@@ -562,8 +550,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         if (active) {
             const ctx = effectCanvas.current?.getContext('2d');
             const typeCtx = typeCanvas.current?.getContext('2d');
-            ctx?.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
             const condenseTolerant = effectStyle?.condenseTolerant;
+            ctx?.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
+
             if (isMonster) {
                 const effectIndexSize = drawEffect(ctx, effect, false, isNormal, undefined, undefined, condenseTolerant);
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');

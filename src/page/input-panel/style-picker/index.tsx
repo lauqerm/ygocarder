@@ -56,7 +56,7 @@ export const StylePicker = React.memo(({
     } = value;
     return <div className="ant-input-group-wrapper name-color-input">
         <span className="ant-input-wrapper ant-input-group">
-            <span className="ant-input-group-addon">Name Color</span>
+            <span className="ant-input-group-addon">Name Style</span>
             <span className="ant-input-affix-wrapper">
                 <div className="ant-radio-group ant-radio-group-outline">
                     <label className={`ant-radio-wrapper ${type === 'auto' ? 'ant-radio-wrapper-checked' : ''}`} onClick={() => {
