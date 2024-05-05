@@ -343,7 +343,8 @@ export const attributeList = [
 
 export * from './canvas';
 export * from './card-seri';
-export * from './effect';
 export * from './link';
+export * from './ocg';
 export * from './text';
+export * from './text-effect';
 export * from './type';

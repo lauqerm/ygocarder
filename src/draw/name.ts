@@ -1,6 +1,6 @@
-import { TextStyle, TextStyleType, getDefaultTextStyle } from 'src/model';
-import { parsePalette, quoteConvert } from 'src/util';
-import { fillTextLeftWithSpacing, strokeTextLeftWithSpacing } from './util';
+import { TextStyle, TextStyleMap, getDefaultTextStyle } from 'src/model';
+import { parsePalette, normalizeCardText } from 'src/util';
+import { fillTextLeftWithSpacing, strokeTextLeftWithSpacing } from './canvas-util';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -47,13 +47,13 @@ const getNameGradient = (
         const topY = cy - offsetY;
         const botX = cx - offsetX;
         const botY = cy + offsetY;
-        // console.log('metric', {
+        // console.info('metric', {
         //     quarterSlot, baseKAF,
-        //     width, height, cx, cy,
-        //     KAF, KAD, DAF, FDA,
-        //     AD, AF, AL, FL,
-        //     maxAscent, maxDescent, baseline,
-        //     topX, topY, botX, botY,
+        //     '\n', width, height, cx, cy,
+        //     '\n', KAF, KAD, DAF, FDA,
+        //     '\n', AD, AF, AL, FL,
+        //     '\n', maxAscent, maxDescent, baseline,
+        //     '\n', topX, topY, botX, botY,
         // });
         const gradient = ctx.createLinearGradient(topX, topY, botX, botY);
         colorStopList.forEach(({ color, offset }) => gradient.addColorStop(parseFloat(offset), color));
@@ -63,18 +63,7 @@ const getNameGradient = (
     return undefined;
 };
 
-const TextStyleMap: Record<string, { fontStyle: string, letterSpacingRatio: number, offset: number }> = {
-    Default: {
-        fontStyle: '95.67px MatrixRegularSmallCaps',
-        letterSpacingRatio: 0,
-        offset: 0,
-    },
-    Arial: {
-        fontStyle: 'bold 61px Arial',
-        letterSpacingRatio: -0.18,
-        offset: 3,
-    },
-};
+
 export const drawName = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
@@ -83,12 +72,12 @@ export const drawName = (
     maxWidth: number,
     style: Partial<TextStyle>,
     option: {
-        nameStyleType?: TextStyleType,
+        format: string,
         isSpeedSkill?: boolean,
     },
 ) => {
     if (ctx && value) {
-        const { isSpeedSkill, nameStyleType } = option;
+        const { isSpeedSkill, format } = option;
         const {
             font,
             fillStyle,
@@ -107,9 +96,7 @@ export const drawName = (
             gradientColor,
         } = { ...getDefaultTextStyle(), ...style };
         const hasOutline = defaultHasOutline || isSpeedSkill;
-        const { fontStyle, letterSpacingRatio, offset } = nameStyleType === 'auto'
-            ? (isSpeedSkill ? TextStyleMap['Arial'] : TextStyleMap['Default'])
-            : (TextStyleMap[font] ?? TextStyleMap['Default']);
+        const { fontStyle, letterSpacingRatio, offsetY, offsetX } = TextStyleMap[font];
         if (hasShadow) {
             ctx.shadowColor = shadowColor;
             ctx.shadowOffsetY = shadowOffsetY;
@@ -124,7 +111,11 @@ export const drawName = (
             ctx.strokeStyle = '#000';
         }
 
-        const tokenList = quoteConvert(value).split(/([^&A-Za-z0-9\-/\s()!,])/g);
+        const quoteConvertedValue = normalizeCardText(value, format);
+        const tokenList = format === 'ocg'
+            ? [quoteConvertedValue]
+            : quoteConvertedValue.split(/([^&A-Za-z0-9\-/\s()!,])/g);
+
         let maxAscent = 0;
         let maxDescent = 0;
         const contentWidth = tokenList
@@ -162,21 +153,21 @@ export const drawName = (
                             ctx,
                             token,
                             letterSpacingRatio,
-                            prev / condenseRatio + lineOffsetX,
-                            baseline - (isSpeedSkill ? offset : 0) + lineOffsetY,
+                            prev / condenseRatio + offsetX + lineOffsetX,
+                            baseline - (isSpeedSkill ? offsetY : 0) + lineOffsetY,
                         );
                         fillTextLeftWithSpacing(
                             ctx,
                             token,
                             letterSpacingRatio,
-                            prev / condenseRatio,
-                            baseline - (isSpeedSkill ? offset : 0),
+                            prev / condenseRatio + offsetX,
+                            baseline - (isSpeedSkill ? offsetY : 0),
                         );
                     } else {
-                        ctx.fillText(token, prev / condenseRatio, baseline - (isSpeedSkill ? offset : 0));
+                        ctx.fillText(token, prev / condenseRatio + offsetX, baseline - (isSpeedSkill ? offsetY : 0));
                     }
                     return prev + ctx.measureText(token).width * condenseRatio;
-                }, edge + (isSpeedSkill ? offset : 0));
+                }, edge + (isSpeedSkill ? offsetY : 0));
             ctx.scale(1 / condenseRatio, 1);
         }
         const defaultTextStyle = getDefaultTextStyle();

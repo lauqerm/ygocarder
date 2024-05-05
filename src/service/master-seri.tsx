@@ -20,7 +20,7 @@ import {
 import {
     pendulumFontList,
     pendulumSizeList,
-    stFontList,
+    tcgSTFontData,
     stSizeList,
     CardTypeSizeMap,
     specialSizeList,
@@ -34,7 +34,8 @@ import {
     NO_ATTRIBUTE,
     UP_RATIO,
     PresetMap,
-    arrowPositionList
+    arrowPositionList,
+    getEffectMonsterFontData
 } from 'src/model';
 import { FinishMap } from 'src/model/finish';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
@@ -331,7 +332,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.star.instructor = () => {
                 ctx?.clearRect(0, 0, CanvasWidth, 150 * UP_RATIO);
                 if (isMonster && !isLink) {
-                    const starWidth = 50, startSpacing = 3.5;
+                    const starWidth = 50, startSpacing = 4;
                     const starCount = Math.min(13, star ?? 0);
                     const starType = isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level';
                     const reverseAlign = isXyz || isDarkSynchro;
@@ -351,7 +352,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             offset += (starWidth + startSpacing);
                             let coordinate: [number, number] = [
                                 leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
-                                99 * UP_RATIO,
+                                145,
                             ];
                             await drawFromSource(ctx, `/asset/image/sub-family/subfamily-${starType}.png`, ...coordinate);
                             return loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate));
@@ -414,11 +415,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     : nameStyleType === 'predefined'
                         ? PresetMap[nameStyle.preset as keyof typeof PresetMap ?? 'commonB'].value
                         : nameStyle;
+                let regionalStyle = style;
+                if (format === 'ocg' && nameStyleType !== 'custom') regionalStyle.font = 'OCG';
+                if (format !== 'ocg' && nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
 
-                drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, style, { isSpeedSkill, nameStyleType });
+                drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, regionalStyle, { isSpeedSkill, format });
             }
         }
-    }, [active, attribute, foil, isInitializing, isMonster, isSpeedSkill, frame, lightHeader, name, nameCanvas, nameStyle, nameStyleType]);
+    }, [active, attribute, foil, isInitializing, isMonster, isSpeedSkill, frame, lightHeader, name, nameCanvas, nameStyle, nameStyleType, format]);
 
     /** DRAW STAT */
     useEffect(() => {
@@ -552,17 +556,29 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             ctx?.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
 
             if (isMonster) {
-                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, undefined, undefined, condenseTolerant);
+                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, getEffectMonsterFontData(format), undefined, condenseTolerant, format);
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
             } else if (isSpeedSkill) {
-                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, specialFontList, specialSizeList, condenseTolerant);
+                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, specialFontList, specialSizeList, condenseTolerant, format);
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
             } else {
-                drawEffect(ctx, effect, false, false, stFontList, stSizeList, condenseTolerant);
+                drawEffect(ctx, effect, false, false, tcgSTFontData, stSizeList, condenseTolerant, format);
                 drawTypeAbility(typeCtx, 'large', 'right');
             }
         }
-    }, [isInitializing, drawTypeAbility, effect, isMonster, isNormal, effectStyle?.condenseTolerant, active, effectCanvas, typeCanvas, isSpeedSkill]);
+    }, [
+        isInitializing,
+        drawTypeAbility,
+        format,
+        effect,
+        isMonster,
+        isNormal,
+        effectStyle?.condenseTolerant,
+        active,
+        effectCanvas,
+        typeCanvas,
+        isSpeedSkill,
+    ]);
 
     /** DRAW PENDULUM EFFECT */
     useEffect(() => {
@@ -578,10 +594,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     pendulumFontList,
                     pendulumSizeList,
                     effectStyle?.condenseTolerant,
+                    format,
                 );
             }
         }
-    }, [active, effectStyle?.condenseTolerant, isInitializing, isMonster, isPendulum, pendulumEffectCanvas, pendulumEffect]);
+    }, [active, effectStyle?.condenseTolerant, isInitializing, format, isMonster, isPendulum, pendulumEffectCanvas, pendulumEffect]);
 
     /** DRAW FINAL OVERLAY */
     useEffect(() => {

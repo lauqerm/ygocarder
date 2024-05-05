@@ -23,7 +23,7 @@ export const AppHeader = React.memo(() => {
                                 target="_blank"
                                 rel="noreferrer">9558able</a> directly.
                             </li>
-                            <li>I do not charge any kind of fee, require donation or embed ads, and hold no liability for any other parties that use my code in their websites.</li>
+                            <li>This app is completely free, I do not charge any kind of fee, require donation or even serve any ads, but I hold no liability for any other parties that use my code in their websites.</li>
                         </ul>
                     </div>}
                 /></span>

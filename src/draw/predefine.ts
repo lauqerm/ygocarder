@@ -1,5 +1,5 @@
 import { UP_RATIO } from 'src/model';
-import { fillTextLeftWithSpacing, fillTextRightWithSpacing, measureWithSymbol } from './util';
+import { fillTextLeftWithSpacing, fillTextRightWithSpacing, measureWithSymbol } from './canvas-util';
 
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,

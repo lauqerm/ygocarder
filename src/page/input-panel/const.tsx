@@ -1,7 +1,24 @@
-import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap } from '../../model';
+import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap, TextStyleMap } from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import './input-panel.scss';
+
+export const formatButtonList = [
+    {
+        label: 'OCG',
+        value: 'ocg',
+        props: {
+            style: { fontWeight: 'bold', color: '#ff6f6f' } as React.CSSProperties
+        },
+    },
+    {
+        label: 'TCG',
+        value: 'tcg',
+        props: {
+            style: { fontWeight: 'bold', color: '#3b9dff' } as React.CSSProperties
+        },
+    },
+];
 
 export const foilButtonList = foilList.map(({ color, name }) => ({
     label: name.toLocaleUpperCase(),
@@ -15,6 +32,11 @@ export const foilButtonList = foilList.map(({ color, name }) => ({
 }));
 
 export const finishButtonList = Object.values(FinishMap).map(({ value, label }) => ({
+    label,
+    value,
+}));
+
+export const FontOptionList = Object.values(TextStyleMap).map(({ value, label }) => ({
     label,
     value,
 }));

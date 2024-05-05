@@ -10,13 +10,14 @@ import {
     defaultCard,
 } from './model';
 import {
-    cardDataCondenser,
+    cardDataShortener,
     insertUrlParam,
     rebuildCardData,
 } from './util';
 import { AppHeader, CardInputPanel, CardInputPanelRef, TaintedCanvasWarning } from './page';
 import WebFont from 'webfontloader';
 import { useMasterSeriDrawer } from './service';
+import { notification } from 'antd';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 const clearCanvas = (
@@ -32,6 +33,7 @@ function App() {
     const [error, setError] = useState('');
     const [currentCard, setCard] = useState<Card>(defaultCard);
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
+    const [ocgStyleFile, setOCGStyleFile] = useState('');
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -109,18 +111,17 @@ function App() {
         WebFont.load({
             custom: {
                 families: [
-                    'stone-serif-bold',
-                    'stone-serif-bold',
-                    'stone-serif-regular',
-                    'matrix',
                     'Matrix-Bold',
-                    'palatino-linotype-bold',
-                    'MatrixBook',
                     'MatrixBoldSmallCaps',
+                    'MatrixBook',
                     'MatrixRegularSmallCaps',
                     'Yugioh Rush Duel Numbers V4',
+                    'matrix',
+                    'palatino-linotype-bold',
+                    'stone-serif-bold',
+                    'stone-serif-regular',
                 ],
-                urls: ['asset/font.css']
+                urls: ['asset/font.css'],
             },
             active: () => {
                 try {
@@ -138,12 +139,76 @@ function App() {
                 }
                 setInitializing(false);
             },
+            fontinactive(familyName, fvd) {
+                console.error('TCG fontinactive', familyName, fvd);
+                notification.error({
+                    message: `${familyName} font could not be loaded, this will impact your card quality`
+                });
+            },
             inactive: () => {
                 setError('Font could not be loaded');
                 setInitializing(false);
             },
         });
     }, []);
+
+    const ocgReady = useRef(false);
+    const loadAttempt = useRef(0);
+    useEffect(() => {
+        if (currentCard.format === 'ocg' && ocgReady.current === false && loadAttempt.current <= 3) {
+            loadAttempt.current += 1;
+            setOCGStyleFile(`${process.env.PUBLIC_URL}/asset/ocg-font.css`);
+            setInitializing(true);
+            const ctx = drawCanvasRef.current?.getContext('2d');
+            if (ctx) {
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.imageSmoothingQuality = 'high';
+                clearCanvas(ctx);
+            }
+
+            // let fontLoaded = false;
+            WebFont.load({
+                custom: {
+                    families: [
+                        'FOT-Rodin Pro M',
+                        'Yu-Gi-Oh! DF Leisho 1',
+                        'Yu-Gi-Oh! DF Leisho 3',
+                        'DFKakuTaiHiStd-W4',
+                    ],
+                    urls: ['asset/ocg-font.css'],
+                },
+                active: () => {
+                    console.log('ready');
+                    try {
+                        ocgReady.current = true;
+                        const localCardVersion = window.localStorage.getItem('card-version');
+                        const localCardData = window.localStorage.getItem('card-data');
+    
+                        const urlParam = (new URLSearchParams(window.location.search)).get('data');
+                        if (urlParam) {
+                            setCard(rebuildCardData(urlParam, true) as any);
+                        } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
+                            setCard(rebuildCardData(localCardData) as any);
+                        }
+                    } catch (e) {
+                        setCard(defaultCard);
+                    }
+                    setInitializing(false);
+                },
+                fontinactive(familyName, fvd) {
+                    console.error('TCG fontinactive', familyName, fvd);
+                    notification.error({
+                        message: `${familyName} font could not be loaded, this will impact your card quality`
+                    });
+                },
+                inactive: () => {
+                    ocgReady.current = true;
+                    setError('Data for OCG cards could not be loaded');
+                    setInitializing(false);
+                },
+            });
+        }
+    }, [currentCard.format]);
 
     const pendingSave = useRef(false);
     const exportRef = useRef({
@@ -200,7 +265,7 @@ function App() {
 
                         await exportRef.current.currentPipeline;
                         if (relevant) {
-                            const condensedCard = cardDataCondenser(currentCard);
+                            const condensedCard = cardDataShortener(currentCard);
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
                             document.getElementById('export-canvas')?.classList.add('js-export-available');
@@ -300,6 +365,7 @@ function App() {
                 })
             }}
         >
+            {ocgStyleFile && <link rel="stylesheet" type="text/css" href={ocgStyleFile} />}
             <div className={'app-container'}>
                 {isInitializing && <div className="full-loading">
                     {error.length > 0 ? <span style={{ color: '#e04040' }}>
@@ -314,7 +380,7 @@ function App() {
                             <button onClick={() => {
                                 if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
 
-                                window.prompt('Save card data for later use', `${cardDataCondenser(currentCard)}`);
+                                window.prompt('Save card data for later use', `${cardDataShortener(currentCard)}`);
                             }}>Export Data</button>
                             <button onClick={() => {
                                 const cardData = window.prompt('Paste your card data here');
@@ -337,7 +403,7 @@ function App() {
                     </div>
                     <div className="card-canvas-container">
                         <div className="card-canvas-group">
-                            <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} style={{ visibility: 'hidden' }} />
+                            <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
                             </div>

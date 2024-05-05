@@ -1,4 +1,14 @@
+[Ｐモンスターを含む効果モンスター２体以上]
+[このカード名の①③の効果はそれぞれ１ターンに１度しか使用できない。①：このカードが]
+[Ｌ召喚した場合に発動できる。自分のＥＸデッキから表側のＰモンスター１体を手札に加える。]
+[②：このカードの攻撃力は、自分フィールドのＰモンスターカードの数×１００アップする。]
+[③：自分・相手のメインフェイズに発動できる。自分のＰゾーンのカード２枚のＰスケールで]
+[Ｐ召喚可能なレベルを持つＰモンスター１体を自分の手札・墓地から守備表示で特殊召喚する。]
+
 ## YGO Carder
+
+* Template provided by: [Grezar](https://www.deviantart.com/grezar) and [9558able](https://www.deviantart.com/9558able)
+* GUI by me, a.k.a @lauqerm
 
 ### Thank you
 
@@ -22,10 +32,12 @@ The app of course has multiple shortcomings, many of them are by design, while o
 * No template for Rush Duel - Template for Rush Duel is already available, so maybe I will revisit this idea in the future.
 * No template for OCG - It is just hard.
 * No ultra card size - While some apps may offer 4K resolution for their card, this app does not. While I think the current card resolution of my app is decently enough, you can always seek for professional up-scale method.
-* No remote saving - This app does not have a dedicated server for such feature, but thanks to that I can serve the app for a long time without ads or the need for any finacial support. The app only provides very simple card information export and import, and your card art should come from online links.
+* No remote saving - This app does not have a dedicated server for such feature, but thanks to that I can serve the app for a long time completely free without ads or the need for any finacial support. The app only provides very simple card information export and import, and your card art should come from online links.
 
 ### Can I use your source code in my site?
 
 Yes, you are free to fork it and do whatever, just don't claim it is yours. Also, I will be extra thankful if you keep the credit for me and template makers.
 
-If you want to modify app assets, better contact template makers and ask for permission yourself.
+If you want to modify app's assets, better contact template makers and ask for permission yourself.
+
+You may contact me through [Reddit](https://www.reddit.com/user/lauqerm/), but I rarely respond in time though, I only visit reddit once in a while.

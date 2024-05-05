@@ -1,8 +1,12 @@
-import { clone } from 'ramda';
-import { JSONCrush, JSONUncrush } from '../3rd';
-import { Card, defaultCard } from '../model';
-
-export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
+/** Thuật toán tìm kiếm đơn giản như sau
+ * 1. Bước nhảy mặc định là 100
+ * 1. Tìm từ trên xuống, chừng nào giá trị hiện tại còn lớn hơn giá trị yêu cầu
+ * 1. Nếu giá trị hiện tại bằng giá trị yêu cầu => Kết thúc
+ * 1. Nếu giá trị hiện tại nhỏ hơn giá trị yêu cầu nghĩa là đã đi quá, nhảy lên lại một bậc
+ * 1. Giảm bước nhảy đi 10 lần, lặp lại từ bước 2 với bước nhảy mới
+ */
+const MAX_CONDENSER_THRESHOLD = 1000;
+export const createCondenser = (minThreshold = 0, maxThreshold = MAX_CONDENSER_THRESHOLD) => {
     let min = minThreshold;
     let max = maxThreshold;
     let median = max;
@@ -65,157 +69,32 @@ export const createCondenser = (minThreshold = 0, maxThreshold = 1000) => {
     };
 };
 
-const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
-    format: 'fm',
-    frame: 'fr',
-    foil: 'fo',
-    finish: 'fn',
-    artFinish: 'afn',
-    name: 'na',
-    nameStyleType: 'nst',
-    effectStyle: {
-        _newKey: 'es',
-        condenseTolerant: 'cdtl',
-    },
-    nameStyle: {
-        _newKey: 'ns',
-        font: 'nsft',
-        fillStyle: 'nsfs',
-        shadowColor: 'nssc',
-        shadowOffsetY: 'nssoy',
-        shadowOffsetX: 'nssox',
-        shadowBlur: 'nssb',
-        hasShadow: 'nshs',
-        lineColor: 'nslc',
-        lineWidth: 'nslw',
-        lineOffsetY: 'nsloy',
-        lineOffsetX: 'nslox',
-        hasOutline: 'nshl',
-        gradientAngle: 'nsgd',
-        gradientColor: 'nscg',
-        hasGradient: 'nshg',
-        preset: 'nspr',
-    },
-    attribute: 'at',
-    subFamily: 'sf',
-    star: 'st',
-    picture: 'pt',
-    pictureCrop: {
-        _newKey: 'ptc',
-        x: 'ptx',
-        y: 'pty',
-        width: 'ptw',
-        height: 'pth',
-        unit: 'ptu',
-        aspect: 'pta',
-    },
-    linkMap: 'lm',
-    isPendulum: 'ip',
-    pendulumFrame: 'pf',
-    pendulumEffect: 'pe',
-    pendulumScaleRed: 'rs',
-    pendulumScaleBlue: 'bs',
-    typeAbility: 'ta',
-    effect: 'ef',
-    setId: 'si',
-    atk: 'atk',
-    def: 'def',
-    passcode: 'pc',
-    sticker: 'sti',
-    isFirstEdition: 'ife',
-    isSpeedCard: 'isp',
-    isDuelTerminalCard: 'idt',
-    creator: 'cr',
-};
-
-export const cardDataCondenser = (
-    card: Record<string, any>,
-    shortenMap: Record<string, any> = cardFieldShortenMap,
-    crush = true,
+export const condense = (
+    worker: (currentMedian: number) => boolean,
+    minThreshold = 100,
 ) => {
-    const condensedCard: Record<string, any> = {};
-    Object.keys(card).forEach(cardKey => {
-        const cardValue = card[cardKey];
+    let effectiveMedian = MAX_CONDENSER_THRESHOLD;
+    const condenser = createCondenser();
+    while (condenser.getIterateCount() >= 0) {
+        if (condenser.getIterateCount() <= 0) {
+            /** Trả về median cuối cùng sau khi lặp tối đa, median nhỏ hơn minThreshold sẽ được quy về minThreshold, để tránh việc phải deal với threshold 0 */
+            const finalMedian = condenser.getMedian();
 
-        if (typeof cardValue === 'object' && cardValue !== null && !Array.isArray(cardValue)) {
-            const newKey = shortenMap[cardKey]?._newKey;
-
-            if (newKey) {
-                condensedCard[newKey] = cardDataCondenser(cardValue, shortenMap[cardKey], false);
-            }
+            effectiveMedian = finalMedian <= minThreshold ? minThreshold : finalMedian;
+            break;
         } else {
-            const newKey = shortenMap[cardKey];
+            const satisfy = worker(condenser.getMedian());
 
-            if (typeof newKey === 'string') condensedCard[newKey] = cardValue;
-        }
-    });
-
-    if (crush) {
-        const curshedCard = JSONCrush(JSON.stringify(condensedCard));
-
-        return curshedCard;
-    }
-    return condensedCard;
-};
-
-export const reverseCardDataCondenser = (
-    condensedCard: Record<string, any> | string,
-    shortenMap: Record<string, any> = cardFieldShortenMap,
-) => {
-    const normalizedCondensedCard = typeof condensedCard === 'string'
-        ? JSON.parse(JSONUncrush(decodeURIComponent(condensedCard)))
-        : condensedCard;
-
-    const fullCard: Record<string, any> = {};
-    Object.keys(shortenMap).forEach(fullKey => {
-        const shortendValue = shortenMap[fullKey];
-
-        if (typeof shortendValue === 'object' && shortendValue !== null && !Array.isArray(shortendValue)) {
-            const shortendKey = shortendValue?._newKey;
-
-            if (shortendKey && normalizedCondensedCard[shortendKey]) {
-                fullCard[fullKey] = reverseCardDataCondenser(normalizedCondensedCard[shortendKey], shortenMap[fullKey]);
-            }
-        } else {
-            if (normalizedCondensedCard[shortendValue]) {
-                fullCard[fullKey] = normalizedCondensedCard[shortendValue];
+            if (!satisfy) {
+                /** If overflow, lower the median and apply it */
+                condenser.searchDown();
+            } else {
+                /** Không làm gì thêm nếu không cần compress */
+                if (condenser.getMedian() === MAX_CONDENSER_THRESHOLD) break;
+                else effectiveMedian = condenser.reverseSearch();
             }
         }
-    });
-    return fullCard;
-};
-
-export const rebuildCardData = (
-    card: Record<string, any> | string,
-    isCondensed = false,
-) => {
-    let fullCard: Record<string, any>;
-    if (isCondensed) {
-        fullCard = reverseCardDataCondenser(card);
-    } else {
-        fullCard = typeof card === 'string'
-            ? JSON.parse(card)
-            : card;
     }
 
-    return migrateCardData(fullCard);
-};
-
-// Try to match old version card data with newer model
-const migrateCardData = (card: Record<string, any>) => {
-    const migratedCard = clone(card);
-
-    if (migratedCard.effectStyle === undefined) {
-        migratedCard.effectStyle = {
-            ...defaultCard.effectStyle
-        };
-    }
-
-    if (migratedCard.version === undefined) migratedCard.version = 1;
-    if (migratedCard.format === undefined) migratedCard.format = 'tcg';
-    if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'spell';
-    if (migratedCard.finish === undefined) migratedCard.finish = [];
-    if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
-    if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
-    return migratedCard;
+    return effectiveMedian;
 };

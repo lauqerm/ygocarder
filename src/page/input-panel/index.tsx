@@ -14,7 +14,8 @@ import {
     stickerButtonList,
     condenseButtonList,
     finishButtonList,
-    artFinishButtonList
+    artFinishButtonList,
+    formatButtonList
 } from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker } from './style-picker';
@@ -65,6 +66,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const setCard = (mutateFunc: (card: Card) => Card) => {
         onCardChange(currentCard => mutateFunc(currentCard));
     };
+    const onFormatChange = onChangeFactory('format', setCard);
     const onFoilChange = onChangeFactory('foil', setCard);
     const onFinishChange = onChangeFactory('finish', setCard);
     const onArtFinishChange = onChangeFactory('artFinish', setCard);
@@ -211,6 +213,9 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             }}
         />
         <div className="card-overlay-input">
+            <RadioTrain className="format-radio" value={format} onChange={onFormatChange} optionList={formatButtonList}>
+                <span>Format</span>
+            </RadioTrain>
             <RadioTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={foilButtonList}>
                 <span>Foil</span>
             </RadioTrain>

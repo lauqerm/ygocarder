@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import './style-picker.scss';
+import { FontOptionList } from '../const';
 
 export type StylePicker = {
     defaultType: TextStyleType,
@@ -333,14 +334,11 @@ export const StylePicker = React.memo(({
                             <Dropdown key="font-picker"
                                 overlayClassName="input-overlay font-picker-overlay"
                                 overlay={<Menu>
-                                    {[
-                                        { key: 'Default', label: 'Default' },
-                                        { key: 'Arial', label: 'Arial (Bold)' },
-                                    ].map(({ key, label }) => {
-                                        return <Menu.Item key={key}
-                                            className={value.font === key ? 'menu-active' : ''}
+                                    {FontOptionList.map(({ value: fontValue, label }) => {
+                                        return <Menu.Item key={fontValue}
+                                            className={value.font === fontValue ? 'menu-active' : ''}
                                             onClick={() => {
-                                                setValue(cur => ({ ...cur, font: key }));
+                                                setValue(cur => ({ ...cur, font: fontValue }));
                                                 requestSendStyle();
                                             }}
                                         >
