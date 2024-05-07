@@ -122,16 +122,14 @@ export const drawName = (
             .reduce((prev, cur, index) => {
                 if (index % 2 === 0) ctx.font = fontStyle;
                 else ctx.font = 'small-caps 64px matrix';
-                const metric = ctx.measureText(cur);
-                maxAscent = Math.max(maxAscent, metric.actualBoundingBoxAscent);
-                maxDescent = Math.max(maxDescent, metric.actualBoundingBoxDescent);
+                const textMetric = ctx.measureText(cur);
+                maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
+                maxDescent = Math.max(maxDescent, textMetric.actualBoundingBoxDescent);
 
-                return prev + metric.width * (2 + letterSpacingRatio) / 2;
+                return prev + textMetric.width * (2 + letterSpacingRatio) / 2;
             }, 0);
 
-        // ctx.fillText(value, edge, baseline, maxWidth);
-        /** Công thức tính gradient tham khảo
-         * https://app.diagrams.net/#G1CLt-JAbzoPJUKvAHNyuOB-U-GGgf4Del#%7B%22pageId%22%3A%22ltzT5SsYBdAxyO781Ist%22%7D
+        /** Công thức tính gradient tham khảo knowledge diagram
          */
         if (contentWidth > 0) {
             const condenseRatio = Math.min(maxWidth / contentWidth, 1);

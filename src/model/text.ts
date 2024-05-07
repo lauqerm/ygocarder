@@ -36,3 +36,6 @@ export const TextStyleMap: Record<string, TextStyle> = {
 };
 
 export const BREAKABLE_LETTER = '\\s\\-/';
+export const DEFAULT_LETTER_SPACING = 0;
+export const START_OF_LINE_GAP = 0;
+export const DEFAULT_TEXT_GAP = -10;

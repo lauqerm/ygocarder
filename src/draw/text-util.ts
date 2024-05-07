@@ -20,6 +20,7 @@ import {
     OCG_INCREASED_WIDTH_REGEX,
     OCG_NUMBER_REGEX,
     OCG_REDUCED_AT_LAST_SENTENCE_RATIO,
+    DEFAULT_TEXT_GAP,
 } from 'src/model';
 
 export const tokenizeText = (text: string, keepControlCharacter = false) => {
@@ -218,4 +219,95 @@ export const getLetterWidth = ({
     letterWidthCacheMap[format][cacheType][letter] = actualLetterWidth;
     if (debug) console.info(`getLetterWidth ${debug}`, letter, trueLetterWidth, letterRatio, endLineRatio, '|', actualLetterWidth);
     return actualLetterWidth;
+};
+
+/**
+ * Trả về độ dài biểu kiến của phần head của ruby (không phụ thuộc scale), lượng chữ càng nhiều thì càng khít lại. ("PenduLuMoon" OCG)
+ * * Ruby quá dài có thể chiếm dụng không gian hai bên của nó, nếu những bên này không có ruby hoặc ruby ít.
+ * * Việc chiếm dụng không thể tích lũy, nghĩa là nếu một từ có ruby dài chiếm không gian phía bên phải, từ bên phải đó nếu có ruby không
+ * được chiếm dùng từ từ bên phải kế tiếp của nó.
+ * * Từ bên trái có thể được chiếm dụng, nhưng không thể bị đẩy dịch. ("Joyous Melffys" OCG)
+ * * Furigana có thể tràn ra rìa trái để foot text canh chuẩn lề ("Beyond the Pendulum" OCG)
+ * * Nếu token hiện tại có gap phải đủ lớn, footText của token kế tiếp sẽ dịch qua bên trái một khoảng để rebalance lại cự ly giữa các footText với nhau, headText vẫn giữ nguyên ("Beyond the Pendulum" OCG)
+ * */
+export const getHeadTextWidth = ({
+    footText, footTextWidth,
+    headText, headTextLetterWidth,
+    debug,
+}: {
+    headText: string,
+    headTextLetterWidth: number,
+    footText: string,
+    footTextWidth: number,
+    debug?: string,
+}) => {
+    const condenseHeadText = headTextLetterWidth / footTextWidth;
+    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? -1.5 : -4;
+    const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
+    const alignSpaceAroundLetterSpacing = (footTextWidth - headTextLetterWidth) / headText.length;
+    const alignSpaceAroundHeadTextWidth = headTextLetterWidth + alignSpaceAroundLetterSpacing * (headText.length - 1);
+    const alignment = footText.length === 1 || alignCenterHeadTextWidth >= footTextWidth
+        ? 'center' as const
+        : 'space-around' as const;
+    const letterSpacing = alignment === 'center' ? alignCenterLetterSpacing : alignSpaceAroundLetterSpacing;
+    const headTextWidth = alignment === 'center' ? alignCenterHeadTextWidth : alignSpaceAroundHeadTextWidth;
+    const halfGap = Math.max(
+        DEFAULT_TEXT_GAP,
+        alignment === 'center'
+            ? (alignCenterHeadTextWidth - footTextWidth) / 2
+            : alignSpaceAroundLetterSpacing / -2
+    );
+
+    if (debug) console.info(
+        `getHeadTextWidth ${debug}`,
+        alignment,
+        letterSpacing,
+        headText, headTextWidth,
+        footText, footTextWidth,
+        halfGap,
+    );
+    return {
+        letterSpacing,
+        headTextWidth,
+        /**
+         * Canh giữa nếu footText có 1 ký tự hoặc nếu headText canh giữa dài hơn footText, space-around trong trường hợp còn lại
+         * * `[gap][letter + spacing][gap]`
+         * * `[half-gap][letter][gap][letter][half-gap]`
+         */
+        alignment,
+        /** * Gap dương, furigana chiếm thêm chỗ
+         * * Gap âm, furigana có thể nhường chỗ
+         */
+        halfGap,
+    };
+};
+
+/**
+ * Tính lại phần chiều dài bên trái (tính từ footText) do ảnh hưởng bởi gap phải.
+ * * Nếu prevGap dương (đẩy phải)
+ *    * Nếu curGap dương (đẩy trái): Tất cả gap thành chiều dài bổ sung
+ *    * Nếu curGap âm (hút trái): Chiều dài bổ sung bị giảm đi, nhưng không quá phần chiều dài mà previousGap có thể cho
+ * * Nếu prevGap âm (hút phải)
+ *    * Nếu curGap dương (đẩy trái): curGap lấy hết cỡ từ prevGap, nhưng không quá những gì prevGap có nhận
+ *    * Nếu curGap âm (hút trái): Hai gap không can thiệp nhau, chiều dài bổ sung là 0
+ */
+export const getExtraLeftWidth = (prevGap: number, curGap: number) => {
+    return prevGap >= 0
+        ? curGap >= 0
+            ? curGap
+            : Math.max(curGap, prevGap * -1)
+        : curGap >= 0
+            ? curGap + Math.max(curGap * -1, prevGap)
+            : 0;
+};
+
+/**
+ * Tính phần chiều dài bên trái đã mất (nếu có) do ảnh hưởng bởi gap phải.
+ */
+export const getExtraLeftOffset = (prevGap: number, curGap: number) => {
+    if ((prevGap >= 0 && curGap >= 0) || (prevGap <= 0 && curGap <= 0)) return 0;
+    const leftExtraWidth = getExtraLeftWidth(prevGap, curGap);
+
+    if (prevGap <= 0 && curGap >= 0) return curGap - leftExtraWidth;
+    return -1 * leftExtraWidth;
 };

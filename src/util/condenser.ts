@@ -96,5 +96,5 @@ export const condense = (
         }
     }
 
-    return effectiveMedian;
+    return Math.min(effectiveMedian, MAX_CONDENSER_THRESHOLD);
 };

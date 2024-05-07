@@ -647,10 +647,13 @@ export const NB_WORD_OPEN = '⦉';
 export const NB_WORD_CLOSE = '⦊';
 export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
+
+/** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
 export const SPECIAL_LETTER_JOINLIST = '#@∞';
+export const SPECIAL_LETTER_REGEX = new RegExp(`[${SPECIAL_LETTER_JOINLIST}]`);
 export const CHIISAI_KANA_JOINLIST = 'ヽヾーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ々〻';
-export const ocgKeywordJoinRegex = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
-export const ocgKeywordRegexSource = `(${ocgKeywordJoinRegex})(?!.*})`;
+export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
+export const ocgKeywordRegexSource = `(${OCG_KEYWORD_JOIN_REGEX})(?!.*})`;
 export const ocgRubyRegexSource = '{[^{}]+?}';
 /** Các ký tự sau không được ở đầu dòng, vậy nên ta nối nó với một ký tự phía trước */
 export const mustNotAtLineStartRegexSource = `.[${CHIISAI_KANA_JOINLIST})\\]｝〕〉》」｣』】〙〗〟'"’”｠»‐゠–〜？!‼⁇⁈⁉・、:;,。.｡､]+`;
@@ -658,7 +661,8 @@ export const mustNotAtLineStartRegexSource = `.[${CHIISAI_KANA_JOINLIST})\\]｝�
 export const mustNotAtLineEndRegexSource = '[(\\[｛〔〈《「｢『【〘〖〝\'"‘“｟«●]+.';
 export const mustNotSplitRegexSource = '.[—...‥〳〴〵]+.';
 export const ocgBulletRegexSource = '[①-⑳]：.';
-export const ocgAlphabetRegexSource = '[Ａ-Ｚａ-ｚ]';
+export const OCG_ALPHABET_REGEX_SOURCE = '[Ａ-Ｚａ-ｚ]';
+export const OCG_ALPHABET_REGEX = new RegExp(OCG_ALPHABET_REGEX_SOURCE);
 export const ocgWholeWordRegexSource = `[${SPECIAL_LETTER_JOINLIST}a-zA-Z0-9!+×Ａ-Ｚａ-ｚ！＃０-９‘“’”]+`;
 
 export const CHIISAI_REGEX = new RegExp(`[${CHIISAI_KANA_JOINLIST}]`);
@@ -670,15 +674,26 @@ export const HIRAGANA_RATIO = 0.875;
 export const KATAKANA_REGEX = /[アイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヰヱヲンヴヷヸヹヺ]/;
 export const KATAKANA_RATIO = 0.875;
 export const OCG_LETTER_RATIO = 1.000;
+
 export const OCG_DOT_REGEX = new RegExp('[・]');
-export const OCG_DOT_RATIO = 0.600;
+export const OCG_DOT_RATIO = 1.000;
+
 export const CHOONPU_REGEX = new RegExp('[ー]');
 export const CHOONPU_RATIO = 0.875;
+
 const OCG_REDUCED_WIDTH_JOINLIST = '：';
 export const OCG_REDUCED_WIDTH_REGEX = new RegExp(`[${OCG_REDUCED_WIDTH_JOINLIST}]`);
 export const OCG_REDUCED_WIDTH_RATIO = 0.750;
+
 const OCG_INCREASED_WIDTH_JOINLIST = '。､｢｣';
 export const OCG_INCREASED_WIDTH_REGEX = new RegExp(`[${OCG_INCREASED_WIDTH_JOINLIST}]`);
 export const OCG_INCREASED_WIDTH_RATIO = 1.250;
+
 export const OCG_REDUCED_AT_LAST_SENTENCE_REGEX = new RegExp(`[${OCG_INCREASED_WIDTH_JOINLIST}${OCG_REDUCED_WIDTH_JOINLIST}]`);
 export const OCG_REDUCED_AT_LAST_SENTENCE_RATIO = 0.500;
+
+export const BULLET_LETTER = '●';
+export const getBulletSpacing = (format: string) => format === 'tcg' ? 5 : 1;
+
+export const MAX_LINE_REVERSE_INDENT = 20;
+export const START_OF_LINE_ALPHABET_OFFSET = 4;
