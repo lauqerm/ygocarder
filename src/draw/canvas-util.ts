@@ -4,30 +4,26 @@ const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
 export const randomDarkColor = () => '#000000'.replace(/0/g, () => (~~(Math.random() * 12)).toString(16));
 
-export const measureWithSymbol = (
+/** Vẽ một vệt thẳng để làm mốc, bị ảnh hưởng bởi xRatio */
+export const drawMarker = ({
+    ctx,
+    color = randomDarkColor(), width,
+    offset = 0.5 + Math.random() * 2,
+    trueEdge, baseline,
+    xRatio,
+}: {
     ctx: CanvasRenderingContext2D,
-    content: string,
-    symbol: string,
-    maxWidth: number,
-) => {
-    const splittedContent = content.split(symbol);
-    const splittedWidth = splittedContent.map(entry => ctx.measureText(entry).width);
-    const symbolWidth = ctx.measureText(symbol).width;
-    const totalCondensableWidth = splittedWidth.reduce((prev, curr) => prev + curr, 0);
-    const returnBundle = {
-        splittedContent,
-        splittedWidth,
-        symbolWidth,
-        totalCondensableWidth,
-        condenseRatio: 1,
-    };
-
-    if (totalCondensableWidth > 0) {
-        // Calculate as if the "symbol" always appear as full width
-        returnBundle.condenseRatio = Math.min((maxWidth - (splittedWidth.length - 1) * symbolWidth) / totalCondensableWidth, 1);
-    }
-
-    return returnBundle;
+    color?: string, width: number,
+    offset?: number,
+    trueEdge: number, baseline: number,
+    xRatio: number,
+}) => {
+    const currentFillStyle = ctx.fillStyle;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.rect(trueEdge / xRatio, baseline + 1 + offset * 5, width / xRatio, 2);
+    ctx.fill();
+    ctx.fillStyle = currentFillStyle;
 };
 
 /** Nguyên tắc về letterSpacing:
@@ -39,7 +35,7 @@ export const measureWithSymbol = (
 export const fillTextLeftWithSpacing = (
     ctx: CanvasRenderingContext2D | null | undefined,
     str: string,
-    letterSpacingRatio: number,
+    letterSpacing: number,
     edge: number,
     baseline: number,
 ) => {
@@ -50,28 +46,7 @@ export const fillTextLeftWithSpacing = (
 
         charList.forEach(char => {
             ctx.fillText(char, curLeft, baseline);
-            curLeft += ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
-        });
-
-        return curLeft;
-    }
-    return 0;
-};
-export const strokeTextLeftWithSpacing = (
-    ctx: CanvasRenderingContext2D | null | undefined,
-    str: string,
-    letterSpacingRatio: number,
-    edge: number,
-    baseline: number,
-) => {
-    if (ctx && str) {
-        ctx.textAlign = 'left';
-        const charList = str.split('');
-        let curLeft = edge;
-
-        charList.forEach(char => {
-            ctx.strokeText(char, curLeft, baseline);
-            curLeft += ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
+            curLeft += ctx.measureText(char).width * (2 + letterSpacing) / 2;
         });
 
         return curLeft;
@@ -81,7 +56,7 @@ export const strokeTextLeftWithSpacing = (
 export const fillTextRightWithSpacing = (
     ctx: CanvasRenderingContext2D | null | undefined,
     str: string,
-    letterSpacingRatio: number,
+    letterSpacing: number,
     edge: number,
     baseline: number,
 ) => {
@@ -93,31 +68,11 @@ export const fillTextRightWithSpacing = (
         charList.forEach((c, index) => {
             const char = charList[charList.length - index - 1];
             ctx.fillText(char, curRight, baseline);
-            curRight -= ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
+            curRight -= ctx.measureText(char).width * (2 + letterSpacing) / 2;
         });
         return curRight;
     };
     return edge;
-};
-
-export const fillTextLeftWithLimit = (
-    ctx: CanvasRenderingContext2D | null | undefined,
-    content: string,
-    edge: number,
-    baseline: number,
-    maxWidth: number,
-) => {
-    if (ctx) {
-        const contentWidth = ctx.measureText(content).width;
-
-        if (contentWidth > 0) {
-            const condenseRatio = Math.min(maxWidth / contentWidth, 1);
-            ctx.scale(condenseRatio, 1);
-            ctx.fillText(content, edge / condenseRatio, baseline);
-            ctx.scale(1 / condenseRatio, 1);
-            ctx.fillStyle = '#000000';
-        }
-    }
 };
 
 export const clearCanvas = (

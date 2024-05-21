@@ -1,5 +1,27 @@
 import { UP_RATIO } from 'src/model';
-import { fillTextLeftWithSpacing, fillTextRightWithSpacing, measureWithSymbol } from './canvas-util';
+import { fillTextLeftWithSpacing } from './canvas-util';
+
+export const drawScale = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    value: string,
+    edge: number,
+    baseline: number,
+) => {
+    if (ctx && value) {
+        const digitList = `${value}`.split('');
+        let totalWidth = 0;
+
+        digitList.forEach(digit => {
+            totalWidth += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
+        });
+        let accLeft = edge - totalWidth / 2;
+
+        digitList.forEach(digit => {
+            ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, baseline);
+            accLeft += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
+        });
+    }
+};
 
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -18,52 +40,6 @@ export const draw1stEdition = (
 
         ctx.font = `bold ${15 * UP_RATIO}px palatino-linotype-bold`;
         ctx.fillText(' Edition', left, 777 * UP_RATIO);
-    }
-};
-
-export const drawCreatorText = (
-    ctx: CanvasRenderingContext2D | null | undefined,
-    content: string,
-) => {
-    if (ctx && content) {
-        ctx.font = `${16 * UP_RATIO}px stone-serif-regular`;
-
-        const baseline = 777 * UP_RATIO;
-        const rightEdge = 496 * UP_RATIO;
-        const leftEdge = 257 * UP_RATIO;
-        const uncondensableSymbol = '©';
-        const {
-            splittedContent,
-            splittedWidth,
-            symbolWidth,
-            condenseRatio,
-        } = measureWithSymbol(ctx, content, uncondensableSymbol, leftEdge);
-
-        if (condenseRatio < 1) {
-            ctx.textAlign = 'left';
-            ctx.scale(condenseRatio, 1);
-            splittedContent.reduce((prev, cur, index) => {
-                // Fill condense text at the current edge
-                ctx.fillText(cur, prev / condenseRatio, baseline);
-                // Increase edge equal to the draw text (condense ratio factored)
-                let nextEdge = prev + splittedWidth[index] * condenseRatio;
-                if (index < splittedContent.length - 1) {
-                    // Restore 1:1 ratio
-                    ctx.scale(1 / condenseRatio, 1);
-                    // Increase edge equal to the character "©" (condense ratio is 1 so no factored)
-                    ctx.fillText(uncondensableSymbol, nextEdge, baseline);
-                    nextEdge += symbolWidth;
-                    // Restore condense ratio
-                    ctx.scale(condenseRatio, 1);
-                }
-                return nextEdge;
-            }, rightEdge - leftEdge);
-            ctx.scale(1 / condenseRatio, 1);
-        } else {
-            ctx.textAlign = 'right';
-            fillTextRightWithSpacing(ctx, content, -0.15, rightEdge / condenseRatio, baseline);
-        }
-        ctx.textAlign = 'left';
     }
 };
 
@@ -96,18 +72,18 @@ export const drawStat = (
         const statWidth = 49.94 * UP_RATIO;
         if (value === '∞') {
             ctx.textAlign = 'right';
-            ctx.font = `bold ${25 * UP_RATIO}px matrix`;
+            ctx.font = 'bold 37px matrix';
             ctx.fillText(value, edge + statWidth, baseline);
         } else {
             ctx.textAlign = 'left';
             const tokenizedText = `${value}`.split('?');
 
             let totalWidth = tokenizedText.reduce((prev, curr, index) => {
-                ctx.font = `${25 * UP_RATIO}px MatrixBoldSmallCaps`;
+                ctx.font = '37px MatrixBoldSmallCaps';
                 let nextWidth = prev + ctx.measureText(curr).width;
 
                 if (index < tokenizedText.length - 1) {
-                    ctx.font = `${25 * UP_RATIO}px matrix`;
+                    ctx.font = '37px matrix';
                     nextWidth += ctx.measureText('?').width;
                 }
 
@@ -121,12 +97,12 @@ export const drawStat = (
                 tokenizedText.reduce((prev, _, index, arr) => {
                     const curText = arr[arr.length - 1 - index];
                     let nextEdge = prev;
-                    ctx.font = `${25 * UP_RATIO}px MatrixBoldSmallCaps`;
+                    ctx.font = '37px MatrixBoldSmallCaps';
                     nextEdge -= ctx.measureText(curText).width * condenseRatio;
                     ctx.fillText(curText, nextEdge / condenseRatio, baseline);
 
                     if (index < tokenizedText.length - 1) {
-                        ctx.font = `bold ${25 * UP_RATIO}px matrix`;
+                        ctx.font = 'bold 37px matrix';
                         nextEdge -= ctx.measureText('?').width * condenseRatio;
                         ctx.fillText('?', nextEdge / condenseRatio, baseline);
                     }

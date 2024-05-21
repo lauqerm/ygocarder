@@ -1,9 +1,9 @@
-import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap, TextStyleMap } from '../../model';
+import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap, NameFontDataMap } from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import './input-panel.scss';
 
-export const formatButtonList = [
+export const FormatButtonList = [
     {
         label: 'OCG',
         value: 'ocg',
@@ -20,7 +20,7 @@ export const formatButtonList = [
     },
 ];
 
-export const foilButtonList = foilList.map(({ color, name }) => ({
+export const FoilButtonList = foilList.map(({ color, name }) => ({
     label: name.toLocaleUpperCase(),
     value: name,
     props: {
@@ -31,17 +31,17 @@ export const foilButtonList = foilList.map(({ color, name }) => ({
     }
 }));
 
-export const finishButtonList = Object.values(FinishMap).map(({ value, label }) => ({
+export const FinishButtonList = Object.values(FinishMap).map(({ value, label }) => ({
     label,
     value,
 }));
 
-export const FontOptionList = Object.values(TextStyleMap).map(({ value, label }) => ({
+export const NameFontOptionList = Object.values(NameFontDataMap).map(({ value, label }) => ({
     label,
     value,
 }));
 
-export const artFinishButtonList = [
+export const ArtFinishButtonList = [
     { value: 'normal', label: <CloseCircleOutlined /> },
     ...Object.values(ArtFinishMap).map(({ value, label }) => ({
         label,
@@ -49,7 +49,7 @@ export const artFinishButtonList = [
     })),
 ];
 
-export const frameButtonList = frameList.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage }) => ({
+export const FrameButtonList = frameList.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage }) => ({
     label: name.replaceAll('-', ' '),
     value: name,
     props: {
@@ -68,21 +68,21 @@ export const getAttributeList = (format: string) => attributeList.map(({ name })
     value: name,
 }));
 
-export const stIconButtonList = iconList.map(entry => ({
+export const STIconButtonList = iconList.map(entry => ({
     label: entry,
     value: entry,
 }));
 
-export const starButtonList = [...Array(14)].map((e, index) => ({ label: index, value: index }));
+export const StarButtonList = [...Array(14)].map((e, index) => ({ label: index, value: index }));
 
-export const stickerButtonList = stickerList.map(name => ({
+export const StickerButtonList = stickerList.map(name => ({
     label: name === 'no-sticker'
         ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,
 }));
 
-export const condenseButtonList = Object
+export const CondenseThresholdButtonList = Object
     .entries(CondenseTolerantLabelMap)
     .map(([key, { label, order }]) => {
         return {

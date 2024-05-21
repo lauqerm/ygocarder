@@ -1,6 +1,9 @@
-import { TextStyle, TextStyleMap, getDefaultTextStyle } from 'src/model';
-import { parsePalette, normalizeCardText } from 'src/util';
-import { fillTextLeftWithSpacing, strokeTextLeftWithSpacing } from './canvas-util';
+import { FootTextRegex, NameFontDataMap, TCG_LETTER_JOINLIST, DefaultFontSizeData, getDefaultNameStyle, NameStyle } from 'src/model';
+import { parsePalette, createFontGetter, condense } from 'src/util';
+import { tokenizeText } from './text-util';
+import { drawLine } from './text';
+import { createLineList } from './line-analyze';
+import { normalizeCardText } from './text-normalize';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -12,6 +15,7 @@ const getNameGradient = (
     maxAscent: number,
     maxDescent: number,
 ) => {
+    /** Dùng knowledge diagram để tra cứu cách tính, về cơ bản ta tạo ra một hình chữ nhật nghiêng theo góc cho trước với độ lớn vừa đủ để chứa toàn bộ text */
     const baseKAF = angleAsDegree % 360;
     const quarterSlot = `${Math.floor(baseKAF / 90)}`;
     const KAF = baseKAF % 90;
@@ -68,9 +72,9 @@ export const drawName = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
     edge: number,
-    baseline: number,
-    maxWidth: number,
-    style: Partial<TextStyle>,
+    trueBaseline: number,
+    trueWidth: number,
+    style: Partial<NameStyle>,
     option: {
         format: string,
         isSpeedSkill?: boolean,
@@ -81,6 +85,7 @@ export const drawName = (
         const {
             font,
             fillStyle,
+            headTextFillStyle,
             shadowBlur,
             hasShadow,
             shadowColor,
@@ -94,9 +99,8 @@ export const drawName = (
             hasGradient,
             gradientAngle,
             gradientColor,
-        } = { ...getDefaultTextStyle(), ...style };
+        } = { ...getDefaultNameStyle(), ...style };
         const hasOutline = defaultHasOutline || isSpeedSkill;
-        const { fontStyle, letterSpacingRatio, offsetY, offsetX } = TextStyleMap[font];
         if (hasShadow) {
             ctx.shadowColor = shadowColor;
             ctx.shadowOffsetY = shadowOffsetY;
@@ -110,65 +114,94 @@ export const drawName = (
             ctx.lineWidth = 6;
             ctx.strokeStyle = '#000';
         }
+        const fontData = {
+            ...NameFontDataMap[font].fontData,
+            headTextFillStyle,
+        };
+        const fontGetter = createFontGetter({
+            defaultFamily: fontData.font,
+            defaultSize: fontData.fontList[0].fontSize,
+            defaultWeight: fontData.weight,
+        });
+        const textData = {
+            fontLevel: 0,
+            fontData,
+            currentFont: fontGetter,
+        };
+        const quoteConvertedValue = normalizeCardText(value, format, { multiline: false });
 
-        const quoteConvertedValue = normalizeCardText(value, format);
-        const tokenList = format === 'ocg'
+        /** Tính bounding box để phục vụ cho gradient  */
+        const crudeTokenList = format === 'ocg'
             ? [quoteConvertedValue]
-            : quoteConvertedValue.split(/([^&A-Za-z0-9\-/\s()!,])/g);
-
+            : quoteConvertedValue.split(new RegExp(`([^${TCG_LETTER_JOINLIST}])`, 'g'));
+        const fontGetterForWidthCalculating = createFontGetter({
+            defaultFamily: fontData.font,
+            defaultSize: fontData.fontList[0].fontSize,
+            defaultWeight: fontData.weight,
+        });
+        const normalStyle = fontGetterForWidthCalculating.getFont();
+        const symbolStyle = fontGetterForWidthCalculating
+            .setSize(cur => cur * fontData.symbolFontRatio)
+            .setStyle('small-caps')
+            .setFamily(fontData.symbolFont)
+            .getFont();
         let maxAscent = 0;
         let maxDescent = 0;
-        const contentWidth = tokenList
-            .reduce((prev, cur, index) => {
-                if (index % 2 === 0) ctx.font = fontStyle;
-                else ctx.font = 'small-caps 64px matrix';
-                const textMetric = ctx.measureText(cur);
-                maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
-                maxDescent = Math.max(maxDescent, textMetric.actualBoundingBoxDescent);
+        crudeTokenList.forEach((cur, index) => {
+            ctx.font = index % 2 === 0 ? normalStyle : symbolStyle;
 
-                return prev + textMetric.width * (2 + letterSpacingRatio) / 2;
-            }, 0);
+            const textMetric = ctx.measureText(cur.replaceAll(FootTextRegex, ''));
+            maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
+            maxDescent = Math.max(maxDescent, textMetric.actualBoundingBoxDescent);
+        }, 0);
 
-        /** Công thức tính gradient tham khảo knowledge diagram
-         */
-        if (contentWidth > 0) {
-            const condenseRatio = Math.min(maxWidth / contentWidth, 1);
-            const gradient = hasGradient
-                ? getNameGradient(ctx, gradientAngle, parsePalette(gradientColor), edge, contentWidth, baseline, maxAscent, maxDescent)
-                : undefined;
+        ctx.font = normalStyle;
+        let actualLineWidth = 0;
+        const internalEffectiveMedian = condense(
+            median => {
+                const { currentLineCount, currentLineList } = createLineList({
+                    ctx,
+                    median,
+                    paragraphList: [quoteConvertedValue],
+                    format, textData,
+                    trueWidth,
+                });
 
-            ctx.fillStyle = gradient ?? fillStyle;
+                if (currentLineCount > 1) return false;
+                actualLineWidth = currentLineList[0].actualLineWidth;
+                return true;
+            },
+        );
+        const xRatio = internalEffectiveMedian / 1000;
+        const yRatio = 1;
 
-            ctx.scale(condenseRatio, 1);
-            tokenList
-                .reduce((prev, token, index) => {
-                    if (index % 2 === 0) ctx.font = fontStyle;
-                    else ctx.font = 'small-caps 64px matrix';
+        ctx.scale(xRatio, yRatio);
 
-                    if (hasOutline) {
-                        ctx.lineJoin = 'round';
-                        strokeTextLeftWithSpacing(
-                            ctx,
-                            token,
-                            letterSpacingRatio,
-                            prev / condenseRatio + offsetX + lineOffsetX,
-                            baseline - (isSpeedSkill ? offsetY : 0) + lineOffsetY,
-                        );
-                        fillTextLeftWithSpacing(
-                            ctx,
-                            token,
-                            letterSpacingRatio,
-                            prev / condenseRatio + offsetX,
-                            baseline - (isSpeedSkill ? offsetY : 0),
-                        );
-                    } else {
-                        ctx.fillText(token, prev / condenseRatio + offsetX, baseline - (isSpeedSkill ? offsetY : 0));
-                    }
-                    return prev + ctx.measureText(token).width * condenseRatio;
-                }, edge + (isSpeedSkill ? offsetY : 0));
-            ctx.scale(1 / condenseRatio, 1);
-        }
-        const defaultTextStyle = getDefaultTextStyle();
+        const offsetY = fontData.fontList[0].offsetY ?? DefaultFontSizeData.offsetY;
+        const tokenList = tokenizeText(quoteConvertedValue);
+        const gradient = actualLineWidth > 0 && hasGradient
+            ? getNameGradient(ctx, gradientAngle, parsePalette(gradientColor), edge, actualLineWidth, trueBaseline, maxAscent, maxDescent)
+            : undefined;
+
+        ctx.fillStyle = gradient ?? fillStyle;
+        drawLine({
+            ctx,
+            tokenList,
+            xRatio, yRatio,
+            trueEdge: edge, trueBaseline,
+            textData,
+            format,
+            textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
+                if (hasOutline) {
+                    ctx.lineJoin = 'round';
+                    ctx.strokeText(letter, scaledEdge + lineOffsetX, scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0));
+                }
+                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+            },
+        });
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        const defaultTextStyle = getDefaultNameStyle();
         ctx.fillStyle = defaultTextStyle.fillStyle;
         ctx.shadowColor = defaultTextStyle.shadowColor;
         ctx.shadowOffsetY = defaultTextStyle.shadowOffsetY;

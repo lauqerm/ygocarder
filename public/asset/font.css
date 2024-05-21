@@ -67,3 +67,10 @@
     font-style: normal;
     font-display: swap;
 }
+@font-face {
+	font-family: 'YuGiOhITCStoneSerifBSc';
+	src: url('./font/YuGiOhITCStoneSerifBSc.ttf');
+	font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}

@@ -18,6 +18,7 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
         _newKey: 'ns',
         font: 'nsft',
         fillStyle: 'nsfs',
+        headTextFillStyle: 'nshfs',
         shadowColor: 'nssc',
         shadowOffsetY: 'nssoy',
         shadowOffsetX: 'nssox',

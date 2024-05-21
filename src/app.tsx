@@ -116,6 +116,7 @@ function App() {
                     'MatrixBook',
                     'MatrixRegularSmallCaps',
                     'Yugioh Rush Duel Numbers V4',
+                    'YuGiOhITCStoneSerifBSc',
                     'matrix',
                     'palatino-linotype-bold',
                     'stone-serif-bold',
@@ -178,21 +179,21 @@ function App() {
                     urls: ['asset/ocg-font.css'],
                 },
                 active: () => {
-                    console.log('ready');
-                    try {
-                        ocgReady.current = true;
-                        const localCardVersion = window.localStorage.getItem('card-version');
-                        const localCardData = window.localStorage.getItem('card-data');
+                    console.info('OCG Data Loaded');
+                    ocgReady.current = true;
+                    // try {
+                    //     const localCardVersion = window.localStorage.getItem('card-version');
+                    //     const localCardData = window.localStorage.getItem('card-data');
     
-                        const urlParam = (new URLSearchParams(window.location.search)).get('data');
-                        if (urlParam) {
-                            setCard(rebuildCardData(urlParam, true) as any);
-                        } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-                            setCard(rebuildCardData(localCardData) as any);
-                        }
-                    } catch (e) {
-                        setCard(defaultCard);
-                    }
+                    //     const urlParam = (new URLSearchParams(window.location.search)).get('data');
+                    //     if (urlParam) {
+                    //         setCard(rebuildCardData(urlParam, true) as any);
+                    //     } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
+                    //         setCard(rebuildCardData(localCardData) as any);
+                    //     }
+                    // } catch (e) {
+                    //     setCard(defaultCard);
+                    // }
                     setInitializing(false);
                 },
                 fontinactive(familyName, fvd) {

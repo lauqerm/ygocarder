@@ -3,38 +3,38 @@ import Moveable from 'react-moveable';
 import { EllipsisOutlined } from '@ant-design/icons';
 import './char-picker.scss';
 
-function insertAtCursor(myField: HTMLTextAreaElement, myValue: string) {
+function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
     //IE support
     if ((document as any).selection) {
-        myField.focus();
+        target.focus();
         const sel = (document as any).selection.createRange();
         sel.text = myValue;
 
         return {
-            value: myField.value,
+            value: target.value,
             position: 0,
         };
     }
     //MOZILLA and others
-    else if (myField.selectionStart || myField.selectionStart === 0) {
-        const startPos = myField.selectionStart;
-        const endPos = myField.selectionEnd;
-        myField.value = myField.value.substring(0, startPos)
+    else if (target.selectionStart || target.selectionStart === 0) {
+        const startPos = target.selectionStart;
+        const endPos = target.selectionEnd;
+        target.value = target.value.substring(0, startPos)
             + myValue
-            + myField.value.substring(endPos, myField.value.length);
-        myField.selectionStart = startPos + myValue.length;
-        myField.selectionEnd = startPos + myValue.length;
-        myField.focus();
+            + target.value.substring(endPos, target.value.length);
+        target.selectionStart = startPos + myValue.length;
+        target.selectionEnd = startPos + myValue.length;
+        target.focus();
 
         return {
-            value: myField.value,
+            value: target.value,
             position: startPos + myValue.length,
         };
     } else {
-        myField.value += myValue;
+        target.value += myValue;
 
         return {
-            value: myField.value,
+            value: target.value,
             position: 0,
         };
     }
@@ -84,6 +84,7 @@ export const CharPicker = ({
                 '©',
                 '™',
                 'Ɐ',
+                'Я',
             ].map(entry => {
                 return <button key={entry} className="ant-btn" onClick={() => internalOnPick(entry)}>{entry}</button>;
             })}

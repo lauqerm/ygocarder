@@ -1,3 +1,4 @@
+const MAX_CONDENSER_THRESHOLD = 1000;
 /** Thuật toán tìm kiếm đơn giản như sau
  * 1. Bước nhảy mặc định là 100
  * 1. Tìm từ trên xuống, chừng nào giá trị hiện tại còn lớn hơn giá trị yêu cầu
@@ -5,7 +6,6 @@
  * 1. Nếu giá trị hiện tại nhỏ hơn giá trị yêu cầu nghĩa là đã đi quá, nhảy lên lại một bậc
  * 1. Giảm bước nhảy đi 10 lần, lặp lại từ bước 2 với bước nhảy mới
  */
-const MAX_CONDENSER_THRESHOLD = 1000;
 export const createCondenser = (minThreshold = 0, maxThreshold = MAX_CONDENSER_THRESHOLD) => {
     let min = minThreshold;
     let max = maxThreshold;
@@ -80,12 +80,12 @@ export const condense = (
             /** Trả về median cuối cùng sau khi lặp tối đa, median nhỏ hơn minThreshold sẽ được quy về minThreshold, để tránh việc phải deal với threshold 0 */
             const finalMedian = condenser.getMedian();
 
-            effectiveMedian = finalMedian <= minThreshold ? minThreshold : finalMedian;
+            effectiveMedian = finalMedian;
             break;
         } else {
             const satisfy = worker(condenser.getMedian());
 
-            if (!satisfy) {
+            if (!satisfy && condenser.getMedian() > 0) {
                 /** If overflow, lower the median and apply it */
                 condenser.searchDown();
             } else {
@@ -96,5 +96,10 @@ export const condense = (
         }
     }
 
-    return Math.min(effectiveMedian, MAX_CONDENSER_THRESHOLD);
+    /** Nếu kết quả cuối cùng không mong muốn (effectiveMedian ngoài ngưỡng), ta chạy lại worker một lần với median được ép về ngưỡng.
+     * Như vậy đảm bảo worker cuối cùng luôn chạy với median sẽ trả về, nếu không worker sẽ chạy với median không mong muốn.
+     */
+    const forcedMedian = Math.max(minThreshold, Math.min(effectiveMedian, MAX_CONDENSER_THRESHOLD));
+    if (forcedMedian !== effectiveMedian) worker(forcedMedian);
+    return forcedMedian;
 };

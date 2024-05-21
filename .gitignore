@@ -25,3 +25,5 @@ yarn-error.log*
 
 # Other
 /unused-frame
+/font-project
+/backup

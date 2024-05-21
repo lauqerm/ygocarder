@@ -2,40 +2,37 @@ import { useCallback, useEffect, useRef } from 'react';
 import {
     clearCanvas,
     draw1stEdition,
-    drawStat,
-    drawBracketSpaceTemplate,
-    drawBracketTemplate,
     drawCreatorText,
     drawEffect,
     drawFromSource,
     drawFromSourceWithSize,
-    drawIconSpaceTemplate,
+    drawMonsterType,
     drawName,
     drawScale,
-    drawTextTemplate,
+    drawStat,
+    drawStatText,
     fillTextLeftWithSpacing,
     fillTextRightWithSpacing,
-    drawStatText
 } from 'src/draw';
 import {
-    pendulumFontList,
-    pendulumSizeList,
-    tcgSTFontData,
-    stSizeList,
-    CardTypeSizeMap,
-    specialSizeList,
-    specialFontList,
     CanvasConst,
     Card,
     CardArtCanvasConst,
-    getDefaultTextStyle,
-    iconList,
     MasterDuelCanvas,
     NO_ATTRIBUTE,
+    PresetNameStyleMap,
+    ST_ICON_SYMBOL,
     UP_RATIO,
-    PresetMap,
     arrowPositionList,
-    getEffectMonsterFontData
+    effectMonsterFontData,
+    effectSTFontData,
+    getDefaultNameStyle,
+    iconList,
+    pendulumFontList,
+    pendulumSizeList,
+    specialFontList,
+    specialSizeList,
+    stSizeList,
 } from 'src/model';
 import { FinishMap } from 'src/model/finish';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
@@ -361,12 +358,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 } else if (!isMonster && !isSpeedSkill) {
                     const normalizedSubFamily = subFamily.toUpperCase();
                     const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconList.includes(normalizedSubFamily);
-                    const stIconSpacing = 7 * UP_RATIO;
 
                     return hasSTIcon
                         ? drawFromSourceWithSize(ctx, `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                            image => 491 * UP_RATIO - image.naturalWidth - stIconSpacing,
-                            103 * UP_RATIO,
+                            image => 715 - image.naturalWidth,
+                            153,
                             image => image.naturalWidth,
                             image => image.naturalWidth,
                         )
@@ -397,29 +393,31 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     /** DRAW NAME */
     useEffect(() => {
         if (active) {
-            const defaultTextStyle = getDefaultTextStyle();
+            const defaultTextStyle = getDefaultNameStyle();
             const ctx = nameCanvas.current?.getContext('2d');
             if (ctx) {
-                const maxWidth = attribute === NO_ATTRIBUTE ? 686 : 606;
+                const lineWidth = attribute === NO_ATTRIBUTE ? 686 : 606;
                 ctx.clearRect(0, 0, CanvasWidth, 100 * UP_RATIO);
                 ctx.textAlign = 'left';
                 const style = nameStyleType === 'auto'
                     ? foil !== 'normal'
-                        ? PresetMap[foil as keyof typeof PresetMap ?? 'commonB'].value
+                        ? PresetNameStyleMap[foil as keyof typeof PresetNameStyleMap ?? 'commonB'].value
                         : frame === 'zarc'
-                            ? PresetMap['animeGold'].value
+                            ? PresetNameStyleMap['animeGold'].value
                             : {
                                 ...defaultTextStyle,
                                 fillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                                headTextFillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
                             }
                     : nameStyleType === 'predefined'
-                        ? PresetMap[nameStyle.preset as keyof typeof PresetMap ?? 'commonB'].value
+                        ? PresetNameStyleMap[nameStyle.preset as keyof typeof PresetNameStyleMap ?? 'commonB'].value
                         : nameStyle;
                 let regionalStyle = style;
                 if (format === 'ocg' && nameStyleType !== 'custom') regionalStyle.font = 'OCG';
-                if (format !== 'ocg' && nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
+                if (nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
+                const edge = format === 'tcg' ? 60 : 64; // 61 AI Ritual
 
-                drawName(ctx, name, 40.52 * UP_RATIO, 78 * UP_RATIO, maxWidth, regionalStyle, { isSpeedSkill, format });
+                drawName(ctx, name, edge, 78 * UP_RATIO, lineWidth, regionalStyle, { isSpeedSkill, format });
             }
         }
     }, [active, attribute, foil, isInitializing, isMonster, isSpeedSkill, frame, lightHeader, name, nameCanvas, nameStyle, nameStyleType, format]);
@@ -448,18 +446,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = setIdCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if (lightFooter) ctx.fillStyle = '#fff';
-                else ctx.fillStyle = '#000';
-                ctx.font = `${15 * UP_RATIO}px stone-serif-regular`;
+                let spacing = 0.175;
+                let offsetY = 0;
+                let xOffset = 0;
+                ctx.fillStyle = lightFooter ? '#fff' : '#000';
+                if (format === 'ocg') {
+                    spacing = 0.145;
+                    offsetY = -1;
+                    xOffset = -3;
+                    ctx.font = '22px stone-serif-regular';
+                } else {
+                    ctx.font = '22px stone-serif-regular';
+                }
 
                 if (isPendulum) {
-                    fillTextLeftWithSpacing(ctx, setId, -0.1, 45 * UP_RATIO, 746 * UP_RATIO);
+                    fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY);
                 } else if (isLink) {
-                    fillTextRightWithSpacing(ctx, setId, -0.1, 450 * UP_RATIO, 590 * UP_RATIO);
-                } else fillTextRightWithSpacing(ctx, setId, -0.1, 492 * UP_RATIO, 589 * UP_RATIO);
+                    fillTextRightWithSpacing(ctx, setId, spacing, 666.56 + xOffset, 873.94 + offsetY);
+                } else fillTextRightWithSpacing(ctx, setId, spacing, 728.78 + xOffset, 871.50 + offsetY);
             }
         }
-    }, [active, isInitializing, isLink, isPendulum, lightFooter, setIdCanvas, setId, isSpeedSkill]);
+    }, [active, isInitializing, format, isLink, isPendulum, lightFooter, setIdCanvas, setId, isSpeedSkill]);
 
     /** DRAW FIRST EDITION NOTICE AND PASSCODE */
     useEffect(() => {
@@ -467,14 +474,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = passcodeCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if (lightFooter) ctx.fillStyle = '#fff';
-                else ctx.fillStyle = '#000';
+                ctx.fillStyle = lightFooter ? '#fff' : '#000';
                 ctx.font = `${15 * UP_RATIO}px stone-serif-regular`;
 
                 const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 25 * UP_RATIO, 777 * UP_RATIO);
                 if (isFirstEdition && !isDuelTerminalCard) {
-                    if (lightFooter) ctx.fillStyle = '#fff';
-                    else ctx.fillStyle = '#000';
+                    ctx.fillStyle = lightFooter ? '#fff' : '#000';
 
                     draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO));
                 }
@@ -488,13 +493,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = creatorCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
-                if (lightFooter) ctx.fillStyle = '#fff';
-                else ctx.fillStyle = '#000';
-
-                drawCreatorText(ctx, creator);
+                ctx.fillStyle = lightFooter ? '#fff' : '#000';
+                drawCreatorText({
+                    ctx,
+                    format,
+                    value: creator,
+                    alignment: 'right',
+                });
             }
         }
-    }, [isInitializing, isLink, isPendulum, lightFooter, creator, active, creatorCanvas]);
+    }, [isInitializing, isLink, isPendulum, lightFooter, creator, active, creatorCanvas, format]);
 
     /** DRAW STICKER */
     useEffect(() => {
@@ -517,35 +525,26 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     ) => {
         if (ctx) {
             ctx?.clearRect(0, 0, CanvasWidth, 700 * UP_RATIO);
-            const size = CardTypeSizeMap[textSize] ?? CardTypeSizeMap['medium'];
-            const { left } = size;
             const normalizedSubFamily = subFamily.toUpperCase();
-            const instructionList = [
-                drawBracketTemplate(ctx, '[', size, alignment),
-                drawBracketSpaceTemplate(ctx, ' ', size, alignment),
-                ...typeAbility.map((entry, index) => drawTextTemplate(
-                    ctx,
-                    entry,
-                    index === typeAbility.length - 1,
-                    size, alignment)),
-                textSize === 'large'
-                    ? normalizedSubFamily === 'NO ICON'
-                        ? (edge: number) => edge + 4 * (alignment === 'left' ? 1 : -1) * UP_RATIO
-                        : drawIconSpaceTemplate(ctx, size, alignment)
-                    : (edge: number) => edge + 2 * UP_RATIO,
-                drawBracketTemplate(ctx, ']', size, alignment),
-            ];
-            const totalLeft = (alignment === 'left'
-                ? instructionList
-                : instructionList.reverse())
-                .reduce((prev, curr) => {
-                    return curr(prev);
-                }, left);
-            ctx.textAlign = 'left';
+            const normalizedTypeAbility = typeAbility.map(text => text.trim()).join('/');
+            const typeAbilityWithIcon = (isMonster || normalizedSubFamily === 'NO ICON')
+                ? normalizedTypeAbility
+                : `${normalizedTypeAbility}${ST_ICON_SYMBOL}`;
+            const normalizedTypeAbilityText = format === 'tcg'
+                ? textSize === 'large'
+                    ? `[  ${typeAbilityWithIcon}  ]`
+                    : `[${typeAbilityWithIcon}]`
+                : `【${typeAbilityWithIcon}】`;
 
-            if (totalLeft > 508 * UP_RATIO && textSize === 'medium') drawTypeAbility(ctx, 'small', alignment);
+            drawMonsterType({
+                ctx,
+                format,
+                size: textSize,
+                value: normalizedTypeAbilityText,
+                alignment,
+            });
         }
-    }, [subFamily, typeAbility]);
+    }, [subFamily, typeAbility, format, isMonster]);
 
     /** DRAW MONSTER EFFECT */
     useEffect(() => {
@@ -556,13 +555,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             ctx?.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
 
             if (isMonster) {
-                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, getEffectMonsterFontData(format), undefined, condenseTolerant, format);
+                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, effectMonsterFontData[format], undefined, condenseTolerant, format);
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
             } else if (isSpeedSkill) {
                 const effectIndexSize = drawEffect(ctx, effect, false, isNormal, specialFontList, specialSizeList, condenseTolerant, format);
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
             } else {
-                drawEffect(ctx, effect, false, false, tcgSTFontData, stSizeList, condenseTolerant, format);
+                drawEffect(ctx, effect, false, false, effectSTFontData[format], stSizeList, condenseTolerant, format);
                 drawTypeAbility(typeCtx, 'large', 'right');
             }
         }
