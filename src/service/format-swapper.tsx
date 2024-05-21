@@ -7,6 +7,7 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
         creator,
         typeAbility,
         nameStyle,
+        setId,
     } = card;
 
     if (format === targetFormat) return card;
@@ -19,6 +20,11 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
     } else {
         newNameStyle.font = NameFontDataMap[targetFormat === 'ocg' ? 'OCG' : 'Default'].value;
     }
+    const newSetId = (targetFormat === 'ocg' && /-EN/.test(setId))
+        ? setId.replace('-EN', '-JP')
+        : targetFormat === 'tcg' && /-JP/.test(setId)
+            ? setId.replace('-JP', '-EN')
+            : setId;
 
     return {
         ...card,
@@ -26,5 +32,6 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
         format: targetFormat,
         typeAbility: typeAbility.map(entry => termMap[entry] ?? entry),
         creator: termMap[creator] ?? creator,
+        setId: newSetId,
     };
 };

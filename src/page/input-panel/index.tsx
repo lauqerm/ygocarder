@@ -69,7 +69,13 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         onCardChange(currentCard => mutateFunc(currentCard));
     };
     const onFormatChange = (formatValue: string | number) => {
-        onCardChange(currentCard => changeCardFormat(currentCard, `${formatValue}`));
+        onCardChange(currentCard => {
+            const nextFormat = `${formatValue}`;
+            const foramtSwappedCard = changeCardFormat(currentCard, nextFormat);
+            setDisplayTypeAbility(foramtSwappedCard.typeAbility.join('/'));
+
+            return foramtSwappedCard;
+        });
     };
     const onFoilChange = onChangeFactory('foil', setCard);
     const onFinishChange = onChangeFactory('finish', setCard);
