@@ -1,22 +1,18 @@
 import {
-    CHIISAI_RATIO,
-    CHOONPU_RATIO,
     ChiisaiRegex,
     ChoonpuRegex,
-    HIRAGANA_RATIO,
     HiraganaRegex,
-    KATAKANA_RATIO,
     KatakanaRegex,
+    MetricMethod,
     OCGDotRegex,
     OCGIncreasedWidthRegex,
     OCGNumberRegex,
-    OCGReducedWidthRegex,
-    OCG_DOT_RATIO,
-    OCG_INCREASED_WIDTH_RATIO,
+    OCGOffsetMap,
+    OCGIncreasedLevel2WidthRegex,
     OCG_LETTER_RATIO,
-    OCG_NUMBER_RATIO,
     OCG_REDUCED_AT_END_LINE_RATIO,
-    OCG_REDUCED_WIDTH_RATIO,
+    OCGLastOfLineOffsetMap,
+    NoSpaceRegex,
 } from 'src/model';
 
 /** Trả về độ dài thực của letter (không phụ thuộc vào scale), nếu thông số `xRatio` được truyền, các ký tự constant width như bullet
@@ -28,57 +24,90 @@ export const getLetterWidth = ({
     lastOfLine = false,
     debug,
     format,
+    metricMethod = 'standard',
 }: {
     ctx: CanvasRenderingContext2D,
     letter: string,
     lastOfLine?: boolean,
     format: string,
+    metricMethod?: MetricMethod,
     debug?: string,
 }) => {
-    if (/⦉|⦊/.test(letter)) return 0;
-    // if (letter === '竜') return 57;
-    // if (letter === 'ガ') return 60;
-    // if (letter === 'ド') return 50;
-    // if (letter === 'ン') return 48;
-    // if (letter === 'ラ') return 58;
-    // if (letter === '白') return 55;
-    // if (letter === 'き') return 59;
-    // if (letter === '森') return 58;
-    // if (letter === 'の') return 53;
-    // if (letter === 'ア') return 49;
-    // if (letter === 'ス') return 55;
+    if (/⦉|⦊/.test(letter)) return {
+        boundWidth: 0,
+    };
+
+    // Compact metricMethod
+    // Width = 1.5625% font width + (bound width) + 1.5625% font width
+    // Bound width không được nhỏ hơn min bound width, tính theo tỷ lệ % ứng với từng ký tự
 
     const metric = ctx.measureText(letter);
-    // const trueLetterWidth = metric.actualBoundingBoxRight + metric.actualBoundingBoxLeft;
-    const trueLetterWidth = metric.width;
-    if (format === 'tcg') return trueLetterWidth;
+    const {
+        width,
+        actualBoundingBoxLeft,
+        actualBoundingBoxRight,
+    } = metric;
+    const actualBoundWidth = actualBoundingBoxLeft + actualBoundingBoxRight;
+    let letterBoxSpacing = Math.max(0.450, width * 0.015625);
+    let boundWidth = actualBoundWidth;
+    let offsetRatio = (lastOfLine
+        ? OCGLastOfLineOffsetMap[letter]
+        : OCGOffsetMap[letter]) ?? 0;
+
+    if (format === 'tcg') return {
+        boundWidth: width,
+        metric,
+        offsetRatio,
+    };
 
     let letterRatio = OCG_LETTER_RATIO;
     let endLineRatio = 1;
-    if (OCGDotRegex.test(letter)) letterRatio = OCG_DOT_RATIO;
-    else if (ChoonpuRegex.test(letter)) letterRatio = CHOONPU_RATIO;
-    else if (ChiisaiRegex.test(letter)) letterRatio = CHIISAI_RATIO;
-    else if (OCGNumberRegex.test(letter)) letterRatio = OCG_NUMBER_RATIO;
-    else if (OCGReducedWidthRegex.test(letter)) {
-        /** Dấu chấm ở cuối đoạn sẽ ngắn hơn bình thường nhiều, về lý thuyết việc này sẽ gây ra sai lệch giữa câu văn tính toán và thực tế.
-         * Nhưng thực tế sai lệch này quá nhỏ và ta chia phần thừa này thành additionalSpace.
-         */
-        letterRatio = OCG_REDUCED_WIDTH_RATIO;
-        endLineRatio = lastOfLine ? OCG_REDUCED_AT_END_LINE_RATIO : 1;
+    let standardMetricRatio = 1.000;
+    if (OCGDotRegex.test(letter)) {
+        boundWidth = actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.350);
+        standardMetricRatio = 0.600;
+    }
+    else if (ChoonpuRegex.test(letter)) {
+        boundWidth = Math.max(actualBoundWidth, width * 0.985);
+    }
+    else if (ChiisaiRegex.test(letter)) {
+        boundWidth = Math.max(actualBoundWidth, width * 0.7);
+    }
+    else if (OCGNumberRegex.test(letter)) {
+        boundWidth = width;
+    }
+    else if (OCGIncreasedLevel2WidthRegex.test(letter)) {
+        boundWidth = actualBoundWidth * 2;
     }
     else if (OCGIncreasedWidthRegex.test(letter)) {
-        /** Trường hợp tương tự dấu chấm */
-        letterRatio = OCG_INCREASED_WIDTH_RATIO;
-        endLineRatio = lastOfLine ? OCG_REDUCED_AT_END_LINE_RATIO : 1;
+        boundWidth = actualBoundWidth * 1.250 * (lastOfLine ? OCG_REDUCED_AT_END_LINE_RATIO : 1);
     }
-    else if (HiraganaRegex.test(letter)) letterRatio = HIRAGANA_RATIO;
-    else if (KatakanaRegex.test(letter)) letterRatio = KATAKANA_RATIO;
-    else letterRatio = OCG_LETTER_RATIO;
+    else if (HiraganaRegex.test(letter)) {
+        boundWidth = Math.max(actualBoundWidth, width * 0.750);
+    }
+    else if (KatakanaRegex.test(letter)) {
+        boundWidth = Math.max(actualBoundWidth, width * 0.690)
+            * (metricMethod === 'creator' ? 0.97500 : 1.000);
+    }
+    else if (NoSpaceRegex.test(letter)) {
+        boundWidth = width;
+        letterBoxSpacing = 0;
+    }
+    else {
+        boundWidth = Math.max(actualBoundWidth, width * 0.875);
+    }
 
-    const actualLetterWidth = trueLetterWidth * letterRatio * endLineRatio;
+    const actualLetterWidth = width * letterRatio * endLineRatio;
 
-    if (debug) console.info(`getLetterWidth ${debug}`, letter, metric, trueLetterWidth, letterRatio, endLineRatio, '|', actualLetterWidth);
-    return actualLetterWidth;
+    if (debug) console.info(`getLetterWidth ${debug}`, letter, metric, letterRatio, endLineRatio, '|', actualLetterWidth);
+
+    return {
+        boundWidth: metricMethod === 'standard'
+            ? width * standardMetricRatio
+            : boundWidth + letterBoxSpacing * 2,
+        metric,
+        offsetRatio,
+    };
 };
 
 export type TextDrawer = (props: {
@@ -88,70 +117,43 @@ export type TextDrawer = (props: {
     scaledBaseline: number,
 }) => void;
 /** Vẽ ký tự lẻ, hàm này chịu ảnh hưởng bởi transform ratio. */
-export const drawLetter = (
+export const drawLetterV2 = ({
+    ctx,
+    baseline,
+    edge,
+    letter,
+    xRatio,
+    letterMetric,
+    textDrawer,
+}: {
     ctx: CanvasRenderingContext2D,
     letter: string,
+    letterMetric?: ReturnType<typeof getLetterWidth>,
     edge: number,
     baseline: number,
     xRatio: number,
     textDrawer?: TextDrawer,
-) => {
-    const letterWidth = ctx.measureText(letter).width * xRatio;
-    const defaultTextDrawer: TextDrawer = ({
+}) => {
+    const {
+        boundWidth,
+        metric = ctx.measureText(letter),
+        offsetRatio = 0,
+    } = letterMetric ?? {};
+    const letterWidth = metric.width * xRatio;
+    const scaledBoundingWidth = boundWidth ? boundWidth * xRatio : letterWidth;
+    const worker = textDrawer ?? (({
         ctx,
         letter,
         scaledBaseline,
         scaledEdge,
     }) => {
         ctx.fillText(letter, scaledEdge, scaledBaseline);
-    };
-    const worker = textDrawer ?? defaultTextDrawer;
-    if (OCGDotRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - OCG_DOT_RATIO) / 2, scaledBaseline: baseline });
+    });
 
-        return letterWidth * OCG_DOT_RATIO;
-    }
-    if (ChoonpuRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - CHOONPU_RATIO) / 2, scaledBaseline: baseline });
-
-        return letterWidth * CHOONPU_RATIO;
-    }
-    if (ChiisaiRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - CHIISAI_RATIO) / 2, scaledBaseline: baseline });
-
-        return letterWidth * CHIISAI_RATIO;
-    }
-    if (OCGNumberRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - OCG_NUMBER_RATIO) / 2, scaledBaseline: baseline });
-
-        return letterWidth * OCG_NUMBER_RATIO;
-    }
-    /** Theo lý thuyết ta cần xử lý case dấu chấm / phẩy ở cuối dòng, nhưng khi vẽ ở cuối dòng thì thông số này được reset ở dòng mới.
-     * Nên không xử lý gì thêm
-     */
-    if (OCGReducedWidthRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio, scaledBaseline: baseline });
-
-        /** Tương tự trường hợp dấu chấm */
-        return letterWidth * OCG_REDUCED_WIDTH_RATIO;
-    }
-    if (OCGIncreasedWidthRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - OCG_INCREASED_WIDTH_RATIO) / 2, scaledBaseline: baseline });
-
-        return letterWidth * OCG_INCREASED_WIDTH_RATIO;
-    }
-    if (HiraganaRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - HIRAGANA_RATIO) / 2, scaledBaseline: baseline });
-
-        return letterWidth * HIRAGANA_RATIO;
-    }
-    if (KatakanaRegex.test(letter)) {
-        worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - KATAKANA_RATIO) / 2, scaledBaseline: baseline });
-
-        return letterWidth * KATAKANA_RATIO;
-    }
-
-    worker({ ctx, letter, scaledEdge: edge / xRatio - letterWidth * (1 - OCG_LETTER_RATIO) / 2, scaledBaseline: baseline });
-
-    return letterWidth * OCG_LETTER_RATIO;
+    worker({
+        ctx,
+        letter,
+        scaledEdge: edge / xRatio - (letterWidth - scaledBoundingWidth) / 2 - scaledBoundingWidth * offsetRatio,
+        scaledBaseline: baseline,
+    });
 };

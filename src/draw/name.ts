@@ -67,7 +67,6 @@ const getNameGradient = (
     return undefined;
 };
 
-
 export const drawName = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,

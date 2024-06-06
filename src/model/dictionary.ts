@@ -32,9 +32,9 @@ export const ocgKeywordDataList = [
         rubyForm: '{相|あい}{手|て}',
     },
     {
-        shortForm: 'ＬＰ',
-        regexForm: '(?<!\\w)ＬＰ(?!\\w)',
-        rubyForm: '{ＬＰ|ライフポイント}',
+        shortForm: 'LP',
+        regexForm: '(?<!\\w)LP(?!\\w)',
+        rubyForm: '{LP|ライフポイント}',
     },
     {
         shortForm: 'デッキ',
@@ -49,9 +49,9 @@ export const ocgKeywordDataList = [
         rubyForm: 'サイド',
     },
     {
-        shortForm: 'ＥＸ',
-        regexForm: '(?<!\\w)ＥＸ(?!\\w)',
-        rubyForm: '{ＥＸ|エクストラ}',
+        shortForm: 'EX',
+        regexForm: '(?<!\\w)EX(?!\\w)',
+        rubyForm: '{EX|エクストラ}',
     },
     {
         shortForm: 'フィールド',
@@ -554,21 +554,24 @@ export const ocgKeywordDataList = [
         rubyForm: 'セット',
     },
     {
-        shortForm: 'Ｓ',
-        rubyForm: '{Ｓ|シンクロ}',
+        shortForm: 'S',
+        regexForm: '(?<!\\w)S(?!\\w)',
+        rubyForm: '{S|シンクロ}',
     },
     {
-        shortForm: 'Ｘ',
-        rubyForm: '{Ｘ|エクシーズ}',
+        shortForm: 'X',
+        regexForm: '(?<!\\w)X(?!\\w)',
+        rubyForm: '{X|エクシーズ}',
     },
     {
-        shortForm: 'Ｌ',
-        rubyForm: '{Ｌ|リンク}',
+        shortForm: 'L',
+        regexForm: '(?<!\\w)L(?!\\w)',
+        rubyForm: '{L|リンク}',
     },
     {
-        shortForm: 'Ｐ',
-        regexForm: '(?<!\\w)Ｐ(?!\\w)',
-        rubyForm: '{Ｐ|ペンデュラム}',
+        shortForm: 'P',
+        regexForm: '(?<!\\w)P(?!\\w)',
+        rubyForm: '{P|ペンデュラム}',
     },
     {
         shortForm: 'リンク',
@@ -625,6 +628,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '降臨',
         rubyForm: '{降|こう}{臨|りん}',
+    },
+    {
+        shortForm: '以外',
+        rubyForm: '{以|い}{外|がい}',
     },
     {
         shortForm: '他',

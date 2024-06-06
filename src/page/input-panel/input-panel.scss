@@ -174,6 +174,42 @@
 	}
 }
 
+.format-radio {
+	.ant-radio-button-wrapper-checked {
+		&.ocg-button {
+			background-color: #ff4d4f;
+			border-color: #ff6f6f;
+			&:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+				border-right-color: #ff6f6f;
+			}
+			&:hover {
+				background-color: #ff6f6f;
+				color: #ffffffcc;
+			}
+		}
+		&.tcg-button {
+			background-color: #096dd9;
+			border-color: #3b9dff;
+			&:hover {
+				background-color: #3b9dff;
+				color: #ffffffcc;
+			}
+		}
+	}
+	.ocg-button {
+		color: #ffffffcc;
+		&:hover {
+			color: #ff6f6f;
+		}
+	}
+	.tcg-button {
+		color: #ffffffcc;
+		&:hover {
+			color: #3b9dff;
+		}
+	}
+}
+
 .frame-radio {
 	.radio-train-input-group {
 		display: flex;
@@ -211,13 +247,21 @@
 		}
 	}
 }
-.pendulum-frame-picker {
-	background-color: #48484b;
-	padding: 5px;
-	.radio-train {
-		display: flex;
-		flex-wrap: wrap;
-		max-width: 500px;
+.pendulum-frame-picker-overlay {
+	&.ant-dropdown-placement-bottomLeft > .ant-dropdown-arrow {
+		border-top-color: #222222;
+		border-left-color: #222222;
+	}
+	.pendulum-frame-picker {
+		border: 1px solid #222;
+		background-color: #48484b;
+		box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.06);
+		padding: 5px;
+		.radio-train {
+			display: flex;
+			flex-wrap: wrap;
+			max-width: 500px;
+		}
 	}
 }
 .input-label-with-button {

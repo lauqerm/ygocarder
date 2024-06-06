@@ -12,13 +12,13 @@ export const drawScale = (
         let totalWidth = 0;
 
         digitList.forEach(digit => {
-            totalWidth += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
+            totalWidth += ctx.measureText(digit).width * (digit === '1' ? 0.65 : 1);
         });
         let accLeft = edge - totalWidth / 2;
 
         digitList.forEach(digit => {
             ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, baseline);
-            accLeft += (digit === '1' ? ctx.measureText(digit).width * 0.65 : ctx.measureText(digit).width);
+            accLeft += ctx.measureText(digit).width * (digit === '1' ? 0.65 : 1);
         });
     }
 };

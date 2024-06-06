@@ -24,15 +24,17 @@ export const DefaultFontSizeData = {
     overheadFontRatio: 0.5,
 };
 
+export type MetricMethod = 'standard' | 'compact' | 'creator';
 export type FontData = {
-    font: string,
     alphabetFont: string,
+    font: string,
+    fontList: FontSizeData[],
+    headTextFillStyle?: string,
+    metricMethod?: MetricMethod,
+    ordinalFont: string,
     symbolFont: string,
     symbolFontRatio: number,
-    ordinalFont: string,
     weight?: string,
-    headTextFillStyle?: string,
-    fontList: FontSizeData[],
 };
 export type TextData = {
     fontData: FontData,
@@ -68,8 +70,9 @@ export const ocgEffectMonsterFontData: FontData = {
     symbolFont: 'matrix',
     ...commonEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
+    metricMethod: 'compact',
     fontList: [
-        { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 25.8, lineCount: 6 },
+        { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6 },
     ]
 };
 export const effectMonsterFontData: Record<string, FontData> = {
@@ -84,10 +87,12 @@ export const tcgVanillaMonsterFontData: FontData = {
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
-        { bulletSymbolWidth: 23, fontSize: 16.74 * UP_RATIO, lineHeight: 17.01 * UP_RATIO, lineCount: 6 },
-        { bulletSymbolWidth: 23, fontSize: 16.74 * UP_RATIO, lineHeight: 17.01 * UP_RATIO, lineCount: 7 },
-        { bulletSymbolWidth: 23, fontSize: 16.74 * UP_RATIO, lineHeight: 17.01 * UP_RATIO, lineCount: 8 },
-    ]
+        { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
+        { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 7 },
+        { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8 },
+        { bulletSymbolWidth: 19, fontSize: 16.7, lineHeight: 16.7, lineCount: 9 },
+        { bulletSymbolWidth: 19, fontSize: 15.0, lineHeight: 15.0, lineCount: 10 },
+    ],
 };
 export const ocgVanillaMonsterFontData: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',
@@ -95,10 +100,9 @@ export const ocgVanillaMonsterFontData: FontData = {
     ...commonEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
+    metricMethod: 'compact',
     fontList: [
-        { bulletSymbolWidth: 16, fontSize: 17 * UP_RATIO, lineHeight: 30, lineCount: 5 },
-        { bulletSymbolWidth: 16, fontSize: 14 * UP_RATIO, lineHeight: 25, lineCount: 6 },
-        { bulletSymbolWidth: 16, fontSize: 12 * UP_RATIO, lineHeight: 23.5, lineCount: 7 },
+        { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6 },
     ]
 };
 export const vanillaMonsterFontData: Record<string, FontData> = {
@@ -106,7 +110,7 @@ export const vanillaMonsterFontData: Record<string, FontData> = {
     ocg: ocgVanillaMonsterFontData,
 };
 
-export const pendulumFontList: FontData = {
+export const tcgPendulumFontList: FontData = {
     font: 'MatrixBook',
     symbolFont: 'matrix',
     ...commonEffectFontData,
@@ -114,8 +118,28 @@ export const pendulumFontList: FontData = {
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
         { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.44 * UP_RATIO, lineCount: 5 },
-        { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.44 * UP_RATIO, lineCount: 5 },
-    ]
+    ],
+};
+export const ocgPendulumFontList: FontData = {
+    font: '"Yu-Gi-Oh! DF Leisho 3"',
+    symbolFont: 'matrix',
+    ...commonEffectFontData,
+    ordinalFont: '"DFKakuTaiHiStd-W4"',
+    alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
+    metricMethod: 'compact',
+    fontList: [
+        {
+            bulletSymbolWidth: 23,
+            fontSize: 22.05,
+            lineHeight: 25.2,
+            overheadFontRatio: 0.4,
+            lineCount: 5,
+        },
+    ],
+};
+export const pendulumFontList: Record<string, FontData> = {
+    tcg: tcgPendulumFontList,
+    ocg: ocgPendulumFontList,
 };
 
 export const tcgSTFontData: FontData = {
@@ -135,6 +159,7 @@ export const ocgSTFontData: FontData = {
     ...commonEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
+    metricMethod: 'compact',
     fontList: [
         { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 25.8, lineCount: 6 },
     ]

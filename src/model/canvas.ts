@@ -15,6 +15,6 @@ export const CardArtCanvasConst = {
         x: 56, // 38 * UP_RATIO,
         y: 213, // 144 * UP_RATIO,
         w: 702, // 474 * UP_RATIO,
-        ratio: 1.325
+        ratio: 1.325, //0.775, // 1.325 1.057
     }
 };

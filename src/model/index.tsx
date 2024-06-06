@@ -169,14 +169,17 @@ export const iconList = [
 export const foilList = [
     {
         name: 'normal',
+        label: 'Normal',
         color: '#747b95',
     },
     {
         name: 'gold',
+        label: 'Gold',
         color: '#cfa65f',
     },
     {
         name: 'platinum',
+        label: 'Platinum',
         color: '#b1b1b1',
     },
 ];

@@ -34,9 +34,11 @@ export const ocgCreatorFontData: FontData = {
     symbolFont: 'matrix',
     symbolFontRatio: 0.8,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
+    metricMethod: 'creator',
     fontList: [{
         bulletSymbolWidth: 18,
-        fontSize: 20.5,
+        fontSize: 19.0,
+        letterSpacing: -0.11,
         lineHeight: 20.5,
         lineCount: 1,
         overheadFontRatio: 0,

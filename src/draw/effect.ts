@@ -3,8 +3,8 @@ import {
     CondenseType,
     UP_RATIO,
     effectMonsterFontData,
-    CoordinateDate,
-    monsterSizeList,
+    CoordinateData,
+    monsterCoordinateData,
     CondenseTolerantMap,
     FontData,
 } from '../model';
@@ -26,7 +26,7 @@ export const drawEffect = (
     isPendulumEffect = false,
     isNormal = false,
     fontData: FontData = effectMonsterFontData.tcg,
-    sizeList: CoordinateDate[] = monsterSizeList,
+    sizeList: CoordinateData[] = monsterCoordinateData.tcg,
     condenseTolerant: CondenseType = 'strict',
     format: string,
 ) => {
@@ -46,13 +46,7 @@ export const drawEffect = (
         body: effectBody,
         flavorCondition: effectFlavorCondition,
         fullLineList,
-    } = isPendulumEffect
-        ? {
-            body: normalizedContent,
-            flavorCondition: '',
-            fullLineList: [],
-        }
-        : splitEffect(normalizedContent, isNormal);
+    } = splitEffect(normalizedContent, isNormal);
 
     /**
      * Line không thuộc effect bao gồm:
@@ -76,7 +70,7 @@ export const drawEffect = (
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
-            .setStyle(isNormal ? 'italic' : '')
+            .setStyle(isNormal && format === 'tcg' ? 'italic' : '')
             .setWeight(format === 'tcg' ? '' : '')
             .setSize(fontSize)
             .setFamily(font)
@@ -155,7 +149,7 @@ export const drawEffect = (
                 effectiveMedian,
             }) => {
                 const xRatio = effectiveMedian / 1000;
-                const { tokenList, additionalSpaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width: trueWidth });
+                const { tokenList, extraSpace } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width: trueWidth });
 
                 ctx.scale(xRatio, yRatio);
                 drawLine({
@@ -163,7 +157,7 @@ export const drawEffect = (
                     tokenList,
                     xRatio, yRatio,
                     trueEdge, trueBaseline,
-                    additionalSpaceWidth,
+                    extraSpace,
                     textData,
                     format,
                 });

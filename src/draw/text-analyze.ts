@@ -12,6 +12,7 @@ import {
     DefaultFontSizeData,
     ST_ICON_SYMBOL,
     TextData,
+    NoSpaceRegex,
 } from 'src/model';
 import { getTextWorker, getExtraLeftWidth, getHeadTextWidth, tokenizeText } from './text-util';
 import { createFontGetter } from 'src/util';
@@ -58,6 +59,7 @@ export const analyzeToken = ({
         fontData,
         fontLevel,
     } = textData;
+    const { metricMethod } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
         largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
@@ -140,6 +142,7 @@ export const analyzeToken = ({
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
             currentRightGap = DEFAULT_TEXT_GAP;
+            spaceCount += 1;
             if (cnt === 0) {
                 outmostLeftGap = DEFAULT_TEXT_GAP;
                 outmostLetter = fragment[0];
@@ -204,11 +207,14 @@ export const analyzeToken = ({
         }
         /** Các ký tự còn lại */
         else {
-            const fragmentWidth = getLetterWidth({ ctx, letter: fragment, lastOfLine, format });
+            const { boundWidth: fragmentWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod });
 
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             currentRightGap = DEFAULT_TEXT_GAP;
-            if (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment))) {
+            if (
+                (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment)))
+                && NoSpaceRegex.test(fragment) !== true
+            ) {
                 spaceCount += 1;
                 if (cnt === fragmentList.length - 1) spaceAtEnd = true;
             }
@@ -282,14 +288,14 @@ export const analyzeLine = ({
     const expectedSpaceWidth = spaceCount > 0 ? (width - totalContentWidth) / spaceCount : 0;
 
     /** TCG không chia space thừa vào line cuối, OCG thì có, nhưng chỉ chia nếu phần space bonus không quá lớn */
-    const additionalSpaceWidth = isLast
+    const extraSpace = isLast
         ? format === 'tcg'
             ? expectedSpaceWidth > 1.600 ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 2.000 ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > 3.200 ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {
         tokenList,
-        additionalSpaceWidth,
+        extraSpace,
     };
 };

@@ -10,7 +10,7 @@ export type RadioTrain = {
 }
 export const RadioTrain = ({
     onChange,
-    value,
+    value: activeValue,
     optionList,
     children,
     className,
@@ -18,20 +18,19 @@ export const RadioTrain = ({
     return <div className={['ant-radio-group ant-radio-group-outline radio-train', className].join(' ')}>
         {children && <label className="standalone-addon ant-input-group-addon">{children}</label>}
         <div className="radio-train-input-group">
-            {optionList.map(entry => {
-                const isChecked = `${entry.value}` === `${value}`;
+            {optionList.map(({ value, props, label }) => {
+                const { className } = props ?? {};
+                const isChecked = `${value}` === `${activeValue}`;
 
-                return <label key={entry.value}
-                    {...entry.props}
-                    className={`ant-radio-button-wrapper ${isChecked ? 'ant-radio-button-wrapper-checked' : ''}`}
-                    onClick={() => {
-                        onChange(entry.value);
-                    }}
+                return <label key={value}
+                    {...props}
+                    className={`ant-radio-button-wrapper ${isChecked ? 'ant-radio-button-wrapper-checked' : ''} ${className}`}
+                    onClick={() => onChange(value)}
                 >
                     <span className={`ant-radio-button ${isChecked ? 'ant-radio-button-checked' : ''}`}>
                         <span className="ant-radio-button-inner"></span>
                     </span>
-                    <span className="label">{entry.label}</span>
+                    <span className="label">{label}</span>
                 </label>;
             })}
         </div>

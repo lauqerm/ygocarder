@@ -104,10 +104,12 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
      * * Các ký tự nối liền không được bẻ dòng (luật Kinsoku Shori)
      */
     const textAfterDetectBlockWord = textAfterSwapLetter
-        .replaceAll(new RegExp(OCG_RUBY_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`)
-        .replaceAll(new RegExp(OCG_KEYWORD_REGEX_SOURCE, 'g'), m => {
-            return `⦉${ocgKeywordDataMap[m].rubyForm}⦊`;
-        })
+        .replaceAll(new RegExp(OCG_RUBY_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`);
+    const textAfterDictionaryMatch = format === 'tcg'
+        ? textAfterDetectBlockWord
+        : textAfterDetectBlockWord
+            .replaceAll(new RegExp(OCG_KEYWORD_REGEX_SOURCE, 'g'), m => `⦉${ocgKeywordDataMap[m].rubyForm}⦊`);
+    const textAfterProcessing = textAfterDictionaryMatch
         .replaceAll(new RegExp(WHOLE_WORD_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`)
         .replaceAll(new RegExp(NOT_END_OF_LINE_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`)
         .replaceAll(new RegExp(NOT_START_OF_LINE_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`)
@@ -121,7 +123,7 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
      */
     let textAfterNormalizeBlockWord = [];
     let currentDepth = 0;
-    for (const letter of textAfterDetectBlockWord) {
+    for (const letter of textAfterProcessing) {
         if (letter === '⦉') {
             if (currentDepth === 0) textAfterNormalizeBlockWord.push(letter);
             currentDepth += 1;

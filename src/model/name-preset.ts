@@ -219,7 +219,6 @@ export const PresetNameStyleMap = {
             lineWidth: 3,
             lineOffsetX: 0,
             hasOutline: true,
-            preset: 'animeSilver',
             lineOffsetY: 0
         }),
     },

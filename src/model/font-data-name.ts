@@ -55,6 +55,7 @@ export const NameFontDataMap: Record<string, NameFontData> = {
             symbolFont: 'matrix',
             symbolFontRatio: 0.8,
             ordinalFont: '"DFKakuTaiHiStd-W4"',
+            metricMethod: 'compact',
             fontList: [{
                 bulletSymbolWidth: 42.67,
                 fontSize: 64,

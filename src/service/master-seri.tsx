@@ -28,6 +28,7 @@ import {
     effectSTFontData,
     getDefaultNameStyle,
     iconList,
+    monsterCoordinateData,
     pendulumFontList,
     pendulumSizeList,
     specialFontList,
@@ -141,8 +142,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.frame.instructor = async () => {
                 clearCanvas(ctx);
                 const cardType = getCardFrame(frame);
+                if (!ctx) return;
 
+                // ctx.globalAlpha = 0.6;
                 await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+                // ctx.globalAlpha = 1;
             };
         }
     }, [active, foil, frame, frameCanvas]);
@@ -157,7 +161,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
             drawingPipeline.current.specialFrame.instructor = async () => {
                 clearCanvas(ctx);
-                // if (!ctx) return;
+                if (!ctx) return;
                 const hasFoil = foil !== 'normal';
 
                 /** Art border for non-pendulum */
@@ -183,12 +187,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 /** General borders for pendulum */
                 if (isPendulum && !isLink) {
                     await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
-                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-monster-effect-${pendulumSize}.png`, effectBoxX, effectBoxY);
-                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-pend-effect-${pendulumSize}.png`, 0, 600);
-                }
-                /** Stat border for monster */
-                if (isMonster) {
-                    await drawFromSource(ctx, '/asset/image/frame/frame-stat-border.png', 0, 1070);
                 }
                 /** Actual artwork */
                 const { x, y, w } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
@@ -197,6 +195,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     const { width: imageWidth, height: imageHeight } = previewCtx;
 
                     if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
+                }
+                if (isPendulum && !isLink) {
+                    // ctx.globalAlpha = 0;
+                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-pend-effect-${pendulumSize}.png`, 0, 738);
+                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-monster-effect-${pendulumSize}.png`, effectBoxX, effectBoxY + 20);
+                    // ctx.globalAlpha = 1;
+                }
+                /** Stat border for monster */
+                if (isMonster) {
+                    await drawFromSource(ctx, '/asset/image/frame/frame-stat-border.png', 0, 1070);
                 }
                 if (isPendulum) {
                     await drawFromSource(ctx, `/asset/image/finish/art-finish-${artFinish}-pendulum-${pendulumSize}.png`, x, y);
@@ -376,7 +384,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     /** DRAW SCALE */
     useEffect(() => {
         if (active) {
-            const fontSize = 43 * UP_RATIO;
+            const fontSize = 60.5;
             const ctx = pendulumScaleCanvas.current?.getContext('2d');
 
             ctx?.clearRect(0, 0, 549 * UP_RATIO, 600 * UP_RATIO);
@@ -384,8 +392,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
                 ctx.textAlign = 'left';
 
-                drawScale(ctx, pendulumScaleBlue ?? 0, 57 * UP_RATIO, 532 * UP_RATIO + fontSize);
-                drawScale(ctx, pendulumScaleRed ?? 0, 493 * UP_RATIO, 532 * UP_RATIO + fontSize);
+                drawScale(ctx, pendulumScaleBlue ?? 0, 84.4, 790 + fontSize);
+                drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790 + fontSize);
             }
         }
     }, [isInitializing, pendulumScaleBlue, isPendulum, pendulumScaleRed, active, pendulumScaleCanvas]);
@@ -415,7 +423,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 let regionalStyle = style;
                 if (format === 'ocg' && nameStyleType !== 'custom') regionalStyle.font = 'OCG';
                 if (nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
-                const edge = format === 'tcg' ? 60 : 64; // 61 AI Ritual
+                const edge = format === 'tcg' ? 60 : 68; // 61 AI Ritual
 
                 drawName(ctx, name, edge, 78 * UP_RATIO, lineWidth, regionalStyle, { isSpeedSkill, format });
             }
@@ -553,15 +561,29 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const typeCtx = typeCanvas.current?.getContext('2d');
             const condenseTolerant = effectStyle?.condenseTolerant;
             ctx?.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
+            const drawEffectParam = [ctx, effect, false] as const;
 
             if (isMonster) {
-                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, effectMonsterFontData[format], undefined, condenseTolerant, format);
+                const effectIndexSize = drawEffect(
+                    ...drawEffectParam,
+                    isNormal,
+                    effectMonsterFontData[format],
+                    monsterCoordinateData[format],
+                    condenseTolerant,
+                    format,
+                );
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
             } else if (isSpeedSkill) {
-                const effectIndexSize = drawEffect(ctx, effect, false, isNormal, specialFontList, specialSizeList, condenseTolerant, format);
+                const effectIndexSize = drawEffect(
+                    ...drawEffectParam,
+                    isNormal,
+                    specialFontList, specialSizeList, condenseTolerant, format);
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
             } else {
-                drawEffect(ctx, effect, false, false, effectSTFontData[format], stSizeList, condenseTolerant, format);
+                drawEffect(
+                    ...drawEffectParam,
+                    false,
+                    effectSTFontData[format], stSizeList, condenseTolerant, format);
                 drawTypeAbility(typeCtx, 'large', 'right');
             }
         }
@@ -590,7 +612,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     pendulumEffect,
                     true,
                     false,
-                    pendulumFontList,
+                    pendulumFontList[format],
                     pendulumSizeList,
                     effectStyle?.condenseTolerant,
                     format,

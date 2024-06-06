@@ -6,6 +6,7 @@ import {
     FragmentSplitRegex,
     KATAKANA_RATIO,
     MAX_LINE_REVERSE_INDENT,
+    NoSpaceRegex,
     OCGAlphabetRegex,
     START_OF_LINE_ALPHABET_OFFSET,
     START_OF_LINE_GAP,
@@ -25,27 +26,28 @@ import {
     getTextWorker,
 } from './text-util';
 import { analyzeToken } from './text-analyze';
-import { TextDrawer, drawLetter, getLetterWidth } from './letter';
+import { TextDrawer, drawLetterV2, getLetterWidth } from './letter';
 
 /** Vẽ các ký tự overhead (furigana) */
 export const fillHeadText = ({
     ctx,
     fontSize,
     edge, baseline,
-    headText,
+    headText, headTextLetterWidth,
     footText, footTextWidth,
     xRatio,
+    format,
     withFurigana,
 }: {
     ctx: CanvasRenderingContext2D,
     fontSize: number,
-    headText: string,
+    headText: string, headTextLetterWidth: number,
     footText: string, footTextWidth: number,
     edge: number, baseline: number,
     xRatio: number,
+    format: string,
     withFurigana: (worker: (innerEdge: number) => number, edge?: number) => number,
 }) => {
-    const headTextLetterWidth = withFurigana(() => KATAKANA_RATIO * ctx.measureText(headText).width, 0);
     const {
         letterSpacing,
         headTextWidth,
@@ -62,11 +64,10 @@ export const fillHeadText = ({
     for (const letter of headText) {
         currentEdge += withFurigana(
             edge => {
-                ctx.scale(KATAKANA_RATIO, 1);
                 ctx.fillText(letter, edge / xRatio / KATAKANA_RATIO, baseline - fontSize * 0.75);
-                ctx.scale(1 / KATAKANA_RATIO, 1);
+                const letterWidth = getLetterWidth({ ctx, letter, format, metricMethod: 'compact' });
 
-                return (ctx.measureText(letter).width * KATAKANA_RATIO + letterSpacing) * xRatio;
+                return (letterWidth.boundWidth + letterSpacing) * xRatio;
             },
             currentEdge,
         );
@@ -82,7 +83,7 @@ export const drawLine = ({
     ctx,
     tokenList,
     trueEdge, trueBaseline,
-    additionalSpaceWidth = 0,
+    extraSpace = 0,
     xRatio, yRatio = 1,
     textData,
     format,
@@ -95,7 +96,7 @@ export const drawLine = ({
     yRatio?: number,
     trueEdge: number,
     trueBaseline: number,
-    additionalSpaceWidth?: number,
+    extraSpace?: number,
     textData: TextData,
     textDrawer?: TextDrawer,
 }) => {
@@ -106,6 +107,7 @@ export const drawLine = ({
     } = textData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
+        metricMethod,
         headTextFillStyle,
     } = fontData;
     const {
@@ -134,6 +136,19 @@ export const drawLine = ({
     /** Rebalance */
     let previousTokenVacantSpace = 0;
     let tokenEdge = trueEdge;
+    const analyzeTokenParameter = {
+        ctx,
+        xRatio,
+        letterSpacing,
+        format,
+        textData,
+    };
+    const drawLetterParameter = {
+        ctx,
+        baseline,
+        xRatio,
+        textDrawer,
+    };
     for (let tokenCnt = 0; tokenCnt < tokenList.length; tokenCnt++) {
         const token = tokenList[tokenCnt];
         const nextToken = tokenList[tokenCnt + 1];
@@ -145,7 +160,7 @@ export const drawLine = ({
             rightGap,
             totalWidth: totalTokenWidth,
         } = analyzeToken({
-            ctx, token, nextToken, xRatio, previousTokenGap, letterSpacing, textData, format,
+            token, nextToken, previousTokenGap, ...analyzeTokenParameter,
         });
 
         /** Token ở đầu line có quyền âm ngược ra lề trái, tuy nhiên footText không được tràn ra khỏi lề, ngoài ra ta giới hạn
@@ -157,13 +172,17 @@ export const drawLine = ({
         let fragmentEdge = tokenEdge + indent;
         let fragmentGap = previousTokenGap;
         let accumulatedSpace = 0;
+        /** Độ dài tăng thêm do gap từ token trước đó */
+
         for (let fragmentCnt = 0; fragmentCnt < fragmentList.length; fragmentCnt++) {
             const fragment = fragmentList[fragmentCnt];
             const nextFragment = fragmentList[fragmentCnt + 1] ?? nextToken;
             const next2ndFragment = fragmentList[tokenCnt + 2] ?? next2ndToken;
+            const previousGapOffset = getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
+
             /** Symbol S/T không bị compress */
             if (fragment === ST_ICON_SYMBOL) {
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
+                fragmentEdge += previousGapOffset;
                 fragmentEdge += withUncompressText(
                     () => {
                         return iconSymbolWidth * letterSpacingRatio;
@@ -175,7 +194,7 @@ export const drawLine = ({
             }
             /** Các symbol ordinal như ① ② ③ không bị compress */
             else if (fragment === BULLET_LETTER) {
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
+                fragmentEdge += previousGapOffset;
                 fragmentEdge += withUncompressText(
                     internalTokenEdge => {
                         drawBullet(ctx, internalTokenEdge, trueBaseline, bulletSymbolWidth, getBulletSpacing(format));
@@ -189,12 +208,17 @@ export const drawLine = ({
             }
             /** OCG Ordinal symbol không bị compress */
             else if (/[©]/.test(fragment)) {
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
+                fragmentEdge += previousGapOffset;
                 fragmentEdge += withUncompressText(
                     internalTokenEdge => {
                         return withLargerText(
                             internalFragmentTrueEdge => {
-                                drawLetter(ctx, fragment, internalFragmentTrueEdge * xRatio, trueBaseline + 2, xRatio, textDrawer);
+                                drawLetterV2({
+                                    ...drawLetterParameter,
+                                    letter: fragment,
+                                    edge: internalFragmentTrueEdge * xRatio,
+                                    baseline: trueBaseline + 2
+                                });
 
                                 return ctx.measureText(fragment).width * letterSpacingRatio;
                             },
@@ -210,12 +234,17 @@ export const drawLine = ({
             }
             /** OCG Ordinal symbol không bị compress */
             else if (/[①-⑳]/.test(fragment)) {
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
+                fragmentEdge += previousGapOffset;
                 fragmentEdge += withUncompressText(
                     internalTokenEdge => {
                         return withOrdinalFont(
                             internalFragmentTrueEdge => {
-                                drawLetter(ctx, fragment, internalFragmentTrueEdge * xRatio, trueBaseline - 2, xRatio, textDrawer);
+                                drawLetterV2({
+                                    ...drawLetterParameter,
+                                    letter: fragment,
+                                    edge: internalFragmentTrueEdge * xRatio,
+                                    baseline: trueBaseline - 2
+                                });
 
                                 return ctx.measureText(fragment).width * letterSpacingRatio;
                             },
@@ -225,6 +254,8 @@ export const drawLine = ({
                     fragmentEdge,
                     xRatio, yRatio,
                 );
+                fragmentEdge += extraSpace;
+                accumulatedSpace += extraSpace;
                 fragmentGap = DEFAULT_TEXT_GAP;
             }
             /** Cụm ruby cần tách đôi các phần */
@@ -232,27 +263,24 @@ export const drawLine = ({
                 const [footText, headText] = fragment.replaceAll(/{|}/g, '').split('|');
                 /** Ta assume cụm ruby không lồng nhau */
                 const { totalWidth: footTextWidth } = analyzeToken({
-                    ctx,
                     token: footText, nextToken: nextFragment,
-                    xRatio,
                     previousTokenGap: 0,
-                    letterSpacing,
-                    format,
-                    textData,
+                    ...analyzeTokenParameter,
                 });
-                const headTextLetterWidth = withFurigana(() => KATAKANA_RATIO * ctx.measureText(headText).width, 0);
+                const headTextLetterWidth = withFurigana(() => {
+                    return headText
+                        .split('')
+                        .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact' }).boundWidth)
+                        .reduce((acc, cur) => acc + cur, 0);
+                }, 0);
                 const { headTextWidth, halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth });
                 const rightGap = halfGap;
                 /** Phần không gian mất đi do fragment âm vào previous gap (nếu có) */
                 const lostLeftWidth = getExtraLeftOffset(fragmentGap, halfGap);
                 const nextLeftGap = analyzeToken({
-                    ctx,
                     token: nextFragment, nextToken: next2ndFragment,
-                    xRatio,
                     previousTokenGap: rightGap,
-                    letterSpacing,
-                    format,
-                    textData,
+                    ...analyzeTokenParameter,
                 }).leftGap;
                 /** Phần không gian mất đi do next gap âm vào fragment (nếu có) */
                 const lostRightWidth = getExtraLeftOffset(halfGap, nextLeftGap);
@@ -275,16 +303,16 @@ export const drawLine = ({
                     const nextFootLetter = footText[cnt3 + 1] ?? nextFragment;
                     /** Ta assume cụm ruby không lồng nhau */
                     const { totalWidth } = analyzeToken({
-                        ctx,
                         token: footLetter, nextToken: nextFootLetter,
-                        xRatio,
                         previousTokenGap: 0,
-                        letterSpacing,
-                        format,
-                        textData,
+                        ...analyzeTokenParameter,
                     });
 
-                    drawLetter(ctx, footLetter, footTextFragmentEdge, baseline, xRatio, textDrawer);
+                    drawLetterV2({
+                        ...drawLetterParameter,
+                        letter: footLetter,
+                        edge: footTextFragmentEdge,
+                    });
                     footTextFragmentEdge += totalWidth * xRatio;
                 }
 
@@ -299,9 +327,10 @@ export const drawLine = ({
                     fontSize,
                     /** Lùi edge của head text nếu xuất hiện trường hợp head text overflow vào gap âm */
                     edge: fragmentEdge - lostLeftWidth * xRatio, baseline,
-                    headText,
+                    headText, headTextLetterWidth,
                     footText, footTextWidth,
                     xRatio,
+                    format,
                     withFurigana,
                 });
                 ctx.fillStyle = currentFillStyle;
@@ -311,11 +340,11 @@ export const drawLine = ({
                 fragmentGap = rightGap;
             }
             else if (WholeWordRegex.test(fragment)) {
+                fragmentEdge += previousGapOffset;
                 const normalizedWordSpacingRatio = wordLetterSpacing
                     ? 1 + wordLetterSpacing / 2
                     : letterSpacingRatio;
                 ctx.letterSpacing = `${(normalizedWordSpacingRatio - 1) * currentFont.getFontInfo().sizeAsNumber}px`;
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
 
                 // Độ dài từng chữ sẽ khác tổng độ dài khi ghép chữ, do letter spacing và conditional kerning
                 let remainFragment = fragment;
@@ -327,7 +356,12 @@ export const drawLine = ({
                     if (SquareBracketLetterRegex.test(currentLetter)) {
                         withSmallerText(
                             (innerEdge, innerBaseline, innerYRatio) => {
-                                drawLetter(ctx, currentLetter, innerEdge / innerYRatio, innerBaseline / innerYRatio, xRatio, textDrawer);
+                                drawLetterV2({
+                                    ...drawLetterParameter,
+                                    letter: currentLetter,
+                                    edge: innerEdge / innerYRatio,
+                                    baseline: innerBaseline / innerYRatio,
+                                });
                             },
                             currentPosition,
                             baseline,
@@ -339,7 +373,12 @@ export const drawLine = ({
                             : 0;
                         withSmallerText(
                             (innerEdge, innerBaseline, innerYRatio) => {
-                                drawLetter(ctx, currentLetter, innerEdge / innerYRatio + letterOffset, innerBaseline / innerYRatio, xRatio, textDrawer);
+                                drawLetterV2({
+                                    ...drawLetterParameter,
+                                    letter: currentLetter,
+                                    edge: innerEdge / innerYRatio + letterOffset,
+                                    baseline: innerBaseline / innerYRatio
+                                });
                             },
                             currentPosition,
                             baseline,
@@ -348,12 +387,20 @@ export const drawLine = ({
                     } else if (TCGNonSymbolRegex.test(currentLetter) && format === 'tcg') {
                         withSymbolFont(
                             (innerEdge) => {
-                                drawLetter(ctx, currentLetter, innerEdge, baseline, xRatio, textDrawer);
+                                drawLetterV2({
+                                    ...drawLetterParameter,
+                                    letter: currentLetter,
+                                    edge: innerEdge,
+                                });
                             },
                             currentPosition,
                         );
                     } else {
-                        drawLetter(ctx, currentLetter, currentPosition, baseline, xRatio, textDrawer);
+                        drawLetterV2({
+                            ...drawLetterParameter,
+                            letter: currentLetter,
+                            edge: currentPosition,
+                        });
                     }
                     currentPosition += actualLetterWidth * xRatio;
                     remainFragment = nextRemainFragment;
@@ -365,10 +412,10 @@ export const drawLine = ({
             }
             /** Một số ký tự dùng font đặc biệt */
             else if (TCGLetterRegex.test(fragment) && format === 'tcg') {
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
+                fragmentEdge += previousGapOffset;
                 fragmentEdge += withSymbolFont(
                     tokenEdge => {
-                        drawLetter(ctx, fragment, tokenEdge, baseline, xRatio, textDrawer);
+                        drawLetterV2({ ...drawLetterParameter, letter: fragment, edge: tokenEdge });
 
                         return ctx.measureText(fragment).width * letterSpacingRatio;
                     },
@@ -377,25 +424,33 @@ export const drawLine = ({
                 fragmentGap = DEFAULT_TEXT_GAP;
             }
             else {
-                fragmentEdge += getExtraLeftWidth(fragmentGap, DEFAULT_TEXT_GAP) * xRatio;
-                const letterWidth = getLetterWidth({ ctx, letter: fragment, format, lastOfLine: nextFragment === undefined });
+                fragmentEdge += previousGapOffset;
+                const letterMetric = getLetterWidth({ ctx, letter: fragment, format, metricMethod, lastOfLine: nextFragment === undefined });
 
-                drawLetter(ctx, fragment, fragmentEdge, baseline, xRatio, textDrawer);
-                fragmentEdge += letterWidth * letterSpacingRatio * xRatio;
-                if (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment))) {
-                    fragmentEdge += additionalSpaceWidth;
-                    accumulatedSpace += additionalSpaceWidth;
+                drawLetterV2({ ...drawLetterParameter, letter: fragment, edge: fragmentEdge, letterMetric });
+                fragmentEdge += letterMetric.boundWidth * letterSpacingRatio * xRatio;
+                if (
+                    (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment)))
+                    && NoSpaceRegex.test(fragment) !== true
+                ) {
+                    fragmentEdge += extraSpace;
+                    accumulatedSpace += extraSpace;
                 }
                 fragmentGap = DEFAULT_TEXT_GAP;
             }
         }
         previousTokenGap = rightGap;
         /** Token ở đầu line không có gap (tức là cho phép furigana chạy âm về lề trái) */
-        // const color = randomDarkColor();
-        // drawMarker({ ctx, color, baseline, trueEdge: tokenEdge, width: totalTokenWidth * xRatio, xRatio, offset: (tokenCnt * 2) * 0.5 });
         // drawMarker({ ctx, color, baseline, trueEdge: tokenEdge, width: 64 * xRatio, xRatio, offset: (tokenCnt * 2 + 1) * 0.5 });
         tokenEdge += totalTokenWidth * xRatio + accumulatedSpace + indent;
     }
+    // console.table(
+    //     tokenList.join('').split('').map(e => {
+    //         const metric = ctx.measureText(e);
+    //         metric.letter = e;
+    //         return metric;
+    //     }),
+    // );
 
     return tokenEdge;
 };

@@ -8,20 +8,22 @@ export const FormatButtonList = [
         label: 'OCG',
         value: 'ocg',
         props: {
-            style: { fontWeight: 'bold', color: '#ff6f6f' } as React.CSSProperties
+            className: 'ocg-button',
+            style: { fontWeight: 'bold' } as React.CSSProperties
         },
     },
     {
         label: 'TCG',
         value: 'tcg',
         props: {
-            style: { fontWeight: 'bold', color: '#3b9dff' } as React.CSSProperties
+            className: 'tcg-button',
+            style: { fontWeight: 'bold' } as React.CSSProperties
         },
     },
 ];
 
-export const FoilButtonList = foilList.map(({ color, name }) => ({
-    label: name.toLocaleUpperCase(),
+export const FoilButtonList = foilList.map(({ color, name, label }) => ({
+    label,
     value: name,
     props: {
         style: {

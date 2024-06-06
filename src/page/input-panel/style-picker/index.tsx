@@ -82,10 +82,6 @@ export const StylePicker = React.memo(forwardRef(({
                     <label className={`ant-radio-wrapper ${type === 'predefined' ? 'ant-radio-wrapper-checked' : ''}`} onClick={() => {
                         setType('predefined');
                     }}>
-                        <span className={`ant-radio ${type === 'predefined' ? 'ant-radio-checked' : ''}`}>
-                            <input type="radio" className="ant-radio-input" value="predefined" />
-                            <span className="ant-radio-inner" />
-                        </span>
                         <Dropdown
                             arrow
                             placement="bottomLeft"
@@ -117,7 +113,13 @@ export const StylePicker = React.memo(forwardRef(({
                                 })}
                             </Menu>}
                         >
-                            <span className="ant-radio-label">Predefined</span>
+                            <span>
+                                <span className={`ant-radio ${type === 'predefined' ? 'ant-radio-checked' : ''}`}>
+                                    <input type="radio" className="ant-radio-input" value="predefined" />
+                                    <span className="ant-radio-inner" />
+                                </span>
+                                <span className="ant-radio-label">Predefined</span>
+                            </span>
                         </Dropdown>
                     </label>
                     <label className={`ant-radio-wrapper ${type === 'custom' ? 'ant-radio-wrapper-checked' : ''}`} onClick={() => {
