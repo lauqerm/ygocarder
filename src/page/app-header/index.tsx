@@ -1,32 +1,46 @@
 import React from 'react';
 import { Explanation } from 'src/component';
+import { GithubFilled } from '@ant-design/icons';
 import './app-header.scss';
+
+export const Affiliation = () => {
+    return <div className="affiliation">
+        <span className="version">v{process.env.REACT_APP_VERSION ?? 'unknown'}</span>
+        <div className="affiliation-link">
+            <a href="https://github.com/lauqerm/ygocarder" target="_blank" rel="noreferrer">
+                <GithubFilled />
+            </a>
+        </div>
+    </div>;
+};
 
 export const AppHeader = React.memo(() => {
     return <div className="app-header">
-        <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={48} />
+        <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
         <div className="app-description">
-            <h1>Yugioh Carder <small style={{ fontFamily: 'serif' }}>v{process.env.REACT_APP_VERSION ?? 'unknown'} TCG</small></h1>
+            <h1>Yugioh Carder</h1>
             <div className="app-contribution">
-                <span className="app-creator">GUI: <b>Lauqerm</b> <Explanation
-                    content={<div className="disclaimer">
-                        <h2>Disclaimer</h2>
-                        <ul>
-                            <li>This is a personal project, not an "official" card maker.</li>
-                            <li>I hold no liability for cards created by this app, including pictures, card text and any product that related to it.</li>
-                            <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project. They belong to their respective creators.</li>
-                            <li>If you want to modify card layers, or use it in any public project, please contact <a
-                                href="https://www.deviantart.com/grezar"
-                                target="_blank"
-                                rel="noreferrer">Grezar</a> or <a
-                                href="https://www.deviantart.com/9558able"
-                                target="_blank"
-                                rel="noreferrer">9558able</a> directly.
-                            </li>
-                            <li>This app is completely free, I do not charge any kind of fee, require donation or even serve any ads, but I hold no liability for any other parties that use my code in their websites.</li>
-                        </ul>
-                    </div>}
-                /></span>
+                <span className="app-creator">
+                    GUI: <b>Lauqerm</b> <Explanation
+                        content={<div className="disclaimer">
+                            <h2>Disclaimer</h2>
+                            <ul>
+                                <li>This is a personal project, not an "official" card maker.</li>
+                                <li>I hold no liability for cards created by this app, including pictures, card text and any product related to it.</li>
+                                <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project. They belong to their respective creators.</li>
+                                <li>If you want to modify card layers, or use it in any public project, please contact <a
+                                    href="https://www.deviantart.com/grezar"
+                                    target="_blank"
+                                    rel="noreferrer">Grezar</a> or <a
+                                    href="https://www.deviantart.com/9558able"
+                                    target="_blank"
+                                    rel="noreferrer">9558able</a> directly.
+                                </li>
+                                <li>This app is completely free, I do not charge any kind of fee, require donation or even serve any ads, but I hold no liability for any other parties that use my code in their websites.</li>
+                            </ul>
+                        </div>}
+                    />
+                </span>
                 <span className="template-creator">
                     Template: <b>Grezar</b> (<a
                         href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"

@@ -1,7 +1,7 @@
-import { Input, Radio } from 'antd';
+import { Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
 import ReactCrop from 'react-image-crop';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -230,9 +230,13 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             <Radio.Button value={'external'} checked={inputMode === 'external'}>
                                 Online
                             </Radio.Button>
-                            <Radio.Button value={'internal'} checked={inputMode === 'internal'}>
-                                Offline
-                            </Radio.Button>
+                            <Tooltip title={<div className="offline-image-warning">
+                                Card data with offline image cannot be exported or auto-saved.
+                            </div>}>
+                                <Radio.Button value={'internal'} checked={inputMode === 'internal'}>
+                                    Offline <ExclamationCircleOutlined />
+                                </Radio.Button>
+                            </Tooltip>
                         </Radio.Group>
                     </div>
                     <div className={['card-image-input', inputMode === 'external' ? '' : 'input-inactive'].join(' ')}>
@@ -242,14 +246,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             onChange={applyExternalSource} maxLength={512}
                         />
                         <div className="online-image-tip">
-                            Recommended. Direct image links from imgur, discord or twitter are acceptable.
+                            Image links from imgur, discord or twitter are acceptable.
                         </div>
                     </div>
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
                         <Input type="file" accept="image/*" onChange={applyInternalSource} />
-                        <div className="offline-image-warning">
-                            Card data with offline image cannot be exported or auto-saved.
-                        </div>
+                        <hr />
                     </div>
                 </div>
             </div>

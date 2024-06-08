@@ -155,6 +155,7 @@ export const drawName = (
         }, 0);
 
         ctx.font = normalStyle;
+        console.log('🚀 ~ ctx.font:', ctx.font);
         let actualLineWidth = 0;
         const internalEffectiveMedian = condense(
             median => {

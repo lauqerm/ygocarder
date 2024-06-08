@@ -6,6 +6,11 @@ export const defaultCard = {
     format: 'tcg',
     frame: 'fusion',
     foil: 'normal',
+    opacity: {
+        body: 100,
+        pendulum: 100,
+        text: 100,
+    },
     finish: [] as string[],
     artFinish: 'normal',
     name: 'Junko',
@@ -50,6 +55,12 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     isDuelTerminalCard: false,
     creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
 };
+
+export const OpacityList = [
+    { value: 'body' as const, label: 'Card' },
+    { value: 'pendulum' as const, label: 'Pendulum Text' },
+    { value: 'text' as const, label: 'Main Text' },
+];
 
 export type FrameInfo = { name: string, labelColor: string, labelBackgroundColor?: string, labelBackgroundImage?: string };
 export const frameMap: Record<string, FrameInfo> = {
@@ -169,7 +180,7 @@ export const iconList = [
 export const foilList = [
     {
         name: 'normal',
-        label: 'Normal',
+        label: 'None',
         color: '#747b95',
     },
     {

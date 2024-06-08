@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     grid-column-gap: 10px;
-    row-gap: 0.5em;
+    row-gap: 0.5rem;
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
-		min-height: 115px;
+		min-height: 93px;
 	}
 	.disabled,
 	.disabled .anticon {
@@ -16,6 +16,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 0.5rem;
 	}
 	.ant-radio-group {
 		.ant-input-group-addon {
@@ -24,6 +25,9 @@
 	}
 	.card-image-input {
 		margin-top: 5px;
+		hr {
+			border-color: #5b626e;
+		}
 		&.input-inactive {
 			display: none;
 		}
@@ -33,19 +37,16 @@
 		display: grid;
 		grid-template-columns: max-content 1fr;
 		.link-marker-chooser {
-			margin-right: 0.5em;
+			margin-right: 0.5rem;
 		}
 		.card-image-source-input-title {
+			min-height: 34px;	// Alignment
 			grid-column: span 2;
+			line-height: 1;
 		}
 		input[type="file"] {
 			cursor: pointer;
 		}
-	}
-	.offline-image-warning {
-		margin-top: 5px;
-		color: #FF6F6F;
-		line-height: 1.25;
 	}
 	.online-image-tip {
 		margin-top: 5px;
@@ -62,4 +63,10 @@
 	.ReactCrop {
 		box-shadow: 0 1px 3px rgba(0,0,0,0.36), 0 1px 2px rgba(0,0,0,0.48);
 	}
+}
+
+.offline-image-warning {
+	color: #FF6F6F;
+	line-height: 1.25;
+	text-align: center;
 }

@@ -8,6 +8,7 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
         typeAbility,
         nameStyle,
         setId,
+        isFirstEdition,
     } = card;
 
     if (format === targetFormat) return card;
@@ -33,5 +34,6 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
         typeAbility: typeAbility.map(entry => termMap[entry] ?? entry),
         creator: termMap[creator] ?? creator,
         setId: newSetId,
+        isFirstEdition: targetFormat === 'ocg' ? false : isFirstEdition,
     };
 };

@@ -1,13 +1,14 @@
 .app-header {
     display: inline-grid;
     grid-template-columns: max-content 1fr;
-    margin-bottom: 10px;
-    background-color: #333333;
-    padding: 4px 10px 4px 4px;
+    margin-bottom: 0.5rem;
+    background-color: #4a4a4f;
+    padding: 3px;
+    padding-right: 10px;
     border-radius: 3px;
-    box-shadow: 0 0 2px 1px #212121 inset;
+    box-shadow: 0 0 2px 1px #212121;
     img {
-        padding: 3px;
+        margin: 3px 0;
     }
     .app-description {
         border-left: 1px dashed #b1b1b1;
@@ -17,7 +18,8 @@
             font-family: MatrixBoldSmallCaps;
             margin: 0;
             line-height: 1;
-            font-size: 30px;
+            font-size: 25px;
+            letter-spacing: 1px;
             color: #e6e6e6;
             text-shadow: -1px 1px 2px #1b1b1b;
             small {
@@ -26,11 +28,12 @@
         }
         .app-contribution {
             display: grid;
-            grid-template-columns: max-content 1fr max-content;
+            grid-template-columns: max-content 1fr;
             column-gap: 10px;
-            font-size: 12px;
+            font-size: 11px;
+            line-height: 1.25;
             b {
-                font-size: 15px;
+                font-size: 13px;
                 color: #2badea;
             }
             > * {
@@ -40,11 +43,36 @@
                 min-width: 0;
             }
         }
-        .explanation-icon {
-            margin: 3px 0;
+    }
+}
+
+.affiliation {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: #666677;
+    border-radius: 0 8px;
+    padding: 5px;
+    border-left: 1px solid #333;
+    border-bottom: 1px solid #333;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    align-items: center;
+    gap: 5px;
+    line-height: 1;
+    .version {
+        font-size: 0.9em;
+        font-family: 'serif';
+    }
+    .affiliation-link {
+        a:hover {
+            svg {
+                fill: #29ace5;
+            }
         }
     }
 }
+
 .explanation-overlay {
 	.disclaimer {
 		font-size: 13px;

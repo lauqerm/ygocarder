@@ -5,6 +5,8 @@
 	--card-height: 800px;
 	--resize-ratio: 0.7;
 	--translate-ratio: -15%;
+	// --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	--bs-input: none;
 }
 #app {
 	width: 100%;
@@ -229,10 +231,23 @@
 .hidden {
 	visibility: hidden;
 }
+.input-ocg {
+	input,
+	textarea {
+		font-size: 15px;
+		line-height: 1.4666;
+		font-family: 'Yu-Gi-Oh! DF Leisho 3';
+	}
+}
 
-// [OVERWRITE]
+// [OVERWRITE ANTD DEFAULT]
 .input-overlay,
 .card-info-panel {
+	.ant-radio-button-wrapper {
+		padding: 0 10px;
+		min-width: 37px;
+		text-align: center;
+	}
 	.ant-input-number,
 	.ant-input-number-handler-wrap,
 	.ant-input-group-addon,
@@ -273,7 +288,9 @@
 	textarea,
 	.ant-checkbox,
 	.radio-train-input-group,
-	.ant-input-affix-wrapper,
+	.ant-input-affix-wrapper {
+		box-shadow: var(--bs-input);
+	}
 	.pendulum-container {
 		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	}

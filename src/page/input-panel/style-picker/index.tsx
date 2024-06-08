@@ -67,7 +67,7 @@ export const StylePicker = React.memo(forwardRef(({
     return <div className="ant-input-group-wrapper name-color-input">
         <span className="ant-input-wrapper ant-input-group">
             <span className="ant-input-group-addon">Name Style</span>
-            <span className="ant-input-affix-wrapper">
+            <span className="name-style-input-container">
                 <div className="ant-radio-group ant-radio-group-outline">
                     <label className={`ant-radio-wrapper ${type === 'auto' ? 'ant-radio-wrapper-checked' : ''}`} onClick={() => {
                         setType('auto');

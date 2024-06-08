@@ -5,16 +5,17 @@ import 'antd/dist/antd.css';
 import {
     CanvasConst,
     Card,
-    CardArtCanvasConst,
+    CardArtCanvasCoordinateMap,
     UP_RATIO,
     defaultCard,
+    getArtCanvasCoordinate,
 } from './model';
 import {
     cardDataShortener,
     insertUrlParam,
     rebuildCardData,
 } from './util';
-import { AppHeader, CardInputPanel, CardInputPanelRef, TaintedCanvasWarning } from './page';
+import { Affiliation, AppHeader, CardInputPanel, CardInputPanelRef, TaintedCanvasWarning } from './page';
 import WebFont from 'webfontloader';
 import { useMasterSeriDrawer } from './service';
 import { notification } from 'antd';
@@ -76,6 +77,8 @@ function App() {
     });
 
     const {
+        format,
+        opacity,
         name,
         pictureCrop,
         isPendulum,
@@ -330,7 +333,7 @@ function App() {
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
             if (previewCtx && exportCtx) {
-                const { x, y, w } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+                const { x, y, w } = CardArtCanvasCoordinateMap[getArtCanvasCoordinate(isPendulum, opacity)];
                 const { width: imageWidth, height: imageHeight } = previewCtx;
 
                 if (imageHeight > 0) exportCtx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
@@ -358,6 +361,7 @@ function App() {
     return (
         <div id="app"
             onDrop={() => { }}
+            className={format === 'ocg' ? 'input-ocg' : ''}
             style={{
                 backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                 ...({
@@ -373,8 +377,7 @@ function App() {
                         {error}
                     </span> : 'Loading fonts and scripts...'}
                 </div>}
-                {/* <div className="card-filter-panel">
-                </div> */}
+                {/* <div className="card-filter-panel"></div> */}
                 <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                     <div className="export-button">
                         <div className="imexport">
@@ -445,6 +448,7 @@ function App() {
                     onTainted={() => setTainted(true)}
                 >
                     <AppHeader /><br />
+                    <Affiliation />
                 </CardInputPanel>}
             </div>
         </div>

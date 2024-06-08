@@ -30,7 +30,7 @@ export const createFontGetter = (props?: {
     let family = defaultFamily;
 
     return {
-        getFont: () => [style, weight, size, family].filter(part => part !== '').join(' '),
+        getFont: () => `${[style, weight, size, family].filter(part => part !== '').join(' ')}, Arial`,
         getFontInfo: () => ({ style, size, family, sizeAsNumber }),
         setWeight(nextWeight) {
             weight = nextWeight;

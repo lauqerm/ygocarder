@@ -11,16 +11,17 @@
 		width: 100%;
 		height: 100%;
 	}
-	.picker-dropdown {
-		background-color: #475061;
-		border: 1px solid #505870;
-		padding: 1px 4px;
-		margin: -2px 0;
-		margin-left: 5px;
-		border-radius: 2px;
-		&:hover {
-			background-color: #505870;
-		}
+}
+.picker-dropdown {
+    background-color: #5b626e;
+    border: 1px solid #222222;
+	padding: 1px 4px;
+	margin: -2px 0;
+	margin-left: 5px;
+	border-radius: 2px;
+    box-shadow: 0 0 3px 0 #333;
+	&:hover {
+		background-color: #707681;
 	}
 }
 .preset-preview {
@@ -100,7 +101,7 @@
 			grid-template-columns: max-content 1fr;
 			grid-template-rows: max-content max-content max-content 1fr;
 			column-gap: 10px;
-			row-gap: 0.5em;
+			row-gap: 0.5rem;
 			font-size: 10px;
 			padding: 10px;
 			padding-bottom: 0;
@@ -140,6 +141,12 @@
 				}
 				.ant-slider {
 					margin: 2px;
+				}
+				.ant-slider-handle {
+					border-color: #1890ff;
+				}
+				.ant-slider-track {
+					background-color: #1890ff;
 				}
 			}
 		}

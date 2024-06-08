@@ -17,7 +17,7 @@ import {
 import {
     CanvasConst,
     Card,
-    CardArtCanvasConst,
+    CardArtCanvasCoordinateMap,
     MasterDuelCanvas,
     NO_ATTRIBUTE,
     PresetNameStyleMap,
@@ -26,6 +26,7 @@ import {
     arrowPositionList,
     effectMonsterFontData,
     effectSTFontData,
+    getArtCanvasCoordinate,
     getDefaultNameStyle,
     iconList,
     monsterCoordinateData,
@@ -69,7 +70,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     } = canvasMap;
     const {
         format,
-        frame, foil, finish, artFinish,
+        frame, foil, finish, artFinish, opacity,
         name, nameStyleType, nameStyle,
         effect,
         effectStyle,
@@ -144,12 +145,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const cardType = getCardFrame(frame);
                 if (!ctx) return;
 
-                // ctx.globalAlpha = 0.6;
+                ctx.globalAlpha = opacity.body / 100;
                 await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
-                // ctx.globalAlpha = 1;
+                ctx.globalAlpha = 1;
             };
         }
-    }, [active, foil, frame, frameCanvas]);
+    }, [active, foil, frame, frameCanvas, opacity.body]);
 
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
@@ -189,7 +190,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
                 }
                 /** Actual artwork */
-                const { x, y, w } = CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'];
+                const { x, y, w } = CardArtCanvasCoordinateMap[getArtCanvasCoordinate(isPendulum, opacity)];
                 if (previewCtx && ctx) {
                     // ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
                     const { width: imageWidth, height: imageHeight } = previewCtx;
@@ -197,10 +198,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
                 }
                 if (isPendulum && !isLink) {
-                    // ctx.globalAlpha = 0;
+                    ctx.globalAlpha = opacity.pendulum / 100;
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-pend-effect-${pendulumSize}.png`, 0, 738);
+                    ctx.globalAlpha = opacity.text / 100;
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-monster-effect-${pendulumSize}.png`, effectBoxX, effectBoxY + 20);
-                    // ctx.globalAlpha = 1;
+                    ctx.globalAlpha = 1;
                 }
                 /** Stat border for monster */
                 if (isMonster) {
@@ -314,6 +316,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         isMonster,
         isSpeedSkill,
         isDuelTerminalCard,
+        opacity,
     ]);
 
     /** DRAW ATTRIBUTE */
@@ -489,11 +492,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 if (isFirstEdition && !isDuelTerminalCard) {
                     ctx.fillStyle = lightFooter ? '#fff' : '#000';
 
-                    draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO));
+                    draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO) - (format === 'ocg' ? 10 : 0));
                 }
             }
         }
-    }, [active, isDuelTerminalCard, isFirstEdition, isInitializing, passcode, passcodeCanvas, lightFooter]);
+    }, [active, isDuelTerminalCard, isFirstEdition, isInitializing, passcode, passcodeCanvas, lightFooter, format]);
 
     /** DRAW CREATOR TEXT */
     useEffect(() => {

@@ -1,6 +1,15 @@
 @media only screen and (max-width: 1600px) {
+	#app {
+		padding: 0;
+		.card-info-panel {
+			min-height: 100vh;
+		}
+	}
 	.app-container {
 		border-radius: 0;
+		.affiliation {
+			border-radius: 0 0 0 8px;
+		}
 		.password-input,
 		.checkbox-input {
 			grid-column: span 2;
@@ -14,7 +23,7 @@
 				column-gap: 2px;
 				box-shadow: none;
 				.ant-radio-button-wrapper {
-					flex: 1;
+					flex: 1 1 auto;
 					border-radius: 0;
 					border-left-width: 1px;
 					text-align: center;
@@ -65,28 +74,51 @@
 				margin-left: 0;
 			}
 		}
-		.card-info-panel .main-info {
-			flex-wrap: wrap;
-			flex-direction: column-reverse;
-			.main-info-first {
-				width: 100%;
-			}
-			.main-info-second {
-				flex: 1;
-				align-self: self-end;
-			}
-			.card-image-cropper {
-				align-items: center;
-				.card-cropper {
-					max-width: 375px;
-					height: unset;
-					position: relative;
+		.card-info-panel {
+			margin-left: 10px;
+			border-left: 1px solid #5b626e;
+			.main-info {
+				flex-wrap: wrap;
+				flex-direction: column-reverse;
+				.main-info-first {
+					width: 100%;
+					.radio-train-input-group {
+						width: 100%;
+					}
+				}
+				.main-info-second {
+					flex: 1;
+					align-self: self-end;
+					width: 100%;
+				}
+				.card-image-cropper {
+					display: grid;
+					grid-template-columns: 1fr max-content;
+					grid-template-rows: max-content 1fr;
+					grid-template-areas:
+						"source cropper"
+						"finish cropper";
+					align-items: start;
+					.art-finish-checkbox {
+						grid-area: finish;
+					}
+					.card-image-source-input {
+						grid-area: source;
+					}
+					.card-cropper {
+						grid-area: cropper;
+						max-width: 375px;
+						height: unset;
+						position: relative;
+					}
 				}
 			}
 		}
+		.char-picker-container {
+			top: 740px;
+		}
 	}
 }
-
 
 @media only screen and (max-width: 1200px) {
 	.app-container {
@@ -94,9 +126,44 @@
 		.checkbox-input {
 			grid-column: span 2;
 		}
-		.card-info-panel .main-info {
-			.main-info-second {
-				align-self: self-end;
+		.card-info-panel {
+			.main-info {
+				.main-info-second {
+					align-self: self-end;
+				}
+			}
+			.image-input-train label span:nth-child(2) {
+				width: 0;
+			}
+		}
+		.card-image-cropper {
+			.ant-input-group-addon {
+				text-align: left;
+			}
+			.card-image-source-input-title,
+			.art-finish-checkbox {
+				flex-wrap: wrap;
+			}
+		}
+		.char-picker-container {
+			top: 940px;
+		}
+	}
+}
+
+@media only screen and (max-width: 1068px) {
+	.app-container {
+		.card-info-panel {
+			.main-info {
+				.card-image-cropper {
+					display: flex;
+					> * {
+						width: 100%;
+					}
+				}
+				.card-cropper {
+					margin: auto;
+				}
 			}
 		}
 	}
@@ -132,6 +199,22 @@
 		--resize-ratio: 0.60;
 		--translate-ratio: -20%;
 		flex-wrap: wrap;
+		.app-header {
+			width: 100%;
+		}
+		.affiliation {
+			right: 10px;
+			border-radius: 0 3px;
+		}
+		.card-info-panel {
+			margin-left: 0;
+			border-left: none;
+			.main-info {
+				.card-image-cropper {
+					display: grid;
+				}
+			}
+		}
 		.card-info-panel,
 		.card-preview-panel {
 			flex: 1 1 auto;
@@ -153,9 +236,9 @@
 		.checkbox-input {
 			grid-column: span 1;
 		}
-	}
-	.char-picker-container {
-		top: 765px;
-		left: 10px;
+		.char-picker-container {
+			top: 765px;
+			left: 0;
+		}
 	}
 }

@@ -1,6 +1,6 @@
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Input, Checkbox, Dropdown } from 'antd';
-import { Card, CardArtCanvasConst, CondenseType, NameStyle, NameStyleType, frameMap } from '../../model';
+import { Input, Checkbox, Dropdown, Slider, InputNumber } from 'antd';
+import { Card, CardArtCanvasCoordinateMap, CondenseType, NameStyle, NameStyleType, OpacityList, frameMap, getArtCanvasCoordinate } from '../../model';
 import { FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import debounce from 'lodash.debounce';
@@ -79,6 +79,17 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     };
     const onFoilChange = onChangeFactory('foil', setCard);
     const onFinishChange = onChangeFactory('finish', setCard);
+    const onOpacityChange = (type: keyof Card['opacity'], value: number) => {
+        onCardChange(currentCard => {
+            const newOpacity = { ...currentCard.opacity };
+            newOpacity[type] = value;
+
+            return {
+                ...currentCard,
+                opacity: newOpacity,
+            };
+        });
+    };
     const onArtFinishChange = onChangeFactory('artFinish', setCard);
     const onFrameChange = (frameValue: number | string) => {
         onCardChange(currentCard => {
@@ -173,7 +184,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
     const {
         format,
-        frame, foil, finish, artFinish,
+        frame, foil, finish, artFinish, opacity,
         name, nameStyleType, nameStyle,
         picture,
         effect,
@@ -212,6 +223,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     }));
 
     const currentPendulumFrame = frameMap[pendulumFrame];
+    const artCoordinateType = getArtCanvasCoordinate(isPendulum, opacity);
     return <div className="card-info-panel">
         {children}
         <CharPicker
@@ -232,23 +244,67 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             <CheckboxTrain className="finish-checkbox" value={finish} onChange={onFinishChange} optionList={FinishButtonList}>
                 <span>Finish Type</span>
             </CheckboxTrain>
+
+        </div>
+        <div className="card-opacity-input">
+            <label className="standalone-addon ant-input-group-addon">Opacity</label>
+            <div className="card-opacity-slider-container">
+                {OpacityList.map(({ label, value: type }) => {
+                    return <div key={type} className="card-opacity-slider">
+                        <Slider
+                            min={0}
+                            max={100}
+                            onChange={value => onOpacityChange(type, value)}
+                            value={opacity[type] ?? 100}
+                        />
+                        <InputNumber
+                            size="small"
+                            min={0}
+                            max={100}
+                            onChange={value => onOpacityChange(type, typeof value === 'number' ? value : 100)}
+                            value={opacity[type] ?? 100}
+                        />
+                        <div className="slider-label">{label}</div>
+                    </div>;
+                })}
+            </div>
         </div>
         <RadioTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={FrameButtonList} />
-        <div className="card-header custom-gap">
-            <Input
-                id="name"
-                ref={onlineCharPicker === 'name' ? ref as any : null}
-                onFocus={() => setOnlineCharPicker('name')}
-                allowClear
-                addonBefore={'Name'}
-                placeholder="Card Name"
-                value={displayName}
-                className="name-input"
-                onChange={ev => {
-                    onNameChange(ev);
-                    setDisplayName(ev.target.value);
-                }}
-            />
+        <div className="name-style-id-input">
+            <div className="name-id-input">
+                <Input
+                    id="name"
+                    ref={onlineCharPicker === 'name' ? ref as any : null}
+                    onFocus={() => setOnlineCharPicker('name')}
+                    allowClear
+                    addonBefore={'Name'}
+                    placeholder="Card Name"
+                    value={displayName}
+                    className="name-input"
+                    onChange={ev => {
+                        onNameChange(ev);
+                        setDisplayName(ev.target.value);
+                    }}
+                />
+                <Input
+                    id="set-id"
+                    ref={onlineCharPicker === 'set-id' ? ref as any : null}
+                    onFocus={() => setOnlineCharPicker('set-id')}
+                    allowClear
+                    className="set-id-input"
+                    addonBefore={<div className="input-label-with-button">
+                        <div className="input-label">Set ID</div>
+                        <IconButton
+                            iconProps={{ onClick: () => onPasscodeChange(randomSetID(format)) }}
+                            Icon={SyncOutlined}
+                            tooltipProps={{ overlay: 'Randomize' }}
+                        />
+                    </div>}
+                    onChange={onSetIDChange}
+                    placeholder="Set ID"
+                    value={setId}
+                />
+            </div>
             <StylePicker ref={stylePickerRef} defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} />
             {isMonster
                 ? !isLink
@@ -271,24 +327,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 >
                     <span>Attribute</span>
                 </RadioTrain>
-                <Input
-                    id="set-id"
-                    ref={onlineCharPicker === 'set-id' ? ref as any : null}
-                    onFocus={() => setOnlineCharPicker('set-id')}
-                    allowClear
-                    className="set-id-input"
-                    addonBefore={<div className="input-label-with-button">
-                        <div className="input-label">Set ID</div>
-                        <IconButton
-                            iconProps={{ onClick: () => onPasscodeChange(randomSetID()) }}
-                            Icon={SyncOutlined}
-                            tooltipProps={{ overlay: 'Randomize' }}
-                        />
-                    </div>}
-                    onChange={onSetIDChange}
-                    placeholder="Set ID"
-                    value={setId}
-                />
                 {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
                     <div className="joined-row pendulum-option">
                         <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum</Checkbox>
@@ -345,7 +383,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                     onPendulumEffectChange(ev);
                                     setDisplayPendulumEffect(ev.target.value);
                                 }}
-                                rows={6}
+                                rows={5}
                             />
                         </div>
                     </>}
@@ -385,7 +423,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     allowClear
                     placeholder="Card effect"
                     value={displayEffect}
-                    rows={9}
+                    rows={8}
                     onChange={ev => {
                         onEffectChange(ev);
                         setDisplayEffect(ev.target.value);
@@ -478,7 +516,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}
                     onTainted={onTainted}
-                    ratio={CardArtCanvasConst[isPendulum ? 'pendulum' : 'normal'].ratio}
+                    ratio={CardArtCanvasCoordinateMap[artCoordinateType].ratio}
                     beforeCropper={
                         <RadioTrain
                             className="art-finish-checkbox image-input-train"
