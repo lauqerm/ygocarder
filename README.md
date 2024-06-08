@@ -117,6 +117,8 @@ If this card is Link Summoned: You can apply these effects in sequence, dependin
 ● All monsters your opponent currently controls lose 300 ATK for each Sea Serpent.
 ● You gain 400 LP for each Wyrm.
 
+Dark synchro style
+Beatrice text style
 
 ## YGO Carder
 

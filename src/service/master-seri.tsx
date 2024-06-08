@@ -135,19 +135,19 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         },
     });
 
-    /** GOLD / PLATINUM FOIL + MAIN FRAME */
+    /** GOLD / PLATINUM FOIL + MAIN FRAME (may become deprecated) */
     useEffect(() => {
         if (active) {
-            const ctx = frameCanvas.current?.getContext('2d');
+            // const ctx = frameCanvas.current?.getContext('2d');
 
             drawingPipeline.current.frame.instructor = async () => {
-                clearCanvas(ctx);
-                const cardType = getCardFrame(frame);
-                if (!ctx) return;
+                // clearCanvas(ctx);
+                // const cardType = getCardFrame(frame);
+                // if (!ctx) return;
 
-                ctx.globalAlpha = opacity.body / 100;
-                await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
-                ctx.globalAlpha = 1;
+                // ctx.globalAlpha = opacity.body / 100;
+                // await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+                // ctx.globalAlpha = 1;
             };
         }
     }, [active, foil, frame, frameCanvas, opacity.body]);
@@ -163,7 +163,25 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.specialFrame.instructor = async () => {
                 clearCanvas(ctx);
                 if (!ctx) return;
+                const { x, y, w } = CardArtCanvasCoordinateMap[getArtCanvasCoordinate(isPendulum, opacity)];
+                const drawArtwork = () => {
+                    if (previewCtx && ctx) {
+                        const { width: imageWidth, height: imageHeight } = previewCtx;
+    
+                        if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
+                    }
+                };
+
                 const hasFoil = foil !== 'normal';
+                /** Actual artwork for non-pendulum card */
+                if (previewCtx && ctx && !isPendulum) {
+                    drawArtwork();
+                }
+                
+                const cardType = getCardFrame(frame);
+                ctx.globalAlpha = opacity.body / 100;
+                await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+                ctx.globalAlpha = 1;
 
                 /** Art border for non-pendulum */
                 if (!isPendulum) {
@@ -189,13 +207,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 if (isPendulum && !isLink) {
                     await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
                 }
-                /** Actual artwork */
-                const { x, y, w } = CardArtCanvasCoordinateMap[getArtCanvasCoordinate(isPendulum, opacity)];
-                if (previewCtx && ctx) {
-                    // ctx.clearRect(0, 0, 548 * UP_RATIO, 650 * UP_RATIO);
-                    const { width: imageWidth, height: imageHeight } = previewCtx;
-
-                    if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
+                if (previewCtx && ctx && isPendulum) {
+                    drawArtwork();
                 }
                 if (isPendulum && !isLink) {
                     ctx.globalAlpha = opacity.pendulum / 100;
