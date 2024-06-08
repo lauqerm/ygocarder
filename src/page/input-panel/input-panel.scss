@@ -191,6 +191,23 @@
 	.pendulum-frame-input {
 		display: inline-block;
 		cursor: pointer;
+		box-shadow: 0 0 2px 0 #333;
+		.frame-info-block {
+			height: 21px;
+			border-radius: 4px 0 0 4px;
+			transform: translateY(-1px);
+		}
+		.pendulum-frame-label {
+			background: #5b626e;
+			border: 1px solid #222;
+			border-left: none;
+			padding: 0 4px;
+			border-radius: 0 4px 4px 0;
+			&:first-child {
+				border-radius: 4px;
+				border-left: 1px solid #222;
+			}
+		}
 	}
 	.pendulum-container {
 		display: grid;

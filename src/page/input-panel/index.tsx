@@ -344,7 +344,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             </div>}
                         >
                             <div className="pendulum-frame-input">
-                                Pendulum Frame <CaretDownOutlined /> {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
+                                {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
+                                <span className="pendulum-frame-label">Pendulum Frame <CaretDownOutlined /></span>
                             </div>
                         </Dropdown>}
                     </div>

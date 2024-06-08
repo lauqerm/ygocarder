@@ -239,6 +239,15 @@
 		font-family: 'Yu-Gi-Oh! DF Leisho 3';
 	}
 }
+.by-me {
+	position: fixed;
+    right: 0;
+    bottom: 0;
+    font-size: 8px;
+    opacity: 0.5;
+    padding: 1px 4px;
+    color: #d6d6d6;
+}
 
 // [OVERWRITE ANTD DEFAULT]
 .input-overlay,

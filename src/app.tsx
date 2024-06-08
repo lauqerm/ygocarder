@@ -451,6 +451,7 @@ function App() {
                     <Affiliation />
                 </CardInputPanel>}
             </div>
+            <div className="by-me">Made by Lauqerm</div>
         </div>
     );
 }
