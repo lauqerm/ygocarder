@@ -1,6 +1,6 @@
-import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Input, Checkbox, Dropdown, Slider, InputNumber } from 'antd';
-import { Card, CardArtCanvasCoordinateMap, CondenseType, NameStyle, NameStyleType, OpacityList, frameMap, getArtCanvasCoordinate } from '../../model';
+import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { Input, Checkbox, Popover } from 'antd';
+import { Card, CardOpacity, CondenseType, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate } from '../../model';
 import { FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import debounce from 'lodash.debounce';
@@ -23,7 +23,9 @@ import { CheckboxTrain, RadioTrain } from './input-train';
 import { ImageCropperRef } from '../../component/card-picture';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat } from '../../service';
+import { OpacityPicker, OpacityPickerRef } from './opacity-picker';
 import './input-panel.scss';
+import { StyledPendulumFrameContainer } from './input-panel.styled';
 
 const { TextArea } = Input;
 
@@ -65,6 +67,37 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const [isMirrorScale, setMirrorScale] = useState(true);
     const stylePickerRef = useRef<StylePickerRef>(null);
     const imageCropperRef = useRef<ImageCropperRef>(null);
+
+    const {
+        format,
+        frame, foil, finish, artFinish, opacity,
+        name, nameStyleType, nameStyle,
+        picture,
+        effect,
+        effectStyle,
+        typeAbility,
+        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleRed, pendulumScaleBlue,
+        atk, def, linkMap,
+        attribute,
+        subFamily,
+        star,
+        setId,
+        passcode, creator, sticker,
+        isSpeedCard, isDuelTerminalCard, isFirstEdition,
+    } = currentCard;
+    const isXyz = checkXyz(currentCard);
+    const isLink = checkLink(currentCard);
+    const isMonster = checkMonster(currentCard);
+    const isDarkSynchro = checkDarkSynchro(currentCard);
+    const [displayTypeAbility, setDisplayTypeAbility] = useState(typeAbility.join('/'));
+    const [displayName, setDisplayName] = useState(name);
+    const [displayEffect, setDisplayEffect] = useState(effect);
+    const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulumEffect);
+    const [onlineCharPicker, setOnlineCharPicker] = useState('');
+    const ref = useRef();
+    const opacityPickerRef = useRef<OpacityPickerRef>(null);
+    const lastPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
+
     const setCard = (mutateFunc: (card: Card) => Card) => {
         onCardChange(currentCard => mutateFunc(currentCard));
     };
@@ -79,17 +112,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     };
     const onFoilChange = onChangeFactory('foil', setCard);
     const onFinishChange = onChangeFactory('finish', setCard);
-    const onOpacityChange = (type: keyof Card['opacity'], value: number) => {
-        onCardChange(currentCard => {
-            const newOpacity = { ...currentCard.opacity };
-            newOpacity[type] = value;
-
-            return {
-                ...currentCard,
-                opacity: newOpacity,
-            };
-        });
-    };
+    const onOpacityChange = (opacity: CardOpacity) => onCardChange(currentCard => ({ ...currentCard, opacity }));
     const onArtFinishChange = onChangeFactory('artFinish', setCard);
     const onFrameChange = (frameValue: number | string) => {
         onCardChange(currentCard => {
@@ -143,7 +166,14 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     });
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('linkMap', setCard);
-    const onPendulumFrameChange = onChangeFactory('pendulumFrame', setCard);
+    const onPendulumFrameChange = (value: string | number) => {
+        const normalizedValue = `${value}`;
+
+        if (normalizedValue !== 'auto') lastPendulumFrame.current = normalizedValue;
+        onCardChange(currentCard => {
+            return { ...currentCard, pendulumFrame: normalizedValue };
+        });
+    };
     const onRedScaleChange = onChangeFactory('pendulumScaleRed', setCard);
     const onBlueScaleChange = onChangeFactory('pendulumScaleBlue', setCard);
     const onPendulumEffectChange = debounce(onChangeFactory('pendulumEffect', setCard), 350);
@@ -182,35 +212,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         return { ...currentCard, isSpeedCard: e.target.checked };
     });
 
-    const {
-        format,
-        frame, foil, finish, artFinish, opacity,
-        name, nameStyleType, nameStyle,
-        picture,
-        effect,
-        effectStyle,
-        typeAbility,
-        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleRed, pendulumScaleBlue,
-        atk, def, linkMap,
-        attribute,
-        subFamily,
-        star,
-        setId,
-        passcode, creator, sticker,
-        isSpeedCard, isDuelTerminalCard, isFirstEdition,
-    } = currentCard;
-    const isXyz = checkXyz(currentCard);
-    const isLink = checkLink(currentCard);
-    const isMonster = checkMonster(currentCard);
-    const isDarkSynchro = checkDarkSynchro(currentCard);
-    const [displayTypeAbility, setDisplayTypeAbility] = useState(typeAbility.join('/'));
-    const [displayName, setDisplayName] = useState(name);
-    const [displayEffect, setDisplayEffect] = useState(effect);
-    const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulumEffect);
-    const [onlineCharPicker, setOnlineCharPicker] = useState('');
-    const ref = useRef();
-
     const attributeList = useMemo(() => getAttributeList(format), [format]);
+
+    useEffect(() => {
+        opacityPickerRef.current?.setValue(opacity);
+    }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
         forceCardData: (card) => {
@@ -223,7 +229,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     }));
 
     const currentPendulumFrame = frameMap[pendulumFrame];
-    const artCoordinateType = getArtCanvasCoordinate(isPendulum, opacity);
     return <div className="card-info-panel">
         {children}
         <CharPicker
@@ -247,27 +252,16 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
         </div>
         <div className="card-opacity-input">
-            <label className="standalone-addon ant-input-group-addon">Opacity</label>
-            <div className="card-opacity-slider-container">
-                {OpacityList.map(({ label, value: type }) => {
-                    return <div key={type} className="card-opacity-slider">
-                        <Slider
-                            min={0}
-                            max={100}
-                            onChange={value => onOpacityChange(type, value)}
-                            value={opacity[type] ?? 100}
-                        />
-                        <InputNumber
-                            size="small"
-                            min={0}
-                            max={100}
-                            onChange={value => onOpacityChange(type, typeof value === 'number' ? value : 100)}
-                            value={opacity[type] ?? 100}
-                        />
-                        <div className="slider-label">{label}</div>
-                    </div>;
-                })}
-            </div>
+            <label className="standalone-addon ant-input-group-addon">
+                Opacity <Explanation
+                    content={'May affect behavior of some finish types'}
+                />
+            </label>
+            <OpacityPicker ref={opacityPickerRef}
+                defaultValue={opacity}
+                isPendulum={isPendulum}
+                onChange={onOpacityChange}
+            />
         </div>
         <RadioTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={FrameButtonList} />
         <div className="name-style-id-input">
@@ -305,7 +299,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     value={setId}
                 />
             </div>
-            <StylePicker ref={stylePickerRef} defaultType={nameStyleType} defaultValue={nameStyle} onChange={onNameColorChange} />
+            <StylePicker ref={stylePickerRef}
+                frameInfo={frameMap[frame as keyof typeof frameMap]}
+                defaultType={nameStyleType}
+                defaultValue={nameStyle}
+                onChange={onNameColorChange}
+            />
             {isMonster
                 ? !isLink
                     ? <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={StarButtonList}>
@@ -329,25 +328,36 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 </RadioTrain>
                 {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
                     <div className="joined-row pendulum-option">
-                        <Checkbox onChange={onIsPendulumChange} checked={isPendulum}>Is Pendulum</Checkbox>
+                        <Checkbox className="pendulum-checkbox" onChange={onIsPendulumChange} checked={isPendulum}>Pendulum</Checkbox>
                         {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
-                        {isPendulum && <Dropdown
-                            arrow
+                        <Popover
+                            placement="bottom"
                             overlayClassName="pendulum-frame-picker-overlay"
-                            overlay={<div className="pendulum-frame-picker">
-                                <RadioTrain
-                                    className="frame-radio"
-                                    value={pendulumFrame}
-                                    onChange={onPendulumFrameChange}
-                                    optionList={FrameButtonList}
-                                />
+                            content={<div className="overlay-event-absorber">
+                                <StyledPendulumFrameContainer
+                                    className="pendulum-frame-picker"
+                                >
+                                    <Checkbox
+                                        className="frame-auto-checkbox"
+                                        checked={pendulumFrame === 'auto'}
+                                        onChange={e => {
+                                            onPendulumFrameChange(e.target.checked ? 'auto' : lastPendulumFrame.current);
+                                        }}
+                                    >Auto</Checkbox>
+                                    <RadioTrain
+                                        className="frame-radio"
+                                        value={pendulumFrame}
+                                        onChange={onPendulumFrameChange}
+                                        optionList={FrameButtonList}
+                                    />
+                                </StyledPendulumFrameContainer>
                             </div>}
                         >
                             <div className="pendulum-frame-input">
                                 {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
                                 <span className="pendulum-frame-label">Pendulum Frame <CaretDownOutlined /></span>
                             </div>
-                        </Dropdown>}
+                        </Popover>
                     </div>
                     {isPendulum && <>
                         <div>
@@ -413,7 +423,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 >
                     <span>
                         Condense <Explanation
-                            content={'Higher condense limit will favor compressing words instead of adding new lines'}
+                            content={'Higher condense limit will prefer compressing words instead of adding new lines'}
                         />
                     </span>
                 </RadioTrain>
@@ -517,7 +527,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onSourceChange={onPictureChange}
                     onImageChange={onImageChange}
                     onTainted={onTainted}
-                    ratio={CardArtCanvasCoordinateMap[artCoordinateType].ratio}
+                    ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
                     beforeCropper={
                         <RadioTrain
                             className="art-finish-checkbox image-input-train"

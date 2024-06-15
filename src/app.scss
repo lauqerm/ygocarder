@@ -1,4 +1,4 @@
-#root {
+html {
 	background-color: #fff;
     min-width: 600px;
 	--card-width: 549px;
@@ -7,6 +7,12 @@
 	--translate-ratio: -15%;
 	// --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	--bs-input: none;
+	--color: #d3d3d6;
+}
+hr {
+	margin: 0;
+	border: none;
+	border-top: 1px solid #222222;
 }
 #app {
 	width: 100%;
@@ -233,7 +239,7 @@
 }
 .input-ocg {
 	input,
-	textarea {
+	textarea.ant-input {
 		font-size: 15px;
 		line-height: 1.4666;
 		font-family: 'Yu-Gi-Oh! DF Leisho 3';
@@ -300,9 +306,6 @@
 	.ant-input-affix-wrapper {
 		box-shadow: var(--bs-input);
 	}
-	.pendulum-container {
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-	}
 	--border-radius: 2px;
 	.radio-train .ant-radio-button-wrapper:first-child {
 		border-radius: var(--border-radius) 0 0 var(--border-radius);
@@ -347,12 +350,17 @@ span.ant-input-affix-wrapper {
 		border-color: #222;
 	}
 }
-.ant-dropdown.ant-dropdown-placement-bottomLeft > .ant-dropdown-arrow {
-	border-top-color: #48484b;
-	border-left-color: #48484b;
+
+.ant-popover.ant-popover-placement-bottom,
+.ant-popover.ant-popover-placement-bottomLeft,
+.ant-popover.ant-popover-placement-bottomRight {
+	.ant-popover-content .ant-popover-arrow {
+		border-top-color: #222222;
+		border-left-color: #222222;
+	}
 }
 ul.ant-dropdown-menu {
-	background: #48484b;
+	background: #4e4e53;
 	.ant-dropdown-menu-item {
 		color: #ffffff;
 		&:hover {
@@ -360,8 +368,14 @@ ul.ant-dropdown-menu {
 		}
 	}
 }
-.menu-active {
-	background-color: #1890ff;
+
+.ant-popover {
+	.ant-popover-inner,
+	.ant-popover-inner-content {
+		padding: 0;
+		border-width: 0;
+		background-color: transparent;
+	}
 }
 
 /** Avoid annoying user agent style */

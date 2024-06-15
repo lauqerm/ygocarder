@@ -5,7 +5,7 @@ export type NameFontData = {
     label: React.ReactNode,
     fontData: FontData,
 };
-export const NameFontDataMap: Record<string, NameFontData> = {
+export const NameFontDataMap = {
     Default: {
         value: 'Default',
         label: 'Default',
@@ -24,7 +24,7 @@ export const NameFontDataMap: Record<string, NameFontData> = {
                 overheadFontRatio: 0.225,
             }],
         },
-    },
+    } as NameFontData,
     Arial: {
         value: 'Arial',
         label: 'Arial (Bold)',
@@ -45,7 +45,7 @@ export const NameFontDataMap: Record<string, NameFontData> = {
                 overheadFontRatio: 0.225,
             }],
         },
-    },
+    } as NameFontData,
     OCG: {
         value: 'OCG',
         label: 'OCG',
@@ -64,7 +64,7 @@ export const NameFontDataMap: Record<string, NameFontData> = {
                 offsetY: 0,
             }],
         }
-    }
+    } as NameFontData,
 };
 
 export const BREAKABLE_LETTER = '\\s\\-/';

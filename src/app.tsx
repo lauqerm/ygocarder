@@ -5,7 +5,6 @@ import 'antd/dist/antd.css';
 import {
     CanvasConst,
     Card,
-    CardArtCanvasCoordinateMap,
     UP_RATIO,
     defaultCard,
     getArtCanvasCoordinate,
@@ -291,6 +290,12 @@ function App() {
         };
     });
 
+    useEffect(() => {
+        document.title = currentCard.name
+            ? `${currentCard.name} - Yu-Gi-Oh Carder`
+            : 'Yu-Gi-Oh Carder';
+    }, [currentCard.name]);
+
     const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
     }) => {
@@ -333,10 +338,10 @@ function App() {
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
             if (previewCtx && exportCtx) {
-                const { x, y, w } = CardArtCanvasCoordinateMap[getArtCanvasCoordinate(isPendulum, opacity)];
+                const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity);
                 const { width: imageWidth, height: imageHeight } = previewCtx;
 
-                if (imageHeight > 0) exportCtx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
+                if (imageHeight > 0) exportCtx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, artX, artY, artWidth, artWidth / (imageWidth / imageHeight));
             }
             await generateLayer(specialFrameCanvasRef, exportCtx);
             await Promise.all([

@@ -17,7 +17,6 @@ import {
 import {
     CanvasConst,
     Card,
-    CardArtCanvasCoordinateMap,
     MasterDuelCanvas,
     NO_ATTRIBUTE,
     PresetNameStyleMap,
@@ -27,6 +26,7 @@ import {
     effectMonsterFontData,
     effectSTFontData,
     getArtCanvasCoordinate,
+    getDefaultCardOpacity,
     getDefaultNameStyle,
     iconList,
     monsterCoordinateData,
@@ -75,7 +75,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
+        isPendulum, pendulumFrame: basePendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
         atk, def, linkMap,
         attribute,
         subFamily,
@@ -85,6 +85,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         isFirstEdition, isDuelTerminalCard, isSpeedCard,
     } = card;
     console.log('🚀 ~ useMasterSeriDrawer ~ card:', card);
+    const pendulumFrame = basePendulumFrame === 'auto' && isPendulum ? 'spell' : basePendulumFrame;
     const isNormal = checkNormal(card);
     const isXyz = checkXyz(card);
     const isDarkSynchro = checkDarkSynchro(card);
@@ -92,7 +93,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
     const lightHeader = isXyz || isDarkSynchro || isSpeedSkill || (isMonster && ['hamon', 'uria', 'raviel'].includes(frame));
-    const lightFooter = lightHeader && !isPendulum;
+    const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(pendulumFrame);
     const {
         isInitializing,
         imageChangeCount,
@@ -129,8 +130,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             order: 4,
             instructor: () => Promise.resolve(),
         },
-        overlay: {
+        name: {
             order: 5,
+            instructor: () => Promise.resolve(),
+        },
+        overlay: {
+            order: 6,
             instructor: () => Promise.resolve(),
         },
     });
@@ -150,7 +155,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 // ctx.globalAlpha = 1;
             };
         }
-    }, [active, foil, frame, frameCanvas, opacity.body]);
+    }, [active, foil, frame, frameCanvas]);
 
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
@@ -163,12 +168,25 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.specialFrame.instructor = async () => {
                 clearCanvas(ctx);
                 if (!ctx) return;
-                const { x, y, w } = CardArtCanvasCoordinateMap[getArtCanvasCoordinate(isPendulum, opacity)];
+                const {
+                    body: opacityBody,
+                    pendulum: opacityPendulum,
+                    text: opacityText,
+                    artFrame: useArtFrame,
+                } = { ...getDefaultCardOpacity(), ...opacity };
+                const {
+                    artX,
+                    artY,
+                    artFinishX,
+                    artFinishY,
+                    artWidth,
+                } = getArtCanvasCoordinate(isPendulum, opacity);
+                const applyArtFinish = useArtFrame && opacityBody > 0;
                 const drawArtwork = () => {
                     if (previewCtx && ctx) {
                         const { width: imageWidth, height: imageHeight } = previewCtx;
     
-                        if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, x, y, w, w / (imageWidth / imageHeight));
+                        if (imageHeight > 0) ctx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, artX, artY, artWidth, artWidth / (imageWidth / imageHeight));
                     }
                 };
 
@@ -178,66 +196,103 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     drawArtwork();
                 }
                 
+                /** Frame */
                 const cardType = getCardFrame(frame);
-                ctx.globalAlpha = opacity.body / 100;
-                await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
-                ctx.globalAlpha = 1;
+                if (!isPendulum) {
+                    ctx.globalAlpha = useArtFrame ? opacityBody / 100 : 0;
+                    await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+                    await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
+                    ctx.globalAlpha = opacityText / 100;
+                    await drawFromSource(ctx, `/asset/image/background/background-text-${cardType}.png`, effectBoxX + 19, effectBoxY + 24);
+                    ctx.globalAlpha = 1;
+                }
 
                 /** Art border for non-pendulum */
                 if (!isPendulum) {
-                    if (isXyz || isSpeedSkill) {
-                        await drawFromSource(ctx, `/asset/image/frame/frame-art-${frame}.png`, artBoxX, artBoxY);
-                    } else if (isLink || ['zarc', 'hamon', 'uria', 'raviel'].includes(frame)) {
-                        await drawFromSource(ctx, '/asset/image/frame/frame-art-special.png', artBoxX, artBoxY);
-                    } else {
-                        await drawFromSource(ctx, '/asset/image/frame/frame-art.png', artBoxX, artBoxY);
+                    if (useArtFrame) {
+                        if (isXyz || isSpeedSkill) {
+                            await drawFromSource(ctx, `/asset/image/frame/frame-art-${frame}.png`, artBoxX, artBoxY);
+                        } else if (isLink || ['zarc', 'hamon', 'uria', 'raviel'].includes(frame)) {
+                            await drawFromSource(ctx, '/asset/image/frame/frame-art-special.png', artBoxX, artBoxY);
+                        } else {
+                            await drawFromSource(ctx, '/asset/image/frame/frame-art.png', artBoxX, artBoxY);
+                        }
                     }
 
                     await drawFromSource(ctx, '/asset/image/frame/frame-effect-box.png', effectBoxX, effectBoxY);
                     if (hasFoil) {
-                        await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, artBoxX, artBoxY);
+                        if (useArtFrame) {
+                            await drawFromSource(ctx, `/asset/image/frame/frame-art-${foil}.png`, artBoxX, artBoxY);
+                        }
                         await drawFromSource(ctx, `/asset/image/frame/frame-effect-box-${foil}.png`, effectBoxX, effectBoxY);
                     } else if (isSpeedSkill) {
                         await drawFromSource(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
                     }
-                    await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-frame-art.png`, 0, 0));
+
+                    if (useArtFrame) {
+                        await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-frame-art.png`, 0, 0));
+                    }
                 }
 
-                /** General borders for pendulum */
-                if (isPendulum && !isLink) {
-                    await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
-                }
+                /** Actual artwork for pendulum card */
                 if (previewCtx && ctx && isPendulum) {
                     drawArtwork();
                 }
+                /** Frame for pendulum only */
                 if (isPendulum && !isLink) {
-                    ctx.globalAlpha = opacity.pendulum / 100;
-                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-pend-effect-${pendulumSize}.png`, 0, 738);
-                    ctx.globalAlpha = opacity.text / 100;
-                    await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-monster-effect-${pendulumSize}.png`, effectBoxX, effectBoxY + 20);
+                    ctx.globalAlpha = useArtFrame ? opacityBody / 100 : 0;
+                    await drawFromSource(ctx, `/asset/image/frame/frame-${cardType}.png`, 0, 0);
+                    await drawFromSource(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
+                    ctx.globalAlpha = 1;
+                    if (previewCtx && ctx) {
+                        const { width: imageWidth, height: imageHeight } = previewCtx;
+                        const imageScaledRatio = artWidth / imageWidth;
+                        const offsetX = opacityBody < 100 ? 13 : 0;
+                        const offsetY = opacityBody < 100 ? 95 : 0;
+                        const offsetHeight = opacityBody < 100 ? 115 : 0;
+    
+                        if (imageHeight > 0) ctx.drawImage(
+                            previewCtx,
+                            offsetX, offsetY,
+                            imageWidth - offsetX * 2, imageHeight - offsetHeight,
+                            artX + (offsetX * imageScaledRatio), artY + (offsetY * imageScaledRatio),
+                            artWidth - (offsetX * 2 * imageScaledRatio), artWidth / (imageWidth / imageHeight) - offsetHeight * imageScaledRatio,
+                        );
+                    }
+                }
+                if (isPendulum && !isLink) {
+                    ctx.globalAlpha = opacityPendulum / 100;
+                    await drawFromSource(ctx, `/asset/image/background/background-pendulum-${pendulumFrame}.png`, 55, 738);
+                    ctx.globalAlpha = opacityText / 100;
+                    await drawFromSource(ctx, `/asset/image/background/background-text-${pendulumFrame}.png`, effectBoxX + 19, effectBoxY + 24);
                     ctx.globalAlpha = 1;
                 }
                 /** Stat border for monster */
                 if (isMonster) {
                     await drawFromSource(ctx, '/asset/image/frame/frame-stat-border.png', 0, 1070);
                 }
-                if (isPendulum) {
-                    await drawFromSource(ctx, `/asset/image/finish/art-finish-${artFinish}-pendulum-${pendulumSize}.png`, x, y);
-                    await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-art-pendulum-${pendulumSize}.png`, x, y));
-                } else {
-                    await drawFromSource(ctx, `/asset/image/finish/art-finish-${artFinish}.png`, x, y);
-                    await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-art.png`, x, y));
+                /** Art Finish for pendulum only */
+                if (applyArtFinish) {
+                    if (isPendulum) {
+                        await drawFromSource(ctx, `/asset/image/finish/art-finish-${artFinish}-pendulum-${pendulumSize}.png`, artFinishX, artFinishY);
+                        await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-art-pendulum-${pendulumSize}.png`, artFinishX, artFinishY));
+                    } else {
+                        await drawFromSource(ctx, `/asset/image/finish/art-finish-${artFinish}.png`, artFinishX, artFinishY);
+                        await loopFinish(ctx, type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-art.png`, artFinishX, artFinishY));
+                    }
                 }
                 /** Scale and pendulum frame */
                 if (isPendulum && !isLink) {
                     await drawFromSource(ctx, `/asset/image/pendulum/frame-pendulum-scale-${pendulumSize}.png`, 0, 750);
-                    await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}.png`, 30, 185);
-                    if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}.png`, 30, 185);
+                    await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}${useArtFrame ? '' : '-artless'}.png`, 30, 185);
+                    if (hasFoil) await drawFromSource(ctx, `/asset/image/frame/frame-pendulum-${pendulumSize}-${foil}${useArtFrame ? '' : '-artless'}.png`, 30, 185);
 
-                    await loopFinish(
-                        ctx,
-                        type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-pendulum-frame-art-${pendulumSize}.png`, 0, 0)
-                    );
+                    if (useArtFrame) {
+                        await loopFinish(
+                            ctx,
+                            type => drawFromSource(ctx, `/asset/image/finish/finish-${type}-pendulum-frame-art-${pendulumSize}.png`, 0, 0)
+                        );
+                    }
                 }
 
                 const foiledBorder = !hasFoil ? '/asset/image/frame/frame-border.png' : `/asset/image/frame/frame-border-${foil}.png`;
@@ -253,7 +308,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             const activeLink = `/asset/image/link/link-active-${entry}`;
                             const coordinate: [number, number, number, number] = [left, top, width, height];
 
-                            await drawFromSourceWithSize(ctx, `${baseLink}-base.png`, ...coordinate);
+                            await drawFromSourceWithSize(ctx, `${baseLink}-base${useArtFrame ? '' : '-full'}.png`, ...coordinate);
                             await drawFromSourceWithSize(ctx, `${baseLink}-core.png`, ...coordinate);
                             if (isActive) {
                                 await drawFromSourceWithSize(ctx, `${activeLink}-base.png`, ...coordinate);
@@ -261,7 +316,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             } else return;
                         })
                     );
-                    if (hasFoil) await drawFromSource(ctx, `/asset/image/link/link-overlay-arrow-${foil}.png`, 0, 175);
+                    if (hasFoil) {
+                        await drawFromSource(ctx, `/asset/image/link/link-overlay-arrow-${foil}${useArtFrame ? '' : '-artless'}.png`, 0, 175);
+                    }
                     await drawFromSource(ctx, '/asset/image/link/link-text.png', 600, 1080);
 
                     if (ctx) {
@@ -274,7 +331,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     }
                 }
 
-                /** Overlay bevel, vì bevel không overlay, không cần chờ tuần tự */
+                /** Overlay bevel, vì các bevel không overlap, không cần chờ tuần tự */
                 await Promise.all(isXyz || isSpeedSkill
                     ? [
                         drawFromSource(ctx, `/asset/image/frame/frame-name-bevel-${frame}.png`, 0, 0),
@@ -417,34 +474,52 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     /** DRAW NAME */
     useEffect(() => {
         if (active) {
-            const defaultTextStyle = getDefaultNameStyle();
             const ctx = nameCanvas.current?.getContext('2d');
-            if (ctx) {
-                const lineWidth = attribute === NO_ATTRIBUTE ? 686 : 606;
-                ctx.clearRect(0, 0, CanvasWidth, 100 * UP_RATIO);
-                ctx.textAlign = 'left';
-                const style = nameStyleType === 'auto'
-                    ? foil !== 'normal'
-                        ? PresetNameStyleMap[foil as keyof typeof PresetNameStyleMap ?? 'commonB'].value
-                        : frame === 'zarc'
-                            ? PresetNameStyleMap['animeGold'].value
-                            : {
-                                ...defaultTextStyle,
-                                fillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
-                                headTextFillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
-                            }
-                    : nameStyleType === 'predefined'
-                        ? PresetNameStyleMap[nameStyle.preset as keyof typeof PresetNameStyleMap ?? 'commonB'].value
-                        : nameStyle;
-                let regionalStyle = style;
-                if (format === 'ocg' && nameStyleType !== 'custom') regionalStyle.font = 'OCG';
-                if (nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
-                const edge = format === 'tcg' ? 60 : 68; // 61 AI Ritual
-
-                drawName(ctx, name, edge, 78 * UP_RATIO, lineWidth, regionalStyle, { isSpeedSkill, format });
-            }
+            drawingPipeline.current.name.instructor = async () => {
+                const defaultTextStyle = getDefaultNameStyle();
+                const cloneNode = nameCanvas.current?.cloneNode() as HTMLCanvasElement | undefined;
+                if (ctx && cloneNode) {
+                    const lineWidth = attribute === NO_ATTRIBUTE ? (format === 'tcg' ? 686 : 678) : 606;
+                    ctx.clearRect(0, 0, CanvasWidth, 148.125);
+                    ctx.textAlign = 'left';
+                    const style = nameStyleType === 'auto'
+                        ? foil !== 'normal'
+                            ? PresetNameStyleMap[foil as keyof typeof PresetNameStyleMap ?? 'commonB'].value
+                            : frame === 'zarc'
+                                ? PresetNameStyleMap['animeGold'].value
+                                : {
+                                    ...defaultTextStyle,
+                                    fillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                                    headTextFillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                                }
+                        : nameStyleType === 'predefined'
+                            ? PresetNameStyleMap[nameStyle.preset as keyof typeof PresetNameStyleMap ?? 'commonB'].value
+                            : nameStyle;
+                    let regionalStyle = style;
+                    if (format === 'ocg' && nameStyleType !== 'custom') regionalStyle.font = 'OCG';
+                    if (nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
+                    const edge = format === 'tcg' ? 60 : 68; // 61 AI Ritual
+                    const baseline = 115.5375;
+    
+                    await drawName(ctx, name, edge, baseline, lineWidth, regionalStyle, { isSpeedSkill, format, cloneNode, frame });
+                }
+            };
         }
-    }, [active, attribute, foil, isInitializing, isMonster, isSpeedSkill, frame, lightHeader, name, nameCanvas, nameStyle, nameStyleType, format]);
+    }, [
+        active,
+        attribute,
+        foil,
+        isInitializing,
+        isMonster,
+        isSpeedSkill,
+        frame,
+        lightHeader,
+        name,
+        nameCanvas,
+        nameStyle,
+        nameStyleType,
+        format,
+    ]);
 
     /** DRAW STAT */
     useEffect(() => {

@@ -28,28 +28,50 @@
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
-			column-gap: 2em;
+			column-gap: 1rem;
 			row-gap: 0.5rem;
-			.slider-label {
-				background-color: #48484b;
+			.slider-label,
+			.ant-slider,
+			.slider-padding {
 				border: 1px solid #222222;
-				border-left: none;
+				background-color: #4e4e53;
+			}
+			.slider-label {
+				border-right: none;
 				padding: 0 5px;
-				border-radius: 0 2px 2px 0;
+				border-radius: 2px 0 0 2px;
 				box-shadow: var(--bs-input);
 			}
 			.ant-slider {
-				margin: 6px 10px 6px 0;
+				margin: 0;
+				border-left: none;
+				border-right: none;
+				height: 25px;
+				padding-top: 9px;
+			}
+			.slider-padding {
+				border-left: none;
+				border-radius: 0 2px 2px 0;
+			}
+			.ant-slider-handle {
+				border-color: #1890ff;
+			}
+			.ant-slider-track {
+				background-color: #1890ff;
+			}
+			.ant-slider-rail,
+			.ant-slider-track {
+				border-radius: 0 2px 2px 0;
 			}
 			.card-opacity-slider {
 				flex: 0 1 auto;
 				display: grid;
-				grid-template-columns: 95px 65px max-content;
+				grid-template-columns: max-content 65px 90px 12px;
 			}
 			.ant-input-number {
 				height: 25px; // Alignment
 				width: unset;
-				border-radius: 2px 0 0 2px;
+				border-radius: 0;
 				box-shadow: var(--bs-input);
 			}
 		}
@@ -214,12 +236,12 @@
 		grid-template-columns: 1fr 1fr;
 		column-gap: 10px;
 		row-gap: 0.5rem;
-		padding: 10px;
-		border: 1px solid #222;
-		border-radius: 3px;
-		background-color: #48484b;
 		.joined-row {
 			grid-column: span 2;
+			.pendulum-checkbox {
+				/** Alignment **/
+				width: 100px;
+			}
 			.ant-checkbox-wrapper {
 				margin-right: 5px;
 			}
@@ -315,23 +337,6 @@
 		.ant-radio-button-wrapper-checked {
 			outline: 2px solid #1890ff;
 			outline-offset: 1px;
-		}
-	}
-}
-.pendulum-frame-picker-overlay {
-	&.ant-dropdown-placement-bottomLeft > .ant-dropdown-arrow {
-		border-top-color: #222222;
-		border-left-color: #222222;
-	}
-	.pendulum-frame-picker {
-		border: 1px solid #222;
-		background-color: #48484b;
-		box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.06);
-		padding: 5px;
-		.radio-train {
-			display: flex;
-			flex-wrap: wrap;
-			max-width: 500px;
 		}
 	}
 }

@@ -18,6 +18,7 @@ export const getDefaultNameStyle = () => ({
     gradientColor: '0.000|#eef10b,0.5|#d78025,1.000|#7e20cf',
     hasGradient: false,
     preset: 'commonB',
+    pattern: 'none',
 });
 
 const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameStyle> => ({
@@ -25,13 +26,14 @@ const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameSty
     hasGradient: false,
     hasOutline: false,
     hasShadow: false,
+    pattern: 'none',
     ...presetValue
 });
 export const PresetNameStyleMap = {
     commonB: {
         key: 'commonB',
         label: 'Common (Black)',
-        image: '/asset/image/other/name-common-b.png',
+        image: 'asset/image/other/name-common-b.png',
         value: createPresetNameStyle({
             fillStyle: '#000000',
         }),
@@ -39,7 +41,7 @@ export const PresetNameStyleMap = {
     commonW: {
         key: 'commonW',
         label: 'Common (White)',
-        image: '/asset/image/other/name-common-w.png',
+        image: 'asset/image/other/name-common-w.png',
         value: createPresetNameStyle({
             fillStyle: '#ffffff',
         }),
@@ -47,9 +49,9 @@ export const PresetNameStyleMap = {
     skillDefault: {
         key: 'skillDefault',
         label: 'Skill (Default)',
-        image: '/asset/image/other/name-skill-default.png',
+        image: 'asset/image/other/name-skill-default.png',
         value: createPresetNameStyle({
-            font: 'default',
+            font: 'Default',
             fillStyle: '#ffffff',
             lineWidth: 6,
             lineColor: '#000',
@@ -59,7 +61,7 @@ export const PresetNameStyleMap = {
     skillArial: {
         key: 'skillArial',
         label: 'Skill (Arial)',
-        image: '/asset/image/other/name-skill-arial.png',
+        image: 'asset/image/other/name-skill-arial.png',
         value: createPresetNameStyle({
             font: 'Arial',
             fillStyle: '#ffffff',
@@ -71,7 +73,7 @@ export const PresetNameStyleMap = {
     rare: {
         key: 'rare',
         label: 'Rare',
-        image: '/asset/image/other/name-rare.png',
+        image: 'asset/image/other/name-rare.png',
         value: createPresetNameStyle({
             fillStyle: '#cfc6de',
         }),
@@ -79,7 +81,7 @@ export const PresetNameStyleMap = {
     secretGradient: {
         key: 'secretGradient',
         label: 'Secret (Gradient)',
-        image: '/asset/image/other/name-secret-gradient.png',
+        image: 'asset/image/other/name-secret-gradient.png',
         value: createPresetNameStyle({
             gradientAngle: 180,
             gradientColor: '0.000|#7a71a6,1.000|#a8c1e5',
@@ -89,7 +91,7 @@ export const PresetNameStyleMap = {
     secret: {
         key: 'secret',
         label: 'Secret',
-        image: '/asset/image/other/name-secret.png',
+        image: 'asset/image/other/name-secret.png',
         value: createPresetNameStyle({
             fillStyle: '#8a8381',
         }),
@@ -97,7 +99,7 @@ export const PresetNameStyleMap = {
     platinum2: {
         key: 'platinum2',
         label: 'Platinum',
-        image: '/asset/image/other/name-platinum.png',
+        image: 'asset/image/other/name-platinum.png',
         value: createPresetNameStyle({
             fillStyle: '#a49f9e',
         }),
@@ -105,7 +107,7 @@ export const PresetNameStyleMap = {
     ultra: {
         key: 'ultra',
         label: 'Ultra',
-        image: '/asset/image/other/name-ultra.png',
+        image: 'asset/image/other/name-ultra.png',
         value: createPresetNameStyle({
             fillStyle: '#dbb473',
         }),
@@ -113,7 +115,7 @@ export const PresetNameStyleMap = {
     ultra2: {
         key: 'ultra2',
         label: 'Ultra (Type 2)',
-        image: '/asset/image/other/name-ultra-2.png',
+        image: 'asset/image/other/name-ultra-2.png',
         value: createPresetNameStyle({
             fillStyle: '#fee002',
         }),
@@ -121,7 +123,7 @@ export const PresetNameStyleMap = {
     platinum: {
         key: 'platinum',
         label: 'Foil Platinum',
-        image: '/asset/image/other/name-foil-platinum.png',
+        image: 'asset/image/other/name-foil-platinum.png',
         value: createPresetNameStyle({
             fillStyle: '#CCCCCC',
             shadowColor: '#FFFFFF',
@@ -134,7 +136,7 @@ export const PresetNameStyleMap = {
     gold: {
         key: 'gold',
         label: 'Foil Gold',
-        image: '/asset/image/other/name-foil-gold.png',
+        image: 'asset/image/other/name-foil-gold.png',
         value: createPresetNameStyle({
             fillStyle: '#b88c43',
             shadowColor: '#FCC400',
@@ -147,7 +149,7 @@ export const PresetNameStyleMap = {
     animeRed: {
         key: 'animeRed',
         label: 'Anime (Type Red)',
-        image: '/asset/image/other/name-anime-red.png',
+        image: 'asset/image/other/name-anime-red.png',
         value: createPresetNameStyle({
             gradientAngle: 180,
             gradientColor: '0.000|#d81961,0.220|#b81654,0.270|#9e1348,0.330|#95093e,0.380|#95093e,0.450|#ba3264,0.530|#ff5e99,0.620|#ffa0c3,0.690|#ffffff,0.770|#ff5e99,0.870|#d81961,1.000|#b81654',
@@ -167,7 +169,7 @@ export const PresetNameStyleMap = {
     animeSilver: {
         key: 'animeSilver',
         label: 'Anime (Type Silver)',
-        image: '/asset/image/other/name-anime-silver.png',
+        image: 'asset/image/other/name-anime-silver.png',
         value: createPresetNameStyle({
             shadowColor: '#383838',
             shadowOffsetY: 3,
@@ -187,7 +189,7 @@ export const PresetNameStyleMap = {
     animeGold: {
         key: 'animeGold',
         label: 'Anime (Type Gold)',
-        image: '/asset/image/other/name-anime-gold.png',
+        image: 'asset/image/other/name-anime-gold.png',
         value: createPresetNameStyle({
             shadowColor: '#383838',
             shadowOffsetY: 3,
@@ -207,7 +209,7 @@ export const PresetNameStyleMap = {
     promo: {
         key: 'promo',
         label: 'Promo',
-        image: '/asset/image/other/name-promo.png',
+        image: 'asset/image/other/name-promo.png',
         value: createPresetNameStyle({
             fillStyle: '#c7080b',
             shadowColor: '#333333',
@@ -224,3 +226,59 @@ export const PresetNameStyleMap = {
     },
 };
 export const PresetNameStyleList = Object.values(PresetNameStyleMap);
+
+export const PatternMap: Record<string, { key: string, patternImage: string, blendMode: GlobalCompositeOperation, overrideFill?: boolean }> = {
+    none: {
+        key: 'none',
+        patternImage: '',
+        blendMode: 'source-atop',
+    },
+    type1: {
+        key: 'type1',
+        patternImage: 'name-finish-type1',
+        blendMode: 'source-atop',
+    },
+    type2: {
+        key: 'type2',
+        patternImage: 'name-finish-type2',
+        blendMode: 'source-atop',
+    },
+    type3: {
+        key: 'type3',
+        patternImage: 'name-finish-type3',
+        blendMode: 'source-atop',
+    },
+    type4: {
+        key: 'type4',
+        patternImage: 'name-finish-type4',
+        blendMode: 'source-atop',
+    },
+    type5: {
+        key: 'type5',
+        patternImage: 'name-finish-type5',
+        blendMode: 'multiply',
+        overrideFill: true,
+    },
+    type6: {
+        key: 'type6',
+        patternImage: 'name-finish-type6',
+        blendMode: 'source-atop',
+    },
+    type7: {
+        key: 'type7',
+        patternImage: 'name-finish-type7',
+        blendMode: 'lighter',
+        overrideFill: true,
+    },
+    type8: {
+        key: 'type8',
+        patternImage: 'name-finish-type8',
+        blendMode: 'source-atop',
+    },
+    type9: {
+        key: 'type9',
+        patternImage: 'name-finish-type9',
+        blendMode: 'source-atop',
+    },
+};
+export const PatternList = Object.values(PatternMap);

@@ -1,9 +1,10 @@
-import { FootTextRegex, NameFontDataMap, TCG_LETTER_JOINLIST, DefaultFontSizeData, getDefaultNameStyle, NameStyle } from 'src/model';
+import { FootTextRegex, NameFontDataMap, TCG_LETTER_JOINLIST, DefaultFontSizeData, getDefaultNameStyle, NameStyle, PatternMap } from 'src/model';
 import { parsePalette, createFontGetter, condense } from 'src/util';
 import { tokenizeText } from './text-util';
 import { drawLine } from './text';
 import { createLineList } from './line-analyze';
 import { normalizeCardText } from './text-normalize';
+import { drawFromSource, drawFromSourceWithSize } from './image';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -67,7 +68,7 @@ const getNameGradient = (
     return undefined;
 };
 
-export const drawName = (
+export const drawName = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
     edge: number,
@@ -75,12 +76,15 @@ export const drawName = (
     trueWidth: number,
     style: Partial<NameStyle>,
     option: {
+        frame: string,
+        cloneNode: HTMLCanvasElement | null | undefined,
         format: string,
         isSpeedSkill?: boolean,
     },
 ) => {
-    if (ctx && value) {
-        const { isSpeedSkill, format } = option;
+    const { isSpeedSkill, format, cloneNode, frame } = option;
+    const cloneCtx = cloneNode?.getContext('2d');
+    if (ctx && cloneCtx && value) {
         const {
             font,
             fillStyle,
@@ -98,7 +102,9 @@ export const drawName = (
             hasGradient,
             gradientAngle,
             gradientColor,
+            pattern,
         } = { ...getDefaultNameStyle(), ...style };
+        const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
         const hasOutline = defaultHasOutline || isSpeedSkill;
         if (hasShadow) {
             ctx.shadowColor = shadowColor;
@@ -114,7 +120,7 @@ export const drawName = (
             ctx.strokeStyle = '#000';
         }
         const fontData = {
-            ...NameFontDataMap[font].fontData,
+            ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,
             headTextFillStyle,
         };
         const fontGetter = createFontGetter({
@@ -155,7 +161,6 @@ export const drawName = (
         }, 0);
 
         ctx.font = normalStyle;
-        console.log('🚀 ~ ctx.font:', ctx.font);
         let actualLineWidth = 0;
         const internalEffectiveMedian = condense(
             median => {
@@ -192,13 +197,42 @@ export const drawName = (
             textData,
             format,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                if (hasOutline) {
-                    ctx.lineJoin = 'round';
-                    ctx.strokeText(letter, scaledEdge + lineOffsetX, scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0));
-                }
+                // ctx.lineJoin = 'round';
+                // ctx.strokeText(letter, scaledEdge + lineOffsetX, scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0));
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             },
         });
+        if (patternImage && cloneNode) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            /** Một số pattern cần màu nền của frame */
+            await drawFromSource(cloneCtx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
+            cloneCtx.globalCompositeOperation = patternBlendMode;
+            await drawFromSourceWithSize(
+                cloneCtx, `/asset/image/finish/${patternImage}.png`,
+                edge, trueBaseline - maxAscent,
+                trueWidth,
+                maxAscent + maxDescent,
+            );
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.drawImage(cloneNode, 0, 0);
+            ctx.scale(xRatio, yRatio);
+        }
+        if (hasOutline) {
+            ctx.globalCompositeOperation = 'destination-over';
+            drawLine({
+                ctx,
+                tokenList,
+                xRatio, yRatio,
+                trueEdge: edge, trueBaseline,
+                textData,
+                format,
+                textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
+                    ctx.lineJoin = 'round';
+                    ctx.strokeText(letter, scaledEdge + lineOffsetX, scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0));
+                },
+            });
+        }
+        ctx.globalCompositeOperation = 'source-over';
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 
         const defaultTextStyle = getDefaultNameStyle();
@@ -210,5 +244,6 @@ export const drawName = (
         ctx.lineWidth = defaultTextStyle.lineWidth;
         ctx.strokeStyle = defaultTextStyle.lineColor;
         ctx.lineJoin = 'miter';
+        ctx.globalCompositeOperation = 'source-over';
     }
 };

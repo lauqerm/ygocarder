@@ -27,7 +27,7 @@
                 }
             }
             span, input {
-                color: #ffffff;
+                color: #ffffffcc;
             }
         }
     }
@@ -58,7 +58,7 @@
         }
     }
     .stop-point-control-panel {
-        color: #ffffff;
+        color: #ffffffcc;
         text-align: right;
         display: flex;
         flex-direction: column;
@@ -68,7 +68,7 @@
         }
         .ant-btn.remove-stop-color {
             font-size: 12px;
-            color: #ffffff;
+            color: #ffffffcc;
             background: #c95e5e;
             border: 1px solid #e95e5e;
             margin-left: 5px;
@@ -80,7 +80,7 @@
     }
     .ant-btn.add-stop-color {
         font-size: 12px;
-        color: #ffffff;
+        color: #ffffffcc;
         background: #5e85c9;
         border: 1px solid #5e85e9;
         margin: 5px 0;
@@ -92,8 +92,4 @@
     .ant-btn-primary {
         width: 100%;
     }
-}
-
-.preset-item {
-    padding: 5px 5px;
 }

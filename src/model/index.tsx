@@ -1,3 +1,4 @@
+import { CardOpacity, getDefaultCardOpacity } from './canvas';
 import { CondenseType } from './font-data-effect';
 import { getDefaultNameStyle, NameStyle, NameStyleType } from './name-preset';
 
@@ -6,11 +7,7 @@ export const defaultCard = {
     format: 'tcg',
     frame: 'fusion',
     foil: 'normal',
-    opacity: {
-        body: 100,
-        pendulum: 100,
-        text: 100,
-    },
+    opacity: getDefaultCardOpacity() as Partial<CardOpacity>,
     finish: [] as string[],
     artFinish: 'normal',
     name: 'Junko',
@@ -31,7 +28,8 @@ export const defaultCard = {
     linkMap: ['1',
         '3',
         '7',
-        '9'] as string[],
+        '9'
+    ] as string[],
     isPendulum: false,
     pendulumFrame: 'spell',
     pendulumEffect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
@@ -62,7 +60,8 @@ export const OpacityList = [
     { value: 'text' as const, label: 'Main Text' },
 ];
 
-export type FrameInfo = { name: string, labelColor: string, labelBackgroundColor?: string, labelBackgroundImage?: string };
+export type FrameInfo = {
+    name: string, labelColor: string, labelBackgroundColor?: string, labelBackgroundImage?: string };
 export const frameMap: Record<string, FrameInfo> = {
     'normal': {
         name: 'normal',
@@ -211,34 +210,44 @@ export const stickerList = [
 
 export const NO_ATTRIBUTE = 'NONE';
 export const attributeList = [
-    { name: NO_ATTRIBUTE, color: '#000000',
-
+    {
+        name: NO_ATTRIBUTE,
+        color: '#000000',
     },
-    { name: 'DARK',
+    {
+        name: 'DARK',
         color: '#b41dda',
     },
-    { name: 'EARTH',
+    {
+        name: 'EARTH',
         color: '#8d8e8e',
     },
-    { name: 'FIRE',
+    {
+        name: 'FIRE',
         color: '#e51b23',
     },
-    { name: 'LIGHT',
+    {
+        name: 'LIGHT',
         color: '#bfae32',
     },
-    { name: 'WATER',
+    {
+        name: 'WATER',
         color: '#008ecd',
     },
-    { name: 'WIND',
+    {
+        name: 'WIND',
         color: '#28ab35',
     },
-    { name: 'DIVINE',
+    {
+        name: 'DIVINE',
         color: '#ef6300',
     },
-    { name: 'SPELL',
+    {
+        name: 'SPELL',
         color: '#1b8f83',
     },
-    { name: 'TRAP',
+    {
+        name: 'TRAP',
         color: '#c32a8c',
     },
 ];

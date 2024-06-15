@@ -1,6 +1,6 @@
 import { clone } from 'ramda';
 import { JSONCrush, JSONUncrush } from '../3rd';
-import { Card, defaultCard } from '../model';
+import { Card, defaultCard, getDefaultCardOpacity } from '../model';
 
 const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     format: 'fm',
@@ -11,6 +11,7 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
         body: 'opbd',
         pendulum: 'oppd',
         text: 'optx',
+        artFrame: 'opaf',
     },
     finish: 'fn',
     artFinish: 'afn',
@@ -39,6 +40,7 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
         gradientColor: 'nscg',
         hasGradient: 'nshg',
         preset: 'nspr',
+        pattern: 'nspt',
     },
     attribute: 'at',
     subFamily: 'sf',
@@ -121,7 +123,7 @@ export const reverseCardDataShortener = (
                 fullCard[fullKey] = reverseCardDataShortener(normalizedCondensedCard[shortendKey], shortenMap[fullKey]);
             }
         } else {
-            if (normalizedCondensedCard[shortendValue]) {
+            if (normalizedCondensedCard[shortendValue] != null) {
                 fullCard[fullKey] = normalizedCondensedCard[shortendValue];
             }
         }
@@ -161,10 +163,6 @@ const migrateCardData = (card: Record<string, any>) => {
     if (migratedCard.finish === undefined) migratedCard.finish = [];
     if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
     if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
-    if (migratedCard.opacity === undefined) migratedCard.opacity = {
-        body: 100,
-        pendulum: 100,
-        text: 100,
-    };
+    if (migratedCard.opacity === undefined) migratedCard.opacity = getDefaultCardOpacity();
     return migratedCard;
 };

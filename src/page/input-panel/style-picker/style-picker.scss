@@ -12,21 +12,6 @@
 		height: 100%;
 	}
 }
-.picker-dropdown {
-    background-color: #5b626e;
-    border: 1px solid #222222;
-	padding: 1px 4px;
-	margin: -2px 0;
-	margin-left: 5px;
-	border-radius: 4px;
-    box-shadow: 0 0 2px 0 #333;
-	&:hover {
-		background-color: #707681;
-	}
-}
-.preset-preview {
-	max-width: 110px;
-}
 .style-picker-overlay {
 	.style-picker-mask {
 		position: fixed;
@@ -36,7 +21,7 @@
 		left: 0px;
 	}
 	.style-picker-auto {
-		background-color: #48484b;
+		background-color: #4e4e53;
 		text-align: left;
 		padding: 5px;
 		display: grid;
@@ -55,7 +40,7 @@
 		position: relative;
 	}
 	.custom-style-picker {
-		background-color: #48484b;
+		background-color: #4e4e53;
 		position: relative;
 		border: 1px solid #222;
 		border-radius: 2px;
@@ -63,23 +48,26 @@
 		h2,
 		h3 {
 			text-align: left;
-			background-color: #48484b;
+			background-color: #4e4e53;
 			margin: 0;
 			padding: 2px 5px;
 			font-size: 13px;
-			color: #d3d3d6;
+			color: var(--color);
 			.ant-checkbox-wrapper {
-				color: #d3d3d6;
+				color: var(--color);
 			}
 		}
 		h3 {
 			background-color: #28282b;
-			border-bottom: 1px solid #7a7a7a;
 			cursor: pointer;
+			border-bottom: 1px solid #7a7a7a;
+			&:last-child {
+				border-bottom-color: transparent;
+			}
 		}
 		.compact-picker {
 			color: #ffffffcc;
-			background-color: #48484b;
+			background-color: #4e4e53;
 			> div > span > div {
 				outline: 1px solid #7a7a7a !important;
 			}
@@ -151,18 +139,4 @@
 			}
 		}
 	}
-	> .ant-popover-content > .ant-popover-arrow {
-		border-top-color: #1e1e1e;
-		border-left-color: #1e1e1e;
-	}
-	.ant-popover-inner,
-	.ant-popover-inner-content {
-		padding: 0;
-		border-width: 0;
-		background-color: transparent;
-	}
-}
-.predefined-picker-overlay {
-	width: 120px !important;
-	min-width: unset !important;
 }

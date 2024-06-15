@@ -65,7 +65,7 @@ const WrappedColorPicker = forwardRef(({
                 default: {
                     picker: {
                         color: '#000000',
-                        background: '#48484b',
+                        background: '#4e4e53',
                         boxShadow: 'none',
                     },
                     body: {
@@ -84,7 +84,7 @@ const WrappedColorPicker = forwardRef(({
     </div>;
 });
 
-const MAX_STOP_POINT = 12;
+const MAX_STOP_POINT = 20;
 export type TextGradientPicker = {
     palette?: string,
     angle?: number,
