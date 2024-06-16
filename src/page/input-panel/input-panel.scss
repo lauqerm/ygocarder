@@ -214,17 +214,20 @@
 		display: inline-block;
 		cursor: pointer;
 		box-shadow: 0 0 2px 0 #333;
+		vertical-align: middle;
 		.frame-info-block {
-			height: 21px;
 			border-radius: 4px 0 0 4px;
-			transform: translateY(-1px);
+			padding: 1px 5px;
+			line-height: 1.25;
 		}
 		.pendulum-frame-label {
-			background: #5b626e;
+			display: inline-block;
+			background: var(--bgColor-dropdown-button);
 			border: 1px solid #222;
 			border-left: none;
-			padding: 0 4px;
+			padding: 1px 5px;
 			border-radius: 0 4px 4px 0;
+			line-height: 1.25;
 			&:first-child {
 				border-radius: 4px;
 				border-left: 1px solid #222;
@@ -241,6 +244,15 @@
 			.pendulum-checkbox {
 				/** Alignment **/
 				width: 100px;
+				text-align: right;
+			}
+			.pendulum-checkbox-placeholder {
+				display: inline-block;
+				/** Alignment **/
+				width: 105px;
+			}
+			.pendulum-frame-input {
+				margin-right: 10px;
 			}
 			.ant-checkbox-wrapper {
 				margin-right: 5px;

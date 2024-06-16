@@ -4,7 +4,7 @@ import { tokenizeText } from './text-util';
 import { drawLine } from './text';
 import { createLineList } from './line-analyze';
 import { normalizeCardText } from './text-normalize';
-import { drawFromSource, drawFromSourceWithSize } from './image';
+import { drawFrom, drawWithSizeFrom } from './image';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -205,10 +205,10 @@ export const drawName = async (
         if (patternImage && cloneNode) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             /** Một số pattern cần màu nền của frame */
-            await drawFromSource(cloneCtx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
+            await drawFrom(cloneCtx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
             cloneCtx.globalCompositeOperation = patternBlendMode;
-            await drawFromSourceWithSize(
-                cloneCtx, `/asset/image/finish/${patternImage}.png`,
+            await drawWithSizeFrom(
+                cloneCtx, `/asset/image/finish-name/${patternImage}.png`,
                 edge, trueBaseline - maxAscent,
                 trueWidth,
                 maxAscent + maxDescent,

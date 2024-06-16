@@ -83,6 +83,8 @@ export const tcgToOCGLetterMap: Record<string, string> = {
     'ꓕ': 'Ʇ',
     'Ո': 'ꓵ',
     'ꓥ': 'Ʌ',
+    '＜': '<',
+    '＞': '>',
 };
 export const ocgToTCGLetterMap: Record<string, string> = {
     '０': '0',
@@ -169,6 +171,8 @@ export const ocgToTCGLetterMap: Record<string, string> = {
     'ꓕ': 'Ʇ',
     'Ո': 'ꓵ',
     'ꓥ': 'Ʌ',
+    '＜': '<',
+    '＞': '>',
 };
 
 export const ocgToTCGTermMap: Record<string, string> = {

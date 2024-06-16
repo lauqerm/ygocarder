@@ -403,7 +403,7 @@ export const StylePicker = React.memo(forwardRef(({
                                                     ? <img
                                                         style={patternImage ? patternStyle : {}}
                                                         className="pattern-image"
-                                                        src={`${process.env.PUBLIC_URL}/asset/image/finish/${patternImage}.png`}
+                                                        src={`${process.env.PUBLIC_URL}/asset/image/finish-name/${patternImage}.png`}
                                                         alt={key}
                                                     />
                                                     : <>

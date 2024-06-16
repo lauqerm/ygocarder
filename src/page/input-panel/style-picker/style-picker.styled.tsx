@@ -2,7 +2,7 @@ import { StyledDropdown } from 'src/component';
 import styled from 'styled-components';
 
 export const StyledPickerButton = styled.div<{ $active?: boolean }>`
-    background-color: #5b626e;
+    background-color: var(--bgColor-dropdown-button);
     ${({ $active }) => $active ? 'border: 1px solid #1890ff;' : 'border: 1px solid #222222;'}
 	padding: 1px 4px;
 	margin: -2px 0;

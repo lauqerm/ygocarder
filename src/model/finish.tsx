@@ -1,4 +1,4 @@
-type FinishInformation = {
+export type FinishInformation = {
     value: string,
     label: React.ReactNode,
     blendMode: CanvasRenderingContext2D['globalCompositeOperation'],
@@ -27,6 +27,11 @@ export const FinishMap: Record<string, FinishInformation> = {
     type5: {
         value: 'type5',
         label: '5',
+        blendMode: 'source-over',
+    },
+    type6: {
+        value: 'type6',
+        label: '6',
         blendMode: 'source-over',
     },
 };

@@ -6,7 +6,7 @@ export type Card = typeof defaultCard;
 export const defaultCard = {
     format: 'tcg',
     frame: 'fusion',
-    foil: 'normal',
+    foil: 'normal' as Foil,
     opacity: getDefaultCardOpacity() as Partial<CardOpacity>,
     finish: [] as string[],
     artFinish: 'normal',
@@ -178,21 +178,22 @@ export const iconList = [
 
 export const foilList = [
     {
-        name: 'normal',
+        name: 'normal' as const,
         label: 'None',
         color: '#747b95',
     },
     {
-        name: 'gold',
+        name: 'gold' as const,
         label: 'Gold',
         color: '#cfa65f',
     },
     {
-        name: 'platinum',
+        name: 'platinum' as const,
         label: 'Platinum',
         color: '#b1b1b1',
     },
 ];
+export type Foil = typeof foilList[0]['name'];
 
 export const stickerList = [
     'no-sticker',
@@ -256,10 +257,11 @@ export * from './canvas';
 export * from './canvas-map';
 export * from './coordinate-data';
 export * from './dictionary';
+export * from './finish';
+export * from './font-data-effect';
+export * from './font-data-name';
 export * from './font-data-other';
 export * from './format';
 export * from './link';
 export * from './name-preset';
 export * from './regex';
-export * from './font-data-name';
-export * from './font-data-effect';

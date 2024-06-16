@@ -38,14 +38,19 @@ export const fillTextLeftWithSpacing = (
     letterSpacing: number,
     edge: number,
     baseline: number,
+    option?: {
+        stroke?: boolean,
+    }
 ) => {
     if (ctx && str) {
+        const { stroke = false } = option ?? {};
         ctx.textAlign = 'left';
         const charList = str.split('');
         let curLeft = edge;
 
         charList.forEach(char => {
             ctx.fillText(char, curLeft, baseline);
+            if (stroke) ctx.strokeText(char, curLeft, baseline);
             curLeft += ctx.measureText(char).width * (2 + letterSpacing) / 2;
         });
 
@@ -59,8 +64,12 @@ export const fillTextRightWithSpacing = (
     letterSpacing: number,
     edge: number,
     baseline: number,
+    option?: {
+        stroke?: boolean,
+    }
 ) => {
     if (ctx && str) {
+        const { stroke = false } = option ?? {};
         ctx.textAlign = 'right';
         const charList = str.split('');
         let curRight = edge;
@@ -68,6 +77,7 @@ export const fillTextRightWithSpacing = (
         charList.forEach((c, index) => {
             const char = charList[charList.length - index - 1];
             ctx.fillText(char, curRight, baseline);
+            if (stroke) ctx.strokeText(char, curRight, baseline);
             curRight -= ctx.measureText(char).width * (2 + letterSpacing) / 2;
         });
         return curRight;

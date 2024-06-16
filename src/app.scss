@@ -8,6 +8,7 @@ html {
 	// --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	--bs-input: none;
 	--color: #d3d3d6;
+	--bgColor-dropdown-button: #5b626e;
 }
 hr {
 	margin: 0;
@@ -378,6 +379,11 @@ ul.ant-dropdown-menu {
 	}
 }
 
+.ant-checkbox + span {
+    transform: translateY(1px);
+    display: inline-block;
+}
+
 /** Avoid annoying user agent style */
 input:-internal-autofill-selected {
 	background-color: unset !important;
@@ -394,11 +400,11 @@ input:-internal-autofill-selected {
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: #888;
+	background: #667;
 }
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: #556;
 }
 
 /** Slow animation for download button **/

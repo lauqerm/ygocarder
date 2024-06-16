@@ -17,19 +17,28 @@ export const getDefaultNameStyle = () => ({
     gradientAngle: 0,
     gradientColor: '0.000|#eef10b,0.5|#d78025,1.000|#7e20cf',
     hasGradient: false,
-    preset: 'commonB',
+    preset: 'commonB' as PresetNameStyle,
     pattern: 'none',
 });
 
 const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameStyle> => ({
-    font: 'Default',
     hasGradient: false,
     hasOutline: false,
     hasShadow: false,
     pattern: 'none',
     ...presetValue
 });
-export const PresetNameStyleMap = {
+export type PresetNameStyle = 'commonB' | 'commonW'
+| 'skillDefault' | 'skillArial'
+| 'rare' | 'secretGradient' | 'secret' | 'platinum2' | 'ultra' | 'ultra2' | 'platinum' | 'gold'
+| 'animeRed' | 'animeSilver' | 'animeGold'
+| 'promo';
+export const PresetNameStyleMap: Record<PresetNameStyle, {
+    key: PresetNameStyle,
+    label: string,
+    image: string,
+    value: Partial<NameStyle>,
+}> = {
     commonB: {
         key: 'commonB',
         label: 'Common (Black)',
@@ -235,49 +244,49 @@ export const PatternMap: Record<string, { key: string, patternImage: string, ble
     },
     type1: {
         key: 'type1',
-        patternImage: 'name-finish-type1',
+        patternImage: 'finish-name-type1',
         blendMode: 'source-atop',
     },
     type2: {
         key: 'type2',
-        patternImage: 'name-finish-type2',
+        patternImage: 'finish-name-type2',
         blendMode: 'source-atop',
     },
     type3: {
         key: 'type3',
-        patternImage: 'name-finish-type3',
+        patternImage: 'finish-name-type3',
         blendMode: 'source-atop',
     },
     type4: {
         key: 'type4',
-        patternImage: 'name-finish-type4',
+        patternImage: 'finish-name-type4',
         blendMode: 'source-atop',
     },
     type5: {
         key: 'type5',
-        patternImage: 'name-finish-type5',
+        patternImage: 'finish-name-type5',
         blendMode: 'multiply',
         overrideFill: true,
     },
     type6: {
         key: 'type6',
-        patternImage: 'name-finish-type6',
+        patternImage: 'finish-name-type6',
         blendMode: 'source-atop',
     },
     type7: {
         key: 'type7',
-        patternImage: 'name-finish-type7',
+        patternImage: 'finish-name-type7',
         blendMode: 'lighter',
         overrideFill: true,
     },
     type8: {
         key: 'type8',
-        patternImage: 'name-finish-type8',
+        patternImage: 'finish-name-type8',
         blendMode: 'source-atop',
     },
     type9: {
         key: 'type9',
-        patternImage: 'name-finish-type9',
+        patternImage: 'finish-name-type9',
         blendMode: 'source-atop',
     },
 };

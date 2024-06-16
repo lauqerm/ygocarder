@@ -76,7 +76,7 @@
 		}
 		.card-info-panel {
 			margin-left: 10px;
-			border-left: 1px solid #5b626e;
+			border-left: 1px solid var(--bgColor-dropdown-button);
 			.main-info {
 				flex-wrap: wrap;
 				flex-direction: column-reverse;

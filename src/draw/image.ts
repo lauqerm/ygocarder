@@ -3,13 +3,13 @@ const imageCacheMap: Record<string, {
     ready: boolean,
 }> = {};
 
-export const drawFromSource = async (
+export const drawFrom = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
     sx: number | ((image: HTMLImageElement) => number),
     sy: number | ((image: HTMLImageElement) => number),
 ) => {
-    if (!ctx) return new Promise<boolean>(resolve => resolve(false));
+    if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
         if (imageCacheMap[source]?.ready === true) {
             const img = imageCacheMap[source].image;
@@ -40,7 +40,7 @@ export const drawFromSource = async (
     });
 };
 
-export const drawFromSourceWithSize = async (
+export const drawWithSizeFrom = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
     sx: number | ((image: HTMLImageElement) => number),
@@ -48,7 +48,7 @@ export const drawFromSourceWithSize = async (
     dw: number | ((image: HTMLImageElement) => number),
     dh: number | ((image: HTMLImageElement) => number),
 ) => {
-    if (!ctx) return new Promise<boolean>(resolve => resolve(false));
+    if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
         if (imageCacheMap[source]?.ready === true) {
             const img = imageCacheMap[source].image;

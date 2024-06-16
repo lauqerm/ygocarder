@@ -126,7 +126,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             return {
                 ...currentCard,
                 frame: value,
-                isPendulum: value === 'link' || value === 'token' || isST ? false : currentCard.isPendulum,
+                isPendulum: value === 'link' ? false : currentCard.isPendulum,
                 subFamily: isST ? 'NO ICON' : currentCard.subFamily,
                 attribute: isST
                     ? `${value}`.toUpperCase()
@@ -326,10 +326,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 >
                     <span>Attribute</span>
                 </RadioTrain>
-                {(isMonster && frame !== 'link' && frame !== 'token') && <div className="pendulum-container">
+                <div className="pendulum-container">
                     <div className="joined-row pendulum-option">
-                        <Checkbox className="pendulum-checkbox" onChange={onIsPendulumChange} checked={isPendulum}>Pendulum</Checkbox>
-                        {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
+                        {frame !== 'link'
+                            ? <Checkbox className="pendulum-checkbox" onChange={onIsPendulumChange} checked={isPendulum}>Pendulum</Checkbox>
+                            : <div className="pendulum-checkbox-placeholder" />}
                         <Popover
                             placement="bottom"
                             overlayClassName="pendulum-frame-picker-overlay"
@@ -354,10 +355,13 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             </div>}
                         >
                             <div className="pendulum-frame-input">
-                                {currentPendulumFrame ? <FrameInfoBlock {...currentPendulumFrame} /> : null}
-                                <span className="pendulum-frame-label">Pendulum Frame <CaretDownOutlined /></span>
+                                {currentPendulumFrame
+                                    ? <FrameInfoBlock {...currentPendulumFrame} />
+                                    : <FrameInfoBlock name="Auto" labelColor="var(--color)" labelBackgroundColor="var(--bgColor-dropdown-button)" />}
+                                <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
                             </div>
                         </Popover>
+                        {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
                     </div>
                     {isPendulum && <>
                         <div>
@@ -398,7 +402,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             />
                         </div>
                     </>}
-                </div>}
+                </div>
                 <Input addonBefore="Type"
                     id="type"
                     ref={onlineCharPicker === 'type' ? ref as any : null}

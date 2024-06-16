@@ -57,7 +57,6 @@ function App() {
     const [canvasMap] = useState({
         previewCanvas: previewCanvasRef,
         drawCanvas: drawCanvasRef,
-        frameCanvas: frameCanvasRef,
         artCanvas: artCanvasRef,
         specialFrameCanvas: specialFrameCanvasRef,
         subFamilyCanvas: subFamilyCanvasRef,
@@ -98,7 +97,7 @@ function App() {
     // let topOffset = -7;
     // let leftOffset = -1;
     // let topOffset = 100;
-    // await drawFromSourceWithSize(ctx, '/asset/image/MP19-EN-C-1E.png', () => -leftOffset, () => -topOffset, 541, 800 * (541 / 549));
+    // await drawWithSizeFrom(ctx, '/asset/image/MP19-EN-C-1E.png', () => -leftOffset, () => -topOffset, 541, 800 * (541 / 549));
     // }, []);
 
     useEffect(() => {
@@ -109,7 +108,6 @@ function App() {
             clearCanvas(ctx);
         }
 
-        // let fontLoaded = false;
         WebFont.load({
             custom: {
                 families: [
@@ -169,7 +167,6 @@ function App() {
                 clearCanvas(ctx);
             }
 
-            // let fontLoaded = false;
             WebFont.load({
                 custom: {
                     families: [
@@ -183,19 +180,7 @@ function App() {
                 active: () => {
                     console.info('OCG Data Loaded');
                     ocgReady.current = true;
-                    // try {
-                    //     const localCardVersion = window.localStorage.getItem('card-version');
-                    //     const localCardData = window.localStorage.getItem('card-data');
-    
-                    //     const urlParam = (new URLSearchParams(window.location.search)).get('data');
-                    //     if (urlParam) {
-                    //         setCard(rebuildCardData(urlParam, true) as any);
-                    //     } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-                    //         setCard(rebuildCardData(localCardData) as any);
-                    //     }
-                    // } catch (e) {
-                    //     setCard(defaultCard);
-                    // }
+
                     setInitializing(false);
                 },
                 fontinactive(familyName, fvd) {
@@ -291,11 +276,23 @@ function App() {
     });
 
     useEffect(() => {
-        document.title = currentCard.name
-            ? `${currentCard.name} - Yu-Gi-Oh Carder`
-            : 'Yu-Gi-Oh Carder';
-    }, [currentCard.name]);
+        let relevant = true;
+        setTimeout(() => {
+            const normalizedName = name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
 
+            if (relevant) {
+                document.title = normalizedName
+                    ? `${normalizedName} - Yu-Gi-Oh Carder`
+                    : 'Yu-Gi-Oh Carder';
+            }
+        }, 500);
+
+        return () => {
+            relevant = false;
+        };
+    }, [name]);
+
+    const drawHistory = useRef<Record<string, number>>({});
     const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
     }) => {
@@ -332,8 +329,16 @@ function App() {
             await Promise.all(Object
                 .values(drawingPipeline.current)
                 .sort((l, r) => l.order - r.order)
-                .map(({ instructor }) => {
-                    return instructor();
+                .map(({ instructor, rerun, name }) => {
+                    if (
+                        (rerun !== 0 && drawHistory.current[name] !== rerun)
+                        || !drawHistory.current[name]
+                    ) {
+                        drawHistory.current[name] = rerun;
+
+                        return instructor();
+                    }
+                    return Promise.resolve();
                 }));
             await generateLayer(frameCanvasRef, exportCtx);
             const previewCtx = previewCanvasRef.current;
@@ -341,7 +346,9 @@ function App() {
                 const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity);
                 const { width: imageWidth, height: imageHeight } = previewCtx;
 
-                if (imageHeight > 0) exportCtx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, artX, artY, artWidth, artWidth / (imageWidth / imageHeight));
+                if (imageHeight > 0) {
+                    exportCtx.drawImage(previewCtx, 0, 0, imageWidth, imageHeight, artX, artY, artWidth, artWidth / (imageWidth / imageHeight));
+                }
             }
             await generateLayer(specialFrameCanvasRef, exportCtx);
             await Promise.all([
@@ -416,7 +423,6 @@ function App() {
                             <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
                             </div>
-                            <canvas id="frameCanvas" ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963 /** 650 * UP_RATIO */} />
                             <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />

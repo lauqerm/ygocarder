@@ -1,7 +1,6 @@
 export type MasterDuelCanvas = {
     previewCanvas: React.RefObject<HTMLCanvasElement>,
     drawCanvas: React.RefObject<HTMLCanvasElement>,
-    frameCanvas: React.RefObject<HTMLCanvasElement>,
     artCanvas: React.RefObject<HTMLCanvasElement>,
     specialFrameCanvas: React.RefObject<HTMLCanvasElement>,
     subFamilyCanvas: React.RefObject<HTMLCanvasElement>,

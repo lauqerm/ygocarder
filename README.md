@@ -31,7 +31,7 @@ https://cdn.ygorganization.com/2023/01/cyac30-scaled.jpg
 https://cdn.ygorganization.com/2023/07/F0-W2rfaQAECYLZ.jpg
 https://cdn.ygorganization.com/2024/04/1911_20240402052213_img_2_gvULdx1jYQJfFagjoXQeSaSTJJ3iFJKl2fuTQk3o0AI5bmcD9sfQJxjQ4cw7j7jb.jpg
 https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalAlpha
-https://en.wikipedia.org/wiki/Bracket
+
 https://en.wikipedia.org/wiki/Ch%C5%8Donpu
 https://en.wikipedia.org/wiki/Half-width_kana
 https://en.wikipedia.org/wiki/Hiragana
@@ -117,11 +117,11 @@ If this card is Link Summoned: You can apply these effects in sequence, dependin
 ● All monsters your opponent currently controls lose 300 ATK for each Sea Serpent.
 ● You gain 400 LP for each Wyrm.
 
-Name with background
+<!-- Name with background -->
 Dark synchro style
 Beatrice text style
 Finish size optimize
-Render optimize
+<!-- Render optimize -->
 
 ## YGO Carder
 
