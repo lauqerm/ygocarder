@@ -120,7 +120,9 @@ If this card is Link Summoned: You can apply these effects in sequence, dependin
 <!-- Name with background -->
 Dark synchro style
 Beatrice text style
-Finish size optimize
+<!-- Foil too dim? -->
+<!-- Overlay foil should leave art outside -->
+<!-- Finish size optimize (Somehow it is bigger) -->
 <!-- Render optimize -->
 
 ## YGO Carder

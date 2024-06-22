@@ -56,12 +56,17 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
 
 export const OpacityList = [
     { value: 'body' as const, label: 'Card' },
-    { value: 'pendulum' as const, label: 'Pendulum Text' },
-    { value: 'text' as const, label: 'Main Text' },
+    { value: 'name' as const, label: 'Name' },
+    { value: 'pendulum' as const, label: 'Pendulum' },
+    { value: 'text' as const, label: 'Effect' },
 ];
 
 export type FrameInfo = {
-    name: string, labelColor: string, labelBackgroundColor?: string, labelBackgroundImage?: string };
+    name: string,
+    labelColor: string,
+    labelBackgroundColor?: string,
+    labelBackgroundImage?: string,
+};
 export const frameMap: Record<string, FrameInfo> = {
     'normal': {
         name: 'normal',

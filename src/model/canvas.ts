@@ -12,12 +12,14 @@ export type CardOpacity = {
     body: number,
     pendulum: number,
     text: number,
+    name: number,
     artFrame: boolean,
 };
 export const getDefaultCardOpacity = () => ({
     body: 100,
     pendulum: 100,
     text: 100,
+    name: 100,
     artFrame: true,
 });
 export const CardArtCanvasCoordinateMap = {

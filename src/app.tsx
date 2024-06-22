@@ -373,7 +373,7 @@ function App() {
     return (
         <div id="app"
             onDrop={() => { }}
-            className={format === 'ocg' ? 'input-ocg' : ''}
+            className={format === 'ocg' ? 'input-ocg' : 'input-tcg'}
             style={{
                 backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                 ...({

@@ -10,6 +10,7 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
         _newKey: 'op',
         body: 'opbd',
         pendulum: 'oppd',
+        name: 'opnm',
         text: 'optx',
         artFrame: 'opaf',
     },

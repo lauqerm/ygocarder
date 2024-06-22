@@ -1,64 +1,97 @@
 export type FinishInformation = {
     value: string,
     label: React.ReactNode,
-    blendMode: CanvasRenderingContext2D['globalCompositeOperation'],
+    partInstructionMap: Record<string, { opacity?: number, blendMode?: GlobalCompositeOperation }[]>,
 };
 export const FinishMap: Record<string, FinishInformation> = {
     type1: {
         value: 'type1',
         label: '1',
-        blendMode: 'source-over',
+        partInstructionMap: {},
     },
     type2: {
         value: 'type2',
         label: '2',
-        blendMode: 'source-over',
+        partInstructionMap: {},
     },
     type3: {
         value: 'type3',
         label: '3',
-        blendMode: 'overlay',
+        partInstructionMap: {
+            art: [{ blendMode: 'overlay', opacity: 1 }],
+            attribute: [{ blendMode: 'overlay', opacity: 1 }],
+            frame: [{ blendMode: 'overlay', opacity: 1 }],
+            'frame-art': [{ blendMode: 'overlay', opacity: 1 }],
+            'frame-pendulum': [{ blendMode: 'overlay', opacity: 1 }],
+        },
     },
     type4: {
         value: 'type4',
         label: '4',
-        blendMode: 'source-over',
+        partInstructionMap: {},
     },
     type5: {
         value: 'type5',
         label: '5',
-        blendMode: 'source-over',
+        partInstructionMap: {},
     },
     type6: {
         value: 'type6',
         label: '6',
-        blendMode: 'source-over',
+        partInstructionMap: {},
+    },
+    type7: {
+        value: 'type7',
+        label: '7',
+        partInstructionMap: {
+            'total-overlay': [{ blendMode: 'screen', opacity: 0.175 }, { blendMode: 'color-dodge', opacity: 0.175 }],
+        },
     },
 };
 
-export const ArtFinishMap = {
+export type ArtFinishInformation = {
+    value: string,
+    label: React.ReactNode,
+    instructionList: { opacity?: number, blendMode?: GlobalCompositeOperation }[],
+};
+export const ArtFinishMap: Record<string, ArtFinishInformation> = {
     type1: {
         value: 'type1',
         label: '1',
+        instructionList: [{}],
     },
     type2: {
         value: 'type2',
         label: '2',
+        instructionList: [
+            { opacity: 0.08, blendMode: 'darken' },
+            { opacity: 0.28, blendMode: 'color-dodge' },
+            { opacity: 0.48, blendMode: 'multiply' },
+        ],
     },
     type3: {
         value: 'type3',
         label: '3',
+        instructionList: [{ opacity: 0.66, blendMode: 'color-dodge' }, { opacity: 0.64, blendMode: 'multiply' }],
     },
     type4: {
         value: 'type4',
         label: '4',
+        instructionList: [{ opacity: 0.31, blendMode: 'color-dodge' }, { opacity: 0.6, blendMode: 'multiply' }],
     },
     type5: {
         value: 'type5',
         label: '5',
+        instructionList: [{ opacity: 0.19, blendMode: 'color-dodge' }, { opacity: 0.6, blendMode: 'multiply' }],
     },
     type6: {
         value: 'type6',
         label: '6',
+        instructionList: [{ opacity: 0.25, blendMode: 'color-dodge' }, { opacity: 0.6, blendMode: 'multiply' }],
+    },
+    type7: {
+        value: 'type7',
+        label: '7',
+        instructionList: [{}],
     },
 };
