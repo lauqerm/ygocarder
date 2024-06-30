@@ -76,7 +76,7 @@
 		}
 		.card-info-panel {
 			margin-left: 10px;
-			border-left: 1px solid var(--bgColor-dropdown-button);
+			border-left: 1px solid var(--main-button);
 			.main-info {
 				flex-wrap: wrap;
 				flex-direction: column-reverse;
@@ -116,6 +116,18 @@
 		}
 		.char-picker-container {
 			top: 740px;
+		}
+	}
+	.formattting-guide-overlay {
+		.panel-figure {
+			display: block;
+		}
+		.image-with-caption {
+			display: inline-block;
+			max-width: 617px; // Hard with for guide image
+		}
+		.image-with-caption + .image-with-caption {
+			margin-top: 0.5rem;
 		}
 	}
 }

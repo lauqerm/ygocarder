@@ -1,0 +1,8 @@
+{
+    "guide": {
+        "non-breakable-line": "[Even though the box still has plenty of space, this line does not wrap but compress its content instead.]\n[You can put non-breakable line at the star of your text, as well as next to another non-breakable lines.]\n[This syntax has no effects] when put in a paragraph.",
+        "non-breakable-text": "Non-breakable texts will try their best to stay on {the same line all the time}.\nThe current line will either compress itself to fit all the content, or push the non-breakable part to a new line altogether.",
+        "ruby": "The OCG use tiny {letters|furigana} to indicate the pronunciation of many words.\nThe app provides default furigana for popular terms in OCG cards to reduce writing effort.",
+        "non-compressable-text": "{{These words will not be compressed}}. In the past \"Beatrice, Lady of the Eternal\" had very long card text, so they joined the text that describes her material and her monster effects together to make use of as much space as possible. Nowadays, newer reprints of \"Beatrice\" no longer need this treatment."
+    }
+}

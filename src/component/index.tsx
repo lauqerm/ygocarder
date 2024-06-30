@@ -32,3 +32,4 @@ export { Loading } from './loading';
 export * from './explanation';
 export * from './frame-info-block';
 export * from './icon-button';
+export * from './formatting-guide';

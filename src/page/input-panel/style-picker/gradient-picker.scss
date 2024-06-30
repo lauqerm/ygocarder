@@ -1,38 +1,7 @@
 .controls-wrapper.gradient-picker-container {
     position: relative;
-    .angle-picker-container {
-        h2 {
-            padding: 0;
-        }
-        .ap {
-            background-color: #eeeeee;
-            .apc {
-                width: 8px;
-            }
-            .aph {
-                width: 8px;
-                height: 8px;
-            }
-        }
-        .ai {
-            margin: 0;
-            background: #009ce0;
-            justify-content: space-between;
-            span {
-                background: #307bc9;
-                padding-left: 10px;
-                padding-right: 10px;
-                &:hover {
-                    background: #0c8ac6;
-                }
-            }
-            span, input {
-                color: #ffffffcc;
-            }
-        }
-    }
     .csh {
-        margin-bottom: 5px;
+        margin-bottom: 0.5rem;
     }
     .cs.active > div {
         box-shadow: 0 0 0px 3px #ffffffaa;
@@ -51,10 +20,40 @@
     .gradient-angle-control {
         position: absolute;
         top: 59px;
-        padding: 10px;
-        border-right: 2px solid #1890ff;
+        padding: 0 0.5rem;
+        margin-top: 5px;   // Alignment with gradient color input
         h2 {
-            padding: 0;
+            padding: 0.5rem 0;
+        }
+    }
+    .angle-picker-container {
+        .ap {
+            background-color: #eeeeee;
+            .apc {
+                width: 8px;
+            }
+            .aph {
+                width: 8px;
+                height: 8px;
+            }
+        }
+        .ai {
+            margin: 0;
+            margin-top: 0.5rem;
+            background: #009ce0;
+            justify-content: space-between;
+            line-height: 1.4;
+            span {
+                background: #307bc9;
+                padding-left: 10px;
+                padding-right: 10px;
+                &:hover {
+                    background: #0c8ac6;
+                }
+            }
+            span, input {
+                color: #ffffffcc;
+            }
         }
     }
     .stop-point-control-panel {
@@ -79,11 +78,12 @@
         }
     }
     .ant-btn.add-stop-color {
+        width: 100%;
         font-size: 12px;
         color: #ffffffcc;
         background: #5e85c9;
         border: 1px solid #5e85e9;
-        margin: 5px 0;
+        margin: 3px 0; // Alignment
         &:hover {
             background-color: #5e85e9;
             box-shadow: none;

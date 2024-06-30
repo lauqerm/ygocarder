@@ -8,7 +8,22 @@ html {
 	// --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 	--bs-input: none;
 	--color: #d3d3d6;
-	--bgColor-dropdown-button: #5b626e;
+	--color-contrast: #eeeeee;
+	--main-button: #5b626e;
+	--sub-button: #707681;
+	h1 {
+		color: #ffffffee;
+		font-size: 1.75em;
+	}
+	h2 {
+		line-height: 1;
+		font-size: 1.2em;
+		color: #94e4ff;
+		padding: 0.5rem 0;
+		&:first-child {
+			padding-top: 0;
+		}
+	}
 }
 hr {
 	margin: 0;
@@ -360,6 +375,14 @@ span.ant-input-affix-wrapper {
 		border-left-color: #222222;
 	}
 }
+.ant-popover.ant-popover-placement-top,
+.ant-popover.ant-popover-placement-topLeft,
+.ant-popover.ant-popover-placement-topRight {
+	.ant-popover-content .ant-popover-arrow {
+		border-right-color: #222222;
+		border-bottom-color: #222222;
+	}
+}
 ul.ant-dropdown-menu {
 	background: #4e4e53;
 	.ant-dropdown-menu-item {
@@ -379,9 +402,64 @@ ul.ant-dropdown-menu {
 	}
 }
 
+button.ant-btn {
+	color: var(--color-contrast);
+	background: var(--main-button);
+	border-color: var(--sub-button);
+	&:hover {
+		color: var(--color-contrast);
+		background: var(--sub-button);
+		border-color: var(--sub-button);
+	}
+	&.ant-btn-primary  {
+		background: #0093bd;
+		border-color: #1890ff;
+		&:hover {
+			background: #00aad4;
+		}
+	}
+}
+
 .ant-checkbox + span {
     transform: translateY(1px);
     display: inline-block;
+}
+
+.ant-drawer {
+	.ant-drawer-header {
+		background-color: #5b626e;
+		.ant-drawer-title {
+			color: var(--color);
+			font-size: 1.25em;
+		}
+		.ant-drawer-close {
+			color: var(--color);
+			&:hover {
+				color: var(--color-contrast);
+			}
+		}
+	}
+	.ant-drawer-content {
+		background-color: #505050;
+		color: var(--color);
+	}
+}
+.ant-modal-root .ant-modal-content {
+	background-color: #505050;
+	color: var(--color);
+	.ant-modal-close {
+		color: var(--color);
+		&:hover {
+			color: var(--color-contrast);
+		}
+	}
+	.ant-modal-body {
+		padding: 1rem;
+	}
+	.ant-modal-footer {
+		border-color: #222222;
+		padding: 1rem;
+	}
 }
 
 /** Avoid annoying user agent style */

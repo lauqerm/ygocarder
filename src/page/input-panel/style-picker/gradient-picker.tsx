@@ -170,26 +170,25 @@ export const TextGradientPicker = ({
         <div className="gradient-angle-control">
             <h2>
                 Color Points
-                <br />
-                <Button
-                    size="small"
-                    className="add-stop-color"
-                    disabled={(palette.colorList?.length ?? 10000) > MAX_STOP_POINT}
-                    onClick={() => {
-                        setPalette(cur => {
-                            const nextColorList = [
-                                ...cur.colorList,
-                                { offset: '0.5', color: '#ffffff', id: cur.colorList.length + 1 },
-                            ].sort((l, r) => Number(l.offset) - Number(r.offset));
-
-                            return {
-                                ...cur,
-                                ...getPaletteInfo(nextColorList)
-                            };
-                        });
-                    }}
-                >Add Point ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
             </h2>
+            <Button
+                size="small"
+                className="add-stop-color"
+                disabled={(palette.colorList?.length ?? 10000) > MAX_STOP_POINT}
+                onClick={() => {
+                    setPalette(cur => {
+                        const nextColorList = [
+                            ...cur.colorList,
+                            { offset: '0.5', color: '#ffffff', id: cur.colorList.length + 1 },
+                        ].sort((l, r) => Number(l.offset) - Number(r.offset));
+
+                        return {
+                            ...cur,
+                            ...getPaletteInfo(nextColorList)
+                        };
+                    });
+                }}
+            >Add Point ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
             <div className="angle-picker-container">
                 <h2>Angle</h2>
                 <AnglePicker angle={angle} size={120} setAngle={setAngle} />

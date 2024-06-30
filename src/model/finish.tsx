@@ -62,6 +62,13 @@ export const FinishMap: Record<string, FinishInformation> = {
             'name': type8CommonInstruction,
         },
     },
+    type9: {
+        value: 'type9',
+        label: '9',
+        partInstructionMap: {
+            'total-overlay': [{ blendMode: 'screen', opacity: 0.25 }],
+        },
+    },
 };
 
 export type ArtFinishInformation = {

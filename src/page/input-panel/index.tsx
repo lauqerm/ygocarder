@@ -1,7 +1,7 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Popover } from 'antd';
 import { Card, CardOpacity, CondenseType, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate } from '../../model';
-import { FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
+import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
 import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
@@ -357,7 +357,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             <div className="pendulum-frame-input">
                                 {currentPendulumFrame
                                     ? <FrameInfoBlock {...currentPendulumFrame} />
-                                    : <FrameInfoBlock name="Auto" labelColor="var(--color)" labelBackgroundColor="var(--bgColor-dropdown-button)" />}
+                                    : <FrameInfoBlock name="Auto" labelColor="var(--color)" labelBackgroundColor="var(--main-button)" />}
                                 <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
                             </div>
                         </Popover>
@@ -392,6 +392,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                 ref={onlineCharPicker === 'pendulum-effect' ? ref as any : null}
                                 onFocus={() => setOnlineCharPicker('pendulum-effect')}
                                 allowClear
+                                spellCheck={false}
                                 placeholder="Pendulum effect"
                                 value={displayPendulumEffect}
                                 onChange={ev => {
@@ -421,21 +422,25 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     style={{ width: '100%' }}
                     value={displayTypeAbility}
                 />
-                <RadioTrain className="condense-input" value={`${effectStyle?.condenseTolerant}`}
-                    onChange={value => onCondenseTolerantChange(value as CondenseType)}
-                    optionList={CondenseThresholdButtonList}
-                >
-                    <span>
+                <div className="card-condense-input">
+                    <RadioTrain className="condense-input" value={`${effectStyle?.condenseTolerant}`}
+                        onChange={value => onCondenseTolerantChange(value as CondenseType)}
+                        optionList={CondenseThresholdButtonList}
+                    >
+                        <span>
                         Condense <Explanation
-                            content={'Higher condense limit will prefer compressing words instead of adding new lines'}
-                        />
-                    </span>
-                </RadioTrain>
+                                content={'Higher condense limit will prefer compressing words instead of adding new lines'}
+                            />
+                        </span>
+                    </RadioTrain>
+                    <FormattingHelpDrawer />
+                </div>
                 <TextArea key="effect"
                     id="card-effect"
                     ref={onlineCharPicker === 'card-effect' ? ref as any : null}
                     onFocus={() => setOnlineCharPicker('card-effect')}
                     allowClear
+                    spellCheck={false}
                     placeholder="Card effect"
                     value={displayEffect}
                     rows={8}

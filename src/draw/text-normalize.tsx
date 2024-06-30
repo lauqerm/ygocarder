@@ -134,12 +134,12 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
             if (currentDepth === 0) textAfterNormalizeBlockWord.push(letter);
         } else textAfterNormalizeBlockWord.push(letter);
     }
-    /** Vì block row có độ ưu tiên cao hơn block word, ta đưa block word vào trong.
-     * Tương tự, uncompress signal có độ ưu tiên cao hơn block word.
-     */
+    /** Vì block row có độ ưu tiên cao hơn block word, ta đưa block word vào trong. */
     const finalizedText = textAfterNormalizeBlockWord.join('')
         .replaceAll('⟆⦊', '⦊⟆')
         .replaceAll('⦉⟅', '⟅⦉')
+        .replaceAll('⟬⦊', '⦊⟬')
+        .replaceAll('⦉⟭', '⟭⦉')
         .replaceAll('⟅⟆', '')
         .replaceAll('⦉⦊', '');
     console.info('normalizeCardText:', text, '\n', textAfterNormalizeBlockWord, '\n', finalizedText);
