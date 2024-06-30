@@ -8,17 +8,18 @@ export const drawScale = (
     baseline: number,
 ) => {
     if (ctx && value) {
+        const digitScaleRatio = 0.65;
         const digitList = `${value}`.split('');
         let totalWidth = 0;
 
         digitList.forEach(digit => {
-            totalWidth += ctx.measureText(digit).width * (digit === '1' ? 0.65 : 1);
+            totalWidth += ctx.measureText(digit).width * (digit === '1' ? digitScaleRatio : 1);
         });
         let accLeft = edge - totalWidth / 2;
 
         digitList.forEach(digit => {
             ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, baseline);
-            accLeft += ctx.measureText(digit).width * (digit === '1' ? 0.65 : 1);
+            accLeft += ctx.measureText(digit).width * (digit === '1' ? digitScaleRatio : 1);
         });
     }
 };

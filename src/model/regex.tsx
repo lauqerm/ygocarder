@@ -37,6 +37,9 @@ export const SquareBracketLetterRegex = new RegExp(SQUARE_BRACKET_REGEX_SOURCE);
 export const WHOLE_WORD_REGEX_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】]+';
 export const WholeWordRegex = new RegExp(WHOLE_WORD_REGEX_SOURCE);
 
+export const UNCOMPRESSED_REGEX_SOURCE = '{{([^{}]+?)}}';
+export const UncompressedRegex = new RegExp(UNCOMPRESSED_REGEX_SOURCE);
+
 export const FragmentSplitRegex = new RegExp(`({[^{}]+?}|${WHOLE_WORD_REGEX_SOURCE}|.)`);
 // export const FragmentSplitRegex = new RegExp('({[^{}]+?}|.)');
 
@@ -44,8 +47,17 @@ export const NB_WORD_OPEN = '⦉';
 export const NB_WORD_CLOSE = '⦊';
 export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
+export const NB_UNCOMPRESSED_START = '⟬';
+export const NB_UNCOMPRESSED_END = '⟭';
 /** Loại bỏ tất cả ký tự control và furigana */
-export const FootTextRegex = new RegExp(`[${NB_WORD_OPEN}${NB_WORD_CLOSE}${NB_LINE_OPEN}${NB_LINE_CLOSE}]|(\\|[^}]+})`, 'g');
+export const FootTextRegex = new RegExp(`[${[
+    NB_WORD_OPEN,
+    NB_WORD_CLOSE,
+    NB_LINE_OPEN,
+    NB_LINE_CLOSE,
+    NB_UNCOMPRESSED_START,
+    NB_UNCOMPRESSED_END,
+].join('')}]|(\\|[^}]+})`, 'g');
 
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;\\[\\]';

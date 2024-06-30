@@ -247,7 +247,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 <span>Foil</span>
             </RadioTrain>
             <CheckboxTrain className="finish-checkbox" value={finish} onChange={onFinishChange} optionList={FinishButtonList}>
-                <span>Finish Type</span>
+                <span>Finish</span>
             </CheckboxTrain>
 
         </div>
@@ -539,7 +539,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             onChange={onArtFinishChange}
                             optionList={ArtFinishButtonList}
                         >
-                            <span>Art Finish Type</span>
+                            <span>Art Finish</span>
                         </RadioTrain>
                     }
                 >

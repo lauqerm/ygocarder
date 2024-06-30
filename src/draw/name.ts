@@ -204,8 +204,9 @@ export const drawName = async (
         });
         if (patternImage && cloneNode) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            /** Một số pattern cần màu nền của frame */
+            /** Một số pattern cần nền của frame */
             await drawFrom(cloneCtx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
+            await drawFrom(cloneCtx, `/asset/image/frame/frame-name-box-${frame}.png`, 0, 0);
             cloneCtx.globalCompositeOperation = patternBlendMode;
             await drawWithSizeFrom(
                 cloneCtx, `/asset/image/finish-name/${patternImage}.png`,

@@ -10,19 +10,20 @@ import {
     NOT_SPLIT_REGEX_SOURCE,
     OCG_BULLET_REGEX_SOURCE,
     tcgToOCGLetterMap,
-    ocgToTCGLetterMap
+    ocgToTCGLetterMap,
+    UNCOMPRESSED_REGEX_SOURCE
 } from 'src/model';
 
 export const splitEffect = (effect: string, isNormal = false) => {
     let effectBody = effect;
 
     let fullLineList = [];
-    const materialRegex = new RegExp(`^(${NB_LINE_OPEN}([^${NB_LINE_CLOSE}]*)${NB_LINE_CLOSE}\\s*)`);
+    const wholeLineRegex = new RegExp(`^(${NB_LINE_OPEN}([^${NB_LINE_CLOSE}]*)${NB_LINE_CLOSE}\\s*)`);
     let materialReplacement;
     let material;
     do {
-        materialReplacement = materialRegex.exec(effectBody)?.[1];
-        material = materialRegex.exec(effectBody)?.[2];
+        materialReplacement = wholeLineRegex.exec(effectBody)?.[1];
+        material = wholeLineRegex.exec(effectBody)?.[2];
 
         if (material && materialReplacement) {
             fullLineList.push(material);
@@ -104,6 +105,7 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
      * * Các ký tự nối liền không được bẻ dòng (luật Kinsoku Shori)
      */
     const textAfterDetectBlockWord = textAfterSwapLetter
+        .replaceAll(new RegExp(UNCOMPRESSED_REGEX_SOURCE, 'g'), m => m.replaceAll('{{', '⟬').replaceAll('}}', '⟭'))
         .replaceAll(new RegExp(OCG_RUBY_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`);
     const textAfterDictionaryMatch = format === 'tcg'
         ? textAfterDetectBlockWord
@@ -132,10 +134,13 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
             if (currentDepth === 0) textAfterNormalizeBlockWord.push(letter);
         } else textAfterNormalizeBlockWord.push(letter);
     }
-    /** Vì block row có độ ưu tiên cao hơn block word, ta đưa block word vào trong. */
+    /** Vì block row có độ ưu tiên cao hơn block word, ta đưa block word vào trong.
+     * Tương tự, uncompress signal có độ ưu tiên cao hơn block word.
+     */
     const finalizedText = textAfterNormalizeBlockWord.join('')
         .replaceAll('⟆⦊', '⦊⟆')
         .replaceAll('⦉⟅', '⟅⦉')
+        .replaceAll('⟅⟆', '')
         .replaceAll('⦉⦊', '');
     console.info('normalizeCardText:', text, '\n', textAfterNormalizeBlockWord, '\n', finalizedText);
 

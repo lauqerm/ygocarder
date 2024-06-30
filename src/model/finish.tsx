@@ -1,7 +1,10 @@
+type FinishInstruction = { opacity?: number, blendMode?: GlobalCompositeOperation };
+const type8CommonInstruction: FinishInstruction[] = [{ blendMode: 'overlay', opacity: 0.65 }, { blendMode: 'multiply', opacity: 0.55 }];
+
 export type FinishInformation = {
     value: string,
     label: React.ReactNode,
-    partInstructionMap: Record<string, { opacity?: number, blendMode?: GlobalCompositeOperation }[]>,
+    partInstructionMap: Record<string, FinishInstruction[]>,
 };
 export const FinishMap: Record<string, FinishInformation> = {
     type1: {
@@ -47,12 +50,24 @@ export const FinishMap: Record<string, FinishInformation> = {
             'total-overlay': [{ blendMode: 'screen', opacity: 0.175 }, { blendMode: 'color-dodge', opacity: 0.175 }],
         },
     },
+    type8: {
+        value: 'type8',
+        label: '8',
+        partInstructionMap: {
+            frame: type8CommonInstruction,
+            'frame-background': type8CommonInstruction,
+            'frame-art': type8CommonInstruction,
+            'art': type8CommonInstruction,
+            'pendulum-frame-art': type8CommonInstruction,
+            'name': type8CommonInstruction,
+        },
+    },
 };
 
 export type ArtFinishInformation = {
     value: string,
     label: React.ReactNode,
-    instructionList: { opacity?: number, blendMode?: GlobalCompositeOperation }[],
+    instructionList: FinishInstruction[],
 };
 export const ArtFinishMap: Record<string, ArtFinishInformation> = {
     type1: {

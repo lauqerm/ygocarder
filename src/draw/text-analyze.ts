@@ -1,8 +1,6 @@
 import {
     FontData,
-    DEFAULT_TEXT_GAP,
     BULLET_LETTER,
-    KATAKANA_RATIO,
     TCGLetterRegex,
     OCGAlphabetRegex,
     MAX_LINE_REVERSE_INDENT,
@@ -13,6 +11,9 @@ import {
     ST_ICON_SYMBOL,
     TextData,
     NoSpaceRegex,
+    LETTER_GAP_RATIO,
+    NB_UNCOMPRESSED_START,
+    NB_UNCOMPRESSED_END,
 } from 'src/model';
 import { getTextWorker, getExtraLeftWidth, getHeadTextWidth, tokenizeText } from './text-util';
 import { createFontGetter } from 'src/util';
@@ -62,11 +63,13 @@ export const analyzeToken = ({
     const { metricMethod } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
+        fontSize,
         largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
         wordLetterSpacing,
         bulletSymbolWidth,
         iconSymbolWidth = bulletSymbolWidth,
     } = fontSizeData;
+    const overheadTextGap = fontSize * LETTER_GAP_RATIO;
     const {
         withLargerText,
         withFurigana,
@@ -95,15 +98,16 @@ export const analyzeToken = ({
     const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
     for (let cnt = 0; cnt < fragmentList.length; cnt++) {
         const fragment = fragmentList[cnt];
-        const defaultgetExtraLeftWidth = getExtraLeftWidth(currentRightGap, DEFAULT_TEXT_GAP);
+        const defaultgetExtraLeftWidth = getExtraLeftWidth(currentRightGap, overheadTextGap);
+
         /** Symbol S/T không bị compress */
         if (fragment === ST_ICON_SYMBOL) {
             const fragmentWidth = iconSymbolWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
@@ -113,9 +117,9 @@ export const analyzeToken = ({
             const fragmentWidth = bulletSymbolWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
@@ -129,9 +133,9 @@ export const analyzeToken = ({
             );
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
@@ -141,23 +145,28 @@ export const analyzeToken = ({
             const fragmentWidth = withOrdinalFont(() => ctx.measureText(fragment).width / xRatio);
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
             spaceCount += 1;
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
         }
         /** Cụm ruby cần tách đôi các phần */
         else if (/{[^{}]+?}/.test(fragment)) {
-            const [footText, headText] = fragment.replaceAll(/{|}/g, '').split('|');
+            const [footText, headText = ''] = fragment.replaceAll(/{|}/g, '').split('|');
             const {
                 totalWidth: footTextWidth,
                 fixedWidth: footTextFixedWidth,
             } = analyzeToken({ ctx, token: footText, nextToken, xRatio, letterSpacing, previousTokenGap: 0, format, textData });
-            const headTextLetterWidth = withFurigana(() => KATAKANA_RATIO * ctx.measureText(headText).width, 0);
-            const { halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth });
+            const headTextLetterWidth = withFurigana(() => {
+                return headText
+                    .split('')
+                    .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact' }).boundWidth)
+                    .reduce((acc, cur) => acc + cur, 0);
+            }, 0);
+            const { halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap });
             const leftGap = getExtraLeftWidth(currentRightGap, halfGap);
             const rightGap = halfGap;
             if (debug) console.info(
@@ -184,10 +193,10 @@ export const analyzeToken = ({
             const fragmentWidth = ctx.measureText(fragment).width;
 
             totalWidth += fragmentWidth + defaultgetExtraLeftWidth;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
 
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
@@ -198,9 +207,9 @@ export const analyzeToken = ({
             const fragmentWidth = withSymbolFont(() => ctx.measureText(fragment).width);
 
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
@@ -210,7 +219,7 @@ export const analyzeToken = ({
             const { boundWidth: fragmentWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod });
 
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
-            currentRightGap = DEFAULT_TEXT_GAP;
+            currentRightGap = overheadTextGap;
             if (
                 (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment)))
                 && NoSpaceRegex.test(fragment) !== true
@@ -219,7 +228,7 @@ export const analyzeToken = ({
                 if (cnt === fragmentList.length - 1) spaceAtEnd = true;
             }
             if (cnt === 0) {
-                outmostLeftGap = DEFAULT_TEXT_GAP;
+                outmostLeftGap = overheadTextGap;
                 outmostLetter = fragment[0];
             }
             if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
@@ -246,7 +255,7 @@ export const analyzeLine = ({
     ctx,
     line,
     width,
-    xRatio,
+    xRatio: baseXRatio,
     format,
     isLast,
     textData,
@@ -264,9 +273,18 @@ export const analyzeLine = ({
     let spaceCount = 0;
     let currentGap = 0;
 
-    for (let cnt = 0; cnt < tokenList.length; cnt++) {
+    for (let cnt = 0, xRatio = baseXRatio; cnt < tokenList.length; cnt++) {
         const token = tokenList[cnt];
         const nextToken = tokenList[cnt + 1];
+        /** Bật / tắt chế độ không nén */
+        if (token === NB_UNCOMPRESSED_START) {
+            xRatio = 1;
+            continue;
+        }
+        else if (token === NB_UNCOMPRESSED_END) {
+            xRatio = baseXRatio;
+            continue;
+        }
         const {
             space,
             totalWidth,

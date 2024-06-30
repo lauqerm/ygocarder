@@ -5,7 +5,7 @@
     row-gap: 0.5rem;
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
-		min-height: 93px;
+		min-height: 104px;	// Alignment
 	}
 	.disabled,
 	.disabled .anticon {
@@ -51,6 +51,7 @@
 	}
 	.card-cropper {
 		max-height: 400px;
+		min-height: 50px;
 		position: relative;
 	}
 	.ReactCrop__image {

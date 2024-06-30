@@ -17,7 +17,7 @@ export const StyledPickerButton = styled.div<{ $active?: boolean }>`
 export const StyledPatternContainer = styled(StyledDropdown.Container)`
     display: grid;
     grid-template-columns: repeat(2, 200px);
-    gap: 10px;
+    gap: 0.5rem;
     padding: 5px;
 `;
 export const StyledPatternOption = styled.div`
@@ -54,7 +54,7 @@ export const StyledPatternOption = styled.div`
 export const StyledPredefinedContainer = styled(StyledDropdown.Container)`
     display: grid;
     grid-template-columns: repeat(4, 120px);
-    gap: 10px;
+    gap: 0.5rem;
     padding: 5px;
 `;
 export const StyledPredefinedOption = styled.div`

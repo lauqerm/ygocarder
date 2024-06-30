@@ -194,7 +194,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		row-gap: 0.5rem;
-		column-gap: 10px;
+		column-gap: 0.5rem;
 		.checkbox-input {
 			align-self: center;
 			.ant-checkbox + span {
@@ -237,7 +237,7 @@
 	.pendulum-container {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		column-gap: 10px;
+		column-gap: 0.5rem;
 		row-gap: 0.5rem;
 		.joined-row {
 			grid-column: span 2;
@@ -272,8 +272,13 @@
 	.checkbox-input {
 		text-align: right;
 	}
-	.art-finish-checkbox .ant-input-group-addon {
-		padding-left: 0;
+	.art-finish-checkbox {
+		.ant-input-group-addon {
+			padding-left: 0;
+		}
+		.radio-train-input-group .ant-radio-button-wrapper {
+			min-width: unset;
+		}
 	}
 }
 

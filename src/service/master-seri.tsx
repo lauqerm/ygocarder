@@ -235,6 +235,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 await drawFrom(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
 
                 if (useArtFrame) {
+                    /** Ta vẽ thêm một box bên dưới để name box không bị xuyên thấu 100% nếu không có frame nền */
                     ctx.fillStyle = `${frameMap[trueFrame]?.labelBackgroundColor ?? ''}11`;
                     ctx.fillRect(44, 47, 726, 91);
                 }
@@ -315,6 +316,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             artWidth - destinationOffsetX * 2, artWidth / (imageWidth / imageHeight) - offsetHeight * imageScaledRatio,
                         );
                     }
+                    /** Vì ảnh tràn viền mới vẽ sẽ đè lên name box, ta vẽ lại ở đây */
+                    ctx.globalAlpha = opacityName / 100;
+                    await drawFrom(ctx, `/asset/image/frame/frame-name-box-${trueFrame}.png`, 0, 0);
+    
+                    ctx.globalAlpha = 1;
 
                     /** Vẽ background cho card text và pendulum text */
                     ctx.globalAlpha = opacityPendulum / 100;
@@ -377,9 +383,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 await loopFinish(ctx, 'frame', type => {
                     return drawFrom(ctx, `/asset/image/finish/finish-${type}-frame${pendulumSizeSuffix}.png`, 0, 0);
                 });
+                if (useArtFrame) {
+                    await loopFinish(ctx, 'frame-background', type => {
+                        return drawFrom(ctx, `/asset/image/finish/finish-${type}-frame-background${pendulumSizeSuffix}.png`, 0, 0);
+                    });
+                } else {
+                    await loopFinish(ctx, 'name', type => {
+                        return drawFrom(ctx, `/asset/image/finish/finish-${type}-name.png`, 0, 0);
+                    });
+                }
 
                 /** Link map, foil cho link arrow và link number */
                 if (!isPendulum && isLink) {
+                    if (hasFoil) {
+                        await drawFrom(ctx, `/asset/image/link/link-overlay-arrow-${foil}${useArtFrame ? '' : '-artless'}.png`, 0, 175);
+                    }
+                    /** Ta vẽ lại art frame ở đây, vì art frame cần nằm trên foil nhưng lại phải nằm dưới link arrow, vậy nên ta sẽ vẽ foil trước,
+                     * sau đó vẽ frame rồi vẽ foil artless (chỉ có link arrow) sau cùng
+                     */
+                    if (useArtFrame) {
+                        await loopFinish(ctx, 'frame-art', finishType => drawFrom(ctx, `/asset/image/finish/finish-${finishType}-frame-art.png`));
+                    }
                     await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
                         .map(async entry => {
                             const { left, top, height, width } = arrowPositionList[entry - 1];
@@ -397,7 +421,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                         })
                     );
                     if (hasFoil) {
-                        await drawFrom(ctx, `/asset/image/link/link-overlay-arrow-${foil}${useArtFrame ? '' : '-artless'}.png`, 0, 175);
+                        await drawFrom(ctx, `/asset/image/link/link-overlay-arrow-${foil}-artless.png`, 0, 175);
                     }
                     await drawFrom(ctx, '/asset/image/link/link-text.png', 600, 1080);
 

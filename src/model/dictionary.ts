@@ -568,10 +568,10 @@ export const ocgKeywordDataList = [
         regexForm: '(?<!\\w)L(?!\\w)',
         rubyForm: '{L|リンク}',
     },
-    {
+    { /** @todo Fix this duplicate */
         shortForm: 'P',
         regexForm: '(?<!\\w)P(?!\\w)',
-        rubyForm: '{P|ペンデュラム}',
+        rubyForm: '{P|ペンデュラムペンデュラム}',
     },
     {
         shortForm: 'リンク',

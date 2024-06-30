@@ -6,8 +6,8 @@ const imageCacheMap: Record<string, {
 export const drawFrom = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
-    sx: number | ((image: HTMLImageElement) => number),
-    sy: number | ((image: HTMLImageElement) => number),
+    sx: number | ((image: HTMLImageElement) => number) = 0,
+    sy: number | ((image: HTMLImageElement) => number) = 0,
 ) => {
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {

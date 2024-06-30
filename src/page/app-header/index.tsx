@@ -65,7 +65,7 @@ export const TaintedCanvasWarning = <Explanation
         </p>
         <h2>How does it affect me?</h2>
         <p>
-            A "tainted canvas" prevent all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your concern.<br />
+            A "tainted canvas" prevent all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your consent.<br />
             Furthemore, once it get tainted, it will remains tainted even if you switch to other "safe" image host.
         </p>
         <h2>How do I fix it?</h2>

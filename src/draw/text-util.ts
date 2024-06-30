@@ -1,6 +1,5 @@
 import {
     BREAKABLE_LETTER,
-    DEFAULT_TEXT_GAP,
     DefaultFontSizeData,
     FontData,
     FontSizeData,
@@ -12,7 +11,9 @@ export const tokenizeText = (text: string, keepControlCharacter = false) => {
         ? new RegExp(`([${BREAKABLE_LETTER}])|(⦉[\\w\\W]+?⦊)|(.+?)`)
         : new RegExp(`([${BREAKABLE_LETTER}])|⦉([\\w\\W]+?)⦊|(.+?)`);
 
-    return text.split(regex).filter(token => token != null && token !== '');
+    return text
+        .split(regex)
+        .filter(token => token != null && token !== '');
 };
 
 export const getTextWorker = (
@@ -108,16 +109,18 @@ export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline
 export const getHeadTextWidth = ({
     footText, footTextWidth,
     headText, headTextLetterWidth,
+    overheadTextGap,
     debug,
 }: {
     headText: string,
     headTextLetterWidth: number,
     footText: string,
     footTextWidth: number,
+    overheadTextGap: number,
     debug?: string,
 }) => {
     const condenseHeadText = headTextLetterWidth / footTextWidth;
-    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? -1.5 : -4;
+    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? -0.75 : -2;
     const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
     const alignSpaceAroundLetterSpacing = (footTextWidth - headTextLetterWidth) / headText.length;
     const alignSpaceAroundHeadTextWidth = headTextLetterWidth + alignSpaceAroundLetterSpacing * (headText.length - 1);
@@ -127,7 +130,7 @@ export const getHeadTextWidth = ({
     const letterSpacing = alignment === 'center' ? alignCenterLetterSpacing : alignSpaceAroundLetterSpacing;
     const headTextWidth = alignment === 'center' ? alignCenterHeadTextWidth : alignSpaceAroundHeadTextWidth;
     const halfGap = Math.max(
-        DEFAULT_TEXT_GAP,
+        overheadTextGap,
         alignment === 'center'
             ? (alignCenterHeadTextWidth - footTextWidth) / 2
             : alignSpaceAroundLetterSpacing / -2

@@ -156,6 +156,7 @@ export const StylePicker = React.memo(forwardRef(({
                         <div className="style-picker">
                             <span className="ant-radio-label">Custom</span>
                             <Popover key="color-picker"
+                                trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <div className={'custom-style-picker'}>
@@ -185,6 +186,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 </StyledPickerButton>
                             </Popover>
                             <Popover key="shadow-picker"
+                                trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <div className={'custom-style-picker'}>
@@ -266,6 +268,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 </StyledPickerButton>
                             </Popover>
                             <Popover key="outline-picker"
+                                trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <div className={'custom-style-picker'}>
@@ -355,6 +358,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 </StyledPickerButton>
                             </Popover>
                             <Popover key="gradient-picker"
+                                trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <div className={'custom-style-picker'}>
@@ -384,6 +388,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 </StyledPickerButton>
                             </Popover>
                             <Popover key="pattern-picker"
+                                trigger={['click']}
                                 overlayClassName="input-overlay pattern-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <StyledPatternContainer onClick={e => e.stopPropagation()}>
@@ -423,6 +428,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 </StyledPickerButton>
                             </Popover>
                             <Popover key="font-picker"
+                                trigger={['click']}
                                 overlayClassName="input-overlay font-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <StyledDropdown.Container>

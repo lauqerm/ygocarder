@@ -25,5 +25,9 @@ yarn-error.log*
 
 # Other
 /unused-frame
-/font-project
+/project-font
+/project-image
 /backup
+
+# GIMP
+*.xcf
