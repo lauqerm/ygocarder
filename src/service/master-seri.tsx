@@ -32,12 +32,13 @@ import {
     monsterCoordinateData,
     pendulumFontList,
     pendulumSizeList,
-    specialFontList,
-    specialSizeList,
-    stSizeList,
+    specialFontData,
+    specialCoordinateData,
+    stCoordinateData,
     FinishMap,
     ArtFinishMap,
     frameMap,
+    vanillaMonsterFontData,
 } from 'src/model';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
 
@@ -88,6 +89,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         passcode, creator, sticker,
         isFirstEdition, isDuelTerminalCard, isSpeedCard,
     } = card;
+    /** @todo clean log */
     console.log('🚀 ~ useMasterSeriDrawer ~ card:', card);
     const pendulumFrame = basePendulumFrame === 'auto' && isPendulum ? 'spell' : basePendulumFrame;
     const isNormal = checkNormal(card);
@@ -97,7 +99,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
     const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel']
-        .includes(basePendulumFrame === 'auto' ? frame : pendulumFrame);
+        .includes(isPendulum
+            ? basePendulumFrame === 'auto'
+                ? 'spell'
+                : pendulumFrame
+            : basePendulumFrame === 'auto'
+                ? frame
+                : pendulumFrame);
     const lightHeader = !isMonster || ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(frame);
     const {
         isInitializing,
@@ -330,7 +338,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     ctx.globalAlpha = 1;
                 }
                 /** Stat border ngăn cách stat và effect */
-                if (isMonster) {
+                if (isMonster || isPendulum) {
                     await drawFrom(ctx, '/asset/image/frame/frame-stat-border.png', 0, 1070);
                 }
 
@@ -650,7 +658,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 let spacing = 0.175;
                 let offsetY = 0;
                 let xOffset = 0;
-                ctx.fillStyle = lightFooter ? '#fff' : '#000';
+                ctx.fillStyle = (lightFooter && !isPendulum) ? '#fff' : '#000';
                 ctx.strokeStyle = pendulumFrame === 'zarc' ? '#888' : '#000';
                 ctx.font = '22px stone-serif-regular';
                 if (format === 'ocg') {
@@ -658,7 +666,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     offsetY = -1;
                     xOffset = -3;
                 }
-                const option = pendulumFrame === 'zarc' ? { stroke: true } : undefined;
+                const option = (pendulumFrame === 'zarc' && !isPendulum) ? { stroke: true } : undefined;
 
                 if (isPendulum) {
                     fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY, option);
@@ -764,7 +772,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const effectIndexSize = drawEffect(
                     ...drawEffectStartParam,
                     isNormal,
-                    effectMonsterFontData[format],
+                    (isNormal ? vanillaMonsterFontData : effectMonsterFontData)[format],
                     monsterCoordinateData[format],
                     ...drawEffectEndParam,
                 );
@@ -773,8 +781,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const effectIndexSize = drawEffect(
                     ...drawEffectStartParam,
                     isNormal,
-                    specialFontList,
-                    specialSizeList,
+                    specialFontData[isPendulum ? 'pendulum' : 'normal'],
+                    specialCoordinateData[isPendulum ? 'pendulum' : 'normal'],
                     ...drawEffectEndParam,
                 );
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
@@ -782,8 +790,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 drawEffect(
                     ...drawEffectStartParam,
                     false,
-                    effectSTFontData[format],
-                    stSizeList,
+                    effectSTFontData[format + (isPendulum ? '-pendulum' : '')],
+                    stCoordinateData[format + (isPendulum ? '-pendulum' : '')],
                     ...drawEffectEndParam,
                 );
                 drawTypeAbility(typeCtx, 'large', 'right');
@@ -796,6 +804,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         effect,
         isMonster,
         isNormal,
+        isPendulum,
         effectStyle?.condenseTolerant,
         active,
         effectCanvas,

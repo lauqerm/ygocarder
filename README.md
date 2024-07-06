@@ -118,7 +118,12 @@ If this card is Link Summoned: You can apply these effects in sequence, dependin
 
 <!-- Name with background -->
 Dark synchro style
-Remaining font data (OCG spell for example)
+Testing
+Character need treatment: ！ ( )
+Remainig Todos
+Dictionary
+<!-- Credit -->
+<!-- Remaining font data (OCG spell for example) -->
 <!-- Beatrice text style -->
 <!-- Foil too dim? -->
 <!-- Overlay foil should leave art outside -->

@@ -14,6 +14,7 @@ export type FontSizeData = {
     letterSpacing?: number,
     wordLetterSpacing?: number,
     overheadFontRatio?: number,
+    overheadTextSpacing?: number,
 };
 export const DefaultFontSizeData = {
     offsetY: 0,
@@ -22,6 +23,7 @@ export const DefaultFontSizeData = {
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
     overheadFontRatio: 0.5,
+    overheadTextSpacing: -1.5
 };
 
 export type MetricMethod = 'standard' | 'compact' | 'creator';
@@ -47,7 +49,7 @@ export const DefaultFontData = {
 
 const commonEffectFontData = {
     symbolFontRatio: 1.15,
-    overheadFontRatio: 0.5,
+    overheadFontRatio: 0.40,
 };
 
 export const tcgEffectMonsterFontData: FontData = {
@@ -81,17 +83,17 @@ export const effectMonsterFontData: Record<string, FontData> = {
 };
 
 export const tcgVanillaMonsterFontData: FontData = {
-    font: 'MatrixBook',
+    font: '"stone-serif-regular"',
     symbolFont: 'matrix',
     ...commonEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
-        { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
-        { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 7 },
-        { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8 },
-        { bulletSymbolWidth: 19, fontSize: 16.7, lineHeight: 16.7, lineCount: 9 },
-        { bulletSymbolWidth: 19, fontSize: 15.0, lineHeight: 15.0, lineCount: 10 },
+        { bulletSymbolWidth: 23, fontSize: 22.3, lineHeight: 24.9, lineCount: 6 },
+        { bulletSymbolWidth: 23, fontSize: 17.68, lineHeight: 21.5, lineCount: 7 },
+        { bulletSymbolWidth: 23, fontSize: 16.65, lineHeight: 18.8, lineCount: 8 },
+        { bulletSymbolWidth: 19, fontSize: 14.79, lineHeight: 16.7, lineCount: 9 },
+        { bulletSymbolWidth: 19, fontSize: 13.29, lineHeight: 15.0, lineCount: 10 },
     ],
 };
 export const ocgVanillaMonsterFontData: FontData = {
@@ -151,7 +153,17 @@ export const tcgSTFontData: FontData = {
     fontList: [
         { bulletSymbolWidth: 23, fontSize: 23.26, lineHeight: 24.7, lineCount: 8 },
         { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
-    ]
+    ],
+};
+export const tcgSTPendulumFontList: FontData = {
+    font: 'MatrixBook',
+    symbolFont: 'matrix',
+    ...commonEffectFontData,
+    ordinalFont: '"DFKakuTaiHiStd-W4"',
+    alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
+    fontList: [
+        { bulletSymbolWidth: 23, fontSize: 23.26, lineHeight: 24.7, lineCount: 7 },
+    ],
 };
 export const ocgSTFontData: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',
@@ -161,25 +173,40 @@ export const ocgSTFontData: FontData = {
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     metricMethod: 'compact',
     fontList: [
-        { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 25.8, lineCount: 6 },
+        { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7 },
     ]
 };
 export const effectSTFontData: Record<string, FontData> = {
     tcg: tcgSTFontData,
     ocg: ocgSTFontData,
+    'tcg-pendulum': tcgSTPendulumFontList,
+    'ocg-pendulum': ocgSTFontData,
 };
 
 /** Speed skill không có dòng ATK / DEF, nhưng lại có dòng type / ability */
-export const specialFontList: FontData = {
-    font: 'MatrixBook',
-    symbolFont: 'matrix',
-    ...commonEffectFontData,
-    ordinalFont: '"DFKakuTaiHiStd-W4"',
-    alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
-    fontList: [
-        { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.74 * UP_RATIO, lineCount: 7 },
-        { bulletSymbolWidth: 23, fontSize: 13.46 * UP_RATIO, lineHeight: 14.28 * UP_RATIO, lineCount: 8 },
-    ]
+export const specialFontData: Record<string, FontData> = {
+    normal: {
+        font: 'MatrixBook',
+        symbolFont: 'matrix',
+        ...commonEffectFontData,
+        ordinalFont: '"DFKakuTaiHiStd-W4"',
+        alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
+        fontList: [
+            { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.74 * UP_RATIO, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 13.46 * UP_RATIO, lineHeight: 14.28 * UP_RATIO, lineCount: 8 },
+        ]
+    },
+    pendulum: {
+        font: 'MatrixBook',
+        symbolFont: 'matrix',
+        ...commonEffectFontData,
+        ordinalFont: '"DFKakuTaiHiStd-W4"',
+        alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
+        fontList: [
+            { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.74 * UP_RATIO, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 13.46 * UP_RATIO, lineHeight: 14.28 * UP_RATIO, lineCount: 7 },
+        ]
+    },
 };
 
 export type CondenseType = 'veryStrict' | 'veryLoose' | 'strict' | 'loose' | 'relaxed';

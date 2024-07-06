@@ -59,8 +59,10 @@ export const FootTextRegex = new RegExp(`[${[
     NB_UNCOMPRESSED_END,
 ].join('')}]|(\\|[^}]+})`, 'g');
 
+/** @todo Remove deprecated */
+
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
-export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;\\[\\]';
+export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]';
 export const TCGLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
 
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
@@ -89,7 +91,6 @@ export const OCGNumberRegex = new RegExp('[０-９]');
 export const OCG_NUMBER_RATIO = 1.000;
 
 export const HiraganaRegex = /[あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんゔ]/;
-export const HIRAGANA_RATIO = 1.000;
 
 export const KatakanaRegex = /[アイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヰヱヲンヴヷヸヹヺ]/;
 export const KATAKANA_RATIO = 1.000;

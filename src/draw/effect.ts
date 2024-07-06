@@ -23,7 +23,7 @@ const {
 export const drawEffect = (
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
-    isPendulumEffect = false,
+    _isPendulumEffect = false,
     isNormal = false,
     fontData: FontData = effectMonsterFontData.tcg,
     sizeList: CoordinateData[] = monsterCoordinateData.tcg,
@@ -185,7 +185,11 @@ export const drawEffect = (
 
                 ctx.scale(xRatio, yRatio);
                 ctx.font = currentFont.setStyle('').getFont();
-                const tokenList = tokenizeText(effectFlavorCondition);
+                let tokenList = tokenizeText(effectFlavorCondition);
+                // Loại dấu carrige return đầu tiên
+                tokenList = tokenList[0] === '\n'
+                    ? tokenList.slice(1)
+                    : tokenList;
                 drawLine({
                     ctx,
                     tokenList,
@@ -201,6 +205,7 @@ export const drawEffect = (
         }
     }
 
+    /** @todo clean log */
     console.info('Time end', performance.now() - tStart);
     return effectSizeLevel;
 };

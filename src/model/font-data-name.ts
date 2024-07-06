@@ -38,7 +38,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             fontList: [{
                 bulletSymbolWidth: 40.67,
                 fontSize: 61,
-                letterSpacing: -0.18,
+                letterSpacing: -0.14,
                 lineCount: 1,
                 lineHeight: 61,
                 offsetY: 3,
@@ -57,11 +57,13 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             ordinalFont: '"DFKakuTaiHiStd-W4"',
             metricMethod: 'compact',
             fontList: [{
+                overheadFontRatio: 0.25,
                 bulletSymbolWidth: 42.67,
                 fontSize: 64,
                 lineCount: 1,
                 lineHeight: 64,
                 offsetY: 0,
+                overheadTextSpacing: -1,
             }],
         }
     },

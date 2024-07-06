@@ -51,9 +51,10 @@ export const ArtFinishButtonList = [
     })),
 ];
 
-export const FrameButtonList = frameList.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage }) => ({
+export const getFrameButtonList = () => frameList.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage, edition }) => ({
     label: name.replaceAll('-', ' '),
     value: name,
+    edition,
     props: {
         style: {
             background: labelBackgroundColor,

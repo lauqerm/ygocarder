@@ -110,6 +110,7 @@ export const getHeadTextWidth = ({
     footText, footTextWidth,
     headText, headTextLetterWidth,
     overheadTextGap,
+    overheadTextSpacing,
     debug,
 }: {
     headText: string,
@@ -117,10 +118,11 @@ export const getHeadTextWidth = ({
     footText: string,
     footTextWidth: number,
     overheadTextGap: number,
+    overheadTextSpacing: number,
     debug?: string,
 }) => {
     const condenseHeadText = headTextLetterWidth / footTextWidth;
-    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? -0.75 : -2;
+    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? overheadTextSpacing : overheadTextSpacing * 4/3;
     const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
     const alignSpaceAroundLetterSpacing = (footTextWidth - headTextLetterWidth) / headText.length;
     const alignSpaceAroundHeadTextWidth = headTextLetterWidth + alignSpaceAroundLetterSpacing * (headText.length - 1);

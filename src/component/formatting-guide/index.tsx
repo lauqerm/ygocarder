@@ -6,8 +6,7 @@ import './formatting-guide.scss';
 
 const StyledCode = styled.span`
     background: #333333;
-    padding: 0 0.15rem;
-    padding-bottom: 0.1rem;
+    padding: 0.1rem 0.15rem;
     border: 1px solid #4e84a4;
     border-radius: 3px;
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
@@ -90,6 +89,8 @@ export const FormattingHelpDrawer = () => {
                 </p>
                 <h2>Non-breakable line</h2>
                 Wrap a line of text inside a <StyledCode>{'['}</StyledCode> and <StyledCode>{']'}</StyledCode> to prevent the text from breaking down into multiple lines.
+                <br />
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 1'}</StyledCode> or <StyledCode>{'⌘ 1'}</StyledCode>
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -106,6 +107,8 @@ export const FormattingHelpDrawer = () => {
                 </StyledPanel>
                 <h2>Non-breakable text</h2>
                 Wrap a piece of text inside a <StyledCode>{'{'}</StyledCode> and <StyledCode>{'}'}</StyledCode> to prevent the text from breaking down into multiple lines.
+                <br />
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 2'}</StyledCode> or <StyledCode>{'⌘ 2'}</StyledCode>
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -122,6 +125,8 @@ export const FormattingHelpDrawer = () => {
                 </StyledPanel>
                 <h2>Ruby</h2>
                 Put a <StyledCode>{'|'}</StyledCode> in between of a non-breakable text to annotate it with small overhead letters.
+                <br />
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 3'}</StyledCode> or <StyledCode>{'⌘ 3'}</StyledCode>
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -138,6 +143,8 @@ export const FormattingHelpDrawer = () => {
                 </StyledPanel>
                 <h2>Non-compressable text</h2>
                 Wrap a piece of text inside a <StyledCode>{'{{'}</StyledCode> and <StyledCode>{'}}'}</StyledCode> to prevent the text from being compressed.
+                <br />
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 4'}</StyledCode> or <StyledCode>{'⌘ 4'}</StyledCode>
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}

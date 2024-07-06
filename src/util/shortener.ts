@@ -1,8 +1,9 @@
 import { clone } from 'ramda';
-import { JSONCrush, JSONUncrush } from '../3rd';
-import { Card, defaultCard, getDefaultCardOpacity } from '../model';
+import { JSONUncrush } from '../3rd';
+import { Card, getDefaultCardOpacity, getEmptyCard } from '../model';
 
 const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
+    version: 've',
     format: 'fm',
     frame: 'fr',
     foil: 'fo',
@@ -78,34 +79,52 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
 export const cardDataShortener = (
     card: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
-    crush = true,
+    serialize = true,
 ) => {
     const condensedCard: Record<string, any> = {};
-    Object.keys(card).forEach(cardKey => {
-        const cardValue = card[cardKey];
+    Object.keys(card).forEach(fieldKey => {
+        const fieldValue = card[fieldKey];
 
-        if (typeof cardValue === 'object' && cardValue !== null && !Array.isArray(cardValue)) {
-            const newKey = shortenMap[cardKey]?._newKey;
+        if (typeof fieldValue === 'object' && fieldValue !== null && !Array.isArray(fieldValue)) {
+            const newKey = shortenMap[fieldKey]?._newKey;
 
             if (newKey) {
-                condensedCard[newKey] = cardDataShortener(cardValue, shortenMap[cardKey], false);
+                condensedCard[newKey] = cardDataShortener(fieldValue, shortenMap[fieldKey], false);
             }
         } else {
-            const newKey = shortenMap[cardKey];
+            const newFieldKey = shortenMap[fieldKey];
 
-            if (typeof newKey === 'string') condensedCard[newKey] = cardValue;
+            if (typeof newFieldKey === 'string') condensedCard[newFieldKey] = fieldValue;
         }
     });
 
-    if (crush) {
-        const curshedCard = JSONCrush(JSON.stringify(condensedCard));
-
-        return curshedCard;
-    }
+    if (serialize) return JSON.stringify(condensedCard);
     return condensedCard;
 };
 
 export const reverseCardDataShortener = (
+    condensedCard: Record<string, any>,
+    shortenMap: Record<string, any> = cardFieldShortenMap,
+) => {
+    const fullCard: Record<string, any> = {};
+    Object.keys(shortenMap).forEach(fullKey => {
+        const shortenKey = shortenMap[fullKey];
+
+        if (typeof shortenKey === 'object' && shortenKey !== null && !Array.isArray(shortenKey)) {
+            const shortendKey = shortenKey?._newKey;
+
+            if (shortendKey && condensedCard[shortendKey]) {
+                fullCard[fullKey] = reverseCardDataShortener(condensedCard[shortendKey], shortenMap[fullKey]);
+            }
+        } else {
+            if (condensedCard[shortenKey] != null) {
+                fullCard[fullKey] = condensedCard[shortenKey];
+            }
+        }
+    });
+    return fullCard;
+};
+export const legacyReverseCardDataShortener = (
     condensedCard: Record<string, any> | string,
     shortenMap: Record<string, any> = cardFieldShortenMap,
 ) => {
@@ -115,17 +134,17 @@ export const reverseCardDataShortener = (
 
     const fullCard: Record<string, any> = {};
     Object.keys(shortenMap).forEach(fullKey => {
-        const shortendValue = shortenMap[fullKey];
+        const shortenKey = shortenMap[fullKey];
 
-        if (typeof shortendValue === 'object' && shortendValue !== null && !Array.isArray(shortendValue)) {
-            const shortendKey = shortendValue?._newKey;
+        if (typeof shortenKey === 'object' && shortenKey !== null && !Array.isArray(shortenKey)) {
+            const shortendKey = shortenKey?._newKey;
 
             if (shortendKey && normalizedCondensedCard[shortendKey]) {
-                fullCard[fullKey] = reverseCardDataShortener(normalizedCondensedCard[shortendKey], shortenMap[fullKey]);
+                fullCard[fullKey] = legacyReverseCardDataShortener(normalizedCondensedCard[shortendKey], shortenMap[fullKey]);
             }
         } else {
-            if (normalizedCondensedCard[shortendValue] != null) {
-                fullCard[fullKey] = normalizedCondensedCard[shortendValue];
+            if (normalizedCondensedCard[shortenKey] != null) {
+                fullCard[fullKey] = normalizedCondensedCard[shortenKey];
             }
         }
     });
@@ -134,11 +153,21 @@ export const reverseCardDataShortener = (
 
 export const rebuildCardData = (
     card: Record<string, any> | string,
+) => {
+    const normalizedCard = typeof card === 'string'
+        ? JSON.parse(card)
+        : card;
+    const fullCard: Record<string, any> = reverseCardDataShortener(normalizedCard);
+
+    return migrateCardData(fullCard);
+};
+export const legacyRebuildCardData = (
+    card: Record<string, any> | string,
     isCondensed = false,
 ) => {
     let fullCard: Record<string, any>;
     if (isCondensed) {
-        fullCard = reverseCardDataShortener(card);
+        fullCard = legacyReverseCardDataShortener(card);
     } else {
         fullCard = typeof card === 'string'
             ? JSON.parse(card)
@@ -150,17 +179,20 @@ export const rebuildCardData = (
 
 // Try to match old version card data with newer model
 const migrateCardData = (card: Record<string, any>) => {
-    const migratedCard = clone(card);
+    const migratedCard = {
+        ...getEmptyCard(),
+        ...clone(card)
+    };
 
     if (migratedCard.effectStyle === undefined) {
         migratedCard.effectStyle = {
-            ...defaultCard.effectStyle
+            ...getEmptyCard().effectStyle
         };
     }
 
     if (migratedCard.version === undefined) migratedCard.version = 1;
     if (migratedCard.format === undefined) migratedCard.format = 'tcg';
-    if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'spell';
+    if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'auto';
     if (migratedCard.finish === undefined) migratedCard.finish = [];
     if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
     if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';

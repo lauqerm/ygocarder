@@ -85,6 +85,9 @@ export const tcgToOCGLetterMap: Record<string, string> = {
     'ꓥ': 'Ʌ',
     '＜': '<',
     '＞': '>',
+    '！': '!',
+    '（': '(',
+    '）': ')',
 };
 export const ocgToTCGLetterMap: Record<string, string> = {
     '０': '0',
@@ -173,6 +176,9 @@ export const ocgToTCGLetterMap: Record<string, string> = {
     'ꓥ': 'Ʌ',
     '＜': '<',
     '＞': '>',
+    '！': '!',
+    '（': '(',
+    '）': ')',
 };
 
 export const ocgToTCGTermMap: Record<string, string> = {
@@ -236,6 +242,11 @@ export const ocgToTCGTermMap: Record<string, string> = {
     /** creator */
     '©高橋和希 スタジオ・ダイス／集英社': '©1996 KAZUKI TAKAHASHI',
     '©スタジオ・ダイス／集英社・テレビ東京・KONAMI': '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+    /** sample card */
+    '{純|ジュン}{狐|こ}': 'Junko',
+    [`自分フィールドの効果モンスター×２体以上
+①：このカードがモンスターゾーンに存在する限り、相手フィールドのモンスターが効果を発動する度に、その相手の表側表示モンスターにピュアカウンターを１つ置く(最大１つまで）。②：このカードはピュアカウンターが置かれているモンスターが発動した効果を受けない。③：このカードはピュアカウンターが置かれているモンスターとの戦闘では破壊されない。`]: `[2+ Effect Monsters on your field]
+Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`
 };
 export const tcgToOCGTermMap = Object.entries(ocgToTCGTermMap).reduce((acc, cur) => {
     const [ocgTerm, tcgTerm] = cur;

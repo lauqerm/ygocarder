@@ -6,12 +6,14 @@ import {
     CanvasConst,
     Card,
     UP_RATIO,
-    defaultCard,
+    getDefaultCard,
     getArtCanvasCoordinate,
+    getEmptyCard,
 } from './model';
 import {
     cardDataShortener,
     insertUrlParam,
+    legacyRebuildCardData,
     rebuildCardData,
 } from './util';
 import { Affiliation, AppHeader, CardInputPanel, CardInputPanelRef, TaintedCanvasWarning } from './page';
@@ -28,10 +30,32 @@ const clearCanvas = (
     };
 };
 
+const decodeCardWithCompatibility = (cardData: Record<string, any> | string | null): Card => {
+    let decodedCard = getEmptyCard();
+    if (!cardData) return decodedCard;
+    try {
+        decodedCard = rebuildCardData(cardData) as Card;
+    } catch (e) {
+        try {
+            decodedCard = legacyRebuildCardData(cardData, true) as Card;
+            notification.info({
+                message: 'Card data has outdated format',
+                description: 'System will automatically convert it into newer version.',
+            });
+        } catch (e) {
+            console.error('cardData', cardData);
+            notification.error({
+                message: 'Card data cannot be decoded',
+                description: 'It is either malformed or not compatible.',
+            });
+        }
+    }
+    return decodedCard;
+};
 function App() {
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
-    const [currentCard, setCard] = useState<Card>(defaultCard);
+    const [currentCard, setCard] = useState<Card>(getDefaultCard());
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [ocgStyleFile, setOCGStyleFile] = useState('');
 
@@ -129,14 +153,16 @@ function App() {
                     const localCardVersion = window.localStorage.getItem('card-version');
                     const localCardData = window.localStorage.getItem('card-data');
 
-                    const urlParam = (new URLSearchParams(window.location.search)).get('data');
-                    if (urlParam) {
-                        setCard(rebuildCardData(urlParam, true) as any);
+                    const cardURLData = (new URLSearchParams(window.location.search)).get('data');
+                    if (cardURLData) {
+                        const decodedCard = decodeCardWithCompatibility(cardURLData);
+
+                        setCard(decodedCard);
                     } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-                        setCard(rebuildCardData(localCardData) as any);
+                        setCard(JSON.parse(localCardData) as any);
                     }
                 } catch (e) {
-                    setCard(defaultCard);
+                    setCard(getDefaultCard());
                 }
                 setInitializing(false);
             },
@@ -207,8 +233,11 @@ function App() {
     const download = useCallback(() => {
         const canvasRef = drawCanvasRef.current;
         if (canvasRef) try {
+            const normalizedName = name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
             var link = document.createElement('a');
-            link.download = `${name}.png`;
+            link.download = normalizedName
+                ? `${normalizedName}.png`
+                : 'card.png';
             link.href = canvasRef.toDataURL('image/png');
             link.click();
         } catch (e) {
@@ -402,8 +431,9 @@ function App() {
                                 const cardData = window.prompt('Paste your card data here');
 
                                 if (cardData) {
-                                    const decodedCard = rebuildCardData(cardData, true) as Card;
+                                    const decodedCard = decodeCardWithCompatibility(cardData);
                                     setCard(decodedCard);
+                                    setImageChangeCount(cnt => cnt + 1);
                                     cardInputRef.current?.forceCardData(decodedCard);
                                 }
                             }}>Import Data</button>
@@ -448,7 +478,7 @@ function App() {
                     currentCard={currentCard}
                     onCardChange={setCard}
                     defaultCropInfo={pictureCrop}
-                    onImageChange={(cropInfo, sourceType) => {
+                    onCropChange={(cropInfo, sourceType) => {
                         setImageChangeCount(cnt => cnt + 1);
                         setSourceType(sourceType);
                         if (cropInfo) setCard(curr => ({

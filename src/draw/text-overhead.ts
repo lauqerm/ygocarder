@@ -14,6 +14,7 @@ export const fillHeadText = ({
     headText, headTextLetterWidth,
     footText, footTextWidth,
     overheadTextGap,
+    overheadTextSpacing,
     xRatio,
     format,
     withFurigana,
@@ -24,6 +25,7 @@ export const fillHeadText = ({
     footText: string, footTextWidth: number,
     edge: number, baseline: number,
     overheadTextGap: number,
+    overheadTextSpacing: number,
     xRatio: number,
     format: string,
     withFurigana: (worker: (innerEdge: number) => number, edge?: number) => number,
@@ -33,7 +35,7 @@ export const fillHeadText = ({
         headTextWidth,
         halfGap,
         alignment,
-    } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap });
+    } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap, overheadTextSpacing });
     const overflow = headTextWidth > footTextWidth;
     let currentEdge = edge + xRatio * (alignment === 'center'
         ? overflow

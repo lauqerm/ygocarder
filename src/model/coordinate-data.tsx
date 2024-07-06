@@ -19,22 +19,52 @@ export const monsterCoordinateData: Record<string, CoordinateData[]> = {
     ocg: [
         { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
     ],
+    'tcg-pendulum': [
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+    ],
+    'ocg-pendulum': [
+        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+    ],
 };
 
-export const stSizeList: CoordinateData[] = [
-    { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
-    { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
-];
+export const stCoordinateData: Record<string, CoordinateData[]> = {
+    tcg: [
+        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+    ],
+    ocg: [
+        { trueWidth: 684, trueBaseline: 895.23, trueEdge: 64.8 },
+    ],
+    'tcg-pendulum': [
+        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+    ],
+    'ocg-pendulum': [
+        { trueWidth: 684, trueBaseline: 891.23, trueEdge: 64.8 },
+    ],
+};
 
 export const pendulumSizeList: CoordinateData[] = [
     { trueWidth: 375 * UP_RATIO, trueBaseline: 504.5 * UP_RATIO, trueEdge: 87.05 * UP_RATIO },
     { trueWidth: 375 * UP_RATIO, trueBaseline: 504.5 * UP_RATIO, trueEdge: 87.05 * UP_RATIO },
 ];
 
-export const specialSizeList: CoordinateData[] = [
-    { trueWidth: 461 * UP_RATIO, trueBaseline: 620 * UP_RATIO, trueEdge: 45 * UP_RATIO },
-    { trueWidth: 461 * UP_RATIO, trueBaseline: 624 * UP_RATIO, trueEdge: 45 * UP_RATIO },
-];
+export const specialCoordinateData: Record<string, CoordinateData[]> = {
+    normal: [
+        { trueWidth: 461 * UP_RATIO, trueBaseline: 620 * UP_RATIO, trueEdge: 45 * UP_RATIO },
+        { trueWidth: 461 * UP_RATIO, trueBaseline: 624 * UP_RATIO, trueEdge: 45 * UP_RATIO },
+    ],
+    pendulum: [
+        { trueWidth: 461 * UP_RATIO, trueBaseline: 620 * UP_RATIO, trueEdge: 45 * UP_RATIO },
+        { trueWidth: 461 * UP_RATIO, trueBaseline: 624 * UP_RATIO, trueEdge: 45 * UP_RATIO },
+    ],
+};
 
 export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateData>> = {
     tcg: {

@@ -39,7 +39,7 @@ export type ImageCropper = {
     ratio?: number,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     onSourceChange?: (source: string) => void,
-    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     onTainted: () => void,
 }
 export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
@@ -51,7 +51,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     ratio = 1,
     defaultCropInfo,
     onSourceChange = () => { },
-    onImageChange = () => { },
+    onCropChange = () => { },
     onTainted = () => { },
 }: ImageCropper, forwardedRef) => {
     const [crossorigin, setCrossOrigin] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
@@ -98,8 +98,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     useEffect(() => {
         const image = imgRef.current;
         const canvas = previewCanvasRef;
-        const cropData = completedCrop;
-        if (!cropData || !canvas || !image) return;
+        if (!completedCrop || !canvas || !image) return;
 
         /** Upsize canvas để nâng cao chất lượng ảnh */
         canvas.style.transform = 'scale(2)';
@@ -109,18 +108,24 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const { naturalHeight, naturalWidth } = image;
         const zoomX = naturalWidth / image.width;
         const zoomY = naturalHeight / image.height;
-        const cropUnit = cropData.unit ?? 'px';
+        const cropUnit = completedCrop.unit ?? 'px';
         const pixelRatio = window.devicePixelRatio;
 
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         /** Làm mượt thông số crop để image không bị vỡ */
         let drawWidth = Math.min(
             naturalWidth,
-            Math.round((cropData.width ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100)),
+            Math.round((completedCrop.width ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100)),
         );
-        let drawHeight = drawWidth / ratio;
-        let drawCoordinateX = (cropData.x ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100);
-        let drawCoordinateY = (cropData.y ?? 0) * (cropUnit === 'px' ? zoomY : naturalHeight / 100);
+        let drawHeight = Math.floor(drawWidth / ratio);
+        let drawCoordinateX = Math.min(
+            naturalWidth,
+            Math.round((completedCrop.x ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100))
+        );
+        let drawCoordinateY = Math.min(
+            naturalHeight,
+            Math.round((completedCrop.y ?? 0) * (cropUnit === 'px' ? zoomY : naturalHeight / 100))
+        );
         ctx.imageSmoothingQuality = 'high';
         let fitCropData: Partial<ReactCrop.Crop> | undefined = undefined;
         /** Fit crop frame vào ảnh nếu nó bị tràn (ví dụ do thay đổi về ratio). Ta cố gắng để crop frame lớn nhất có thể. */
@@ -179,8 +184,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             drawHeight,
         );
         if (sourceType === 'internal' && (internalSource ?? '').length <= 0) { }
-        else onImageChange(cropData, sourceType);
-        if (fitCropData) setCrop(fitCropData);
+        else if (ratio === completedCrop.aspect) {
+            onCropChange(completedCrop, sourceType);
+        }
+        if (fitCropData) {
+            setCrop(fitCropData);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ratio, completedCrop, previewCanvasRef, noRedrawNumber]);
 

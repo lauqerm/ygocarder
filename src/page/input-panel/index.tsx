@@ -7,7 +7,6 @@ import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
 import {
     FoilButtonList,
-    FrameButtonList,
     StarButtonList,
     STIconButtonList,
     getAttributeList,
@@ -15,17 +14,18 @@ import {
     CondenseThresholdButtonList,
     FinishButtonList,
     ArtFinishButtonList,
-    FormatButtonList
+    FormatButtonList,
+    getFrameButtonList
 } from './const';
 import { CharPicker } from './char-picker';
 import { StylePicker, StylePickerRef } from './style-picker';
 import { CheckboxTrain, RadioTrain } from './input-train';
 import { ImageCropperRef } from '../../component/card-picture';
 import { Explanation } from 'src/component/explanation';
-import { changeCardFormat } from '../../service';
+import { changeCardFormat, useSetting } from '../../service';
 import { OpacityPicker, OpacityPickerRef } from './opacity-picker';
-import './input-panel.scss';
 import { StyledPendulumFrameContainer } from './input-panel.styled';
+import './input-panel.scss';
 
 const { TextArea } = Input;
 
@@ -42,6 +42,8 @@ const onChangeFactory = (
     };
 };
 
+const availableCommand = new Set(['1', '2', '3', '4']);
+
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
 }
@@ -50,7 +52,7 @@ export type CardInputPanel = {
     receivingCanvasRef: HTMLCanvasElement | null,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     onCardChange: React.Dispatch<React.SetStateAction<Card>>,
-    onImageChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     children?: React.ReactNode,
 } & {
     onTainted: ImageCropper['onTainted']
@@ -60,10 +62,15 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     receivingCanvasRef,
     defaultCropInfo,
     onCardChange,
-    onImageChange,
+    onCropChange,
     onTainted,
     children,
 }: CardInputPanel, forwardedRef) => {
+    const {
+        setting,
+    } = useSetting(({ setting }) => ({ setting }));
+    const { allowHotkey, showCreativeOption, showExtraDecorativeOption } = setting;
+
     const [isMirrorScale, setMirrorScale] = useState(true);
     const stylePickerRef = useRef<StylePickerRef>(null);
     const imageCropperRef = useRef<ImageCropperRef>(null);
@@ -162,7 +169,18 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     };
     const onStarChange = onChangeFactory('star', setCard);
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
-        return { ...currentCard, isPendulum: e.target.checked };
+        const willBecomePendulum = e.target.checked;
+        /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it is closer to real card */
+        // const currentOpacity = currentCard.opacity;
+        // const nextOpacity = willBecomePendulum && (currentOpacity.pendulum ?? 100) !== 85
+        //     ? { ...currentOpacity, pendulum: 85 }
+        //     : currentOpacity;
+
+        return {
+            ...currentCard,
+            // opacity: nextOpacity,
+            isPendulum: willBecomePendulum,
+        };
     });
     const onPictureChange = onChangeFactory('picture', setCard);
     const onLinkMapChange = onChangeFactory('linkMap', setCard);
@@ -213,10 +231,48 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     });
 
     const attributeList = useMemo(() => getAttributeList(format), [format]);
+    const frameList = useMemo(() => getFrameButtonList().filter(entry => {
+        return showExtraDecorativeOption || entry.edition === 'normal';
+    }), [showExtraDecorativeOption]);
 
     useEffect(() => {
         opacityPickerRef.current?.setValue(opacity);
     }, [opacity]);
+
+    const [forceCursorData, setForceCursorData] = useState({ id: '', placement: -1 });
+    useEffect(() => {
+        const { id, placement } = forceCursorData;
+        if (id && placement >= 0) {
+            const target = document.querySelector(`#${id}`) as HTMLInputElement | null;
+
+            if (target && (target.selectionEnd ?? -1) >= 0) {
+                target.selectionEnd = placement;
+                setForceCursorData({ id: '', placement: -1 });
+            }
+        }
+    }, [forceCursorData]);
+    const wrapText = (
+        value: string,
+        key: string,
+        selectionStart: number,
+        selectionEnd: number,
+        onResult: (joinedText: string, newCursorPlacement: number) => void,
+    ) => {
+        const selectedText = value.substring(selectionStart, selectionEnd);
+        let wrappedText = selectedText;
+        let cursorOffset = 2;
+        switch (key) {
+            case '1': wrappedText = `[${selectedText}]`; break;
+            case '2': wrappedText = `{${selectedText}}`; break;
+            case '3': wrappedText = `{${selectedText}|}`; break;
+            case '4': wrappedText = `{{${selectedText}}}`; cursorOffset = 4; break;
+        }
+        const joinedText = value.substring(0, selectionStart)
+            + `${wrappedText}`
+            + value.substring(selectionEnd, value.length);
+
+        onResult(joinedText, selectionEnd + cursorOffset);
+    };
 
     useImperativeHandle(forwardedRef, () => ({
         forceCardData: (card) => {
@@ -246,12 +302,16 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             <RadioTrain className="foil-radio" value={foil} onChange={onFoilChange} optionList={FoilButtonList}>
                 <span>Foil</span>
             </RadioTrain>
-            <CheckboxTrain className="finish-checkbox" value={finish} onChange={onFinishChange} optionList={FinishButtonList}>
+            {showExtraDecorativeOption && <CheckboxTrain
+                className="finish-checkbox"
+                value={finish}
+                onChange={onFinishChange}
+                optionList={FinishButtonList}
+            >
                 <span>Finish</span>
-            </CheckboxTrain>
-
+            </CheckboxTrain>}
         </div>
-        <div className="card-opacity-input">
+        {showCreativeOption && <div className="card-opacity-input">
             <label className="standalone-addon ant-input-group-addon">
                 Opacity <Explanation
                     content={'May affect behavior of some finish types'}
@@ -262,8 +322,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 isPendulum={isPendulum}
                 onChange={onOpacityChange}
             />
-        </div>
-        <RadioTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={FrameButtonList} />
+        </div>}
+        <RadioTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameList} />
         <div className="name-style-id-input">
             <div className="name-id-input">
                 <Input
@@ -275,6 +335,24 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     placeholder="Card Name"
                     value={displayName}
                     className="name-input"
+                    onKeyDown={ev => {
+                        if (!allowHotkey) return;
+                        const { ctrlKey, key } = ev;
+                        const selectionStart = ev.currentTarget.selectionStart ?? -1;
+                        const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
+                        if (ctrlKey && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                            ev.preventDefault();
+                            wrapText(
+                                ev.currentTarget.value, key,
+                                selectionStart, selectionEnd,
+                                (joinedText, placement) => {
+                                    onNameChange({ target: { value: joinedText } });
+                                    setDisplayName(joinedText);
+                                    setForceCursorData({ id: 'name', placement });
+                                }
+                            );
+                        }
+                    }}
                     onChange={ev => {
                         onNameChange(ev);
                         setDisplayName(ev.target.value);
@@ -289,7 +367,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     addonBefore={<div className="input-label-with-button">
                         <div className="input-label">Set ID</div>
                         <IconButton
-                            iconProps={{ onClick: () => onPasscodeChange(randomSetID(format)) }}
+                            containerProps={{ onClick: () => onPasscodeChange(randomSetID(format)) }}
                             Icon={SyncOutlined}
                             tooltipProps={{ overlay: 'Randomize' }}
                         />
@@ -303,6 +381,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 frameInfo={frameMap[frame as keyof typeof frameMap]}
                 defaultType={nameStyleType}
                 defaultValue={nameStyle}
+                showExtraDecorativeOption={showExtraDecorativeOption}
                 onChange={onNameColorChange}
             />
             {isMonster
@@ -326,12 +405,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 >
                     <span>Attribute</span>
                 </RadioTrain>
-                <div className="pendulum-container">
+                {(isPendulum || frame !== 'link' || showCreativeOption) && <div className="pendulum-container">
                     <div className="joined-row pendulum-option">
                         {frame !== 'link'
                             ? <Checkbox className="pendulum-checkbox" onChange={onIsPendulumChange} checked={isPendulum}>Pendulum</Checkbox>
                             : <div className="pendulum-checkbox-placeholder" />}
-                        <Popover
+                        {showCreativeOption && <Popover
                             placement="bottom"
                             overlayClassName="pendulum-frame-picker-overlay"
                             content={<div className="overlay-event-absorber">
@@ -349,7 +428,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                         className="frame-radio"
                                         value={pendulumFrame}
                                         onChange={onPendulumFrameChange}
-                                        optionList={FrameButtonList}
+                                        optionList={frameList}
                                     />
                                 </StyledPendulumFrameContainer>
                             </div>}
@@ -360,8 +439,9 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                     : <FrameInfoBlock name="Auto" labelColor="var(--color)" labelBackgroundColor="var(--main-button)" />}
                                 <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
                             </div>
-                        </Popover>
-                        {isPendulum && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
+                        </Popover>}
+                        {(isPendulum && showCreativeOption)
+                            && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
                     </div>
                     {isPendulum && <>
                         <div>
@@ -384,7 +464,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                 onChange={e => {
                                     if (isMirrorScale) onBlueScaleChange(e);
                                     onRedScaleChange(e);
-                                }} />
+                                }}
+                            />
                         </div>
                         <div className="joined-row" style={{ position: 'relative' }}>
                             <TextArea key="pendulum-effect"
@@ -395,6 +476,24 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                 spellCheck={false}
                                 placeholder="Pendulum effect"
                                 value={displayPendulumEffect}
+                                onKeyDown={ev => {
+                                    if (!allowHotkey) return;
+                                    const { ctrlKey, key } = ev;
+                                    const selectionStart = ev.currentTarget.selectionStart ?? -1;
+                                    const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
+                                    if (ctrlKey && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                                        ev.preventDefault();
+                                        wrapText(
+                                            ev.currentTarget.value, key,
+                                            selectionStart, selectionEnd,
+                                            (joinedText, placement) => {
+                                                onPendulumEffectChange({ target: { value: joinedText } });
+                                                setDisplayPendulumEffect(joinedText);
+                                                setForceCursorData({ id: 'pendulum-effect', placement });
+                                            }
+                                        );
+                                    }
+                                }}
                                 onChange={ev => {
                                     onPendulumEffectChange(ev);
                                     setDisplayPendulumEffect(ev.target.value);
@@ -403,7 +502,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             />
                         </div>
                     </>}
-                </div>
+                </div>}
                 <Input addonBefore="Type"
                     id="type"
                     ref={onlineCharPicker === 'type' ? ref as any : null}
@@ -428,7 +527,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         optionList={CondenseThresholdButtonList}
                     >
                         <span>
-                        Condense <Explanation
+                            Condense <Explanation
                                 content={'Higher condense limit will prefer compressing words instead of adding new lines'}
                             />
                         </span>
@@ -444,6 +543,24 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     placeholder="Card effect"
                     value={displayEffect}
                     rows={8}
+                    onKeyDown={ev => {
+                        if (!allowHotkey) return;
+                        const { ctrlKey, key } = ev;
+                        const selectionStart = ev.currentTarget.selectionStart ?? -1;
+                        const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
+                        if (ctrlKey && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                            ev.preventDefault();
+                            wrapText(
+                                ev.currentTarget.value, key,
+                                selectionStart, selectionEnd,
+                                (joinedText, placement) => {
+                                    onEffectChange({ target: { value: joinedText } });
+                                    setDisplayEffect(joinedText);
+                                    setForceCursorData({ id: 'card-effect', placement });
+                                }
+                            );
+                        }
+                    }}
                     onChange={ev => {
                         onEffectChange(ev);
                         setDisplayEffect(ev.target.value);
@@ -456,15 +573,14 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             ref={onlineCharPicker === 'atk' ? ref as any : null}
                             onFocus={() => setOnlineCharPicker('atk')}
                             addonBefore="ATK" allowClear value={atk} onChange={onATKChange} />
-                        : <div />}
+                        : null}
                     {isMonster
                         ? <Input key="def"
                             id="def"
                             ref={onlineCharPicker === 'def' ? ref as any : null}
                             onFocus={() => setOnlineCharPicker('def')}
                             addonBefore="DEF" allowClear value={def} onChange={onDEFChange} />
-                        : <div />
-                    }
+                        : null}
                     <Input
                         id="password"
                         ref={onlineCharPicker === 'password' ? ref as any : null}
@@ -474,7 +590,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         addonBefore={<div className="input-label-with-button">
                             <div className="input-label">Password</div>
                             <IconButton
-                                iconProps={{ onClick: () => onPasscodeChange(randomPassword()) }}
+                                containerProps={{ onClick: () => onPasscodeChange(randomPassword()) }}
                                 Icon={SyncOutlined}
                                 tooltipProps={{ overlay: 'Randomize' }}
                             />
@@ -534,11 +650,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     defaultCropInfo={defaultCropInfo}
                     previewCanvasRef={receivingCanvasRef}
                     onSourceChange={onPictureChange}
-                    onImageChange={onImageChange}
+                    onCropChange={onCropChange}
                     onTainted={onTainted}
                     ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
-                    beforeCropper={
-                        <RadioTrain
+                    beforeCropper={showExtraDecorativeOption
+                        ? <RadioTrain
                             className="art-finish-checkbox image-input-train"
                             value={artFinish}
                             onChange={onArtFinishChange}
@@ -546,6 +662,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         >
                             <span>Art Finish</span>
                         </RadioTrain>
+                        : null
                     }
                 >
                     {isLink

@@ -8,4 +8,4 @@ export {
     Affiliation,
     AppHeader,
     TaintedCanvasWarning,
-} from './app-header';
+} from '../component/app-header';

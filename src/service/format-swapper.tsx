@@ -3,12 +3,14 @@ import { checkSpeedSkill } from 'src/util';
 
 export const changeCardFormat = (card: Card, targetFormat: string): Card => {
     const {
+        name,
         format,
         creator,
         typeAbility,
         nameStyle,
         setId,
         isFirstEdition,
+        effect,
     } = card;
 
     if (format === targetFormat) return card;
@@ -29,8 +31,10 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
 
     return {
         ...card,
+        name: termMap[name] ?? name,
         nameStyle: newNameStyle,
         format: targetFormat,
+        effect: termMap[effect] ?? effect,
         typeAbility: typeAbility.map(entry => termMap[entry] ?? entry),
         creator: termMap[creator] ?? creator,
         setId: newSetId,

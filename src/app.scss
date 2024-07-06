@@ -11,6 +11,7 @@ html {
 	--color-contrast: #eeeeee;
 	--main-button: #5b626e;
 	--sub-button: #707681;
+	--main-overlay: #4e4e53;
 	h1 {
 		color: #ffffffee;
 		font-size: 1.75em;
@@ -23,6 +24,9 @@ html {
 		&:first-child {
 			padding-top: 0;
 		}
+	}
+	h3 {
+		color: var(--color);
 	}
 }
 hr {
@@ -273,7 +277,8 @@ hr {
 
 // [OVERWRITE ANTD DEFAULT]
 .input-overlay,
-.card-info-panel {
+.card-info-panel,
+.ant-popover-inner-content {
 	.ant-radio-button-wrapper {
 		padding: 0 10px;
 		min-width: 37px;

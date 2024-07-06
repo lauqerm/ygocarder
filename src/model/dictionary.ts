@@ -422,6 +422,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{魔|ま}{導|どう}{騎|き}{士|し}',
     },
     {
+        shortForm: '無効化',
+        rubyForm: '{無|む}{効|こう}{化|か}',
+    },
+    {
         shortForm: 'オメガ',
         rubyForm: 'オメガ',
     },
@@ -554,6 +558,11 @@ export const ocgKeywordDataList = [
         rubyForm: 'セット',
     },
     {
+        shortForm: 'RUM',
+        regexForm: '(?<!\\w)RUM(?!\\w)',
+        rubyForm: '{RUM|ランクアップマジック}',
+    },
+    {
         shortForm: 'S',
         regexForm: '(?<!\\w)S(?!\\w)',
         rubyForm: '{S|シンクロ}',
@@ -634,6 +643,22 @@ export const ocgKeywordDataList = [
         rubyForm: '{以|い}{外|がい}',
     },
     {
+        shortForm: '使用',
+        rubyForm: '{使|し}{用|よう}',
+    },
+    {
+        shortForm: '存在',
+        rubyForm: '{存|そん}{在|ざい}',
+    },
+    {
+        shortForm: '最大',
+        rubyForm: '{最|さい}{大|だい}',
+    },
+    {
+        shortForm: '成功',
+        rubyForm: '{成|せい}{功|こう}',
+    },
+    {
         shortForm: '他',
         rubyForm: '{他|ほか}',
     },
@@ -648,6 +673,26 @@ export const ocgKeywordDataList = [
     {
         shortForm: '族',
         rubyForm: '{族|ぞく}',
+    },
+    {
+        shortForm: '数',
+        rubyForm: '{数|かず}',
+    },
+    {
+        shortForm: '体',
+        rubyForm: '{体|たい}',
+    },
+    {
+        shortForm: '限',
+        rubyForm: '{限|ゲン}',
+    },
+    {
+        shortForm: '置',
+        rubyForm: '{置|チ}',
+    },
+    {
+        shortForm: '受',
+        rubyForm: '{受|う}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

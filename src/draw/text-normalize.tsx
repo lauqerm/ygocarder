@@ -32,7 +32,7 @@ export const splitEffect = (effect: string, isNormal = false) => {
     } while (materialReplacement && material);
 
     let effectFlavorCondition = '';
-    const flavorConditionRegex = /(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*\([\w\W]+\))\s*$/m;
+    const flavorConditionRegex = /(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*⦉?\([\w\W]+\)⦊?)\s*$/m;
     const flavorCondition = flavorConditionRegex.exec(effect)?.[1];
     if (flavorCondition && isNormal) {
         effectFlavorCondition = flavorCondition;
@@ -67,6 +67,26 @@ const ocgNumberCircleMap: Record<string, string> = {
     '(１８)': '⑱',
     '(１９)': '⑲',
     '(２０)': '⑳',
+    '(1)': '①',
+    '(2)': '②',
+    '(3)': '③',
+    '(4)': '④',
+    '(5)': '⑤',
+    '(6)': '⑥',
+    '(7)': '⑦',
+    '(8)': '⑧',
+    '(9)': '⑨',
+    '(10)': '⑩',
+    '(11)': '⑪',
+    '(12)': '⑫',
+    '(13)': '⑬',
+    '(14)': '⑭',
+    '(15)': '⑮',
+    '(16)': '⑯',
+    '(17)': '⑰',
+    '(18)': '⑱',
+    '(19)': '⑲',
+    '(20)': '⑳',
 };
 export const normalizeCardText = (text: string, format: string, option?: { multiline?: boolean }) => {
     const { multiline = true } = option ?? {};
@@ -92,7 +112,7 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
         .replace(/--/g, '\u2014')                                   /** Chuyển cặp ký tự "--" thành em dash "—" */
         .replace(/● /g, '●')                                        /** Loại bỏ space nối liền bullet, vì space sau bullet là fixed space vẽ riêng */
         // Chuyển shorthand dạng (15) thành ký tự chữ số tròn tương ứng "⑮", trong OCG text
-        .replace(/(\([０-９]{1,2}\))/g, m => {
+        .replace(/(\([０-９0-9]{1,2}\))/g, m => {
             const correspondingCircleSymbol = ocgNumberCircleMap[m];
 
             return correspondingCircleSymbol ?? m;
@@ -142,7 +162,6 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
         .replaceAll('⦉⟭', '⟭⦉')
         .replaceAll('⟅⟆', '')
         .replaceAll('⦉⦊', '');
-    console.info('normalizeCardText:', text, '\n', textAfterNormalizeBlockWord, '\n', finalizedText);
 
     return finalizedText;
 };

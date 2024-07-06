@@ -72,6 +72,7 @@ export const drawLine = ({
         bulletSymbolWidth,
         iconSymbolWidth = bulletSymbolWidth,
         largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
+        overheadTextSpacing = DefaultFontSizeData.overheadTextSpacing,
     } = fontSizeData;
     const overheadTextGap = fontSize * LETTER_GAP_RATIO;
     const {
@@ -244,7 +245,10 @@ export const drawLine = ({
                         .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact' }).boundWidth)
                         .reduce((acc, cur) => acc + cur, 0);
                 }, 0);
-                const { headTextWidth, halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap });
+                const {
+                    headTextWidth,
+                    halfGap,
+                } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap, overheadTextSpacing });
                 const rightGap = halfGap, leftGap = halfGap;
                 /** Phần không gian mất đi do fragment âm vào gap phải của token trước (nếu có) */
                 const lostLeftWidth = getExtraLeftOffset(fragmentRightGap, leftGap);
@@ -303,6 +307,7 @@ export const drawLine = ({
                     headText, headTextLetterWidth,
                     footText, footTextWidth,
                     overheadTextGap,
+                    overheadTextSpacing,
                     xRatio,
                     format,
                     withFurigana,

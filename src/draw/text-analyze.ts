@@ -68,6 +68,7 @@ export const analyzeToken = ({
         wordLetterSpacing,
         bulletSymbolWidth,
         iconSymbolWidth = bulletSymbolWidth,
+        overheadTextSpacing = DefaultFontSizeData.overheadTextSpacing,
     } = fontSizeData;
     const overheadTextGap = fontSize * LETTER_GAP_RATIO;
     const {
@@ -166,7 +167,7 @@ export const analyzeToken = ({
                     .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact' }).boundWidth)
                     .reduce((acc, cur) => acc + cur, 0);
             }, 0);
-            const { halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap });
+            const { halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap, overheadTextSpacing });
             const leftGap = getExtraLeftWidth(currentRightGap, halfGap);
             const rightGap = halfGap;
             if (debug) console.info(
@@ -308,7 +309,7 @@ export const analyzeLine = ({
     /** TCG không chia space thừa vào line cuối, OCG thì có, nhưng chỉ chia nếu phần space bonus không quá lớn */
     const extraSpace = isLast
         ? format === 'tcg'
-            ? expectedSpaceWidth > 1.600 ? 0 : expectedSpaceWidth
+            ? expectedSpaceWidth > 1.500 ? 0 : expectedSpaceWidth
             : expectedSpaceWidth > 3.200 ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 

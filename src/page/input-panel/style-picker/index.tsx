@@ -25,12 +25,14 @@ export type StylePicker = {
     frameInfo?: FrameInfo,
     defaultType: NameStyleType,
     defaultValue: Partial<NameStyle>,
+    showExtraDecorativeOption: boolean,
     onChange: (type: NameStyleType, style: Partial<NameStyle>) => void,
 };
 export const StylePicker = React.memo(forwardRef(({
     frameInfo,
     defaultType,
     defaultValue,
+    showExtraDecorativeOption,
     onChange: undebouncedOnChange,
 }: StylePicker, ref: ForwardedRef<StylePickerRef>) => {
     const [type, setType] = useState(defaultType);
@@ -185,7 +187,7 @@ export const StylePicker = React.memo(forwardRef(({
                                     Color <CaretDownOutlined />
                                 </StyledPickerButton>
                             </Popover>
-                            <Popover key="shadow-picker"
+                            {showExtraDecorativeOption && <Popover key="shadow-picker"
                                 trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
                                 content={<div className="overlay-event-absorber">
@@ -266,7 +268,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 >
                                     Shadow <CaretDownOutlined />
                                 </StyledPickerButton>
-                            </Popover>
+                            </Popover>}
                             <Popover key="outline-picker"
                                 trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
@@ -357,7 +359,7 @@ export const StylePicker = React.memo(forwardRef(({
                                     Outline <CaretDownOutlined />
                                 </StyledPickerButton>
                             </Popover>
-                            <Popover key="gradient-picker"
+                            {showExtraDecorativeOption && <Popover key="gradient-picker"
                                 trigger={['click']}
                                 overlayClassName="input-overlay style-picker-overlay"
                                 content={<div className="overlay-event-absorber">
@@ -386,8 +388,8 @@ export const StylePicker = React.memo(forwardRef(({
                                 >
                                     Gradient <CaretDownOutlined />
                                 </StyledPickerButton>
-                            </Popover>
-                            <Popover key="pattern-picker"
+                            </Popover>}
+                            {showExtraDecorativeOption && <Popover key="pattern-picker"
                                 trigger={['click']}
                                 overlayClassName="input-overlay pattern-picker-overlay"
                                 content={<div className="overlay-event-absorber">
@@ -426,8 +428,8 @@ export const StylePicker = React.memo(forwardRef(({
                                 >
                                     Pattern
                                 </StyledPickerButton>
-                            </Popover>
-                            <Popover key="font-picker"
+                            </Popover>}
+                            {showExtraDecorativeOption && <Popover key="font-picker"
                                 trigger={['click']}
                                 overlayClassName="input-overlay font-picker-overlay"
                                 content={<div className="overlay-event-absorber">
@@ -450,7 +452,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 <StyledPickerButton className="picker-dropdown font-picker-dropdown">
                                     Font
                                 </StyledPickerButton>
-                            </Popover>
+                            </Popover>}
                         </div>
                     </label>
                 </div>
@@ -458,5 +460,6 @@ export const StylePicker = React.memo(forwardRef(({
         </span>
     </div>;
 }), (l, r) => {
-    return l.frameInfo === r.frameInfo;
+    return l.frameInfo === r.frameInfo
+        && l.showExtraDecorativeOption === r.showExtraDecorativeOption;
 });

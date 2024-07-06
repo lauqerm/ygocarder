@@ -2,8 +2,9 @@ import { CardOpacity, getDefaultCardOpacity } from './canvas';
 import { CondenseType } from './font-data-effect';
 import { getDefaultNameStyle, NameStyle, NameStyleType } from './name-preset';
 
-export type Card = typeof defaultCard;
-export const defaultCard = {
+export type Card = ReturnType<typeof getDefaultCard>;
+export const getDefaultCard = () => ({
+    version: 0,
     format: 'tcg',
     frame: 'fusion',
     foil: 'normal' as Foil,
@@ -31,7 +32,7 @@ export const defaultCard = {
         '9'
     ] as string[],
     isPendulum: false,
-    pendulumFrame: 'spell',
+    pendulumFrame: 'auto',
     pendulumEffect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
     pendulumScaleRed: '4',
     pendulumScaleBlue: '4',
@@ -51,8 +52,52 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     isFirstEdition: true,
     isSpeedCard: false,
     isDuelTerminalCard: false,
-    creator: '©2020 Studio Dice/SHUEISHA TV TOKYO, KONAMI',
-};
+    creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+});
+export const getEmptyCard = (): Card => ({
+    version: 0,
+    format: 'tcg',
+    frame: 'effect',
+    foil: 'normal',
+    opacity: getDefaultCardOpacity(),
+    finish: [],
+    artFinish: 'normal',
+    name: '',
+    nameStyleType: 'auto',
+    nameStyle: getDefaultNameStyle(),
+    attribute: 'LIGHT',
+    subFamily: 'NO ICON',
+    star: 6,
+    picture: 'https://i.imgur.com/h5kXZeC.png',
+    pictureCrop: {
+        x: 0,
+        y: 12,
+        width: 269,
+        height: 269,
+        unit: 'px',
+        aspect: 1,
+    },
+    linkMap: [],
+    isPendulum: false,
+    pendulumFrame: 'auto',
+    pendulumEffect: '',
+    pendulumScaleRed: '4',
+    pendulumScaleBlue: '4',
+    typeAbility: [],
+    effectStyle: {
+        condenseTolerant: 'strict',
+    },
+    effect: '',
+    setId: 'YGOC-EN001',
+    atk: '0',
+    def: '0',
+    passcode: '',
+    sticker: 'no-sticker',
+    isFirstEdition: false,
+    isSpeedCard: false,
+    isDuelTerminalCard: false,
+    creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+});
 
 export const OpacityList = [
     { value: 'body' as const, label: 'Card' },
@@ -63,6 +108,7 @@ export const OpacityList = [
 
 export type FrameInfo = {
     name: string,
+    edition: 'normal' | 'extendend',
     labelColor: string,
     labelBackgroundColor?: string,
     labelBackgroundImage?: string,
@@ -71,101 +117,121 @@ export const frameMap: Record<string, FrameInfo> = {
     'normal': {
         name: 'normal',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#c49c5e',
     },
     'effect': {
         name: 'effect',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#b96c49',
     },
     'fusion': {
         name: 'fusion',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#8948a4',
     },
     'synchro': {
         name: 'synchro',
         labelColor: '#000',
+        edition: 'normal',
         labelBackgroundColor: '#efefef',
     },
     'xyz': {
         name: 'xyz',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#000000',
     },
     'link': {
         name: 'link',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#0c8ac6',
     },
     'ritual': {
         name: 'ritual',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#5e85c9',
     },
     'spell': {
         name: 'spell',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#1b8f83',
     },
     'trap': {
         name: 'trap',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#c32a8c',
     },
     'token': {
         name: 'token',
         labelColor: '#ffffff',
+        edition: 'normal',
         labelBackgroundColor: '#6f6c6b',
     },
     'dark-synchro': {
         name: 'dark-synchro',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#4d4543',
     },
     'obelisk': {
         name: 'obelisk',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#515eb0',
     },
     'osiris': {
         name: 'osiris',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#bd5044',
     },
     'ra': {
         name: 'ra',
         labelColor: '#000',
+        edition: 'extendend',
         labelBackgroundColor: '#b9ad34',
     },
     'raviel': {
         name: 'raviel',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#2b344e',
     },
     'uria': {
         name: 'uria',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#623320',
     },
     'hamon': {
         name: 'hamon',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#534a19',
     },
     'lg-dragon': {
         name: 'lg-dragon',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#4e84a4',
     },
     'speed-skill': {
         name: 'speed-skill',
         labelColor: '#ffffff',
+        edition: 'extendend',
         labelBackgroundColor: '#199cd5',
     },
     'zarc': {
         name: 'zarc',
         labelColor: '#000',
+        edition: 'extendend',
         labelBackgroundImage: 'linear-gradient(90deg, rgba(185,108,73,1) 23%, rgba(137,72,164,1) 27%, rgba(137,72,164,1) 48%, rgba(239,239,239,1) 52%, rgba(239,239,239,1) 73%, rgba(0,0,0,1) 77%)',
     },
 };
