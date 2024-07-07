@@ -23,7 +23,7 @@ export const DefaultFontSizeData = {
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
     overheadFontRatio: 0.5,
-    overheadTextSpacing: -1.5
+    overheadTextSpacing: -2.5
 };
 
 export type MetricMethod = 'standard' | 'compact' | 'creator';

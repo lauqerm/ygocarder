@@ -117,7 +117,7 @@ export type TextDrawer = (props: {
     scaledBaseline: number,
 }) => void;
 /** Vẽ ký tự lẻ, hàm này chịu ảnh hưởng bởi transform ratio. */
-export const drawLetterV2 = ({
+export const drawLetter = ({
     ctx,
     baseline,
     edge,

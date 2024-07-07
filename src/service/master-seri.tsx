@@ -39,6 +39,7 @@ import {
     ArtFinishMap,
     frameMap,
     vanillaMonsterFontData,
+    NameStyle,
 } from 'src/model';
 import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
 
@@ -327,7 +328,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     /** Vì ảnh tràn viền mới vẽ sẽ đè lên name box, ta vẽ lại ở đây */
                     ctx.globalAlpha = opacityName / 100;
                     await drawFrom(ctx, `/asset/image/frame/frame-name-box-${trueFrame}.png`, 0, 0);
-    
+
                     ctx.globalAlpha = 1;
 
                     /** Vẽ background cho card text và pendulum text */
@@ -592,22 +593,35 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 ctx.clearRect(0, 0, CanvasWidth, 148.125);
                 ctx.textAlign = 'left';
 
-                const regionalStyle = nameStyleType === 'auto'
+                const contextualStyle = {
+                    font: isSpeedSkill
+                        ? 'Arial'
+                        : format === 'ocg' ? 'OCG' : 'Default',
+                    fillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                    headTextFillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                };
+                const regionalStyle: Partial<NameStyle> = nameStyleType === 'auto'
                     ? foil !== 'normal'
-                        ? PresetNameStyleMap[foil ?? 'commonB'].value
+                        ? {
+                            ...contextualStyle,
+                            ...PresetNameStyleMap[foil ?? 'commonB'].value,
+                        }
                         : frame === 'zarc'
                             ? PresetNameStyleMap['animeGold'].value
                             : {
                                 ...defaultTextStyle,
-                                fillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
-                                headTextFillStyle: (!isMonster || lightHeader) ? '#ffffff' : '#000000',
+                                ...contextualStyle,
                             }
                     : nameStyleType === 'predefined'
-                        ? PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value
-                        : nameStyle;
+                        ? {
+                            ...contextualStyle,
+                            ...PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value,
+                        }
+                        : {
+                            ...contextualStyle,
+                            ...nameStyle,
+                        };
 
-                if (format === 'ocg' && nameStyleType !== 'custom') regionalStyle.font = 'OCG';
-                if (nameStyleType === 'auto' && isSpeedSkill) regionalStyle.font = 'Arial';
                 const edge = format === 'tcg' ? 60 : 68;
                 const lineWidth = attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 686 : 678)

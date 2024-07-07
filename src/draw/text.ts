@@ -27,7 +27,7 @@ import {
     getTextWorker,
 } from './text-util';
 import { analyzeToken } from './text-analyze';
-import { TextDrawer, drawLetterV2, getLetterWidth } from './letter';
+import { TextDrawer, drawLetter, getLetterWidth } from './letter';
 import { fillHeadText } from './text-overhead';
 
 export const drawLine = ({
@@ -183,7 +183,7 @@ export const drawLine = ({
                     internalTokenEdge => {
                         return withLargerText(
                             internalFragmentTrueEdge => {
-                                drawLetterV2({
+                                drawLetter({
                                     ...drawLetterParameter,
                                     letter: fragment,
                                     edge: internalFragmentTrueEdge * xRatio,
@@ -210,7 +210,7 @@ export const drawLine = ({
                     internalTokenEdge => {
                         return withOrdinalFont(
                             internalFragmentTrueEdge => {
-                                drawLetterV2({
+                                drawLetter({
                                     ...drawLetterParameter,
                                     letter: fragment,
                                     edge: internalFragmentTrueEdge * xRatio,
@@ -277,20 +277,15 @@ export const drawLine = ({
 
                 for (let cnt3 = 0; cnt3 < footText.length; cnt3++) {
                     const footLetter = footText[cnt3];
-                    const nextFootLetter = footText[cnt3 + 1] ?? nextFragment;
-                    /** Ta assume cụm ruby không lồng nhau */
-                    const { totalWidth } = analyzeToken({
-                        token: footLetter, nextToken: nextFootLetter,
-                        previousTokenGap: 0,
-                        ...analyzeTokenParameter,
-                    });
+                    const letterMetric = getLetterWidth({ ctx, letter: footLetter, format, metricMethod, lastOfLine: nextFragment === undefined });
 
-                    drawLetterV2({
+                    drawLetter({
                         ...drawLetterParameter,
                         letter: footLetter,
                         edge: footTextFragmentEdge,
+                        letterMetric,
                     });
-                    footTextFragmentEdge += totalWidth * xRatio;
+                    footTextFragmentEdge += letterMetric.boundWidth * letterSpacingRatio * xRatio;
                 }
 
                 const currentFillStyle = ctx.fillStyle;
@@ -335,7 +330,7 @@ export const drawLine = ({
                     if (SquareBracketLetterRegex.test(currentLetter)) {
                         withSmallerText(
                             (innerEdge, innerBaseline, innerYRatio) => {
-                                drawLetterV2({
+                                drawLetter({
                                     ...drawLetterParameter,
                                     letter: currentLetter,
                                     edge: innerEdge / innerYRatio,
@@ -352,7 +347,7 @@ export const drawLine = ({
                             : 0;
                         withSmallerText(
                             (innerEdge, innerBaseline, innerYRatio) => {
-                                drawLetterV2({
+                                drawLetter({
                                     ...drawLetterParameter,
                                     letter: currentLetter,
                                     edge: innerEdge / innerYRatio + letterOffset,
@@ -366,7 +361,7 @@ export const drawLine = ({
                     } else if (TCGNonSymbolRegex.test(currentLetter) && format === 'tcg') {
                         withSymbolFont(
                             (innerEdge) => {
-                                drawLetterV2({
+                                drawLetter({
                                     ...drawLetterParameter,
                                     letter: currentLetter,
                                     edge: innerEdge,
@@ -375,7 +370,7 @@ export const drawLine = ({
                             currentPosition,
                         );
                     } else {
-                        drawLetterV2({
+                        drawLetter({
                             ...drawLetterParameter,
                             letter: currentLetter,
                             edge: currentPosition,
@@ -395,7 +390,7 @@ export const drawLine = ({
                 fragmentEdge += previousGapOffset;
                 fragmentEdge += withSymbolFont(
                     tokenEdge => {
-                        drawLetterV2({ ...drawLetterParameter, letter: fragment, edge: tokenEdge });
+                        drawLetter({ ...drawLetterParameter, letter: fragment, edge: tokenEdge });
 
                         return ctx.measureText(fragment).width * letterSpacingRatio;
                     },
@@ -408,7 +403,7 @@ export const drawLine = ({
                 fragmentEdge += previousGapOffset;
                 const letterMetric = getLetterWidth({ ctx, letter: fragment, format, metricMethod, lastOfLine: nextFragment === undefined });
 
-                drawLetterV2({ ...drawLetterParameter, letter: fragment, edge: fragmentEdge, letterMetric });
+                drawLetter({ ...drawLetterParameter, letter: fragment, edge: fragmentEdge, letterMetric });
                 fragmentEdge += letterMetric.boundWidth * letterSpacingRatio * xRatio;
                 if (
                     (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment)))
@@ -426,13 +421,6 @@ export const drawLine = ({
         // drawMarker({ ctx, baseline, trueEdge: tokenEdge, width: 64 * xRatio, xRatio, offset: (tokenCnt * 2 + 1) * 0.5 });
         tokenEdge += totalTokenWidth * xRatio + accumulatedSpace + indent;
     }
-    // console.table(
-    //     tokenList.join('').split('').map(e => {
-    //         const metric = ctx.measureText(e);
-    //         metric.letter = e;
-    //         return metric;
-    //     }),
-    // );
 
     return tokenEdge;
 };

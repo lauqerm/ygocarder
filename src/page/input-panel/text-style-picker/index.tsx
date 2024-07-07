@@ -18,23 +18,25 @@ import {
 } from './style-picker.styled';
 import './style-picker.scss';
 
-export type StylePickerRef = {
+export type TextStylePickerRef = {
     setValue: (value: Partial<NameStyle>) => void,
 };
-export type StylePicker = {
+export type TextStylePicker = {
+    defaultFont: string,
     frameInfo?: FrameInfo,
     defaultType: NameStyleType,
     defaultValue: Partial<NameStyle>,
     showExtraDecorativeOption: boolean,
     onChange: (type: NameStyleType, style: Partial<NameStyle>) => void,
 };
-export const StylePicker = React.memo(forwardRef(({
+export const TextStylePicker = React.memo(forwardRef(({
+    defaultFont,
     frameInfo,
     defaultType,
     defaultValue,
     showExtraDecorativeOption,
     onChange: undebouncedOnChange,
-}: StylePicker, ref: ForwardedRef<StylePickerRef>) => {
+}: TextStylePicker, ref: ForwardedRef<TextStylePickerRef>) => {
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
     const [requestSendStyle, requestSendStyleSignal] = useRefresh();
@@ -101,6 +103,22 @@ export const StylePicker = React.memo(forwardRef(({
                         className={`ant-radio-wrapper ${isStylePredefined ? 'ant-radio-wrapper-checked' : ''}`}
                         onClick={() => {
                             setType('predefined');
+                            const key = value.preset;
+                            setValue(cur => ({
+                                ...cur,
+                                preset: key,
+                                font: defaultFont,
+                                ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
+                            }));
+                            onChange(
+                                'predefined',
+                                {
+                                    ...value,
+                                    preset: key,
+                                    font: defaultFont,
+                                    ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
+                                },
+                            );
                         }}
                     >
                         <Popover
@@ -111,10 +129,12 @@ export const StylePicker = React.memo(forwardRef(({
                                     {PresetNameStyleList.map(({ key, image, label }) => {
                                         return <StyledPredefinedOption key={key}
                                             className={`preset-item ${value.preset === key && isStylePredefined ? 'menu-active' : ''}`}
-                                            onClick={() => {
+                                            onClick={e => {
+                                                e.stopPropagation();
                                                 setValue(cur => ({
                                                     ...cur,
                                                     preset: key,
+                                                    font: defaultFont,
                                                     ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
                                                 }));
                                                 onChange(
@@ -122,6 +142,7 @@ export const StylePicker = React.memo(forwardRef(({
                                                     {
                                                         ...value,
                                                         preset: key,
+                                                        font: defaultFont,
                                                         ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
                                                     },
                                                 );
@@ -429,7 +450,7 @@ export const StylePicker = React.memo(forwardRef(({
                                     Pattern
                                 </StyledPickerButton>
                             </Popover>}
-                            {showExtraDecorativeOption && <Popover key="font-picker"
+                            <Popover key="font-picker"
                                 trigger={['click']}
                                 overlayClassName="input-overlay font-picker-overlay"
                                 content={<div className="overlay-event-absorber">
@@ -452,7 +473,7 @@ export const StylePicker = React.memo(forwardRef(({
                                 <StyledPickerButton className="picker-dropdown font-picker-dropdown">
                                     Font
                                 </StyledPickerButton>
-                            </Popover>}
+                            </Popover>
                         </div>
                     </label>
                 </div>
@@ -461,5 +482,6 @@ export const StylePicker = React.memo(forwardRef(({
     </div>;
 }), (l, r) => {
     return l.frameInfo === r.frameInfo
+        && l.defaultFont === r.defaultFont
         && l.showExtraDecorativeOption === r.showExtraDecorativeOption;
 });

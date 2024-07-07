@@ -433,66 +433,70 @@ export const ocgKeywordDataList = [
         shortForm: 'サイキック',
         rubyForm: 'サイキック',
     },
-    // {
-    //     shortForm: '捨てる',
-    //     rubyForm: '{捨|す}てる',
-    // },
-    // {
-    //     shortForm: '加える',
-    //     rubyForm: '{加|くわ}える',
-    // },
-    // {
-    //     shortForm: 'から離れる',
-    //     rubyForm: 'から{離|はな}れる',
-    // },
-    // {
-    //     shortForm: '与える',
-    //     rubyForm: '{与|あた}える',
-    // },
-    // {
-    //     shortForm: '重ねる',
-    //     rubyForm: '{重|かさ}ねる',
-    // },
-    // {
-    //     shortForm: '取り除く',
-    //     rubyForm: '{取|と}り{除|ぞ}く',
-    // },
-    // {
-    //     shortForm: '見せる',
-    //     rubyForm: '{見|み}せる',
-    // },
-    // {
-    //     shortForm: '払う',
-    //     rubyForm: '{払|はら}う',
-    // },
-    // {
-    //     shortForm: '行う',
-    //     rubyForm: '{行|おこな}う',
-    // },
-    // {
-    //     shortForm: '選ぶ',
-    //     rubyForm: '{選|えら}ぶ',
-    // },
-    // {
-    //     shortForm: '対す',
-    //     rubyForm: '{対|たい}す',
-    // },
-    // {
-    //     shortForm: '戻す',
-    //     rubyForm: '{戻|もど}す',
-    // },
-    // {
-    //     shortForm: '送る',
-    //     rubyForm: '{送|おく}る',
-    // },
-    // {
-    //     shortForm: '置く',
-    //     rubyForm: '{置|お}く',
-    // },
-    // {
-    //     shortForm: 'めくる',
-    //     rubyForm: 'めくる',
-    // },
+    {
+        shortForm: '捨てる',
+        rubyForm: '{捨|す}てる',
+    },
+    {
+        shortForm: '加える',
+        rubyForm: '{加|くわ}える',
+    },
+    {
+        shortForm: 'から離れる',
+        rubyForm: 'から{離|はな}れる',
+    },
+    {
+        shortForm: '与える',
+        rubyForm: '{与|あた}える',
+    },
+    {
+        shortForm: '重ねる',
+        rubyForm: '{重|かさ}ねる',
+    },
+    {
+        shortForm: '取り除く',
+        rubyForm: '{取|と}り{除|ぞ}く',
+    },
+    {
+        shortForm: '取り除い',
+        rubyForm: '{取|と}り{除|ぞ}い',
+    },
+    {
+        shortForm: '見せる',
+        rubyForm: '{見|み}せる',
+    },
+    {
+        shortForm: '払う',
+        rubyForm: '{払|はら}う',
+    },
+    {
+        shortForm: '行う',
+        rubyForm: '{行|おこな}う',
+    },
+    {
+        shortForm: '選ぶ',
+        rubyForm: '{選|えら}ぶ',
+    },
+    {
+        shortForm: '対す',
+        rubyForm: '{対|たい}す',
+    },
+    {
+        shortForm: '戻す',
+        rubyForm: '{戻|もど}す',
+    },
+    {
+        shortForm: '送る',
+        rubyForm: '{送|おく}る',
+    },
+    {
+        shortForm: '置く',
+        rubyForm: '{置|お}く',
+    },
+    {
+        shortForm: 'めくる',
+        rubyForm: 'めくる',
+    },
     {
         shortForm: 'アドバンス',
         rubyForm: 'アドバンス',
@@ -577,10 +581,10 @@ export const ocgKeywordDataList = [
         regexForm: '(?<!\\w)L(?!\\w)',
         rubyForm: '{L|リンク}',
     },
-    { /** @todo Fix this duplicate */
+    {
         shortForm: 'P',
         regexForm: '(?<!\\w)P(?!\\w)',
-        rubyForm: '{P|ペンデュラムペンデュラム}',
+        rubyForm: '{P|ペンデュラム}',
     },
     {
         shortForm: 'リンク',
@@ -609,6 +613,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: 'サイキック',
         rubyForm: 'サイキック',
+    },
+    {
+        shortForm: '重ねて',
+        rubyForm: '{重|かさ}ねて',
     },
     {
         shortForm: '魔法',
@@ -659,6 +667,14 @@ export const ocgKeywordDataList = [
         rubyForm: '{成|せい}{功|こう}',
     },
     {
+        shortForm: '自身',
+        rubyForm: '{自|じ}{身|しん}',
+    },
+    {
+        shortForm: '上に',
+        rubyForm: '{上|うえ}に',
+    },
+    {
         shortForm: '他',
         rubyForm: '{他|ほか}',
     },
@@ -693,6 +709,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '受',
         rubyForm: '{受|う}',
+    },
+    {
+        shortForm: '枚',
+        rubyForm: '{枚|まい}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

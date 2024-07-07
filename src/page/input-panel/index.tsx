@@ -1,8 +1,8 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Popover } from 'antd';
-import { Card, CardOpacity, CondenseType, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate } from '../../model';
+import { Card, CardOpacity, CondenseType, NameFontDataMap, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate } from '../../model';
 import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
-import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro } from '../../util';
+import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill } from '../../util';
 import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
 import {
@@ -18,7 +18,7 @@ import {
     getFrameButtonList
 } from './const';
 import { CharPicker } from './char-picker';
-import { StylePicker, StylePickerRef } from './style-picker';
+import { TextStylePicker, TextStylePickerRef } from './text-style-picker';
 import { CheckboxTrain, RadioTrain } from './input-train';
 import { ImageCropperRef } from '../../component/card-picture';
 import { Explanation } from 'src/component/explanation';
@@ -72,7 +72,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const { allowHotkey, showCreativeOption, showExtraDecorativeOption } = setting;
 
     const [isMirrorScale, setMirrorScale] = useState(true);
-    const stylePickerRef = useRef<StylePickerRef>(null);
+    const stylePickerRef = useRef<TextStylePickerRef>(null);
     const imageCropperRef = useRef<ImageCropperRef>(null);
 
     const {
@@ -95,6 +95,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
+    const isSpeedSkill = checkSpeedSkill(currentCard);
     const isDarkSynchro = checkDarkSynchro(currentCard);
     const [displayTypeAbility, setDisplayTypeAbility] = useState(typeAbility.join('/'));
     const [displayName, setDisplayName] = useState(name);
@@ -377,7 +378,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     value={setId}
                 />
             </div>
-            <StylePicker ref={stylePickerRef}
+            <TextStylePicker ref={stylePickerRef}
+                defaultFont={NameFontDataMap[
+                    isSpeedSkill
+                        ? 'Arial'
+                        : format === 'ocg' ? 'OCG' : 'Default'
+                ].value}
                 frameInfo={frameMap[frame as keyof typeof frameMap]}
                 defaultType={nameStyleType}
                 defaultValue={nameStyle}

@@ -488,7 +488,8 @@ function App() {
                     }}
                     onTainted={() => setTainted(true)}
                 >
-                    <AppHeader /><br />
+                    <AppHeader />
+                    <br />
                     <Affiliation />
                 </CardInputPanel>}
             </div>
