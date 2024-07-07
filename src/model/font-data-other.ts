@@ -115,12 +115,13 @@ export const ocgTypeAbilityFontData: FontData = {
             fontSize: 48,
             lineHeight: 48,
             lineCount: 1,
+            iconSymbolWidth: 45,
             overheadFontRatio: 0.3,
             squareBracketRatio: 1.02501,
         },
     ],
 };
-export const TypeAbilityFontData: Record<string, FontData> = {
+export const getTypeAbilityFontData = (): Record<string, FontData> => ({
     tcg: tcgTypeAbilityFontData,
     ocg: ocgTypeAbilityFontData,
-};
+});

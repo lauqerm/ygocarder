@@ -98,7 +98,7 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
     }
     const textAfterJoinRow = textAfterLetterSwap
         // Văn bản Nhật thường tự xuống dòng follow hai ký tự "、" và "。" này, nên ta tự ghép dòng nếu cần.
-        .replace(/(､|｡|。|、)\n/g, '$1');
+        .replace(/(､|｡|。|、)\n(?!●)/g, '$1');
     const textAfterSplitBlockRow = multiline
         ? textAfterJoinRow
             /** Chuyển định dạng block row (dòng nguyên) thành ký tự ít phổ biến hơn, vì các card như "Qliphort Scout" vẫn sử dụng cặp ngoặc [ ]. */

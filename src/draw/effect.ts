@@ -38,9 +38,9 @@ export const drawEffect = (
     const tolerantPerSentence: Record<string, number> = format === 'tcg'
         ? CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
         : {
-            '1': 0,
-            '2': 0,
-            '3': 0,
+            '1': 800,
+            '2': 800,
+            '3': 800,
         };
     const {
         body: effectBody,
@@ -65,7 +65,7 @@ export const drawEffect = (
             lineHeight,
             lineCount,
         } = fontSizeData;
-        const { trueEdge, trueWidth: trueWidthStart, trueBaseline: trueBaselineStart } = sizeList[effectSizeLevel];
+        const { trueEdge, trueWidth: trueWidthStart, trueBaseline: trueBaselineStart } = sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1];
         const trueWidth = isNormal ? trueWidthStart - 2 : trueWidthStart;
 
         const currentFont = createFontGetter();

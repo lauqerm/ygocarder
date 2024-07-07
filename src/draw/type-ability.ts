@@ -1,4 +1,4 @@
-import { TypeAbilityCoordinateMap, TypeAbilityFontData } from 'src/model';
+import { FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData } from 'src/model';
 import { condense, createFontGetter } from 'src/util';
 import { tokenizeText } from './text-util';
 import { drawLine } from './text';
@@ -14,17 +14,20 @@ export const drawMonsterType = ({
     ctx,
     value,
     format,
+    metricMethod,
     size,
     alignment,
 }: {
     ctx: CanvasRenderingContext2D,
     value: string,
     format: string,
+    metricMethod?: FontData['metricMethod'],
     size: 'small' | 'medium' | 'large',
     alignment: 'left' | 'right',
 }) => {
     const { trueEdge, trueBaseline, trueWidth } = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
-    const fontData = TypeAbilityFontData[format];
+    const fontData = getTypeAbilityFontData()[format];
+    if (metricMethod) fontData.metricMethod = metricMethod;
     const { font } = fontData;
     const fontLevel = sizeMap[size];
     const fontSizeData = fontData.fontList[fontLevel];

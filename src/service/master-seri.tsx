@@ -562,7 +562,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 return new Promise(resolve => resolve(true));
             };
         }
-    }, [active, isDarkSynchro, isLink, isMonster, isSpeedSkill, isXyz, star, subFamily, subFamilyCanvas, loopFinish]);
+    }, [active, format, isDarkSynchro, isLink, isMonster, isSpeedSkill, isXyz, star, subFamily, subFamilyCanvas, loopFinish]);
 
     /** DRAW SCALE */
     useEffect(() => {
@@ -769,6 +769,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 format,
                 size,
                 value: normalizedTypeAbilityText,
+                metricMethod: !isMonster ? 'compact' : undefined,
                 alignment,
             });
         }

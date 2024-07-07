@@ -174,6 +174,7 @@ export const ocgSTFontData: FontData = {
     metricMethod: 'compact',
     fontList: [
         { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7 },
+        { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 8 },
     ]
 };
 export const effectSTFontData: Record<string, FontData> = {
