@@ -28,7 +28,7 @@ import {
     getArtCanvasCoordinate,
     getDefaultCardOpacity,
     getDefaultNameStyle,
-    iconList,
+    iconValueList,
     monsterCoordinateData,
     pendulumFontList,
     pendulumSizeList,
@@ -546,7 +546,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     );
                 } else if (!isMonster && !isSpeedSkill) {
                     const normalizedSubFamily = subFamily.toUpperCase();
-                    const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconList.includes(normalizedSubFamily);
+                    const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconValueList.includes(normalizedSubFamily);
 
                     return hasSTIcon
                         ? drawWithSizeFrom(

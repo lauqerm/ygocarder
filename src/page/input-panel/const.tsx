@@ -1,5 +1,6 @@
 import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap, NameFontDataMap } from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
+import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import './input-panel.scss';
 
@@ -51,17 +52,15 @@ export const ArtFinishButtonList = [
     })),
 ];
 
-export const getFrameButtonList = () => frameList.map(({ labelColor, name, labelBackgroundColor, labelBackgroundImage, edition }) => ({
-    label: name.replaceAll('-', ' '),
+
+export const getFrameButtonList = () => frameList.map(({ name, labelBackgroundColor, labelBackgroundColorList, edition }) => ({
+    label: <FrameInfoBlock
+        labelBackgroundColor={labelBackgroundColor}
+        labelBackgroundColorList={labelBackgroundColorList}
+        name={name}
+    />,
     value: name,
     edition,
-    props: {
-        style: {
-            background: labelBackgroundColor,
-            backgroundImage: labelBackgroundImage,
-            color: labelColor,
-        } as React.CSSProperties,
-    }
 }));
 
 export const getAttributeList = (format: string) => attributeList.map(({ name }) => ({
@@ -71,9 +70,9 @@ export const getAttributeList = (format: string) => attributeList.map(({ name })
     value: name,
 }));
 
-export const STIconButtonList = iconList.map(entry => ({
-    label: entry,
-    value: entry,
+export const STIconButtonList = iconList.map(({ label, value }) => ({
+    label,
+    value,
 }));
 
 export const StarButtonList = [...Array(14)].map((e, index) => ({ label: index, value: index }));

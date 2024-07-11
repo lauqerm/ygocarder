@@ -42,7 +42,7 @@
 	.custom-style-picker {
 		background-color: #4e4e53;
 		position: relative;
-		border: 1px solid #222;
+		border: 1px solid var(--sub-level-1);
 		border-radius: 2px;
 		min-width: 247px;
 		h2,
@@ -128,12 +128,6 @@
 				}
 				.ant-slider {
 					margin: 2px;
-				}
-				.ant-slider-handle {
-					border-color: #1890ff;
-				}
-				.ant-slider-track {
-					background-color: #1890ff;
 				}
 			}
 		}

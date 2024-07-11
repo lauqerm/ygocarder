@@ -273,7 +273,8 @@ export const drawLine = ({
                             ? (vacantSpace - footTextWidth) / 2
                             : lostLeftWidth * -1) * xRatio
                 );
-                previousTokenVacantSpace = rightGap > 0 ? rightGap - lostRightWidth : 0;
+                let expectedTokenVacantSpace = rightGap > 0 ? Math.min(fontSize / 3, rightGap - lostRightWidth) : 0;
+                previousTokenVacantSpace = expectedTokenVacantSpace < fontSize / 3.75 ? 0 : expectedTokenVacantSpace;
 
                 for (let cnt3 = 0; cnt3 < footText.length; cnt3++) {
                     const footLetter = footText[cnt3];

@@ -5,12 +5,12 @@
     margin-left: 5px;
     width: 24px;
     height: 24px;
-    border: 1px solid #222;
-    background-color: var(--main-button);
+    border: 1px solid var(--sub-level-1);
+    background-color: var(--main-level-4);
     border-radius: 4px;
-    box-shadow: 0 0 3px 0 #333;
+    box-shadow: 0 0 2px 0 #333;
 	cursor: pointer;
 	&:hover {
-		background-color: var(--sub-button);
+		background-color: var(--sub-level-4);
 	}
 }

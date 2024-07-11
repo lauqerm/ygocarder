@@ -122,7 +122,7 @@ export const getHeadTextWidth = ({
     debug?: string,
 }) => {
     const condenseHeadText = headTextLetterWidth / footTextWidth;
-    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? overheadTextSpacing : overheadTextSpacing * 4/3;
+    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? overheadTextSpacing : overheadTextSpacing * 5/3;
     const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
     const alignSpaceAroundLetterSpacing = (footTextWidth - headTextLetterWidth) / headText.length;
     const alignSpaceAroundHeadTextWidth = headTextLetterWidth + alignSpaceAroundLetterSpacing * (headText.length - 1);

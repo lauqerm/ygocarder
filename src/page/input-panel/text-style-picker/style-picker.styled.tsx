@@ -1,16 +1,25 @@
 import { StyledDropdown } from 'src/component';
 import styled from 'styled-components';
 
-export const StyledPickerButton = styled.div<{ $active?: boolean }>`
-    background-color: var(--main-button);
-    ${({ $active }) => $active ? 'border: 1px solid #1890ff;' : 'border: 1px solid #222222;'}
+export const StyledPickerButton = styled.div<{ $active?: boolean, $softMode: boolean }>`
+    background-color: var(--main-level-4);
+    ${({ $active }) => $active ? 'border: 1px solid var(--main-active);' : 'border: 1px solid var(--sub-level-1);'}
 	padding: 1px 4px;
 	margin: -2px 0;
 	margin-left: 5px;
 	border-radius: 4px;
-    box-shadow: 0 0 2px 0 #333;
+    ${({ $softMode, $active }) => {
+        return $softMode
+            ? `
+                border: 1px solid var(--main-level-4);
+                ${$active ? 'outline: 1px solid var(--main-active);' : ''}
+            `
+            : `
+                box-shadow: 0 0 2px 0 #333;
+            `;
+    }}
 	&:hover {
-		background-color: var(--sub-button);
+		background-color: var(--sub-level-4);
 	}
 `;
 
@@ -28,20 +37,20 @@ export const StyledPatternOption = styled.div`
     &:not(.menu-off) {
         min-height: 23.2px;
         &.menu-active {
-            outline: 2px solid #1890ff;
+            outline: 2px solid var(--main-active);
             &:hover {
-                outline: 2px solid #2badea;
+                outline: 2px solid var(--sub-active);
             }
         }
         :hover {
-            outline: 2px solid #2badea;
+            outline: 2px solid var(--sub-active);
         }
     }
     &.menu-off {
         &:hover {
-            color: #2badea;
+            color: var(--main-link);
             .anticon {
-                color: #2badea;
+                color: var(--main-link);
             }
         }
     }
@@ -62,13 +71,13 @@ export const StyledPredefinedOption = styled.div`
     cursor: pointer;
     min-height: 26.13px;
     &.menu-active {
-        outline: 2px solid #1890ff;
+        outline: 2px solid var(--main-active);
         &:hover {
-            outline: 2px solid #2badea;
+            outline: 2px solid var(--sub-active);
         }
     }
     :hover {
-        outline: 2px solid #2badea;
+        outline: 2px solid var(--sub-active);
     }
     img {
         max-width: 100%;

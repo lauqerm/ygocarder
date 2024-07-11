@@ -1,6 +1,7 @@
 import { CardOpacity, getDefaultCardOpacity } from './canvas';
 import { CondenseType } from './font-data-effect';
 import { getDefaultNameStyle, NameStyle, NameStyleType } from './name-preset';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
@@ -111,6 +112,7 @@ export type FrameInfo = {
     edition: 'normal' | 'extendend',
     labelColor: string,
     labelBackgroundColor?: string,
+    labelBackgroundColorList?: string[],
     labelBackgroundImage?: string,
 };
 export const frameMap: Record<string, FrameInfo> = {
@@ -202,7 +204,7 @@ export const frameMap: Record<string, FrameInfo> = {
         name: 'raviel',
         labelColor: '#ffffff',
         edition: 'extendend',
-        labelBackgroundColor: '#2b344e',
+        labelBackgroundColor: '#313c5f',
     },
     'uria': {
         name: 'uria',
@@ -232,20 +234,27 @@ export const frameMap: Record<string, FrameInfo> = {
         name: 'zarc',
         labelColor: '#000',
         edition: 'extendend',
+        labelBackgroundColorList: [
+            'rgba(185,108,73,1)',
+            'rgba(137,72,164,1)',
+            'rgba(239,239,239,1)',
+            'rgba(0,0,0,1)',
+        ],
         labelBackgroundImage: 'linear-gradient(90deg, rgba(185,108,73,1) 23%, rgba(137,72,164,1) 27%, rgba(137,72,164,1) 48%, rgba(239,239,239,1) 52%, rgba(239,239,239,1) 73%, rgba(0,0,0,1) 77%)',
     },
 };
 export const frameList = Object.values(frameMap);
 
 export const iconList = [
-    'NO ICON',
-    'FIELD',
-    'CONTINUOUS',
-    'QUICK-PLAY',
-    'RITUAL',
-    'EQUIP',
-    'COUNTER',
+    { label: <CloseCircleOutlined />, value: 'NO ICON' },
+    { label: 'Field', value: 'FIELD' },
+    { label: 'Continuous', value: 'CONTINUOUS' },
+    { label: 'Quick-Play', value: 'QUICK-PLAY' },
+    { label: 'Ritual', value: 'RITUAL' },
+    { label: 'Equip', value: 'EQUIP' },
+    { label: 'Counter', value: 'COUNTER' },
 ];
+export const iconValueList = iconList.map(entry => entry.value);
 
 export const foilList = [
     {

@@ -1,63 +1,35 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import 'antd/dist/antd.css';
 import './app.scss';
 import './responsive.scss';
-import 'antd/dist/antd.css';
+import './reduce-color-motion.scss';
 import {
     CanvasConst,
     Card,
     UP_RATIO,
     getDefaultCard,
     getArtCanvasCoordinate,
-    getEmptyCard,
 } from './model';
 import {
     cardDataShortener,
+    decodeCardWithCompatibility,
     insertUrlParam,
-    legacyRebuildCardData,
-    rebuildCardData,
 } from './util';
-import { Affiliation, AppHeader, CardInputPanel, CardInputPanelRef, TaintedCanvasWarning } from './page';
+import { CardInputPanel, CardInputPanelRef } from './page';
 import WebFont from 'webfontloader';
-import { useMasterSeriDrawer } from './service';
+import { useMasterSeriDrawer, useSetting } from './service';
 import { notification } from 'antd';
+import { Affiliation, AppHeader, TaintedCanvasWarning } from './component';
+import { clearCanvas } from './draw';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
-const clearCanvas = (
-    ctx: CanvasRenderingContext2D | null | undefined,
-) => {
-    if (ctx) {
-        ctx.clearRect(0, 0, CanvasWidth, CanvasHeight);
-    };
-};
-
-const decodeCardWithCompatibility = (cardData: Record<string, any> | string | null): Card => {
-    let decodedCard = getEmptyCard();
-    if (!cardData) return decodedCard;
-    try {
-        decodedCard = rebuildCardData(cardData) as Card;
-    } catch (e) {
-        try {
-            decodedCard = legacyRebuildCardData(cardData, true) as Card;
-            notification.info({
-                message: 'Card data has outdated format',
-                description: 'System will automatically convert it into newer version.',
-            });
-        } catch (e) {
-            console.error('cardData', cardData);
-            notification.error({
-                message: 'Card data cannot be decoded',
-                description: 'It is either malformed or not compatible.',
-            });
-        }
-    }
-    return decodedCard;
-};
 function App() {
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
     const [currentCard, setCard] = useState<Card>(getDefaultCard());
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [ocgStyleFile, setOCGStyleFile] = useState('');
+    const softMode = useSetting(state => state.setting.reduceMotionColor);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -321,6 +293,13 @@ function App() {
         };
     }, [name]);
 
+    useEffect(() => {
+        const documentClassList = document.body.classList;
+
+        if (softMode) documentClassList.add('reduced-color-motion');
+        else documentClassList.remove('reduced-color-motion');
+    }, [softMode]);
+
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
@@ -402,13 +381,13 @@ function App() {
     return (
         <div id="app"
             onDrop={() => { }}
-            className={format === 'ocg' ? 'input-ocg' : 'input-tcg'}
+            className={[format === 'ocg' ? 'input-ocg' : 'input-tcg', softMode ? 'reduced-color-motion' : ''].join(' ')}
             style={{
                 backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                 ...({
                     '--card-height': `${CanvasConst.height}px`,
                     '--card-width': `${CanvasConst.width}px`,
-                })
+                }),
             }}
         >
             {ocgStyleFile && <link rel="stylesheet" type="text/css" href={ocgStyleFile} />}

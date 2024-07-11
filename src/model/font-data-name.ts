@@ -71,4 +71,4 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
 
 export const BREAKABLE_LETTER = '\\s\\-/';
 export const START_OF_LINE_GAP = 0;
-export const LETTER_GAP_RATIO = -0.35;
+export const LETTER_GAP_RATIO = -0.4;

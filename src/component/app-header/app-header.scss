@@ -34,7 +34,7 @@
             line-height: 1.25;
             b {
                 font-size: 13px;
-                color: #2badea;
+                color: var(--main-link);
             }
             > * {
                 white-space: nowrap;
@@ -53,8 +53,8 @@
     background: #666677;
     border-radius: 0 8px;
     padding: 5px;
-    border-left: 1px solid #333;
-    border-bottom: 1px solid #333;
+    border-left: 1px solid var(--main-level-1);
+    border-bottom: 1px solid var(--main-level-1);
     display: grid;
     grid-template-columns: max-content 1fr;
     align-items: center;
@@ -67,7 +67,7 @@
     .affiliation-link {
         a:hover {
             svg {
-                fill: #29ace5;
+                fill: var(--sub-link);
             }
         }
     }

@@ -33,7 +33,7 @@
 			.slider-label,
 			.ant-slider,
 			.slider-padding {
-				border: 1px solid #222222;
+				border: 1px solid var(--sub-level-1);
 				background-color: #4e4e53;
 			}
 			.slider-label {
@@ -52,12 +52,6 @@
 			.slider-padding {
 				border-left: none;
 				border-radius: 0 2px 2px 0;
-			}
-			.ant-slider-handle {
-				border-color: #1890ff;
-			}
-			.ant-slider-track {
-				background-color: #1890ff;
 			}
 			.ant-slider-rail,
 			.ant-slider-track {
@@ -103,7 +97,7 @@
 		.ant-input-affix-wrapper {
 			outline: none !important;
 			&:hover {
-				border-color: #222;
+				border-color: var(--sub-level-1);
 			}
 		}
 		.ant-radio-group {
@@ -111,14 +105,9 @@
 			.ant-radio-wrapper {
 				color: #ffffffcc;
 				&:hover .ant-radio-label {
-					color: #2badea;
+					color: var(--sub-active);
 				}
 			}
-		}
-	}
-	.radio-train {
-		.ant-radio-button-wrapper-checked {
-			border-color: #1890ff;
 		}
 	}
 	.image-input-train label {
@@ -215,26 +204,28 @@
 		}
 	}
 	.pendulum-frame-input {
-		display: inline-block;
+		display: inline-flex;
 		cursor: pointer;
-		box-shadow: 0 0 2px 0 #333;
+		box-shadow: var(--bs-input);
 		vertical-align: middle;
 		.frame-info-block {
-			border-radius: 4px 0 0 4px;
-			padding: 1px 5px;
+			border-radius: 0 4px 4px 0;
 			line-height: 1.25;
+			background-color: var(--main-level-4);
+			border: 1px solid var(--sub-level-1);
+			min-width: 100px;
 		}
 		.pendulum-frame-label {
 			display: inline-block;
-			background: var(--main-button);
-			border: 1px solid #222;
-			border-left: none;
+			background: var(--main-level-4);
+			border: 1px solid var(--sub-level-1);
+			border-right: none;
 			padding: 1px 5px;
-			border-radius: 0 4px 4px 0;
+			border-radius: 4px 0 0 4px;
 			line-height: 1.25;
-			&:first-child {
+			&:last-child {
 				border-radius: 4px;
-				border-left: 1px solid #222;
+				border-right: 1px solid var(--sub-level-1);
 			}
 		}
 	}
@@ -289,7 +280,7 @@
 	}
 }
 
-.format-radio {
+.radio-train.format-radio {
 	.ant-radio-button-wrapper-checked {
 		&.ocg-button {
 			background-color: #ff4d4f;
@@ -341,17 +332,17 @@
 			flex: 1;
 			text-transform: capitalize;
 			white-space: nowrap;
-			padding: 0 5px;
+			border: none;
+			box-shadow: 0 0 0 1px var(--sub-level-1);
+			padding: 0;
 			min-width: 90px;
 			height: 28px;
 			line-height: 28px;
 			text-align: center;
-			border-width: 0 !important;
 			text-shadow: none;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.24);
 			font-size: 13px;
 			&:hover {
-				outline: 2px solid #35b9f7;
+				outline: 1px solid var(--main-active);
 				outline-offset: 1px;
 			}
 			&::before {
@@ -359,7 +350,7 @@
 			}
 		}
 		.ant-radio-button-wrapper-checked {
-			outline: 2px solid #1890ff;
+			outline: 1px solid var(--main-active);
 			outline-offset: 1px;
 		}
 	}

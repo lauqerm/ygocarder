@@ -16,6 +16,7 @@ import {
     StyledPatternOption,
     StyledPickerButton,
 } from './style-picker.styled';
+import { useSetting } from 'src/service';
 import './style-picker.scss';
 
 export type TextStylePickerRef = {
@@ -45,6 +46,7 @@ export const TextStylePicker = React.memo(forwardRef(({
         setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
         requestSendStyle();
     }, [requestSendStyle]);
+    const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
 
     const setCustomValue = <ValueType extends any>(key: keyof NameStyle) => {
         return (inputValue: ValueType) => {
@@ -131,6 +133,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             className={`preset-item ${value.preset === key && isStylePredefined ? 'menu-active' : ''}`}
                                             onClick={e => {
                                                 e.stopPropagation();
+                                                setType('predefined');
                                                 setValue(cur => ({
                                                     ...cur,
                                                     preset: key,
@@ -204,7 +207,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 </div>}
                                 placement="bottom"
                             >
-                                <StyledPickerButton className="picker-dropdown color-picker-dropdown">
+                                <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown color-picker-dropdown">
                                     Color <CaretDownOutlined />
                                 </StyledPickerButton>
                             </Popover>
@@ -226,14 +229,14 @@ export const TextStylePicker = React.memo(forwardRef(({
                                                 <PowerSlider axis="xy"
                                                     styles={{
                                                         track: {
-                                                            backgroundColor: '#009ce0',
+                                                            backgroundColor: 'var(--main-slider)',
                                                             width: 100,
                                                             height: 100,
                                                             gridRow: 'span 3',
                                                             position: 'relative',
                                                         },
                                                         thumb: {
-                                                            backgroundColor: '#91d5ff',
+                                                            backgroundColor: 'var(--sub-slider)',
                                                             zIndex: 10,
                                                         },
                                                     }}
@@ -284,6 +287,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 placement="bottom"
                             >
                                 <StyledPickerButton
+                                    $softMode={reduceColorMotion}
                                     $active={isStyleCustom && hasShadow}
                                     className="picker-dropdown shadow-picker-dropdown"
                                 >
@@ -308,14 +312,14 @@ export const TextStylePicker = React.memo(forwardRef(({
                                                 <PowerSlider axis="xy"
                                                     styles={{
                                                         track: {
-                                                            backgroundColor: '#009ce0',
+                                                            backgroundColor: 'var(--main-slider)',
                                                             width: 100,
                                                             height: 100,
                                                             gridRow: 'span 3',
                                                             position: 'relative',
                                                         },
                                                         thumb: {
-                                                            backgroundColor: '#91d5ff',
+                                                            backgroundColor: 'var(--sub-slider)',
                                                             zIndex: 10,
                                                         },
                                                     }}
@@ -374,6 +378,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 placement="bottom"
                             >
                                 <StyledPickerButton
+                                    $softMode={reduceColorMotion}
                                     $active={isStyleCustom && hasOutline}
                                     className="picker-dropdown outline-picker-dropdown"
                                 >
@@ -404,6 +409,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 placement="bottom"
                             >
                                 <StyledPickerButton
+                                    $softMode={reduceColorMotion}
                                     $active={isStyleCustom && hasGradient}
                                     className="picker-dropdown gradient-picker-dropdown"
                                 >
@@ -444,6 +450,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 placement="bottomLeft"
                             >
                                 <StyledPickerButton
+                                    $softMode={reduceColorMotion}
                                     $active={isStyleCustom && typeof pattern === 'string' && pattern !== 'none'}
                                     className="picker-dropdown pattern-picker-dropdown"
                                 >
@@ -470,7 +477,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 </div>}
                                 placement="bottomLeft"
                             >
-                                <StyledPickerButton className="picker-dropdown font-picker-dropdown">
+                                <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
                                     Font
                                 </StyledPickerButton>
                             </Popover>

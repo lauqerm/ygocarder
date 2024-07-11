@@ -70,7 +70,7 @@ export const TCG_NON_SYMBOL_JOINLIST = '&A-Za-z0-9\\-/\\s!,.‘’\\[\\]\\(\\)';
 export const TCGNonSymbolRegex = new RegExp(`[^${TCG_NON_SYMBOL_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
-export const OCG_KEYWORD_REGEX_SOURCE = `(${OCG_KEYWORD_JOIN_REGEX})(?!.*})`;
+export const OCG_KEYWORD_REGEX_SOURCE = `(${OCG_KEYWORD_JOIN_REGEX})(?![^{]*})`;
 
 export const CHIISAI_KANA_JOINLIST = 'ヽヾーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ々〻';
 export const ChiisaiRegex = new RegExp(`[${CHIISAI_KANA_JOINLIST}]`);
@@ -88,7 +88,6 @@ export const OCG_ALPHABET_REGEX_SOURCE = '[Ａ-Ｚａ-ｚ]';
 export const OCGAlphabetRegex = new RegExp(OCG_ALPHABET_REGEX_SOURCE);
 
 export const OCGNumberRegex = new RegExp('[０-９]');
-export const OCG_NUMBER_RATIO = 1.000;
 
 export const HiraganaRegex = /[あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんゔ]/;
 
@@ -98,16 +97,13 @@ export const KATAKANA_RATIO = 1.000;
 export const OCG_LETTER_RATIO = 1.000;
 
 export const OCGDotRegex = new RegExp('[・]');
-export const OCG_DOT_RATIO = 1.500;
 
 export const ChoonpuRegex = new RegExp('[ー]');
-export const CHOONPU_RATIO = 1.000;
 
 export const NoSpaceRegex = new RegExp('[―]');
 
 const OCG_INCREASED_LEVEL_2_WIDTH_JOINLIST = '：';
 export const OCGIncreasedLevel2WidthRegex = new RegExp(`[${OCG_INCREASED_LEVEL_2_WIDTH_JOINLIST}]`);
-export const OCG_REDUCED_WIDTH_RATIO = 0.750;
 
 const OCG_INCREASED_WIDTH_JOINLIST = '。､｢｣';
 export const OCGIncreasedWidthRegex = new RegExp(`[${OCG_INCREASED_WIDTH_JOINLIST}]`);

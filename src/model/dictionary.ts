@@ -5,23 +5,23 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'カード',
-        rubyForm: 'カード',
+        rubyForm: '{カード}',
     },
     {
         shortForm: 'デュエル',
-        rubyForm: 'デュエル',
+        rubyForm: '{デュエル}',
     },
     {
         shortForm: 'マッチ',
-        rubyForm: 'マッチ',
+        rubyForm: '{マッチ}',
     },
     {
         shortForm: 'ターン',
-        rubyForm: 'ターン',
+        rubyForm: '{ターン}',
     },
     {
         shortForm: 'プレイヤー',
-        rubyForm: 'プレイヤー',
+        rubyForm: '{プレイヤー}',
     },
     {
         shortForm: '自分',
@@ -38,15 +38,15 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'デッキ',
-        rubyForm: 'デッキ',
+        rubyForm: '{デッキ}',
     },
     {
         shortForm: 'メイン',
-        rubyForm: 'メイン',
+        rubyForm: '{メイン}',
     },
     {
         shortForm: 'サイド',
-        rubyForm: 'サイド',
+        rubyForm: '{サイド}',
     },
     {
         shortForm: 'EX',
@@ -55,7 +55,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'フィールド',
-        rubyForm: 'フィールド',
+        rubyForm: '{フィールド}',
     },
     {
         shortForm: '墓地',
@@ -67,11 +67,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'ゾーン',
-        rubyForm: 'ゾーン',
+        rubyForm: '{ゾーン}',
     },
     {
         shortForm: 'モンスター',
-        rubyForm: 'モンスター',
+        rubyForm: '{モンスター}',
     },
     {
         shortForm: '縦列',
@@ -79,7 +79,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'コントローラー',
-        rubyForm: 'コントローラー',
+        rubyForm: '{コントローラー}',
     },
     {
         shortForm: '持ち主',
@@ -87,7 +87,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'ダメージ',
-        rubyForm: 'ダメージ',
+        rubyForm: '{ダメージ}',
     },
     {
         shortForm: '戦闘',
@@ -95,19 +95,19 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'スペル',
-        rubyForm: 'スペル',
+        rubyForm: '{スペル}',
     },
     {
         shortForm: 'スピード',
-        rubyForm: 'スピード',
+        rubyForm: '{スピード}',
     },
     {
         shortForm: 'チェーン',
-        rubyForm: 'チェーン',
+        rubyForm: '{チェーン}',
     },
     {
         shortForm: 'ブロック',
-        rubyForm: 'ブロック',
+        rubyForm: '{ブロック}',
     },
     {
         shortForm: '直接',
@@ -127,11 +127,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'コイン',
-        rubyForm: 'コイン',
+        rubyForm: '{コイン}',
     },
     {
         shortForm: 'サイコロ',
-        rubyForm: 'サイコロ',
+        rubyForm: '{サイコロ}',
     },
     {
         shortForm: '元',
@@ -151,35 +151,35 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'エクストラ',
-        rubyForm: 'エクストラ',
+        rubyForm: '{エクストラ}',
     },
     {
         shortForm: 'フェイズ',
-        rubyForm: 'フェイズ',
+        rubyForm: '{フェイズ}',
     },
     {
         shortForm: 'ドロー',
-        rubyForm: 'ドロー',
+        rubyForm: '{ドロー}',
     },
     {
         shortForm: 'スタンバイ',
-        rubyForm: 'スタンバイ',
+        rubyForm: '{スタンバイ}',
     },
     {
         shortForm: 'バトル',
-        rubyForm: 'バトル',
+        rubyForm: '{バトル}',
     },
     {
         shortForm: 'エンド',
-        rubyForm: 'エンド',
+        rubyForm: '{エンド}',
     },
     {
         shortForm: 'スタート',
-        rubyForm: 'スタート',
+        rubyForm: '{スタート}',
     },
     {
         shortForm: 'ステップ',
-        rubyForm: 'ステップ',
+        rubyForm: '{ステップ}',
     },
     {
         shortForm: '種類',
@@ -223,19 +223,19 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'カウンター',
-        rubyForm: 'カウンター',
+        rubyForm: '{カウンター}',
     },
     {
         shortForm: 'レベル',
-        rubyForm: 'レベル',
+        rubyForm: '{レベル}',
     },
     {
         shortForm: 'ランク',
-        rubyForm: 'ランク',
+        rubyForm: '{ランク}',
     },
     {
         shortForm: 'スケール',
-        rubyForm: 'スケール',
+        rubyForm: '{スケール}',
     },
     {
         shortForm: '攻撃力',
@@ -267,35 +267,35 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'マキシマム',
-        rubyForm: 'マキシマム',
+        rubyForm: '{マキシマム}',
     },
     {
         shortForm: 'トークン',
-        rubyForm: 'トークン',
+        rubyForm: '{トークン}',
     },
     {
         shortForm: 'チューナー',
-        rubyForm: 'チューナー',
+        rubyForm: '{チューナー}',
     },
     {
         shortForm: 'デュアル',
-        rubyForm: 'デュアル',
+        rubyForm: '{デュアル}',
     },
     {
         shortForm: 'リバース',
-        rubyForm: 'リバース',
+        rubyForm: '{リバース}',
     },
     {
         shortForm: 'トゥーン',
-        rubyForm: 'トゥーン',
+        rubyForm: '{トゥーン}',
     },
     {
         shortForm: 'スピリット',
-        rubyForm: 'スピリット',
+        rubyForm: '{スピリット}',
     },
     {
         shortForm: 'ユニオン',
-        rubyForm: 'ユニオン',
+        rubyForm: '{ユニオン}',
     },
     {
         shortForm: '光',
@@ -331,7 +331,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'サイバース',
-        rubyForm: 'サイバース',
+        rubyForm: '{サイバース}',
     },
     {
         shortForm: '恐竜',
@@ -355,7 +355,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'ギャラクシー',
-        rubyForm: 'ギャラクシー',
+        rubyForm: '{ギャラクシー}',
     },
     {
         shortForm: '幻想魔',
@@ -403,11 +403,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'アンデット',
-        rubyForm: 'アンデット',
+        rubyForm: '{アンデット}',
     },
     {
         shortForm: 'サイボーグ',
-        rubyForm: 'サイボーグ',
+        rubyForm: '{サイボーグ}',
     },
     {
         shortForm: '天界戦士',
@@ -415,7 +415,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'ハイドラゴン',
-        rubyForm: 'ハイドラゴン',
+        rubyForm: '{ハイドラゴン}',
     },
     {
         shortForm: '魔導騎士',
@@ -427,11 +427,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'オメガ',
-        rubyForm: 'オメガ',
+        rubyForm: '{オメガ}',
     },
     {
         shortForm: 'サイキック',
-        rubyForm: 'サイキック',
+        rubyForm: '{サイキック}',
     },
     {
         shortForm: '捨てる',
@@ -495,11 +495,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'めくる',
-        rubyForm: 'めくる',
+        rubyForm: '{めくる}',
     },
     {
         shortForm: 'アドバンス',
-        rubyForm: 'アドバンス',
+        rubyForm: '{アドバンス}',
     },
     {
         shortForm: '反転',
@@ -543,23 +543,23 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'リリース',
-        rubyForm: 'リリース',
+        rubyForm: '{リリース}',
     },
     {
         shortForm: 'スキップ',
-        rubyForm: 'スキップ',
+        rubyForm: '{スキップ}',
     },
     {
         shortForm: 'シャッフル',
-        rubyForm: 'シャッフル',
+        rubyForm: '{シャッフル}',
     },
     {
         shortForm: 'コントロール',
-        rubyForm: 'コントロール',
+        rubyForm: '{コントロール}',
     },
     {
         shortForm: 'セット',
-        rubyForm: 'セット',
+        rubyForm: '{セット}',
     },
     {
         shortForm: 'RUM',
@@ -588,7 +588,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'リンク',
-        rubyForm: 'リンク',
+        rubyForm: '{リンク}',
     },
     {
         shortForm: '守備',
@@ -608,11 +608,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'ドラゴン',
-        rubyForm: 'ドラゴン',
+        rubyForm: '{ドラゴン}',
     },
     {
         shortForm: 'サイキック',
-        rubyForm: 'サイキック',
+        rubyForm: '{サイキック}',
     },
     {
         shortForm: '重ねて',
@@ -675,6 +675,22 @@ export const ocgKeywordDataList = [
         rubyForm: '{上|うえ}に',
     },
     {
+        shortForm: '以下',
+        rubyForm: '{以|い}{下|か}',
+    },
+    {
+        shortForm: '終了',
+        rubyForm: '{終|しゅう}{了|りょう}',
+    },
+    {
+        shortForm: '全て',
+        rubyForm: '{全|すべ}て',
+    },
+    {
+        shortForm: '記さ',
+        rubyForm: '{記|しる}さ',
+    },
+    {
         shortForm: '他',
         rubyForm: '{他|ほか}',
     },
@@ -713,6 +729,18 @@ export const ocgKeywordDataList = [
     {
         shortForm: '枚',
         rubyForm: '{枚|まい}',
+    },
+    {
+        shortForm: '後',
+        rubyForm: '{後|ご}',
+    },
+    {
+        shortForm: '送',
+        rubyForm: '{送|おく}',
+    },
+    {
+        shortForm: '事',
+        rubyForm: '{事|こと}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

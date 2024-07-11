@@ -105,9 +105,9 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
             .replace(/^\[([\w\W]*?)\](?=(\n|$))/gm, `${NB_LINE_OPEN}$1${NB_LINE_CLOSE}`)
         : textAfterJoinRow;
     const textAfterSwapLetter = textAfterSplitBlockRow
-        .replace(/(^|[-\u2014\s(["])'/g, '$1\u2018')                /** Chuyển ký tự nháy đôi " thành cặp ký tự nháy đơn “ */
+        .replace(/(^|[-\u2014\s(["])'/g, '$1\u2018')                /** Chuyển ký tự nháy đôi " thành cặp ký tự nháy đôi “ */
         .replace(/'/g, '\u2019')                                    /** Chuyển ký tự nháy đơn ' thành cặp ký tự nháy đơn ‘ */
-        .replace(/(^|[-\u2014/[(\u2018\s])"/g, '$1\u201c')          /** Chuyển ký tự nháy đôi " thành cặp ký tự nháy đơn ” */
+        .replace(/(^|[-\u2014/[(\u2018\s])"/g, '$1\u201c')          /** Chuyển ký tự nháy đôi " thành cặp ký tự nháy đôi ” */
         .replace(/"/g, '\u201d')                                    /** Chuyển ký tự nháy đơn ' thành cặp ký tự nháy đơn ’ */
         .replace(/--/g, '\u2014')                                   /** Chuyển cặp ký tự "--" thành em dash "—" */
         .replace(/● /g, '●')                                        /** Loại bỏ space nối liền bullet, vì space sau bullet là fixed space vẽ riêng */

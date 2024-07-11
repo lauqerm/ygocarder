@@ -9,9 +9,24 @@ html {
 	--bs-input: none;
 	--color: #d3d3d6;
 	--color-contrast: #eeeeee;
-	--main-button: #5b626e;
-	--sub-button: #707681;
-	--main-overlay: #4e4e53;
+	--color-vendor: #d0f0ff;
+	--main-level-4: #5b626e;
+	--sub-level-4: #707681;
+	--main-level-3: #4e4e53;
+	--main-level-1: #333333;
+	--main-level-1-active: #333333;
+	--sub-level-1: #222222;
+	--main-link: #27a9e6;
+	--sub-link: #2badea;
+	--main-active: #1890ff;
+	--sub-active: #40a9ff;
+	--main-slider: #009ce0;
+	--sub-slider: #91d5ff;
+	--main-primary: #0093bd;
+	--sub-primary: #00aad4;
+	--sub-secondary: #0c8ac6;
+	--main-tertiary: #5e85c9;
+	--sub-tertiary: #5e85e9;
 	h1 {
 		color: #ffffffee;
 		font-size: 1.75em;
@@ -19,7 +34,7 @@ html {
 	h2 {
 		line-height: 1;
 		font-size: 1.2em;
-		color: #94e4ff;
+		color: var(--color-vendor);
 		padding: 0.5rem 0;
 		&:first-child {
 			padding-top: 0;
@@ -134,7 +149,7 @@ hr {
 			.save-button {
 				flex: 1;
 				font-size: 20px;
-				border: 1px solid #0c8ac6;
+				border: 1px solid var(--sub-secondary);
 				font-weight: 500;
 				box-shadow: 0 0 2px 1px #333;
 			}
@@ -167,11 +182,11 @@ hr {
 				column-gap: 10px;
 				button {
 					font-size: 13px;
-					background-color: #5e85c9;
-					border: 1px solid #5e85e9;
+					background-color: var(--main-tertiary);
+					border: 1px solid var(--sub-tertiary);
 					box-shadow: 0 0 2px 1px #333;
 					&:hover {
-						background-color: #5e85e9;
+						background-color: var(--sub-tertiary);
 						box-shadow: none;
 					}
 				}
@@ -220,10 +235,11 @@ hr {
 				}
 				.canvas-guard-alert {
 					position: absolute;
-					transform: translateY(-60px);
+					top: 0;
+					right: 0;
 					color: white;
 					padding: 5px 10px;
-					border-radius: 5px;
+					border-radius: 0 0 0 5px;
 					background-color: #1890ff;
 					box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 				}
@@ -257,6 +273,7 @@ hr {
 .hidden {
 	visibility: hidden;
 }
+// Use suitable font for inputs in OCG mode?
 // .input-ocg {
 // 	input,
 // 	textarea.ant-input {
@@ -290,7 +307,7 @@ hr {
 	.ant-input,
 	.ant-radio-button-wrapper,
 	.ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
-		background-color: #333;
+		background-color: var(--main-level-1);
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 	}
@@ -302,13 +319,13 @@ hr {
 	.ant-input-number-handler-wrap,
 	.ant-radio-button-wrapper,
 	.ant-radio-button-wrapper:first-child {
-		border-color: #222;
+		border-color: var(--sub-level-1);
 	}
 	.ant-radio-button-wrapper:not(:first-child):not(.ant-radio-button-wrapper-checked)::before {
-		background-color: #222;
+		background-color: var(--sub-level-1);
 	}
 	.ant-checkbox-wrapper {
-		color: #d0f0ff;
+		color: var(--color-vendor);
 		text-shadow: 0 1px #222;
 	}
 	.field-title,
@@ -317,7 +334,7 @@ hr {
 		font-weight: 500;
 		border-color: transparent;
 		background-color: transparent;
-		color: #d0f0ff;
+		color: var(--color-vendor);
 		text-shadow: 0 1px #222;
 		user-select: none;
 	}
@@ -326,6 +343,13 @@ hr {
 	.radio-train-input-group,
 	.ant-input-affix-wrapper {
 		box-shadow: var(--bs-input);
+	}
+	.ant-input-affix-wrapper,
+	.ant-input-number,
+	.ant-input {
+		&:hover {
+			border-color: var(--sub-active);
+		}
 	}
 	--border-radius: 2px;
 	.radio-train .ant-radio-button-wrapper:first-child {
@@ -359,7 +383,7 @@ span.ant-input-affix-wrapper {
 	.ant-radio-button-wrapper,
 	.ant-input,
 	.ant-input-affix-wrapper {
-		background-color: #333;
+		background-color: var(--main-level-1);
 		color: #ffffffcc;
 		text-shadow: 0 1px #222;
 		.anticon {
@@ -368,7 +392,7 @@ span.ant-input-affix-wrapper {
 	}
 	.ant-input,
 	.ant-input-affix-wrapper {
-		border-color: #222;
+		border-color: var(--sub-level-1);
 	}
 }
 
@@ -398,6 +422,84 @@ ul.ant-dropdown-menu {
 	}
 }
 
+div.ant-slider {
+	.ant-slider-handle {
+		border-color: var(--main-active);
+	}
+	.ant-slider-track {
+		background-color: var(--main-active);
+	}
+	&:hover {
+		.ant-slider-handle:not(.ant-tooltip-open),
+		.ant-slider-handle {
+			border-color: var(--sub-active);
+		}
+		.ant-slider-track {
+			background-color: var(--sub-active);
+		}
+	}
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner,
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+	border-color: var(--main-active);
+}
+.ant-checkbox-checked {
+	&::after {
+		border: 1px solid var(--main-active);
+	}
+	.ant-checkbox-inner {
+		background-color: var(--main-active);
+		border-color: var(--main-active);
+	}
+}
+.ant-checkbox-indeterminate {
+	.ant-checkbox-inner {
+		&::after {
+			background-color: var(--main-active);
+		}
+	}
+}
+
+.ant-radio.ant-radio-checked {
+	.ant-radio-inner {
+		border-color: var(--main-active);
+		&::after {
+			background-color: var(--main-active);
+		}
+	}
+}
+
+.ant-radio-group.ant-radio-group-outline {
+	.ant-radio-button-wrapper:hover {
+		color: var(--main-active);
+		.anticon {
+			color: var(--main-active);
+		}
+	}
+    .ant-radio-button-wrapper-checked {
+        border-color: var(--main-active);
+        background-color: var(--main-level-1-active);
+		&:not(.ant-radio-button-wrapper-disabled):hover {
+			color: var(--sub-active);
+    		border-color: var(--sub-active);
+			&::before {
+				background-color: var(--sub-active);
+			}
+		}
+		&:not(.ant-radio-button-wrapper-disabled):first-child {
+			border-color: var(--main-active);
+		}
+        &:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+            border-right-color: var(--main-active);
+        }
+        &:not(.ant-radio-button-wrapper-disabled)::before {
+            background-color: var(--main-active);
+        }
+    }
+}
+
 .ant-popover {
 	.ant-popover-inner,
 	.ant-popover-inner-content {
@@ -409,18 +511,18 @@ ul.ant-dropdown-menu {
 
 button.ant-btn {
 	color: var(--color-contrast);
-	background: var(--main-button);
-	border-color: var(--sub-button);
+	background: var(--main-level-4);
+	border-color: var(--sub-level-4);
 	&:hover {
 		color: var(--color-contrast);
-		background: var(--sub-button);
-		border-color: var(--sub-button);
+		background: var(--sub-level-4);
+		border-color: var(--sub-level-4);
 	}
 	&.ant-btn-primary  {
-		background: #0093bd;
-		border-color: #1890ff;
+		background: var(--main-primary);
+		border-color: var(--main-active);
 		&:hover {
-			background: #00aad4;
+			background: var(--sub-primary);
 		}
 	}
 }
@@ -492,7 +594,7 @@ input:-internal-autofill-selected {
 
 /** Slow animation for download button **/
 .export-button .save-button {
-    background: linear-gradient(135deg, rgba(34, 193, 195, 1) 0%, rgba(41, 138, 233, 1) 50%, rgba(34, 193, 195, 1) 100%);
+    background: linear-gradient(135deg, #22c1c3 0%, #298ae9 50%, #22c1c3 100%);
     background-size: 300% 300%;
     animation: SlowPulsating 10s ease infinite;
 }

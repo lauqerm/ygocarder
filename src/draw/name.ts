@@ -217,6 +217,18 @@ export const drawName = async (
             ctx.globalCompositeOperation = 'source-in';
             ctx.drawImage(cloneNode, 0, 0);
             ctx.scale(xRatio, yRatio);
+            ctx.globalCompositeOperation = 'source-over';
+
+            /** Ruby không bị ảnh hưởng bởi pattern image, vậy nên ta phải vẽ lại chỉ phần ruby sau khi đè pattern image lên text chính */
+            drawLine({
+                ctx,
+                tokenList,
+                xRatio, yRatio,
+                trueEdge: edge, trueBaseline,
+                textData,
+                format,
+                textDrawer: () => {},
+            });
         }
         if (hasOutline) {
             ctx.globalCompositeOperation = 'destination-over';

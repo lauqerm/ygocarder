@@ -13,6 +13,6 @@
         border-radius: 0;
     }
     .ant-radio-button-wrapper:not(.ant-radio-button-wrapper-checked):first-child {
-        border-left-color: #222222;
+        border-left-color: var(--sub-level-1);
     }
 }

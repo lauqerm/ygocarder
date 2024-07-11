@@ -232,9 +232,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     });
 
     const attributeList = useMemo(() => getAttributeList(format), [format]);
-    const frameList = useMemo(() => getFrameButtonList().filter(entry => {
-        return showExtraDecorativeOption || entry.edition === 'normal';
-    }), [showExtraDecorativeOption]);
+    const frameList = useMemo(() => getFrameButtonList()
+        .filter(entry => {
+            return showExtraDecorativeOption || entry.edition === 'normal';
+        }),
+        [showExtraDecorativeOption],
+    );
 
     useEffect(() => {
         opacityPickerRef.current?.setValue(opacity);
@@ -440,10 +443,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             </div>}
                         >
                             <div className="pendulum-frame-input">
-                                {currentPendulumFrame
-                                    ? <FrameInfoBlock {...currentPendulumFrame} />
-                                    : <FrameInfoBlock name="Auto" labelColor="var(--color)" labelBackgroundColor="var(--main-button)" />}
                                 <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
+                                {currentPendulumFrame
+                                    ? <FrameInfoBlock className="frame-info-block" {...currentPendulumFrame} />
+                                    : <FrameInfoBlock className="frame-info-block" name="Auto" />}
                             </div>
                         </Popover>}
                         {(isPendulum && showCreativeOption)

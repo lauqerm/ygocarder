@@ -4,14 +4,16 @@ export type Setting = {
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
     allowHotkey: boolean,
+    reduceMotionColor: boolean,
 };
 export type SettingStore = {
     setting: Setting,
     updateSetting: (transformerOrPayload: Partial<Setting> | ((currentSetting: Setting) => Setting)) => void,
 };
-export const useSetting = create<SettingStore>((set, get) => {
+export const useSetting = create<SettingStore>((set) => {
     const {
         allowHotkey,
+        reduceMotionColor,
         showCreativeOption,
         showExtraDecorativeOption,
     } = ((): Record<string, any> => {
@@ -28,6 +30,7 @@ export const useSetting = create<SettingStore>((set, get) => {
     return {
         setting: {
             allowHotkey: typeof allowHotkey === 'boolean' ? allowHotkey : true,
+            reduceMotionColor: typeof reduceMotionColor === 'boolean' ? reduceMotionColor : false,
             showCreativeOption: typeof showCreativeOption === 'boolean' ? showCreativeOption : true,
             showExtraDecorativeOption: typeof showExtraDecorativeOption === 'boolean' ? showExtraDecorativeOption : true,
         },

@@ -1,0 +1,64 @@
+.reduced-color-motion {
+	--color-vendor: #e0e0ff;
+    --sub-level-1: #333333;
+    --main-link: #8989bb;
+    --sub-link: #9999bb;
+    --main-level-1-active: #444455;
+    --main-active: #8888aa;
+    --sub-active: #8888bb;
+    --main-slider: #6666aa;
+	--sub-slider: #ccccff;
+	--main-primary: #6363ad;
+	--sub-primary: #7777d4;
+    --sub-secondary: #8a8ac6;
+	--main-tertiary: #555599;
+	--sub-tertiary: #5555a9;
+    // .export-button .save-button {
+    //     animation: none;
+    // }
+    .icon-button {
+        border: 1px solid var(--main-level-4);
+    }
+    .export-button .save-button {
+        background: linear-gradient(135deg, #6363ad 0%, #8888a9 50%, #6363ad 100%);
+        background-size: 300% 300%;
+        animation: SlowPulsating 10s ease infinite;
+    }
+    .radio-train.format-radio {
+        .ant-radio-button-wrapper-checked {
+            &.ocg-button {
+                color: #ff4d4f;
+                background-color: var(--main-level-1-active);
+                border-color: var(--main-active);
+                &:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+                    border-right-color: var(--main-active);;
+                }
+                &:hover {
+                    color: #ff6f6f;
+                    background-color: var(--main-level-1-active);
+                }
+            }
+            &.tcg-button {
+                color: #096dd9;
+                background-color: var(--main-level-1-active);
+                border-color: var(--main-active);
+                &:hover {
+                    color: #3b9dff;
+                    background-color: var(--main-level-1-active);
+                }
+            }
+        }
+        .ocg-button {
+            color: #ff4d4f;
+            &:hover {
+                color: #ff6f6f;
+            }
+        }
+        .tcg-button {
+            color: #096dd9;
+            &:hover {
+                color: #3b9dff;
+            }
+        }
+    }
+}
