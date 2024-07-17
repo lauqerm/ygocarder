@@ -21,8 +21,10 @@
     }
     .export-button .save-button {
         background: linear-gradient(135deg, #6363ad 0%, #8888a9 50%, #6363ad 100%);
-        background-size: 300% 300%;
-        animation: SlowPulsating 10s ease infinite;
+        animation: none;
+        &:hover {
+            background: linear-gradient(90deg, #7373bd 0%, #9898b9 50%, #7373bd 100%);
+        }
     }
     .radio-train.format-radio {
         .ant-radio-button-wrapper-checked {

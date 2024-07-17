@@ -57,7 +57,7 @@ type DrawerProp = {
 }
 export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas, card: Card, props: DrawerProp) => {
     const {
-        artCanvas,
+        // artCanvas,
         previewCanvas,
         specialFrameCanvas,
         attributeCanvas,
@@ -437,6 +437,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     ctx.textAlign = 'right';
                     ctx.scale(1.2, 1);
                     ctx.font = 'bold 35.55px Yugioh Rush Duel Numbers V4';
+                    ctx.fillStyle = '#000000';
                     ctx.fillText(`${linkMap.length}`, 623.36, 1105.01);
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.textAlign = 'left';
@@ -475,7 +476,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     }, [
         active,
         imageChangeCount,
-        artCanvas,
+        // artCanvas,
         foil,
         loopFinish, artFinish,
         frame,
@@ -579,7 +580,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790 + fontSize);
             }
         }
-    }, [isInitializing, pendulumScaleBlue, isPendulum, pendulumScaleRed, active, pendulumScaleCanvas]);
+    }, [active, isInitializing, pendulumScaleBlue, isPendulum, pendulumScaleRed, pendulumScaleCanvas]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -673,14 +674,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 let offsetY = 0;
                 let xOffset = 0;
                 ctx.fillStyle = (lightFooter && !isPendulum) ? '#fff' : '#000';
-                ctx.strokeStyle = pendulumFrame === 'zarc' ? '#888' : '#000';
+                const option = ((pendulumFrame === 'zarc' || opacity.artFrame === false) && !isPendulum)
+                    ? { stroke: true }
+                    : undefined;
+                ctx.strokeStyle = (pendulumFrame === 'zarc' || option?.stroke) ? '#888' : '#000';
                 ctx.font = '22px stone-serif-regular';
                 if (format === 'ocg') {
                     spacing = 0.145;
                     offsetY = -1;
                     xOffset = -3;
                 }
-                const option = (pendulumFrame === 'zarc' && !isPendulum) ? { stroke: true } : undefined;
 
                 if (isPendulum) {
                     fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY, option);
@@ -691,7 +694,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
             }
         }
-    }, [active, isInitializing, format, isLink, isPendulum, lightFooter, setIdCanvas, setId, isSpeedSkill, pendulumFrame]);
+    }, [active, isInitializing, format, isLink, isPendulum, lightFooter, setIdCanvas, setId, isSpeedSkill, pendulumFrame, opacity.artFrame]);
 
     /** DRAW FIRST EDITION NOTICE AND PASSCODE */
     useEffect(() => {
@@ -729,7 +732,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 alignment: 'right',
             });
         })();
-    }, [isInitializing, isLink, isPendulum, lightFooter, creator, active, creatorCanvas, format]);
+    }, [isInitializing, isPendulum, lightFooter, creator, active, creatorCanvas, format]);
 
     /** DRAW STICKER */
     useEffect(() => {

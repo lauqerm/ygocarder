@@ -66,7 +66,7 @@ export const FinishMap: Record<string, FinishInformation> = {
         value: 'type9',
         label: '9',
         partInstructionMap: {
-            'total-overlay': [{ blendMode: 'screen', opacity: 0.25 }],
+            'total-overlay': [{ blendMode: 'screen', opacity: 0.45 }],
         },
     },
 };

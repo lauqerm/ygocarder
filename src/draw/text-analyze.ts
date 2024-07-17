@@ -14,6 +14,10 @@ import {
     LETTER_GAP_RATIO,
     NB_UNCOMPRESSED_START,
     NB_UNCOMPRESSED_END,
+    SquareBracketLetterRegex,
+    CapitalLetterRegex,
+    NumberRegex,
+    TCGSymbolRegex,
 } from 'src/model';
 import { getTextWorker, getExtraLeftWidth, getHeadTextWidth, tokenizeText } from './text-util';
 import { createFontGetter } from 'src/util';
@@ -63,19 +67,23 @@ export const analyzeToken = ({
     const { metricMethod } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
-        fontSize,
-        largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
-        wordLetterSpacing,
         bulletSymbolWidth,
+        capitalLetterRatio,
+        fontSize,
         iconSymbolWidth = bulletSymbolWidth,
+        largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
         overheadTextSpacing = DefaultFontSizeData.overheadTextSpacing,
+        squareBracketRatio,
+        wordLetterSpacing,
     } = fontSizeData;
     const overheadTextGap = fontSize * LETTER_GAP_RATIO;
     const {
-        withLargerText,
-        withFurigana,
-        withOrdinalFont,
-        withSymbolFont,
+        applyScale, reverseScale,
+        applyLargerText, stopApplyLargerText,
+        applyFuriganaFont, stopApplyFuriganaFont,
+        applyOrdinalFont, stopApplyOrdinalFont,
+        applySymbolFont, stopApplySymbolFont,
+        applyNumberFont, stopApplyNumberFont,
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont);
     const token = rawToken.replaceAll(/⦉|⦊/g, '');
     const letterSpacingRatio = 1 + letterSpacing / 2;
@@ -127,11 +135,10 @@ export const analyzeToken = ({
         }
         /** Copyright symbol © không bị compress */
         else if (/[©]/.test(fragment)) {
-            const fragmentWidth = withLargerText(
-                () => ctx.measureText(fragment).width / xRatio,
-                0, 0,
-                largeSymbolRatio,
-            );
+            applyLargerText(largeSymbolRatio);
+            const fragmentWidth = ctx.measureText(fragment).width / xRatio;
+            stopApplyLargerText();
+
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
             currentRightGap = overheadTextGap;
@@ -143,7 +150,10 @@ export const analyzeToken = ({
         }
         /** OCG Ordinal symbol không bị compress */
         else if (/[①-⑳©]/.test(fragment)) {
-            const fragmentWidth = withOrdinalFont(() => ctx.measureText(fragment).width / xRatio);
+            applyOrdinalFont();
+            const fragmentWidth = ctx.measureText(fragment).width / xRatio;
+            stopApplyOrdinalFont();
+
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             fixedWidth += fragmentWidth * letterSpacingRatio;
             currentRightGap = overheadTextGap;
@@ -161,12 +171,14 @@ export const analyzeToken = ({
                 totalWidth: footTextWidth,
                 fixedWidth: footTextFixedWidth,
             } = analyzeToken({ ctx, token: footText, nextToken, xRatio, letterSpacing, previousTokenGap: 0, format, textData });
-            const headTextLetterWidth = withFurigana(() => {
-                return headText
-                    .split('')
-                    .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact' }).boundWidth)
-                    .reduce((acc, cur) => acc + cur, 0);
-            }, 0);
+
+            applyFuriganaFont();
+            const headTextLetterWidth = headText
+                .split('')
+                .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact', xRatio }).boundWidth)
+                .reduce((acc, cur) => acc + cur, 0);
+            stopApplyFuriganaFont();
+
             const { halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap, overheadTextSpacing });
             const leftGap = getExtraLeftWidth(currentRightGap, halfGap);
             const rightGap = halfGap;
@@ -179,6 +191,7 @@ export const analyzeToken = ({
             currentRightGap = rightGap;
             totalWidth += footTextWidth + leftGap + Math.max(rightGap, 0);
             fixedWidth += footTextFixedWidth;
+            spaceCount += 1;
 
             if (cnt === 0) {
                 outmostLeftGap = halfGap;
@@ -191,7 +204,34 @@ export const analyzeToken = ({
                 ? 1 + wordLetterSpacing / 2
                 : letterSpacingRatio;
             ctx.letterSpacing = `${(normalizedWordSpacingRatio - 1) * currentFont.getFontInfo().sizeAsNumber}px`;
-            const fragmentWidth = ctx.measureText(fragment).width;
+            let remainFragment = fragment;
+            let fragmentWidth = 0;
+            while (remainFragment !== '') {
+                let currentLetter = remainFragment[0];
+                let nextRemainFragment = remainFragment.slice(1);
+                let actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                if (SquareBracketLetterRegex.test(currentLetter)) {
+                    applyScale(squareBracketRatio);
+                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    reverseScale(squareBracketRatio);
+                } else if (CapitalLetterRegex.test(currentLetter)) {
+                    applyScale(capitalLetterRatio);
+                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    reverseScale(capitalLetterRatio);
+                } else if (NumberRegex.test(currentLetter)) {
+                    applyNumberFont();
+                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    stopApplyNumberFont();
+                } else if (TCGSymbolRegex.test(currentLetter) && format === 'tcg') {
+                    applySymbolFont();
+                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    stopApplySymbolFont();
+                } else {
+                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                }
+                fragmentWidth += actualLetterWidth;
+                remainFragment = nextRemainFragment;
+            }
 
             totalWidth += fragmentWidth + defaultgetExtraLeftWidth;
             currentRightGap = overheadTextGap;
@@ -205,7 +245,9 @@ export const analyzeToken = ({
         }
         /** Một số ký tự dùng font đặc biệt */
         else if (TCGLetterRegex.test(fragment) && format === 'tcg') {
-            const fragmentWidth = withSymbolFont(() => ctx.measureText(fragment).width);
+            applySymbolFont();
+            const fragmentWidth = ctx.measureText(fragment).width;
+            stopApplySymbolFont();
 
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             currentRightGap = overheadTextGap;
@@ -217,7 +259,7 @@ export const analyzeToken = ({
         }
         /** Các ký tự còn lại */
         else {
-            const { boundWidth: fragmentWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod });
+            const { boundWidth: fragmentWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod, xRatio });
 
             totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
             currentRightGap = overheadTextGap;
@@ -305,12 +347,10 @@ export const analyzeLine = ({
         spaceCount += space - (spaceAtEnd && nextToken === undefined ? 1 : 0);
     }
     const expectedSpaceWidth = spaceCount > 0 ? (width - totalContentWidth) / spaceCount : 0;
-
-    /** TCG không chia space thừa vào line cuối, OCG thì có, nhưng chỉ chia nếu phần space bonus không quá lớn */
     const extraSpace = isLast
         ? format === 'tcg'
             ? expectedSpaceWidth > 1.500 ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 3.200 ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > 4.200 ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {

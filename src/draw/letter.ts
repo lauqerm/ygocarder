@@ -24,12 +24,14 @@ export const getLetterWidth = ({
     lastOfLine = false,
     debug,
     format,
+    xRatio,
     metricMethod = 'standard',
 }: {
     ctx: CanvasRenderingContext2D,
     letter: string,
     lastOfLine?: boolean,
     format: string,
+    xRatio: number,
     metricMethod?: MetricMethod,
     debug?: string,
 }) => {
@@ -38,7 +40,7 @@ export const getLetterWidth = ({
     };
 
     // Compact metricMethod
-    // Width = 1.5625% font width + (bound width) + 1.5625% font width
+    // Width = (bound width) + spacing * 2
     // Bound width không được nhỏ hơn min bound width, tính theo tỷ lệ % ứng với từng ký tự
 
     const metric = ctx.measureText(letter);
@@ -48,7 +50,18 @@ export const getLetterWidth = ({
         actualBoundingBoxRight,
     } = metric;
     const actualBoundWidth = actualBoundingBoxLeft + actualBoundingBoxRight;
-    let letterBoxSpacing = Math.max(0.450, width * 0.015625);
+    const spacingScale = metricMethod === 'name'
+        ? 8
+        : 0;
+    const spacingRatio = metricMethod === 'name'
+        ? 0.023438
+        : metricMethod === 'compact'
+            ? 0.046875
+            : 0;
+    let letterBoxSpacing = Math.min(
+        width * 0.075,
+        Math.max(0.450, width * spacingRatio) * (1 + (1 - xRatio) * spacingScale),
+    );
     let boundWidth = actualBoundWidth;
     let offsetRatio = (lastOfLine
         ? OCGLastOfLineOffsetMap[letter]
@@ -64,7 +77,7 @@ export const getLetterWidth = ({
     let endLineRatio = 1;
     let standardMetricRatio = 1.000;
     if (OCGDotRegex.test(letter)) {
-        boundWidth = actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.350);
+        boundWidth = actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.500);
         standardMetricRatio = 0.600;
     }
     else if (ChoonpuRegex.test(letter)) {

@@ -78,7 +78,7 @@ export const SettingButton = () => {
                     >Show Creative Options</Checkbox>
                 </div>
                 <div>
-                    <Tooltip title="Warning: Using hotkey will prevent undo and redo feature" placement="left">
+                    <Tooltip title="Warning: Using hotkey may affect undo / redo feature" placement="left">
                         <Checkbox
                             checked={allowHotkey}
                             onChange={e => updateSetting({ allowHotkey: e.target.checked })}

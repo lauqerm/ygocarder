@@ -31,7 +31,7 @@
 			border-color: transparent transparent #484848 transparent;
 		}
 		.link-marker-button.marker-checked .link-marker-icon {
-			border-color: transparent transparent #40a9ff transparent;
+			border-color: transparent transparent var(--sub-active) transparent;
 		}
 	}
 	.link-marker-reset,
@@ -57,6 +57,6 @@
 		}
 	}
 	.marker-checked {
-		color: #40a9ff;
+		color: var(--sub-active);
 	}
 }

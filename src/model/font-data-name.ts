@@ -54,8 +54,10 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
             symbolFont: 'matrix',
             symbolFontRatio: 0.8,
+            numberFont: 'DFKakuTaiHiStd-W4',
+            numberFontRatio: 1.00,
             ordinalFont: '"DFKakuTaiHiStd-W4"',
-            metricMethod: 'compact',
+            metricMethod: 'name',
             fontList: [{
                 overheadFontRatio: 0.25,
                 bulletSymbolWidth: 42.67,

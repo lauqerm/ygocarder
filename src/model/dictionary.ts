@@ -1,7 +1,7 @@
 export const ocgKeywordDataList = [
     {
-        shortForm: '召喚扱',
-        rubyForm: '{召|しょう}{喚|かん}{扱|あつか}',
+        shortForm: '召喚',
+        rubyForm: '{召|しょう}{喚|かん}',
     },
     {
         shortForm: 'カード',
@@ -462,10 +462,6 @@ export const ocgKeywordDataList = [
         rubyForm: '{取|と}り{除|ぞ}い',
     },
     {
-        shortForm: '見せる',
-        rubyForm: '{見|み}せる',
-    },
-    {
         shortForm: '払う',
         rubyForm: '{払|はら}う',
     },
@@ -474,16 +470,8 @@ export const ocgKeywordDataList = [
         rubyForm: '{行|おこな}う',
     },
     {
-        shortForm: '選ぶ',
-        rubyForm: '{選|えら}ぶ',
-    },
-    {
         shortForm: '対す',
         rubyForm: '{対|たい}す',
-    },
-    {
-        shortForm: '戻す',
-        rubyForm: '{戻|もど}す',
     },
     {
         shortForm: '送る',
@@ -671,10 +659,6 @@ export const ocgKeywordDataList = [
         rubyForm: '{自|じ}{身|しん}',
     },
     {
-        shortForm: '上に',
-        rubyForm: '{上|うえ}に',
-    },
-    {
         shortForm: '以下',
         rubyForm: '{以|い}{下|か}',
     },
@@ -689,6 +673,22 @@ export const ocgKeywordDataList = [
     {
         shortForm: '記さ',
         rubyForm: '{記|しる}さ',
+    },
+    {
+        shortForm: '捨て',
+        rubyForm: '{捨|す}て',
+    },
+    {
+        shortForm: 'CNo．',
+        rubyForm: '{CNo．|カオスナンバーズ}',
+    },
+    {
+        shortForm: 'No．',
+        rubyForm: '{No．|ナンバーズ}',
+    },
+    {
+        shortForm: 'CX',
+        rubyForm: '{CX|カオスエクシーズ}',
     },
     {
         shortForm: '他',
@@ -741,6 +741,66 @@ export const ocgKeywordDataList = [
     {
         shortForm: '事',
         rubyForm: '{事|こと}',
+    },
+    {
+        shortForm: '内',
+        rubyForm: '{内|うち}',
+    },
+    {
+        shortForm: '見',
+        rubyForm: '{見|み}',
+    },
+    {
+        shortForm: '中',
+        rubyForm: '{中|なか}',
+    },
+    {
+        shortForm: '選',
+        rubyForm: '{選|えら}',
+    },
+    {
+        shortForm: '一',
+        rubyForm: '{一|いち}',
+    },
+    {
+        shortForm: '番',
+        rubyForm: '{番|ばん}',
+    },
+    {
+        shortForm: '同',
+        rubyForm: '{同|どう}',
+    },
+    {
+        shortForm: '回',
+        rubyForm: '{回|かい}',
+    },
+    {
+        shortForm: '扱',
+        rubyForm: '{扱|あつか}',
+    },
+    {
+        shortForm: '星',
+        rubyForm: '{星|レベル}',
+    },
+    {
+        shortForm: '攻',
+        rubyForm: '{攻|こう}',
+    },
+    {
+        shortForm: '守',
+        rubyForm: '{守|しゅ}',
+    },
+    {
+        shortForm: '戻',
+        rubyForm: '{戻|もど}',
+    },
+    {
+        shortForm: '上',
+        rubyForm: '{上|うえ}',
+    },
+    {
+        shortForm: '次',
+        rubyForm: '{次|つぎ}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

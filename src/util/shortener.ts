@@ -83,6 +83,7 @@ export const decodeCardWithCompatibility = (cardData: Record<string, any> | stri
     try {
         decodedCard = rebuildCardData(cardData) as Card;
     } catch (e) {
+        console.error('decodedCard', cardData, e);
         try {
             decodedCard = legacyRebuildCardData(cardData, true) as Card;
             notification.info({
@@ -90,7 +91,7 @@ export const decodeCardWithCompatibility = (cardData: Record<string, any> | stri
                 description: 'System will automatically convert it into newer version.',
             });
         } catch (e) {
-            console.error('cardData', cardData);
+            console.error('cardData', cardData, e);
             notification.error({
                 message: 'Card data cannot be decoded',
                 description: 'It is either malformed or not compatible.',

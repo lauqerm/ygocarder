@@ -1,7 +1,7 @@
 export type MasterDuelCanvas = {
     previewCanvas: React.RefObject<HTMLCanvasElement>,
     drawCanvas: React.RefObject<HTMLCanvasElement>,
-    artCanvas: React.RefObject<HTMLCanvasElement>,
+    // artCanvas: React.RefObject<HTMLCanvasElement>,
     specialFrameCanvas: React.RefObject<HTMLCanvasElement>,
     subFamilyCanvas: React.RefObject<HTMLCanvasElement>,
     pendulumScaleCanvas: React.RefObject<HTMLCanvasElement>,

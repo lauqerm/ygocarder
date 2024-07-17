@@ -3,6 +3,7 @@ import {
 } from 'src/model';
 import {
     getHeadTextWidth,
+    getTextWorker,
 } from './text-util';
 import { getLetterWidth } from './letter';
 
@@ -15,9 +16,10 @@ export const fillHeadText = ({
     footText, footTextWidth,
     overheadTextGap,
     overheadTextSpacing,
+    overheadTextHeightRatio,
     xRatio,
     format,
-    withFurigana,
+    textWorker,
 }: {
     ctx: CanvasRenderingContext2D,
     fontSize: number,
@@ -26,10 +28,12 @@ export const fillHeadText = ({
     edge: number, baseline: number,
     overheadTextGap: number,
     overheadTextSpacing: number,
+    overheadTextHeightRatio: number,
     xRatio: number,
     format: string,
-    withFurigana: (worker: (innerEdge: number) => number, edge?: number) => number,
+    textWorker: ReturnType<typeof getTextWorker>,
 }) => {
+    const { applyFuriganaFont, stopApplyFuriganaFont } = textWorker;
     const {
         letterSpacing,
         headTextWidth,
@@ -44,15 +48,10 @@ export const fillHeadText = ({
         : halfGap * -1);
 
     for (const letter of headText) {
-        currentEdge += withFurigana(
-            edge => {
-                ctx.fillText(letter, edge / xRatio / KATAKANA_RATIO, baseline - fontSize * 0.75);
-                const letterWidth = getLetterWidth({ ctx, letter, format, metricMethod: 'compact' });
-
-                return (letterWidth.boundWidth + letterSpacing) * xRatio;
-            },
-            currentEdge,
-        );
+        applyFuriganaFont();
+        ctx.fillText(letter, currentEdge / xRatio / KATAKANA_RATIO, baseline - fontSize * overheadTextHeightRatio);
+        currentEdge += (getLetterWidth({ ctx, letter, format, metricMethod: 'compact', xRatio }).boundWidth + letterSpacing) * xRatio;
+        stopApplyFuriganaFont();
     }
 
     return {

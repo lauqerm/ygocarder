@@ -22,67 +22,94 @@ export const getTextWorker = (
     fontSizeData: FontSizeData,
     fontController: ReturnType<typeof createFontGetter>,
 ) => {
-    const { fontSize, overheadFontRatio = DefaultFontSizeData.overheadFontRatio } = fontSizeData;
-    const { ordinalFont, symbolFont, symbolFontRatio } = fontData;
+    const {
+        fontSize,
+        overheadFontRatio = DefaultFontSizeData.overheadFontRatio,
+    } = fontSizeData;
+    const {
+        font,
+        ordinalFont,
+        symbolFont,
+        symbolFontRatio,
+        numberFont = font,
+        numberFontRatio = 1,
+    } = fontData;
 
-    const withSymbolFont = <T = number>(worker: (edge: number) => T, edge = 0) => {
-        const { family: tempFamily, size: originalSize } = fontController.getFontInfo();
-        const symbolFontSize = fontSize * symbolFontRatio;
-        ctx.font = fontController.setFamily(symbolFont).setSize(symbolFontSize).getFont();
-        const returnValue = worker(edge);
-        ctx.font = fontController.setFamily(tempFamily).setSize(originalSize).getFont();
-
-        return returnValue;
+    let numberFontMemory = fontController.getFontInfo();
+    const applyNumberFont = () => {
+        numberFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setFamily(numberFont).setSize(fontSize * numberFontRatio).getFont();
     };
-    const withOrdinalFont = <T = number>(worker: (edge: number) => T, edge = 0) => {
-        const { family: tempFamily, size: originalSize } = fontController.getFontInfo();
-        const smallSize = fontSize / 1.1;
-        ctx.font = fontController.setFamily(ordinalFont).setSize(smallSize).getFont();
-        const returnValue = worker(edge);
-        ctx.font = fontController.setFamily(tempFamily).setSize(originalSize).getFont();
-
-        return returnValue;
+    const stopApplyNumberFont = () => {
+        ctx.font = fontController
+            .setFamily(numberFontMemory.family)
+            .setSize(numberFontMemory.size)
+            .getFont();
     };
-    const withUncompressText = <T = number>(worker: (edge: number) => T, edge = 0, xRatio = 1, yRatio = 1) => {
+    let symbolFontMemory = fontController.getFontInfo();
+    const applySymbolFont = () => {
+        symbolFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setFamily(symbolFont).setSize(fontSize * symbolFontRatio).getFont();
+    };
+    const stopApplySymbolFont = () => {
+        ctx.font = fontController
+            .setFamily(symbolFontMemory.family)
+            .setSize(symbolFontMemory.size)
+            .getFont();
+    };
+    let ordinalFontMemory = fontController.getFontInfo();
+    const applyOrdinalFont = () => {
+        ordinalFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setFamily(ordinalFont).setSize(fontSize / 1.1).getFont();
+    };
+    const stopApplyOrdinalFont = () => {
+        ctx.font = fontController
+            .setFamily(ordinalFontMemory.family)
+            .setSize(ordinalFontMemory.size)
+            .getFont();
+    };
+    const resetScale = () => {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        const returnValue = worker(edge);
+    };
+    const applyAsymmetricScale = (xRatio = 1, yRatio = 1) => {
         ctx.scale(xRatio, yRatio);
-
-        return returnValue;
     };
-    const withFurigana = <T = number>(worker: (edge: number) => T, edge = 0) => {
-        const { size: originalSize } = fontController.getFontInfo();
-        const smallSize = fontSize * overheadFontRatio;
-        ctx.font = fontController.setSize(smallSize).getFont();
-        const returnValue = worker(edge);
-        ctx.font = fontController.setSize(originalSize).getFont();
-
-        return returnValue;
+    let furiganaFontMemory = fontController.getFontInfo();
+    const applyFuriganaFont = () => {
+        furiganaFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setSize(fontSize * overheadFontRatio).getFont();
     };
-    const withSmallerText = <T = number>(worker: (edge: number, baseline: number, yRatio: number) => T, edge = 0, baseline = 0, yRatio = 1) => {
-        ctx.scale(yRatio, yRatio);
-        const returnValue = worker(edge, baseline, yRatio);
-        ctx.scale(1 / yRatio, 1 / yRatio);
-
-        return returnValue;
+    const stopApplyFuriganaFont = () => {
+        ctx.font = fontController
+            .setSize(furiganaFontMemory.size)
+            .getFont();
     };
-    const withLargerText = <T = number>(worker: (edge: number, baseline: number, fontRatio: number) => T, edge = 0, baseline = 0, fontRatio = 1) => {
-        const { size: originalSize } = fontController.getFontInfo();
-        const largeFontSize = fontSize * fontRatio;
-        ctx.font = fontController.setSize(largeFontSize).getFont();
-        const returnValue = worker(edge, baseline, fontRatio);
-        ctx.font = fontController.setSize(originalSize).getFont();
-
-        return returnValue;
+    const applyScale = (fontRatio = 1) => {
+        ctx.scale(fontRatio, fontRatio);
+    };
+    const reverseScale = (fontRatio = 1) => {
+        ctx.scale(1 / fontRatio, 1 / fontRatio);
+    };
+    let largerTextFontMemory = fontController.getFontInfo();
+    const applyLargerText = (fontRatio = 1) => {
+        largerTextFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setSize(fontSize * fontRatio).getFont();
+    };
+    const stopApplyLargerText = () => {
+        ctx.font = fontController.setSize(largerTextFontMemory.size).getFont();
     };
 
     return {
-        withLargerText,
-        withSmallerText,
-        withSymbolFont,
-        withOrdinalFont,
-        withUncompressText,
-        withFurigana,
+        applyNumberFont, stopApplyNumberFont,
+        applyLargerText, stopApplyLargerText,
+        applySymbolFont, stopApplySymbolFont,
+        applyOrdinalFont, stopApplyOrdinalFont,
+        applyFuriganaFont, stopApplyFuriganaFont,
+
+        applyAsymmetricScale,
+        applyScale,
+        resetScale,
+        reverseScale,
     };
 };
 
@@ -122,7 +149,11 @@ export const getHeadTextWidth = ({
     debug?: string,
 }) => {
     const condenseHeadText = headTextLetterWidth / footTextWidth;
-    const alignCenterLetterSpacing = condenseHeadText <= 2.25 ? overheadTextSpacing : overheadTextSpacing * 5/3;
+    let alignCenterLetterSpacing = overheadTextSpacing;
+    if (condenseHeadText <= 1) alignCenterLetterSpacing = overheadTextSpacing;
+    else if (condenseHeadText <= 2.25) alignCenterLetterSpacing = overheadTextSpacing * 4/3;
+    else alignCenterLetterSpacing = overheadTextSpacing * 5/3;
+
     const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
     const alignSpaceAroundLetterSpacing = (footTextWidth - headTextLetterWidth) / headText.length;
     const alignSpaceAroundHeadTextWidth = headTextLetterWidth + alignSpaceAroundLetterSpacing * (headText.length - 1);

@@ -1,0 +1,70 @@
+.card-image-cropper {
+    display: flex;
+    flex-direction: column;
+    grid-column-gap: 10px;
+    row-gap: 0.5rem;
+	/** Avoid flashing when switching mode **/
+	.card-image-source-input-container {
+		min-height: 104px;	// Alignment
+	}
+	.disabled,
+	.disabled .anticon {
+		cursor: not-allowed;
+		filter: opacity(0.8);
+	}
+	.card-image-source-input-title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.ant-radio-group {
+		.ant-input-group-addon {
+			min-width: unset;
+		}
+	}
+	.card-image-input {
+		margin-top: 5px;
+		&.input-inactive {
+			display: none;
+		}
+	}
+	.card-image-source-input {
+		flex: 1;
+		display: grid;
+		grid-template-columns: max-content 1fr;
+		.link-marker-chooser {
+			margin-right: 0.5rem;
+		}
+		.card-image-source-input-title {
+			min-height: 34px;	// Alignment
+			grid-column: span 2;
+			line-height: 1;
+		}
+		input[type="file"] {
+			cursor: pointer;
+		}
+	}
+	.online-image-tip {
+		margin-top: 5px;
+		line-height: 1.25;
+	}
+	.card-cropper {
+		max-height: 400px;
+		min-height: 50px;
+		position: relative;
+	}
+	.ReactCrop__image {
+		max-width: 100%;
+		max-height: 400px;
+	}
+	.ReactCrop {
+		box-shadow: 0 1px 3px rgba(0,0,0,0.36), 0 1px 2px rgba(0,0,0,0.48);
+	}
+}
+
+.image-warning {
+	color: #FF6F6F;
+	line-height: 1.25;
+	text-align: center;
+}

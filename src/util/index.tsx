@@ -26,7 +26,11 @@ export function insertUrlParam(key: string, value: string) {
         let newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + searchParams.toString();
         window.history.pushState({ path: newurl }, '', newurl);
     }
-}
+};
+
+export const normalizedCardName = (name: string) => {
+    return name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
+};
 
 export * from './categorize';
 export * from './condenser';

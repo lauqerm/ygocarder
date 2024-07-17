@@ -1,8 +1,8 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Input, Checkbox, Popover } from 'antd';
+import { Input, Checkbox, Popover, Tooltip } from 'antd';
 import { Card, CardOpacity, CondenseType, NameFontDataMap, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate } from '../../model';
 import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
-import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill } from '../../util';
+import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill, normalizedCardName } from '../../util';
 import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
 import {
@@ -20,7 +20,7 @@ import {
 import { CharPicker } from './char-picker';
 import { TextStylePicker, TextStylePickerRef } from './text-style-picker';
 import { CheckboxTrain, RadioTrain } from './input-train';
-import { ImageCropperRef } from '../../component/card-picture';
+import { ImageCropperRef } from '../../component/image-cropper';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useSetting } from '../../service';
 import { OpacityPicker, OpacityPickerRef } from './opacity-picker';
@@ -55,7 +55,8 @@ export type CardInputPanel = {
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     children?: React.ReactNode,
 } & {
-    onTainted: ImageCropper['onTainted']
+    onTainted: ImageCropper['onTainted'],
+    onSourceLoaded: ImageCropper['onSourceLoaded'],
 }
 export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel>(({
     currentCard,
@@ -64,6 +65,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     onCardChange,
     onCropChange,
     onTainted,
+    onSourceLoaded,
     children,
 }: CardInputPanel, forwardedRef) => {
     const {
@@ -102,6 +104,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const [displayEffect, setDisplayEffect] = useState(effect);
     const [displayPendulumEffect, setDisplayPendulumEffect] = useState(pendulumEffect);
     const [onlineCharPicker, setOnlineCharPicker] = useState('');
+    const [stylePickerResetCount, setStylePickerResetCount] = useState(0);
     const ref = useRef();
     const opacityPickerRef = useRef<OpacityPickerRef>(null);
     const lastPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
@@ -147,7 +150,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     };
     const onAttributeChange = onChangeFactory('attribute', setCard);
     const onSubFamilyChange = onChangeFactory('subFamily', setCard);
-    const onNameChange = debounce(onChangeFactory('name', setCard), 350);
+    const onNameChange = debounce(onChangeFactory('name', setCard), 400);
     const onNameColorChange = (type: NameStyleType, value: Partial<NameStyle>) => {
         onCardChange(currentCard => {
             return {
@@ -195,8 +198,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     };
     const onRedScaleChange = onChangeFactory('pendulumScaleRed', setCard);
     const onBlueScaleChange = onChangeFactory('pendulumScaleBlue', setCard);
-    const onPendulumEffectChange = debounce(onChangeFactory('pendulumEffect', setCard), 350);
-    const onEffectChange = debounce(onChangeFactory('effect', setCard), 350);
+    const onPendulumEffectChange = debounce(onChangeFactory('pendulumEffect', setCard), 400);
+    const onEffectChange = debounce(onChangeFactory('effect', setCard), 400);
     const onATKChange = onChangeFactory('atk', setCard);
     const onDEFChange = onChangeFactory('def', setCard);
     const onTypeAbilityChange = debounce((value: (string | number)[]) => {
@@ -204,7 +207,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             ...current,
             typeAbility: value.map(entry => `${entry}`),
         }));
-    }, 350);
+    }, 400);
     const onSetIDChange = onChangeFactory('setId', setCard);
     const onPasscodeChange = onChangeFactory('passcode', setCard);
     const onStickerChange = onChangeFactory('sticker', setCard);
@@ -238,6 +241,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         }),
         [showExtraDecorativeOption],
     );
+
+    useEffect(() => {
+        stylePickerRef.current?.setValue({ font: nameStyle.font });
+    }, [nameStyle.font]);
 
     useEffect(() => {
         opacityPickerRef.current?.setValue(opacity);
@@ -284,6 +291,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             setDisplayName(card.name);
             setDisplayEffect(card.effect);
             setDisplayPendulumEffect(card.pendulumEffect);
+            setStylePickerResetCount(cnt => cnt + 1);
             imageCropperRef.current?.forceExternalSource(card.picture, card.pictureCrop);
         }
     }));
@@ -333,9 +341,16 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 <Input
                     id="name"
                     ref={onlineCharPicker === 'name' ? ref as any : null}
+                    autoComplete="off"
                     onFocus={() => setOnlineCharPicker('name')}
                     allowClear
-                    addonBefore={'Name'}
+                    addonBefore={<Tooltip title="Copy">
+                        <span style={{ cursor: 'pointer' }} onClick={() => {
+                            navigator.clipboard.writeText(normalizedCardName(name));
+                        }}>
+                            Name
+                        </span>
+                    </Tooltip>}
                     placeholder="Card Name"
                     value={displayName}
                     className="name-input"
@@ -365,6 +380,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 <Input
                     id="set-id"
                     ref={onlineCharPicker === 'set-id' ? ref as any : null}
+                    autoComplete="off"
                     onFocus={() => setOnlineCharPicker('set-id')}
                     allowClear
                     className="set-id-input"
@@ -381,7 +397,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     value={setId}
                 />
             </div>
-            <TextStylePicker ref={stylePickerRef}
+            <TextStylePicker ref={stylePickerRef} key={stylePickerResetCount}
                 defaultFont={NameFontDataMap[
                     isSpeedSkill
                         ? 'Arial'
@@ -515,6 +531,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 <Input addonBefore="Type"
                     id="type"
                     ref={onlineCharPicker === 'type' ? ref as any : null}
+                    autoComplete="off"
                     onFocus={() => setOnlineCharPicker('type')}
                     allowClear
                     onChange={ev => {
@@ -551,7 +568,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     spellCheck={false}
                     placeholder="Card effect"
                     value={displayEffect}
-                    rows={8}
+                    rows={9}
                     onKeyDown={ev => {
                         if (!allowHotkey) return;
                         const { ctrlKey, key } = ev;
@@ -593,6 +610,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     <Input
                         id="password"
                         ref={onlineCharPicker === 'password' ? ref as any : null}
+                        autoComplete="off"
                         onFocus={() => setOnlineCharPicker('password')}
                         allowClear
                         className="password-input"
@@ -634,6 +652,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     <Input addonBefore="Creator"
                         id="creator-text"
                         ref={onlineCharPicker === 'creator-text' ? ref as any : null}
+                        autoComplete="off"
                         onFocus={() => setOnlineCharPicker('creator-text')}
                         allowClear
                         className="creator-input"
@@ -661,6 +680,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onSourceChange={onPictureChange}
                     onCropChange={onCropChange}
                     onTainted={onTainted}
+                    onSourceLoaded={onSourceLoaded}
                     ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
                     beforeCropper={showExtraDecorativeOption
                         ? <RadioTrain

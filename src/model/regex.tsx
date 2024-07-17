@@ -34,7 +34,7 @@ export const CapitalLetterRegex = new RegExp(CAPITAL_LETTER_REGEX_SOURCE);
 export const SQUARE_BRACKET_REGEX_SOURCE = '[\\[\\]【】]';
 export const SquareBracketLetterRegex = new RegExp(SQUARE_BRACKET_REGEX_SOURCE);
 
-export const WHOLE_WORD_REGEX_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】]+';
+export const WHOLE_WORD_REGEX_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
 export const WholeWordRegex = new RegExp(WHOLE_WORD_REGEX_SOURCE);
 
 export const UNCOMPRESSED_REGEX_SOURCE = '{{([^{}]+?)}}';
@@ -67,7 +67,7 @@ export const TCGLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
 
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
 export const TCG_NON_SYMBOL_JOINLIST = '&A-Za-z0-9\\-/\\s!,.‘’\\[\\]\\(\\)';
-export const TCGNonSymbolRegex = new RegExp(`[^${TCG_NON_SYMBOL_JOINLIST}]`);
+export const TCGSymbolRegex = new RegExp(`[^${TCG_NON_SYMBOL_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
 export const OCG_KEYWORD_REGEX_SOURCE = `(${OCG_KEYWORD_JOIN_REGEX})(?![^{]*})`;
@@ -81,13 +81,14 @@ export const OCG_RUBY_REGEX_SOURCE = '{[^{}]+?}';
 export const NOT_START_OF_LINE_REGEX_SOURCE = `.[${CHIISAI_KANA_JOINLIST})\\]｝〕〉》」｣』】〙〗〟'"’”｠»‐゠–〜？!‼⁇⁈⁉・、:;,。.｡､]+`;
 /** Các ký tự sau không được ở cuối dòng, vậy nên ta nối nó với một ký tự phía sau. ● là ký tự đại diện cho bullet. */
 export const NOT_END_OF_LINE_REGEX_SOURCE = '[(\\[｛〔〈《「｢『【〘〖〝\'"‘“｟«●]+.';
-export const NOT_SPLIT_REGEX_SOURCE = '.[—...‥〳〴〵]+.';
+export const NOT_SPLIT_REGEX_SOURCE = '.[—...‥〳〴〵)]+[^\\s]';
 export const OCG_BULLET_REGEX_SOURCE = '[①-⑳]：.';
 
 export const OCG_ALPHABET_REGEX_SOURCE = '[Ａ-Ｚａ-ｚ]';
 export const OCGAlphabetRegex = new RegExp(OCG_ALPHABET_REGEX_SOURCE);
 
 export const OCGNumberRegex = new RegExp('[０-９]');
+export const NumberRegex = new RegExp('[0-9]');
 
 export const HiraganaRegex = /[あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんゔ]/;
 
@@ -105,7 +106,7 @@ export const NoSpaceRegex = new RegExp('[―]');
 const OCG_INCREASED_LEVEL_2_WIDTH_JOINLIST = '：';
 export const OCGIncreasedLevel2WidthRegex = new RegExp(`[${OCG_INCREASED_LEVEL_2_WIDTH_JOINLIST}]`);
 
-const OCG_INCREASED_WIDTH_JOINLIST = '。､｢｣';
+const OCG_INCREASED_WIDTH_JOINLIST = '。､';
 export const OCGIncreasedWidthRegex = new RegExp(`[${OCG_INCREASED_WIDTH_JOINLIST}]`);
 export const OCG_INCREASED_WIDTH_RATIO = 1.250;
 export const OCGOffsetMap: Record<string, number> = {

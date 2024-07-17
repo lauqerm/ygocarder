@@ -78,17 +78,17 @@ export const TaintedCanvasWarning = <Explanation
     content={<div className="disclaimer">
         <h2>What is happening?</h2>
         <p>
-            You are using an image host that does not get the "approval" needed to be draw to the app. Browsers see it as a potential security risk (even if it is not the case), and mark the canvas as "tainted".
+            You are using an image host that does not get the "approval" needed to be draw to the app. Browsers see it as a potential security risk (even if it is not the case), and mark the card as "tainted".
         </p>
         <h2>How does it affect me?</h2>
         <p>
-            A "tainted canvas" prevent all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your consent.<br />
+            A "tainted card" prevents all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your consent.<br />
             Furthemore, once it get tainted, it will remains tainted even if you switch to other "safe" image host.
         </p>
         <h2>How do I fix it?</h2>
         <p>
-            Change to other safe and popular image host ("imgur" for example) <u>then refresh the page</u>.<br />
-            If you cannot afford to do that, the app will also work mostly just fine, you only need to manually save the card (and keep cautious).
+            Change to other safe and popular image host ("imgur" for example) will likely fix the issue. You may try to refresh the page if the issue persists.<br />
+            If you cannot afford to switch to other image hosts, the app will also work mostly just fine, you only need to manually save the card (and keep cautious for potential malicious links).
         </p>
     </div>}
 />;

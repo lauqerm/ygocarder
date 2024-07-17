@@ -9,11 +9,13 @@ import {
     UP_RATIO,
     getDefaultCard,
     getArtCanvasCoordinate,
+    CardOpacity,
 } from './model';
 import {
     cardDataShortener,
     decodeCardWithCompatibility,
     insertUrlParam,
+    normalizedCardName,
 } from './util';
 import { CardInputPanel, CardInputPanelRef } from './page';
 import WebFont from 'webfontloader';
@@ -30,12 +32,13 @@ function App() {
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [ocgStyleFile, setOCGStyleFile] = useState('');
     const softMode = useSetting(state => state.setting.reduceMotionColor);
+    const [canvasKey, setCanvasKey] = useState(0);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
-    const artCanvasRef = useRef<HTMLCanvasElement>(null);
+    // const artCanvasRef = useRef<HTMLCanvasElement>(null);
     const specialFrameCanvasRef = useRef<HTMLCanvasElement>(null);
     const subFamilyCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumScaleCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,7 +56,7 @@ function App() {
     const [canvasMap] = useState({
         previewCanvas: previewCanvasRef,
         drawCanvas: drawCanvasRef,
-        artCanvas: artCanvasRef,
+        // artCanvas: artCanvasRef,
         specialFrameCanvas: specialFrameCanvasRef,
         subFamilyCanvas: subFamilyCanvasRef,
         pendulumScaleCanvas: pendulumScaleCanvasRef,
@@ -79,10 +82,15 @@ function App() {
     } = currentCard;
 
     const [imageChangeCount, setImageChangeCount] = useState(0);
-    const { drawingPipeline } = useMasterSeriDrawer(true, canvasMap, currentCard, {
-        imageChangeCount,
-        isInitializing,
-    });
+    const { drawingPipeline } = useMasterSeriDrawer(
+        true,
+        canvasMap,
+        currentCard,
+        {
+            imageChangeCount,
+            isInitializing,
+        },
+    );
 
     // const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
     //     let leftOffset = -5;
@@ -249,7 +257,7 @@ function App() {
                     await exportRef.current.currentPipeline;
 
                     if (relevant) {
-                        exportRef.current.currentPipeline = onExport({ isPendulum });
+                        exportRef.current.currentPipeline = onExport({ isPendulum, opacity });
                         exportRef.current.queuedPipeline = false;
 
                         await exportRef.current.currentPipeline;
@@ -279,7 +287,7 @@ function App() {
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {
-            const normalizedName = name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
+            const normalizedName = normalizedCardName(name);
 
             if (relevant) {
                 document.title = normalizedName
@@ -303,6 +311,7 @@ function App() {
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useRef(async (exportProps: {
         isPendulum: boolean,
+        opacity: Partial<CardOpacity>,
     }) => {
         const {
             isPendulum = false
@@ -428,12 +437,12 @@ function App() {
                     </div>
                     <div className="card-canvas-container">
                         <div className="card-canvas-group">
-                            <canvas id="export-canvas" ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="export-canvas" key={canvasKey + 0.1} ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
                             </div>
-                            <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963 /** 650 * UP_RATIO */} />
-                            <canvas id="specialFrameCanvas" ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
+                            <canvas id="specialFrameCanvas" key={canvasKey} ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
                             <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
                             <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UP_RATIO} />
@@ -457,6 +466,11 @@ function App() {
                     currentCard={currentCard}
                     onCardChange={setCard}
                     defaultCropInfo={pictureCrop}
+                    onSourceLoaded={() => {
+                        setCanvasKey(cnt => cnt + 1);
+                        setImageChangeCount(cnt => cnt + 1);
+                        setTainted(false);
+                    }}
                     onCropChange={(cropInfo, sourceType) => {
                         setImageChangeCount(cnt => cnt + 1);
                         setSourceType(sourceType);
@@ -465,7 +479,10 @@ function App() {
                             pictureCrop: cropInfo,
                         }));
                     }}
-                    onTainted={() => setTainted(true)}
+                    onTainted={() => {
+                        setImageChangeCount(cnt => cnt + 1);
+                        setTainted(true);
+                    }}
                 >
                     <AppHeader />
                     <br />

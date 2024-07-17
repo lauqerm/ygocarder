@@ -11,7 +11,8 @@ import {
     OCG_BULLET_REGEX_SOURCE,
     tcgToOCGLetterMap,
     ocgToTCGLetterMap,
-    UNCOMPRESSED_REGEX_SOURCE
+    UNCOMPRESSED_REGEX_SOURCE,
+    ocgNumberCircleMap
 } from 'src/model';
 
 export const splitEffect = (effect: string, isNormal = false) => {
@@ -46,48 +47,6 @@ export const splitEffect = (effect: string, isNormal = false) => {
     };
 };
 
-const ocgNumberCircleMap: Record<string, string> = {
-    '(１)': '①',
-    '(２)': '②',
-    '(３)': '③',
-    '(４)': '④',
-    '(５)': '⑤',
-    '(６)': '⑥',
-    '(７)': '⑦',
-    '(８)': '⑧',
-    '(９)': '⑨',
-    '(１０)': '⑩',
-    '(１１)': '⑪',
-    '(１２)': '⑫',
-    '(１３)': '⑬',
-    '(１４)': '⑭',
-    '(１５)': '⑮',
-    '(１６)': '⑯',
-    '(１７)': '⑰',
-    '(１８)': '⑱',
-    '(１９)': '⑲',
-    '(２０)': '⑳',
-    '(1)': '①',
-    '(2)': '②',
-    '(3)': '③',
-    '(4)': '④',
-    '(5)': '⑤',
-    '(6)': '⑥',
-    '(7)': '⑦',
-    '(8)': '⑧',
-    '(9)': '⑨',
-    '(10)': '⑩',
-    '(11)': '⑪',
-    '(12)': '⑫',
-    '(13)': '⑬',
-    '(14)': '⑭',
-    '(15)': '⑮',
-    '(16)': '⑯',
-    '(17)': '⑰',
-    '(18)': '⑱',
-    '(19)': '⑲',
-    '(20)': '⑳',
-};
 export const normalizeCardText = (text: string, format: string, option?: { multiline?: boolean }) => {
     const { multiline = true } = option ?? {};
     const normalizedText = text ?? '';

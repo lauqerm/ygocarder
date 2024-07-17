@@ -596,7 +596,10 @@ input:-internal-autofill-selected {
 .export-button .save-button {
     background: linear-gradient(135deg, #22c1c3 0%, #298ae9 50%, #22c1c3 100%);
     background-size: 300% 300%;
-    animation: SlowPulsating 10s ease infinite;
+    animation: SlowPulsating ease infinite 10s;
+	&:hover {
+		background: linear-gradient(90deg, #32d1d3 0%, #399af9 50%, #32d1d3 100%);
+	}
 }
 @keyframes SlowPulsating {
     0%{background-position:0% 50%}
