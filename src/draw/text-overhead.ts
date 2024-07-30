@@ -1,11 +1,9 @@
 import {
-    KATAKANA_RATIO,
-} from 'src/model';
-import {
     getHeadTextWidth,
     getTextWorker,
 } from './text-util';
 import { getLetterWidth } from './letter';
+import { GAP_PADDING_RATIO } from 'src/model';
 
 /** Vẽ các ký tự overhead (furigana) */
 export const fillHeadText = ({
@@ -33,26 +31,50 @@ export const fillHeadText = ({
     format: string,
     textWorker: ReturnType<typeof getTextWorker>,
 }) => {
-    const { applyFuriganaFont, stopApplyFuriganaFont } = textWorker;
+    const { applyFuriganaFont, stopApplyFuriganaFont, resetScale, applyScale } = textWorker;
     const {
+        gapPadding,
         letterSpacing,
         headTextWidth,
         halfGap,
         alignment,
-    } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap, overheadTextSpacing });
-    const overflow = headTextWidth > footTextWidth;
-    let currentEdge = edge + xRatio * (alignment === 'center'
-        ? overflow
-            ? 0
-            : (footTextWidth / 2 - headTextWidth / 2)
-        : halfGap * -1);
+    } = getHeadTextWidth({
+        headText, headTextLetterWidth,
+        footText, footTextWidth: footTextWidth * xRatio,
+        overheadTextGap, overheadTextSpacing: overheadTextSpacing * xRatio,
+        gapPadding: fontSize * GAP_PADDING_RATIO,
+    });
+    const overflow = headTextWidth > footTextWidth * xRatio;
+
+    if (headText.length === 0) return {
+        headTextWidth,
+        halfGap,
+    };
+
+    resetScale();
+    let currentEdge = edge;
+
+    if (alignment === 'center') {
+        currentEdge += gapPadding;
+        if (!overflow) {
+            currentEdge += (footTextWidth * xRatio - headTextWidth) / 2;
+        }
+    } else {
+        currentEdge += letterSpacing / 2;
+    }
 
     for (const letter of headText) {
         applyFuriganaFont();
-        ctx.fillText(letter, currentEdge / xRatio / KATAKANA_RATIO, baseline - fontSize * overheadTextHeightRatio);
-        currentEdge += (getLetterWidth({ ctx, letter, format, metricMethod: 'compact', xRatio }).boundWidth + letterSpacing) * xRatio;
+        const { width, boundWidth } = getLetterWidth({ ctx, letter, format, metricMethod: 'furigana', xRatio: 1 });
+        const boundingOffset = (width - boundWidth) / 2;
         stopApplyFuriganaFont();
+
+        applyFuriganaFont(true);
+        ctx.fillText(letter, currentEdge - boundingOffset, baseline - fontSize * overheadTextHeightRatio);
+        stopApplyFuriganaFont();
+        currentEdge += (boundWidth + letterSpacing);
     }
+    applyScale(xRatio, 1);
 
     return {
         headTextWidth,

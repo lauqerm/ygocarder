@@ -88,6 +88,8 @@ export const tcgToOCGLetterMap: Record<string, string> = {
     '！': '!',
     '（': '(',
     '）': ')',
+    '＆': '&',
+    '＇': '\'',
 };
 export const ocgToTCGLetterMap: Record<string, string> = {
     '０': '0',
@@ -179,6 +181,8 @@ export const ocgToTCGLetterMap: Record<string, string> = {
     '！': '!',
     '（': '(',
     '）': ')',
+    '＆': '&',
+    '＇': '\'',
 };
 
 export const ocgNumberCircleMap: Record<string, string> = {

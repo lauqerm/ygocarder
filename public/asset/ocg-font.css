@@ -13,6 +13,13 @@
     font-style: normal;
     font-display: swap;
 }
+/** OCG Furigana */
+@font-face {
+	font-family: 'DFHSGothic-W3-WIN-RKSJ-H';
+	src: url('./font/DFHsg3.ttf');
+    font-style: normal;
+    font-display: swap;
+}
 /** OCG Effect Number */
 @font-face {
 	font-family: 'DFKakuTaiHiStd-W4';

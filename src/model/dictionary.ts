@@ -33,7 +33,7 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: 'LP',
-        regexForm: '(?<!\\w)LP(?!\\w)',
+        regexForm: '(?<![a-zA-Z_])LP(?![a-zA-Z_])',
         rubyForm: '{LP|ライフポイント}',
     },
     {
@@ -691,6 +691,22 @@ export const ocgKeywordDataList = [
         rubyForm: '{CX|カオスエクシーズ}',
     },
     {
+        shortForm: '適用',
+        rubyForm: '{適|てき}{用|よう}',
+    },
+    {
+        shortForm: '数値',
+        rubyForm: '{数|すう}{値|ち}',
+    },
+    {
+        shortForm: '計算',
+        rubyForm: '{計|けい}{算|さん}',
+    },
+    {
+        shortForm: '必要',
+        rubyForm: '{必|ひつ}{要|よう}',
+    },
+    {
         shortForm: '他',
         rubyForm: '{他|ほか}',
     },
@@ -801,6 +817,14 @@ export const ocgKeywordDataList = [
     {
         shortForm: '次',
         rubyForm: '{次|つぎ}',
+    },
+    {
+        shortForm: '値',
+        rubyForm: '{値|ち}',
+    },
+    {
+        shortForm: '含',
+        rubyForm: '{含|ふく}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

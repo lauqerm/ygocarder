@@ -46,9 +46,7 @@ const WrappedColorPicker = forwardRef(({
 
     useEffect(() => {
         if (internalId > 0) onOffsetChange?.(internalId, `${internalOffset / 100}`);
-        /** @todo Kiểm tra và loại bỏ warning */
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [internalOffset]);
+    }, [internalId, internalOffset, onOffsetChange]);
 
     return <div className="stop-point-control-panel">
         <div className="stop-point-offset-input">
@@ -85,6 +83,12 @@ const WrappedColorPicker = forwardRef(({
 });
 
 const MAX_STOP_POINT = 20;
+const getPaletteInfo = (newColorList: ColorPoint[]) => {
+    return {
+        colorList: newColorList,
+        raw: stringifyPalette(newColorList),
+    };
+};
 export type TextGradientPicker = {
     palette?: string,
     angle?: number,
@@ -106,12 +110,12 @@ export const TextGradientPicker = ({
             currentControlId: intialPalette[0]?.id ?? -1,
         };
     });
-    const getPaletteInfo = useCallback((newColorList: ColorPoint[]) => {
-        return {
-            colorList: newColorList,
-            raw: stringifyPalette(newColorList),
-        };
-    }, []);
+
+    const changePalette = useCallback((id: number, offset: string) => setPalette(cur => {
+        const nextColorList = cur.colorList.map(entry => entry.id === id ? { ...entry, offset } : entry);
+
+        return { ...cur, ...getPaletteInfo(nextColorList) };
+    }), []);
 
     useEffect(() => {
         setAngle(externalAngle);
@@ -210,11 +214,7 @@ export const TextGradientPicker = ({
             }}>
                 {/** Children được clone để populate props, vậy nên không cần pass props ở đây */}
                 <WrappedColorPicker ref={pickerRef}
-                    onOffsetChange={(id, offset) => setPalette(cur => {
-                        const nextColorList = cur.colorList.map(entry => entry.id === id ? { ...entry, offset } : entry);
-
-                        return { ...cur, ...getPaletteInfo(nextColorList) };
-                    })}
+                    onOffsetChange={changePalette}
                     onRemove={id => {
                         setPalette(cur => {
                             const nextColorList = cur.colorList.filter(entry => entry.id !== id);

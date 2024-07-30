@@ -68,6 +68,15 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 1.057,
         type: 'truePendulum',
     },
+    // truePendulum: {
+    //     artFinishX: 56,
+    //     artFinishY: 213,
+    //     artWidth: 702,
+    //     artX: 56,
+    //     artY: 213,
+    //     ratio: 1.057,
+    //     type: 'truePendulum',
+    // },
     fullCard: {
         artFinishX: 100,
         artFinishY: 219,

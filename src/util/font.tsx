@@ -5,6 +5,7 @@ export type FontGetter = {
         size: `${number}px`,
         sizeAsNumber: number,
         family: string,
+        weight: '' | 'bold',
     },
     setWeight(nextWeight: '' | 'bold'): FontGetter,
     setStyle(nextStyle: '' | 'italic' | 'small-caps'): FontGetter,
@@ -12,7 +13,7 @@ export type FontGetter = {
     setFamily(nextFamily: string): FontGetter,
 }
 export const createFontGetter = (props?: {
-    defaultWeight?: string,
+    defaultWeight?: '' | 'bold',
     defaultStyle?: '' | 'italic' | 'small-caps',
     defaultSize?: number | `${number}px`,
     defaultFamily?: string,
@@ -31,7 +32,7 @@ export const createFontGetter = (props?: {
 
     return {
         getFont: () => `${[style, weight, size, family].filter(part => part !== '').join(' ')}, Arial`,
-        getFontInfo: () => ({ style, size, family, sizeAsNumber }),
+        getFontInfo: () => ({ style, size, family, sizeAsNumber, weight }),
         setWeight(nextWeight) {
             weight = nextWeight;
             return this;

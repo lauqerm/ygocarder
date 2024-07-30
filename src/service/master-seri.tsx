@@ -202,6 +202,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.specialFrame.instructor = async () => {
                 clearCanvas(ctx);
                 if (!ctx) return;
+                /** Vẽ một lớp màu để loại bỏ các trường hợp transparent */
+                ctx.fillStyle = '#121013';
+                ctx.fillRect(0, 0, CanvasWidth, CanvasHeight);
+
                 const {
                     artX,
                     artY,
@@ -249,12 +253,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     ctx.fillRect(44, 47, 726, 91);
                 }
                 ctx.globalAlpha = opacityName / 100;
+
                 await drawFrom(ctx, `/asset/image/frame/frame-name-box-${trueFrame}.png`, 0, 0);
 
                 ctx.globalAlpha = 1;
 
                 /** Vẽ card dạng thường, thứ tự các lớp như mô tả */
                 if (!isPendulum) {
+
                     /** 1: Background cho card text dựa trên nửa dưới */
                     ctx.globalAlpha = opacityText / 100;
                     await drawFrom(
@@ -317,6 +323,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             ? imageHeight - (pendulumStructureHeight / imageScaledRatio)
                             : 0;
 
+                        /** Vẽ một lớp màu để loại bỏ các trường hợp transparent */
+                        ctx.fillStyle = '#121013';
+                        ctx.fillRect(artX + destinationOffsetX, artY + destinationOffsetY, artWidth - destinationOffsetX * 2, artWidth / (imageWidth / imageHeight) - offsetHeight * imageScaledRatio);
                         ctx.drawImage(
                             previewCtx,
                             sourceOffsetX, sourceOffsetY,
@@ -674,10 +683,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 let offsetY = 0;
                 let xOffset = 0;
                 ctx.fillStyle = (lightFooter && !isPendulum) ? '#fff' : '#000';
-                const option = ((pendulumFrame === 'zarc' || opacity.artFrame === false) && !isPendulum)
-                    ? { stroke: true }
-                    : undefined;
-                ctx.strokeStyle = (pendulumFrame === 'zarc' || option?.stroke) ? '#888' : '#000';
+                ctx.shadowColor = (pendulumFrame === 'zarc' || opacity.artFrame === false) ? '#fff' : '#000';
+                ctx.shadowOffsetY = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowBlur = (pendulumFrame === 'zarc' || opacity.artFrame === false) && !isPendulum ? 1 : 0;
                 ctx.font = '22px stone-serif-regular';
                 if (format === 'ocg') {
                     spacing = 0.145;
@@ -686,11 +695,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
 
                 if (isPendulum) {
-                    fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY, option);
+                    fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY);
                 } else if (isLink) {
-                    fillTextRightWithSpacing(ctx, setId, spacing, 666.56 + xOffset, 873.94 + offsetY, option);
+                    fillTextRightWithSpacing(ctx, setId, spacing, 666.56 + xOffset, 873.94 + offsetY);
                 } else {
-                    fillTextRightWithSpacing(ctx, setId, spacing, 728.78 + xOffset, 871.50 + offsetY, option);
+                    fillTextRightWithSpacing(ctx, setId, spacing, 728.78 + xOffset, 871.50 + offsetY);
                 }
             }
         }
@@ -704,6 +713,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             if (ctx) {
                 ctx.fillStyle = lightFooter ? '#fff' : '#000';
                 ctx.font = `${15 * UP_RATIO}px stone-serif-regular`;
+                ctx.shadowColor = opacity.artFrame === false ? '#fff' : '#000';
+                ctx.shadowOffsetY = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowBlur = opacity.artFrame === false ? 1 : 0;
 
                 const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 25 * UP_RATIO, 777 * UP_RATIO);
                 if (isFirstEdition && !isDuelTerminalCard) {
@@ -713,7 +726,19 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 }
             }
         }
-    }, [active, isDuelTerminalCard, isFirstEdition, isInitializing, passcode, passcodeCanvas, lightFooter, format]);
+    }, [
+        active,
+        isDuelTerminalCard,
+        isFirstEdition,
+        isInitializing,
+        passcode,
+        passcodeCanvas,
+        lightFooter,
+        format,
+        pendulumFrame,
+        opacity.artFrame,
+        isPendulum,
+    ]);
 
     /** DRAW CREATOR TEXT */
     useEffect(() => {
@@ -725,6 +750,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             if (!ctx) return;
 
             ctx.fillStyle = lightFooter ? '#fff' : '#000';
+            ctx.shadowColor = opacity.artFrame === false ? '#fff' : '#000';
+            ctx.shadowOffsetY = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowBlur = opacity.artFrame === false ? 1 : 0;
             drawCreatorText({
                 ctx,
                 format,
@@ -732,7 +761,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 alignment: 'right',
             });
         })();
-    }, [isInitializing, isPendulum, lightFooter, creator, active, creatorCanvas, format]);
+    }, [isInitializing, isPendulum, lightFooter, creator, active, creatorCanvas, format, opacity.artFrame]);
 
     /** DRAW STICKER */
     useEffect(() => {
@@ -761,11 +790,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const typeAbilityWithIcon = (isMonster || normalizedSubFamily === 'NO ICON')
                 ? normalizedTypeAbility
                 : `${normalizedTypeAbility}${ST_ICON_SYMBOL}`;
-            const normalizedTypeAbilityText = format === 'tcg'
-                ? size === 'large'
-                    ? `[  ${typeAbilityWithIcon}  ]`
-                    : `[${typeAbilityWithIcon}]`
-                : `【${typeAbilityWithIcon}】`;
+            const normalizedTypeAbilityText = typeAbilityWithIcon.length > 0
+                ? format === 'tcg'
+                    ? size === 'large'
+                        ? `[  ${typeAbilityWithIcon}  ]`
+                        : `[${typeAbilityWithIcon}]`
+                    : `【${typeAbilityWithIcon}】`
+                : '';
 
             drawMonsterType({
                 ctx,

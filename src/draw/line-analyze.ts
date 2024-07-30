@@ -2,7 +2,6 @@ import {
     OCGAlphabetRegex,
     MAX_LINE_REVERSE_INDENT,
     START_OF_LINE_ALPHABET_OFFSET,
-    START_OF_LINE_GAP,
     TextData,
     NB_UNCOMPRESSED_END,
     NB_UNCOMPRESSED_START,
@@ -39,7 +38,7 @@ export const createLineList = ({
         let addedLineCount = 1;
         let wordList: string[] = [];
         let currentLineWidth = 0;
-        let currentGap = START_OF_LINE_GAP;
+        let currentGap = 0;
         let unCompressedFlag = 0;
 
         for (let cnt = 0, xRatio = baseXRatio; cnt < tokenList.length; cnt++) {
@@ -59,7 +58,7 @@ export const createLineList = ({
             }
             /** Tính số đo của 1 token */
             let {
-                outmostLetter,
+                leftMostLetter,
                 totalWidth,
                 rightGap,
                 leftGap,
@@ -70,7 +69,7 @@ export const createLineList = ({
              */
             const indent = cnt === 0
                 ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT / xRatio, leftGap) * -1 : 0)
-                    + (OCGAlphabetRegex.test(outmostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0)
+                    + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0)
                 : 0;
             let tokenWidth = totalWidth / (unCompressedFlag > 0 ? baseXRatio : 1) + indent;
             /**
@@ -95,10 +94,10 @@ export const createLineList = ({
                     totalWidth,
                     rightGap,
                     leftGap,
-                } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: START_OF_LINE_GAP, format, textData });
+                } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: 0, format, textData });
                 /** Xử lý âm lề tương tự */
                 const indent = (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT / xRatio, leftGap) * -1 : 0)
-                    + (OCGAlphabetRegex.test(outmostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0);
+                    + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0);
                 let tokenWidth = totalWidth + indent;
                 currentLineWidth = tokenWidth;
                 currentGap = rightGap;

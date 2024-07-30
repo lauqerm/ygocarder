@@ -93,7 +93,6 @@ export const NumberRegex = new RegExp('[0-9]');
 export const HiraganaRegex = /[あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんゔ]/;
 
 export const KatakanaRegex = /[アイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヰヱヲンヴヷヸヹヺ]/;
-export const KATAKANA_RATIO = 1.000;
 
 export const OCG_LETTER_RATIO = 1.000;
 
@@ -108,6 +107,10 @@ export const OCGIncreasedLevel2WidthRegex = new RegExp(`[${OCG_INCREASED_LEVEL_2
 
 const OCG_INCREASED_WIDTH_JOINLIST = '。､';
 export const OCGIncreasedWidthRegex = new RegExp(`[${OCG_INCREASED_WIDTH_JOINLIST}]`);
+
+const OCG_NO_OVERHEAD_GAP_JOINLIST = '：';
+export const OCGNoOverheadGapRegex = new RegExp(`[${OCG_NO_OVERHEAD_GAP_JOINLIST}]`);
+
 export const OCG_INCREASED_WIDTH_RATIO = 1.250;
 export const OCGOffsetMap: Record<string, number> = {
     '。': 0,

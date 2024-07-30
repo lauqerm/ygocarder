@@ -27,20 +27,25 @@ export const drawScale = (
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
     edge = 99,
+    option = { stroke: false },
 ) => {
     if (ctx) {
-        ctx.font = `bold ${16 * UP_RATIO}px palatino-linotype-bold`;
+        const { stroke = false } = option ?? {};
+        ctx.font = 'bold 23.7px palatino-linotype-bold';
 
         let left = edge;
-        ctx.fillText('1', left, 777 * UP_RATIO);
+        ctx.fillText('1', left, 1150.93);
+        if (stroke) ctx.strokeText('1', left, 1150.93);
         left += ctx.measureText('1').width - 2;
 
-        ctx.font = `bold ${12 * UP_RATIO}px palatino-linotype-bold`;
-        ctx.fillText('st', left, (777 - 5) * UP_RATIO);
+        ctx.font = 'bold 17.78px palatino-linotype-bold';
+        ctx.fillText('st', left, 1143.53);
+        if (stroke) ctx.strokeText('st', left, 1143.53);
         left += ctx.measureText('st').width;
 
-        ctx.font = `bold ${15 * UP_RATIO}px palatino-linotype-bold`;
-        ctx.fillText(' Edition', left, 777 * UP_RATIO);
+        ctx.font = 'bold 22.22px palatino-linotype-bold';
+        ctx.fillText(' Edition', left, 1150.93);
+        if (stroke) ctx.strokeText(' Edition', left, 1150.93);
     }
 };
 

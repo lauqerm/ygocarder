@@ -22,14 +22,14 @@ export const DefaultFontSizeData = {
     squareBracketRatio: 1,
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
-    overheadFontRatio: 0.4,
-    overheadTextSpacing: -2,
+    overheadFontRatio: 0.325,
+    overheadTextSpacing: 0.5,
 };
 export const DefaultFontData = {
-    overheadTextHeightRatio: 0.75,
+    overheadTextHeightRatio: 0.775,
 };
 
-export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator';
+export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
 export type FontData = {
     alphabetFont: string,
     font: string,
@@ -43,6 +43,7 @@ export type FontData = {
     numberFontRatio?: number,
     weight?: string,
     overheadTextHeightRatio?: number
+    furiganaFont: string,
 };
 export type TextData = {
     fontData: FontData,
@@ -51,9 +52,10 @@ export type TextData = {
 };
 
 const commonEffectFontData = {
-    symbolFontRatio: 1.15,
+    symbolFontRatio: 1,
     overheadFontRatio: 0.7,
-    overheadTextHeightRatio: 0.8,
+    overheadTextHeightRatio: 0.825,
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
 };
 
 export const tcgEffectMonsterFontData: FontData = {
@@ -156,7 +158,7 @@ export const tcgSTFontData: FontData = {
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
-        { bulletSymbolWidth: 23, fontSize: 24.88, lineHeight: 24.7, lineCount: 8 },
+        { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
         { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
     ],
 };

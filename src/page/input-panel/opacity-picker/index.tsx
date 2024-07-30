@@ -47,7 +47,7 @@ export const OpacityPicker = forwardRef<OpacityPickerRef, OpacityPicker>(({
             onChange={value => setOpacity(cur => ({ ...cur, artFrame: value.target.checked }))}
             checked={opacity.artFrame}
         >
-            {'Art Frame'}
+            {'Frame'}
         </Checkbox>
         {OpacityList.map(({ label, value: type }) => {
             if (type === 'pendulum' && !isPendulum) return null;

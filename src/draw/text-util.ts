@@ -33,6 +33,7 @@ export const getTextWorker = (
         symbolFontRatio,
         numberFont = font,
         numberFontRatio = 1,
+        furiganaFont,
     } = fontData;
 
     let numberFontMemory = fontController.getFontInfo();
@@ -75,20 +76,22 @@ export const getTextWorker = (
         ctx.scale(xRatio, yRatio);
     };
     let furiganaFontMemory = fontController.getFontInfo();
-    const applyFuriganaFont = () => {
+    const applyFuriganaFont = (bold = false) => {
         furiganaFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setSize(fontSize * overheadFontRatio).getFont();
+        ctx.font = fontController.setFamily(furiganaFont).setWeight(bold ? 'bold' : '').setSize(fontSize * overheadFontRatio).getFont();
     };
     const stopApplyFuriganaFont = () => {
         ctx.font = fontController
+            .setFamily(furiganaFontMemory.family)
+            .setWeight(furiganaFontMemory.weight)
             .setSize(furiganaFontMemory.size)
             .getFont();
     };
-    const applyScale = (fontRatio = 1) => {
-        ctx.scale(fontRatio, fontRatio);
+    const applyScale = (xScale = 1, yScale = xScale) => {
+        ctx.scale(xScale, yScale);
     };
-    const reverseScale = (fontRatio = 1) => {
-        ctx.scale(1 / fontRatio, 1 / fontRatio);
+    const reverseScale = (scaleValue = 1) => {
+        ctx.scale(1 / scaleValue, 1 / scaleValue);
     };
     let largerTextFontMemory = fontController.getFontInfo();
     const applyLargerText = (fontRatio = 1) => {
@@ -125,19 +128,21 @@ export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline
 };
 
 /**
- * Trả về độ dài biểu kiến của phần head của ruby (không phụ thuộc scale), lượng chữ càng nhiều thì càng khít lại. ("PenduLuMoon" OCG)
+ * Trả về độ dài biểu kiến của phần head của ruby (không phụ thuộc scale).
  * * Ruby quá dài có thể chiếm dụng không gian hai bên của nó, nếu những bên này không có ruby hoặc ruby ít.
- * * Việc chiếm dụng không thể tích lũy, nghĩa là nếu một từ có ruby dài chiếm không gian phía bên phải, từ bên phải đó nếu có ruby không
- * được chiếm dùng từ từ bên phải kế tiếp của nó.
- * * Từ bên trái có thể được chiếm dụng, nhưng không thể bị đẩy dịch. ("Joyous Melffys" OCG)
- * * Furigana có thể tràn ra rìa trái để foot text canh chuẩn lề ("Beyond the Pendulum" OCG)
  * * Nếu token hiện tại có gap phải đủ lớn, footText của token kế tiếp sẽ dịch qua bên trái một khoảng để rebalance lại cự ly giữa các footText với nhau, headText vẫn giữ nguyên ("Beyond the Pendulum" OCG)
+ * * Lượng chữ càng nhiều thì cự ly giữa các chữ càng khít lại. ("PenduLuMoon" OCG)
+ * * Từ bên trái có thể được chiếm dụng, nhưng không thể bị đẩy dịch. ("Joyous Melffys" OCG)
+ * * Furigana có thể tràn ra rìa trái để foot text canh chuẩn lề. ("Beyond the Pendulum" OCG)
+ * * Furigana không bị nén. ("Recette de Poisson (Fish Recipe)" OCG)
+ * * Furigana không thể vượt qua các ký tự fixed width như bullet, ordinal. ("Pendulum Dimension" OCG)
  * */
 export const getHeadTextWidth = ({
     footText, footTextWidth,
     headText, headTextLetterWidth,
     overheadTextGap,
     overheadTextSpacing,
+    gapPadding,
     debug,
 }: {
     headText: string,
@@ -146,27 +151,29 @@ export const getHeadTextWidth = ({
     footTextWidth: number,
     overheadTextGap: number,
     overheadTextSpacing: number,
+    gapPadding: number,
     debug?: string,
 }) => {
+    const noHeadText = headText.length === 0;
     const condenseHeadText = headTextLetterWidth / footTextWidth;
     let alignCenterLetterSpacing = overheadTextSpacing;
     if (condenseHeadText <= 1) alignCenterLetterSpacing = overheadTextSpacing;
-    else if (condenseHeadText <= 2.25) alignCenterLetterSpacing = overheadTextSpacing * 4/3;
-    else alignCenterLetterSpacing = overheadTextSpacing * 5/3;
+    else if (condenseHeadText <= 2.0) alignCenterLetterSpacing = 0;
+    else alignCenterLetterSpacing = Math.abs(overheadTextSpacing) * -6;
 
     const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
-    const alignSpaceAroundLetterSpacing = (footTextWidth - headTextLetterWidth) / headText.length;
-    const alignSpaceAroundHeadTextWidth = headTextLetterWidth + alignSpaceAroundLetterSpacing * (headText.length - 1);
-    const alignment = footText.length === 1 || alignCenterHeadTextWidth >= footTextWidth
+    const alignEvenlyLetterSpacing = noHeadText ? 0 : (footTextWidth - headTextLetterWidth) / headText.length;
+    const alignEvenlyHeadTextWidth = footTextWidth;
+    const alignment = footText.length === 1 || (gapPadding * 2 + alignCenterHeadTextWidth > footTextWidth)
         ? 'center' as const
         : 'space-around' as const;
-    const letterSpacing = alignment === 'center' ? alignCenterLetterSpacing : alignSpaceAroundLetterSpacing;
-    const headTextWidth = alignment === 'center' ? alignCenterHeadTextWidth : alignSpaceAroundHeadTextWidth;
+    const letterSpacing = alignment === 'center' ? alignCenterLetterSpacing : alignEvenlyLetterSpacing;
+    const headTextWidth = alignment === 'center' ? gapPadding * 2 + alignCenterHeadTextWidth : alignEvenlyHeadTextWidth;
     const halfGap = Math.max(
         overheadTextGap,
         alignment === 'center'
-            ? (alignCenterHeadTextWidth - footTextWidth) / 2
-            : alignSpaceAroundLetterSpacing / -2
+            ? gapPadding + (alignCenterHeadTextWidth - footTextWidth) / 2
+            : 0
     );
 
     if (debug) console.info(
@@ -178,6 +185,7 @@ export const getHeadTextWidth = ({
         halfGap,
     );
     return {
+        gapPadding,
         letterSpacing,
         headTextWidth,
         /**
@@ -194,31 +202,20 @@ export const getHeadTextWidth = ({
 };
 
 /**
- * Tính lại phần chiều dài bên trái (tính từ footText) do ảnh hưởng bởi gap phải.
+ * Tính phần chiều dài bên trái đã mất (nếu có) do ảnh hưởng bởi gap phải. lostLeftWidth luôn dương.
  * * Nếu prevGap dương (đẩy phải)
- *    * Nếu curGap dương (đẩy trái): Tất cả gap thành chiều dài bổ sung
- *    * Nếu curGap âm (hút trái): Chiều dài bổ sung bị giảm đi, nhưng không quá phần chiều dài mà previousGap có thể cho
+ *    * Nếu curGap dương (đẩy trái): Không mất chiều dài
+ *    * Nếu curGap âm (hút trái): Mất đi một phần bên trái, nhưng không quá phần chiều dài mà prevGap có thể cho
  * * Nếu prevGap âm (hút phải)
- *    * Nếu curGap dương (đẩy trái): curGap lấy hết cỡ từ prevGap, nhưng không quá những gì prevGap có nhận
- *    * Nếu curGap âm (hút trái): Hai gap không can thiệp nhau, chiều dài bổ sung là 0
+ *    * Nếu curGap dương (đẩy trái): Mất đi một phần bên trái, nhưng không quá những gì prevGap có thể nhận
+ *    * Nếu curGap âm (hút trái): Không mất chiều dài
  */
-export const getExtraLeftWidth = (prevGap: number, curGap: number) => {
+export const getLostLeftWidth = (prevGap: number, curGap: number) => {
     return prevGap >= 0
         ? curGap >= 0
-            ? curGap
-            : Math.max(curGap, prevGap * -1)
+            ? 0
+            : Math.max(prevGap * -1, curGap) * -1
         : curGap >= 0
-            ? curGap + Math.max(curGap * -1, prevGap)
+            ? Math.max(prevGap, curGap * -1) * -1
             : 0;
-};
-
-/**
- * Tính phần chiều dài bên trái đã mất (nếu có) do ảnh hưởng bởi gap phải.
- */
-export const getExtraLeftOffset = (prevGap: number, curGap: number) => {
-    if ((prevGap >= 0 && curGap >= 0) || (prevGap <= 0 && curGap <= 0)) return 0;
-    const leftExtraWidth = getExtraLeftWidth(prevGap, curGap);
-
-    if (prevGap <= 0 && curGap >= 0) return curGap - leftExtraWidth;
-    return -1 * leftExtraWidth;
 };

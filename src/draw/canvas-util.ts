@@ -2,13 +2,13 @@ import { CanvasConst } from 'src/model';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
-export const randomDarkColor = () => '#000000'.replace(/0/g, () => (~~(Math.random() * 12)).toString(16));
+export const randomDarkColor = () => '#000000'.replace(/0/g, () => (~~(Math.random() * 12 + 2)).toString(16));
 
 /** Vẽ một vệt thẳng để làm mốc, bị ảnh hưởng bởi xRatio */
 export const drawMarker = ({
     ctx,
     color = randomDarkColor(), width,
-    offset = 0.5 + Math.random() * 2,
+    offset = 4,
     trueEdge, baseline,
     xRatio,
 }: {
@@ -21,8 +21,8 @@ export const drawMarker = ({
     const currentFillStyle = ctx.fillStyle;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.rect(trueEdge / xRatio, baseline + 1 + offset * 5, width / xRatio, 2);
-    ctx.fill();
+    ctx.rect(trueEdge / xRatio, baseline + 1 + Math.random() * offset, width / xRatio, 2);
+    // ctx.fill();
     ctx.fillStyle = currentFillStyle;
 };
 

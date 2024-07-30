@@ -197,8 +197,6 @@ export const drawName = async (
             textData,
             format,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                // ctx.lineJoin = 'round';
-                // ctx.strokeText(letter, scaledEdge + lineOffsetX, scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0));
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             },
         });

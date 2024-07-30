@@ -6,6 +6,7 @@ export const tcgCreatorFontData: FontData = {
     symbolFont: 'matrix',
     symbolFontRatio: 0.8,
     ordinalFont: 'stone-serif-regular',
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontList: [
         {
             offsetY: -1,
@@ -34,6 +35,7 @@ export const ocgCreatorFontData: FontData = {
     symbolFont: 'matrix',
     symbolFontRatio: 0.8,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     metricMethod: 'creator',
     fontList: [{
         bulletSymbolWidth: 18,
@@ -56,6 +58,7 @@ export const tcgTypeAbilityFontData: FontData = {
     symbolFont: 'matrix',
     symbolFontRatio: 0.8,
     ordinalFont: 'YuGiOhITCStoneSerifBSc',
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontList: [
         {
             bulletSymbolWidth: 20.05,
@@ -95,6 +98,7 @@ export const ocgTypeAbilityFontData: FontData = {
     symbolFont: 'matrix',
     symbolFontRatio: 0.8,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontList: [
         {
             bulletSymbolWidth: 20.05,

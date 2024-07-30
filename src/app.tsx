@@ -176,10 +176,11 @@ function App() {
             WebFont.load({
                 custom: {
                     families: [
+                        'DFHSGothic-W3-WIN-RKSJ-H',
+                        'DFKakuTaiHiStd-W4',
                         'FOT-Rodin Pro M',
                         'Yu-Gi-Oh! DF Leisho 1',
                         'Yu-Gi-Oh! DF Leisho 3',
-                        'DFKakuTaiHiStd-W4',
                     ],
                     urls: ['asset/ocg-font.css'],
                 },

@@ -18,8 +18,11 @@ import {
     CapitalLetterRegex,
     NumberRegex,
     TCGSymbolRegex,
+    OCGNoOverheadGapRegex,
+    GAP_PER_WIDTH_RATIO,
+    GAP_PADDING_RATIO,
 } from 'src/model';
-import { getTextWorker, getExtraLeftWidth, getHeadTextWidth, tokenizeText } from './text-util';
+import { getTextWorker, getHeadTextWidth, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter } from 'src/util';
 import { getLetterWidth } from './letter';
 
@@ -34,7 +37,7 @@ export const analyzeToken = ({
     letterSpacing = DefaultFontSizeData.letterSpacing,
     format,
     textData,
-    debug,
+    // debug = false,
 }: {
     ctx: CanvasRenderingContext2D,
     token: string,
@@ -43,16 +46,16 @@ export const analyzeToken = ({
     previousTokenGap?: number,
     letterSpacing?: number,
     format: string,
+    // debug?: boolean,
     textData: {
         fontData: FontData,
         fontLevel: number,
         currentFont: ReturnType<typeof createFontGetter>,
     },
-    debug?: string,
 }) => {
     if (!ctx || !rawToken) return {
         totalWidth: 0,
-        outmostLetter: '',
+        leftMostLetter: '',
         space: 0,
         spaceAtEnd: false,
         fixedWidth: 0,
@@ -76,7 +79,7 @@ export const analyzeToken = ({
         squareBracketRatio,
         wordLetterSpacing,
     } = fontSizeData;
-    const overheadTextGap = fontSize * LETTER_GAP_RATIO;
+    const defaultGap = fontSize * LETTER_GAP_RATIO;
     const {
         applyScale, reverseScale,
         applyLargerText, stopApplyLargerText,
@@ -87,7 +90,7 @@ export const analyzeToken = ({
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont);
     const token = rawToken.replaceAll(/⦉|⦊/g, '');
     const letterSpacingRatio = 1 + letterSpacing / 2;
-    let outmostLetter = '';
+    let leftMostLetter = '';
     /** Tính số đo của 1 token */
     let totalWidth = 0;
     /** Số lượng khoảng trắng có trong token */
@@ -99,70 +102,68 @@ export const analyzeToken = ({
     const lastOfLine = nextToken === undefined;
     /** Gap chừa lại được cho furigana của token, như vậy right gap của token này là left gap của token kế tiếp */
     let currentRightGap = previousTokenGap ?? 0;
-    let outmostLeftGap = 0;
+    /** Bị ảnh hưởng bởi tokenRebalanceOffset */
+    let offsetable = false;
+    let leftMostGap = 0;
     /** 3 nhóm trong token:
      * * Nhóm ruby
      * * Ký tự lẻ
      */
     const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
     for (let cnt = 0; cnt < fragmentList.length; cnt++) {
+        const isLeftmost = cnt === 0;
         const fragment = fragmentList[cnt];
-        const defaultgetExtraLeftWidth = getExtraLeftWidth(currentRightGap, overheadTextGap);
 
         /** Symbol S/T không bị compress */
         if (fragment === ST_ICON_SYMBOL) {
+            currentRightGap = 0;
             const fragmentWidth = iconSymbolWidth / xRatio;
-            totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
+            totalWidth += fragmentWidth * letterSpacingRatio;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = overheadTextGap;
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            if (isLeftmost) {
+                leftMostGap = 0;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
         }
         /** Bullet symbol không bị compress, tham khảo "Agave Dragon" */
         else if (fragment === BULLET_LETTER) {
+            currentRightGap = 0;
             const fragmentWidth = bulletSymbolWidth / xRatio;
-            totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
+            totalWidth += fragmentWidth * letterSpacingRatio;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = overheadTextGap;
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            if (isLeftmost) {
+                leftMostGap = 0;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
         }
         /** Copyright symbol © không bị compress */
         else if (/[©]/.test(fragment)) {
+            currentRightGap = 0;
             applyLargerText(largeSymbolRatio);
             const fragmentWidth = ctx.measureText(fragment).width / xRatio;
             stopApplyLargerText();
 
-            totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
+            totalWidth += fragmentWidth * letterSpacingRatio;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = overheadTextGap;
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            if (isLeftmost) {
+                leftMostGap = 0;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
         }
         /** OCG Ordinal symbol không bị compress */
-        else if (/[①-⑳©]/.test(fragment)) {
+        else if (/[①-⑳]/.test(fragment)) {
+            currentRightGap = 0;
             applyOrdinalFont();
             const fragmentWidth = ctx.measureText(fragment).width / xRatio;
             stopApplyOrdinalFont();
 
-            totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
+            totalWidth += fragmentWidth * letterSpacingRatio;
             fixedWidth += fragmentWidth * letterSpacingRatio;
-            currentRightGap = overheadTextGap;
             spaceCount += 1;
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            if (isLeftmost) {
+                leftMostGap = 0;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
         }
         /** Cụm ruby cần tách đôi các phần */
         else if (/{[^{}]+?}/.test(fragment)) {
@@ -175,27 +176,36 @@ export const analyzeToken = ({
             applyFuriganaFont();
             const headTextLetterWidth = headText
                 .split('')
-                .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'compact', xRatio }).boundWidth)
+                .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
                 .reduce((acc, cur) => acc + cur, 0);
             stopApplyFuriganaFont();
 
-            const { halfGap } = getHeadTextWidth({ headText, headTextLetterWidth, footText, footTextWidth, overheadTextGap, overheadTextSpacing });
-            const leftGap = getExtraLeftWidth(currentRightGap, halfGap);
+            const { halfGap: baseHalfGap, headTextWidth } = getHeadTextWidth({
+                headText,
+                headTextLetterWidth: headTextLetterWidth / xRatio,
+                footText,
+                footTextWidth,
+                overheadTextGap: defaultGap / xRatio,
+                overheadTextSpacing,
+                gapPadding: GAP_PADDING_RATIO * fontSize / xRatio,
+            });
+            const halfGap = headText.length === 0
+                ? Math.max(defaultGap, footTextWidth / GAP_PER_WIDTH_RATIO)
+                : baseHalfGap;
+            const leftGap = halfGap;
             const rightGap = halfGap;
-            if (debug) console.info(
-                `analyzeToken ${debug}`,
-                token, fragment,
-                currentRightGap, leftGap, rightGap,
-                footTextWidth, footTextWidth + leftGap + Math.max(rightGap, 0),
-            );
+            const boundWidth = Math.max(headTextWidth, footTextWidth);
+            const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
+
             currentRightGap = rightGap;
-            totalWidth += footTextWidth + leftGap + Math.max(rightGap, 0);
-            fixedWidth += footTextFixedWidth;
+            totalWidth += boundWidth - lostLeftWidth;
+            fixedWidth += headTextWidth > footTextWidth ? headTextWidth : footTextFixedWidth;
             spaceCount += 1;
 
-            if (cnt === 0) {
-                outmostLeftGap = halfGap;
-                outmostLetter = footText[0];
+            if (isLeftmost) {
+                offsetable = true;
+                leftMostGap = leftGap;
+                leftMostLetter = footText[0];
             }
         }
         // Ta assume các ký tự dùng symbol font trong whole word (ví dụ ";"), có độ dài tương ứng với font thường (chỉ khác hình dạng)
@@ -233,36 +243,46 @@ export const analyzeToken = ({
                 remainFragment = nextRemainFragment;
             }
 
-            totalWidth += fragmentWidth + defaultgetExtraLeftWidth;
-            currentRightGap = overheadTextGap;
+            const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);
+            const rightGap = leftGap;
+            const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
 
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            totalWidth += fragmentWidth - lostLeftWidth;
+            currentRightGap = rightGap;
+
+            if (isLeftmost) {
+                leftMostGap = leftGap;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
             ctx.letterSpacing = '0px';
         }
         /** Một số ký tự dùng font đặc biệt */
         else if (TCGLetterRegex.test(fragment) && format === 'tcg') {
             applySymbolFont();
-            const fragmentWidth = ctx.measureText(fragment).width;
+            const fragmentWidth = ctx.measureText(fragment).width * letterSpacingRatio;
             stopApplySymbolFont();
 
-            totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
-            currentRightGap = overheadTextGap;
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);
+            const rightGap = leftGap;
+            const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
+
+            totalWidth += fragmentWidth - lostLeftWidth;
+            currentRightGap = rightGap;
+            if (isLeftmost) {
+                leftMostGap = leftGap;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
         }
         /** Các ký tự còn lại */
         else {
-            const { boundWidth: fragmentWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod, xRatio });
+            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod, xRatio });
+            const fragmentWidth = boundWidth * letterSpacingRatio;
+            const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);
+            const rightGap = leftGap;
+            const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
 
-            totalWidth += fragmentWidth * letterSpacingRatio + defaultgetExtraLeftWidth;
-            currentRightGap = overheadTextGap;
+            totalWidth += fragmentWidth - lostLeftWidth;
+            currentRightGap = rightGap;
             if (
                 (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment)))
                 && NoSpaceRegex.test(fragment) !== true
@@ -270,11 +290,14 @@ export const analyzeToken = ({
                 spaceCount += 1;
                 if (cnt === fragmentList.length - 1) spaceAtEnd = true;
             }
-            if (cnt === 0) {
-                outmostLeftGap = overheadTextGap;
-                outmostLetter = fragment[0];
+            if (isLeftmost) {
+                leftMostGap = leftGap;
+                leftMostLetter = fragment[0];
             }
-            if (debug) console.info(`analyzeToken ${debug}`, token, fragment, fragmentWidth, currentRightGap, defaultgetExtraLeftWidth);
+            if (OCGNoOverheadGapRegex.test(fragment)) {
+                leftMostGap = 0;
+                currentRightGap = 0;
+            }
         }
     }
 
@@ -283,9 +306,10 @@ export const analyzeToken = ({
         space: spaceCount,
         spaceAtEnd,
         fixedWidth,
-        outmostLetter,
+        leftMostLetter,
         rightGap: currentRightGap,
-        leftGap: outmostLeftGap,
+        leftGap: leftMostGap,
+        offsetable,
     };
 };
 
@@ -334,15 +358,15 @@ export const analyzeLine = ({
             spaceAtEnd,
             leftGap,
             rightGap,
-            outmostLetter,
-        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap, textData, format });
+            leftMostLetter,
+        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData, format });
         const indent = (
             (cnt === 0 && leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT, leftGap * xRatio) * -1 : 0)
             +
-            (cnt === 0 && OCGAlphabetRegex.test(outmostLetter) ? START_OF_LINE_ALPHABET_OFFSET * xRatio : 0)
+            (cnt === 0 && OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * xRatio : 0)
         );
 
-        currentGap = rightGap;
+        currentGap = rightGap * xRatio;
         totalContentWidth += totalWidth * xRatio + indent;
         spaceCount += space - (spaceAtEnd && nextToken === undefined ? 1 : 0);
     }

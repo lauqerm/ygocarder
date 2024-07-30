@@ -17,6 +17,8 @@ import {
 
 /** Trả về độ dài thực của letter (không phụ thuộc vào scale), nếu thông số `xRatio` được truyền, các ký tự constant width như bullet
  * sẽ được phóng to lên tương ứng.
+ * 
+ * BOLD font weight WILL make this function run incorrectly
  */
 export const getLetterWidth = ({
     ctx,
@@ -36,6 +38,7 @@ export const getLetterWidth = ({
     debug?: string,
 }) => {
     if (/⦉|⦊/.test(letter)) return {
+        width: 0,
         boundWidth: 0,
     };
 
@@ -50,24 +53,29 @@ export const getLetterWidth = ({
         actualBoundingBoxRight,
     } = metric;
     const actualBoundWidth = actualBoundingBoxLeft + actualBoundingBoxRight;
-    const spacingScale = metricMethod === 'name'
-        ? 8
-        : 0;
+    let kerningScaleRatio = 1;
+    if (metricMethod === 'name') {
+        kerningScaleRatio = 1 + (1 - xRatio) * 8;
+    }
     const spacingRatio = metricMethod === 'name'
         ? 0.023438
-        : metricMethod === 'compact'
+        : metricMethod === 'compact' || metricMethod === 'furigana'
             ? 0.046875
             : 0;
-    let letterBoxSpacing = Math.min(
-        width * 0.075,
-        Math.max(0.450, width * spacingRatio) * (1 + (1 - xRatio) * spacingScale),
-    );
+    let letterBoxSpacing = metricMethod === 'furigana'
+        ? 0
+        : Math.min(
+            width * 0.075,
+            Math.max(0.450, width * spacingRatio) * kerningScaleRatio,
+        );
     let boundWidth = actualBoundWidth;
     let offsetRatio = (lastOfLine
         ? OCGLastOfLineOffsetMap[letter]
         : OCGOffsetMap[letter]) ?? 0;
 
     if (format === 'tcg') return {
+        width,
+        actualBoundWidth,
         boundWidth: width,
         metric,
         offsetRatio,
@@ -77,14 +85,14 @@ export const getLetterWidth = ({
     let endLineRatio = 1;
     let standardMetricRatio = 1.000;
     if (OCGDotRegex.test(letter)) {
-        boundWidth = actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.500);
+        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.500);
         standardMetricRatio = 0.600;
     }
     else if (ChoonpuRegex.test(letter)) {
-        boundWidth = Math.max(actualBoundWidth, width * 0.985);
+        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.985);
     }
     else if (ChiisaiRegex.test(letter)) {
-        boundWidth = Math.max(actualBoundWidth, width * 0.7);
+        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.7);
     }
     else if (OCGNumberRegex.test(letter)) {
         boundWidth = width;
@@ -96,7 +104,7 @@ export const getLetterWidth = ({
         boundWidth = actualBoundWidth * 1.250 * (lastOfLine ? OCG_REDUCED_AT_END_LINE_RATIO : 1);
     }
     else if (HiraganaRegex.test(letter)) {
-        boundWidth = Math.max(actualBoundWidth, width * 0.750);
+        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.750);
     }
     else if (KatakanaRegex.test(letter)) {
         boundWidth = Math.max(actualBoundWidth, width * 0.690)
@@ -113,8 +121,9 @@ export const getLetterWidth = ({
     const actualLetterWidth = width * letterRatio * endLineRatio;
 
     if (debug) console.info(`getLetterWidth ${debug}`, letter, metric, letterRatio, endLineRatio, '|', actualLetterWidth);
-
     return {
+        width,
+        actualBoundWidth,
         boundWidth: metricMethod === 'standard'
             ? width * standardMetricRatio
             : boundWidth + letterBoxSpacing * 2,
@@ -163,10 +172,12 @@ export const drawLetter = ({
         ctx.fillText(letter, scaledEdge, scaledBaseline);
     });
 
+    const boundingOffset = (letterWidth - scaledBoundingWidth) / 2;
+    const externalOffset = scaledBoundingWidth * offsetRatio;
     worker({
         ctx,
         letter,
-        scaledEdge: edge / xRatio - (letterWidth - scaledBoundingWidth) / 2 - scaledBoundingWidth * offsetRatio,
+        scaledEdge: edge / xRatio - boundingOffset - externalOffset,
         scaledBaseline: baseline,
     });
 };
