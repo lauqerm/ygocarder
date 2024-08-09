@@ -29,12 +29,13 @@ export const drawEffect = (
     sizeList: CoordinateData[] = monsterCoordinateData.tcg,
     condenseTolerant: CondenseType = 'strict',
     format: string,
+    furiganaHelper: boolean,
 ) => {
     let effectSizeLevel = 0;
     if (!ctx || !content) return effectSizeLevel;
 
     let tStart = performance.now();
-    const normalizedContent = normalizeCardText(content.trim(), format);
+    const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
     const tolerantPerSentence: Record<string, number> = format === 'tcg'
         ? CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
         : {

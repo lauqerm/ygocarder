@@ -29,7 +29,7 @@ export function insertUrlParam(key: string, value: string) {
 };
 
 export const normalizedCardName = (name: string) => {
-    return name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
+    return name.replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1');
 };
 
 export * from './categorize';

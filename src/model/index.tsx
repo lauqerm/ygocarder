@@ -54,6 +54,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     isSpeedCard: false,
     isDuelTerminalCard: false,
     creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+    furiganaHelper: true,
 });
 export const getEmptyCard = (): Card => ({
     version: 0,
@@ -98,6 +99,7 @@ export const getEmptyCard = (): Card => ({
     isSpeedCard: false,
     isDuelTerminalCard: false,
     creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+    furiganaHelper: true,
 });
 
 export const OpacityList = [

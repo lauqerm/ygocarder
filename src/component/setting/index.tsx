@@ -31,6 +31,7 @@ const StyledSettingButtonContainer = styled.div<{ $softMode?: boolean }>`
     }
     .anticon-setting {
         font-size: 1.5em;
+        justify-self: center;
         > svg {
             ${({ $softMode }) => $softMode ? '' : css`animation: ${rotate} 12s linear infinite;`}
         }

@@ -89,6 +89,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         setId,
         passcode, creator, sticker,
         isFirstEdition, isDuelTerminalCard, isSpeedCard,
+        furiganaHelper,
     } = card;
     /** @todo clean log */
     console.log('🚀 ~ useMasterSeriDrawer ~ card:', card);
@@ -562,7 +563,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                         ? drawWithSizeFrom(
                             ctx,
                             `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                            image => 715 - image.naturalWidth,
+                            image => 717 - image.naturalWidth,
                             153,
                             image => image.naturalWidth,
                             image => image.naturalWidth,
@@ -637,7 +638,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     ? (format === 'tcg' ? 686 : 678)
                     : 606;
 
-                await drawName(ctx, name, edge, 115.5375, lineWidth, regionalStyle, { isSpeedSkill, format, cloneNode, frame });
+                await drawName(ctx, name, edge, 115.5375, lineWidth, regionalStyle, { isSpeedSkill, format, cloneNode, frame, furiganaHelper });
             };
         }
     }, [
@@ -654,6 +655,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         nameStyle,
         nameStyleType,
         format,
+        furiganaHelper,
     ]);
 
     /** DRAW STAT (ATK / DEF) */
@@ -805,9 +807,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 value: normalizedTypeAbilityText,
                 metricMethod: !isMonster ? 'compact' : undefined,
                 alignment,
+                furiganaHelper,
             });
         }
-    }, [subFamily, typeAbility, format, isMonster]);
+    }, [subFamily, typeAbility, format, isMonster, furiganaHelper]);
     useEffect(() => {
         if (active) {
             const ctx = effectCanvas.current?.getContext('2d');
@@ -815,7 +818,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const condenseTolerant = effectStyle?.condenseTolerant;
             ctx?.clearRect(0, 0, CanvasWidth, 1110.938);
             const drawEffectStartParam = [ctx, effect, false] as const;
-            const drawEffectEndParam = [condenseTolerant, format] as const;
+            const drawEffectEndParam = [condenseTolerant, format, furiganaHelper] as const;
 
             if (isMonster) {
                 const effectIndexSize = drawEffect(
@@ -859,6 +862,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         effectCanvas,
         typeCanvas,
         isSpeedSkill,
+        furiganaHelper,
     ]);
 
     /** DRAW PENDULUM EFFECT */
@@ -876,10 +880,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     pendulumSizeList,
                     effectStyle?.condenseTolerant,
                     format,
+                    furiganaHelper,
                 );
             }
         }
-    }, [active, effectStyle?.condenseTolerant, isInitializing, format, isPendulum, pendulumEffectCanvas, pendulumEffect]);
+    }, [active, effectStyle?.condenseTolerant, isInitializing, format, isPendulum, pendulumEffectCanvas, pendulumEffect, furiganaHelper]);
 
     /** DRAW TOTAL OVERLAY */
     useEffect(() => {

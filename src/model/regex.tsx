@@ -132,3 +132,6 @@ export const getBulletSpacing = (format: string) => format === 'tcg' ? 7 : 1;
 
 export const MAX_LINE_REVERSE_INDENT = 20;
 export const START_OF_LINE_ALPHABET_OFFSET = 4;
+
+export const RUBY_REGEX = /{[^{}]+?}/;
+export const RUBY_BONUS_RATIO = 0.1;

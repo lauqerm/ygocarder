@@ -1,9 +1,9 @@
 import {
-    getHeadTextWidth,
+    analyzeHeadText,
     getTextWorker,
 } from './text-util';
 import { getLetterWidth } from './letter';
-import { GAP_PADDING_RATIO } from 'src/model';
+import { GAP_PADDING_RATIO, RUBY_BONUS_RATIO } from 'src/model';
 
 /** Vẽ các ký tự overhead (furigana) */
 export const fillHeadText = ({
@@ -12,52 +12,75 @@ export const fillHeadText = ({
     edge, baseline,
     headText, headTextLetterWidth,
     footText, footTextWidth,
-    overheadTextGap,
-    overheadTextSpacing,
-    overheadTextHeightRatio,
+    headTextGap,
+    headTextSpacing,
+    headTextHeightRatio,
     xRatio,
     format,
     textWorker,
+    fitFootText,
+    headTextOverflow,
 }: {
     ctx: CanvasRenderingContext2D,
     fontSize: number,
     headText: string, headTextLetterWidth: number,
     footText: string, footTextWidth: number,
     edge: number, baseline: number,
-    overheadTextGap: number,
-    overheadTextSpacing: number,
-    overheadTextHeightRatio: number,
+    headTextGap: number,
+    headTextSpacing: number,
+    headTextHeightRatio: number,
     xRatio: number,
     format: string,
     textWorker: ReturnType<typeof getTextWorker>,
+    fitFootText: boolean,
+    headTextOverflow: 'normal' | 'condense',
 }) => {
     const { applyFuriganaFont, stopApplyFuriganaFont, resetScale, applyScale } = textWorker;
+    const externalHeadTextXRatio = (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0;
     const {
         gapPadding,
         letterSpacing,
-        headTextWidth,
+        trueHeadTextWidth,
         halfGap,
         alignment,
-    } = getHeadTextWidth({
+        headTextXRatio,
+    } = analyzeHeadText({
         headText, headTextLetterWidth,
         footText, footTextWidth: footTextWidth * xRatio,
-        overheadTextGap, overheadTextSpacing: overheadTextSpacing * xRatio,
+        headTextGap, headTextSpacing: headTextSpacing * xRatio,
         gapPadding: fontSize * GAP_PADDING_RATIO,
+        fitFootText,
+        xRatio: externalHeadTextXRatio,
     });
-    const overflow = headTextWidth > footTextWidth * xRatio;
+    const overflow = trueHeadTextWidth > footTextWidth * xRatio;
 
     if (headText.length === 0) return {
-        headTextWidth,
+        trueHeadTextWidth,
         halfGap,
     };
 
-    resetScale();
+    const baseLoneTokenRatio = fitFootText
+        ? Math.min(1, footTextWidth * xRatio / trueHeadTextWidth)
+        : 1;
+    const loneTokenRatio = fitFootText
+        ? baseLoneTokenRatio
+        : (externalHeadTextXRatio && alignment === 'center')
+            ? externalHeadTextXRatio
+            : headTextXRatio;
+
     let currentEdge = edge;
+    resetScale();
+    if (fitFootText || loneTokenRatio) {
+        applyScale(loneTokenRatio, 1);
+        currentEdge = edge / loneTokenRatio;
+    }
 
     if (alignment === 'center') {
         currentEdge += gapPadding;
         if (!overflow) {
-            currentEdge += (footTextWidth * xRatio - headTextWidth) / 2;
+            currentEdge += (footTextWidth * xRatio - trueHeadTextWidth) / 2;
+        } else if (loneTokenRatio > baseLoneTokenRatio) {
+            currentEdge += (footTextWidth * xRatio / loneTokenRatio - trueHeadTextWidth) / 2 / loneTokenRatio;
         }
     } else {
         currentEdge += letterSpacing / 2;
@@ -70,14 +93,17 @@ export const fillHeadText = ({
         stopApplyFuriganaFont();
 
         applyFuriganaFont(true);
-        ctx.fillText(letter, currentEdge - boundingOffset, baseline - fontSize * overheadTextHeightRatio);
+        ctx.fillText(letter, currentEdge - boundingOffset, baseline - fontSize * headTextHeightRatio);
         stopApplyFuriganaFont();
         currentEdge += (boundWidth + letterSpacing);
+    }
+    if (fitFootText || loneTokenRatio) {
+        resetScale();
     }
     applyScale(xRatio, 1);
 
     return {
-        headTextWidth,
+        trueHeadTextWidth,
         halfGap,
     };
 };

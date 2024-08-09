@@ -1,15 +1,8 @@
-/** OCG Name */
+/** OCG Text */
 @font-face {
 	font-family: 'Yu-Gi-Oh! DF Leisho 3';
 	src: url('./font/Yu-Gi-Oh! DF Leisho 3.ttf');
 	font-weight: 100;
-    font-style: normal;
-    font-display: swap;
-}
-/** OCG Effect */
-@font-face {
-	font-family: 'Yu-Gi-Oh! DF Leisho 1';
-	src: url('./font/Yu-Gi-Oh! DF Leisho 1.ttf');
     font-style: normal;
     font-display: swap;
 }

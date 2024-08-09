@@ -1,6 +1,6 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Popover, Tooltip } from 'antd';
-import { Card, CardOpacity, CondenseType, NameFontDataMap, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate } from '../../model';
+import { Card, CardOpacity, CondenseType, NameFontDataMap, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate, tcgToOCGTermMap } from '../../model';
 import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill, normalizedCardName } from '../../util';
 import debounce from 'lodash.debounce';
@@ -42,7 +42,7 @@ const onChangeFactory = (
     };
 };
 
-const availableCommand = new Set(['1', '2', '3', '4']);
+const availableCommand = new Set(['1', '2', '3', '4', '5']);
 
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
@@ -93,12 +93,14 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         setId,
         passcode, creator, sticker,
         isSpeedCard, isDuelTerminalCard, isFirstEdition,
+        furiganaHelper,
     } = currentCard;
     const isXyz = checkXyz(currentCard);
     const isLink = checkLink(currentCard);
     const isMonster = checkMonster(currentCard);
     const isSpeedSkill = checkSpeedSkill(currentCard);
     const isDarkSynchro = checkDarkSynchro(currentCard);
+    const isOCG = format === 'ocg';
     const [displayTypeAbility, setDisplayTypeAbility] = useState(typeAbility.join('/'));
     const [displayName, setDisplayName] = useState(name);
     const [displayEffect, setDisplayEffect] = useState(effect);
@@ -129,9 +131,15 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         onCardChange(currentCard => {
             const value = `${frameValue}`;
             const isST = value === 'spell' || value === 'trap';
+            const termMap = currentCard.format === 'tcg'
+                ? {
+                    'Spell Card': 'Spell Card',
+                    'Trap Card': 'Trap Card',
+                }
+                : tcgToOCGTermMap;
             const newTypeAbility = value === 'spell'
-                ? ['Spell Card']
-                : value === 'trap' ? ['Trap Card'] : currentCard.typeAbility;
+                ? [termMap['Spell Card']]
+                : value === 'trap' ? [termMap['Trap Card']] : currentCard.typeAbility;
             if (isST) setDisplayTypeAbility(newTypeAbility[0]);
 
             return {
@@ -142,9 +150,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 attribute: isST
                     ? `${value}`.toUpperCase()
                     : currentCard.attribute,
-                typeAbility: value === 'spell'
-                    ? ['Spell Card']
-                    : value === 'trap' ? ['Trap Card'] : currentCard.typeAbility,
+                typeAbility: newTypeAbility,
             };
         });
     };
@@ -233,6 +239,9 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const onSpeedCardChange = (e: any) => onCardChange(currentCard => {
         return { ...currentCard, isSpeedCard: e.target.checked };
     });
+    const toggleFuriganaHelper = (e: any) => onCardChange(currentCard => {
+        return { ...currentCard, furiganaHelper: e.target.checked };
+    });
 
     const attributeList = useMemo(() => getAttributeList(format), [format]);
     const frameList = useMemo(() => getFrameButtonList()
@@ -270,13 +279,15 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         onResult: (joinedText: string, newCursorPlacement: number) => void,
     ) => {
         const selectedText = value.substring(selectionStart, selectionEnd);
+        const nextLetter = value[selectionEnd];
         let wrappedText = selectedText;
         let cursorOffset = 2;
         switch (key) {
-            case '1': wrappedText = `[${selectedText}]`; break;
+            case '1': wrappedText = `[${selectedText}]${nextLetter === '\n' ? '' : '\n'}`; cursorOffset = nextLetter === '\n' ? 2 : 3; break;
             case '2': wrappedText = `{${selectedText}}`; break;
             case '3': wrappedText = `{${selectedText}|}`; break;
-            case '4': wrappedText = `{{${selectedText}}}`; cursorOffset = 4; break;
+            case '4': wrappedText = `{${selectedText}||}`; cursorOffset = 3; break;
+            case '5': wrappedText = `{{${selectedText}}}`; cursorOffset = 4; break;
         }
         const joinedText = value.substring(0, selectionStart)
             + `${wrappedText}`
@@ -401,7 +412,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 defaultFont={NameFontDataMap[
                     isSpeedSkill
                         ? 'Arial'
-                        : format === 'ocg' ? 'OCG' : 'Default'
+                        : isOCG ? 'OCG' : 'Default'
                 ].value}
                 frameInfo={frameMap[frame as keyof typeof frameMap]}
                 defaultType={nameStyleType}
@@ -528,26 +539,37 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         </div>
                     </>}
                 </div>}
-                <Input addonBefore="Type"
-                    id="type"
-                    ref={onlineCharPicker === 'type' ? ref as any : null}
-                    autoComplete="off"
-                    onFocus={() => setOnlineCharPicker('type')}
-                    allowClear
-                    onChange={ev => {
-                        const value = ev.target.value;
+                <div className={isOCG ? 'two-column-input-group' : ''}>
+                    <Input addonBefore="Type"
+                        id="type"
+                        ref={onlineCharPicker === 'type' ? ref as any : null}
+                        autoComplete="off"
+                        onFocus={() => setOnlineCharPicker('type')}
+                        allowClear
+                        onChange={ev => {
+                            const value = ev.target.value;
 
-                        setDisplayTypeAbility(value);
-                        onTypeAbilityChange(value
-                            .split('/')
-                            .map(entry => entry.trim())
-                            .filter(entry => typeof entry === 'string' && entry.length > 0));
-                    }}
-                    placeholder="Type / Ability"
-                    style={{ width: '100%' }}
-                    value={displayTypeAbility}
-                />
-                <div className="card-condense-input">
+                            setDisplayTypeAbility(value);
+                            onTypeAbilityChange(value
+                                .split('/')
+                                .map(entry => entry.trim())
+                                .filter(entry => typeof entry === 'string' && entry.length > 0));
+                        }}
+                        placeholder="Type / Ability"
+                        style={{ width: '100%' }}
+                        value={displayTypeAbility}
+                    />
+                    {isOCG && <Tooltip overlay="Automatically annotates popular kanji characters with furigana. Manual-input furigana are unaffected.">
+                        <Checkbox
+                            className="input-kanji-helper"
+                            onChange={toggleFuriganaHelper}
+                            checked={furiganaHelper}
+                        >
+                            {'Furigana Helper'}
+                        </Checkbox>
+                    </Tooltip>}
+                </div>
+                <div className="two-column-input-group">
                     <RadioTrain className="condense-input" value={`${effectStyle?.condenseTolerant}`}
                         onChange={value => onCondenseTolerantChange(value as CondenseType)}
                         optionList={CondenseThresholdButtonList}

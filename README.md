@@ -99,6 +99,8 @@ Dictionary
 Extended art over frame
 Flip letter
 Reduce font bundle size
+Dialect (Chef Special Recipe for example)
+Remove fixed width?
 <!-- Credit -->
 <!-- Remaining font data (OCG spell for example) -->
 <!-- Beatrice text style -->

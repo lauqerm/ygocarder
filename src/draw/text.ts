@@ -13,6 +13,8 @@ import {
     NumberRegex,
     OCGAlphabetRegex,
     OCGNoOverheadGapRegex,
+    RUBY_BONUS_RATIO,
+    RUBY_REGEX,
     START_OF_LINE_ALPHABET_OFFSET,
     ST_ICON_SYMBOL,
     SquareBracketLetterRegex,
@@ -25,7 +27,7 @@ import {
 import {
     drawBullet,
     getLostLeftWidth,
-    getHeadTextWidth,
+    analyzeHeadText,
     getTextWorker,
     tokenizeText,
 } from './text-util';
@@ -66,7 +68,8 @@ export const drawLine = ({
     const {
         metricMethod,
         headTextFillStyle,
-        overheadTextHeightRatio = DefaultFontData.overheadTextHeightRatio,
+        headTextHeightRatio = DefaultFontData.headTextHeightRatio,
+        headTextOverflow = DefaultFontData.headTextOverflow,
     } = fontData;
     const {
         letterSpacing = DefaultFontSizeData.letterSpacing,
@@ -77,7 +80,7 @@ export const drawLine = ({
         bulletSymbolWidth,
         iconSymbolWidth = bulletSymbolWidth,
         largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
-        overheadTextSpacing = DefaultFontSizeData.overheadTextSpacing,
+        headTextSpacing = DefaultFontSizeData.headTextSpacing,
     } = fontSizeData;
     const textWorker = getTextWorker(ctx, fontData, fontSizeData, currentFont);
     const {
@@ -96,6 +99,7 @@ export const drawLine = ({
     /** Rebalance */
     let previousTokenRebalanceOffset = 0;
     let tokenEdge = trueEdge;
+
     for (let tokenCnt = 0, xRatio = baseXRatio; tokenCnt < tokenList.length; tokenCnt++) {
         const token = tokenList[tokenCnt];
         /** Bật / tắt chế độ không nén */
@@ -135,9 +139,6 @@ export const drawLine = ({
         } = analyzeToken({
             token, nextToken, previousTokenGap: previousTokenGap / xRatio, ...analyzeTokenParameter,
         });
-        console.log('text', token, analyzeToken({
-            token, nextToken, previousTokenGap: previousTokenGap / xRatio, ...analyzeTokenParameter,
-        }));
 
         /** Token ở đầu line có quyền âm ngược ra lề trái, tuy nhiên footText không được tràn ra khỏi lề, ngoài ra ta giới hạn
          * việc âm ngược để tránh tràn headText quá nhiều
@@ -214,8 +215,9 @@ export const drawLine = ({
                 previousTokenRebalanceOffset = 0;
             }
             /** Cụm ruby cần tách đôi các phần */
-            else if (/{[^{}]+?}/.test(fragment)) {
-                const [footText, headText = ''] = fragment.replaceAll(/{|}/g, '').split('|');
+            else if (RUBY_REGEX.test(fragment)) {
+                const [footText, rubyType, headText = ''] = fragment.replaceAll(/{|}/g, '').split(/(\|+)/);
+                const fitFootText = rubyType === '||';
                 /** Ta assume cụm ruby không lồng nhau */
                 const { totalWidth: footTextWidth } = analyzeToken({
                     token: footText, nextToken: nextFragment,
@@ -233,14 +235,16 @@ export const drawLine = ({
                 const {
                     headTextWidth,
                     halfGap: baseHalfGap,
-                } = getHeadTextWidth({
+                } = analyzeHeadText({
                     headText,
                     headTextLetterWidth,
                     footText,
                     footTextWidth: footTextWidth * xRatio,
-                    overheadTextGap: defaultGap,
-                    overheadTextSpacing: overheadTextSpacing * xRatio,
+                    headTextGap: defaultGap,
+                    headTextSpacing: headTextSpacing * xRatio,
                     gapPadding: fontSize * GAP_PADDING_RATIO,
+                    fitFootText,
+                    xRatio: (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0,
                 });
                 const halfGap = headText.length === 0
                     ? Math.max(defaultGap, footTextWidth * gapRatio)
@@ -267,7 +271,7 @@ export const drawLine = ({
                 const totalVacantSpace = vacantLeftWidth + vacantRightWidth;
                 let rebalancedSpace = 0;
                 let nextTokenRebalanceOffset = 0;
-                if (totalVacantSpace > fontSize * xRatio / 0.9 && isNextTokenOffsetable) {
+                if (totalVacantSpace > footTextWidth * xRatio * 0.55 && isNextTokenOffsetable) {
                     rebalancedSpace = (totalVacantSpace + Math.max(nextLeftGap, 0) * 2) / 3;
                     nextTokenRebalanceOffset = Math.max(nextLeftGap, 0) - rebalancedSpace;
                 } else {
@@ -315,12 +319,14 @@ export const drawLine = ({
                     edge: headTextFragmentEdge, baseline,
                     headText, headTextLetterWidth,
                     footText, footTextWidth,
-                    overheadTextGap: defaultGap,
-                    overheadTextSpacing,
-                    overheadTextHeightRatio,
+                    headTextGap: defaultGap,
+                    headTextSpacing,
+                    headTextHeightRatio,
                     xRatio,
                     format,
                     textWorker,
+                    fitFootText,
+                    headTextOverflow,
                 });
                 ctx.fillStyle = currentFillStyle;
                 ctx.strokeStyle = currentStrokeStyle;

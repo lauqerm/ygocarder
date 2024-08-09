@@ -13,8 +13,8 @@ export type FontSizeData = {
     largeSymbolRatio?: number,
     letterSpacing?: number,
     wordLetterSpacing?: number,
-    overheadFontRatio?: number,
-    overheadTextSpacing?: number,
+    headTextFontRatio?: number,
+    headTextSpacing?: number,
 };
 export const DefaultFontSizeData = {
     offsetY: 0,
@@ -22,11 +22,12 @@ export const DefaultFontSizeData = {
     squareBracketRatio: 1,
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
-    overheadFontRatio: 0.325,
-    overheadTextSpacing: 0.5,
+    headTextFontRatio: 0.325,
+    headTextSpacing: 1,
 };
 export const DefaultFontData = {
-    overheadTextHeightRatio: 0.775,
+    headTextHeightRatio: 0.800,
+    headTextOverflow: 'normal' as 'normal' | 'condense',
 };
 
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
@@ -34,16 +35,17 @@ export type FontData = {
     alphabetFont: string,
     font: string,
     fontList: FontSizeData[],
+    furiganaFont: string,
     headTextFillStyle?: string,
     metricMethod?: MetricMethod,
-    ordinalFont: string,
-    symbolFont: string,
-    symbolFontRatio: number,
     numberFont?: string,
     numberFontRatio?: number,
-    weight?: string,
-    overheadTextHeightRatio?: number
-    furiganaFont: string,
+    ordinalFont: string,
+    headTextHeightRatio?: number,
+    symbolFont: string,
+    symbolFontRatio: number,
+    weight?: 'bold',
+    headTextOverflow?: 'normal' | 'condense',
 };
 export type TextData = {
     fontData: FontData,
@@ -51,10 +53,10 @@ export type TextData = {
     currentFont: ReturnType<typeof createFontGetter>,
 };
 
-const commonEffectFontData = {
+const DefaultEffectFontData = {
     symbolFontRatio: 1,
-    overheadFontRatio: 0.7,
-    overheadTextHeightRatio: 0.825,
+    headTextFontRatio: 0.7,
+    headTextHeightRatio: 0.800,
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
 };
 
@@ -62,7 +64,8 @@ export const tcgEffectMonsterFontData: FontData = {
     font: 'MatrixBook',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
+    headTextHeightRatio: 0.750,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     fontList: [
         { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
@@ -76,7 +79,7 @@ export const ocgEffectMonsterFontData: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     metricMethod: 'compact',
     fontList: [
@@ -91,7 +94,8 @@ export const effectMonsterFontData: Record<string, FontData> = {
 export const tcgVanillaMonsterFontData: FontData = {
     font: '"stone-serif-regular"',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
+    headTextHeightRatio: 0.750,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
@@ -105,7 +109,7 @@ export const tcgVanillaMonsterFontData: FontData = {
 export const ocgVanillaMonsterFontData: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     metricMethod: 'compact',
@@ -121,7 +125,8 @@ export const vanillaMonsterFontData: Record<string, FontData> = {
 export const tcgPendulumFontList: FontData = {
     font: 'MatrixBook',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
+    headTextHeightRatio: 0.750,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
@@ -131,7 +136,7 @@ export const tcgPendulumFontList: FontData = {
 export const ocgPendulumFontList: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     metricMethod: 'compact',
@@ -140,7 +145,7 @@ export const ocgPendulumFontList: FontData = {
             bulletSymbolWidth: 16,
             fontSize: 22.05,
             lineHeight: 25.2,
-            overheadFontRatio: 0.4,
+            headTextFontRatio: 0.325,
             lineCount: 5,
             wordLetterSpacing: 0.09,
         },
@@ -154,7 +159,8 @@ export const pendulumFontList: Record<string, FontData> = {
 export const tcgSTFontData: FontData = {
     font: 'MatrixBook',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
+    headTextHeightRatio: 0.750,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
@@ -165,7 +171,8 @@ export const tcgSTFontData: FontData = {
 export const tcgSTPendulumFontList: FontData = {
     font: 'MatrixBook',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
+    headTextHeightRatio: 0.750,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
@@ -175,7 +182,7 @@ export const tcgSTPendulumFontList: FontData = {
 export const ocgSTFontData: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',
     symbolFont: 'matrix',
-    ...commonEffectFontData,
+    ...DefaultEffectFontData,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     metricMethod: 'compact',
@@ -196,7 +203,7 @@ export const specialFontData: Record<string, FontData> = {
     normal: {
         font: 'MatrixBook',
         symbolFont: 'matrix',
-        ...commonEffectFontData,
+        ...DefaultEffectFontData,
         ordinalFont: '"DFKakuTaiHiStd-W4"',
         alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
         fontList: [
@@ -207,7 +214,7 @@ export const specialFontData: Record<string, FontData> = {
     pendulum: {
         font: 'MatrixBook',
         symbolFont: 'matrix',
-        ...commonEffectFontData,
+        ...DefaultEffectFontData,
         ordinalFont: '"DFKakuTaiHiStd-W4"',
         alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
         fontList: [

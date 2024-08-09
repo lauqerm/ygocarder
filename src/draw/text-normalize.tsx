@@ -47,8 +47,12 @@ export const splitEffect = (effect: string, isNormal = false) => {
     };
 };
 
-export const normalizeCardText = (text: string, format: string, option?: { multiline?: boolean }) => {
-    const { multiline = true } = option ?? {};
+export const normalizeCardText = (
+    text: string,
+    format: string,
+    option?: { multiline?: boolean, furiganaHelper?: boolean, dictionaryType?: 'rubyForm' | 'rubyFormName' },
+) => {
+    const { multiline = true, furiganaHelper = true, dictionaryType = 'rubyForm' } = option ?? {};
     const normalizedText = text ?? '';
     let textAfterLetterSwap = '';
     let letterSwapMap = format === 'ocg' ? tcgToOCGLetterMap : ocgToTCGLetterMap;
@@ -86,10 +90,10 @@ export const normalizeCardText = (text: string, format: string, option?: { multi
     const textAfterDetectBlockWord = textAfterSwapLetter
         .replaceAll(new RegExp(UNCOMPRESSED_REGEX_SOURCE, 'g'), m => m.replaceAll('{{', '⟬').replaceAll('}}', '⟭'))
         .replaceAll(new RegExp(OCG_RUBY_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`);
-    const textAfterDictionaryMatch = format === 'tcg'
+    const textAfterDictionaryMatch = format === 'tcg' || furiganaHelper === false
         ? textAfterDetectBlockWord
         : textAfterDetectBlockWord
-            .replaceAll(new RegExp(OCG_KEYWORD_REGEX_SOURCE, 'g'), m => `⦉${ocgKeywordDataMap[m].rubyForm}⦊`);
+            .replaceAll(new RegExp(OCG_KEYWORD_REGEX_SOURCE, 'g'), m => `⦉${ocgKeywordDataMap[m][dictionaryType] ?? ocgKeywordDataMap[m].rubyForm}⦊`);
     const textAfterProcessing = textAfterDictionaryMatch
         .replaceAll(new RegExp(WHOLE_WORD_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`)
         .replaceAll(new RegExp(NOT_END_OF_LINE_REGEX_SOURCE, 'g'), m => `⦉${m}⦊`)

@@ -97,7 +97,7 @@ export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateD
         },
         large: {
             trueBaseline: 190.5,
-            trueEdge: 758.82,
+            trueEdge: 763.82,
             trueWidth: 648.5,
         },
     },

@@ -179,10 +179,11 @@
 			}
 		}
 	}
-	.card-condense-input {
+	.two-column-input-group {
 		display: grid;
 		grid-template-columns: 1fr max-content;
 		gap: 0.5rem;
+		align-items: center;
 	}
 	.card-footer-input {
 		display: grid;
@@ -267,6 +268,9 @@
 	.ant-checkbox-wrapper + .ant-checkbox-wrapper {
 		margin-left: 5px;
 	}
+	.ant-checkbox-wrapper:last-child > span {
+		padding-right: 0;
+	}
 	.checkbox-input {
 		text-align: right;
 	}
@@ -287,6 +291,9 @@
 			border-color: #ff6f6f;
 			&:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
 				border-right-color: #ff6f6f;
+			}
+			&:not(.ant-radio-button-wrapper-disabled):first-child {
+				border-color: #ff6f6f;
 			}
 			&:hover {
 				background-color: #ff6f6f;

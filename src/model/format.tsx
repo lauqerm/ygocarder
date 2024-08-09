@@ -71,6 +71,7 @@ export const tcgToOCGLetterMap: Record<string, string> = {
     // '・': '･',
     // '・': '･',
     // '：': ':',
+    '∀': 'Ɐ',
     'ꓯ': 'Ɐ',
     'ꓛ': 'Ɔ',
     'ꓱ': 'Ǝ',
@@ -164,6 +165,7 @@ export const ocgToTCGLetterMap: Record<string, string> = {
     // '･': '・',
     // '･': '・',
     // ':': '：',
+    '∀': 'Ɐ',
     'ꓯ': 'Ɐ',
     'ꓛ': 'Ɔ',
     'ꓱ': 'Ǝ',
@@ -279,6 +281,7 @@ export const ocgToTCGTermMap: Record<string, string> = {
     'リンク': 'Link',
     'マキシマム': 'Maximum',
     'トークン': 'Token',
+    '特殊召喚': 'Special Summon',
     /** ability */
     'チューナー': 'Tuner',
     'デュアル': 'Gemini',

@@ -85,12 +85,12 @@ export const FormattingHelpDrawer = () => {
                 <p>
                     Formatting should work out-of-the-box, but in case you need to fine-tune your cards, here are some additional formatting syntax.
                     <br />
-                    Only a few inputs support additional syntax, such as Card Name, Card Text and Pendulum Card Text.
+                    Only a few inputs support these additional syntaxes, such as Card Name, Card Text and Pendulum Card Text.
                 </p>
                 <h2>Non-breakable line</h2>
                 Wrap a line of text inside a <StyledCode>{'['}</StyledCode> and <StyledCode>{']'}</StyledCode> to prevent the text from breaking down into multiple lines.
                 <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 1'}</StyledCode> or <StyledCode>{'⌘ 1'}</StyledCode>
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 1'}</StyledCode> or <StyledCode>{'⌘ 1'}</StyledCode>.
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -108,7 +108,7 @@ export const FormattingHelpDrawer = () => {
                 <h2>Non-breakable text</h2>
                 Wrap a piece of text inside a <StyledCode>{'{'}</StyledCode> and <StyledCode>{'}'}</StyledCode> to prevent the text from breaking down into multiple lines.
                 <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 2'}</StyledCode> or <StyledCode>{'⌘ 2'}</StyledCode>
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 2'}</StyledCode> or <StyledCode>{'⌘ 2'}</StyledCode>.
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -124,9 +124,9 @@ export const FormattingHelpDrawer = () => {
                     />
                 </StyledPanel>
                 <h2>Ruby</h2>
-                Put a <StyledCode>{'|'}</StyledCode> in between of a non-breakable text to annotate it with small overhead letters.
+                Put a <StyledCode>{'|'}</StyledCode> in between of a non-breakable text to annotate the text with small letters above it.
                 <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 3'}</StyledCode> or <StyledCode>{'⌘ 3'}</StyledCode>
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 3'}</StyledCode> or <StyledCode>{'⌘ 3'}</StyledCode>.
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -141,10 +141,10 @@ export const FormattingHelpDrawer = () => {
                         caption="Output"
                     />
                 </StyledPanel>
-                <h2>Non-compressable text</h2>
-                Wrap a piece of text inside a <StyledCode>{'{{'}</StyledCode> and <StyledCode>{'}}'}</StyledCode> to prevent the text from being compressed.
+                <h2>Compressable Ruby</h2>
+                Put a <StyledCode>{'||'}</StyledCode> in between of a non-breakable text to annotate it compressable small letters that does not try to extend beyond the text below it.
                 <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 4'}</StyledCode> or <StyledCode>{'⌘ 4'}</StyledCode>
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 4'}</StyledCode> or <StyledCode>{'⌘ 4'}</StyledCode>.
                 <StyledPanel className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
@@ -156,6 +156,24 @@ export const FormattingHelpDrawer = () => {
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-4-preview.jpg`}
+                        caption="Output"
+                    />
+                </StyledPanel>
+                <h2>Non-compressable text</h2>
+                Wrap a piece of text inside a <StyledCode>{'{{'}</StyledCode> and <StyledCode>{'}}'}</StyledCode> to prevent the text from being compressed.
+                <br />
+                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl 5'}</StyledCode> or <StyledCode>{'⌘ 5'}</StyledCode>.
+                <StyledPanel className="panel-figure">
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-raw' }}
+                        alt={'non-breakable line raw'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-5-raw.jpg`}
+                        caption="Input"
+                    />
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-preview' }}
+                        alt={'non-breakable line preview'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-5-preview.jpg`}
                         caption="Output"
                     />
                 </StyledPanel>

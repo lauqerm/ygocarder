@@ -17,6 +17,7 @@ export const drawMonsterType = ({
     metricMethod,
     size,
     alignment,
+    furiganaHelper,
 }: {
     ctx: CanvasRenderingContext2D,
     value: string,
@@ -24,6 +25,7 @@ export const drawMonsterType = ({
     metricMethod?: FontData['metricMethod'],
     size: 'small' | 'medium' | 'large',
     alignment: 'left' | 'right',
+    furiganaHelper: boolean,
 }) => {
     const { trueEdge, trueBaseline, trueWidth } = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
     const fontData = getTypeAbilityFontData()[format];
@@ -44,7 +46,7 @@ export const drawMonsterType = ({
 
     ctx.font = fontGetter.getFont();
     ctx.textAlign = 'left';
-    const normalizedText = normalizeCardText(value, format, { multiline: false });
+    const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper });
     const internalEffectiveMedian = condense(
         median => {
             const { currentLineCount, currentLineList } = createLineList({

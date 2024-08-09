@@ -33,7 +33,10 @@
                 background-color: var(--main-level-1-active);
                 border-color: var(--main-active);
                 &:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
-                    border-right-color: var(--main-active);;
+                    border-right-color: var(--main-active);
+                }
+                &:not(.ant-radio-button-wrapper-disabled):first-child {
+                    border-color: var(--main-active);
                 }
                 &:hover {
                     color: #ff6f6f;

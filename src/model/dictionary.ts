@@ -1,7 +1,7 @@
 export const ocgKeywordDataList = [
     {
-        shortForm: '召喚',
-        rubyForm: '{召|しょう}{喚|かん}',
+        shortForm: '特殊召喚',
+        rubyForm: '{特|とく}{殊|しゅ}{召|しょう}{喚|かん}',
     },
     {
         shortForm: 'カード',
@@ -671,23 +671,24 @@ export const ocgKeywordDataList = [
         rubyForm: '{全|すべ}て',
     },
     {
-        shortForm: '記さ',
-        rubyForm: '{記|しる}さ',
-    },
-    {
         shortForm: '捨て',
         rubyForm: '{捨|す}て',
     },
     {
         shortForm: 'CNo．',
+        regexForm: '(?<![a-zA-Z])CNo．(?![a-zA-Z])',
         rubyForm: '{CNo．|カオスナンバーズ}',
+        rubyFormName: '{CNo||カオスナンバーズ}．',
     },
     {
         shortForm: 'No．',
+        regexForm: '(?<![a-zA-Z])No．(?![a-zA-Z])',
         rubyForm: '{No．|ナンバーズ}',
+        rubyFormName: '{No||ナンバーズ}．',
     },
     {
         shortForm: 'CX',
+        regexForm: '(?<![a-zA-Z])CX(?![a-zA-Z])',
         rubyForm: '{CX|カオスエクシーズ}',
     },
     {
@@ -707,8 +708,28 @@ export const ocgKeywordDataList = [
         rubyForm: '{必|ひつ}{要|よう}',
     },
     {
+        shortForm: '選択',
+        rubyForm: '{選|せん}{択|たく}',
+    },
+    {
+        shortForm: '半分',
+        rubyForm: '{半|はん}{分|ぶん}',
+    },
+    {
+        shortForm: '開始',
+        rubyForm: '{開|かい}{始|し}',
+    },
+    {
+        shortForm: '裏表',
+        rubyForm: '{裏|うら}{表|おもて}',
+    },
+    {
         shortForm: '他',
         rubyForm: '{他|ほか}',
+    },
+    {
+        shortForm: '当',
+        rubyForm: '{当|あ}',
     },
     {
         shortForm: '度',
@@ -825,6 +846,26 @@ export const ocgKeywordDataList = [
     {
         shortForm: '含',
         rubyForm: '{含|ふく}',
+    },
+    {
+        shortForm: '与',
+        rubyForm: '{与|むた}',
+    },
+    {
+        shortForm: '得',
+        rubyForm: '{得|え}',
+    },
+    {
+        shortForm: '及',
+        rubyForm: '{及|およ}',
+    },
+    {
+        shortForm: '異',
+        rubyForm: '{異|こと}',
+    },
+    {
+        shortForm: '記',
+        rubyForm: '{記|しる}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

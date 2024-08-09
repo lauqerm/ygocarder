@@ -185,8 +185,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         // const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
         // const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
 
-        canvas.width = (drawWidth ?? 0) * pixelRatio;
-        canvas.height = (drawHeight ?? 0) * pixelRatio;
+        canvas.width = (drawWidth ?? 0);
+        canvas.height = (drawHeight ?? 0);
 
         ctx.drawImage(
             image,

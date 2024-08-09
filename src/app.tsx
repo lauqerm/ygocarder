@@ -179,7 +179,6 @@ function App() {
                         'DFHSGothic-W3-WIN-RKSJ-H',
                         'DFKakuTaiHiStd-W4',
                         'FOT-Rodin Pro M',
-                        'Yu-Gi-Oh! DF Leisho 1',
                         'Yu-Gi-Oh! DF Leisho 3',
                     ],
                     urls: ['asset/ocg-font.css'],

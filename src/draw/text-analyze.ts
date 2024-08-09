@@ -21,8 +21,11 @@ import {
     OCGNoOverheadGapRegex,
     GAP_PER_WIDTH_RATIO,
     GAP_PADDING_RATIO,
+    RUBY_REGEX,
+    DefaultFontData,
+    RUBY_BONUS_RATIO,
 } from 'src/model';
-import { getTextWorker, getHeadTextWidth, tokenizeText, getLostLeftWidth } from './text-util';
+import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter } from 'src/util';
 import { getLetterWidth } from './letter';
 
@@ -67,7 +70,10 @@ export const analyzeToken = ({
         fontData,
         fontLevel,
     } = textData;
-    const { metricMethod } = fontData;
+    const {
+        metricMethod,
+        headTextOverflow = DefaultFontData.headTextOverflow,
+    } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
         bulletSymbolWidth,
@@ -75,7 +81,7 @@ export const analyzeToken = ({
         fontSize,
         iconSymbolWidth = bulletSymbolWidth,
         largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
-        overheadTextSpacing = DefaultFontSizeData.overheadTextSpacing,
+        headTextSpacing = DefaultFontSizeData.headTextSpacing,
         squareBracketRatio,
         wordLetterSpacing,
     } = fontSizeData;
@@ -166,8 +172,9 @@ export const analyzeToken = ({
             }
         }
         /** Cụm ruby cần tách đôi các phần */
-        else if (/{[^{}]+?}/.test(fragment)) {
-            const [footText, headText = ''] = fragment.replaceAll(/{|}/g, '').split('|');
+        else if (RUBY_REGEX.test(fragment)) {
+            const [footText, rubyType, headText = ''] = fragment.replaceAll(/{|}/g, '').split(/(\|+)/);
+            const fitFootText = rubyType === '||';
             const {
                 totalWidth: footTextWidth,
                 fixedWidth: footTextFixedWidth,
@@ -180,14 +187,16 @@ export const analyzeToken = ({
                 .reduce((acc, cur) => acc + cur, 0);
             stopApplyFuriganaFont();
 
-            const { halfGap: baseHalfGap, headTextWidth } = getHeadTextWidth({
+            const { halfGap: baseHalfGap, headTextWidth } = analyzeHeadText({
                 headText,
                 headTextLetterWidth: headTextLetterWidth / xRatio,
                 footText,
                 footTextWidth,
-                overheadTextGap: defaultGap / xRatio,
-                overheadTextSpacing,
+                headTextGap: defaultGap / xRatio,
+                headTextSpacing,
                 gapPadding: GAP_PADDING_RATIO * fontSize / xRatio,
+                fitFootText,
+                xRatio: (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0,
             });
             const halfGap = headText.length === 0
                 ? Math.max(defaultGap, footTextWidth / GAP_PER_WIDTH_RATIO)
@@ -374,7 +383,7 @@ export const analyzeLine = ({
     const extraSpace = isLast
         ? format === 'tcg'
             ? expectedSpaceWidth > 1.500 ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 4.200 ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > 2.750 ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {

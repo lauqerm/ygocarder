@@ -53,13 +53,12 @@ export const getLetterWidth = ({
         actualBoundingBoxRight,
     } = metric;
     const actualBoundWidth = actualBoundingBoxLeft + actualBoundingBoxRight;
+    // const boundRatio = actualBoundWidth / width;
     let kerningScaleRatio = 1;
     if (metricMethod === 'name') {
         kerningScaleRatio = 1 + (1 - xRatio) * 8;
     }
-    const spacingRatio = metricMethod === 'name'
-        ? 0.023438
-        : metricMethod === 'compact' || metricMethod === 'furigana'
+    const spacingRatio = metricMethod === 'name' || metricMethod === 'compact' || metricMethod === 'furigana'
             ? 0.046875
             : 0;
     let letterBoxSpacing = metricMethod === 'furigana'
@@ -89,7 +88,8 @@ export const getLetterWidth = ({
         standardMetricRatio = 0.600;
     }
     else if (ChoonpuRegex.test(letter)) {
-        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.985);
+        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.75);
+        letterBoxSpacing = 2;
     }
     else if (ChiisaiRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.7);
@@ -115,7 +115,7 @@ export const getLetterWidth = ({
         letterBoxSpacing = 0;
     }
     else {
-        boundWidth = Math.max(actualBoundWidth, width * 0.875);
+        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.750);
     }
 
     const actualLetterWidth = width * letterRatio * endLineRatio;

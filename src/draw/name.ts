@@ -80,9 +80,10 @@ export const drawName = async (
         cloneNode: HTMLCanvasElement | null | undefined,
         format: string,
         isSpeedSkill?: boolean,
+        furiganaHelper: boolean,
     },
 ) => {
-    const { isSpeedSkill, format, cloneNode, frame } = option;
+    const { isSpeedSkill, format, cloneNode, frame, furiganaHelper } = option;
     const cloneCtx = cloneNode?.getContext('2d');
     if (ctx && cloneCtx && value) {
         const {
@@ -133,7 +134,7 @@ export const drawName = async (
             fontData,
             currentFont: fontGetter,
         };
-        const quoteConvertedValue = normalizeCardText(value, format, { multiline: false });
+        const quoteConvertedValue = normalizeCardText(value, format, { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName' });
 
         /** Tính bounding box để phục vụ cho gradient  */
         const crudeTokenList = format === 'ocg'

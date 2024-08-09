@@ -24,7 +24,7 @@ export const getTextWorker = (
 ) => {
     const {
         fontSize,
-        overheadFontRatio = DefaultFontSizeData.overheadFontRatio,
+        headTextFontRatio = DefaultFontSizeData.headTextFontRatio,
     } = fontSizeData;
     const {
         font,
@@ -78,7 +78,7 @@ export const getTextWorker = (
     let furiganaFontMemory = fontController.getFontInfo();
     const applyFuriganaFont = (bold = false) => {
         furiganaFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(furiganaFont).setWeight(bold ? 'bold' : '').setSize(fontSize * overheadFontRatio).getFont();
+        ctx.font = fontController.setFamily(furiganaFont).setWeight(bold ? 'bold' : '').setSize(fontSize * headTextFontRatio).getFont();
     };
     const stopApplyFuriganaFont = () => {
         ctx.font = fontController
@@ -134,59 +134,91 @@ export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline
  * * Lượng chữ càng nhiều thì cự ly giữa các chữ càng khít lại. ("PenduLuMoon" OCG)
  * * Từ bên trái có thể được chiếm dụng, nhưng không thể bị đẩy dịch. ("Joyous Melffys" OCG)
  * * Furigana có thể tràn ra rìa trái để foot text canh chuẩn lề. ("Beyond the Pendulum" OCG)
- * * Furigana không bị nén. ("Recette de Poisson (Fish Recipe)" OCG)
+ * * Furigana không bị nén ("Recette de Poisson (Fish Recipe)" OCG) cho đến khi độ dài chênh lệch giữa headText và footText quá lớn ("PenduLuMoon" OCG). Một số trường hợp khác ép headText lại để không vượt quá footText ("Number C92: Heart-eartH Chaos Dragon" OCG)
+ * * Nếu cả câu chỉ có 1 token và token này có nhiều footLetter thì furigana nén lại để fit với footLetter ("Amaze Attraction Viking Vortex" OCG).
  * * Furigana không thể vượt qua các ký tự fixed width như bullet, ordinal. ("Pendulum Dimension" OCG)
  * */
-export const getHeadTextWidth = ({
+export const analyzeHeadText = ({
     footText, footTextWidth,
     headText, headTextLetterWidth,
-    overheadTextGap,
-    overheadTextSpacing,
+    headTextGap,
+    headTextSpacing,
     gapPadding,
     debug,
+    fitFootText,
+    xRatio,
 }: {
     headText: string,
     headTextLetterWidth: number,
     footText: string,
     footTextWidth: number,
-    overheadTextGap: number,
-    overheadTextSpacing: number,
+    headTextGap: number,
+    headTextSpacing: number,
     gapPadding: number,
     debug?: string,
+    fitFootText: boolean,
+    xRatio: number,
 }) => {
     const noHeadText = headText.length === 0;
     const condenseHeadText = headTextLetterWidth / footTextWidth;
-    let alignCenterLetterSpacing = overheadTextSpacing;
-    if (condenseHeadText <= 1) alignCenterLetterSpacing = overheadTextSpacing;
-    else if (condenseHeadText <= 2.0) alignCenterLetterSpacing = 0;
-    else alignCenterLetterSpacing = Math.abs(overheadTextSpacing) * -6;
+    let alignCenterLetterSpacing = headTextSpacing;
+    let internalXRatio = 0;
+    if (condenseHeadText <= 1) {
+        alignCenterLetterSpacing = headTextSpacing;
+    }
+    else if (condenseHeadText <= 1.5) {
+        alignCenterLetterSpacing = 0;
+    }
+    else if (condenseHeadText <= 2.25) {
+        alignCenterLetterSpacing = headTextSpacing * -1/3;
+    }
+    else {
+        internalXRatio = 0.66;
+        alignCenterLetterSpacing = headTextSpacing * -1/3;
+        gapPadding = 0;
+    }
+    if (fitFootText || xRatio) {
+        alignCenterLetterSpacing = headTextSpacing;
+    }
 
-    const alignCenterHeadTextWidth = headTextLetterWidth + alignCenterLetterSpacing * (headText.length - 1);
+    const alignCenterHeadTextWidth = headTextLetterWidth * ((xRatio && !fitFootText) ? xRatio : internalXRatio ? internalXRatio : 1)
+        + alignCenterLetterSpacing * (headText.length - 1);
     const alignEvenlyLetterSpacing = noHeadText ? 0 : (footTextWidth - headTextLetterWidth) / headText.length;
     const alignEvenlyHeadTextWidth = footTextWidth;
+
     const alignment = footText.length === 1 || (gapPadding * 2 + alignCenterHeadTextWidth > footTextWidth)
         ? 'center' as const
         : 'space-around' as const;
-    const letterSpacing = alignment === 'center' ? alignCenterLetterSpacing : alignEvenlyLetterSpacing;
-    const headTextWidth = alignment === 'center' ? gapPadding * 2 + alignCenterHeadTextWidth : alignEvenlyHeadTextWidth;
+    const letterSpacing = alignment === 'center'
+        ? alignCenterLetterSpacing
+        : alignEvenlyLetterSpacing;
+    const trueHeadTextWidth = alignment === 'center'
+        ? gapPadding * 2 + alignCenterHeadTextWidth
+        : alignEvenlyHeadTextWidth;
+    const headTextWidth = fitFootText
+        ? Math.min(trueHeadTextWidth, footTextWidth)
+        : trueHeadTextWidth;
+    const baseHalfGap = alignment === 'center'
+        ? (alignCenterHeadTextWidth - footTextWidth) / 2
+        : 0;
     const halfGap = Math.max(
-        overheadTextGap,
-        alignment === 'center'
-            ? gapPadding + (alignCenterHeadTextWidth - footTextWidth) / 2
-            : 0
+        headTextGap,
+        fitFootText ? Math.min(baseHalfGap, 0) : baseHalfGap,
     );
 
     if (debug) console.info(
-        `getHeadTextWidth ${debug}`,
+        `analyzeHeadText ${debug}`,
         alignment,
         letterSpacing,
-        headText, headTextWidth,
+        '|',
+        headText, headTextWidth, trueHeadTextWidth,
         footText, footTextWidth,
         halfGap,
     );
     return {
         gapPadding,
         letterSpacing,
+        trueHeadTextWidth,
         headTextWidth,
         /**
          * Canh giữa nếu footText có 1 ký tự hoặc nếu headText canh giữa dài hơn footText, space-around trong trường hợp còn lại
@@ -198,6 +230,7 @@ export const getHeadTextWidth = ({
          * * Gap âm, furigana có thể nhường chỗ
          */
         halfGap,
+        headTextXRatio: alignment === 'center' ? internalXRatio : 0,
     };
 };
 

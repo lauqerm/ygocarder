@@ -78,12 +78,11 @@ export const TaintedCanvasWarning = <Explanation
     content={<div className="disclaimer">
         <h2>What is happening?</h2>
         <p>
-            You are using an image host that does not get the "approval" needed to be draw to the app. Browsers see it as a potential security risk (even if it is not the case), and mark the card as "tainted".
+            You are using an image host that does not get the "approval" needed for the app to use it. Browsers see it as a potential security risk (even if it is not the case), and mark the card as "tainted".
         </p>
         <h2>How does it affect me?</h2>
         <p>
-            A "tainted card" prevents all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your consent.<br />
-            Furthemore, once it get tainted, it will remains tainted even if you switch to other "safe" image host.
+            A "tainted card" prevents all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your consent.
         </p>
         <h2>How do I fix it?</h2>
         <p>

@@ -19,7 +19,7 @@ export const drawCreatorText = ({
     const { trueEdge, trueBaseline, trueWidth } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];
     const { font } = fontData;
-    const normalizedText = normalizeCardText(value, format, { multiline: false });
+    const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
 
     let textData = {
         fontLevel: 0,

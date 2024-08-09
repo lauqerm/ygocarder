@@ -75,6 +75,7 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
     isSpeedCard: 'isp',
     isDuelTerminalCard: 'idt',
     creator: 'cr',
+    furiganaHelper: 'fh',
 };
 
 export const decodeCardWithCompatibility = (cardData: Record<string, any> | string | null): Card => {
@@ -222,5 +223,7 @@ const migrateCardData = (card: Record<string, any>) => {
     if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
     if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
     if (migratedCard.opacity === undefined) migratedCard.opacity = getDefaultCardOpacity();
+    if (migratedCard.furiganaHelper === undefined) migratedCard.furiganaHelper = true;
+    if ((migratedCard as any).kanjiHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     return migratedCard;
 };
