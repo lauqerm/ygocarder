@@ -9,10 +9,10 @@ import {
     OCGNumberRegex,
     OCGOffsetMap,
     OCGIncreasedLevel2WidthRegex,
-    OCG_LETTER_RATIO,
     OCG_REDUCED_AT_END_LINE_RATIO,
     OCGLastOfLineOffsetMap,
     NoSpaceRegex,
+    nonBreakableSymbolRegex,
 } from 'src/model';
 
 /** Trả về độ dài thực của letter (không phụ thuộc vào scale), nếu thông số `xRatio` được truyền, các ký tự constant width như bullet
@@ -37,7 +37,7 @@ export const getLetterWidth = ({
     metricMethod?: MetricMethod,
     debug?: string,
 }) => {
-    if (/⦉|⦊/.test(letter)) return {
+    if (nonBreakableSymbolRegex.test(letter)) return {
         width: 0,
         boundWidth: 0,
     };
@@ -80,7 +80,7 @@ export const getLetterWidth = ({
         offsetRatio,
     };
 
-    let letterRatio = OCG_LETTER_RATIO;
+    let letterRatio = 1;
     let endLineRatio = 1;
     let standardMetricRatio = 1.000;
     if (OCGDotRegex.test(letter)) {
@@ -89,7 +89,7 @@ export const getLetterWidth = ({
     }
     else if (ChoonpuRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.75);
-        letterBoxSpacing = 2;
+        letterBoxSpacing = metricMethod === 'furigana' ? 0 : 2;
     }
     else if (ChiisaiRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.7);

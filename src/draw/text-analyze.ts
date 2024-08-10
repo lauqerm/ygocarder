@@ -24,6 +24,7 @@ import {
     RUBY_REGEX,
     DefaultFontData,
     RUBY_BONUS_RATIO,
+    NON_BREAKABLE_SYMBOL_SOURCE,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter } from 'src/util';
@@ -94,7 +95,7 @@ export const analyzeToken = ({
         applySymbolFont, stopApplySymbolFont,
         applyNumberFont, stopApplyNumberFont,
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont);
-    const token = rawToken.replaceAll(/⦉|⦊/g, '');
+    const token = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
     const letterSpacingRatio = 1 + letterSpacing / 2;
     let leftMostLetter = '';
     /** Tính số đo của 1 token */

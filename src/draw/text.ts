@@ -271,7 +271,8 @@ export const drawLine = ({
                 const totalVacantSpace = vacantLeftWidth + vacantRightWidth;
                 let rebalancedSpace = 0;
                 let nextTokenRebalanceOffset = 0;
-                if (totalVacantSpace > footTextWidth * xRatio * 0.55 && isNextTokenOffsetable) {
+
+                if (totalVacantSpace > footTextWidth * xRatio * 0.35 && isNextTokenOffsetable) {
                     rebalancedSpace = (totalVacantSpace + Math.max(nextLeftGap, 0) * 2) / 3;
                     nextTokenRebalanceOffset = Math.max(nextLeftGap, 0) - rebalancedSpace;
                 } else {

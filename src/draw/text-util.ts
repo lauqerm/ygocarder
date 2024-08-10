@@ -3,13 +3,15 @@ import {
     DefaultFontSizeData,
     FontData,
     FontSizeData,
+    NB_WORD_CLOSE,
+    NB_WORD_OPEN,
 } from 'src/model';
 import { createFontGetter } from 'src/util';
 
 export const tokenizeText = (text: string, keepControlCharacter = false) => {
     const regex = keepControlCharacter
-        ? new RegExp(`([${BREAKABLE_LETTER}])|(⦉[\\w\\W]+?⦊)|(.+?)`)
-        : new RegExp(`([${BREAKABLE_LETTER}])|⦉([\\w\\W]+?)⦊|(.+?)`);
+        ? new RegExp(`([${BREAKABLE_LETTER}])|(${NB_WORD_OPEN}[\\w\\W]+?${NB_WORD_CLOSE})|(.+?)`)
+        : new RegExp(`([${BREAKABLE_LETTER}])|${NB_WORD_OPEN}([\\w\\W]+?)${NB_WORD_CLOSE}|(.+?)`);
 
     return text
         .split(regex)
