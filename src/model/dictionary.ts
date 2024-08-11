@@ -462,10 +462,6 @@ export const ocgKeywordDataList = [
         rubyForm: '{取|と}り{除|ぞ}い',
     },
     {
-        shortForm: '払う',
-        rubyForm: '{払|はら}う',
-    },
-    {
         shortForm: '行う',
         rubyForm: '{行|おこな}う',
     },
@@ -587,6 +583,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{通|つう}{常|じょう}',
     },
     {
+        shortForm: '可能',
+        rubyForm: '{可|か}{能|のう}',
+    },
+    {
         shortForm: '神',
         rubyForm: '{神|かみ}',
     },
@@ -677,13 +677,13 @@ export const ocgKeywordDataList = [
     {
         shortForm: 'CNo．',
         regexForm: '(?<![a-zA-Z])CNo．(?![a-zA-Z])',
-        rubyForm: '{CNo．|カオスナンバーズ}',
+        rubyForm: '{CNo．||カオスナンバーズ}',
         rubyFormName: '{CNo||カオスナンバーズ}．',
     },
     {
         shortForm: 'No．',
         regexForm: '(?<![a-zA-Z])No．(?![a-zA-Z])',
-        rubyForm: '{No．|ナンバーズ}',
+        rubyForm: '{No．||ナンバーズ}',
         rubyFormName: '{No||ナンバーズ}．',
     },
     {
@@ -722,6 +722,26 @@ export const ocgKeywordDataList = [
     {
         shortForm: '裏表',
         rubyForm: '{裏|うら}{表|おもて}',
+    },
+    {
+        shortForm: '回復',
+        rubyForm: '{回|かい}{復|ふく}',
+    },
+    {
+        shortForm: '指定',
+        rubyForm: '{指|し}{定|てい}',
+    },
+    {
+        shortForm: '位置',
+        rubyForm: '{位|い}{置|ち}',
+    },
+    {
+        shortForm: '移動',
+        rubyForm: '{移|い}{動|どう}',
+    },
+    {
+        shortForm: '前',
+        rubyForm: '{前|まえ}',
     },
     {
         shortForm: '他',
@@ -878,6 +898,34 @@ export const ocgKeywordDataList = [
     {
         shortForm: '決',
         rubyForm: '{決|き}',
+    },
+    {
+        shortForm: '互',
+        rubyForm: '{互|たが}',
+    },
+    {
+        shortForm: '払',
+        rubyForm: '{払|はら}',
+    },
+    {
+        shortForm: '多',
+        rubyForm: '{多|おお}',
+    },
+    {
+        shortForm: '持',
+        rubyForm: '{持|おお}',
+    },
+    {
+        shortForm: '持',
+        rubyForm: '{持|も}',
+    },
+    {
+        shortForm: '間',
+        rubyForm: '{間|あいだ}',
+    },
+    {
+        shortForm: '所',
+        rubyForm: '{所|しょ}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

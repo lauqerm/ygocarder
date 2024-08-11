@@ -197,6 +197,7 @@ export const analyzeToken = ({
                 headTextSpacing,
                 gapPadding: GAP_PADDING_RATIO * fontSize / xRatio,
                 fitFootText,
+                sentenceXRatio: xRatio,
                 xRatio: (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0,
             });
             const halfGap = headText.length === 0

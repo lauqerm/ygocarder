@@ -80,6 +80,11 @@ export const drawStat = (
             ctx.textAlign = 'right';
             ctx.font = 'bold 37px matrix';
             ctx.fillText(value, edge + statWidth, baseline);
+        } else
+        if (value === '?') {
+            ctx.textAlign = 'right';
+            ctx.font = 'bold 34px matrix';
+            ctx.fillText(value, edge + statWidth, baseline);
         } else {
             ctx.textAlign = 'left';
             const tokenizedText = `${value}`.split('?');

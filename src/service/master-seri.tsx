@@ -108,7 +108,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             : basePendulumFrame === 'auto'
                 ? frame
                 : pendulumFrame);
-    const lightHeader = !isMonster || ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(frame);
+    const lightHeader = !isMonster || ['link', 'xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(frame);
     const {
         isInitializing,
         imageChangeCount,
@@ -699,7 +699,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 if (isPendulum) {
                     fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY);
                 } else if (isLink) {
-                    fillTextRightWithSpacing(ctx, setId, spacing, 666.56 + xOffset, 873.94 + offsetY);
+                    fillTextRightWithSpacing(ctx, setId, spacing, 666.56 + xOffset, 872.94 + offsetY);
                 } else {
                     fillTextRightWithSpacing(ctx, setId, spacing, 728.78 + xOffset, 871.50 + offsetY);
                 }
@@ -895,10 +895,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             drawingPipeline.current.overlay.instructor = async () => {
                 ctx?.clearRect(0, 0, CanvasWidth, CanvasHeight);
                 if (!ctx) return;
-                await loopFinish(ctx, 'total-overlay', overlayType => drawFrom(ctx, `/asset/image/finish/finish-${overlayType}-total-overlay.png`, 0, 0));
+                await loopFinish(
+                    ctx,
+                    'total-overlay',
+                    overlayType => drawFrom(ctx, `/asset/image/finish/finish-${overlayType}-total-overlay.png`, 0, 0),
+                );
             };
         }
-    }, [active, isInitializing, finishCanvas, loopFinish]);
+    }, [active, isInitializing, finishCanvas, loopFinish, name]);
 
     return {
         drawingPipeline,

@@ -50,6 +50,7 @@ export const fillHeadText = ({
         headTextGap, headTextSpacing: headTextSpacing * xRatio,
         gapPadding: fontSize * GAP_PADDING_RATIO,
         fitFootText,
+        sentenceXRatio: xRatio,
         xRatio: externalHeadTextXRatio,
     });
     const overflow = trueHeadTextWidth > footTextWidth * xRatio;

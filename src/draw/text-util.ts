@@ -148,6 +148,7 @@ export const analyzeHeadText = ({
     gapPadding,
     debug,
     fitFootText,
+    sentenceXRatio,
     xRatio,
 }: {
     headText: string,
@@ -159,19 +160,20 @@ export const analyzeHeadText = ({
     gapPadding: number,
     debug?: string,
     fitFootText: boolean,
+    sentenceXRatio: number,
     xRatio: number,
 }) => {
     const noHeadText = headText.length === 0;
-    const condenseHeadText = headTextLetterWidth / footTextWidth;
+    const condenseHeadText = headTextLetterWidth / footTextWidth * sentenceXRatio;
     let alignCenterLetterSpacing = headTextSpacing;
     let internalXRatio = 0;
     if (condenseHeadText <= 1) {
         alignCenterLetterSpacing = headTextSpacing;
     }
-    else if (condenseHeadText <= 1.5) {
+    else if (condenseHeadText <= 1.275) {
         alignCenterLetterSpacing = 0;
     }
-    else if (condenseHeadText <= 2.25) {
+    else if (condenseHeadText <= 1.575) {
         alignCenterLetterSpacing = headTextSpacing * -1/3;
     }
     else {
@@ -183,7 +185,9 @@ export const analyzeHeadText = ({
         alignCenterLetterSpacing = headTextSpacing;
     }
 
-    const alignCenterHeadTextWidth = headTextLetterWidth * ((xRatio && !fitFootText) ? xRatio : internalXRatio ? internalXRatio : 1)
+    const alignCenterHeadTextWidth = headTextLetterWidth * ((xRatio && !fitFootText)
+        ? xRatio
+        : (!internalXRatio || fitFootText) ? 1 : internalXRatio)
         + alignCenterLetterSpacing * (headText.length - 1);
     const alignEvenlyLetterSpacing = noHeadText ? 0 : (footTextWidth - headTextLetterWidth) / headText.length;
     const alignEvenlyHeadTextWidth = footTextWidth;

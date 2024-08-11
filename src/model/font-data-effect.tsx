@@ -56,7 +56,7 @@ export type TextData = {
 const DefaultEffectFontData = {
     symbolFontRatio: 1,
     headTextFontRatio: 0.7,
-    headTextHeightRatio: 0.800,
+    headTextHeightRatio: 0.815,
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
 };
 

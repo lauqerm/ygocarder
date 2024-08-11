@@ -244,6 +244,7 @@ export const drawLine = ({
                     headTextSpacing: headTextSpacing * xRatio,
                     gapPadding: fontSize * GAP_PADDING_RATIO,
                     fitFootText,
+                    sentenceXRatio: xRatio,
                     xRatio: (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0,
                 });
                 const halfGap = headText.length === 0
@@ -272,7 +273,7 @@ export const drawLine = ({
                 let rebalancedSpace = 0;
                 let nextTokenRebalanceOffset = 0;
 
-                if (totalVacantSpace > footTextWidth * xRatio * 0.35 && isNextTokenOffsetable) {
+                if (totalVacantSpace > 0 && nextLeftGap >= 0 && isNextTokenOffsetable) {
                     rebalancedSpace = (totalVacantSpace + Math.max(nextLeftGap, 0) * 2) / 3;
                     nextTokenRebalanceOffset = Math.max(nextLeftGap, 0) - rebalancedSpace;
                 } else {
