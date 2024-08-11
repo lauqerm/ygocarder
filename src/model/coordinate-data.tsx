@@ -1,5 +1,3 @@
-import { UP_RATIO } from './canvas';
-
 export type CoordinateData = {
     trueWidth: number,
     trueBaseline: number,
@@ -51,18 +49,17 @@ export const stCoordinateData: Record<string, CoordinateData[]> = {
 };
 
 export const pendulumSizeList: CoordinateData[] = [
-    { trueWidth: 375 * UP_RATIO, trueBaseline: 504.5 * UP_RATIO, trueEdge: 87.05 * UP_RATIO },
-    { trueWidth: 375 * UP_RATIO, trueBaseline: 504.5 * UP_RATIO, trueEdge: 87.05 * UP_RATIO },
+    { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
+    { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
 ];
 
 export const specialCoordinateData: Record<string, CoordinateData[]> = {
     normal: [
-        { trueWidth: 461 * UP_RATIO, trueBaseline: 620 * UP_RATIO, trueEdge: 45 * UP_RATIO },
-        { trueWidth: 461 * UP_RATIO, trueBaseline: 624 * UP_RATIO, trueEdge: 45 * UP_RATIO },
+        { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
     ],
     pendulum: [
-        { trueWidth: 461 * UP_RATIO, trueBaseline: 620 * UP_RATIO, trueEdge: 45 * UP_RATIO },
-        { trueWidth: 461 * UP_RATIO, trueBaseline: 624 * UP_RATIO, trueEdge: 45 * UP_RATIO },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
     ],
 };
 

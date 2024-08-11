@@ -6,7 +6,6 @@ import './reduce-color-motion.scss';
 import {
     CanvasConst,
     Card,
-    UP_RATIO,
     getDefaultCard,
     getArtCanvasCoordinate,
     CardOpacity,
@@ -443,13 +442,13 @@ function App() {
                             </div>
                             {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
                             <canvas id="specialFrameCanvas" key={canvasKey} ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
-                            <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={100 * UP_RATIO} />
-                            <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={150 * UP_RATIO} />
-                            <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={600 * UP_RATIO} />
-                            <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={600 * UP_RATIO} />
-                            <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={700 * UP_RATIO} />
-                            <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={750 * UP_RATIO} />
+                            <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
+                            <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={148} />
+                            <canvas id="subFamilyCanvas" ref={subFamilyCanvasRef} width={CanvasWidth} height={222} />
+                            <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />
+                            <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={889} />
+                            <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={1037} />
+                            <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={1111} />
                             <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="passcode" ref={passcodeCanvasRef} width={CanvasWidth} height={CanvasHeight} />

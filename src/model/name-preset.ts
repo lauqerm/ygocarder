@@ -76,6 +76,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
             fillStyle: '#ffffff',
             lineWidth: 6,
             lineColor: '#000',
+            lineOffsetX: 1,
             hasOutline: true,
         }),
     },

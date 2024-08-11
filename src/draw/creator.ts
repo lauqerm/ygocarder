@@ -10,11 +10,13 @@ export const drawCreatorText = ({
     value,
     format,
     alignment,
+    baselineOffset = 0,
 }: {
     ctx: CanvasRenderingContext2D,
     value: string,
     format: string,
     alignment: 'left' | 'right',
+    baselineOffset?: number,
 }) => {
     const { trueEdge, trueBaseline, trueWidth } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];
@@ -72,7 +74,7 @@ export const drawCreatorText = ({
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
         trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
-        trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY),
+        trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY) + baselineOffset,
         textData,
         format,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {

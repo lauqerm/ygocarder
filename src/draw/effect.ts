@@ -1,7 +1,6 @@
 import {
     CanvasConst,
     CondenseType,
-    UP_RATIO,
     effectMonsterFontData,
     CoordinateData,
     monsterCoordinateData,
@@ -114,7 +113,7 @@ export const drawEffect = (
         ) {
             effectSizeLevel += 1;
         } else {
-            ctx.clearRect(0, 0, CanvasWidth, 750 * UP_RATIO);
+            ctx.clearRect(0, 0, CanvasWidth, 1111);
 
             let trueBaseline = trueBaselineStart + lineHeight;
             /** Full line list - ví dụ material, luôn nằm trong 1 dòng duy nhất và có hệ số condense riêng so với phần còn lại của effect, tham

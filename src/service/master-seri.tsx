@@ -527,7 +527,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const ctx = subFamilyCanvas.current?.getContext('2d');
             drawingPipeline.current.star.rerun += 1;
             drawingPipeline.current.star.instructor = () => {
-                ctx?.clearRect(0, 0, CanvasWidth, 150 * UP_RATIO);
+                ctx?.clearRect(0, 0, CanvasWidth, 222);
                 if (isMonster && !isLink) {
                     const starWidth = 50, startSpacing = 4;
                     const starCount = Math.min(13, star ?? 0);
@@ -581,7 +581,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const fontSize = 60.5;
             const ctx = pendulumScaleCanvas.current?.getContext('2d');
 
-            ctx?.clearRect(0, 0, 549 * UP_RATIO, 600 * UP_RATIO);
+            ctx?.clearRect(0, 0, 549 * UP_RATIO, 889);
             if (ctx && isPendulum) {
                 ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
                 ctx.textAlign = 'left';
@@ -724,7 +724,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 if (isFirstEdition && !isDuelTerminalCard) {
                     ctx.fillStyle = lightFooter ? '#fff' : '#000';
 
-                    draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO) - (format === 'ocg' ? 10 : 0));
+                    draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO) - (format === 'ocg' ? 10 : 0), isSpeedSkill ? -2 : 0);
                 }
             }
         }
@@ -740,6 +740,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         pendulumFrame,
         opacity.artFrame,
         isPendulum,
+        isSpeedSkill,
     ]);
 
     /** DRAW CREATOR TEXT */
@@ -761,9 +762,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 format,
                 value: creator,
                 alignment: 'right',
+                baselineOffset: isSpeedSkill ? -2 : 0,
             });
         })();
-    }, [isInitializing, isPendulum, lightFooter, creator, active, creatorCanvas, format, opacity.artFrame]);
+    }, [isInitializing, isPendulum, lightFooter, creator, active, creatorCanvas, format, opacity.artFrame, isSpeedSkill]);
 
     /** DRAW STICKER */
     useEffect(() => {
@@ -786,7 +788,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         alignment: 'left' | 'right' = 'left',
     ) => {
         if (ctx) {
-            ctx?.clearRect(0, 0, CanvasWidth, 700 * UP_RATIO);
+            ctx?.clearRect(0, 0, CanvasWidth, 1037);
             const normalizedSubFamily = subFamily.toUpperCase();
             const normalizedTypeAbility = typeAbility.map(text => text.trim()).join('/');
             const typeAbilityWithIcon = (isMonster || normalizedSubFamily === 'NO ICON')
@@ -869,7 +871,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     useEffect(() => {
         if (active) {
             const ctx = pendulumEffectCanvas.current?.getContext('2d');
-            ctx?.clearRect(0, 0, 549 * UP_RATIO, 600 * UP_RATIO);
+            ctx?.clearRect(0, 0, 549 * UP_RATIO, 889);
             if (isPendulum) {
                 drawEffect(
                     ctx,

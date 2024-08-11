@@ -174,12 +174,11 @@ export const analyzeHeadText = ({
         alignCenterLetterSpacing = 0;
     }
     else if (condenseHeadText <= 1.575) {
-        alignCenterLetterSpacing = headTextSpacing * -1/3;
+        alignCenterLetterSpacing = headTextSpacing * -1/4;
     }
     else {
         internalXRatio = 0.66;
-        alignCenterLetterSpacing = headTextSpacing * -1/3;
-        gapPadding = 0;
+        alignCenterLetterSpacing = headTextSpacing * -1/4;
     }
     if (fitFootText || xRatio) {
         alignCenterLetterSpacing = headTextSpacing;

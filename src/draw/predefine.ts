@@ -1,4 +1,3 @@
-import { UP_RATIO } from 'src/model';
 import { fillTextLeftWithSpacing } from './canvas-util';
 
 export const drawScale = (
@@ -27,6 +26,7 @@ export const drawScale = (
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
     edge = 99,
+    baselineOffset = 0,
     option = { stroke: false },
 ) => {
     if (ctx) {
@@ -34,17 +34,17 @@ export const draw1stEdition = (
         ctx.font = 'bold 23.7px palatino-linotype-bold';
 
         let left = edge;
-        ctx.fillText('1', left, 1150.93);
+        ctx.fillText('1', left, 1150.93 + baselineOffset);
         if (stroke) ctx.strokeText('1', left, 1150.93);
         left += ctx.measureText('1').width - 2;
 
         ctx.font = 'bold 17.78px palatino-linotype-bold';
-        ctx.fillText('st', left, 1143.53);
+        ctx.fillText('st', left, 1143.53 + baselineOffset);
         if (stroke) ctx.strokeText('st', left, 1143.53);
         left += ctx.measureText('st').width;
 
         ctx.font = 'bold 22.22px palatino-linotype-bold';
-        ctx.fillText(' Edition', left, 1150.93);
+        ctx.fillText(' Edition', left, 1150.93 + baselineOffset);
         if (stroke) ctx.strokeText(' Edition', left, 1150.93);
     }
 };
@@ -75,7 +75,7 @@ export const drawStat = (
     baseline: number,
 ) => {
     if (ctx && value !== undefined) {
-        const statWidth = 49.94 * UP_RATIO;
+        const statWidth = 73.97;
         if (value === '∞') {
             ctx.textAlign = 'right';
             ctx.font = 'bold 37px matrix';

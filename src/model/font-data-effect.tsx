@@ -1,5 +1,4 @@
 import { createFontGetter } from 'src/util';
-import { UP_RATIO } from './canvas';
 
 export type FontSizeData = {
     fontSize: number,
@@ -130,7 +129,7 @@ export const tcgPendulumFontList: FontData = {
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
     fontList: [
-        { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.44 * UP_RATIO, lineCount: 5 },
+        { bulletSymbolWidth: 23, fontSize: 24.3, lineHeight: 24.35, lineCount: 5 },
     ],
 };
 export const ocgPendulumFontList: FontData = {
@@ -207,8 +206,7 @@ export const specialFontData: Record<string, FontData> = {
         ordinalFont: '"DFKakuTaiHiStd-W4"',
         alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
         fontList: [
-            { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.74 * UP_RATIO, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 13.46 * UP_RATIO, lineHeight: 14.28 * UP_RATIO, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
         ]
     },
     pendulum: {
@@ -218,8 +216,8 @@ export const specialFontData: Record<string, FontData> = {
         ordinalFont: '"DFKakuTaiHiStd-W4"',
         alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
         fontList: [
-            { bulletSymbolWidth: 23, fontSize: 16.41 * UP_RATIO, lineHeight: 16.74 * UP_RATIO, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 13.46 * UP_RATIO, lineHeight: 14.28 * UP_RATIO, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 7 },
         ]
     },
 };

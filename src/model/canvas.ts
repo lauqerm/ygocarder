@@ -1,8 +1,8 @@
 export const UP_RATIO = 1.48125;
 /** Các thông số được làm tròn thay vì upscale để đảm bảo độ mịn */
 export const CanvasConst = {
-    width: 813, // 549 * UP_RATIO,
-    height: 1185, // 800 * UP_RATIO,
+    width: 813,
+    height: 1185,
     topToPendulumStructure: 210,
     pendulumStructureHeight: 912,
     leftToPendulumStructure: 52,
