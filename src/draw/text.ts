@@ -273,7 +273,7 @@ export const drawLine = ({
                 let rebalancedSpace = 0;
                 let nextTokenRebalanceOffset = 0;
 
-                if (totalVacantSpace > 0 && nextLeftGap >= 0 && isNextTokenOffsetable) {
+                if (totalVacantSpace > 0 && nextLeftGap >= -2 && isNextTokenOffsetable) {
                     rebalancedSpace = (totalVacantSpace + Math.max(nextLeftGap, 0) * 2) / 3;
                     nextTokenRebalanceOffset = Math.max(nextLeftGap, 0) - rebalancedSpace;
                 } else {

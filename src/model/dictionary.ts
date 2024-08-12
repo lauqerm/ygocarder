@@ -740,8 +740,32 @@ export const ocgKeywordDataList = [
         rubyForm: '{移|い}{動|どう}',
     },
     {
+        shortForm: '方法',
+        rubyForm: '{方|ほう}{法|ほう}',
+    },
+    {
+        shortForm: '変更',
+        rubyForm: '{変|へん}{更|こう}',
+    },
+    {
+        shortForm: '発生',
+        rubyForm: '{発|はっ}{生|せい}',
+    },
+    {
         shortForm: '前',
         rubyForm: '{前|まえ}',
+    },
+    {
+        shortForm: '違',
+        rubyForm: '{違|ちが}',
+    },
+    {
+        shortForm: '続',
+        rubyForm: '{続|つづ}',
+    },
+    {
+        shortForm: '残',
+        rubyForm: '{残|のこ}',
     },
     {
         shortForm: '他',
@@ -926,6 +950,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '所',
         rubyForm: '{所|しょ}',
+    },
+    {
+        shortForm: '高',
+        rubyForm: '{高|たか}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {

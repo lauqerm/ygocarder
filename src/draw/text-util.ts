@@ -167,10 +167,10 @@ export const analyzeHeadText = ({
     const condenseHeadText = headTextLetterWidth / footTextWidth * sentenceXRatio;
     let alignCenterLetterSpacing = headTextSpacing;
     let internalXRatio = 0;
-    if (condenseHeadText <= 1) {
+    if (condenseHeadText <= 0.95) {
         alignCenterLetterSpacing = headTextSpacing;
     }
-    else if (condenseHeadText <= 1.275) {
+    else if (condenseHeadText <= 1.175) {
         alignCenterLetterSpacing = 0;
     }
     else if (condenseHeadText <= 1.575) {

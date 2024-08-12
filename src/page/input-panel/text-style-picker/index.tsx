@@ -421,6 +421,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 overlayClassName="input-overlay pattern-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <StyledPatternContainer onClick={e => e.stopPropagation()}>
+                                        <div className="alert">Will disable shadow and gradient</div>
                                         {PatternList.map(({ key, patternImage }) => {
                                             return <StyledPatternOption key={key}
                                                 className={[

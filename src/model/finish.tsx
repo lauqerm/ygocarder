@@ -47,7 +47,7 @@ export const FinishMap: Record<string, FinishInformation> = {
         value: 'type7',
         label: '7',
         partInstructionMap: {
-            'total-overlay': [{ blendMode: 'screen', opacity: 0.175 }, { blendMode: 'color-dodge', opacity: 0.175 }],
+            'total-overlay': [{ blendMode: 'screen', opacity: 0.175 }, { blendMode: 'color-dodge', opacity: 0.125 }],
         },
     },
     type8: {

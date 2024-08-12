@@ -28,6 +28,11 @@ export const StyledPatternContainer = styled(StyledDropdown.Container)`
     grid-template-columns: repeat(2, 200px);
     gap: 0.5rem;
     padding: 5px;
+    .alert {
+        grid-column: span 2;
+        font-size: 13px;
+        text-align: center;
+    }
 `;
 export const StyledPatternOption = styled.div`
     line-height: 0;
