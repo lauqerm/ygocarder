@@ -37,8 +37,6 @@ export const nonBreakableSymbolRegex = new RegExp(NON_BREAKABLE_SYMBOL_SOURCE);
 
 export const FLAVOR_CONDITION_SOURCE = `(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*${NB_WORD_OPEN}?\\([\\w\\W]+\\)${NB_WORD_CLOSE}?)\\s*$`;
 
-/** @todo Remove deprecated */
-
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]';
 export const TCGLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
@@ -72,9 +70,7 @@ export const HiraganaRegex = /[あいうえおかがきぎくぐけげこごさ�
 export const KatakanaRegex = /[アイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヰヱヲンヴヷヸヹヺ]/;
 
 export const OCGDotRegex = new RegExp('[・]');
-
 export const ChoonpuRegex = new RegExp('[ー]');
-
 export const NoSpaceRegex = new RegExp('[―]');
 
 const OCG_INCREASED_LEVEL_2_WIDTH_JOINLIST = '：';

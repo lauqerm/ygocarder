@@ -1,7 +1,7 @@
 <!-- Name with background -->
 Dark synchro style
-Testing
-Character need treatment: ！ ( )
+<!-- Testing -->
+<!-- Character need treatment: ！ ( ) -->
 Remainig Todos
 Dictionary
 Extended art over frame

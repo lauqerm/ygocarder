@@ -367,10 +367,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     className="name-input"
                     onKeyDown={ev => {
                         if (!allowHotkey) return;
-                        const { ctrlKey, key } = ev;
+                        const { ctrlKey, key, metaKey } = ev;
                         const selectionStart = ev.currentTarget.selectionStart ?? -1;
                         const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
-                        if (ctrlKey && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                        if ((ctrlKey || metaKey) && selectionEnd !== selectionStart && availableCommand.has(key)) {
                             ev.preventDefault();
                             wrapText(
                                 ev.currentTarget.value, key,
@@ -514,10 +514,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                                 value={displayPendulumEffect}
                                 onKeyDown={ev => {
                                     if (!allowHotkey) return;
-                                    const { ctrlKey, key } = ev;
+                                    const { ctrlKey, metaKey, key } = ev;
                                     const selectionStart = ev.currentTarget.selectionStart ?? -1;
                                     const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
-                                    if (ctrlKey && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                                    if ((ctrlKey || metaKey) && selectionEnd !== selectionStart && availableCommand.has(key)) {
                                         ev.preventDefault();
                                         wrapText(
                                             ev.currentTarget.value, key,
@@ -593,10 +593,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     rows={9}
                     onKeyDown={ev => {
                         if (!allowHotkey) return;
-                        const { ctrlKey, key } = ev;
+                        const { ctrlKey, metaKey, key } = ev;
                         const selectionStart = ev.currentTarget.selectionStart ?? -1;
                         const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
-                        if (ctrlKey && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                        if ((ctrlKey || metaKey) && selectionEnd !== selectionStart && availableCommand.has(key)) {
                             ev.preventDefault();
                             wrapText(
                                 ev.currentTarget.value, key,

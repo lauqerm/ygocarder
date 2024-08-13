@@ -246,6 +246,14 @@ export const ocgKeywordDataList = [
         rubyForm: '{守|しゅ}{備|び}{力|りょく}',
     },
     {
+        shortForm: '撃力',
+        rubyForm: '{撃|げき}{力|りょく}',
+    },
+    {
+        shortForm: '勝利',
+        rubyForm: '{勝|しょう}{利|り}',
+    },
+    {
         shortForm: '属性',
         rubyForm: '{属|ぞく}{性|せい}',
     },
@@ -750,6 +758,18 @@ export const ocgKeywordDataList = [
     {
         shortForm: '発生',
         rubyForm: '{発|はっ}{生|せい}',
+    },
+    {
+        shortForm: '公開',
+        rubyForm: '{公|こう}{開|かい}',
+    },
+    {
+        shortForm: '超',
+        rubyForm: '{超|こ}',
+    },
+    {
+        shortForm: '毎',
+        rubyForm: '{毎|ごと}',
     },
     {
         shortForm: '前',
