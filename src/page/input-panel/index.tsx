@@ -1,7 +1,7 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Popover, Tooltip } from 'antd';
 import { Card, CardOpacity, CondenseType, NameFontDataMap, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate, tcgToOCGTermMap } from '../../model';
-import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser } from '../../component';
+import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser, StandaloneLabel } from '../../component';
 import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill, normalizedCardName } from '../../util';
 import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
@@ -310,14 +310,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const currentPendulumFrame = frameMap[pendulumFrame];
     return <div className="card-info-panel">
         {children}
-        <CharPicker
-            targetId={onlineCharPicker}
-            onPick={value => {
-                if (ref.current) (ref.current as any)?.props?.onChange?.({
-                    target: { value }
-                });
-            }}
-        />
         <div className="card-overlay-input">
             <RadioTrain className="format-radio" value={format} onChange={onFormatChange} optionList={FormatButtonList}>
                 <span>Format</span>
@@ -504,6 +496,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             />
                         </div>
                         <div className="joined-row" style={{ position: 'relative' }}>
+                            <StandaloneLabel className="standalone-label">Pendulum Effect</StandaloneLabel>
                             <TextArea key="pendulum-effect"
                                 id="pendulum-effect"
                                 ref={onlineCharPicker === 'pendulum-effect' ? ref as any : null}
@@ -539,9 +532,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         </div>
                     </>}
                 </div>}
-                <div className={isOCG ? 'two-column-input-group' : ''}>
+                <div className="two-column-input-group">
                     <Input addonBefore="Type"
                         id="type"
+                        className="type-ability-input"
                         ref={onlineCharPicker === 'type' ? ref as any : null}
                         autoComplete="off"
                         onFocus={() => setOnlineCharPicker('type')}
@@ -568,8 +562,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             {'Furigana Helper'}
                         </Checkbox>
                     </Tooltip>}
-                </div>
-                <div className="two-column-input-group">
                     <RadioTrain className="condense-input" value={`${effectStyle?.condenseTolerant}`}
                         onChange={value => onCondenseTolerantChange(value as CondenseType)}
                         optionList={CondenseThresholdButtonList}
@@ -582,38 +574,51 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     </RadioTrain>
                     <FormattingHelpDrawer />
                 </div>
-                <TextArea key="effect"
-                    id="card-effect"
-                    ref={onlineCharPicker === 'card-effect' ? ref as any : null}
-                    onFocus={() => setOnlineCharPicker('card-effect')}
-                    allowClear
-                    spellCheck={false}
-                    placeholder="Card effect"
-                    value={displayEffect}
-                    rows={9}
-                    onKeyDown={ev => {
-                        if (!allowHotkey) return;
-                        const { ctrlKey, metaKey, key } = ev;
-                        const selectionStart = ev.currentTarget.selectionStart ?? -1;
-                        const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
-                        if ((ctrlKey || metaKey) && selectionEnd !== selectionStart && availableCommand.has(key)) {
-                            ev.preventDefault();
-                            wrapText(
-                                ev.currentTarget.value, key,
-                                selectionStart, selectionEnd,
-                                (joinedText, placement) => {
-                                    onEffectChange({ target: { value: joinedText } });
-                                    setDisplayEffect(joinedText);
-                                    setForceCursorData({ id: 'card-effect', placement });
-                                }
-                            );
-                        }
-                    }}
-                    onChange={ev => {
-                        onEffectChange(ev);
-                        setDisplayEffect(ev.target.value);
-                    }}
-                />
+                <div>
+                    <div className="card-effect-letter-helper">
+                        <StandaloneLabel className="standalone-label">Effect</StandaloneLabel>
+                        <CharPicker
+                            targetId={onlineCharPicker}
+                            onPick={value => {
+                                if (ref.current) (ref.current as any)?.props?.onChange?.({
+                                    target: { value }
+                                });
+                            }}
+                        />
+                    </div>
+                    <TextArea key="effect"
+                        id="card-effect"
+                        ref={onlineCharPicker === 'card-effect' ? ref as any : null}
+                        onFocus={() => setOnlineCharPicker('card-effect')}
+                        allowClear
+                        spellCheck={false}
+                        placeholder="Card effect"
+                        value={displayEffect}
+                        rows={9}
+                        onKeyDown={ev => {
+                            if (!allowHotkey) return;
+                            const { ctrlKey, metaKey, key } = ev;
+                            const selectionStart = ev.currentTarget.selectionStart ?? -1;
+                            const selectionEnd = ev.currentTarget.selectionEnd ?? -1;
+                            if ((ctrlKey || metaKey) && selectionEnd !== selectionStart && availableCommand.has(key)) {
+                                ev.preventDefault();
+                                wrapText(
+                                    ev.currentTarget.value, key,
+                                    selectionStart, selectionEnd,
+                                    (joinedText, placement) => {
+                                        onEffectChange({ target: { value: joinedText } });
+                                        setDisplayEffect(joinedText);
+                                        setForceCursorData({ id: 'card-effect', placement });
+                                    }
+                                );
+                            }
+                        }}
+                        onChange={ev => {
+                            onEffectChange(ev);
+                            setDisplayEffect(ev.target.value);
+                        }}
+                    />
+                </div>
                 <div className="card-footer-input">
                     {isMonster
                         ? <Input key="atk"
@@ -711,7 +716,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                             onChange={onArtFinishChange}
                             optionList={ArtFinishButtonList}
                         >
-                            <span>Art Finish</span>
+                            <span className="field-title">Art Finish</span>
                         </RadioTrain>
                         : null
                     }

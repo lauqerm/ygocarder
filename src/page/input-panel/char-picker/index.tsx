@@ -1,7 +1,50 @@
-import { useCallback, useEffect, useState } from 'react';
-import Moveable from 'react-moveable';
-import { EllipsisOutlined } from '@ant-design/icons';
+// import { useCallback, useEffect, useState } from 'react';
+// import Moveable from 'react-moveable';
+// import { EllipsisOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
 import './char-picker.scss';
+
+const StyledCharPickerContainer = styled.div`
+	z-index: 10;
+	.char-picker {
+		z-index: 1;
+		display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+		.handler,
+		.ant-btn {
+			background-color: #4a4a4d;
+			color: #ffffffcc;
+			text-shadow: 0 1px #222;
+			font-family: Segoe UI Symbol, sans-serif;
+			border: 1px solid var(--sub-level-1);
+			border-radius: 0;
+			padding: 0 10px;
+			height: 25px;
+			+ .ant-btn {
+				border-left-width: 0;
+			}
+			&:hover {
+				background-color: #585863;
+			}
+			&:first-child {
+				border-radius: 3px 0 0 3px;
+			}
+			&:last-child {
+				border-radius: 0 3px 3px 0;
+			}
+		}
+		.handler {
+			cursor: grabbing;
+			background-color: #585863;
+			height: unset;
+			font-size: 20px;
+			height: 20px;
+			line-height: 1;
+			padding: 0;
+			text-align: center;
+		}
+	}
+`;
 
 function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
     //IE support
@@ -40,6 +83,7 @@ function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
     }
 }
 
+/** The dragging experience is not good. Currently turn it off for now and glue it into effect's textarea. */
 export type CharPicker = {
     targetId: string,
     onPick?: (value: string) => void,
@@ -48,7 +92,7 @@ export const CharPicker = ({
     targetId = '',
     onPick = () => {},
 }: CharPicker) => {
-    const [target, setTarget] = useState<HTMLElement | null>(null);
+    // const [target, setTarget] = useState<HTMLElement | null>(null);
     const internalOnPick = (char: string) => {
         const inputTarget = document.getElementById(targetId) as HTMLTextAreaElement;
         if (inputTarget) {
@@ -58,25 +102,25 @@ export const CharPicker = ({
         }
     };
 
-    useEffect(() => {
-        setTarget(document.getElementById('char-picker'));
-    }, []);
+    // useEffect(() => {
+    //     setTarget(document.getElementById('char-picker'));
+    // }, []);
 
-    const onDrag = useCallback(({
-        target,
-        left, top,
-        transform,
-    }) => {
-        target!.style.left = `${left}px`;
-        target!.style.top = `${top}px`;
-        target!.style.transform = transform;
-    }, []);
+    // const onDrag = useCallback(({
+    //     target,
+    //     left, top,
+    //     transform,
+    // }) => {
+    //     target!.style.left = `${left}px`;
+    //     target!.style.top = `${top}px`;
+    //     target!.style.transform = transform;
+    // }, []);
 
-    return <div className="char-picker-container">
+    return <StyledCharPickerContainer className="char-picker-container">
         {<div id={'char-picker'} className="char-picker">
-            <div className="handler">
+            {/* <div className="handler">
                 <EllipsisOutlined />
-            </div>
+            </div> */}
             {[
                 '∞',
                 '☆',
@@ -89,17 +133,13 @@ export const CharPicker = ({
                 return <button key={entry} className="ant-btn" onClick={() => internalOnPick(entry)}>{entry}</button>;
             })}
         </div>}
-        <Moveable
+        {/* <Moveable
             target={target}
             container={null}
-
-            /* Resize event edges */
             edge={false}
-
-            /* draggable */
             draggable={true}
             throttleDrag={0}
             onDrag={onDrag}
-        />
-    </div>;
+        /> */}
+    </StyledCharPickerContainer>;
 };

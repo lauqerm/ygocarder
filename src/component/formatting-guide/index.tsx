@@ -179,9 +179,12 @@ export const FormattingHelpDrawer = () => {
                 </StyledPanel>
             </div>
         </Drawer>
-        <Button onClick={() => {
-            setDrawerOpen(true);
-        }} type="primary">
+        <Button
+            className="formatting-help-button"
+            onClick={() => {
+                setDrawerOpen(true);
+            }} type="primary"
+        >
             Formatting Help <BulbFilled />
         </Button>
     </>;

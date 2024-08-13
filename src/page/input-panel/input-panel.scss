@@ -182,7 +182,27 @@
 	.two-column-input-group {
 		display: grid;
 		grid-template-columns: 1fr max-content;
+		grid-template-areas:
+			"type-input input-helper"
+			"condense-input help-button";
 		gap: 0.5rem;
+		align-items: center;
+		.formatting-help-button {
+			grid-area: help-button;
+		}
+		.input-kanji-helper {
+			grid-area: input-helper;
+		}
+		.type-ability-input {
+			grid-area: type-input;
+		}
+		.condense-input {
+			grid-area: condense-input;
+		}
+	}
+	.card-effect-letter-helper {
+		display: grid;
+		grid-template-columns: max-content 1fr;
 		align-items: center;
 	}
 	.card-footer-input {
@@ -208,7 +228,7 @@
 		display: inline-flex;
 		cursor: pointer;
 		box-shadow: var(--bs-input);
-		vertical-align: middle;
+		vertical-align: bottom;
 		.frame-info-block {
 			border-radius: 0 4px 4px 0;
 			line-height: 1.25;
@@ -237,6 +257,11 @@
 		row-gap: 0.5rem;
 		.joined-row {
 			grid-column: span 2;
+			.standalone-label {
+				min-width: none;
+				width: unset;
+				padding-left: 11px;
+			}
 			.pendulum-checkbox {
 				/** Alignment **/
 				width: 95px;
@@ -251,7 +276,7 @@
 				width: 105px;
 			}
 			.pendulum-frame-input {
-				margin-right: 0.5rem;
+				margin-right: 1rem;
 			}
 			.ant-checkbox-wrapper {
 				margin-right: 10px;
@@ -259,10 +284,6 @@
 			.ant-checkbox-wrapper + .ant-checkbox-wrapper {
 				margin-left: 0;
 			}
-		}
-		.ant-input-group-addon {
-			width: 105px;
-			text-align: left;
 		}
 	}
 	.ant-checkbox-wrapper + .ant-checkbox-wrapper {

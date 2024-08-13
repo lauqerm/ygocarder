@@ -19,9 +19,34 @@ import {
 import { CardInputPanel, CardInputPanelRef } from './page';
 import WebFont from 'webfontloader';
 import { useMasterSeriDrawer, useSetting } from './service';
-import { notification } from 'antd';
+import { Modal, notification, Tooltip } from 'antd';
 import { Affiliation, AppHeader, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
+import { ZoomInOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+
+const LightboxButton = styled.div`
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 101;
+    background: var(--main-primary);
+    border-color: var(--main-active);
+    color: var(--color-contrast);
+    padding: 10px;
+    line-height: 1;
+    font-size: 30px;
+    text-align: center;
+    width: 51px;
+    height: 51px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 1px 1px var(--main-level-1);
+    display: none;
+    &:hover {
+        background: var(--sub-primary);
+    }
+`;
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 function App() {
@@ -32,6 +57,7 @@ function App() {
     const [ocgStyleFile, setOCGStyleFile] = useState('');
     const softMode = useSetting(state => state.setting.reduceMotionColor);
     const [canvasKey, setCanvasKey] = useState(0);
+    const [lightboxVisible, setLightboxVisible] = useState(false);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -52,6 +78,7 @@ function App() {
     const creatorCanvasRef = useRef<HTMLCanvasElement>(null);
     const stickerCanvasRef = useRef<HTMLCanvasElement>(null);
     const finishCanvasRef = useRef<HTMLCanvasElement>(null);
+    const lightboxCanvasRef = useRef<HTMLCanvasElement>(null);
     const [canvasMap] = useState({
         previewCanvas: previewCanvasRef,
         drawCanvas: drawCanvasRef,
@@ -90,18 +117,6 @@ function App() {
             isInitializing,
         },
     );
-
-    // const drawRefrenceImage = useCallback(async (ctx: CanvasRenderingContext2D | null | undefined) => {
-    //     let leftOffset = -5;
-    //     let topOffset = 150;
-    // let leftOffset = -4;
-    // let topOffset = 300;
-    // let leftOffset = -300;
-    // let topOffset = -7;
-    // let leftOffset = -1;
-    // let topOffset = 100;
-    // await drawWithSizeFrom(ctx, '/asset/image/MP19-EN-C-1E.png', () => -leftOffset, () => -topOffset, 541, 800 * (541 / 549));
-    // }, []);
 
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
@@ -382,7 +397,9 @@ function App() {
                 stickerCanvasRef,
                 finishCanvasRef,
             ].map(currentlayer => generateLayer(currentlayer, exportCtx)));
-            // await drawRefrenceImage(exportCtx);
+
+            const lightboxCanvas = lightboxCanvasRef.current;
+            lightboxCanvas?.getContext('2d')?.drawImage(canvasRef, 0, 0);
         }
     }).current;
 
@@ -436,6 +453,11 @@ function App() {
                     </div>
                     <div className="card-canvas-container">
                         <div className="card-canvas-group">
+                            <Tooltip title="View full size">
+                                <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
+                                    <ZoomInOutlined />
+                                </LightboxButton>
+                            </Tooltip>
                             <canvas id="export-canvas" key={canvasKey + 0.1} ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
@@ -488,6 +510,16 @@ function App() {
                     <Affiliation />
                 </CardInputPanel>}
             </div>
+            <Modal
+                width="843px"
+                wrapClassName="card-lightbox-overlay"
+                visible={lightboxVisible}
+                forceRender={true}
+                onCancel={() => setLightboxVisible(false)}
+                footer={() => null}
+            >
+                <canvas id="lightbox-canvas" key={canvasKey + 0.1} ref={lightboxCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+            </Modal>
             <div className="by-me">Made by Lauqerm</div>
         </div>
     );

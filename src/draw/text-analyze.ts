@@ -62,7 +62,6 @@ export const analyzeToken = ({
         leftMostLetter: '',
         space: 0,
         spaceAtEnd: false,
-        fixedWidth: 0,
         rightGap: 0,
         leftGap: 0,
     };
@@ -104,8 +103,6 @@ export const analyzeToken = ({
     let spaceCount = 0;
     /** Ở cuối token có space hay không, vì trong một vài trường hợp ta bỏ space ở cuối */
     let spaceAtEnd = false;
-    /** Độ dài token cố định có / không thể bị compresss */
-    let fixedWidth = 0;
     const lastOfLine = nextToken === undefined;
     /** Gap chừa lại được cho furigana của token, như vậy right gap của token này là left gap của token kế tiếp */
     let currentRightGap = previousTokenGap ?? 0;
@@ -126,7 +123,6 @@ export const analyzeToken = ({
             currentRightGap = 0;
             const fragmentWidth = iconSymbolWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio;
-            fixedWidth += fragmentWidth * letterSpacingRatio;
             if (isLeftmost) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
@@ -137,7 +133,6 @@ export const analyzeToken = ({
             currentRightGap = 0;
             const fragmentWidth = bulletSymbolWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio;
-            fixedWidth += fragmentWidth * letterSpacingRatio;
             if (isLeftmost) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
@@ -151,7 +146,6 @@ export const analyzeToken = ({
             stopApplyLargerText();
 
             totalWidth += fragmentWidth * letterSpacingRatio;
-            fixedWidth += fragmentWidth * letterSpacingRatio;
             if (isLeftmost) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
@@ -165,7 +159,6 @@ export const analyzeToken = ({
             stopApplyOrdinalFont();
 
             totalWidth += fragmentWidth * letterSpacingRatio;
-            fixedWidth += fragmentWidth * letterSpacingRatio;
             spaceCount += 1;
             if (isLeftmost) {
                 leftMostGap = 0;
@@ -178,7 +171,6 @@ export const analyzeToken = ({
             const fitFootText = rubyType === '||';
             const {
                 totalWidth: footTextWidth,
-                fixedWidth: footTextFixedWidth,
             } = analyzeToken({ ctx, token: footText, nextToken, xRatio, letterSpacing, previousTokenGap: 0, format, textData });
 
             applyFuriganaFont();
@@ -210,7 +202,6 @@ export const analyzeToken = ({
 
             currentRightGap = rightGap;
             totalWidth += boundWidth - lostLeftWidth;
-            fixedWidth += headTextWidth > footTextWidth ? headTextWidth : footTextFixedWidth;
             spaceCount += 1;
 
             if (isLeftmost) {
@@ -316,7 +307,6 @@ export const analyzeToken = ({
         totalWidth,
         space: spaceCount,
         spaceAtEnd,
-        fixedWidth,
         leftMostLetter,
         rightGap: currentRightGap,
         leftGap: leftMostGap,

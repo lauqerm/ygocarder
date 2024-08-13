@@ -8,7 +8,7 @@ Extended art over frame
 Flip letter
 Reduce font bundle size
 Dialect (Chef Special Recipe for example)
-Remove fixed width?
+<!-- Remove fixed width? -->
 Zoom
 <!-- Credit -->
 <!-- Remaining font data (OCG spell for example) -->

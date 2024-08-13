@@ -581,7 +581,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const fontSize = 60.5;
             const ctx = pendulumScaleCanvas.current?.getContext('2d');
 
-            ctx?.clearRect(0, 0, 549 * UP_RATIO, 889);
+            ctx?.clearRect(0, 0, 813, 889);
             if (ctx && isPendulum) {
                 ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
                 ctx.textAlign = 'left';
@@ -871,7 +871,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     useEffect(() => {
         if (active) {
             const ctx = pendulumEffectCanvas.current?.getContext('2d');
-            ctx?.clearRect(0, 0, 549 * UP_RATIO, 889);
+            ctx?.clearRect(0, 0, 813, 889);
             if (isPendulum) {
                 drawEffect(
                     ctx,

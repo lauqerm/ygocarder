@@ -189,6 +189,14 @@ export const ocgToTCGLetterMap: Record<string, string> = {
     '＠': '@',
 };
 
+// const MirrorableLetter = {
+//     'ꟻ': 'Ｆ',
+//     '⅃': 'Ｌ',
+//     'ꟼ': 'Ｐ',
+//     'И': 'Ｎ',
+//     'Я': 'Ｒ',
+// };
+
 export const ocgNumberCircleMap: Record<string, string> = {
     '(１)': '①',
     '(２)': '②',

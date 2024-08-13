@@ -1,8 +1,15 @@
 @media only screen and (max-width: 1600px) {
 	#app {
 		padding: 0;
+		padding-bottom: 20px;
 		.card-info-panel {
 			min-height: 100vh;
+			.two-column-input-group {
+				grid-template-areas:
+					"type-input type-input"
+					"condense-input condense-input"
+					"input-helper help-button";
+			}
 		}
 	}
 	.app-container {
@@ -42,6 +49,15 @@
 }
 
 @media only screen and (max-width: 1368px) {
+	#app {
+		.card-info-panel {
+			.two-column-input-group {
+				grid-template-areas:
+					"type-input input-helper"
+					"condense-input help-button";
+			}
+		}
+	}
 	.app-container {
 		--resize-ratio: 0.60;
 		--translate-ratio: -20%;
@@ -114,9 +130,6 @@
 				}
 			}
 		}
-		.char-picker-container {
-			top: 740px;
-		}
 	}
 	.formattting-guide-overlay {
 		.panel-figure {
@@ -157,9 +170,6 @@
 				flex-wrap: wrap;
 			}
 		}
-		.char-picker-container {
-			top: 940px;
-		}
 	}
 }
 
@@ -182,11 +192,32 @@
 }
 
 @media only screen and (max-width: 1024px) {
+	#app {
+		.card-info-panel {
+			.two-column-input-group {
+				grid-template-areas:
+					"type-input type-input"
+					"condense-input condense-input"
+					"input-helper help-button";
+			}
+		}
+	}
 	.app-container {
 		--resize-ratio: 0.5;
 		--translate-ratio: -25%;
 		.card-preview-panel {
 			flex: 0 0 415px;
+		}
+		.card-info-panel {
+			.main-info {
+				.field-title {
+					width: 105px;
+				}
+				.art-finish-checkbox > .ant-input-group-addon {
+					flex: 0 0 105px;
+					text-align: right;
+				}
+			}
 		}
 	}
 	.app-container .card-preview-panel {
@@ -201,26 +232,41 @@
 			white-space: normal;
 		}
 	}
-	.char-picker-container {
-		top: 910px;
-	}
 }
 
 @media only screen and (max-width: 860px) {
+	#app {
+		.card-info-panel {
+			.two-column-input-group {
+				grid-template-areas:
+					"type-input input-helper"
+					"condense-input help-button";
+			}
+		}
+	}
 	.app-container {
 		--resize-ratio: 0.60;
 		--translate-ratio: -20%;
 		flex-wrap: wrap;
 		.app-header {
+			position: relative;
 			width: 100%;
+			z-index: 1;
+			border-radius: 3px 0 3px 3px;
 		}
 		.affiliation {
 			right: 10px;
 			border-radius: 0 3px;
+			transform: translateY(-100%);
+			border-radius: 3px 3px 0 0;
+			box-shadow: 0 0 0 1px #212121;
 		}
 		.card-info-panel {
 			margin-left: 0;
 			border-left: none;
+			.name-style-id-input .name-id-input {
+				display: grid;
+			}
 			.main-info {
 				.card-image-cropper {
 					display: grid;
@@ -247,10 +293,6 @@
 		.password-input,
 		.checkbox-input {
 			grid-column: span 1;
-		}
-		.char-picker-container {
-			top: 765px;
-			left: 0;
 		}
 	}
 }

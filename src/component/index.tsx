@@ -1,5 +1,22 @@
 import styled from 'styled-components';
 
+export const StandaloneLabel = styled.div`
+    font-weight: 500;
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--color-vendor);
+    text-shadow: 0 1px #222;
+    user-select: none;
+    display: inline-block;
+    height: 32px;
+    width: 105px;
+    line-height: 30px;
+    position: relative;
+    min-width: 105px;
+    text-align: right;
+    padding-right: 11px;
+`;
+
 export const StyledDropdownOption = styled.div`
     padding: 5px 10px;
     cursor: pointer;

@@ -1,8 +1,8 @@
 html {
 	background-color: #fff;
     min-width: 600px;
-	--card-width: 549px;
-	--card-height: 800px;
+	--card-width: 813px;
+	--card-height: 1185px;
 	--resize-ratio: 0.7;
 	--translate-ratio: -15%;
 	// --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -51,8 +51,9 @@ hr {
 }
 #app {
 	width: 100%;
-	min-height: 100vh;
+	height: 100vh;
 	padding: 10px 0;
+	overflow-y: scroll;
 }
 .full-loading {
 	position: fixed;
@@ -204,8 +205,12 @@ hr {
 				position: absolute;
 				left: 0;
 				z-index: 1;
+				pointer-events: none;
 			}
 			&:hover {
+				.lightbox-button {
+					display: block;
+				}
 				#export-canvas.js-export-available {
 					display: inline-block !important;
 					cursor: default;
@@ -574,23 +579,23 @@ input:-internal-autofill-selected {
 	background-color: unset !important;
 }
 
-/** Custom Scrollbar **/
-/* width */
-::-webkit-scrollbar {
-	width: 10px;
-}
-/* Track */
-::-webkit-scrollbar-track {
-	background: #f1f1f1;
-}
-/* Handle */
-::-webkit-scrollbar-thumb {
-	background: #667;
-}
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-	background: #556;
-}
+// /** Custom Scrollbar **/
+// /* width */
+// ::-webkit-scrollbar {
+// 	width: 10px;
+// }
+// /* Track */
+// ::-webkit-scrollbar-track {
+// 	background: #f1f1f1;
+// }
+// /* Handle */
+// ::-webkit-scrollbar-thumb {
+// 	background: #667;
+// }
+// /* Handle on hover */
+// ::-webkit-scrollbar-thumb:hover {
+// 	background: #556;
+// }
 
 /** Slow animation for download button **/
 .export-button .save-button {
@@ -605,4 +610,18 @@ input:-internal-autofill-selected {
     0%{background-position:0% 50%}
     50%{background-position:100% 50%}
     100%{background-position:0% 50%}
+}
+
+.card-lightbox-overlay {
+	.ant-modal {
+		max-width: unset;
+	}
+	.ant-modal-close-x {
+		display: none;
+	}
+	.ant-modal-content .ant-modal-body {
+		--lightbox-padding: 15px;
+		padding: var(--lightbox-padding);
+		width: calc(var(--card-width) + var(--lightbox-padding) * 2);
+	}
 }
