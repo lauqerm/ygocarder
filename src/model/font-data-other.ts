@@ -75,7 +75,7 @@ export const tcgTypeAbilityFontData: FontData = {
             lineHeight: 32.75,
             lineCount: 1,
             capitalLetterRatio: 0.95,
-            letterSpacing: 0.03,
+            letterSpacing: -0.03,
             headTextFontRatio: 0.4,
         },
         {

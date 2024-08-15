@@ -12,7 +12,8 @@ import {
     drawStat,
     drawStatText,
     fillTextLeftWithSpacing,
-    fillTextRightWithSpacing,
+    drawSetId,
+    drawCardIcon,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -21,14 +22,12 @@ import {
     NO_ATTRIBUTE,
     PresetNameStyleMap,
     ST_ICON_SYMBOL,
-    UP_RATIO,
     arrowPositionList,
     effectMonsterFontData,
     effectSTFontData,
     getArtCanvasCoordinate,
     getDefaultCardOpacity,
     getDefaultNameStyle,
-    iconValueList,
     monsterCoordinateData,
     pendulumFontList,
     pendulumSizeList,
@@ -41,7 +40,7 @@ import {
     vanillaMonsterFontData,
     NameStyle,
 } from 'src/model';
-import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz, getCardFrame } from 'src/util';
+import { checkDarkSynchro, checkLink, checkMonster, checkNormal, checkSpeedSkill, checkXyz } from 'src/util';
 
 const {
     height: CanvasHeight,
@@ -84,8 +83,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         isPendulum, pendulumFrame: basePendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
         atk, def, linkMap,
         attribute,
-        subFamily,
-        star,
+        cardIcon, subFamily, star,
         setId,
         passcode, creator, sticker,
         isFirstEdition, isDuelTerminalCard, isSpeedCard,
@@ -93,21 +91,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     } = card;
     /** @todo clean log */
     console.log('🚀 ~ useMasterSeriDrawer ~ card:', card);
-    const pendulumFrame = basePendulumFrame === 'auto' && isPendulum ? 'spell' : basePendulumFrame;
+    const pendulumFrame = basePendulumFrame === 'auto'
+        ? isPendulum
+            ? 'spell'
+            : frame
+        : basePendulumFrame;
     const isNormal = checkNormal(card);
     const isXyz = checkXyz(card);
     const isDarkSynchro = checkDarkSynchro(card);
     const isLink = checkLink(card);
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
-    const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel']
-        .includes(isPendulum
-            ? basePendulumFrame === 'auto'
-                ? 'spell'
-                : pendulumFrame
-            : basePendulumFrame === 'auto'
-                ? frame
-                : pendulumFrame);
+    const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(pendulumFrame);
     const lightHeader = !isMonster || ['link', 'xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(frame);
     const {
         isInitializing,
@@ -237,7 +232,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     text: opacityText,
                     artFrame: useArtFrame,
                 } = { ...getDefaultCardOpacity(), ...opacity };
-                const trueFrame = getCardFrame(frame);
                 const hasFoil = foil !== 'normal';
 
                 /** Artwork ở dưới cùng */
@@ -245,17 +239,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
                 /** Frame chính gồm nửa trên và nửa dưới và phần ở name */
                 ctx.globalAlpha = useArtFrame ? opacityBody / 100 : 0;
-                await drawFrom(ctx, `/asset/image/frame/frame-${trueFrame}.png`, 0, 0);
+                await drawFrom(ctx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
                 await drawFrom(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
 
+                console.log('🚀 ~ drawingPipeline.current.specialFrame.instructor= ~ pendulumFrame:', frame, frame, pendulumFrame);
                 if (useArtFrame) {
                     /** Ta vẽ thêm một box bên dưới để name box không bị xuyên thấu 100% nếu không có frame nền */
-                    ctx.fillStyle = `${frameMap[trueFrame]?.labelBackgroundColor ?? ''}11`;
+                    ctx.fillStyle = `${frameMap[frame]?.labelBackgroundColor ?? ''}11`;
                     ctx.fillRect(44, 47, 726, 91);
                 }
                 ctx.globalAlpha = opacityName / 100;
 
-                await drawFrom(ctx, `/asset/image/frame/frame-name-box-${trueFrame}.png`, 0, 0);
+                await drawFrom(ctx, `/asset/image/frame/frame-name-box-${frame}.png`, 0, 0);
 
                 ctx.globalAlpha = 1;
 
@@ -266,7 +261,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     ctx.globalAlpha = opacityText / 100;
                     await drawFrom(
                         ctx,
-                        `/asset/image/background/background-text-${pendulumFrame === 'auto' ? trueFrame : pendulumFrame}.png`,
+                        `/asset/image/background/background-text-${pendulumFrame}.png`,
                         backgroundEffectBoxX, backgroundEffectBoxY,
                     );
                     ctx.globalAlpha = 1;
@@ -337,7 +332,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     }
                     /** Vì ảnh tràn viền mới vẽ sẽ đè lên name box, ta vẽ lại ở đây */
                     ctx.globalAlpha = opacityName / 100;
-                    await drawFrom(ctx, `/asset/image/frame/frame-name-box-${trueFrame}.png`, 0, 0);
+                    await drawFrom(ctx, `/asset/image/frame/frame-name-box-${frame}.png`, 0, 0);
 
                     ctx.globalAlpha = 1;
 
@@ -521,59 +516,24 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         }
     }, [active, attribute, attributeCanvas, format, isSpeedSkill, loopFinish]);
 
-    /** DRAW LEVEL - RANK - ST ICON */
+    /** DRAW STAR (NEG. LEVEL - LEVEL - RANK) - ST ICON */
     useEffect(() => {
         if (active) {
             const ctx = subFamilyCanvas.current?.getContext('2d');
             drawingPipeline.current.star.rerun += 1;
             drawingPipeline.current.star.instructor = () => {
                 ctx?.clearRect(0, 0, CanvasWidth, 222);
-                if (isMonster && !isLink) {
-                    const starWidth = 50, startSpacing = 4;
-                    const starCount = Math.min(13, star ?? 0);
-                    const starType = isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level';
-                    const reverseAlign = isXyz || isDarkSynchro;
-                    const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
-                    /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
-                    const leftEdge = starCount <= 12
-                        ? reverseAlign
-                            ? 85.9125 - starWidth
-                            : 728.775
-                        : reverseAlign
-                            ? (CanvasWidth - totalWidth) / 2 - starWidth
-                            : (CanvasWidth - totalWidth) / 2 + totalWidth;
-
-                    let offset = 0 - (starWidth + startSpacing);
-                    return Promise.all([...Array(starCount)]
-                        .map(async () => {
-                            offset += (starWidth + startSpacing);
-                            let coordinate: [number, number] = [
-                                leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
-                                145,
-                            ];
-                            await drawFrom(ctx, `/asset/image/sub-family/subfamily-${starType}.png`, ...coordinate);
-                            return loopFinish(ctx, 'star', type => drawFrom(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate));
-                        })
-                    );
-                } else if (!isMonster && !isSpeedSkill) {
-                    const normalizedSubFamily = subFamily.toUpperCase();
-                    const hasSTIcon = normalizedSubFamily !== 'NO ICON' && iconValueList.includes(normalizedSubFamily);
-
-                    return hasSTIcon
-                        ? drawWithSizeFrom(
-                            ctx,
-                            `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                            image => 717 - image.naturalWidth,
-                            153,
-                            image => image.naturalWidth,
-                            image => image.naturalWidth,
-                        )
-                        : new Promise(resolve => resolve(true));
-                };
-                return new Promise(resolve => resolve(true));
+                if (isLink) return new Promise(resolve => resolve(true));
+                return drawCardIcon(
+                    ctx,
+                    cardIcon,
+                    subFamily,
+                    star ?? 0,
+                    coordinate => loopFinish(ctx, 'star', type => drawFrom(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate))
+                );
             };
         }
-    }, [active, format, isDarkSynchro, isLink, isMonster, isSpeedSkill, isXyz, star, subFamily, subFamilyCanvas, loopFinish]);
+    }, [active, format, isDarkSynchro, isLink, isMonster, isSpeedSkill, isXyz, star, subFamily, subFamilyCanvas, loopFinish, cardIcon]);
 
     /** DRAW SCALE */
     useEffect(() => {
@@ -618,7 +578,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             ...PresetNameStyleMap[foil ?? 'commonB'].value,
                         }
                         : frame === 'zarc'
-                            ? PresetNameStyleMap['animeGold'].value
+                            ? {
+                                ...PresetNameStyleMap['animeGold'].value,
+                                ...contextualStyle,
+                            }
                             : {
                                 ...defaultTextStyle,
                                 ...contextualStyle,
@@ -667,10 +630,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
             if (!ctx || !isMonster) return;
             drawStatText(ctx, 'ATK', 432.10, 1106.494);
-            drawStat(ctx, atk, 343.51 * UP_RATIO, 1106.494);
+            drawStat(ctx, atk, 508.824, 1106.494);
             if (!isLink) {
                 drawStatText(ctx, 'DEF', 600.85, 1106.494);
-                drawStat(ctx, def, 454.93 * UP_RATIO, 1106.494);
+                drawStat(ctx, def, 673.865, 1106.494);
             }
         })();
     }, [isInitializing, atk, def, isLink, isMonster, active, statCanvas]);
@@ -680,30 +643,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         if (active) {
             const ctx = setIdCanvas.current?.getContext('2d');
             clearCanvas(ctx);
-            if (ctx) {
-                let spacing = 0.175;
-                let offsetY = 0;
-                let xOffset = 0;
-                ctx.fillStyle = (lightFooter && !isPendulum) ? '#fff' : '#000';
-                ctx.shadowColor = (pendulumFrame === 'zarc' || opacity.artFrame === false) ? '#fff' : '#000';
-                ctx.shadowOffsetY = 0;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowBlur = (pendulumFrame === 'zarc' || opacity.artFrame === false) && !isPendulum ? 1 : 0;
-                ctx.font = '22px stone-serif-regular';
-                if (format === 'ocg') {
-                    spacing = 0.145;
-                    offsetY = -1;
-                    xOffset = -3;
+            drawSetId(
+                ctx,
+                setId,
+                {
+                    isLink, isPendulum,
+                    withShadow: pendulumFrame === 'zarc' || opacity.artFrame === false,
+                    format,
+                    lightFooter,
                 }
-
-                if (isPendulum) {
-                    fillTextLeftWithSpacing(ctx, setId, spacing, 66.65 + xOffset, 1105.01 + offsetY);
-                } else if (isLink) {
-                    fillTextRightWithSpacing(ctx, setId, spacing, 666.56 + xOffset, 872.94 + offsetY);
-                } else {
-                    fillTextRightWithSpacing(ctx, setId, spacing, 728.78 + xOffset, 871.50 + offsetY);
-                }
-            }
+            );
         }
     }, [active, isInitializing, format, isLink, isPendulum, lightFooter, setIdCanvas, setId, isSpeedSkill, pendulumFrame, opacity.artFrame]);
 
@@ -714,17 +663,17 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             clearCanvas(ctx);
             if (ctx) {
                 ctx.fillStyle = lightFooter ? '#fff' : '#000';
-                ctx.font = `${15 * UP_RATIO}px stone-serif-regular`;
+                ctx.font = '22.219px stone-serif-regular';
                 ctx.shadowColor = opacity.artFrame === false ? '#fff' : '#000';
                 ctx.shadowOffsetY = 0;
                 ctx.shadowOffsetX = 0;
                 ctx.shadowBlur = opacity.artFrame === false ? 1 : 0;
 
-                const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 25 * UP_RATIO, 777 * UP_RATIO);
+                const endOfPasscode = fillTextLeftWithSpacing(ctx, passcode, 0.1, 37.031, 1150.931);
                 if (isFirstEdition && !isDuelTerminalCard) {
                     ctx.fillStyle = lightFooter ? '#fff' : '#000';
 
-                    draw1stEdition(ctx, Math.max(endOfPasscode + 10 * UP_RATIO, 96 * UP_RATIO) - (format === 'ocg' ? 10 : 0), isSpeedSkill ? -2 : 0);
+                    draw1stEdition(ctx, Math.max(endOfPasscode + 14.813, 142.2) - (format === 'ocg' ? 10 : 0), isSpeedSkill ? -2 : 0);
                 }
             }
         }
@@ -776,7 +725,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 clearCanvas(ctx);
 
                 if (sticker === 'no-sticker') return Promise.resolve();
-                return drawFrom(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 499 * UP_RATIO, 1110.938);
+                return drawFrom(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
             };
         }
     }, [active, sticker, stickerCanvas]);
@@ -835,8 +784,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 const effectIndexSize = drawEffect(
                     ...drawEffectStartParam,
                     isNormal,
-                    specialFontData[isPendulum ? 'pendulum' : 'normal'],
-                    specialCoordinateData[isPendulum ? 'pendulum' : 'normal'],
+                    specialFontData[format][isPendulum ? 'pendulum' : 'normal'],
+                    specialCoordinateData[format][isPendulum ? 'pendulum' : 'normal'],
                     ...drawEffectEndParam,
                 );
                 drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
@@ -844,8 +793,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 drawEffect(
                     ...drawEffectStartParam,
                     false,
-                    effectSTFontData[format + (isPendulum ? '-pendulum' : '')],
-                    stCoordinateData[format + (isPendulum ? '-pendulum' : '')],
+                    effectSTFontData[`${format}${isPendulum ? '-pendulum' : ''}`],
+                    stCoordinateData[`${format}${isPendulum ? '-pendulum' : ''}`],
                     ...drawEffectEndParam,
                 );
                 drawTypeAbility(typeCtx, 'large', 'right');

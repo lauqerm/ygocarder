@@ -48,6 +48,7 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
     attribute: 'at',
     subFamily: 'sf',
     star: 'st',
+    cardIcon: 'it',
     picture: 'pt',
     pictureCrop: {
         _newKey: 'ptc',

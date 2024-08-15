@@ -17,6 +17,7 @@ export const getDefaultCard = () => ({
     nameStyle: getDefaultNameStyle() as Partial<NameStyle>,
     attribute: 'LIGHT',
     subFamily: 'NO ICON',
+    cardIcon: 'auto',
     star: 6,
     picture: 'https://i.imgur.com/h5kXZeC.png',
     pictureCrop: {
@@ -69,6 +70,7 @@ export const getEmptyCard = (): Card => ({
     nameStyle: getDefaultNameStyle(),
     attribute: 'LIGHT',
     subFamily: 'NO ICON',
+    cardIcon: 'auto',
     star: 6,
     picture: 'https://i.imgur.com/h5kXZeC.png',
     pictureCrop: {
@@ -247,7 +249,7 @@ export const frameMap: Record<string, FrameInfo> = {
 };
 export const frameList = Object.values(frameMap);
 
-export const iconList = [
+export const IconList = [
     { label: <CloseCircleOutlined />, value: 'NO ICON' },
     { label: 'Field', value: 'FIELD' },
     { label: 'Continuous', value: 'CONTINUOUS' },
@@ -256,9 +258,9 @@ export const iconList = [
     { label: 'Equip', value: 'EQUIP' },
     { label: 'Counter', value: 'COUNTER' },
 ];
-export const iconValueList = iconList.map(entry => entry.value);
+export const IconValueList = IconList.map(entry => entry.value);
 
-export const foilList = [
+export const FoilList = [
     {
         name: 'normal' as const,
         label: 'None',
@@ -275,9 +277,9 @@ export const foilList = [
         color: '#b1b1b1',
     },
 ];
-export type Foil = typeof foilList[0]['name'];
+export type Foil = typeof FoilList[0]['name'];
 
-export const stickerList = [
+export const StickerList = [
     'no-sticker',
     'gold',
     'silver',
@@ -292,7 +294,7 @@ export const stickerList = [
 ];
 
 export const NO_ATTRIBUTE = 'NONE';
-export const attributeList = [
+export const AttributeList = [
     {
         name: NO_ATTRIBUTE,
         color: '#000000',
@@ -336,7 +338,6 @@ export const attributeList = [
 ];
 
 export * from './canvas';
-export * from './canvas-map';
 export * from './coordinate-data';
 export * from './dictionary';
 export * from './finish';

@@ -198,27 +198,35 @@ export const effectSTFontData: Record<string, FontData> = {
 };
 
 /** Speed skill không có dòng ATK / DEF, nhưng lại có dòng type / ability */
-export const specialFontData: Record<string, FontData> = {
-    normal: {
-        font: 'MatrixBook',
-        symbolFont: 'matrix',
-        ...DefaultEffectFontData,
-        ordinalFont: '"DFKakuTaiHiStd-W4"',
-        alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
-        fontList: [
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
-        ]
+export const specialFontData: Record<string, Record<string, FontData>> = {
+    tcg: {
+        normal: {
+            ...tcgEffectMonsterFontData,
+            fontList: [
+                { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
+            ]
+        },
+        pendulum: {
+            ...tcgEffectMonsterFontData,
+            fontList: [
+                { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
+                { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 7 },
+            ]
+        },
     },
-    pendulum: {
-        font: 'MatrixBook',
-        symbolFont: 'matrix',
-        ...DefaultEffectFontData,
-        ordinalFont: '"DFKakuTaiHiStd-W4"',
-        alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
-        fontList: [
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 7 },
-        ]
+    ocg: {
+        normal: {
+            ...ocgEffectMonsterFontData,
+            fontList: [
+                { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6, wordLetterSpacing: 0.09 },
+            ]
+        },
+        pendulum: {
+            ...ocgEffectMonsterFontData,
+            fontList: [
+                { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6, wordLetterSpacing: 0.09 },
+            ]
+        },
     },
 };
 

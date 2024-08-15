@@ -1,8 +1,8 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Input, Checkbox, Popover, Tooltip } from 'antd';
 import { Card, CardOpacity, CondenseType, NameFontDataMap, NameStyle, NameStyleType, frameMap, getArtCanvasCoordinate, tcgToOCGTermMap } from '../../model';
-import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser, StandaloneLabel } from '../../component';
-import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill, normalizedCardName } from '../../util';
+import { FormattingHelpDrawer, FrameInfoBlock, IconButton, ImageCropper, LinkMarkChooser, StandaloneLabel, StyledDropdown } from '../../component';
+import { checkXyz, checkLink, checkMonster, randomPassword, randomSetID, checkDarkSynchro, checkSpeedSkill, normalizedCardName, getCardIconFromFrame } from '../../util';
 import debounce from 'lodash.debounce';
 import { CaretDownOutlined, SyncOutlined } from '@ant-design/icons';
 import {
@@ -15,7 +15,9 @@ import {
     FinishButtonList,
     ArtFinishButtonList,
     FormatButtonList,
-    getFrameButtonList
+    getFrameButtonList,
+    IconTypeList,
+    IconTypeMap
 } from './const';
 import { CharPicker } from './char-picker';
 import { TextStylePicker, TextStylePickerRef } from './text-style-picker';
@@ -88,8 +90,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         isPendulum, pendulumFrame, pendulumEffect, pendulumScaleRed, pendulumScaleBlue,
         atk, def, linkMap,
         attribute,
-        subFamily,
-        star,
+        cardIcon, subFamily, star,
         setId,
         passcode, creator, sticker,
         isSpeedCard, isDuelTerminalCard, isFirstEdition,
@@ -127,30 +128,35 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const onFinishChange = onChangeFactory('finish', setCard);
     const onOpacityChange = (opacity: CardOpacity) => onCardChange(currentCard => ({ ...currentCard, opacity }));
     const onArtFinishChange = onChangeFactory('artFinish', setCard);
-    const onFrameChange = (frameValue: number | string) => {
+    const changeFrame = (frameValue: number | string) => {
         onCardChange(currentCard => {
-            const value = `${frameValue}`;
-            const isST = value === 'spell' || value === 'trap';
-            const termMap = currentCard.format === 'tcg'
+            const { typeAbility, isPendulum, subFamily, attribute, format, cardIcon } = currentCard;
+            const nextFrame = `${frameValue}`;
+            const isST = nextFrame === 'spell' || nextFrame === 'trap';
+            const termMap = format === 'tcg'
                 ? {
                     'Spell Card': 'Spell Card',
                     'Trap Card': 'Trap Card',
                 }
                 : tcgToOCGTermMap;
-            const newTypeAbility = value === 'spell'
+            const newTypeAbility = nextFrame === 'spell'
                 ? [termMap['Spell Card']]
-                : value === 'trap' ? [termMap['Trap Card']] : currentCard.typeAbility;
+                : nextFrame === 'trap' ? [termMap['Trap Card']] : typeAbility;
+            const nextIconType = cardIcon === 'auto'
+                ? cardIcon
+                : getCardIconFromFrame(nextFrame);
             if (isST) setDisplayTypeAbility(newTypeAbility[0]);
 
             return {
                 ...currentCard,
-                frame: value,
-                isPendulum: value === 'link' ? false : currentCard.isPendulum,
-                subFamily: isST ? 'NO ICON' : currentCard.subFamily,
+                frame: nextFrame,
+                isPendulum: nextFrame === 'link' ? false : isPendulum,
+                subFamily: isST ? 'NO ICON' : subFamily,
                 attribute: isST
-                    ? `${value}`.toUpperCase()
-                    : currentCard.attribute,
+                    ? `${nextFrame}`.toUpperCase()
+                    : attribute,
                 typeAbility: newTypeAbility,
+                cardIcon: nextIconType,
             };
         });
     };
@@ -177,6 +183,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             };
         });
     };
+    const setIconType = onChangeFactory('cardIcon', setCard);
     const onStarChange = onChangeFactory('star', setCard);
     const onIsPendulumChange = (e: any) => onCardChange(currentCard => {
         const willBecomePendulum = e.target.checked;
@@ -308,6 +315,35 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     }));
 
     const currentPendulumFrame = frameMap[pendulumFrame];
+    const iconTypeData = cardIcon === 'auto'
+        ? IconTypeMap[isMonster
+            ? isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level'
+            : 'st'
+        ]
+        : IconTypeMap[cardIcon];
+    const IconDropdown = <Popover key="icon-type-picker"
+        trigger={['click']}
+        overlayClassName="input-overlay pattern-picker-overlay"
+        content={<div className="overlay-event-absorber">
+            <StyledDropdown.Container>
+                {IconTypeList.map(({ fullLabel, value }) => {
+                    return <StyledDropdown.Option key={value}
+                        className={value === cardIcon ? 'menu-active' : ''}
+                        onClick={() => setIconType(value)}
+                    >
+                        {fullLabel}
+                    </StyledDropdown.Option>;
+                })}
+            </StyledDropdown.Container>
+        </div>}
+        placement="bottomRight"
+    >
+        <span
+            className="card-icon-dropdown"
+        >
+            {iconTypeData.label} <CaretDownOutlined />
+        </span>
+    </Popover>;
     return <div className="card-info-panel">
         {children}
         <div className="card-overlay-input">
@@ -338,7 +374,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 onChange={onOpacityChange}
             />
         </div>}
-        <RadioTrain className="frame-radio" value={frame} onChange={onFrameChange} optionList={frameList} />
+        <RadioTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />
         <div className="name-style-id-input">
             <div className="name-id-input">
                 <Input
@@ -412,15 +448,15 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 showExtraDecorativeOption={showExtraDecorativeOption}
                 onChange={onNameColorChange}
             />
-            {isMonster
-                ? !isLink
-                    ? <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={StarButtonList}>
-                        <span>{isXyz ? 'Rank' : isDarkSynchro ? 'Neg. Level' : 'Level'}</span>
+            {!isLink
+                ? iconTypeData.value === 'st'
+                    ? <RadioTrain value={subFamily} onChange={onSubFamilyChange} optionList={STIconButtonList}>
+                        {IconDropdown}
                     </RadioTrain>
-                    : null
-                : <RadioTrain value={subFamily} onChange={onSubFamilyChange} optionList={STIconButtonList}>
-                    <span>Icon</span>
-                </RadioTrain>
+                    : <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={onStarChange} optionList={StarButtonList}>
+                        {IconDropdown}
+                    </RadioTrain>
+                : null
             }
         </div>
         <div key="pic" className="main-info">

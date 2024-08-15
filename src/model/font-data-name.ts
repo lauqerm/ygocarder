@@ -75,8 +75,3 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
         }
     },
 };
-
-export const BREAKABLE_LETTER = '\\s\\-/';
-export const LETTER_GAP_RATIO = -0.4;
-export const GAP_PER_WIDTH_RATIO = -2.25;
-export const GAP_PADDING_RATIO = 0.03125;

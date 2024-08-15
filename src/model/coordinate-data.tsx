@@ -53,14 +53,24 @@ export const pendulumSizeList: CoordinateData[] = [
     { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
 ];
 
-export const specialCoordinateData: Record<string, CoordinateData[]> = {
-    normal: [
-        { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
-    ],
-    pendulum: [
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-    ],
+export const specialCoordinateData: Record<string, Record<string, CoordinateData[]>> = {
+    tcg: {
+        normal: [
+            { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
+        ],
+        pendulum: [
+            { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+            { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        ],
+    },
+    ocg: {
+        normal: [
+            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+        ],
+        pendulum: [
+            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+        ],
+    }
 };
 
 export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateData>> = {

@@ -1,4 +1,4 @@
-import { frameList, iconList, attributeList, stickerList, foilList, CondenseTolerantLabelMap, NameFontDataMap } from '../../model';
+import { frameList, IconList, AttributeList, StickerList, FoilList, CondenseTolerantLabelMap, NameFontDataMap } from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -23,7 +23,7 @@ export const FormatButtonList = [
     },
 ];
 
-export const FoilButtonList = foilList.map(({ color, name, label }) => ({
+export const FoilButtonList = FoilList.map(({ color, name, label }) => ({
     label,
     value: name,
     props: {
@@ -52,7 +52,6 @@ export const ArtFinishButtonList = [
     })),
 ];
 
-
 export const getFrameButtonList = () => frameList.map(({ name, labelBackgroundColor, labelBackgroundColorList, edition }) => ({
     label: <FrameInfoBlock
         labelBackgroundColor={labelBackgroundColor}
@@ -63,21 +62,49 @@ export const getFrameButtonList = () => frameList.map(({ name, labelBackgroundCo
     edition,
 }));
 
-export const getAttributeList = (format: string) => attributeList.map(({ name }) => ({
+export const getAttributeList = (format: string) => AttributeList.map(({ name }) => ({
     label: name === 'NONE'
         ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
     value: name,
 }));
 
-export const STIconButtonList = iconList.map(({ label, value }) => ({
+export const STIconButtonList = IconList.map(({ label, value }) => ({
     label,
     value,
 }));
 
 export const StarButtonList = [...Array(14)].map((e, index) => ({ label: index, value: index }));
+export const IconTypeMap: Record<string, { value: string, label: React.ReactNode, fullLabel: React.ReactNode }> = {
+    'auto': {
+        value: 'auto',
+        label: 'Auto',
+        fullLabel: 'Auto',
+    },
+    'st': {
+        value: 'st',
+        label: 'Icon',
+        fullLabel: 'Spell/Trap Icon',
+    },
+    'level': {
+        value: 'level',
+        label: 'Level',
+        fullLabel: 'Level',
+    },
+    'negative-level': {
+        value: 'negative-level',
+        label: 'Neg. Level',
+        fullLabel: 'Negative Level',
+    },
+    'rank': {
+        value: 'rank',
+        label: 'Rank',
+        fullLabel: 'Rank',
+    },
+};
+export const IconTypeList = Object.values(IconTypeMap);
 
-export const StickerButtonList = stickerList.map(name => ({
+export const StickerButtonList = StickerList.map(name => ({
     label: name === 'no-sticker'
         ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,

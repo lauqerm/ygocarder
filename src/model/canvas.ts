@@ -1,4 +1,23 @@
-export const UP_RATIO = 1.48125;
+export type MasterDuelCanvas = {
+    previewCanvas: React.RefObject<HTMLCanvasElement>,
+    drawCanvas: React.RefObject<HTMLCanvasElement>,
+    // artCanvas: React.RefObject<HTMLCanvasElement>,
+    specialFrameCanvas: React.RefObject<HTMLCanvasElement>,
+    subFamilyCanvas: React.RefObject<HTMLCanvasElement>,
+    pendulumScaleCanvas: React.RefObject<HTMLCanvasElement>,
+    pendulumEffectCanvas: React.RefObject<HTMLCanvasElement>,
+    typeCanvas: React.RefObject<HTMLCanvasElement>,
+    effectCanvas: React.RefObject<HTMLCanvasElement>,
+    nameCanvas: React.RefObject<HTMLCanvasElement>,
+    attributeCanvas: React.RefObject<HTMLCanvasElement>,
+    statCanvas: React.RefObject<HTMLCanvasElement>,
+    setIdCanvas: React.RefObject<HTMLCanvasElement>,
+    passcodeCanvas: React.RefObject<HTMLCanvasElement>,
+    creatorCanvas: React.RefObject<HTMLCanvasElement>,
+    stickerCanvas: React.RefObject<HTMLCanvasElement>,
+    finishCanvas: React.RefObject<HTMLCanvasElement>,
+};
+
 /** Các thông số được làm tròn thay vì upscale để đảm bảo độ mịn */
 export const CanvasConst = {
     width: 813,
@@ -68,15 +87,6 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 1.057,
         type: 'truePendulum',
     },
-    // truePendulum: {
-    //     artFinishX: 56,
-    //     artFinishY: 213,
-    //     artWidth: 702,
-    //     artX: 56,
-    //     artY: 213,
-    //     ratio: 1.057,
-    //     type: 'truePendulum',
-    // },
     fullCard: {
         artFinishX: 100,
         artFinishY: 219,

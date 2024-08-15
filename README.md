@@ -3,13 +3,14 @@ Dark synchro style
 <!-- Testing -->
 <!-- Character need treatment: ！ ( ) -->
 Remainig Todos
-Dictionary
+<!-- Dictionary -->
 Extended art over frame
-Flip letter
-Reduce font bundle size
+<!-- Flip letter -->
+<!-- Reduce font bundle size -->
 Dialect (Chef Special Recipe for example)
 <!-- Remove fixed width? -->
 Zoom
+Refactor styling
 <!-- Credit -->
 <!-- Remaining font data (OCG spell for example) -->
 <!-- Beatrice text style -->

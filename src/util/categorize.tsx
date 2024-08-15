@@ -22,3 +22,12 @@ export const checkMonster = (card: Pick<Card, 'frame'>) => {
 export const getCardFrame = (frame: string) => {
     return frameList.find(entry => entry.name === frame.toLowerCase())?.name ?? 'effect';
 };
+export const getCardIconFromFrame = (frame: string) => {
+    return frame === 'spell' || frame === 'trap'
+        ? 'st'
+        : frame === 'xyz'
+            ? 'rank'
+            : frame === 'dark-synchro'
+                ? 'negative-level'
+                : 'level';
+};

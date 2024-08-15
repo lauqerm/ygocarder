@@ -516,7 +516,7 @@ function App() {
                 visible={lightboxVisible}
                 forceRender={true}
                 onCancel={() => setLightboxVisible(false)}
-                footer={() => null}
+                footer={null}
             >
                 <canvas id="lightbox-canvas" key={canvasKey + 0.1} ref={lightboxCanvasRef} width={CanvasWidth} height={CanvasHeight} />
             </Modal>

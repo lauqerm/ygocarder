@@ -66,7 +66,7 @@ export const drawEffect = (
             lineCount,
         } = fontSizeData;
         const { trueEdge, trueWidth: trueWidthStart, trueBaseline: trueBaselineStart } = sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1];
-        const trueWidth = isNormal ? trueWidthStart - 2 : trueWidthStart;
+        const trueWidth = (isNormal && format === 'tcg') ? trueWidthStart - 2 : trueWidthStart;
 
         const currentFont = createFontGetter();
         ctx.font = currentFont

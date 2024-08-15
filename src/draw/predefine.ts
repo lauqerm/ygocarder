@@ -1,4 +1,10 @@
-import { fillTextLeftWithSpacing } from './canvas-util';
+import { CanvasConst, IconValueList } from 'src/model';
+import { fillTextLeftWithSpacing, fillTextRightWithSpacing } from './canvas-util';
+import { drawFrom, drawWithSizeFrom } from './image';
+
+const {
+    width: CanvasWidth,
+} = CanvasConst;
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -124,4 +130,88 @@ export const drawStat = (
             }
         }
     }
+};
+
+export const drawSetId = (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    value: string,
+    option: { isPendulum: boolean, isLink: boolean, withShadow: boolean, format: string, lightFooter: boolean }
+) => {
+    if (ctx) {
+        const { isPendulum, isLink, withShadow, format, lightFooter } = option;
+        let spacing = 0.175;
+        let offsetY = 0;
+        let xOffset = 0;
+        ctx.fillStyle = (lightFooter && !isPendulum) ? '#fff' : '#000';
+        ctx.shadowColor = withShadow ? '#fff' : '#000';
+        ctx.shadowOffsetY = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowBlur = withShadow && !isPendulum ? 1 : 0;
+        ctx.font = '22px stone-serif-regular';
+        if (format === 'ocg') {
+            spacing = 0.145;
+            offsetY = -1;
+            xOffset = -3;
+        }
+
+        if (isPendulum) {
+            fillTextLeftWithSpacing(ctx, value, spacing, 66.65 + xOffset, 1105.01 + offsetY);
+        } else if (isLink) {
+            fillTextRightWithSpacing(ctx, value, spacing, 666.56 + xOffset, 872.94 + offsetY);
+        } else {
+            fillTextRightWithSpacing(ctx, value, spacing, 728.78 + xOffset, 871.50 + offsetY);
+        }
+    }
+};
+
+export const drawCardIcon = async (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    cardIcon: string,
+    subFamily: string,
+    star: number,
+    onStarDraw: (coordinate: [number, number]) => Promise<void>,
+) => {
+    const willDrawIcon = cardIcon === 'st';
+    if (!willDrawIcon) {
+        const starWidth = 50;
+        const startSpacing = 4;
+        const starCount = Math.min(13, star);
+        const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
+        const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
+        /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
+        const leftEdge = starCount <= 12
+            ? reverseAlign
+                ? 85.9125 - starWidth
+                : 728.775
+            : reverseAlign
+                ? (CanvasWidth - totalWidth) / 2 - starWidth
+                : (CanvasWidth - totalWidth) / 2 + totalWidth;
+
+        let offset = 0 - (starWidth + startSpacing);
+        return Promise.all([...Array(starCount)]
+            .map(async () => {
+                offset += (starWidth + startSpacing);
+                let coordinate: [number, number] = [
+                    leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
+                    145,
+                ];
+                await drawFrom(ctx, `/asset/image/sub-family/subfamily-${cardIcon}.png`, ...coordinate);
+                return onStarDraw(coordinate);
+            })
+        );
+    } else {
+        const normalizedSubFamily = subFamily.toUpperCase();
+        const hasSTIcon = normalizedSubFamily !== 'NO ICON' && IconValueList.includes(normalizedSubFamily);
+
+        return hasSTIcon
+            ? drawWithSizeFrom(
+                ctx,
+                `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
+                image => 717 - image.naturalWidth,
+                153,
+                image => image.naturalWidth,
+                image => image.naturalWidth,
+            )
+            : new Promise(resolve => resolve(true));
+    };
 };
