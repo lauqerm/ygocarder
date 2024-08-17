@@ -1,11 +1,11 @@
-import React from 'react';
+import { memo } from 'react';
 import { GithubFilled } from '@ant-design/icons';
 import styled from 'styled-components';
-import './app-header.scss';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
+import './app-header.scss';
 
-export const Affiliation = () => {
+export const Affiliation = memo(() => {
     return <div className="affiliation">
         <span className="version">v{process.env.REACT_APP_VERSION ?? 'unknown'}</span>
         <div className="affiliation-link">
@@ -14,7 +14,7 @@ export const Affiliation = () => {
             </a>
         </div>
     </div>;
-};
+});
 
 const StyledAppSettingContainer = styled.div`
     align-content: center;
@@ -22,7 +22,7 @@ const StyledAppSettingContainer = styled.div`
     padding-left: 10px;
     margin-left: 10px;
 `;
-export const AppHeader = React.memo(() => {
+export const AppHeader = memo(() => {
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
         <div className="app-description">

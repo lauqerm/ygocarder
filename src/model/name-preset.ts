@@ -44,6 +44,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Common (Black)',
         image: 'asset/image/other/name-common-b.png',
         value: createPresetNameStyle({
+            preset: 'commonB',
             fillStyle: '#000000',
         }),
     },
@@ -52,6 +53,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Common (White)',
         image: 'asset/image/other/name-common-w.png',
         value: createPresetNameStyle({
+            preset: 'commonW',
             fillStyle: '#ffffff',
         }),
     },
@@ -60,7 +62,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Skill (Default)',
         image: 'asset/image/other/name-skill-default.png',
         value: createPresetNameStyle({
-            font: 'Default',
+            preset: 'skillDefault',
             fillStyle: '#ffffff',
             lineWidth: 6,
             lineColor: '#000',
@@ -72,6 +74,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Skill (Arial)',
         image: 'asset/image/other/name-skill-arial.png',
         value: createPresetNameStyle({
+            preset: 'skillArial',
             font: 'Arial',
             fillStyle: '#ffffff',
             lineWidth: 6,
@@ -85,6 +88,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Rare',
         image: 'asset/image/other/name-rare.png',
         value: createPresetNameStyle({
+            preset: 'rare',
             fillStyle: '#cfc6de',
         }),
     },
@@ -93,6 +97,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Secret (Gradient)',
         image: 'asset/image/other/name-secret-gradient.png',
         value: createPresetNameStyle({
+            preset: 'secretGradient',
             gradientAngle: 180,
             gradientColor: '0.000|#7a71a6,1.000|#a8c1e5',
             hasGradient: true,
@@ -103,6 +108,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Secret',
         image: 'asset/image/other/name-secret.png',
         value: createPresetNameStyle({
+            preset: 'secret',
             fillStyle: '#8a8381',
         }),
     },
@@ -111,6 +117,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Platinum',
         image: 'asset/image/other/name-platinum.png',
         value: createPresetNameStyle({
+            preset: 'platinum2',
             fillStyle: '#a49f9e',
         }),
     },
@@ -119,6 +126,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Ultra',
         image: 'asset/image/other/name-ultra.png',
         value: createPresetNameStyle({
+            preset: 'ultra',
             fillStyle: '#dbb473',
         }),
     },
@@ -127,6 +135,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Ultra (Type 2)',
         image: 'asset/image/other/name-ultra-2.png',
         value: createPresetNameStyle({
+            preset: 'ultra2',
             fillStyle: '#fee002',
         }),
     },
@@ -135,6 +144,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Foil Platinum',
         image: 'asset/image/other/name-foil-platinum.png',
         value: createPresetNameStyle({
+            preset: 'platinum',
             fillStyle: '#CCCCCC',
             shadowColor: '#FFFFFF',
             shadowOffsetY: 1,
@@ -148,6 +158,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Foil Gold',
         image: 'asset/image/other/name-foil-gold.png',
         value: createPresetNameStyle({
+            preset: 'gold',
             fillStyle: '#b88c43',
             shadowColor: '#FCC400',
             shadowOffsetY: 1,
@@ -161,6 +172,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Anime (Type Red)',
         image: 'asset/image/other/name-anime-red.png',
         value: createPresetNameStyle({
+            preset: 'animeRed',
             gradientAngle: 180,
             gradientColor: '0.000|#d81961,0.220|#b81654,0.270|#9e1348,0.330|#95093e,0.380|#95093e,0.450|#ba3264,0.530|#ff5e99,0.620|#ffa0c3,0.690|#ffffff,0.770|#ff5e99,0.870|#d81961,1.000|#b81654',
             hasGradient: true,
@@ -181,6 +193,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Anime (Type Silver)',
         image: 'asset/image/other/name-anime-silver.png',
         value: createPresetNameStyle({
+            preset: 'animeSilver',
             shadowColor: '#383838',
             shadowOffsetY: 3,
             shadowOffsetX: 2,
@@ -201,6 +214,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Anime (Type Gold)',
         image: 'asset/image/other/name-anime-gold.png',
         value: createPresetNameStyle({
+            preset: 'animeGold',
             shadowColor: '#383838',
             shadowOffsetY: 3,
             shadowOffsetX: 2,
@@ -221,6 +235,7 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
         label: 'Promo',
         image: 'asset/image/other/name-promo.png',
         value: createPresetNameStyle({
+            preset: 'promo',
             fillStyle: '#c7080b',
             shadowColor: '#333333',
             shadowOffsetY: 0,

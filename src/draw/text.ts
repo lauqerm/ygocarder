@@ -19,7 +19,6 @@ import {
     ST_ICON_SYMBOL,
     SquareBracketLetterRegex,
     TCGLetterRegex,
-    TCGSymbolRegex,
     TextData,
     WholeWordRegex,
     getBulletSpacing,
@@ -45,7 +44,7 @@ export const drawLine = ({
     textData,
     format,
     textDrawer,
-    debug = true,
+    debug = false,
 }: {
     ctx: CanvasRenderingContext2D,
     format: string,
@@ -66,10 +65,11 @@ export const drawLine = ({
     } = textData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
-        metricMethod,
         headTextFillStyle,
         headTextHeightRatio = DefaultFontData.headTextHeightRatio,
         headTextOverflow = DefaultFontData.headTextOverflow,
+        metricMethod,
+        fontStyle,
     } = fontData;
     const {
         letterSpacing = DefaultFontSizeData.letterSpacing,
@@ -96,6 +96,7 @@ export const drawLine = ({
     const letterSpacingRatio = 1 + letterSpacing / 2;
     const baseline = trueBaseline / yRatio;
     let previousTokenGap = 0;
+    let iconPositionList: { edge: number, size: number, baseline: number }[] = [];
     /** Rebalance */
     let previousTokenRebalanceOffset = 0;
     let tokenEdge = trueEdge;
@@ -162,9 +163,8 @@ export const drawLine = ({
             if (token === NB_UNCOMPRESSED_START || token === NB_UNCOMPRESSED_END) {}
             /** Symbol S/T không bị compress, ta vẽ symbol S/T riêng, ở đây chỉ chừa chỗ trống */
             else if (fragment === ST_ICON_SYMBOL) {
-                resetScale();
+                iconPositionList.push({ edge: fragmentEdge, size: iconSymbolWidth, baseline });
                 fragmentEdge += iconSymbolWidth * letterSpacingRatio;
-                applyAsymmetricScale(xRatio, yRatio);
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
@@ -228,7 +228,7 @@ export const drawLine = ({
                 applyFuriganaFont();
                 const headTextLetterWidth = headText
                     .split('')
-                    .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
+                    .map(letter => getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
                     .reduce((acc, cur) => acc + cur, 0);
                 stopApplyFuriganaFont();
 
@@ -325,7 +325,7 @@ export const drawLine = ({
                     headTextSpacing,
                     headTextHeightRatio,
                     xRatio,
-                    format,
+                    fontStyle,
                     textWorker,
                     fitFootText,
                     headTextOverflow,
@@ -389,7 +389,7 @@ export const drawLine = ({
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter(drawLetterofWordParameter);
                         stopApplyNumberFont();
-                    } else if (TCGSymbolRegex.test(currentLetter) && format === 'tcg') {
+                    } else if (TCGLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
                         applySymbolFont();
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter(drawLetterofWordParameter);
@@ -408,7 +408,7 @@ export const drawLine = ({
                 ctx.letterSpacing = '0px';
             }
             /** Một số ký tự dùng font đặc biệt */
-            else if (TCGLetterRegex.test(fragment) && format === 'tcg') {
+            else if (TCGLetterRegex.test(fragment) && fontStyle === 'tcg') {
                 const letter = fragment;
                 applySymbolFont();
 
@@ -431,7 +431,7 @@ export const drawLine = ({
                 const letterMetric = getLetterWidth({
                     ctx,
                     letter,
-                    format,
+                    fontStyle,
                     metricMethod,
                     lastOfLine: nextFragment === undefined,
                     xRatio,
@@ -460,5 +460,8 @@ export const drawLine = ({
         tokenEdge += totalTokenWidth * xRatio + accumulatedSpace + indent;
     }
 
-    return tokenEdge;
+    return {
+        tokenEdge,
+        iconPositionList,
+    };
 };

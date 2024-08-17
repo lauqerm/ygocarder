@@ -21,12 +21,12 @@ export const StyledDropdownOption = styled.div`
     padding: 5px 10px;
     cursor: pointer;
     &:hover {
-        background-color: var(--sub-link);
+        background-color: var(--sub-active);
     }
     &.menu-active {
-        background-color: var(--main-link);
+        background-color: var(--main-active);
         &:hover {
-            background-color: var(--sub-link);
+            background-color: var(--sub-active);
         }
     }
 `;

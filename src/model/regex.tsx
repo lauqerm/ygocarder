@@ -41,10 +41,6 @@ export const FLAVOR_CONDITION_SOURCE = `(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]';
 export const TCGLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
 
-/** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
-export const TCG_NON_SYMBOL_JOINLIST = '&A-Za-z0-9\\-/\\s!,.‘’\\[\\]\\(\\)';
-export const TCGSymbolRegex = new RegExp(`[^${TCG_NON_SYMBOL_JOINLIST}]`);
-
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
 export const OCG_KEYWORD_SOURCE = `(${OCG_KEYWORD_JOIN_REGEX})(?![^{]*})`;
 

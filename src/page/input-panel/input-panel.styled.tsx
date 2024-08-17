@@ -1,5 +1,6 @@
 import { StyledDropdown } from 'src/component';
 import styled from 'styled-components';
+import { TrainGridStyle } from './input-train';
 
 export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     padding: 5px;
@@ -17,4 +18,5 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     .frame-auto-checkbox {
         margin-bottom: 5px;
     }
+    ${TrainGridStyle}
 `;

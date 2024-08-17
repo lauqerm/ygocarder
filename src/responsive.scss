@@ -55,11 +55,16 @@
 				grid-template-areas:
 					"type-input input-helper"
 					"condense-input help-button";
+				&.variant-tcg {
+					.type-ability-input {
+						grid-column: span 2;
+					}
+				}
 			}
 		}
 	}
 	.app-container {
-		--resize-ratio: 0.60;
+		--resize-ratio: 0.6;
 		--translate-ratio: -20%;
 		.card-preview-panel {
 			flex: 0 0 500px;
@@ -241,11 +246,16 @@
 				grid-template-areas:
 					"type-input input-helper"
 					"condense-input help-button";
+				&.variant-tcg {
+					.type-ability-input {
+						grid-column: span 2;
+					}
+				}
 			}
 		}
 	}
 	.app-container {
-		--resize-ratio: 0.60;
+		--resize-ratio: 0.6;
 		--translate-ratio: -20%;
 		flex-wrap: wrap;
 		.app-header {

@@ -27,7 +27,11 @@ export const drawMonsterType = ({
     alignment: 'left' | 'right',
     furiganaHelper: boolean,
 }) => {
-    const { trueEdge, trueBaseline, trueWidth } = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
+    const {
+        trueEdge,
+        trueBaseline,
+        trueWidth,
+    } = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
     const fontData = getTypeAbilityFontData()[format];
     if (metricMethod) fontData.metricMethod = metricMethod;
     const { font } = fontData;
@@ -76,6 +80,7 @@ export const drawMonsterType = ({
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline);
         },
+        debug: true,
     });
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 

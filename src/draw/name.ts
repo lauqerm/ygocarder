@@ -95,7 +95,7 @@ export const drawName = async (
             shadowColor,
             shadowOffsetX,
             shadowOffsetY,
-            hasOutline: defaultHasOutline,
+            hasOutline: hasDefaultOutline,
             lineColor,
             lineWidth,
             lineOffsetX,
@@ -106,19 +106,19 @@ export const drawName = async (
             pattern,
         } = { ...getDefaultNameStyle(), ...style };
         const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
-        const hasOutline = defaultHasOutline || isSpeedSkill;
+        const hasOutline = hasDefaultOutline;
         if (hasShadow) {
             ctx.shadowColor = shadowColor;
             ctx.shadowOffsetY = shadowOffsetY;
             ctx.shadowOffsetX = shadowOffsetX;
             ctx.shadowBlur = shadowBlur;
         }
-        if (defaultHasOutline) {
+        if (hasDefaultOutline) {
             ctx.lineWidth = lineWidth;
             ctx.strokeStyle = lineColor;
         } else if (isSpeedSkill) {
-            ctx.lineWidth = 6;
-            ctx.strokeStyle = '#000';
+            // ctx.lineWidth = 6;
+            // ctx.strokeStyle = '#000';
         }
         const fontData = {
             ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,

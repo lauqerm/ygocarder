@@ -3,7 +3,7 @@ import { JSONUncrush } from '../3rd';
 import { Card, getDefaultCardOpacity, getEmptyCard } from '../model';
 import { notification } from 'antd';
 
-const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
+const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
     format: 'fm',
     frame: 'fr',
@@ -70,13 +70,20 @@ const cardFieldShortenMap: Record<keyof Card, string | Record<string, string>> =
     setId: 'si',
     atk: 'atk',
     def: 'def',
-    passcode: 'pc',
+    password: 'pw',
     sticker: 'sti',
     isFirstEdition: 'ife',
     isSpeedCard: 'isp',
     isDuelTerminalCard: 'idt',
     creator: 'cr',
     furiganaHelper: 'fh',
+};
+const legacyCardFieldShortenMap = {
+    passcode: 'pc',
+};
+const cardFieldShortenMap = {
+    ...currentCardFieldShortenMap,
+    ...legacyCardFieldShortenMap,
 };
 
 export const decodeCardWithCompatibility = (cardData: Record<string, any> | string | null): Card => {
@@ -225,6 +232,13 @@ const migrateCardData = (card: Record<string, any>) => {
     if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
     if (migratedCard.opacity === undefined) migratedCard.opacity = getDefaultCardOpacity();
     if (migratedCard.furiganaHelper === undefined) migratedCard.furiganaHelper = true;
-    if ((migratedCard as any).kanjiHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
+    if ((migratedCard as any).kanjiHelper) {
+        if (!migratedCard.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
+        delete (migratedCard as any).kanjiHelper;
+    }
+    if ((migratedCard as any).passcode) {
+        if (!migratedCard.password) migratedCard.password = (migratedCard as any).passcode;
+        delete (migratedCard as any).passcode;
+    }
     return migratedCard;
 };

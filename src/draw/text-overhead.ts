@@ -16,7 +16,7 @@ export const fillHeadText = ({
     headTextSpacing,
     headTextHeightRatio,
     xRatio,
-    format,
+    fontStyle,
     textWorker,
     fitFootText,
     headTextOverflow,
@@ -30,7 +30,7 @@ export const fillHeadText = ({
     headTextSpacing: number,
     headTextHeightRatio: number,
     xRatio: number,
-    format: string,
+    fontStyle: string,
     textWorker: ReturnType<typeof getTextWorker>,
     fitFootText: boolean,
     headTextOverflow: 'normal' | 'condense',
@@ -89,7 +89,7 @@ export const fillHeadText = ({
 
     for (const letter of headText) {
         applyFuriganaFont();
-        const { width, boundWidth } = getLetterWidth({ ctx, letter, format, metricMethod: 'furigana', xRatio: 1 });
+        const { width, boundWidth } = getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1 });
         const boundingOffset = (width - boundWidth) / 2;
         stopApplyFuriganaFont();
 

@@ -25,14 +25,14 @@ export const getLetterWidth = ({
     letter,
     lastOfLine = false,
     debug,
-    format,
+    fontStyle,
     xRatio,
     metricMethod = 'standard',
 }: {
     ctx: CanvasRenderingContext2D,
     letter: string,
     lastOfLine?: boolean,
-    format: string,
+    fontStyle: string,
     xRatio: number,
     metricMethod?: MetricMethod,
     debug?: string,
@@ -72,7 +72,7 @@ export const getLetterWidth = ({
         ? OCGLastOfLineOffsetMap[letter]
         : OCGOffsetMap[letter]) ?? 0;
 
-    if (format === 'tcg') return {
+    if (fontStyle === 'tcg') return {
         width,
         actualBoundWidth,
         boundWidth: width,

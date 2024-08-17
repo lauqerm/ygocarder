@@ -7,6 +7,7 @@ export const tcgCreatorFontData: FontData = {
     symbolFontRatio: 0.8,
     ordinalFont: 'stone-serif-regular',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
+    fontStyle: 'tcg',
     fontList: [
         {
             offsetY: -1,
@@ -37,6 +38,7 @@ export const ocgCreatorFontData: FontData = {
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     metricMethod: 'creator',
+    fontStyle: 'ocg',
     fontList: [{
         bulletSymbolWidth: 18,
         fontSize: 19.0,
@@ -59,12 +61,14 @@ export const tcgTypeAbilityFontData: FontData = {
     symbolFontRatio: 0.8,
     ordinalFont: 'YuGiOhITCStoneSerifBSc',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
+    fontStyle: 'tcg',
     fontList: [
         {
             bulletSymbolWidth: 20.05,
             fontSize: 31.5,
             lineHeight: 31.5,
             lineCount: 1,
+            iconSymbolWidth: 26,
             capitalLetterRatio: 0.95,
             letterSpacing: 0.02,
             headTextFontRatio: 0.4,
@@ -74,6 +78,7 @@ export const tcgTypeAbilityFontData: FontData = {
             fontSize: 32.75,
             lineHeight: 32.75,
             lineCount: 1,
+            iconSymbolWidth: 26,
             capitalLetterRatio: 0.95,
             letterSpacing: -0.03,
             headTextFontRatio: 0.4,
@@ -100,12 +105,14 @@ export const ocgTypeAbilityFontData: FontData = {
     headTextHeightRatio: 0.775,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
+    fontStyle: 'ocg',
     fontList: [
         {
             bulletSymbolWidth: 20.05,
             fontSize: 25.2,
             lineHeight: 25.2,
             lineCount: 1,
+            iconSymbolWidth: 26,
             headTextFontRatio: 0.300,
         },
         {
@@ -113,6 +120,7 @@ export const ocgTypeAbilityFontData: FontData = {
             fontSize: 26.5,
             lineHeight: 26.5,
             lineCount: 1,
+            iconSymbolWidth: 26,
             headTextFontRatio: 0.300,
         },
         {

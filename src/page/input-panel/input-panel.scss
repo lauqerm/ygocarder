@@ -112,6 +112,12 @@
 	}
 	.card-icon-dropdown {
 		cursor: pointer;
+		&.active {
+			color: var(--main-active);
+			.anticon {
+				color: var(--main-active);
+			}
+		}
 	}
 	.image-input-train label {
 		padding: 0 10px;
@@ -201,6 +207,11 @@
 		}
 		.condense-input {
 			grid-area: condense-input;
+		}
+		&.variant-tcg {
+			.type-ability-input {
+				grid-column: span 2;
+			}
 		}
 	}
 	.card-effect-letter-helper {
@@ -313,7 +324,7 @@
 		&.ocg-button {
 			background-color: #ff4d4f;
 			border-color: #ff6f6f;
-			&:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
+			&:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
 				border-right-color: #ff6f6f;
 			}
 			&:not(.ant-radio-button-wrapper-disabled):first-child {
@@ -347,48 +358,9 @@
 	}
 }
 
-.frame-radio {
-	.radio-train-input-group {
-		display: flex;
-		flex-wrap: wrap;
-		column-gap: 5px;
-		row-gap: 5px;
-		box-shadow: none;
-		border-radius: none;
-		.ant-radio-button-wrapper:first-child,
-		.ant-radio-button-wrapper:last-child {
-			border-radius: 0;
-		}
-		.ant-radio-button-wrapper {
-			flex: 1;
-			text-transform: capitalize;
-			white-space: nowrap;
-			border: none;
-			box-shadow: 0 0 0 1px var(--sub-level-1);
-			padding: 0;
-			min-width: 90px;
-			height: 28px;
-			line-height: 28px;
-			text-align: center;
-			text-shadow: none;
-			font-size: 13px;
-			&:hover {
-				outline: 1px solid var(--main-active);
-				outline-offset: 1px;
-			}
-			&::before {
-				display: none;
-			}
-		}
-		.ant-radio-button-wrapper-checked {
-			outline: 1px solid var(--main-active);
-			outline-offset: 1px;
-		}
-	}
-}
 .input-label-with-button {
 	display: flex;
-    align-items: center;
+	align-items: center;
 	.input-label {
 		flex: 1;
 	}

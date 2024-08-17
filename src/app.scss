@@ -1,6 +1,6 @@
 html {
 	background-color: #fff;
-    min-width: 600px;
+	min-width: 600px;
 	--card-width: 813px;
 	--card-height: 1185px;
 	--resize-ratio: 0.7;
@@ -27,6 +27,9 @@ html {
 	--sub-secondary: #0c8ac6;
 	--main-tertiary: #5e85c9;
 	--sub-tertiary: #5e85e9;
+	--main-danger: #ff6f6f;
+	--main-red-scale: #ff6f6f;
+	--main-blue-scale: #3b9dff;
 	h1 {
 		color: #ffffffee;
 		font-size: 1.75em;
@@ -64,7 +67,9 @@ hr {
 	background-image: linear-gradient(45deg, #333, #333);
 	z-index: 4000;
 	color: white;
-	text-shadow: 0 1px #333, 0 2px #111;
+	text-shadow:
+		0 1px #333,
+		0 2px #111;
 	font-size: 30px;
 	display: flex;
 	align-items: center;
@@ -197,7 +202,8 @@ hr {
 			width: var(--card-width);
 			height: var(--card-height);
 			margin-bottom: 10px;
-			transform: translateX(var(--translate-ratio)) translateY(var(--translate-ratio)) scale(var(--resize-ratio)) translateZ(0);
+			transform: translateX(var(--translate-ratio)) translateY(var(--translate-ratio)) scale(var(--resize-ratio))
+				translateZ(0);
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -208,6 +214,7 @@ hr {
 				pointer-events: none;
 			}
 			&:hover {
+				.reset-button,
 				.lightbox-button {
 					display: block;
 				}
@@ -246,7 +253,9 @@ hr {
 					padding: 5px 10px;
 					border-radius: 0 0 0 5px;
 					background-color: #1890ff;
-					box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+					box-shadow:
+						0 3px 6px rgba(0, 0, 0, 0.16),
+						0 3px 6px rgba(0, 0, 0, 0.23);
 				}
 				&.guard-on {
 					display: flex !important;
@@ -278,23 +287,22 @@ hr {
 .hidden {
 	visibility: hidden;
 }
-// Use suitable font for inputs in OCG mode?
-// .input-ocg {
-// 	input,
-// 	textarea.ant-input {
-// 		font-size: 15px;
-// 		line-height: 1.4666;
-// 		font-family: 'Yu-Gi-Oh! DF Leisho 3';
-// 	}
-// }
+.input-ocg {
+	input,
+	textarea.ant-input {
+		font-size: 15px;
+		line-height: 1.4666;
+		font-family: "DFHSGothic-W3-WIN-RKSJ-H";
+	}
+}
 .by-me {
 	position: fixed;
-    right: 0;
-    bottom: 0;
-    font-size: 8px;
-    opacity: 0.5;
-    padding: 1px 4px;
-    color: #d6d6d6;
+	right: 0;
+	bottom: 0;
+	font-size: 8px;
+	opacity: 0.5;
+	padding: 1px 4px;
+	color: #d6d6d6;
 }
 
 // [OVERWRITE ANTD DEFAULT]
@@ -483,12 +491,12 @@ div.ant-slider {
 			color: var(--main-active);
 		}
 	}
-    .ant-radio-button-wrapper-checked {
-        border-color: var(--main-active);
-        background-color: var(--main-level-1-active);
+	.ant-radio-button-wrapper-checked {
+		border-color: var(--main-active);
+		background-color: var(--main-level-1-active);
 		&:not(.ant-radio-button-wrapper-disabled):hover {
 			color: var(--sub-active);
-    		border-color: var(--sub-active);
+			border-color: var(--sub-active);
 			&::before {
 				background-color: var(--sub-active);
 			}
@@ -496,13 +504,13 @@ div.ant-slider {
 		&:not(.ant-radio-button-wrapper-disabled):first-child {
 			border-color: var(--main-active);
 		}
-        &:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper:first-child {
-            border-right-color: var(--main-active);
-        }
-        &:not(.ant-radio-button-wrapper-disabled)::before {
-            background-color: var(--main-active);
-        }
-    }
+		&:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
+			border-right-color: var(--main-active);
+		}
+		&:not(.ant-radio-button-wrapper-disabled)::before {
+			background-color: var(--main-active);
+		}
+	}
 }
 
 .ant-popover {
@@ -523,7 +531,7 @@ button.ant-btn {
 		background: var(--sub-level-4);
 		border-color: var(--sub-level-4);
 	}
-	&.ant-btn-primary  {
+	&.ant-btn-primary {
 		background: var(--main-primary);
 		border-color: var(--main-active);
 		&:hover {
@@ -533,8 +541,8 @@ button.ant-btn {
 }
 
 .ant-checkbox + span {
-    transform: translateY(1px);
-    display: inline-block;
+	transform: translateY(1px);
+	display: inline-block;
 }
 
 .ant-drawer {
@@ -599,17 +607,23 @@ input:-internal-autofill-selected {
 
 /** Slow animation for download button **/
 .export-button .save-button {
-    background: linear-gradient(135deg, #22c1c3 0%, #298ae9 50%, #22c1c3 100%);
-    background-size: 300% 300%;
-    animation: SlowPulsating ease infinite 10s;
+	background: linear-gradient(135deg, #22c1c3 0%, #298ae9 50%, #22c1c3 100%);
+	background-size: 300% 300%;
+	animation: SlowPulsating ease infinite 10s;
 	&:hover {
 		background: linear-gradient(90deg, #32d1d3 0%, #399af9 50%, #32d1d3 100%);
 	}
 }
 @keyframes SlowPulsating {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
 .card-lightbox-overlay {

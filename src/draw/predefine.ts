@@ -1,6 +1,6 @@
-import { CanvasConst, IconValueList } from 'src/model';
+import { CanvasConst } from 'src/model';
 import { fillTextLeftWithSpacing, fillTextRightWithSpacing } from './canvas-util';
-import { drawFrom, drawWithSizeFrom } from './image';
+import { drawFrom } from './image';
 
 const {
     width: CanvasWidth,
@@ -164,54 +164,41 @@ export const drawSetId = (
     }
 };
 
-export const drawCardIcon = async (
+export const drawCardIcon = async ({
+    ctx,
+    cardIcon,
+    star,
+    onStarDraw,
+}: {
     ctx: CanvasRenderingContext2D | null | undefined,
     cardIcon: string,
-    subFamily: string,
     star: number,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
-) => {
-    const willDrawIcon = cardIcon === 'st';
-    if (!willDrawIcon) {
-        const starWidth = 50;
-        const startSpacing = 4;
-        const starCount = Math.min(13, star);
-        const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
-        const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
-        /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
-        const leftEdge = starCount <= 12
-            ? reverseAlign
-                ? 85.9125 - starWidth
-                : 728.775
-            : reverseAlign
-                ? (CanvasWidth - totalWidth) / 2 - starWidth
-                : (CanvasWidth - totalWidth) / 2 + totalWidth;
+}) => {
+    const starWidth = 50;
+    const startSpacing = 4;
+    const starCount = Math.min(13, star);
+    const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
+    const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
+    /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
+    const leftEdge = starCount <= 12
+        ? reverseAlign
+            ? 85.9125 - starWidth
+            : 728.775
+        : reverseAlign
+            ? (CanvasWidth - totalWidth) / 2 - starWidth
+            : (CanvasWidth - totalWidth) / 2 + totalWidth;
 
-        let offset = 0 - (starWidth + startSpacing);
-        return Promise.all([...Array(starCount)]
-            .map(async () => {
-                offset += (starWidth + startSpacing);
-                let coordinate: [number, number] = [
-                    leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
-                    145,
-                ];
-                await drawFrom(ctx, `/asset/image/sub-family/subfamily-${cardIcon}.png`, ...coordinate);
-                return onStarDraw(coordinate);
-            })
-        );
-    } else {
-        const normalizedSubFamily = subFamily.toUpperCase();
-        const hasSTIcon = normalizedSubFamily !== 'NO ICON' && IconValueList.includes(normalizedSubFamily);
-
-        return hasSTIcon
-            ? drawWithSizeFrom(
-                ctx,
-                `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                image => 717 - image.naturalWidth,
-                153,
-                image => image.naturalWidth,
-                image => image.naturalWidth,
-            )
-            : new Promise(resolve => resolve(true));
-    };
+    let offset = 0 - (starWidth + startSpacing);
+    return Promise.all([...Array(starCount)]
+        .map(async () => {
+            offset += (starWidth + startSpacing);
+            let coordinate: [number, number] = [
+                leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
+                145,
+            ];
+            await drawFrom(ctx, `/asset/image/sub-family/subfamily-${cardIcon}.png`, ...coordinate);
+            return onStarDraw(coordinate);
+        })
+    );
 };

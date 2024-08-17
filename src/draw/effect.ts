@@ -1,9 +1,9 @@
 import {
     CanvasConst,
     CondenseType,
-    effectMonsterFontData,
+    EffectFontData,
     CoordinateData,
-    monsterCoordinateData,
+    EffectCoordinateData,
     CondenseTolerantMap,
     FontData,
 } from '../model';
@@ -16,7 +16,6 @@ import { tokenizeText } from './text-util';
 
 /** @summary Block => Paragraph => Sentence => Token => Fragment => Letter **/
 const {
-    // height: CanvasHeight,
     width: CanvasWidth,
 } = CanvasConst;
 export const drawEffect = (
@@ -24,8 +23,8 @@ export const drawEffect = (
     content: string,
     _isPendulumEffect = false,
     isNormal = false,
-    fontData: FontData = effectMonsterFontData.tcg,
-    sizeList: CoordinateData[] = monsterCoordinateData.tcg,
+    fontData: FontData = EffectFontData.tcg,
+    sizeList: CoordinateData[] = EffectCoordinateData['tcg-type'],
     condenseTolerant: CondenseType = 'strict',
     format: string,
     furiganaHelper: boolean,

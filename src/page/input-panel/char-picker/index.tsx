@@ -46,7 +46,7 @@ const StyledCharPickerContainer = styled.div`
 	}
 `;
 
-function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
+export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
     //IE support
     if ((document as any).selection) {
         target.focus();
@@ -86,19 +86,19 @@ function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
 /** The dragging experience is not good. Currently turn it off for now and glue it into effect's textarea. */
 export type CharPicker = {
     targetId: string,
-    onPick?: (value: string) => void,
+    onPick?: (value: string, letter: string) => void,
 }
 export const CharPicker = ({
     targetId = '',
     onPick = () => {},
 }: CharPicker) => {
     // const [target, setTarget] = useState<HTMLElement | null>(null);
-    const internalOnPick = (char: string) => {
+    const internalOnPick = (letter: string) => {
         const inputTarget = document.getElementById(targetId) as HTMLTextAreaElement;
         if (inputTarget) {
-            const { value } = insertAtCursor(inputTarget, char);
+            const { value } = insertAtCursor(inputTarget, letter);
 
-            onPick(value);
+            onPick(value, letter);
         }
     };
 

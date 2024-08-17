@@ -17,7 +17,6 @@ import {
     SquareBracketLetterRegex,
     CapitalLetterRegex,
     NumberRegex,
-    TCGSymbolRegex,
     OCGNoOverheadGapRegex,
     GAP_PER_WIDTH_RATIO,
     GAP_PADDING_RATIO,
@@ -73,6 +72,7 @@ export const analyzeToken = ({
     const {
         metricMethod,
         headTextOverflow = DefaultFontData.headTextOverflow,
+        fontStyle,
     } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
@@ -176,7 +176,7 @@ export const analyzeToken = ({
             applyFuriganaFont();
             const headTextLetterWidth = headText
                 .split('')
-                .map(letter => getLetterWidth({ ctx, letter, format, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
+                .map(letter => getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
                 .reduce((acc, cur) => acc + cur, 0);
             stopApplyFuriganaFont();
 
@@ -234,7 +234,7 @@ export const analyzeToken = ({
                     applyNumberFont();
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     stopApplyNumberFont();
-                } else if (TCGSymbolRegex.test(currentLetter) && format === 'tcg') {
+                } else if (TCGLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
                     applySymbolFont();
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     stopApplySymbolFont();
@@ -259,7 +259,7 @@ export const analyzeToken = ({
             ctx.letterSpacing = '0px';
         }
         /** Một số ký tự dùng font đặc biệt */
-        else if (TCGLetterRegex.test(fragment) && format === 'tcg') {
+        else if (TCGLetterRegex.test(fragment) && fontStyle === 'tcg') {
             applySymbolFont();
             const fragmentWidth = ctx.measureText(fragment).width * letterSpacingRatio;
             stopApplySymbolFont();
@@ -277,7 +277,7 @@ export const analyzeToken = ({
         }
         /** Các ký tự còn lại */
         else {
-            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, format, metricMethod, xRatio });
+            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, fontStyle, metricMethod, xRatio });
             const fragmentWidth = boundWidth * letterSpacingRatio;
             const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);
             const rightGap = leftGap;

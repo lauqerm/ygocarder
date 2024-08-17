@@ -21,7 +21,10 @@ export const FrameInfoBlock = ({
     labelBackgroundColorList,
     className,
 }: Omit<FrameInfo, 'edition' | 'labelColor'> & { className?: string }) => {
-    return <StyledFrameContainer className={className} $withPillar={!!(labelBackgroundColor || labelBackgroundColorList)}>
+    return <StyledFrameContainer
+        className={className}
+        $withPillar={!!(labelBackgroundColor || labelBackgroundColorList)}
+    >
         {labelBackgroundColorList
             ? <StyledFramePillar>
                 {labelBackgroundColorList.map(color => <div

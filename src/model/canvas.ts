@@ -1,9 +1,9 @@
 export type MasterDuelCanvas = {
     previewCanvas: React.RefObject<HTMLCanvasElement>,
-    drawCanvas: React.RefObject<HTMLCanvasElement>,
+    drawCanvasRef: React.RefObject<HTMLCanvasElement>,
     // artCanvas: React.RefObject<HTMLCanvasElement>,
     specialFrameCanvas: React.RefObject<HTMLCanvasElement>,
-    subFamilyCanvas: React.RefObject<HTMLCanvasElement>,
+    cardIconCanvas: React.RefObject<HTMLCanvasElement>,
     pendulumScaleCanvas: React.RefObject<HTMLCanvasElement>,
     pendulumEffectCanvas: React.RefObject<HTMLCanvasElement>,
     typeCanvas: React.RefObject<HTMLCanvasElement>,
@@ -12,10 +12,11 @@ export type MasterDuelCanvas = {
     attributeCanvas: React.RefObject<HTMLCanvasElement>,
     statCanvas: React.RefObject<HTMLCanvasElement>,
     setIdCanvas: React.RefObject<HTMLCanvasElement>,
-    passcodeCanvas: React.RefObject<HTMLCanvasElement>,
+    passwordCanvasRef: React.RefObject<HTMLCanvasElement>,
     creatorCanvas: React.RefObject<HTMLCanvasElement>,
     stickerCanvas: React.RefObject<HTMLCanvasElement>,
     finishCanvas: React.RefObject<HTMLCanvasElement>,
+    lightboxCanvas: React.RefObject<HTMLCanvasElement>,
 };
 
 /** Các thông số được làm tròn thay vì upscale để đảm bảo độ mịn */

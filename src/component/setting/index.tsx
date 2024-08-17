@@ -37,9 +37,9 @@ const StyledSettingButtonContainer = styled.div<{ $softMode?: boolean }>`
         }
     }
     &:hover {
-        color: var(--main-slider);
+        color: var(--main-active);
         .anticon-setting {
-            color: var(--sub-slider);
+            color: var(--sub-active);
         }
     }
 `;

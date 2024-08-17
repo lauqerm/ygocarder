@@ -1,6 +1,9 @@
 export {
-    CardInputPanel
+    CardInputPanel,
 } from './input-panel';
 export type {
-    CardInputPanelRef
+    CardInputPanelRef,
 } from './input-panel';
+export {
+    DownloadButton,
+} from './canvas-panel';

@@ -1,5 +1,5 @@
 import { Button, Drawer } from 'antd';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 import { BulbFilled } from '@ant-design/icons';
 import './formatting-guide.scss';
@@ -61,7 +61,7 @@ export const ImageWithCaption = ({
     </StyledImageWithCaptionContainer>;
 };
 
-export const FormattingHelpDrawer = () => {
+export const FormattingHelpDrawer = memo(() => {
     const [modalOpen, setDrawerOpen] = useState(false);
 
     return <>
@@ -85,7 +85,7 @@ export const FormattingHelpDrawer = () => {
                 <p>
                     Formatting should work out-of-the-box, but in case you need to fine-tune your cards, here are some additional formatting syntax.
                     <br />
-                    Only a few inputs support these additional syntaxes, such as Card Name, Card Text and Pendulum Card Text.
+                    The behavior may be differents base on the input.
                 </p>
                 <h2>Non-breakable line</h2>
                 Wrap a line of text inside a <StyledCode>{'['}</StyledCode> and <StyledCode>{']'}</StyledCode> to prevent the text from breaking down into multiple lines.
@@ -188,4 +188,4 @@ export const FormattingHelpDrawer = () => {
             Formatting Help <BulbFilled />
         </Button>
     </>;
-};
+});

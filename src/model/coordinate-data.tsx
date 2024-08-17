@@ -4,74 +4,37 @@ export type CoordinateData = {
     trueEdge: number,
 };
 
-export const monsterCoordinateData: Record<string, CoordinateData[]> = {
-    tcg: [
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-    ],
-    ocg: [
-        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
-    ],
-    'tcg-pendulum': [
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-    ],
-    'ocg-pendulum': [
-        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
-    ],
-};
-
-export const stCoordinateData: Record<string, CoordinateData[]> = {
-    tcg: [
-        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+export const EffectCoordinateData: Record<string, CoordinateData[]> = {
+    'tcg': [
         { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
     ],
-    ocg: [
+    'tcg-stat': [
+        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+    ],
+    'tcg-type-stat': [
+        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+    ],
+    'tcg-type': [
+        { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
+    ],
+    'ocg': [
         { trueWidth: 684, trueBaseline: 895.23, trueEdge: 64.8 },
     ],
-    'tcg-pendulum': [
-        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
-        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
-    ],
-    'ocg-pendulum': [
+    'ocg-stat': [
         { trueWidth: 684, trueBaseline: 891.23, trueEdge: 64.8 },
+    ],
+    'ocg-type-stat': [
+        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+    ],
+    'ocg-type': [
+        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
     ],
 };
 
-export const pendulumSizeList: CoordinateData[] = [
+export const PendulumEffectCoordinate: CoordinateData[] = [
     { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
     { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
 ];
-
-export const specialCoordinateData: Record<string, Record<string, CoordinateData[]>> = {
-    tcg: {
-        normal: [
-            { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
-        ],
-        pendulum: [
-            { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-            { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
-        ],
-    },
-    ocg: {
-        normal: [
-            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
-        ],
-        pendulum: [
-            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
-        ],
-    }
-};
 
 export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateData>> = {
     tcg: {

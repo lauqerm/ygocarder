@@ -1,5 +1,5 @@
 import { Checkbox, InputNumber, Slider } from 'antd';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react';
 import { CardOpacity, OpacityList, getDefaultCardOpacity } from 'src/model';
 
 export type OpacityPicker = {
@@ -10,7 +10,7 @@ export type OpacityPicker = {
 export type OpacityPickerRef = {
     setValue: (opacity: Partial<CardOpacity>) => void,
 };
-export const OpacityPicker = forwardRef<OpacityPickerRef, OpacityPicker>(({
+export const OpacityPicker = memo(forwardRef<OpacityPickerRef, OpacityPicker>(({
     defaultValue,
     isPendulum,
     onChange,
@@ -71,4 +71,4 @@ export const OpacityPicker = forwardRef<OpacityPickerRef, OpacityPicker>(({
             </div>;
         })}
     </div>;
-});
+}));

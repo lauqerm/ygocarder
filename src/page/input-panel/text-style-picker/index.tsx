@@ -1,8 +1,15 @@
-import { Checkbox, InputNumber, Popover, Slider, Tooltip } from 'antd';
+import { Checkbox, InputNumber, Popover, Slider } from 'antd';
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { PresetNameStyleList, PresetNameStyleMap, NameStyle, NameStyleType, PatternList, FrameInfo } from '../../../model';
+import {
+    PresetNameStyleList,
+    PresetNameStyleMap,
+    NameStyle,
+    NameStyleType,
+    PatternList,
+    FrameInfo,
+} from '../../../model';
 import PowerSlider from 'react-input-slider';
 import debounce from 'lodash.debounce';
 import { stringifyPalette, useRefresh } from 'src/util';
@@ -23,7 +30,6 @@ export type TextStylePickerRef = {
     setValue: (value: Partial<NameStyle>) => void,
 };
 export type TextStylePicker = {
-    defaultFont: string,
     frameInfo?: FrameInfo,
     defaultType: NameStyleType,
     defaultValue: Partial<NameStyle>,
@@ -31,7 +37,6 @@ export type TextStylePicker = {
     onChange: (type: NameStyleType, style: Partial<NameStyle>) => void,
 };
 export const TextStylePicker = React.memo(forwardRef(({
-    defaultFont,
     frameInfo,
     defaultType,
     defaultValue,
@@ -75,6 +80,7 @@ export const TextStylePicker = React.memo(forwardRef(({
         hasShadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY,
         hasGradient, gradientColor, gradientAngle,
         pattern,
+        font,
     } = value;
     const { labelBackgroundColor, labelBackgroundImage } = frameInfo ?? {};
     const patternStyle = {
@@ -104,23 +110,12 @@ export const TextStylePicker = React.memo(forwardRef(({
                     <label
                         className={`ant-radio-wrapper ${isStylePredefined ? 'ant-radio-wrapper-checked' : ''}`}
                         onClick={() => {
+                            const presetValue = value.preset
+                                ? PresetNameStyleMap[value.preset]?.value
+                                : {};
                             setType('predefined');
-                            const key = value.preset;
-                            setValue(cur => ({
-                                ...cur,
-                                preset: key,
-                                font: defaultFont,
-                                ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
-                            }));
-                            onChange(
-                                'predefined',
-                                {
-                                    ...value,
-                                    preset: key,
-                                    font: defaultFont,
-                                    ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
-                                },
-                            );
+                            setValue(cur => ({ ...cur, ...presetValue }));
+                            requestSendStyle();
                         }}
                     >
                         <Popover
@@ -133,27 +128,22 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             className={`preset-item ${value.preset === key && isStylePredefined ? 'menu-active' : ''}`}
                                             onClick={e => {
                                                 e.stopPropagation();
+                                                const presetValue = key
+                                                    ? PresetNameStyleMap[key]?.value
+                                                    : {};
                                                 setType('predefined');
-                                                setValue(cur => ({
-                                                    ...cur,
-                                                    preset: key,
-                                                    font: defaultFont,
-                                                    ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
-                                                }));
-                                                onChange(
-                                                    'predefined',
-                                                    {
-                                                        ...value,
-                                                        preset: key,
-                                                        font: defaultFont,
-                                                        ...PresetNameStyleMap[key as keyof typeof PresetNameStyleMap]?.value ?? {},
-                                                    },
-                                                );
+                                                setValue(cur => ({ ...cur, ...presetValue }));
+                                                requestSendStyle();
                                             }}
                                         >
-                                            <Tooltip title={label} placement="right">
-                                                <img className="preset-preview" src={`${process.env.PUBLIC_URL}/${image}`} alt={label} />
-                                            </Tooltip>
+                                            {/** Tooltip currently is not really helpful, and gives poor UX */}
+                                            {/* <Tooltip title={label} placement="right"> */}
+                                            <img
+                                                className="preset-preview"
+                                                src={`${process.env.PUBLIC_URL}/${image}`}
+                                                alt={label}
+                                            />
+                                            {/* </Tooltip> */}
                                         </StyledPredefinedOption>;
                                     })}
                                 </StyledPredefinedContainer>
@@ -246,30 +236,32 @@ export const TextStylePicker = React.memo(forwardRef(({
                                                     y={shadowOffsetY ?? 0}
                                                     onChange={({ x, y }) => {
                                                         setValue(cur => {
-                                                            const newStyle = {
+                                                            return {
                                                                 ...cur,
                                                                 shadowOffsetX: x,
                                                                 shadowOffsetY: y,
                                                             };
-
-                                                            return newStyle;
                                                         });
                                                         requestSendStyle();
                                                     }} />
                                                 <div className="single-slider">
-                                                    X Offset: <InputNumber size="small" value={shadowOffsetX} onChange={setCustomValue('shadowOffsetX')} />
+                                                    X Offset: <InputNumber
+                                                        size="small"
+                                                        value={shadowOffsetX}
+                                                        onChange={setCustomValue('shadowOffsetX')}
+                                                    />
                                                 </div>
                                                 <div className="single-slider">
-                                                    Y Offset: <InputNumber size="small" value={shadowOffsetY} onChange={setCustomValue('shadowOffsetY')} />
+                                                    Y Offset: <InputNumber
+                                                        size="small"
+                                                        value={shadowOffsetY}
+                                                        onChange={setCustomValue('shadowOffsetY')}
+                                                    />
                                                 </div>
                                                 <div className="single-slider">
                                                     Blur: <Slider value={shadowBlur} min={0} max={10} onChange={(value: number) => {
                                                         if (typeof value === 'number') {
-                                                            setValue(cur => {
-                                                                const newStyle = { ...cur, shadowBlur: value };
-
-                                                                return newStyle;
-                                                            });
+                                                            setValue(cur => ({ ...cur, shadowBlur: value }));
                                                             requestSendStyle();
                                                         }
                                                     }} />
@@ -421,7 +413,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 overlayClassName="input-overlay pattern-picker-overlay"
                                 content={<div className="overlay-event-absorber">
                                     <StyledPatternContainer onClick={e => e.stopPropagation()}>
-                                        <div className="alert">Will disable shadow and gradient</div>
+                                        <div className="alert">Pattern will disable shadow and gradient</div>
                                         {PatternList.map(({ key, patternImage }) => {
                                             return <StyledPatternOption key={key}
                                                 className={[
@@ -465,7 +457,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                     <StyledDropdown.Container>
                                         {NameFontOptionList.map(({ value: fontValue, label }) => {
                                             return <StyledDropdown.Option key={fontValue}
-                                                className={value.font === fontValue ? 'menu-active' : ''}
+                                                className={font === fontValue ? 'menu-active' : ''}
                                                 onClick={() => {
                                                     setValue(cur => ({ ...cur, font: fontValue }));
                                                     requestSendStyle();
@@ -490,6 +482,5 @@ export const TextStylePicker = React.memo(forwardRef(({
     </div>;
 }), (l, r) => {
     return l.frameInfo === r.frameInfo
-        && l.defaultFont === r.defaultFont
         && l.showExtraDecorativeOption === r.showExtraDecorativeOption;
 });
