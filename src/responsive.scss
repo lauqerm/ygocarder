@@ -4,7 +4,7 @@
 		padding-bottom: 20px;
 		.card-info-panel {
 			min-height: 100vh;
-			.two-column-input-group {
+			.post-pendulum-input {
 				grid-template-areas:
 					"type-input type-input"
 					"condense-input condense-input"
@@ -51,7 +51,7 @@
 @media only screen and (max-width: 1368px) {
 	#app {
 		.card-info-panel {
-			.two-column-input-group {
+			.post-pendulum-input {
 				grid-template-areas:
 					"type-input input-helper"
 					"condense-input help-button";
@@ -70,11 +70,13 @@
 			flex: 0 0 500px;
 		}
 		.name-color-input .ant-radio-group label {
-			display: block;
 			.ant-radio-label {
 				display: inline-block;
-				width: 100%;
 			}
+		}
+		.name-style-option-break {
+			display: block;
+			width: 100%;
 		}
 		.password-input,
 		.checkbox-input {
@@ -82,9 +84,11 @@
 		}
 		.name-color-input {
 			.style-picker {
+				display: flex;
+				margin-top: 5px;
 				flex-wrap: wrap;
-				row-gap: 5px;
-				column-gap: 5px;
+				row-gap: 0.5rem;
+				column-gap: 0.5rem;
 			}
 			.anticon-caret-down,
 			.anticon-caret-up {
@@ -96,7 +100,7 @@
 			}
 		}
 		.card-info-panel {
-			margin-left: 10px;
+			margin-left: var(--spacing);
 			border-left: 1px solid var(--main-level-4);
 			.main-info {
 				flex-wrap: wrap;
@@ -162,7 +166,7 @@
 					align-self: self-end;
 				}
 			}
-			.image-input-train label span:nth-child(2) {
+			.fill-input-train label span:nth-child(2) {
 				width: 0;
 			}
 		}
@@ -194,12 +198,20 @@
 			}
 		}
 	}
+	.app-header .app-description .app-contribution {
+		.template-creator,
+		.app-creator {
+			grid-column: -1 / 1;
+			white-space: normal;
+			margin-bottom: 2px;
+		}
+	}
 }
 
 @media only screen and (max-width: 1024px) {
 	#app {
 		.card-info-panel {
-			.two-column-input-group {
+			.post-pendulum-input {
 				grid-template-areas:
 					"type-input type-input"
 					"condense-input condense-input"
@@ -230,19 +242,12 @@
 			margin: 0;
 		}
 	}
-	.app-header .app-description .app-contribution {
-		.template-creator,
-		.app-creator {
-			grid-column: -1 / 1;
-			white-space: normal;
-		}
-	}
 }
 
 @media only screen and (max-width: 860px) {
 	#app {
 		.card-info-panel {
-			.two-column-input-group {
+			.post-pendulum-input {
 				grid-template-areas:
 					"type-input input-helper"
 					"condense-input help-button";
@@ -265,7 +270,7 @@
 			border-radius: 3px 0 3px 3px;
 		}
 		.affiliation {
-			right: 10px;
+			right: var(--spacing);
 			border-radius: 0 3px;
 			transform: translateY(-100%);
 			border-radius: 3px 3px 0 0;
@@ -293,8 +298,8 @@
 		}
 		.card-preview-panel {
 			min-height: unset;
-			.export-button {
-				padding-right: 10px;
+			.data-button-panel {
+				padding-right: var(--spacing);
 			}
 		}
 		.card-info-panel {

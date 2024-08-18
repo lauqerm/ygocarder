@@ -10,16 +10,17 @@
     --sub-slider: #ccccff;
     --main-primary: #6363ad;
     --sub-primary: #7777d4;
+    --main-secondary: #8b8bc6;
     --sub-secondary: #8a8ac6;
     --main-tertiary: #555599;
     --sub-tertiary: #5555a9;
-    // .export-button .save-button {
+    // .data-button-panel .save-button {
     //     animation: none;
     // }
     .icon-button {
         border: 1px solid var(--main-level-4);
     }
-    .export-button .save-button {
+    .data-button-panel .save-button {
         background: linear-gradient(135deg, #6363ad 0%, #8888a9 50%, #6363ad 100%);
         animation: none;
         &:hover {
@@ -30,18 +31,22 @@
         --main-active: #7272ff;
     }
     .card-info-panel .pendulum-frame-input {
-        .frame-info-block,
         .pendulum-frame-label {
             border-color: var(--main-level-4);
         }
         .frame-info-block {
-            border-left-color: var(--sub-level-1);
+            border: none;
+            border-left: 1px solid var(--sub-level-1);
         }
+		.frame-info-block-label {
+			border: 1px solid var(--main-level-4);
+			border-left: none;
+		}
     }
     .radio-train.format-radio {
         .ant-radio-button-wrapper-checked {
             &.ocg-button {
-                color: #ff4d4f;
+                color: var(--main-red-scale);
                 background-color: var(--main-level-1-active);
                 border-color: var(--main-active);
                 &:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
@@ -51,30 +56,30 @@
                     border-color: var(--main-active);
                 }
                 &:hover {
-                    color: #ff6f6f;
+                    color: var(--sub-red-scale);
                     background-color: var(--main-level-1-active);
                 }
             }
             &.tcg-button {
-                color: #096dd9;
+                color: var(--main-blue-scale);
                 background-color: var(--main-level-1-active);
                 border-color: var(--main-active);
                 &:hover {
-                    color: #3b9dff;
+                    color: var(--sub-blue-scale);
                     background-color: var(--main-level-1-active);
                 }
             }
         }
         .ocg-button {
-            color: #ff4d4f;
+            color: var(--main-red-scale);
             &:hover {
-                color: #ff6f6f;
+                color: var(--sub-red-scale);
             }
         }
         .tcg-button {
-            color: #096dd9;
+            color: var(--main-blue-scale);
             &:hover {
-                color: #3b9dff;
+                color: var(--sub-blue-scale);
             }
         }
     }

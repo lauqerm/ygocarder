@@ -2,7 +2,6 @@ import { frameList, IconList, AttributeList, StickerList, FoilList, CondenseTole
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import './input-panel.scss';
 
 export const FormatButtonList = [
     {

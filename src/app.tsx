@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import 'antd/dist/antd.css';
 import './app.scss';
+import './style/index.scss';
 import './responsive.scss';
 import './reduce-color-motion.scss';
 import {
@@ -19,6 +20,12 @@ import { TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import {
+    StyledAppLoading,
+    StyledByMe,
+    StyledCardCanvasGroupContainer,
+    StyledDataButtonPanelContainer,
+} from './app.styled';
 
 const ErrorAlert = styled.span`
     color: var(--main-danger);
@@ -28,8 +35,8 @@ const OverlayButton = styled.div`
     z-index: 101;
     background: var(--main-primary);
     border-color: var(--main-active);
-    color: var(--color-contrast);
-    padding: 10px;
+    color: var(--color-heavy);
+    padding: var(--spacing);
     line-height: 1;
     font-size: 30px;
     text-align: center;
@@ -218,17 +225,22 @@ function App() {
             }}
         >
             {ocgStyleFile && <link rel="stylesheet" type="text/css" href={ocgStyleFile} />}
-            <div className={'app-container'}>
-                {isInitializing && <div className="full-loading">
+            <div
+                className={'app-container'}
+                style={{
+                    backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/dark-denim-3.png")`,
+                }}
+            >
+                {isInitializing && <StyledAppLoading className="app-loading">
                     {error.length > 0
                         ? <ErrorAlert>
                             {error}
                         </ErrorAlert>
                         : 'Loading fonts and scripts...'}
-                </div>}
+                </StyledAppLoading>}
                 {/* <div className="card-filter-panel"></div> */}
                 <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
-                    <div className="export-button">
+                    <StyledDataButtonPanelContainer className="data-button-panel">
                         <div className="imexport">
                             <button onClick={() => {
                                 if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
@@ -261,9 +273,9 @@ function App() {
                             : <div id="save-button-tainted" className="save-button-container">
                                 <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
                             </div>}
-                    </div>
+                    </StyledDataButtonPanelContainer>
                     <div className="card-canvas-container">
-                        <div className="card-canvas-group">
+                        <StyledCardCanvasGroupContainer className="card-canvas-group">
                             <Tooltip title="Reset">
                                 <ResetButton className="reset-button" onClick={() => {
                                     const consent = window.confirm('This will reset your card information back to default, make sure you export the current data first!');
@@ -289,6 +301,7 @@ function App() {
                                 </LightboxButton>
                             </Tooltip>
                             <canvas id="export-canvas" key={canvasKey + 0.1} ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            {/** Overlay guarding seems very janky, cursor should suffix for now */}
                             <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                 {/* <div className="canvas-guard-alert">Generating...</div> */}
                             </div>
@@ -308,7 +321,7 @@ function App() {
                             <canvas id="sticker" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="finish" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas className="crop-canvas" ref={previewCanvasRef} />
-                        </div>
+                        </StyledCardCanvasGroupContainer>
                     </div>
                 </div>
                 {isInitializing === false && <CardInputPanel
@@ -335,7 +348,7 @@ function App() {
                     height={CanvasHeight}
                 />
             </Modal>
-            <div className="by-me">Made by Lauqerm</div>
+            <StyledByMe className="by-me">Made by Lauqerm</StyledByMe>
         </div>
     );
 }

@@ -63,11 +63,11 @@ const WrappedColorPicker = forwardRef(({
                 default: {
                     picker: {
                         color: '#000000',
-                        background: '#4e4e53',
+                        background: 'var(--main-level-3)',
                         boxShadow: 'none',
                     },
                     body: {
-                        padding: '10px 10px',
+                        padding: 'var(--spacing) var(--spacing)',
                     }
                 },
             }}

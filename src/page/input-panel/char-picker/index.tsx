@@ -2,7 +2,6 @@
 // import Moveable from 'react-moveable';
 // import { EllipsisOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
-import './char-picker.scss';
 
 export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
     //IE support
@@ -42,52 +41,53 @@ export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
 }
 
 const StyledCharPickerContainer = styled.div`
-	z-index: 10;
-	.char-picker {
-		z-index: 1;
-		display: grid;
+    z-index: 10;
+    .char-picker {
+        z-index: 1;
+        display: grid;
         grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-		.handler,
-		.ant-btn {
-			background-color: #4a4a4d;
-			color: #ffffffcc;
-			text-shadow: 0 1px #222;
-			font-family: Segoe UI Symbol, sans-serif;
-			border: 1px solid var(--sub-level-1);
-			border-radius: 0;
-			padding: 0 10px;
-			height: 25px;
-			+ .ant-btn {
-				border-left-width: 0;
-			}
-			&:hover {
-				background-color: #585863;
-			}
-			&:first-child {
-				border-radius: 3px 0 0 3px;
-			}
-			&:last-child {
-				border-radius: 0 3px 3px 0;
-			}
-		}
-		.handler {
-			cursor: grabbing;
-			background-color: #585863;
-			height: unset;
-			font-size: 20px;
-			height: 20px;
-			line-height: 1;
-			padding: 0;
-			text-align: center;
-		}
-	}
-	.moveable-control-box {
-		.moveable-control.moveable-origin,
-		.moveable-line.moveable-direction {
-			border-color: transparent;
-			background: none;
-		}
-	}
+        .handler,
+        .ant-btn {
+            background-color: var(--main-level-1);
+            color: var(--color-heavy);
+            text-shadow: 0 1px #222;
+            font-family: Segoe UI Symbol, sans-serif;
+            border: 1px solid var(--sub-level-1);
+            border-radius: 0;
+            padding: 0 var(--spacing);
+            height: 25px;
+            + .ant-btn {
+                border-left-width: 0;
+            }
+            &:hover {
+                color: var(--main-active);
+            }
+            &:first-child {
+                border-radius: 3px 0 0 3px;
+            }
+            &:last-child {
+                border-radius: 0 3px 3px 0;
+            }
+        }
+        /** Currently char picker no longer movable */
+        /* .handler {
+            cursor: grabbing;
+            background-color: var(--main-level-2);
+            height: unset;
+            font-size: 20px;
+            height: 20px;
+            line-height: 1;
+            padding: 0;
+            text-align: center;
+        } */
+    }
+    .moveable-control-box {
+        .moveable-control.moveable-origin,
+        .moveable-line.moveable-direction {
+            border-color: transparent;
+            background: none;
+        }
+    }
 `;
 
 /** The dragging experience is not good. Currently turn it off for now and glue it into effect's textarea. */

@@ -7,7 +7,7 @@
         box-shadow: 0 0 0px 3px #ffffffaa;
     }
     .stop-color-picker-container {
-        padding: 10px;
+        padding: var(--spacing);
     }
     .chrome-picker {
         input {
@@ -28,7 +28,7 @@
     }
     .angle-picker-container {
         .ap {
-            background-color: #eeeeee;
+            background-color: var(--color-heavy);
             .apc {
                 width: 8px;
             }
@@ -44,20 +44,20 @@
             justify-content: space-between;
             line-height: 1.4;
             span {
-                background: var(--sub-secondary);
-                padding-left: 10px;
-                padding-right: 10px;
+                background: var(--main-secondary);
+                padding-left: var(--spacing);
+                padding-right: var(--spacing);
                 &:hover {
-                    background: #0c8ac6;
+                    background: var(--sub-secondary);
                 }
             }
             span, input {
-                color: #ffffffcc;
+                color: var(--color-heavy);
             }
         }
     }
     .stop-point-control-panel {
-        color: #ffffffcc;
+        color: var(--color-heavy);
         text-align: right;
         display: flex;
         flex-direction: column;
@@ -67,12 +67,12 @@
         }
         .ant-btn.remove-stop-color {
             font-size: 12px;
-            color: #ffffffcc;
-            background: #c95e5e;
-            border: 1px solid #e95e5e;
+            color: var(--color-heavy);
+            background: var(--main-danger);
+            border: 1px solid var(--sub-danger);
             margin-left: 5px;
             &:hover {
-                background-color: #e95e5e;
+                background-color: var(--sub-danger);
                 box-shadow: none;
             }
         }
@@ -80,7 +80,7 @@
     .ant-btn.add-stop-color {
         width: 100%;
         font-size: 12px;
-        color: #ffffffcc;
+        color: var(--color-heavy);
         background: var(--main-tertiary);
         border: 1px solid var(--sub-tertiary);
         margin: 3px 0; // Alignment

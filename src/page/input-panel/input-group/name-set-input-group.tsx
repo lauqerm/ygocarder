@@ -6,6 +6,23 @@ import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { SyncOutlined } from '@ant-design/icons';
 import { normalizedCardName, randomSetID } from 'src/util';
+import { StyledInputLabelWithButton } from '../input-panel.styled';
+import styled from 'styled-components';
+
+const StyledNameInputContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    .name-input {
+        flex: 3;
+        min-width: 400px;
+    }
+    .set-id-input {
+        flex: 1;
+        min-width: 250px;
+    }
+`;
 
 export type NameSetInputGroupRef = {
     setValue: (value: { name?: string, setId?: string }) => void,
@@ -42,7 +59,7 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
         }
     }));
 
-    return <div className="name-id-input">
+    return <StyledNameInputContainer className="name-id-input">
         <CardTextInput ref={nameInputRef}
             id="name"
             defaultValue={name}
@@ -59,7 +76,7 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
         <CardTextInput ref={setIdInputRef}
             id="set-id"
             defaultValue={useCard.getState().card.setId}
-            addonBefore={<div className="input-label-with-button">
+            addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
                 <div className="input-label">Set ID</div>
                 <IconButton
                     containerProps={{
@@ -68,9 +85,9 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
                     Icon={SyncOutlined}
                     tooltipProps={{ overlay: 'Randomize' }}
                 />
-            </div>}
+            </StyledInputLabelWithButton>}
             onChange={changeSetId}
             onTakePicker={onTakePicker}
         />
-    </div>;
+    </StyledNameInputContainer>;
 });

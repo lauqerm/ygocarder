@@ -5,4 +5,3 @@ export * from './image-input-group';
 export * from './name-set-input-group';
 export * from './pendulum-input-group';
 export * from './post-pendulum-input-group';
-export * from './stat-input-group';

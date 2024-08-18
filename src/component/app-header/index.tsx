@@ -1,11 +1,10 @@
-import { memo } from 'react';
 import { GithubFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import './app-header.scss';
 
-export const Affiliation = memo(() => {
+export const Affiliation = () => {
     return <div className="affiliation">
         <span className="version">v{process.env.REACT_APP_VERSION ?? 'unknown'}</span>
         <div className="affiliation-link">
@@ -14,15 +13,15 @@ export const Affiliation = memo(() => {
             </a>
         </div>
     </div>;
-});
+};
 
 const StyledAppSettingContainer = styled.div`
     align-content: center;
     border-left: 1px dashed #b1b1b1;
-    padding-left: 10px;
-    margin-left: 10px;
+    padding-left: var(--spacing);
+    margin-left: var(--spacing);
 `;
-export const AppHeader = memo(() => {
+export const AppHeader = () => {
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
         <div className="app-description">
@@ -70,7 +69,7 @@ export const AppHeader = memo(() => {
             <SettingButton />
         </StyledAppSettingContainer>
     </div>;
-}, () => true);
+};
 
 export const TaintedCanvasWarning = <Explanation
     overlayClassName="disclaimer-overlay"

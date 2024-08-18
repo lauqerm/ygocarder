@@ -4,10 +4,12 @@ import styled from 'styled-components';
 export const StyledPickerButton = styled.div<{ $active?: boolean, $softMode: boolean }>`
     background-color: var(--main-level-4);
     ${({ $active }) => $active ? 'border: 1px solid var(--main-active);' : 'border: 1px solid var(--sub-level-1);'}
-	padding: 1px 4px;
-	margin: -2px 0;
-	margin-left: 5px;
-	border-radius: 4px;
+    padding: 1px 4px;
+    margin: -2px 0;
+    border-radius: 4px;
+    box-shadow: 0 0 2px 0 #333;
+    color: var(--color-heavy);
+    cursor: pointer;
     ${({ $softMode, $active }) => {
         return $softMode
             ? `
@@ -18,9 +20,9 @@ export const StyledPickerButton = styled.div<{ $active?: boolean, $softMode: boo
                 box-shadow: 0 0 2px 0 #333;
             `;
     }}
-	&:hover {
-		background-color: var(--sub-level-4);
-	}
+    &:hover {
+        background-color: var(--sub-level-4);
+    }
 `;
 
 export const StyledPatternContainer = styled(StyledDropdown.Container)`
@@ -61,7 +63,7 @@ export const StyledPatternOption = styled.div`
     }
     img {
         max-width: 100%;
-        border: 1px solid #222222;
+        border: 1px solid var(--sub-level-1);
     }
 `;
 

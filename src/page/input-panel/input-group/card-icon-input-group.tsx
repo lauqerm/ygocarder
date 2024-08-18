@@ -55,40 +55,42 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
             : 'st'
         ]
         : IconTypeMap[cardIcon];
+    const IconDropdownLabel = showCreativeOption
+        ? <>{iconTypeData.label} <CaretDownOutlined /></>
+        : iconTypeData.label;
     const IconDropdown = <Popover key="icon-type-picker"
         trigger={['click']}
         overlayClassName="input-overlay pattern-picker-overlay"
-        content={showCreativeOption
-            ? <div className="overlay-event-absorber">
-                <StyledDropdown.Container>
-                    {IconTypeList.map(({ fullLabel, value }) => {
-                        return <StyledDropdown.Option key={value}
-                            className={value === cardIcon ? 'menu-active' : ''}
-                            onClick={() => changeCardIcon(value)}
-                        >
-                            {fullLabel}
-                        </StyledDropdown.Option>;
-                    })}
-                </StyledDropdown.Container>
-            </div>
-            : null}
+        content={<div className="overlay-event-absorber">
+            <StyledDropdown.Container>
+                {IconTypeList.map(({ fullLabel, value }) => {
+                    return <StyledDropdown.Option key={value}
+                        className={value === cardIcon ? 'menu-active' : ''}
+                        onClick={() => changeCardIcon(value)}
+                    >
+                        {fullLabel}
+                    </StyledDropdown.Option>;
+                })}
+            </StyledDropdown.Container>
+        </div>}
         placement="bottomRight"
     >
         <span
-            className={`card-icon-dropdown ${cardIcon === 'auto' ? '' : 'active'}`}
+            className={`card-icon-dropdown ${cardIcon === 'auto' ? '' : 'active'} ${showCreativeOption ? '' : 'disabled'}`}
         >
-            {showCreativeOption
-                ? <>{iconTypeData.label} <CaretDownOutlined /></>
-                : iconTypeData.label}
+            {IconDropdownLabel}
         </span>
     </Popover>;
+    const DropdownChildren = showCreativeOption
+        ? IconDropdown
+        : IconDropdownLabel;
     return !isLink
         ? iconTypeData.value === 'st'
             ? <RadioTrain value={subFamily} onChange={changeSubFamily} optionList={STIconButtonList}>
-                {IconDropdown}
+                {DropdownChildren}
             </RadioTrain>
             : <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={changeStar} optionList={StarButtonList}>
-                {IconDropdown}
+                {DropdownChildren}
             </RadioTrain>
         : null;
 });

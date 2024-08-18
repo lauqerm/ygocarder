@@ -9,6 +9,73 @@ import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'reac
 import { FrameInfoMap } from 'src/model';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { getFrameButtonList } from '../const';
+import styled from 'styled-components';
+
+const StyledPendulumFrameInputContainer = styled.div`
+    display: inline-flex;
+    cursor: pointer;
+    box-shadow: var(--bs-input);
+    vertical-align: bottom;
+    box-shadow: 0 0 2px 0 #333;
+    border-radius: 4px;
+    .frame-info-block {
+        border-radius: 0 4px 4px 0;
+        line-height: 1.25;
+        background-color: var(--main-level-4);
+        min-width: 100px;
+        overflow: hidden;
+        border: 1px solid var(--sub-level-1);
+    }
+    .pendulum-frame-label {
+        display: inline-block;
+        background: var(--main-level-4);
+        border: 1px solid var(--sub-level-1);
+        border-right: none;
+        padding: 1px 5px;
+        border-radius: 4px 0 0 4px;
+        line-height: 1.25;
+        &:last-child {
+            border-radius: 4px;
+            border-right: 1px solid var(--sub-level-1);
+        }
+    }
+`;
+const StyledPendulumInputContainer = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
+    .joined-row {
+        grid-column: span 2;
+        .standalone-label {
+            min-width: 0;
+            width: unset;
+            padding-left: 11px;
+        }
+        .pendulum-checkbox {
+            /** Alignment **/
+            width: 95px;
+            text-align: right;
+            > span {
+                padding-right: 0;
+            }
+        }
+        .pendulum-checkbox-placeholder {
+            display: inline-block;
+            /** Alignment **/
+            width: 105px;
+        }
+        .pendulum-frame-input {
+            margin-right: 1rem;
+        }
+        .ant-checkbox-wrapper {
+            margin-right: var(--spacing);
+        }
+        .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+            margin-left: 0;
+        }
+    }
+`;
 
 export type PendulumInputGroupRef = {
     setValue: (value: { pendulumEffect?: string }) => void,
@@ -92,7 +159,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     }));
 
     const currentPendulumFrame = FrameInfoMap[pendulumFrame];
-    return <div className="pendulum-container">
+    return <StyledPendulumInputContainer className="pendulum-input">
         <div className="joined-row pendulum-option">
             {frame !== 'link'
                 ? <Checkbox
@@ -124,12 +191,12 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     </StyledPendulumFrameContainer>
                 </div>}
             >
-                <div className="pendulum-frame-input">
+                <StyledPendulumFrameInputContainer className="pendulum-frame-input">
                     <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
                     {currentPendulumFrame
                         ? <FrameInfoBlock className="frame-info-block" {...currentPendulumFrame} />
                         : <FrameInfoBlock className="frame-info-block" name="Auto" />}
-                </div>
+                </StyledPendulumFrameInputContainer>
             </Popover>}
             {(isPendulum && showCreativeOption)
                 && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
@@ -138,7 +205,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             <div>
                 <Input
                     addonBefore={<span>
-                        <span style={{ color: 'var(--main-blue-scale)' }}>Blue</span> Scale
+                        <span style={{ color: 'var(--sub-blue-scale)' }}>Blue</span> Scale
                     </span>}
                     value={pendulumScaleBlue}
                     onChange={e => {
@@ -149,7 +216,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             <div>
                 <Input
                     addonBefore={<span>
-                        <span style={{ color: 'var(--main-red-scale)' }}>Red</span> Scale
+                        <span style={{ color: 'var(--sub-red-scale)' }}>Red</span> Scale
                     </span>}
                     value={pendulumScaleRed}
                     onChange={e => {
@@ -171,5 +238,5 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 />
             </div>
         </>}
-    </div>;
+    </StyledPendulumInputContainer>;
 });

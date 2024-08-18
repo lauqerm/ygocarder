@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Checkbox } from 'antd';
 import { useCard } from '../../service';
 import styled from 'styled-components';
@@ -13,7 +13,7 @@ const StyledCheckboxGroup = styled.div`
 `;
 
 export type CardCheckboxGroup = {};
-export const CardCheckboxGroup = memo((_: CardCheckboxGroup) => {
+export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
     const {
         isDuelTerminalCard,
         isFirstEdition,
@@ -74,4 +74,4 @@ export const CardCheckboxGroup = memo((_: CardCheckboxGroup) => {
             {'Duel Terminal'}
         </Checkbox>
     </StyledCheckboxGroup>;
-});
+};

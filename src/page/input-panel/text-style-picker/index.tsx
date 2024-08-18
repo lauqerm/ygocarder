@@ -54,7 +54,10 @@ export const TextStylePicker = memo(forwardRef(({
     const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
 
     useEffect(() => {
-        if (sendCustomStyleSignal !== 0) onChange('custom', value);
+        if (sendCustomStyleSignal !== 0) {
+            setType('custom');
+            onChange('custom', value);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sendCustomStyleSignal]);
 
@@ -113,6 +116,7 @@ export const TextStylePicker = memo(forwardRef(({
                         </span>
                         <span className="ant-radio-label">Auto</span>
                     </label>
+                    <span className="name-style-option-break" />
                     <label
                         className={`ant-radio-wrapper ${isStylePredefined ? 'ant-radio-wrapper-checked' : ''}`}
                         onClick={() => {
@@ -164,6 +168,7 @@ export const TextStylePicker = memo(forwardRef(({
                             </span>
                         </Popover>
                     </label>
+                    <span className="name-style-option-break" />
                     <label
                         className={`ant-radio-wrapper ${type === 'custom' ? 'ant-radio-wrapper-checked' : ''}`}
                         onClick={() => {
@@ -171,235 +176,237 @@ export const TextStylePicker = memo(forwardRef(({
                             if (type !== 'custom') onChange('custom', value);
                         }}
                     >
-                        <span className={`ant-radio ${type === 'custom' ? 'ant-radio-checked' : ''}`}>
-                            <input type="radio" className="ant-radio-input" value="custom" />
-                            <span className="ant-radio-inner" />
+                        <span>
+                            <span className={`ant-radio ${type === 'custom' ? 'ant-radio-checked' : ''}`}>
+                                <input type="radio" className="ant-radio-input" value="custom" />
+                                <span className="ant-radio-inner" />
+                            </span>
+                            <span className="ant-radio-label ant-radio-label-custom">Custom</span>
                         </span>
-                        <div className="style-picker">
-                            <span className="ant-radio-label">Custom</span>
-                            <Popover key="color-picker"
-                                trigger={['click']}
-                                overlayClassName="input-overlay style-picker-overlay"
-                                content={<div className="overlay-event-absorber">
-                                    <div className={'custom-style-picker'}>
-                                        <div className="custom-style-text">
-                                            <h3>Text Color</h3>
-                                            <CompactPicker color={fillStyle} onChangeComplete={color => {
-                                                setType('custom');
-                                                setValue(cur => ({ ...cur, fillStyle: color.hex }));
-                                                customStyleSignal();
-                                            }} />
-                                        </div>
-                                        <hr />
-                                        <div className="custom-style-text">
-                                            <h3>Ruby Color (<small>Japanese Furigana</small>)</h3>
-                                            <CompactPicker color={headTextFillStyle} onChangeComplete={color => {
-                                                setType('custom');
-                                                setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
-                                                customStyleSignal();
-                                            }} />
-                                        </div>
-                                    </div>
-                                </div>}
-                                placement="bottom"
-                            >
-                                <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown color-picker-dropdown">
-                                    Color <CaretDownOutlined />
-                                </StyledPickerButton>
-                            </Popover>
-                            {showExtraDecorativeOption && <Popover key="shadow-picker"
-                                trigger={['click']}
-                                overlayClassName="input-overlay style-picker-overlay"
-                                content={<div className="overlay-event-absorber">
-                                    <div className={'custom-style-picker'}>
-                                        <h3 className="custom-style-expand">
-                                            <Checkbox value={'has-shadow'} checked={hasShadow} onChange={() => {
-                                                setType('custom');
-                                                setValue(cur => ({ ...cur, hasShadow: !cur.hasShadow }));
-                                                customStyleSignal();
-                                            }}>Has Shadow?</Checkbox>
-                                        </h3>
-                                        {hasShadow && <GridSliderInput ref={shadowPickeRef}
-                                            className="custom-style-shadow"
-                                            fieldMap={{
-                                                color: 'shadowColor',
-                                                width: 'shadowBlur',
-                                                x: 'shadowOffsetX',
-                                                y: 'shadowOffsetY',
-                                            }}
-                                            labelMap={{
-                                                shadowBlur: 'Blur',
-                                            }}
-                                            defaultValue={value}
-                                            onChange={({ color, width, x, y }) => {
-                                                setValue(cur => ({
-                                                    ...cur,
-                                                    shadowBlur: width,
-                                                    shadowColor: color,
-                                                    shadowOffsetX: x,
-                                                    shadowOffsetY: y,
-                                                }));
-                                                customStyleSignal();
-                                            }}
-                                        />}
-                                    </div>
-                                </div>}
-                                placement="bottom"
-                            >
-                                <StyledPickerButton
-                                    $softMode={reduceColorMotion}
-                                    $active={isStyleCustom && hasShadow}
-                                    className="picker-dropdown shadow-picker-dropdown"
-                                >
-                                    Shadow <CaretDownOutlined />
-                                </StyledPickerButton>
-                            </Popover>}
-                            <Popover key="outline-picker"
-                                trigger={['click']}
-                                overlayClassName="input-overlay style-picker-overlay"
-                                content={<div className="overlay-event-absorber">
-                                    <div className={'custom-style-picker'}>
-                                        <h3 className="custom-style-expand">
-                                            <Checkbox value={'has-line'} checked={hasOutline} onChange={() => {
-                                                setType('custom');
-                                                setValue(cur => ({ ...cur, hasOutline: !cur.hasOutline }));
-                                                customStyleSignal();
-                                            }}>Has outline?</Checkbox>
-                                        </h3>
-                                        {hasOutline && <GridSliderInput ref={outlinePickeRef}
-                                            className="custom-style-line"
-                                            fieldMap={{
-                                                color: 'lineColor',
-                                                width: 'lineWidth',
-                                                x: 'lineOffsetX',
-                                                y: 'lineOffsetY',
-                                            }}
-                                            labelMap={{
-                                                lineWidth: 'Thickness',
-                                            }}
-                                            defaultValue={value}
-                                            onChange={({ color, width, x, y }) => {
-                                                setValue(cur => ({
-                                                    ...cur,
-                                                    lineBlur: width,
-                                                    lineColor: color,
-                                                    lineOffsetX: x,
-                                                    lineOffsetY: y,
-                                                }));
-                                                customStyleSignal();
-                                            }}
-                                        />}
-                                    </div>
-                                </div>}
-                                placement="bottom"
-                            >
-                                <StyledPickerButton
-                                    $softMode={reduceColorMotion}
-                                    $active={isStyleCustom && hasOutline}
-                                    className="picker-dropdown outline-picker-dropdown"
-                                >
-                                    Outline <CaretDownOutlined />
-                                </StyledPickerButton>
-                            </Popover>
-                            {showExtraDecorativeOption && <Popover key="gradient-picker"
-                                trigger={['click']}
-                                overlayClassName="input-overlay style-picker-overlay"
-                                content={<div className="overlay-event-absorber">
-                                    <div className={'custom-style-picker'}>
-                                        <h3 className="custom-style-expand">
-                                            <Checkbox value={'has-gradient'} checked={hasGradient} onChange={() => {
-                                                setType('custom');
-                                                setValue(cur => ({ ...cur, hasGradient: !cur.hasGradient }));
-                                                customStyleSignal();
-                                            }}>Has gradient?</Checkbox>
-                                        </h3>
-                                        {hasGradient && <div className="custom-style-gradient">
-                                            <TextGradientPicker
-                                                angle={gradientAngle}
-                                                palette={gradientColor}
-                                                memoizedOnChange={memoizedOnGradientChange}
-                                            />
-                                        </div>}
-                                    </div>
-                                </div>}
-                                placement="bottom"
-                            >
-                                <StyledPickerButton
-                                    $softMode={reduceColorMotion}
-                                    $active={isStyleCustom && hasGradient}
-                                    className="picker-dropdown gradient-picker-dropdown"
-                                >
-                                    Gradient <CaretDownOutlined />
-                                </StyledPickerButton>
-                            </Popover>}
-                            {showExtraDecorativeOption && <Popover key="pattern-picker"
-                                trigger={['click']}
-                                overlayClassName="input-overlay pattern-picker-overlay"
-                                content={<div className="overlay-event-absorber">
-                                    <StyledPatternContainer onClick={e => e.stopPropagation()}>
-                                        <div className="alert">Pattern will disable shadow and gradient</div>
-                                        {PatternList.map(({ key, patternImage }) => {
-                                            return <StyledPatternOption key={key}
-                                                className={[
-                                                    'pattern-option',
-                                                    value.pattern === key ? 'menu-active' : '',
-                                                    patternImage ? '' : 'menu-off',
-                                                ].join(' ')}
-                                                onClick={() => {
-                                                    setValue(cur => ({ ...cur, pattern: key }));
-                                                    customStyleSignal();
-                                                }}
-                                            >
-                                                {patternImage
-                                                    ? <img
-                                                        style={patternImage ? patternStyle : {}}
-                                                        className="pattern-image"
-                                                        src={`${process.env.PUBLIC_URL}/asset/image/finish-name/${patternImage}.png`}
-                                                        alt={key}
-                                                    />
-                                                    : <>
-                                                        <CloseCircleOutlined /> No Pattern
-                                                    </>}
-                                            </StyledPatternOption>;
-                                        })}
-                                    </StyledPatternContainer>
-                                </div>}
-                                placement="bottomLeft"
-                            >
-                                <StyledPickerButton
-                                    $softMode={reduceColorMotion}
-                                    $active={isStyleCustom && typeof pattern === 'string' && pattern !== 'none'}
-                                    className="picker-dropdown pattern-picker-dropdown"
-                                >
-                                    Pattern
-                                </StyledPickerButton>
-                            </Popover>}
-                            <Popover key="font-picker"
-                                trigger={['click']}
-                                overlayClassName="input-overlay font-picker-overlay"
-                                content={<div className="overlay-event-absorber">
-                                    <StyledDropdown.Container>
-                                        {NameFontOptionList.map(({ value: fontValue, label }) => {
-                                            return <StyledDropdown.Option key={fontValue}
-                                                className={font === fontValue ? 'menu-active' : ''}
-                                                onClick={() => {
-                                                    setValue(cur => ({ ...cur, font: fontValue }));
-                                                    customStyleSignal();
-                                                }}
-                                            >
-                                                {label}
-                                            </StyledDropdown.Option>;
-                                        })}
-                                    </StyledDropdown.Container>
-                                </div>}
-                                placement="bottomLeft"
-                            >
-                                <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
-                                    Font
-                                </StyledPickerButton>
-                            </Popover>
-                        </div>
                     </label>
+                </div>
+                <div className="style-picker">
+                    <Popover key="color-picker"
+                        trigger={['click']}
+                        overlayClassName="input-overlay style-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <div className={'custom-style-picker'}>
+                                <div className="custom-style-text">
+                                    <h3>Text Color</h3>
+                                    <CompactPicker color={fillStyle} onChangeComplete={color => {
+                                        setType('custom');
+                                        setValue(cur => ({ ...cur, fillStyle: color.hex }));
+                                        customStyleSignal();
+                                    }} />
+                                </div>
+                                <hr />
+                                <div className="custom-style-text">
+                                    <h3>Ruby Color (<small>Japanese Furigana</small>)</h3>
+                                    <CompactPicker color={headTextFillStyle} onChangeComplete={color => {
+                                        setType('custom');
+                                        setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
+                                        customStyleSignal();
+                                    }} />
+                                </div>
+                            </div>
+                        </div>}
+                        placement="bottom"
+                    >
+                        <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown color-picker-dropdown">
+                            Color <CaretDownOutlined />
+                        </StyledPickerButton>
+                    </Popover>
+                    {showExtraDecorativeOption && <Popover key="shadow-picker"
+                        trigger={['click']}
+                        overlayClassName="input-overlay style-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <div className={'custom-style-picker'}>
+                                <h3 className="custom-style-expand">
+                                    <Checkbox value={'has-shadow'} checked={hasShadow} onChange={() => {
+                                        setType('custom');
+                                        setValue(cur => ({ ...cur, hasShadow: !cur.hasShadow }));
+                                        customStyleSignal();
+                                    }}>Has Shadow?</Checkbox>
+                                </h3>
+                                {hasShadow && <GridSliderInput ref={shadowPickeRef}
+                                    className="custom-style-shadow"
+                                    fieldMap={{
+                                        color: 'shadowColor',
+                                        width: 'shadowBlur',
+                                        x: 'shadowOffsetX',
+                                        y: 'shadowOffsetY',
+                                    }}
+                                    labelMap={{
+                                        shadowBlur: 'Blur',
+                                    }}
+                                    defaultValue={value}
+                                    onChange={({ color, width, x, y }) => {
+                                        setValue(cur => ({
+                                            ...cur,
+                                            shadowBlur: width,
+                                            shadowColor: color,
+                                            shadowOffsetX: x,
+                                            shadowOffsetY: y,
+                                        }));
+                                        customStyleSignal();
+                                    }}
+                                />}
+                            </div>
+                        </div>}
+                        placement="bottom"
+                    >
+                        <StyledPickerButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom && hasShadow}
+                            className="picker-dropdown shadow-picker-dropdown"
+                        >
+                            Shadow <CaretDownOutlined />
+                        </StyledPickerButton>
+                    </Popover>}
+                    <Popover key="outline-picker"
+                        trigger={['click']}
+                        overlayClassName="input-overlay style-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <div className={'custom-style-picker'}>
+                                <h3 className="custom-style-expand">
+                                    <Checkbox value={'has-line'} checked={hasOutline} onChange={() => {
+                                        setType('custom');
+                                        setValue(cur => ({ ...cur, hasOutline: !cur.hasOutline }));
+                                        customStyleSignal();
+                                    }}>Has outline?</Checkbox>
+                                </h3>
+                                {hasOutline && <GridSliderInput ref={outlinePickeRef}
+                                    className="custom-style-line"
+                                    fieldMap={{
+                                        color: 'lineColor',
+                                        width: 'lineWidth',
+                                        x: 'lineOffsetX',
+                                        y: 'lineOffsetY',
+                                    }}
+                                    labelMap={{
+                                        lineWidth: 'Thickness',
+                                    }}
+                                    defaultValue={value}
+                                    onChange={({ color, width, x, y }) => {
+                                        setValue(cur => ({
+                                            ...cur,
+                                            lineWidth: width,
+                                            lineColor: color,
+                                            lineOffsetX: x,
+                                            lineOffsetY: y,
+                                        }));
+                                        customStyleSignal();
+                                    }}
+                                />}
+                            </div>
+                        </div>}
+                        placement="bottom"
+                    >
+                        <StyledPickerButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom && hasOutline}
+                            className="picker-dropdown outline-picker-dropdown"
+                        >
+                            Outline <CaretDownOutlined />
+                        </StyledPickerButton>
+                    </Popover>
+                    {showExtraDecorativeOption && <Popover key="gradient-picker"
+                        trigger={['click']}
+                        overlayClassName="input-overlay style-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <div className={'custom-style-picker'}>
+                                <h3 className="custom-style-expand">
+                                    <Checkbox value={'has-gradient'} checked={hasGradient} onChange={() => {
+                                        setType('custom');
+                                        setValue(cur => ({ ...cur, hasGradient: !cur.hasGradient }));
+                                        customStyleSignal();
+                                    }}>Has gradient?</Checkbox>
+                                </h3>
+                                {hasGradient && <div className="custom-style-gradient">
+                                    <TextGradientPicker
+                                        angle={gradientAngle}
+                                        palette={gradientColor}
+                                        memoizedOnChange={memoizedOnGradientChange}
+                                    />
+                                </div>}
+                            </div>
+                        </div>}
+                        placement="bottom"
+                    >
+                        <StyledPickerButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom && hasGradient}
+                            className="picker-dropdown gradient-picker-dropdown"
+                        >
+                            Gradient <CaretDownOutlined />
+                        </StyledPickerButton>
+                    </Popover>}
+                    {showExtraDecorativeOption && <Popover key="pattern-picker"
+                        trigger={['click']}
+                        overlayClassName="input-overlay pattern-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <StyledPatternContainer onClick={e => e.stopPropagation()}>
+                                <div className="alert">Pattern will disable shadow and gradient</div>
+                                {PatternList.map(({ key, patternImage }) => {
+                                    return <StyledPatternOption key={key}
+                                        className={[
+                                            'pattern-option',
+                                            value.pattern === key ? 'menu-active' : '',
+                                            patternImage ? '' : 'menu-off',
+                                        ].join(' ')}
+                                        onClick={() => {
+                                            setValue(cur => ({ ...cur, pattern: key }));
+                                            customStyleSignal();
+                                        }}
+                                    >
+                                        {patternImage
+                                            ? <img
+                                                style={patternImage ? patternStyle : {}}
+                                                className="pattern-image"
+                                                src={`${process.env.PUBLIC_URL}/asset/image/finish-name/${patternImage}.png`}
+                                                alt={key}
+                                            />
+                                            : <>
+                                                <CloseCircleOutlined /> No Pattern
+                                            </>}
+                                    </StyledPatternOption>;
+                                })}
+                            </StyledPatternContainer>
+                        </div>}
+                        placement="bottomLeft"
+                    >
+                        <StyledPickerButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom && typeof pattern === 'string' && pattern !== 'none'}
+                            className="picker-dropdown pattern-picker-dropdown"
+                        >
+                            Pattern
+                        </StyledPickerButton>
+                    </Popover>}
+                    <Popover key="font-picker"
+                        trigger={['click']}
+                        overlayClassName="input-overlay font-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <StyledDropdown.Container>
+                                {NameFontOptionList.map(({ value: fontValue, label }) => {
+                                    return <StyledDropdown.Option key={fontValue}
+                                        className={font === fontValue ? 'menu-active' : ''}
+                                        onClick={() => {
+                                            setValue(cur => ({ ...cur, font: fontValue }));
+                                            customStyleSignal();
+                                        }}
+                                    >
+                                        {label}
+                                    </StyledDropdown.Option>;
+                                })}
+                            </StyledDropdown.Container>
+                        </div>}
+                        placement="bottomLeft"
+                    >
+                        <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
+                            Font
+                        </StyledPickerButton>
+                    </Popover>
                 </div>
             </span>
         </span>

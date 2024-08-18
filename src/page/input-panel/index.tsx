@@ -41,10 +41,12 @@ import {
     PendulumInputGroupRef,
     PostPendulumInputGroup,
     PostPendulumInputGroupRef,
-    StatInputGroup,
-    StatInputGroupRef,
 } from './input-group';
 import { useShallow } from 'zustand/react/shallow';
+import {
+    StyledFormatRadioTrain,
+    StyledNameSetIdInputContainer,
+} from './input-panel.styled';
 import './input-panel.scss';
 
 export type CardInputPanelRef = {
@@ -99,7 +101,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const pendulumInputGroupRef = useRef<PendulumInputGroupRef>(null);
     const effectInputGroupRef = useRef<EffectInputGroupRef>(null);
     const postPendulumInputGroupRef = useRef<PostPendulumInputGroupRef>(null);
-    const statInputGroupRef = useRef<StatInputGroupRef>(null);
     const footerInputGroupRef = useRef<FooterInputGroupRef>(null);
 
     const [pickerTarget, setPickerTarget] = useState<{
@@ -162,20 +163,21 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             effectInputGroupRef.current?.setValue(effect);
             postPendulumInputGroupRef.current?.setValue({ typeAbility });
-            statInputGroupRef.current?.setValue({ atk, def });
-            footerInputGroupRef.current?.setValue({ creator, password });
+            footerInputGroupRef.current?.setValue({ atk, def, creator, password });
         }
     }));
 
-    return <div className={['card-info-panel', format === 'ocg' ? 'input-ocg' : 'input-tcg'].join(' ')}>
+    return <div
+        className={['card-info-panel', format === 'ocg' ? 'input-ocg' : 'input-tcg'].join(' ')}
+    >
         <AppHeader />
         <br />
         <Affiliation />
 
         <div className="card-overlay-input">
-            <RadioTrain className="format-radio" value={format} onChange={changeFormat} optionList={FormatButtonList}>
+            <StyledFormatRadioTrain className="format-radio" value={format} onChange={changeFormat} optionList={FormatButtonList}>
                 <span>Format</span>
-            </RadioTrain>
+            </StyledFormatRadioTrain>
             <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={FoilButtonList}>
                 <span>Foil</span>
             </RadioTrain>
@@ -204,7 +206,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
         <FrameTrain onSTFrameChange={typeAbility => postPendulumInputGroupRef.current?.setValue({ typeAbility })} />
 
-        <div className="name-style-id-input">
+        <StyledNameSetIdInputContainer className="name-style-id-input">
             <NameSetInputGroup ref={nameSetIdInputGroupRef}
                 onTakePicker={setPickerTarget}
             />
@@ -220,11 +222,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 isMonster={isMonster}
                 showCreativeOption={showCreativeOption}
             />
-        </div>
+        </StyledNameSetIdInputContainer>
         <div className="main-info">
             <div className="main-info-first">
                 <RadioTrain
-                    className="image-input-train attribute-input"
+                    className="fill-input-train attribute-input"
                     value={attribute}
                     onChange={changeAttribute}
                     optionList={attributeList}
@@ -252,12 +254,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     <EffectInputGroup ref={effectInputGroupRef} onTakePicker={setPickerTarget} />
                 </div>
 
-                <div className="card-footer-input">
-                    {(isMonster || showCreativeOption) && <StatInputGroup ref={statInputGroupRef} onTakePicker={setPickerTarget} />}
-                    <FooterInputGroup ref={footerInputGroupRef}
-                        onTakePicker={setPickerTarget}
-                    />
-                </div>
+                <FooterInputGroup ref={footerInputGroupRef}
+                    isMonster={isMonster}
+                    showCreativeOption={showCreativeOption}
+                    onTakePicker={setPickerTarget}
+                />
             </div>
             <div className="main-info-second">
                 <ImageInputGroup ref={imageInputGroupRef}

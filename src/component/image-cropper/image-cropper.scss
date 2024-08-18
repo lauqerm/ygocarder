@@ -1,7 +1,7 @@
 .card-image-cropper {
     display: flex;
     flex-direction: column;
-    grid-column-gap: 10px;
+    grid-column-gap: var(--spacing);
     row-gap: 0.5rem;
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
@@ -64,7 +64,7 @@
 }
 
 .image-warning {
-	color: #FF6F6F;
+	color: var(--main-danger);
 	line-height: 1.25;
 	text-align: center;
 }

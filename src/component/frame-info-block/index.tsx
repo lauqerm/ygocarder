@@ -35,6 +35,6 @@ export const FrameInfoBlock = ({
             : labelBackgroundColor
                 ? <StyledFramePillar style={{ backgroundColor: labelBackgroundColor }} />
                 : null}
-        <label>{name.replaceAll('-', ' ')}</label>
+        <label className="frame-info-block-label">{name.replaceAll('-', ' ')}</label>
     </StyledFrameContainer>;
 };

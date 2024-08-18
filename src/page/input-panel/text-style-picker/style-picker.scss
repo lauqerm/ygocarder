@@ -1,135 +1,135 @@
 .style-picker {
-	display: inline-flex;
-	column-gap: 5px;
-	line-height: 1.15;
-	.disable-overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		background-color: #ffffff66;
-		z-index: 1;
-		width: 100%;
-		height: 100%;
-	}
+    display: inline-flex;
+    column-gap: 0.5rem;
+    line-height: 1.15;
+    .disable-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: var(--main-disabled);
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+    }
 }
 .style-picker-overlay {
-	.style-picker-mask {
-		position: fixed;
-		top: 0px;
-		right: 0px;
-		bottom: 0px;
-		left: 0px;
-	}
-	.style-picker-auto {
-		background-color: #4e4e53;
-		text-align: left;
-		padding: 5px;
-		display: grid;
-		grid-template-columns: 1fr min-content;
-		position: relative;
-		.style-picker-close {
-			color: #f45c52;
-			font-size: 20px;
-			cursor: pointer;
-		}
-	}
-	.custom-style-text,
-	.custom-style-shadow,
-	.custom-style-line,
-	.custom-style-gradient {
-		position: relative;
-	}
-	.custom-style-picker {
-		background-color: #4e4e53;
-		position: relative;
-		border: 1px solid var(--sub-level-1);
-		border-radius: 2px;
-		min-width: 247px;
-		h2,
-		h3 {
-			text-align: left;
-			background-color: #4e4e53;
-			margin: 0;
-			padding: 2px 5px;
-			font-size: 13px;
-			.ant-checkbox-wrapper {
-				color: var(--color);
-			}
-		}
-		h3 {
-			background-color: #28282b;
-			cursor: pointer;
-			border-bottom: 1px solid #7a7a7a;
-			&:last-child {
-				border-bottom-color: transparent;
-			}
-		}
-		.compact-picker {
-			color: #ffffffcc;
-			background-color: #4e4e53;
-			> div > span > div {
-				outline: 1px solid #7a7a7a !important;
-			}
-		}
-		.flexbox-fix {
-			column-gap: 5px;
-			input {
-				color: #ffffffcc !important;
-				padding: 0 0 0 18px !important;
-				width: 100% !important;
-			}
-			label {
-				line-height: 18px;
-			}
-		}
-		.shadow-position,
-		.line-position {
-			display: grid;
-			grid-template-columns: max-content 1fr;
-			grid-template-rows: max-content max-content max-content 1fr;
-			column-gap: 0.5rem;
-			row-gap: 0.5rem;
-			font-size: 10px;
-			padding: 10px;
-			padding-bottom: 0;
-			> :first-child {
-				&::before {
-					content: "";
-					width: 100%;
-					border-top: 1px solid white;
-					position: absolute;
-					top: 50%;
-					left: 0;
-					z-index: 1;
-				}
-				&::after {
-					content: "";
-					height: 100%;
-					border-left: 1px solid white;
-					position: absolute;
-					top: 0;
-					left: 50%;
-					z-index: 1;
-				}
-				> :last-child {
-					z-index: 2;
-				}
-			}
-			.single-slider {
-				display: grid;
-				grid-template-columns: max-content 1fr;
-				column-gap: 0.5rem;
-				align-items: center;
-				color: hsla(0,0%,100%,.8);
-				text-shadow: 0 1px #222;
-				font-weight: 700;
-				.ant-input-number {
-					width: 60px;
-				}
-				.ant-slider {
-					margin: 2px;
-				}
-			}
-		}
-	}
+    .style-picker-mask {
+        position: fixed;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+    }
+    .style-picker-auto {
+        background-color: var(--main-level-3);
+        text-align: left;
+        padding: 5px;
+        display: grid;
+        grid-template-columns: 1fr min-content;
+        position: relative;
+        .style-picker-close {
+            color: var(--main-danger);
+            font-size: 20px;
+            cursor: pointer;
+        }
+    }
+    .custom-style-text,
+    .custom-style-shadow,
+    .custom-style-line,
+    .custom-style-gradient {
+        position: relative;
+    }
+    .custom-style-picker {
+        background-color: var(--main-level-3);
+        position: relative;
+        border: 1px solid var(--sub-level-1);
+        border-radius: 2px;
+        min-width: 247px;
+        h2,
+        h3 {
+            text-align: left;
+            background-color: var(--main-level-3);
+            margin: 0;
+            padding: 2px 5px;
+            font-size: 13px;
+            .ant-checkbox-wrapper {
+                color: var(--color);
+            }
+        }
+        h3 {
+            background-color: var(--main-level-1);
+            border-bottom: 1px solid #7a7a7a;
+            cursor: pointer;
+            &:last-child {
+                border-bottom-color: transparent;
+            }
+        }
+        .compact-picker {
+            color: var(--color-heavy);
+            background-color: var(--main-level-3);
+            > div > span > div {
+                outline: 1px solid #7a7a7a !important;
+            }
+        }
+        .flexbox-fix {
+            column-gap: 5px;
+            input {
+                color: var(--color-heavy) !important;
+                padding: 0 0 0 18px !important;
+                width: 100% !important;
+            }
+            label {
+                line-height: 18px;
+            }
+        }
+        .shadow-position,
+        .line-position {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            grid-template-rows: max-content max-content max-content 1fr;
+            column-gap: 0.5rem;
+            row-gap: 0.5rem;
+            font-size: 10px;
+            padding: var(--spacing);
+            padding-bottom: 0;
+            > :first-child {
+                &::before {
+                    content: "";
+                    width: 100%;
+                    border-top: 1px solid white;
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    z-index: 1;
+                }
+                &::after {
+                    content: "";
+                    height: 100%;
+                    border-left: 1px solid white;
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    z-index: 1;
+                }
+                > :last-child {
+                    z-index: 2;
+                }
+            }
+            .single-slider {
+                display: grid;
+                grid-template-columns: max-content 1fr;
+                column-gap: 0.5rem;
+                align-items: center;
+                color: hsla(0,0%,100%,.8);
+                text-shadow: 0 1px #222;
+                font-weight: 700;
+                .ant-input-number {
+                    width: 60px;
+                }
+                .ant-slider {
+                    margin: 2px;
+                }
+            }
+        }
+    }
 }

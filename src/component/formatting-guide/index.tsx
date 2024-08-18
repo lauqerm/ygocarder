@@ -1,11 +1,11 @@
 import { Button, Drawer } from 'antd';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { BulbFilled } from '@ant-design/icons';
 import './formatting-guide.scss';
 
 const StyledCode = styled.span`
-    background: #333333;
+    background: var(--main-level-1);
     padding: 0.1rem 0.15rem;
     border: 1px solid #4e84a4;
     border-radius: 3px;
@@ -33,13 +33,13 @@ const StyledImageWithCaptionContainer = styled.div`
         right: 0;
         bottom: 0;
         padding: 0.1rem 0.5rem;
-        background: #505050;
+        background: var(--main-level-5);
         border-radius: 5px 0 0 0;
         box-shadow: 0 0 1px 1px #222222;
     }
     > img {
         max-width: 100%;
-        border: 1px solid #222222;
+        border: 1px solid var(--sub-level-1);
         border-radius: 4px;
     }
 `;
@@ -61,7 +61,7 @@ export const ImageWithCaption = ({
     </StyledImageWithCaptionContainer>;
 };
 
-export const FormattingHelpDrawer = memo(() => {
+export const FormattingHelpDrawer = () => {
     const [modalOpen, setDrawerOpen] = useState(false);
 
     return <>
@@ -188,4 +188,4 @@ export const FormattingHelpDrawer = memo(() => {
             Formatting Help <BulbFilled />
         </Button>
     </>;
-});
+};

@@ -1,19 +1,19 @@
 .explanation-icon {
     font-size: 15px;
-    color: #e6e6e6;
+    color: var(--color-heavy);
     cursor: pointer;
 }
 .explanation-overlay {
     .ant-popover-inner {
         background-color: transparent;
     }
-	.ant-popover-inner-content {
-		padding: 5px;
-		background-color: #464646;
-		color: #ffffffcc;
-		text-shadow: 0 1px #222;
+    .ant-popover-inner-content {
+        padding: 5px;
+        background-color: var(--main-level-3);
+        color: var(--color-heavy);
+        text-shadow: 0 1px #222;
         max-width: 550px;
         border-radius: 4px;
         border: 1px solid var(--sub-level-1);
-	}
+    }
 }

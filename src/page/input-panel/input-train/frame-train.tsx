@@ -1,6 +1,6 @@
 import { useCard, useSetting } from 'src/service';
 import { RadioTrain } from './radio-train';
-import { memo, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -14,7 +14,7 @@ const StyledFrameTrain = styled(RadioTrain)`
 export type FrameTrain = {
     onSTFrameChange: (value: string[]) => void,
 };
-export const FrameTrain = memo(({
+export const FrameTrain = ({
     onSTFrameChange,
 }: FrameTrain) => {
     const {
@@ -72,4 +72,4 @@ export const FrameTrain = memo(({
     }, [setCard, onSTFrameChange]);
 
     return <StyledFrameTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />;
-});
+};

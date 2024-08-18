@@ -7,6 +7,40 @@ import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { CondenseType } from 'src/model';
 import { CondenseThresholdButtonList } from '../const';
+import styled from 'styled-components';
+
+const StyledPostPendulumInputContainer = styled.div`
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    grid-template-areas:
+        "type-input input-helper"
+        "condense-input help-button";
+    gap: 0.5rem;
+    align-items: center;
+    .formatting-help-button {
+        grid-area: help-button;
+    }
+    .input-kanji-helper {
+        grid-area: input-helper;
+    }
+    .type-ability-input {
+        grid-area: type-input;
+    }
+    .condense-input {
+        grid-area: condense-input;
+		.standalone-addon.ant-input-group-addon {
+			width: unset;
+		}
+		.ant-radio-button-wrapper {
+			flex: 1 1 90px;
+		}
+	}
+    &.variant-tcg {
+        .type-ability-input {
+            grid-column: span 2;
+        }
+    }
+`;
 
 export type PostPendulumInputGroupRef = {
     setValue: (value: { typeAbility?: string[] }) => void,
@@ -71,7 +105,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
     }));
 
     const isOCG = format === 'ocg';
-    return <div className={`two-column-input-group variant-${format}`}>
+    return <StyledPostPendulumInputContainer className={`post-pendulum-input variant-${format}`}>
         <CardTextInput ref={typeAbilityInputRef}
             addonBefore="Type"
             id="type-ability"
@@ -101,5 +135,5 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             </span>
         </RadioTrain>
         <FormattingHelpDrawer />
-    </div>;
+    </StyledPostPendulumInputContainer>;
 });

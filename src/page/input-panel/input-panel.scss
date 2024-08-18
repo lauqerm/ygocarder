@@ -1,367 +1,112 @@
 .card-info-panel {
-	.card-overlay-input {
-		display: flex;
-		flex-wrap: wrap;
-		margin-bottom: 0.5rem;
-		row-gap: 0.5rem;
-	}
-	.foil-radio.radio-train {
-		display: inline-flex;
-	}
-	.family-radio {
-		display: flex;
-		.ant-radio-button-wrapper {
-			padding: 0 5px;
-			width: 70px;
-			text-align: center;
-		}
-	}
-	.card-opacity-input {
-		display: grid;
-		grid-template-columns: 105px 1fr;
-		margin-bottom: 0.5rem;
-		.standalone-addon.ant-input-group-addon {
-			height: 25px; // Alignment
-			line-height: 20px;
-		}
-		.card-opacity-slider-container {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			column-gap: 0.5rem;
-			row-gap: 0.5rem;
-			.slider-label,
-			.ant-slider,
-			.slider-padding {
-				border: 1px solid var(--sub-level-1);
-				background-color: #4e4e53;
-			}
-			.slider-label {
-				border-right: none;
-				padding: 0 5px;
-				border-radius: 2px 0 0 2px;
-				box-shadow: var(--bs-input);
-			}
-			.ant-slider {
-				margin: 0;
-				border-left: none;
-				border-right: none;
-				height: 25px;
-				padding-top: 9px;
-			}
-			.slider-padding {
-				border-left: none;
-				border-radius: 0 2px 2px 0;
-			}
-			.ant-slider-rail,
-			.ant-slider-track {
-				border-radius: 0 2px 2px 0;
-			}
-			.card-opacity-slider {
-				flex: 0 1 auto;
-				display: grid;
-				grid-template-columns: max-content 60px 50px 12px;
-			}
-			.ant-input-number {
-				height: 25px; // Alignment
-				width: unset;
-				border-radius: 0;
-				box-shadow: var(--bs-input);
-			}
-		}
-	}
-	.main-info {
-		display: flex;
-		align-items: flex-start;
-		margin-top: 0.5rem;
-		column-gap: 0.5rem;
-		row-gap: 0.5rem;
-		.main-info-first {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			row-gap: 0.5rem;
-			#card-effect {
-				min-height: 13rem;
-			}
-		}
-		.main-info-second {
-			flex: 0 0 375px;
-			text-align: center;
-		}
-	}
-	.name-color-input {
-		width: 100%;
-		position: relative;
-		z-index: 3;
-		.ant-input-affix-wrapper {
-			outline: none !important;
-			&:hover {
-				border-color: var(--sub-level-1);
-			}
-		}
-		.ant-radio-group {
-			box-shadow: none;
-			.ant-radio-wrapper {
-				color: #ffffffcc;
-				&:hover .ant-radio-label {
-					color: var(--sub-active);
-				}
-			}
-		}
-	}
-	.card-icon-dropdown {
-		cursor: pointer;
-		&.active {
-			color: var(--main-active);
-			.anticon {
-				color: var(--main-active);
-			}
-		}
-	}
-	.image-input-train label {
-		padding: 0 10px;
-		flex: 1;
-		span:nth-child(2) {
-			width: 100%;
-			height: 100%;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			img {
-				width: 26px;
-				height: 26px;
-			}
-		}
-	}
-	.name-input .ant-input-group-addon {
-		min-width: 105px;
-	}
-	.condense-input {
-		.standalone-addon.ant-input-group-addon {
-			width: unset;
-		}
-		.ant-radio-button-wrapper {
-			flex: 1 1 90px;
-		}
-	}
+    .card-overlay-input {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+        row-gap: 0.5rem;
+    }
+    .foil-radio.radio-train {
+        display: inline-flex;
+    }
+    .card-opacity-input {
+        display: grid;
+        grid-template-columns: 105px 1fr;
+        margin-bottom: 0.5rem;
+        .standalone-addon.ant-input-group-addon {
+            height: 25px; // Alignment
+            line-height: 20px;
+        }
+    }
+    .main-info {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 0.5rem;
+        column-gap: 0.5rem;
+        row-gap: 0.5rem;
+        .main-info-first {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            row-gap: 0.5rem;
+            #card-effect {
+                min-height: 13rem;
+            }
+        }
+        .main-info-second {
+            flex: 0 0 375px;
+            text-align: center;
+        }
+    }
+    .name-color-input {
+        width: 100%;
+        position: relative;
+        z-index: 3;
+        .ant-input-affix-wrapper {
+            outline: none !important;
+            &:hover {
+                border-color: var(--sub-level-1);
+            }
+        }
+        .ant-radio-group {
+            box-shadow: none;
+            .ant-radio-wrapper {
+                color: var(--color-heavy);
+                &:hover .ant-radio-label {
+                    color: var(--sub-active);
+                }
+            }
+        }
+    }
+    .card-icon-dropdown {
+        &:not(.disable) {
+            cursor: pointer;
+        }
+        &.active {
+            color: var(--main-active);
+            .anticon {
+                color: var(--main-active);
+            }
+        }
+    }
+    .fill-input-train label {
+        padding: 0 var(--spacing);
+        flex: 1;
+        span:nth-child(2) {
+            width: 100%;
+            height: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            img {
+                width: 26px;
+                height: 26px;
+            }
+        }
+    }
 
-	.ant-input-group-addon {
-		min-width: 105px;
-		text-align: right;
-	}
-	.standalone-addon.ant-input-group-addon {
-		display: inline-block;
-		height: 32px;
-		width: 105px;
-		line-height: 30px;
-		position: relative;
-	}
-	.name-style-id-input {
-		display: flex;
-		align-items: center;
-		margin-top: 0.5rem;
-		flex-wrap: wrap;
-		row-gap: 0.5rem;
-		.name-id-input {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5rem;
-			width: 100%;
-			.name-input {
-				flex: 3;
-				min-width: 400px;
-			}
-			.set-id-input {
-				flex: 1;
-				min-width: 250px;
-			}
-		}
-		.card-info-sub-family {
-			padding-right: 1em;
-			margin-right: 1em;
-			border-right: 1px solid #ccc;
-			&:empty {
-				padding: 0;
-				margin: 0;
-				border: none;
-			}
-		}
-	}
-	.two-column-input-group {
-		display: grid;
-		grid-template-columns: 1fr max-content;
-		grid-template-areas:
-			"type-input input-helper"
-			"condense-input help-button";
-		gap: 0.5rem;
-		align-items: center;
-		.formatting-help-button {
-			grid-area: help-button;
-		}
-		.input-kanji-helper {
-			grid-area: input-helper;
-		}
-		.type-ability-input {
-			grid-area: type-input;
-		}
-		.condense-input {
-			grid-area: condense-input;
-		}
-		&.variant-tcg {
-			.type-ability-input {
-				grid-column: span 2;
-			}
-		}
-	}
-	.card-effect-letter-helper {
-		display: grid;
-		grid-template-columns: max-content 1fr;
-		align-items: center;
-	}
-	.card-footer-input {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.5rem;
-		.checkbox-input {
-			align-self: center;
-			.ant-checkbox + span {
-				user-select: none;
-			}
-		}
-		.sticker-input,
-		.creator-input {
-			grid-column: span 2;
-		}
-		.sticker-input .ant-radio-button-wrapper {
-			padding-left: 8px;
-			padding-right: 8px;
-		}
-	}
-	.pendulum-frame-input {
-		display: inline-flex;
-		cursor: pointer;
-		box-shadow: var(--bs-input);
-		vertical-align: bottom;
-		.frame-info-block {
-			border-radius: 0 4px 4px 0;
-			line-height: 1.25;
-			background-color: var(--main-level-4);
-			border: 1px solid var(--sub-level-1);
-			min-width: 100px;
-		}
-		.pendulum-frame-label {
-			display: inline-block;
-			background: var(--main-level-4);
-			border: 1px solid var(--sub-level-1);
-			border-right: none;
-			padding: 1px 5px;
-			border-radius: 4px 0 0 4px;
-			line-height: 1.25;
-			&:last-child {
-				border-radius: 4px;
-				border-right: 1px solid var(--sub-level-1);
-			}
-		}
-	}
-	.pendulum-container {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 0.5rem;
-		row-gap: 0.5rem;
-		.joined-row {
-			grid-column: span 2;
-			.standalone-label {
-				min-width: 0;
-				width: unset;
-				padding-left: 11px;
-			}
-			.pendulum-checkbox {
-				/** Alignment **/
-				width: 95px;
-				text-align: right;
-				> span {
-					padding-right: 0;
-				}
-			}
-			.pendulum-checkbox-placeholder {
-				display: inline-block;
-				/** Alignment **/
-				width: 105px;
-			}
-			.pendulum-frame-input {
-				margin-right: 1rem;
-			}
-			.ant-checkbox-wrapper {
-				margin-right: 10px;
-			}
-			.ant-checkbox-wrapper + .ant-checkbox-wrapper {
-				margin-left: 0;
-			}
-		}
-	}
-	.ant-checkbox-wrapper + .ant-checkbox-wrapper {
-		margin-left: 5px;
-	}
-	.ant-checkbox-wrapper:last-child > span {
-		padding-right: 0;
-	}
-	.checkbox-input {
-		text-align: right;
-	}
-	.art-finish-checkbox {
-		.ant-input-group-addon {
-			padding-left: 0;
-		}
-		.radio-train-input-group .ant-radio-button-wrapper {
-			min-width: unset;
-		}
-	}
-}
-
-.radio-train.format-radio {
-	.ant-radio-button-wrapper-checked {
-		&.ocg-button {
-			background-color: #ff4d4f;
-			border-color: #ff6f6f;
-			&:not([class*=" ant-radio-button-wrapper-disabled"]).ant-radio-button-wrapper:first-child {
-				border-right-color: #ff6f6f;
-			}
-			&:not(.ant-radio-button-wrapper-disabled):first-child {
-				border-color: #ff6f6f;
-			}
-			&:hover {
-				background-color: #ff6f6f;
-				color: #ffffffcc;
-			}
-		}
-		&.tcg-button {
-			background-color: #096dd9;
-			border-color: #3b9dff;
-			&:hover {
-				background-color: #3b9dff;
-				color: #ffffffcc;
-			}
-		}
-	}
-	.ocg-button {
-		color: #ffffffcc;
-		&:hover {
-			color: #ff6f6f;
-		}
-	}
-	.tcg-button {
-		color: #ffffffcc;
-		&:hover {
-			color: #3b9dff;
-		}
-	}
-}
-
-.input-label-with-button {
-	display: flex;
-	align-items: center;
-	.input-label {
-		flex: 1;
-	}
+    .ant-input-group-addon {
+        min-width: 105px;
+        text-align: right;
+    }
+    .standalone-addon.ant-input-group-addon {
+        display: inline-block;
+        height: 32px;
+        width: 105px;
+        line-height: 30px;
+        position: relative;
+    }
+    .card-effect-letter-helper {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        align-items: center;
+    }
+    .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+        margin-left: 5px;
+    }
+    .ant-checkbox-wrapper:last-child > span {
+        padding-right: 0;
+    }
+    .checkbox-input {
+        text-align: right;
+    }
 }

@@ -2,9 +2,9 @@
     display: inline-grid;
     grid-template-columns: max-content 1fr max-content;
     margin-bottom: 0.5rem;
-    background-color: #4e4e53;
+    background-color: var(--main-level-3);
     padding: 3px;
-    padding-right: 10px;
+    padding-right: var(--spacing);
     border-radius: 3px;
     box-shadow: 0 0 2px 1px #212121;
     img {
@@ -12,7 +12,7 @@
     }
     .app-description {
         border-left: 1px dashed #b1b1b1;
-        padding-left: 10px;
+        padding-left: var(--spacing);
         margin-left: 5px;
         h1 {
             font-family: MatrixBoldSmallCaps;
@@ -20,7 +20,7 @@
             line-height: 1;
             font-size: 25px;
             letter-spacing: 1px;
-            color: #e6e6e6;
+            color: var(--color-heavy);
             text-shadow: -1px 1px 2px #1b1b1b;
             small {
                 font-size: 20px;
@@ -50,7 +50,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    background: #666677;
+    background: var(--sub-level-3);
     border-radius: 0 8px;
     padding: 5px;
     border-left: 1px solid var(--main-level-1);

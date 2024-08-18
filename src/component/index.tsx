@@ -18,7 +18,7 @@ export const StandaloneLabel = styled.div`
 `;
 
 export const StyledDropdownOption = styled.div`
-    padding: 5px 10px;
+    padding: 5px var(--spacing);
     cursor: pointer;
     &:hover {
         background-color: var(--sub-active);
@@ -33,7 +33,7 @@ export const StyledDropdownOption = styled.div`
 export const StyledDropdownContainer = styled.div`
     border: 1px solid var(--sub-level-1);
     border-radius: 4px;
-    background-color: #4e4e53;
+    background-color: var(--main-level-3);
     box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.06);
     padding: 5px 0;
     color: var(--color);

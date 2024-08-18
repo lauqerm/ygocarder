@@ -5,6 +5,16 @@ import { RadioTrain } from '../input-train';
 import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList } from '../const';
 import { getArtCanvasCoordinate } from 'src/model';
+import styled from 'styled-components';
+
+const StyledImageRadioTrain = styled(RadioTrain)`
+    .ant-input-group-addon {
+        padding-left: 0;
+    }
+    .radio-train-input-group .ant-radio-button-wrapper {
+        min-width: unset;
+    }
+`;
 
 export type ImageInputGroupRef = {
     setValue: (value: { art?: string, artCrop?: Partial<ReactCrop.Crop> }) => void,
@@ -83,14 +93,14 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         onSourceLoaded={onSourceLoaded}
         ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
         beforeCropper={showExtraDecorativeOption
-            ? <RadioTrain
-                className="art-finish-checkbox image-input-train"
+            ? <StyledImageRadioTrain
+                className="art-finish-checkbox fill-input-train"
                 value={artFinish}
                 onChange={changeArtFinish}
                 optionList={ArtFinishButtonList}
             >
                 <span className="field-title">Art Finish</span>
-            </RadioTrain>
+            </StyledImageRadioTrain>
             : null
         }
     >
