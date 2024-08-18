@@ -49,9 +49,9 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
         const widthValue = defaultValue[widthField] as number;
 
         return {
-            x: xValue,
-            y: yValue,
-            width: widthValue,
+            x: xValue ?? 0,
+            y: yValue ?? 0,
+            width: widthValue ?? 0,
             color: colorValue,
         };
     });
@@ -64,7 +64,16 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
     const widthLabel = labelMap[widthField];
 
     useEffect(() => {
-        onChange(value);
+        let relevant = true;
+        setTimeout(() => {
+            if (relevant) {
+                onChange(value);
+            }
+        }, 500);
+
+        return () => {
+            relevant = false;
+        };
     /** No need to depend on handler */
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
@@ -74,9 +83,11 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
             const keyList = Object.keys(nextValue) as (keyof typeof value)[];
 
             for (const key in keyList) {
-                if (nextValue[key as keyof typeof value] !== value[key as keyof typeof value]) return;
+                if (nextValue[key as keyof typeof value] !== value[key as keyof typeof value]) {
+                    setValue(cur => ({ ...cur, ...nextValue }));
+                    return;
+                }
             }
-            setValue(cur => ({ ...cur, nextValue }));
         },
     }));
 
