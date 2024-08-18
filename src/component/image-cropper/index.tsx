@@ -28,7 +28,7 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
 }
 
 export type ImageCropperRef = {
-    forceExternalSource: (pictureLink: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+    forceExternalSource: (artLink: string, cropInfo: Partial<ReactCrop.Crop>) => void,
 }
 export type ImageCropper = {
     noRedrawNumber?: number,

@@ -1,6 +1,6 @@
 import { availableCommand, placeCursorInInput, resolveHotkey } from './util';
 import { Input } from 'antd';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { TextAreaProps } from 'antd/lib/input';
 
 const { TextArea } = Input;
@@ -26,19 +26,27 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
     className,
     ...rest
 }, ref) => {
+    const immediateValue = useRef(defaultValue);
     const [value, setValue] = useState(defaultValue);
     const [cursorData, setCursorData] = useState({ id: '', placement: -1 });
-    const internalOnChange = (value: string) => {
-        onChange({ target: { value } });
-        setValue(value);
-    };
+    const internalOnChange = useCallback((eventOrValue: string | { target: { value: string }}) => {
+        const normalizedValue = typeof eventOrValue === 'string' ? eventOrValue : eventOrValue.target.value;
+        immediateValue.current = normalizedValue;
+        setValue(normalizedValue);
+    }, []);
 
     useEffect(() => {
         placeCursorInInput(cursorData);
     }, [cursorData]);
 
+    useEffect(() => {
+        onChange({ target: { value } });
+    /** No need to depend on callback */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
+
     const externalSetValue = (nextValue: string) => {
-        if (nextValue !== value) {
+        if (nextValue !== immediateValue.current) {
             internalOnChange(nextValue);
         }
     };
@@ -73,7 +81,7 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
                 );
             }
         }}
-        onChange={ev => internalOnChange(ev.target.value)}
+        onChange={internalOnChange}
         {...rest}
     />;
 });

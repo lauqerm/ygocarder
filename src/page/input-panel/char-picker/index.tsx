@@ -4,6 +4,43 @@
 import styled from 'styled-components';
 import './char-picker.scss';
 
+export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
+    //IE support
+    if ((document as any).selection) {
+        target.focus();
+        const sel = (document as any).selection.createRange();
+        sel.text = myValue;
+
+        return {
+            value: target.value,
+            position: 0,
+        };
+    }
+    //MOZILLA and others
+    else if (target.selectionStart || target.selectionStart === 0) {
+        const startPos = target.selectionStart;
+        const endPos = target.selectionEnd;
+        target.value = target.value.substring(0, startPos)
+            + myValue
+            + target.value.substring(endPos, target.value.length);
+        target.selectionStart = startPos + myValue.length;
+        target.selectionEnd = startPos + myValue.length;
+        target.focus();
+
+        return {
+            value: target.value,
+            position: startPos + myValue.length,
+        };
+    } else {
+        target.value += myValue;
+
+        return {
+            value: target.value,
+            position: 0,
+        };
+    }
+}
+
 const StyledCharPickerContainer = styled.div`
 	z-index: 10;
 	.char-picker {
@@ -44,44 +81,14 @@ const StyledCharPickerContainer = styled.div`
 			text-align: center;
 		}
 	}
+	.moveable-control-box {
+		.moveable-control.moveable-origin,
+		.moveable-line.moveable-direction {
+			border-color: transparent;
+			background: none;
+		}
+	}
 `;
-
-export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
-    //IE support
-    if ((document as any).selection) {
-        target.focus();
-        const sel = (document as any).selection.createRange();
-        sel.text = myValue;
-
-        return {
-            value: target.value,
-            position: 0,
-        };
-    }
-    //MOZILLA and others
-    else if (target.selectionStart || target.selectionStart === 0) {
-        const startPos = target.selectionStart;
-        const endPos = target.selectionEnd;
-        target.value = target.value.substring(0, startPos)
-            + myValue
-            + target.value.substring(endPos, target.value.length);
-        target.selectionStart = startPos + myValue.length;
-        target.selectionEnd = startPos + myValue.length;
-        target.focus();
-
-        return {
-            value: target.value,
-            position: startPos + myValue.length,
-        };
-    } else {
-        target.value += myValue;
-
-        return {
-            value: target.value,
-            position: 0,
-        };
-    }
-}
 
 /** The dragging experience is not good. Currently turn it off for now and glue it into effect's textarea. */
 export type CharPicker = {

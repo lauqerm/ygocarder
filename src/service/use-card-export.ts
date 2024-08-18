@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { cardDataShortener, insertUrlParam, normalizedCardName } from 'src/util';
+import { compressCardData, insertUrlParam, normalizedCardName } from 'src/util';
 import { useCard } from './use-card';
 import { CardOpacity } from 'src/model';
 
@@ -100,7 +100,7 @@ export const useCardExport = ({
 
                         await exportRef.current.currentPipeline;
                         if (relevant) {
-                            const condensedCard = cardDataShortener(currentCard);
+                            const condensedCard = compressCardData(currentCard);
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
                             document.getElementById('export-canvas')?.classList.add('js-export-available');

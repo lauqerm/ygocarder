@@ -1,5 +1,5 @@
-import { Checkbox, InputNumber, Popover, Slider } from 'antd';
-import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
+import { Checkbox, Popover } from 'antd';
+import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, memo } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {
@@ -10,7 +10,6 @@ import {
     PatternList,
     FrameInfo,
 } from '../../../model';
-import PowerSlider from 'react-input-slider';
 import debounce from 'lodash.debounce';
 import { stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
@@ -24,6 +23,7 @@ import {
     StyledPickerButton,
 } from './style-picker.styled';
 import { useSetting } from 'src/service';
+import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import './style-picker.scss';
 
 export type TextStylePickerRef = {
@@ -36,7 +36,7 @@ export type TextStylePicker = {
     showExtraDecorativeOption: boolean,
     onChange: (type: NameStyleType, style: Partial<NameStyle>) => void,
 };
-export const TextStylePicker = React.memo(forwardRef(({
+export const TextStylePicker = memo(forwardRef(({
     frameInfo,
     defaultType,
     defaultValue,
@@ -45,39 +45,45 @@ export const TextStylePicker = React.memo(forwardRef(({
 }: TextStylePicker, ref: ForwardedRef<TextStylePickerRef>) => {
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
-    const [requestSendStyle, requestSendStyleSignal] = useRefresh();
+    const [customStyleSignal, sendCustomStyleSignal] = useRefresh();
     const onChange = useRef(debounce(undebouncedOnChange, 250)).current;
     const memoizedOnGradientChange = useCallback((palette, gradientAngle) => {
         setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
-        requestSendStyle();
-    }, [requestSendStyle]);
+        customStyleSignal();
+    }, [customStyleSignal]);
     const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
 
-    const setCustomValue = <ValueType extends any>(key: keyof NameStyle) => {
-        return (inputValue: ValueType) => {
-            setValue(curValue => {
-                const newStyle = { ...curValue, [key]: inputValue };
-
-                onChange('custom', newStyle);
-                return newStyle;
-            });
-        };
-    };
-
     useEffect(() => {
-        if (requestSendStyleSignal !== 0) onChange('custom', value);
+        if (sendCustomStyleSignal !== 0) onChange('custom', value);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [requestSendStyleSignal]);
+    }, [sendCustomStyleSignal]);
+
+    const shadowPickeRef = useRef<GridSliderInputRef>(null);
+    const outlinePickeRef = useRef<GridSliderInputRef>(null);
 
     useImperativeHandle(ref, () => ({
-        setValue: nextValue => setValue(currentValue => ({ ...currentValue, ...nextValue }))
-    }));
+        setValue: nextValue => {
+            setValue(currentValue => ({ ...currentValue, ...nextValue }));
 
+            const {
+                lineColor, lineWidth, lineOffsetX, lineOffsetY,
+                shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY,
+            } = nextValue;
+            shadowPickeRef.current?.setValue({
+                x: shadowOffsetX, y: shadowOffsetY,
+                width: shadowBlur, color: shadowColor,
+            });
+            outlinePickeRef.current?.setValue({
+                x: lineOffsetX, y: lineOffsetY,
+                width: lineWidth, color: lineColor,
+            });
+        },
+    }));
     const {
         fillStyle,
         headTextFillStyle,
-        hasOutline, lineColor, lineWidth, lineOffsetX, lineOffsetY,
-        hasShadow, shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY,
+        hasOutline,
+        hasShadow,
         hasGradient, gradientColor, gradientAngle,
         pattern,
         font,
@@ -115,7 +121,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                 : {};
                             setType('predefined');
                             setValue(cur => ({ ...cur, ...presetValue }));
-                            requestSendStyle();
+                            onChange('predefined', { ...value, ...presetValue });
                         }}
                     >
                         <Popover
@@ -133,7 +139,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                                     : {};
                                                 setType('predefined');
                                                 setValue(cur => ({ ...cur, ...presetValue }));
-                                                requestSendStyle();
+                                                onChange('predefined', { ...value, ...presetValue });
                                             }}
                                         >
                                             {/** Tooltip currently is not really helpful, and gives poor UX */}
@@ -181,7 +187,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             <CompactPicker color={fillStyle} onChangeComplete={color => {
                                                 setType('custom');
                                                 setValue(cur => ({ ...cur, fillStyle: color.hex }));
-                                                requestSendStyle();
+                                                customStyleSignal();
                                             }} />
                                         </div>
                                         <hr />
@@ -190,7 +196,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             <CompactPicker color={headTextFillStyle} onChangeComplete={color => {
                                                 setType('custom');
                                                 setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
-                                                requestSendStyle();
+                                                customStyleSignal();
                                             }} />
                                         </div>
                                     </div>
@@ -210,70 +216,32 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             <Checkbox value={'has-shadow'} checked={hasShadow} onChange={() => {
                                                 setType('custom');
                                                 setValue(cur => ({ ...cur, hasShadow: !cur.hasShadow }));
-                                                requestSendStyle();
+                                                customStyleSignal();
                                             }}>Has Shadow?</Checkbox>
                                         </h3>
-                                        {hasShadow && <div className="custom-style-shadow">
-                                            <h2>Position</h2>
-                                            <div className="shadow-position">
-                                                <PowerSlider axis="xy"
-                                                    styles={{
-                                                        track: {
-                                                            backgroundColor: 'var(--main-slider)',
-                                                            width: 100,
-                                                            height: 100,
-                                                            gridRow: 'span 3',
-                                                            position: 'relative',
-                                                        },
-                                                        thumb: {
-                                                            backgroundColor: 'var(--sub-slider)',
-                                                            zIndex: 10,
-                                                        },
-                                                    }}
-                                                    xmax={5} xmin={-5}
-                                                    ymax={5} ymin={-5}
-                                                    x={shadowOffsetX ?? 0}
-                                                    y={shadowOffsetY ?? 0}
-                                                    onChange={({ x, y }) => {
-                                                        setValue(cur => {
-                                                            return {
-                                                                ...cur,
-                                                                shadowOffsetX: x,
-                                                                shadowOffsetY: y,
-                                                            };
-                                                        });
-                                                        requestSendStyle();
-                                                    }} />
-                                                <div className="single-slider">
-                                                    X Offset: <InputNumber
-                                                        size="small"
-                                                        value={shadowOffsetX}
-                                                        onChange={setCustomValue('shadowOffsetX')}
-                                                    />
-                                                </div>
-                                                <div className="single-slider">
-                                                    Y Offset: <InputNumber
-                                                        size="small"
-                                                        value={shadowOffsetY}
-                                                        onChange={setCustomValue('shadowOffsetY')}
-                                                    />
-                                                </div>
-                                                <div className="single-slider">
-                                                    Blur: <Slider value={shadowBlur} min={0} max={10} onChange={(value: number) => {
-                                                        if (typeof value === 'number') {
-                                                            setValue(cur => ({ ...cur, shadowBlur: value }));
-                                                            requestSendStyle();
-                                                        }
-                                                    }} />
-                                                </div>
-                                                <div />
-                                            </div>
-                                            <h2>Color</h2>
-                                            <CompactPicker color={shadowColor} onChangeComplete={color => {
-                                                setValue(cur => ({ ...cur, shadowColor: color.hex }));
-                                                requestSendStyle();
-                                            }} />
-                                        </div>}
+                                        {hasShadow && <GridSliderInput ref={shadowPickeRef}
+                                            className="custom-style-shadow"
+                                            fieldMap={{
+                                                color: 'shadowColor',
+                                                width: 'shadowBlur',
+                                                x: 'shadowOffsetX',
+                                                y: 'shadowOffsetY',
+                                            }}
+                                            labelMap={{
+                                                shadowBlur: 'Blur',
+                                            }}
+                                            defaultValue={value}
+                                            onChange={({ color, width, x, y }) => {
+                                                setValue(cur => ({
+                                                    ...cur,
+                                                    shadowBlur: width,
+                                                    shadowColor: color,
+                                                    shadowOffsetX: x,
+                                                    shadowOffsetY: y,
+                                                }));
+                                                customStyleSignal();
+                                            }}
+                                        />}
                                     </div>
                                 </div>}
                                 placement="bottom"
@@ -295,76 +263,32 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             <Checkbox value={'has-line'} checked={hasOutline} onChange={() => {
                                                 setType('custom');
                                                 setValue(cur => ({ ...cur, hasOutline: !cur.hasOutline }));
-                                                requestSendStyle();
+                                                customStyleSignal();
                                             }}>Has outline?</Checkbox>
                                         </h3>
-                                        {hasOutline && <div className="custom-style-line">
-                                            <h2>Position</h2>
-                                            <div className="line-position">
-                                                <PowerSlider axis="xy"
-                                                    styles={{
-                                                        track: {
-                                                            backgroundColor: 'var(--main-slider)',
-                                                            width: 100,
-                                                            height: 100,
-                                                            gridRow: 'span 3',
-                                                            position: 'relative',
-                                                        },
-                                                        thumb: {
-                                                            backgroundColor: 'var(--sub-slider)',
-                                                            zIndex: 10,
-                                                        },
-                                                    }}
-                                                    xmax={5} xmin={-5}
-                                                    ymax={5} ymin={-5}
-                                                    x={lineOffsetX ?? 0}
-                                                    y={lineOffsetY ?? 0}
-                                                    onChange={({ x, y }) => {
-                                                        setValue(cur => {
-                                                            const newStyle = {
-                                                                ...cur,
-                                                                lineOffsetX: x,
-                                                                lineOffsetY: y,
-                                                            };
-
-                                                            return newStyle;
-                                                        });
-                                                        requestSendStyle();
-                                                    }} />
-                                                <div className="single-slider">
-                                                    X Offset: <InputNumber
-                                                        size="small"
-                                                        value={lineOffsetX}
-                                                        onChange={setCustomValue('lineOffsetX')}
-                                                    />
-                                                </div>
-                                                <div className="single-slider">
-                                                    Y Offset: <InputNumber
-                                                        size="small"
-                                                        value={lineOffsetY}
-                                                        onChange={setCustomValue('lineOffsetY')}
-                                                    />
-                                                </div>
-                                                <div className="single-slider">
-                                                    Thickness: <Slider value={lineWidth} min={1} max={10} onChange={(value: number) => {
-                                                        if (typeof value === 'number') {
-                                                            setValue(cur => {
-                                                                const newStyle = { ...cur, lineWidth: value };
-
-                                                                return newStyle;
-                                                            });
-                                                            requestSendStyle();
-                                                        }
-                                                    }} />
-                                                </div>
-                                                <div />
-                                            </div>
-                                            <h2>Color</h2>
-                                            <CompactPicker color={lineColor} onChangeComplete={color => {
-                                                setValue(cur => ({ ...cur, lineColor: color.hex }));
-                                                requestSendStyle();
-                                            }} />
-                                        </div>}
+                                        {hasOutline && <GridSliderInput ref={outlinePickeRef}
+                                            className="custom-style-line"
+                                            fieldMap={{
+                                                color: 'lineColor',
+                                                width: 'lineWidth',
+                                                x: 'lineOffsetX',
+                                                y: 'lineOffsetY',
+                                            }}
+                                            labelMap={{
+                                                lineWidth: 'Thickness',
+                                            }}
+                                            defaultValue={value}
+                                            onChange={({ color, width, x, y }) => {
+                                                setValue(cur => ({
+                                                    ...cur,
+                                                    lineBlur: width,
+                                                    lineColor: color,
+                                                    lineOffsetX: x,
+                                                    lineOffsetY: y,
+                                                }));
+                                                customStyleSignal();
+                                            }}
+                                        />}
                                     </div>
                                 </div>}
                                 placement="bottom"
@@ -386,7 +310,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                             <Checkbox value={'has-gradient'} checked={hasGradient} onChange={() => {
                                                 setType('custom');
                                                 setValue(cur => ({ ...cur, hasGradient: !cur.hasGradient }));
-                                                requestSendStyle();
+                                                customStyleSignal();
                                             }}>Has gradient?</Checkbox>
                                         </h3>
                                         {hasGradient && <div className="custom-style-gradient">
@@ -423,7 +347,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                                 ].join(' ')}
                                                 onClick={() => {
                                                     setValue(cur => ({ ...cur, pattern: key }));
-                                                    requestSendStyle();
+                                                    customStyleSignal();
                                                 }}
                                             >
                                                 {patternImage
@@ -460,7 +384,7 @@ export const TextStylePicker = React.memo(forwardRef(({
                                                 className={font === fontValue ? 'menu-active' : ''}
                                                 onClick={() => {
                                                     setValue(cur => ({ ...cur, font: fontValue }));
-                                                    requestSendStyle();
+                                                    customStyleSignal();
                                                 }}
                                             >
                                                 {label}

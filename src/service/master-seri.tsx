@@ -27,7 +27,7 @@ import {
     PendulumEffectCoordinate,
     FinishMap,
     ArtFinishMap,
-    frameMap,
+    FrameInfoMap,
     EffectCoordinateData,
     TCGVanillaTypeStatFontList,
     EffectFontData,
@@ -204,7 +204,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = specialFrameCanvas.current?.getContext('2d');
             const previewCtx = previewCanvas.current;
             const effectBoxY = 860, effectBoxX = 35;
@@ -261,7 +261,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
                 if (useArtFrame) {
                     /** Ta vẽ thêm một box bên dưới để name box không bị xuyên thấu 100% nếu không có frame nền */
-                    ctx.fillStyle = `${frameMap[frame]?.labelBackgroundColor ?? ''}11`;
+                    ctx.fillStyle = `${FrameInfoMap[frame]?.labelBackgroundColor ?? ''}11`;
                     ctx.fillRect(44, 47, 726, 91);
                 }
                 ctx.globalAlpha = opacityName / 100;
@@ -497,6 +497,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     }, [
         active,
         imageChangeCount,
+        isInitializing,
         // artCanvas,
         foil,
         loopFinish, artFinish,
@@ -521,7 +522,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW ATTRIBUTE */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = attributeCanvas.current?.getContext('2d');
             drawingPipeline.current.attribute.rerun += 1;
             drawingPipeline.current.attribute.instructor = async () => {
@@ -532,32 +533,36 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 await loopFinish(ctx, 'attribute', type => drawFrom(ctx, `/asset/image/finish/finish-${type}-attribute.png`, 678, 55));
             };
         }
-    }, [active, attribute, attributeCanvas, format, isSpeedSkill, loopFinish]);
+    }, [active, isInitializing, attribute, attributeCanvas, format, isSpeedSkill, loopFinish]);
 
     /** DRAW STAR (NEG. LEVEL - LEVEL - RANK) - ST ICON */
     useEffect(
         () => {
-            if (active) {
+            if (active && isInitializing === false) {
                 const ctx = cardIconCanvas.current?.getContext('2d');
                 drawingPipeline.current.star.rerun += 1;
                 drawingPipeline.current.star.instructor = () => {
                     ctx?.clearRect(0, 0, CanvasWidth, 222);
                     if (isLink) return new Promise(resolve => resolve(true));
+                    const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
                     return drawCardIcon({
                         ctx,
-                        cardIcon: cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon,
+                        cardIcon: normalizedCardIcon,
                         star: star ?? 0,
-                        onStarDraw: coordinate => loopFinish(
-                            ctx,
-                            'star',
-                            type => drawFrom(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate),
-                        ),
+                        onStarDraw: coordinate => normalizedCardIcon === 'st'
+                            ? Promise.resolve()
+                            : loopFinish(
+                                ctx,
+                                'star',
+                                type => drawFrom(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate),
+                            ),
                     });
                 };
             }
         },
         [
             active,
+            isInitializing,
             isLink,
             star,
             cardIconCanvas,
@@ -569,7 +574,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW SCALE */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const fontSize = 60.5;
             const ctx = pendulumScaleCanvas.current?.getContext('2d');
 
@@ -586,7 +591,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW NAME */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = nameCanvas.current?.getContext('2d');
             drawingPipeline.current.name.rerun += 1;
             drawingPipeline.current.name.instructor = async () => {
@@ -645,7 +650,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW SET ID */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = setIdCanvas.current?.getContext('2d');
             clearCanvas(ctx);
             drawSetId(
@@ -663,7 +668,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW FIRST EDITION NOTICE AND PASSCODE */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = passwordCanvasRef.current?.getContext('2d');
             clearCanvas(ctx);
             if (ctx) {
@@ -723,7 +728,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW STICKER */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = stickerCanvas.current?.getContext('2d');
             drawingPipeline.current.sticker.rerun += 1;
             drawingPipeline.current.sticker.instructor = () => {
@@ -733,13 +738,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 return drawFrom(ctx, `/asset/image/sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
             };
         }
-    }, [active, sticker, stickerCanvas]);
+    }, [active, isInitializing, sticker, stickerCanvas]);
 
     /** DRAW CARD EFFECT + TYPE ABILITY */
     const drawTypeAbility = useCallback(async (
         ctx: CanvasRenderingContext2D | null | undefined,
         size: 'small' | 'medium' | 'large',
-        alignment: 'left' | 'right' = 'left',
     ) => {
         if (ctx) {
             ctx?.clearRect(0, 0, CanvasWidth, 1037);
@@ -760,22 +764,24 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             ctx.fillStyle = checkLightFrame(frame) && !checkSpeedSkill({ frame }) && size === 'large'
                 ? '#fff'
                 : '#000';
-            const { iconPositionList } = drawMonsterType({
+            const { iconPositionList, xRatio } = drawMonsterType({
                 ctx,
                 format,
                 size,
                 value: normalizedTypeAbilityText,
                 metricMethod: !isMonster ? 'compact' : undefined,
-                alignment,
                 furiganaHelper,
             });
+            let offsetY = format === 'ocg' ? -4 : 0;
+            let offsetX = format === 'ocg' ? -3 : 0;
 
             if (willDrawIcon) {
+                const { edge, baseline } = iconPositionList[0];
                 await drawWithSizeFrom(
                     ctx,
                     `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                    image => 717 - image.naturalWidth,
-                    153,
+                    image => edge + image.naturalWidth * 0.175 * xRatio + offsetX,
+                    image => baseline - image.naturalWidth * 0.8 + offsetY,
                     image => image.naturalWidth,
                     image => image.naturalWidth,
                 );
@@ -799,13 +805,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         }
     }, [normalizedTypeAbility, normalizedSubFamily, format, isMonster, furiganaHelper, frame]);
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = effectCanvas.current?.getContext('2d');
             const typeCtx = typeCanvas.current?.getContext('2d');
 
             drawingPipeline.current.typeAbility.rerun += 1;
             drawingPipeline.current.typeAbility.instructor = async () => {
                 ctx?.clearRect(0, 0, CanvasWidth, 1110.938);
+                if (!ctx || !typeCtx) return;
                 const typeInEffect = cardIcon === 'auto'
                     ? isMonster || isSpeedSkill
                     : cardIcon !== 'st' || isLink;
@@ -815,7 +822,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     .filter(entry => entry !== '').join('-');
 
                 const fontData = EffectFontData[fontDataKey];
-                if (statInEffect && typeInEffect && isNormal) fontData.fontList = TCGVanillaTypeStatFontList;
+                if (statInEffect && typeInEffect && isNormal && format === 'tcg') fontData.fontList = TCGVanillaTypeStatFontList;
 
                 const effectIndexSize = drawEffect(
                     ctx,
@@ -829,7 +836,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     furiganaHelper,
                 );
                 if (!typeInEffect) {
-                    await drawTypeAbility(typeCtx, 'large', 'right');
+                    await drawTypeAbility(typeCtx, 'large');
                 } else {
                     await drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
                 }
@@ -848,13 +855,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         isMonster,
         isNormal,
         isSpeedSkill,
+        isInitializing,
         statInEffect,
         typeCanvas,
     ]);
 
     /** DRAW PENDULUM EFFECT */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = pendulumEffectCanvas.current?.getContext('2d');
             ctx?.clearRect(0, 0, 813, 889);
             if (isPendulum) {
@@ -875,7 +883,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW TOTAL OVERLAY */
     useEffect(() => {
-        if (active) {
+        if (active && isInitializing === false) {
             const ctx = finishCanvas.current?.getContext('2d');
 
             drawingPipeline.current.overlay.rerun += 1;

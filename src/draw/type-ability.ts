@@ -16,7 +16,6 @@ export const drawMonsterType = ({
     format,
     metricMethod,
     size,
-    alignment,
     furiganaHelper,
 }: {
     ctx: CanvasRenderingContext2D,
@@ -24,10 +23,10 @@ export const drawMonsterType = ({
     format: string,
     metricMethod?: FontData['metricMethod'],
     size: 'small' | 'medium' | 'large',
-    alignment: 'left' | 'right',
     furiganaHelper: boolean,
 }) => {
     const {
+        edgeAlignment = 'left',
         trueEdge,
         trueBaseline,
         trueWidth,
@@ -73,16 +72,18 @@ export const drawMonsterType = ({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
-        trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
+        trueEdge: edgeAlignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
         trueBaseline,
         textData,
         format,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline);
         },
-        debug: true,
     });
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    return result;
+    return {
+        ...result,
+        xRatio,
+    };
 };

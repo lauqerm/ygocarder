@@ -1,4 +1,5 @@
 export type CoordinateData = {
+    edgeAlignment?: 'left' | 'right',
     trueWidth: number,
     trueBaseline: number,
     trueEdge: number,
@@ -41,34 +42,36 @@ export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateD
         small: {
             trueBaseline: 919,
             trueEdge: 62.50,
-            trueWidth: 648.5,
+            trueWidth: 684.5,
         },
         medium: {
             trueBaseline: 920,
             trueEdge: 62.50,
-            trueWidth: 648.5,
+            trueWidth: 684.5,
         },
         large: {
             trueBaseline: 187.5,
             trueEdge: 732.00,
+            edgeAlignment: 'right',
             trueWidth: 648.5,
         },
     },
     ocg: {
         small: {
             trueBaseline: 917,
-            trueEdge: 45.70,
-            trueWidth: 648.5,
+            trueEdge: 63.70,
+            trueWidth: 684.5,
         },
         medium: {
             trueBaseline: 917,
-            trueEdge: 45.70,
-            trueWidth: 648.5,
+            trueEdge: 63.70,
+            trueWidth: 684.5,
         },
         large: {
             trueBaseline: 190.5,
-            trueEdge: 763.82,
-            trueWidth: 648.5,
+            trueEdge: 728.00,
+            edgeAlignment: 'right',
+            trueWidth: 642.5,
         },
     },
 };

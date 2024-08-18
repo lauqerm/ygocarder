@@ -19,8 +19,8 @@ export const getDefaultCard = () => ({
     subFamily: 'NO ICON',
     cardIcon: 'auto',
     star: 6,
-    picture: 'https://i.imgur.com/h5kXZeC.png',
-    pictureCrop: {
+    art: 'https://i.imgur.com/h5kXZeC.png',
+    artCrop: {
         x: 0,
         y: 12,
         width: 269,
@@ -72,8 +72,8 @@ export const getEmptyCard = (): Card => ({
     subFamily: 'NO ICON',
     cardIcon: 'auto',
     star: 6,
-    picture: 'https://i.imgur.com/h5kXZeC.png',
-    pictureCrop: {
+    art: 'https://i.imgur.com/jjtCuG5.png',
+    artCrop: {
         x: 0,
         y: 12,
         width: 269,
@@ -119,7 +119,7 @@ export type FrameInfo = {
     labelBackgroundColorList?: string[],
     labelBackgroundImage?: string,
 };
-export const frameMap: Record<string, FrameInfo> = {
+export const FrameInfoMap: Record<string, FrameInfo> = {
     'normal': {
         name: 'normal',
         labelColor: '#ffffff',
@@ -247,7 +247,7 @@ export const frameMap: Record<string, FrameInfo> = {
         labelBackgroundImage: 'linear-gradient(90deg, rgba(185,108,73,1) 23%, rgba(137,72,164,1) 27%, rgba(137,72,164,1) 48%, rgba(239,239,239,1) 52%, rgba(239,239,239,1) 73%, rgba(0,0,0,1) 77%)',
     },
 };
-export const frameList = Object.values(frameMap);
+export const frameList = Object.values(FrameInfoMap);
 
 export const IconList = [
     { label: <CloseCircleOutlined />, value: 'NO ICON' },

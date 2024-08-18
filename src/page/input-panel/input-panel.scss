@@ -272,7 +272,7 @@
 		.joined-row {
 			grid-column: span 2;
 			.standalone-label {
-				min-width: none;
+				min-width: 0;
 				width: unset;
 				padding-left: 11px;
 			}

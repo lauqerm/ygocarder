@@ -17,7 +17,17 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         artFrame: 'opaf',
     },
     finish: 'fn',
+    art: 'ar',
     artFinish: 'afn',
+    artCrop: {
+        _newKey: 'arc',
+        x: 'arx',
+        y: 'ary',
+        width: 'arw',
+        height: 'arh',
+        unit: 'aru',
+        aspect: 'ara',
+    },
     name: 'na',
     nameStyleType: 'nst',
     effectStyle: {
@@ -49,16 +59,6 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     subFamily: 'sf',
     star: 'st',
     cardIcon: 'it',
-    picture: 'pt',
-    pictureCrop: {
-        _newKey: 'ptc',
-        x: 'ptx',
-        y: 'pty',
-        width: 'ptw',
-        height: 'pth',
-        unit: 'ptu',
-        aspect: 'pta',
-    },
     linkMap: 'lm',
     isPendulum: 'ip',
     pendulumFrame: 'pf',
@@ -80,6 +80,16 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
 };
 const legacyCardFieldShortenMap = {
     passcode: 'pc',
+    picture: 'pt',
+    pictureCrop: {
+        _newKey: 'ptc',
+        x: 'ptx',
+        y: 'pty',
+        width: 'ptw',
+        height: 'pth',
+        unit: 'ptu',
+        aspect: 'pta',
+    },
 };
 const cardFieldShortenMap = {
     ...currentCardFieldShortenMap,
@@ -110,7 +120,7 @@ export const decodeCardWithCompatibility = (cardData: Record<string, any> | stri
     return decodedCard;
 };
 
-export const cardDataShortener = (
+export const compressCardData = (
     card: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
     serialize = true,
@@ -123,7 +133,7 @@ export const cardDataShortener = (
             const newKey = shortenMap[fieldKey]?._newKey;
 
             if (newKey) {
-                condensedCard[newKey] = cardDataShortener(fieldValue, shortenMap[fieldKey], false);
+                condensedCard[newKey] = compressCardData(fieldValue, shortenMap[fieldKey], false);
             }
         } else {
             const newFieldKey = shortenMap[fieldKey];
@@ -136,7 +146,7 @@ export const cardDataShortener = (
     return condensedCard;
 };
 
-export const reverseCardDataShortener = (
+export const decompressCardData = (
     condensedCard: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
 ) => {
@@ -148,7 +158,7 @@ export const reverseCardDataShortener = (
             const shortendKey = shortenKey?._newKey;
 
             if (shortendKey && condensedCard[shortendKey]) {
-                fullCard[fullKey] = reverseCardDataShortener(condensedCard[shortendKey], shortenMap[fullKey]);
+                fullCard[fullKey] = decompressCardData(condensedCard[shortendKey], shortenMap[fullKey]);
             }
         } else {
             if (condensedCard[shortenKey] != null) {
@@ -191,7 +201,7 @@ export const rebuildCardData = (
     const normalizedCard = typeof card === 'string'
         ? JSON.parse(card)
         : card;
-    const fullCard: Record<string, any> = reverseCardDataShortener(normalizedCard);
+    const fullCard: Record<string, any> = decompressCardData(normalizedCard);
 
     return migrateCardData(fullCard);
 };
@@ -211,7 +221,7 @@ export const legacyRebuildCardData = (
     return migrateCardData(fullCard);
 };
 
-// Try to match old version card data with newer model
+/** Migrate old version of card data into the new version without information loss */
 const migrateCardData = (card: Record<string, any>) => {
     const migratedCard = {
         ...getEmptyCard(),
@@ -228,17 +238,24 @@ const migrateCardData = (card: Record<string, any>) => {
     if (migratedCard.format === undefined) migratedCard.format = 'tcg';
     if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'auto';
     if (migratedCard.finish === undefined) migratedCard.finish = [];
+
     if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
-    if ((migratedCard.picture ?? '') === '') migratedCard.picture = 'https://i.imgur.com/jjtCuG5.png';
+    if ((migratedCard as any).picture && !card.art) migratedCard.art = (migratedCard as any).picture;
+    delete (migratedCard as any).picture;
+
+    if ((migratedCard as any).pictureCrop && !card.artCrop) migratedCard.artCrop = (migratedCard as any).pictureCrop;
+    delete (migratedCard as any).pictureCrop;
+
+    if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
+
     if (migratedCard.opacity === undefined) migratedCard.opacity = getDefaultCardOpacity();
+
+    if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
+    delete (migratedCard as any).kanjiHelper;
     if (migratedCard.furiganaHelper === undefined) migratedCard.furiganaHelper = true;
-    if ((migratedCard as any).kanjiHelper) {
-        if (!migratedCard.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
-        delete (migratedCard as any).kanjiHelper;
-    }
-    if ((migratedCard as any).passcode) {
-        if (!migratedCard.password) migratedCard.password = (migratedCard as any).passcode;
-        delete (migratedCard as any).passcode;
-    }
+
+    if ((migratedCard as any).passcode && !card.password) migratedCard.password = (migratedCard as any).passcode;
+    delete (migratedCard as any).passcode;
+
     return migratedCard;
 };

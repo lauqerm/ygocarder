@@ -11,6 +11,7 @@ Dialect (Chef Special Recipe for example)
 <!-- Remove fixed width? -->
 Zoom
 Refactor styling
+Reduce amount of component memo
 <!-- Credit -->
 <!-- Remaining font data (OCG spell for example) -->
 <!-- Beatrice text style -->

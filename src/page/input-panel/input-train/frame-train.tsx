@@ -12,10 +12,10 @@ const StyledFrameTrain = styled(RadioTrain)`
 `;
 
 export type FrameTrain = {
-    setDisplayTypeAbility: (value: React.SetStateAction<string>) => void,
+    onSTFrameChange: (value: string[]) => void,
 };
 export const FrameTrain = memo(({
-    setDisplayTypeAbility,
+    onSTFrameChange,
 }: FrameTrain) => {
     const {
         setting,
@@ -57,7 +57,7 @@ export const FrameTrain = memo(({
             const newTypeAbility = nextFrame === 'spell'
                 ? [termMap['Spell Card']]
                 : nextFrame === 'trap' ? [termMap['Trap Card']] : typeAbility;
-            if (isST) setDisplayTypeAbility(newTypeAbility[0]);
+            if (isST) onSTFrameChange(newTypeAbility);
 
             return {
                 ...currentCard,
@@ -69,7 +69,7 @@ export const FrameTrain = memo(({
                 typeAbility: newTypeAbility,
             };
         });
-    }, [setCard, setDisplayTypeAbility]);
+    }, [setCard, onSTFrameChange]);
 
     return <StyledFrameTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />;
 });

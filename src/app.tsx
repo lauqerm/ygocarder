@@ -8,12 +8,12 @@ import {
     getDefaultCard,
 } from './model';
 import {
-    cardDataShortener,
+    compressCardData,
     decodeCardWithCompatibility,
 } from './util';
 import { CardInputPanel, CardInputPanelRef, DownloadButton } from './page';
 import WebFont from 'webfontloader';
-import { changeCardFormat, useCard, useOCGFont, useSetting } from './service';
+import { changeCardFormat, retrieveSavedCard, useCard, useOCGFont, useSetting } from './service';
 import { Modal, notification, Tooltip } from 'antd';
 import { TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
@@ -54,10 +54,10 @@ const ResetButton = styled(OverlayButton)`
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 function App() {
+    const softMode = useSetting(state => state.setting.reduceMotionColor);
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
-    const softMode = useSetting(state => state.setting.reduceMotionColor);
     const [canvasKey, setCanvasKey] = useState(0);
     const [lightboxVisible, setLightboxVisible] = useState(false);
 
@@ -129,21 +129,7 @@ function App() {
                 urls: ['asset/font.css'],
             },
             active: () => {
-                try {
-                    const localCardVersion = window.localStorage.getItem('card-version');
-                    const localCardData = window.localStorage.getItem('card-data');
-
-                    const cardURLData = (new URLSearchParams(window.location.search)).get('data');
-                    if (cardURLData) {
-                        const decodedCard = decodeCardWithCompatibility(cardURLData);
-
-                        setCard(decodedCard);
-                    } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-                        setCard(JSON.parse(localCardData) as any);
-                    }
-                } catch (e) {
-                    setCard(getDefaultCard());
-                }
+                setCard(retrieveSavedCard());
                 setInitializing(false);
             },
             fontinactive(familyName, fvd) {
@@ -250,7 +236,7 @@ function App() {
 
                                 window.prompt(
                                     'Save card data for later use',
-                                    `${cardDataShortener(exportableCard)}`,
+                                    `${compressCardData(exportableCard)}`,
                                 );
                             }}>Export Data</button>
                             <button onClick={() => {
@@ -280,14 +266,18 @@ function App() {
                         <div className="card-canvas-group">
                             <Tooltip title="Reset">
                                 <ResetButton className="reset-button" onClick={() => {
-                                    const consent = window.confirm('This will reset your card information back to default, make sure you already export the current data first!');
+                                    const consent = window.confirm('This will reset your card information back to default, make sure you export the current data first!');
 
                                     if (consent) {
                                         const { setCard, card } = useCard.getState();
-                                        const currentFormat = card.format;
                                         const defaultCard = getDefaultCard();
+                                        const contextualDefaultCardData = card.format === 'tcg'
+                                            ? defaultCard
+                                            : changeCardFormat(defaultCard, 'ocg');
 
-                                        setCard(currentFormat === 'tcg' ? defaultCard : changeCardFormat(defaultCard, 'ocg'));
+                                        setCard(contextualDefaultCardData);
+                                        setImageChangeCount(cnt => cnt + 1);
+                                        cardInputRef.current?.forceCardData(contextualDefaultCardData);
                                     }
                                 }}>
                                     <ClearOutlined />

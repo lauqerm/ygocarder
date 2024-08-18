@@ -38,7 +38,6 @@ export const placeCursorInInput = ({
     if (id && placement >= 0) {
         const target = document.querySelector(`#${id}`) as HTMLInputElement | null;
 
-        console.log('🚀 ~ target:', target, target?.selectionEnd, placement);
         if (target && (target.selectionEnd ?? -1) >= 0) {
             target.selectionEnd = placement;
         }

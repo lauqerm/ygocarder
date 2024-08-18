@@ -29,6 +29,15 @@
     .standalone-addon {
         --main-active: #7272ff;
     }
+    .card-info-panel .pendulum-frame-input {
+        .frame-info-block,
+        .pendulum-frame-label {
+            border-color: var(--main-level-4);
+        }
+        .frame-info-block {
+            border-left-color: var(--sub-level-1);
+        }
+    }
     .radio-train.format-radio {
         .ant-radio-button-wrapper-checked {
             &.ocg-button {

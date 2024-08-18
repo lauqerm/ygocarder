@@ -64,19 +64,22 @@ export const resolveNameStyle = ({
     if (isSpeedSkill && format === 'tcg') contextualFont = 'Arial';
 
     /** Predefined name style has dynamic font based on format unless explictly stated */
-    if (nameStyleType === 'predefined') {
-        const resultNameStyle = { ...nameStyle };
-        if (!PresetNameStyleMap[resultNameStyle.preset ?? 'commonB'].value.font) {
-            resultNameStyle.font = contextualFont;
-        }
-
-        return resultNameStyle;
-    }
-
     let contextualColor = {
         fillStyle: lightHeader ? '#ffffff' : '#000000',
         headTextFillStyle: lightHeader ? '#ffffff' : '#000000',
     };
+    if (nameStyleType === 'predefined') {
+        const resultNameStyle = PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value;
+        if (!PresetNameStyleMap[resultNameStyle.preset ?? 'commonB'].value.font) {
+            resultNameStyle.font = contextualFont;
+        }
+
+        return {
+            ...contextualColor,
+            ...resultNameStyle,
+        };
+    }
+
     let contextualOutline = isSpeedSkill
         ? {
             hasOutline: true,

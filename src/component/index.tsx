@@ -44,6 +44,7 @@ export const StyledDropdown = {
 };
 
 export { ImageCropper } from './image-cropper';
+export type { ImageCropperRef } from './image-cropper';
 export { LinkMarkChooser } from './link-marker';
 export { Loading } from './loading';
 export * from './explanation';

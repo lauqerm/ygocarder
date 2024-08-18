@@ -22,7 +22,7 @@ export const drawMarker = ({
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.rect(trueEdge / xRatio, baseline + 1 + Math.random() * offset, width / xRatio, 2);
-    // ctx.fill();
+    ctx.fill();
     ctx.fillStyle = currentFillStyle;
 };
 
