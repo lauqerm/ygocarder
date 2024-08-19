@@ -5,9 +5,8 @@ html {
     --card-height: 1185px;
     --resize-ratio: 0.7;
     --translate-ratio: -15%;
-    // --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    --bs-input: none;
-    --color-dim: #d6d6d6;
+
+    --color-dim: #9b9b9b;
     --color: #d3d3d6;
     --color-heavy: #eeeeee;
     --color-vendor: #d0f0ff;
@@ -45,17 +44,58 @@ html {
     --main-info: #3a9eff;
     --sub-info: #3b9dff;
 
+    // Margin / Padding
+    --spacing-px: 1px;
+    --spacing-xxs: 2px;
+    --spacing-xs: 5px;
+    --spacing-sm: 7px;
     --spacing: 10px;
+    --spacing-lg: 15px;
+    --spacing-xl: 18px;
+    --spacing-2xl: 20px;
+    --spacing-antd: 11px;
+
+    --fs-xs: 9px;
+    --fs-sm: 12px;
+    --fs: 14px;
+    --fs-lg: 18px;
+    --fs-xl: 20px;
+    --fs-2xl: 24px;
+    --fs-3xl: 30px;
+    --fs-4xl: 40px;
+    --fs-ocg: 15px;
+
+    // Border Radius
+    --br: 2px;
+    --br-lg: 4px;
+    --br-xl: 8px;
+
+    // Border Width / Outline Width
+    --bw: 1px;
+    --bw-lg: 2px;
+
+    // Box Shadow
+    --bs-1: 0 0 0 1px #222222;
+    --bs-button: 0 0 2px 0 #333333;
+    --bs-block: 0 0 1px 1px #222222;
+    // --bs-input: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --bs-input: none;
+
+    // Text Shadow
+    --ts: 0 1px #222;
+
+    // Size
+    --width-label: 105px;
 
     h1 {
         color: var(--color-heavy);
-        font-size: 1.75em;
+        font-size: var(--fs-2xl);
     }
     h2 {
         line-height: 1;
-        font-size: 1.2em;
+        font-size: var(--fs-lg);
         color: var(--color-vendor);
-        padding: 0.5rem 0;
+        padding: var(--spacing-sm) 0;
         &:first-child {
             padding-top: 0;
         }
@@ -67,13 +107,14 @@ html {
 hr {
     margin: 0;
     border: none;
-    border-top: 1px solid var(--sub-level-1);
+    border-top: var(--bw) solid var(--sub-level-1);
 }
 #app {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     padding: var(--spacing) 0;
     overflow-y: scroll;
+    position: relative;
 }
 .app-container {
     display: flex;
@@ -81,7 +122,7 @@ hr {
     background-color: #404040;
     box-shadow: 0 0 2px 2px #202020;
     margin: auto;
-    border-radius: 8px;
+    border-radius: var(--br-xl);
     &.app-container-export {
         flex-direction: row-reverse;
         > .card-filter-panel {
@@ -98,7 +139,7 @@ hr {
         flex: 3;
         padding: var(--spacing);
         color: var(--color-heavy);
-        text-shadow: 0 1px #222;
+        text-shadow: var(--ts);
         position: relative;
     }
     .card-preview-panel {
@@ -137,7 +178,7 @@ hr {
         > span {
             display: flex;
             align-self: center;
-            margin-left: 5px;
+            margin-left: var(--spacing-xs);
         }
     }
 }
@@ -148,7 +189,7 @@ hr {
 .input-ocg {
     input,
     textarea.ant-input {
-        font-size: 15px;
+        font-size: var(--fs-ocg);
         line-height: 1.4666;
         font-family: "DFHSGothic-W3-WIN-RKSJ-H";
     }
@@ -206,7 +247,7 @@ input:-internal-autofill-selected {
         display: none;
     }
     .ant-modal-content .ant-modal-body {
-        --lightbox-padding: 15px;
+        --lightbox-padding: var(--spacing-lg);
         padding: var(--lightbox-padding);
         width: calc(var(--card-width) + var(--lightbox-padding) * 2);
     }

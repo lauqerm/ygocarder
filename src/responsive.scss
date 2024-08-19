@@ -1,7 +1,6 @@
 @media only screen and (max-width: 1600px) {
 	#app {
 		padding: 0;
-		padding-bottom: 20px;
 		.card-info-panel {
 			min-height: 100vh;
 			.post-pendulum-input {
@@ -15,7 +14,7 @@
 	.app-container {
 		border-radius: 0;
 		.affiliation {
-			border-radius: 0 0 0 8px;
+			border-radius: 0 0 0 var(--br-xl);
 		}
 		.password-input,
 		.checkbox-input {
@@ -26,13 +25,13 @@
 			.ant-radio-group,
 			.radio-train-input-group {
 				flex-wrap: wrap;
-				row-gap: 2px;
-				column-gap: 2px;
+				row-gap: var(--spacing-xxs);
+				column-gap: var(--spacing-xxs);
 				box-shadow: none;
 				.ant-radio-button-wrapper {
 					flex: 1 1 auto;
 					border-radius: 0;
-					border-left-width: 1px;
+					border-left-width: var(--bw);
 					text-align: center;
 				}
 			}
@@ -85,10 +84,10 @@
 		.name-color-input {
 			.style-picker {
 				display: flex;
-				margin-top: 5px;
+				margin-top: var(--spacing-xs);
 				flex-wrap: wrap;
-				row-gap: 0.5rem;
-				column-gap: 0.5rem;
+				row-gap: var(--spacing-sm);
+				column-gap: var(--spacing-sm);
 			}
 			.anticon-caret-down,
 			.anticon-caret-up {
@@ -101,7 +100,7 @@
 		}
 		.card-info-panel {
 			margin-left: var(--spacing);
-			border-left: 1px solid var(--main-level-4);
+			border-left: var(--bw) solid var(--main-level-4);
 			.main-info {
 				flex-wrap: wrap;
 				flex-direction: column-reverse;
@@ -129,12 +128,17 @@
 					}
 					.card-image-source-input {
 						grid-area: source;
+						grid-template-columns: 1fr;
 					}
 					.card-cropper {
 						grid-area: cropper;
 						max-width: 375px;
 						height: unset;
 						position: relative;
+					}
+					.link-marker-chooser {
+						margin-right: 0;
+						margin-bottom: var(--spacing-sm);
 					}
 				}
 			}
@@ -149,7 +153,7 @@
 			max-width: 617px; // Hard with for guide image
 		}
 		.image-with-caption + .image-with-caption {
-			margin-top: 0.5rem;
+			margin-top: var(--spacing-sm);
 		}
 	}
 }
@@ -195,6 +199,16 @@
 				.card-cropper {
 					margin: auto;
 				}
+				.card-image-cropper {
+					.card-image-source-input {
+						grid-area: source;
+						grid-template-columns: max-content 1fr;
+					}
+					.link-marker-chooser {
+						margin-right: var(--spacing-sm);
+						margin-bottom: 0;
+					}
+				}
 			}
 		}
 	}
@@ -203,7 +217,7 @@
 		.app-creator {
 			grid-column: -1 / 1;
 			white-space: normal;
-			margin-bottom: 2px;
+			margin-bottom: var(--spacing-xxs);
 		}
 	}
 }
@@ -228,10 +242,10 @@
 		.card-info-panel {
 			.main-info {
 				.field-title {
-					width: 105px;
+					width: var(--width-label);
 				}
 				.art-finish-checkbox > .ant-input-group-addon {
-					flex: 0 0 105px;
+					flex: 0 0 var(--width-label);
 					text-align: right;
 				}
 			}
@@ -267,14 +281,14 @@
 			position: relative;
 			width: 100%;
 			z-index: 1;
-			border-radius: 3px 0 3px 3px;
+			border-radius: var(--br) 0 var(--br) var(--br);
 		}
 		.affiliation {
 			right: var(--spacing);
-			border-radius: 0 3px;
+			border-radius: 0 var(--br);
 			transform: translateY(-100%);
-			border-radius: 3px 3px 0 0;
-			box-shadow: 0 0 0 1px #212121;
+			border-radius: var(--br) var(--br) 0 0;
+			box-shadow: var(--bs-1);
 		}
 		.card-info-panel {
 			margin-left: 0;

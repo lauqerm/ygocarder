@@ -1,21 +1,21 @@
 import { Button, Drawer } from 'antd';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { BulbFilled } from '@ant-design/icons';
+import { BulbFilled, SettingFilled } from '@ant-design/icons';
 import './formatting-guide.scss';
 
 const StyledCode = styled.span`
     background: var(--main-level-1);
-    padding: 0.1rem 0.15rem;
-    border: 1px solid #4e84a4;
-    border-radius: 3px;
+    padding: var(--spacing-px) var(--spacing-xxs);
+    border: var(--bw) solid #4e84a4;
+    border-radius: var(--br);
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 `;
 const StyledPanel = styled.div`
     display: grid;
     grid-template-columns: 615fr 703fr;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
     overflow: hidden;
     .panel-box {
         min-width: 0;
@@ -32,15 +32,15 @@ const StyledImageWithCaptionContainer = styled.div`
         position: absolute;
         right: 0;
         bottom: 0;
-        padding: 0.1rem 0.5rem;
+        padding: var(--spacing-px) var(--spacing-sm);
         background: var(--main-level-5);
-        border-radius: 5px 0 0 0;
-        box-shadow: 0 0 1px 1px #222222;
+        border-radius: var(--br-lg) 0 0 0;
+        box-shadow: var(--bs-block);
     }
     > img {
         max-width: 100%;
-        border: 1px solid var(--sub-level-1);
-        border-radius: 4px;
+        border: var(--bw) solid var(--sub-level-1);
+        border-radius: var(--br-lg);
     }
 `;
 export type ImageWithCaption = {
@@ -85,7 +85,9 @@ export const FormattingHelpDrawer = () => {
                 <p>
                     Formatting should work out-of-the-box, but in case you need to fine-tune your cards, here are some additional formatting syntax.
                     <br />
-                    The behavior may be differents base on the input.
+                    The behavior may be differents based on the input.
+                    <br />
+                    You can turn on/off hotkey usage in setting <SettingFilled />.
                 </p>
                 <h2>Non-breakable line</h2>
                 Wrap a line of text inside a <StyledCode>{'['}</StyledCode> and <StyledCode>{']'}</StyledCode> to prevent the text from breaking down into multiple lines.

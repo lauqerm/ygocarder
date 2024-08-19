@@ -6,6 +6,10 @@ import { TextAreaProps } from 'antd/lib/input';
 const { TextArea } = Input;
 export type CardTextAreaRef = {
     setValue: (nextValue: string) => void,
+    getPickerRef: () => null | {
+        id: string, 
+        setValue: (nextValue: string) => void;
+    },
 };
 export type CardTextArea = {
     allowHotkey?: boolean,
@@ -52,6 +56,7 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
     };
     useImperativeHandle(ref, () => ({
         setValue: externalSetValue,
+        getPickerRef: () => id ? ({ id, setValue: externalSetValue }) : null,
     }));
 
     return <TextArea

@@ -4,6 +4,7 @@ import { tokenizeText } from './text-util';
 import { drawLine } from './text';
 import { createLineList } from './line-analyze';
 import { normalizeCardText } from './text-normalize';
+import { clearCanvas } from './canvas-util';
 
 export const drawCreatorText = ({
     ctx,
@@ -11,13 +12,28 @@ export const drawCreatorText = ({
     format,
     alignment,
     baselineOffset = 0,
+    lightFooter,
+    hasShadow,
 }: {
-    ctx: CanvasRenderingContext2D,
+    ctx?: CanvasRenderingContext2D | null,
     value: string,
     format: string,
     alignment: 'left' | 'right',
     baselineOffset?: number,
+    lightFooter: boolean,
+    hasShadow?: boolean,
 }) => {
+    clearCanvas(ctx);
+    if (!ctx) return;
+
+    ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
+    ctx.shadowColor = hasShadow
+        ? lightFooter ? '#000000' : '#ffffff'
+        : '#000000';
+    ctx.shadowOffsetY = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowBlur = hasShadow ? 1 : 0;
+
     const { trueEdge, trueBaseline, trueWidth } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];
     const { font } = fontData;
@@ -36,7 +52,7 @@ export const drawCreatorText = ({
         const fontGetter = createFontGetter({
             defaultFamily: font,
             defaultSize: `${fontSizeData.fontSize}px`,
-            defaultWeight: format === 'tcg' ? '' : 'bold',
+            defaultWeight: format === 'ocg' || hasShadow ? 'bold' : '',
         });
         let internalTextData = {
             fontLevel,

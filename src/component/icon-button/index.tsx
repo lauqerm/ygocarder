@@ -7,13 +7,13 @@ const StyledIconButtonContainer = styled.span`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-left: 5px;
+    margin-left: var(--spacing-xs);
     width: 24px;
     height: 24px;
-    border: 1px solid var(--sub-level-1);
+    border: var(--bw) solid var(--sub-level-1);
     background-color: var(--main-level-4);
-    border-radius: 4px;
-    box-shadow: 0 0 2px 0 #333;
+    border-radius: var(--br-lg);
+    box-shadow: var(--bs-button);
 	cursor: pointer;
 	&:hover {
 		background-color: var(--sub-level-4);

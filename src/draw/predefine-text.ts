@@ -1,10 +1,4 @@
-import { CanvasConst } from 'src/model';
 import { fillTextLeftWithSpacing, fillTextRightWithSpacing } from './canvas-util';
-import { drawFrom } from './image';
-
-const {
-    width: CanvasWidth,
-} = CanvasConst;
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -13,6 +7,10 @@ export const drawScale = (
     baseline: number,
 ) => {
     if (ctx && value) {
+        const fontSize = 60.5;
+        ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
+        ctx.textAlign = 'left';
+
         const digitScaleRatio = 0.65;
         const digitList = `${value}`.split('');
         let totalWidth = 0;
@@ -23,7 +21,7 @@ export const drawScale = (
         let accLeft = edge - totalWidth / 2;
 
         digitList.forEach(digit => {
-            ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, baseline);
+            ctx.fillText(digit, digit === '1' ? accLeft - 3 : accLeft, baseline + fontSize);
             accLeft += ctx.measureText(digit).width * (digit === '1' ? digitScaleRatio : 1);
         });
     }
@@ -35,24 +33,24 @@ export const draw1stEdition = (
     baselineOffset = 0,
     option = { stroke: false },
 ) => {
-    if (ctx) {
-        const { stroke = false } = option ?? {};
-        ctx.font = 'bold 23.7px palatino-linotype-bold';
+    if (!ctx) return;
 
-        let left = edge;
-        ctx.fillText('1', left, 1150.93 + baselineOffset);
-        if (stroke) ctx.strokeText('1', left, 1150.93);
-        left += ctx.measureText('1').width - 2;
+    const { stroke = false } = option ?? {};
+    ctx.font = 'bold 23.7px palatino-linotype-bold';
 
-        ctx.font = 'bold 17.78px palatino-linotype-bold';
-        ctx.fillText('st', left, 1143.53 + baselineOffset);
-        if (stroke) ctx.strokeText('st', left, 1143.53);
-        left += ctx.measureText('st').width;
+    let left = edge;
+    ctx.fillText('1', left, 1150.93 + baselineOffset);
+    if (stroke) ctx.strokeText('1', left, 1150.93);
+    left += ctx.measureText('1').width - 2;
 
-        ctx.font = 'bold 22.22px palatino-linotype-bold';
-        ctx.fillText(' Edition', left, 1150.93 + baselineOffset);
-        if (stroke) ctx.strokeText(' Edition', left, 1150.93);
-    }
+    ctx.font = 'bold 17.78px palatino-linotype-bold';
+    ctx.fillText('st', left, 1143.53 + baselineOffset);
+    if (stroke) ctx.strokeText('st', left, 1143.53);
+    left += ctx.measureText('st').width;
+
+    ctx.font = 'bold 22.22px palatino-linotype-bold';
+    ctx.fillText(' Edition', left, 1150.93 + baselineOffset);
+    if (stroke) ctx.strokeText(' Edition', left, 1150.93);
 };
 
 export const drawStatText = (
@@ -142,12 +140,14 @@ export const drawSetId = (
         let spacing = 0.175;
         let offsetY = 0;
         let xOffset = 0;
-        ctx.fillStyle = (lightFooter && !isPendulum) ? '#fff' : '#000';
-        ctx.shadowColor = withShadow ? '#fff' : '#000';
+        ctx.fillStyle = (lightFooter && !isPendulum) ? '#ffffff' : '#000000';
+        ctx.shadowColor = withShadow
+            ? lightFooter ? '#000000' : '#ffffff'
+            : '#000000';
         ctx.shadowOffsetY = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowBlur = withShadow && !isPendulum ? 1 : 0;
-        ctx.font = '22px stone-serif-regular';
+        ctx.font = `${withShadow ? 'bold' : ''} 22px stone-serif-regular`;
         if (format === 'ocg') {
             spacing = 0.145;
             offsetY = -1;
@@ -164,41 +164,25 @@ export const drawSetId = (
     }
 };
 
-export const drawCardIcon = async ({
+export const drawPassword = ({
     ctx,
-    cardIcon,
-    star,
-    onStarDraw,
+    password,
+    hasShadow,
+    lightFooter,
 }: {
-    ctx: CanvasRenderingContext2D | null | undefined,
-    cardIcon: string,
-    star: number,
-    onStarDraw: (coordinate: [number, number]) => Promise<void>,
+    ctx?: CanvasRenderingContext2D | null,
+    password: string,
+    hasShadow?: boolean,
+    lightFooter: boolean,
 }) => {
-    const starWidth = 50;
-    const startSpacing = 4;
-    const starCount = Math.min(13, star);
-    const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
-    const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
-    /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
-    const leftEdge = starCount <= 12
-        ? reverseAlign
-            ? 85.9125 - starWidth
-            : 728.775
-        : reverseAlign
-            ? (CanvasWidth - totalWidth) / 2 - starWidth
-            : (CanvasWidth - totalWidth) / 2 + totalWidth;
+    if (!ctx) return 0;
 
-    let offset = 0 - (starWidth + startSpacing);
-    return Promise.all([...Array(starCount)]
-        .map(async () => {
-            offset += (starWidth + startSpacing);
-            let coordinate: [number, number] = [
-                leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
-                145,
-            ];
-            await drawFrom(ctx, `/asset/image/sub-family/subfamily-${cardIcon}.png`, ...coordinate);
-            return onStarDraw(coordinate);
-        })
-    );
+    ctx.fillStyle = lightFooter ? '#fff' : '#000';
+    ctx.font = `${hasShadow ? 'bold' : ''} 22.219px stone-serif-regular`;
+    ctx.shadowColor = hasShadow ? '#fff' : '#000';
+    ctx.shadowOffsetY = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowBlur = hasShadow ? 1 : 0;
+
+    return fillTextLeftWithSpacing(ctx, password, 0.1, 37.031, 1150.931);
 };

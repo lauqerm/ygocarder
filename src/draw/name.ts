@@ -107,6 +107,8 @@ export const drawName = async (
         } = { ...getDefaultNameStyle(), ...style };
         const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
         const hasOutline = hasDefaultOutline;
+
+        ctx.textAlign = 'left';
         if (hasShadow) {
             ctx.shadowColor = shadowColor;
             ctx.shadowOffsetY = shadowOffsetY;
@@ -116,9 +118,6 @@ export const drawName = async (
         if (hasDefaultOutline) {
             ctx.lineWidth = lineWidth;
             ctx.strokeStyle = lineColor;
-        } else if (isSpeedSkill) {
-            // ctx.lineWidth = 6;
-            // ctx.strokeStyle = '#000';
         }
         const fontData = {
             ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,
@@ -240,7 +239,11 @@ export const drawName = async (
                 format,
                 textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                     ctx.lineJoin = 'round';
-                    ctx.strokeText(letter, scaledEdge + lineOffsetX, scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0));
+                    ctx.strokeText(
+                        letter,
+                        scaledEdge + lineOffsetX,
+                        scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
+                    );
                 },
             });
         }

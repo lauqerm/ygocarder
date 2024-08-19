@@ -1,5 +1,5 @@
 .explanation-icon {
-    font-size: 15px;
+    font-size: var(--fs);
     color: var(--color-heavy);
     cursor: pointer;
 }
@@ -8,12 +8,12 @@
         background-color: transparent;
     }
     .ant-popover-inner-content {
-        padding: 5px;
+        padding: var(--spacing-xs);
         background-color: var(--main-level-3);
         color: var(--color-heavy);
-        text-shadow: 0 1px #222;
+        text-shadow: var(--ts);
         max-width: 550px;
-        border-radius: 4px;
-        border: 1px solid var(--sub-level-1);
+        border-radius: var(--br-lg);
+        border: var(--bw) solid var(--sub-level-1);
     }
 }

@@ -7,18 +7,18 @@ const StyledOpacityPickerContainer = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    column-gap: 0.5rem;
-    row-gap: 0.5rem;
+    column-gap: var(--spacing-sm);
+    row-gap: var(--spacing-sm);
     .slider-label,
     .ant-slider,
     .slider-padding {
-        border: 1px solid var(--sub-level-1);
+        border: var(--bw) solid var(--sub-level-1);
         background-color: var(--main-level-3);
     }
     .slider-label {
         border-right: none;
-        padding: 0 5px;
-        border-radius: 2px 0 0 2px;
+        padding: 0 var(--spacing-xs);
+        border-radius: var(--br) 0 0 var(--br);
         box-shadow: var(--bs-input);
     }
     .ant-slider {
@@ -26,15 +26,15 @@ const StyledOpacityPickerContainer = styled.div`
         border-left: none;
         border-right: none;
         height: 25px;
-        padding-top: 9px;
+        padding-top: 9px; // Alignment
     }
     .slider-padding {
         border-left: none;
-        border-radius: 0 2px 2px 0;
+        border-radius: 0 var(--br) var(--br) 0;
     }
     .ant-slider-rail,
     .ant-slider-track {
-        border-radius: 0 2px 2px 0;
+        border-radius: 0 var(--br) var(--br) 0;
     }
     .card-opacity-slider {
         flex: 0 1 auto;

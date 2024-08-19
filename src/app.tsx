@@ -11,6 +11,7 @@ import {
 import {
     compressCardData,
     decodeCardWithCompatibility,
+    isMobileDevice,
 } from './util';
 import { CardInputPanel, CardInputPanelRef, DownloadButton } from './page';
 import WebFont from 'webfontloader';
@@ -31,6 +32,7 @@ const ErrorAlert = styled.span`
     color: var(--main-danger);
 `;
 const OverlayButton = styled.div`
+    --overlay-size: 51px;
     position: absolute;
     z-index: 101;
     background: var(--main-primary);
@@ -38,25 +40,25 @@ const OverlayButton = styled.div`
     color: var(--color-heavy);
     padding: var(--spacing);
     line-height: 1;
-    font-size: 30px;
+    font-size: var(--fs-3xl);
     text-align: center;
-    width: 51px;
-    height: 51px;
-    border-radius: 4px;
+    width: var(--overlay-size);
+    height: var(--overlay-size);
+    border-radius: var(--br-lg);
     cursor: pointer;
-    box-shadow: 0 0 0 1px var(--main-level-1);
+    box-shadow: var(--bs-1);
     display: none;
     &:hover {
         background: var(--sub-primary);
     }
 `;
 const LightboxButton = styled(OverlayButton)`
-    top: 5px;
-    right: 5px;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
 `;
 const ResetButton = styled(OverlayButton)`
-    top: 5px;
-    right: 61px;
+    top: var(--spacing-xs);
+    right: calc(var(--overlay-size) + 2 * var(--spacing-xs));
 `;
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
@@ -88,19 +90,19 @@ function App() {
     const finishCanvasRef = useRef<HTMLCanvasElement>(null);
     const lightboxCanvasRef = useRef<HTMLCanvasElement>(null);
     const [canvasMap] = useState({
-        previewCanvas: previewCanvasRef,
+        previewCanvasRef,
         drawCanvasRef,
         // artCanvas: artCanvasRef,
-        specialFrameCanvas: specialFrameCanvasRef,
-        cardIconCanvas: cardIconCanvasRef,
-        pendulumScaleCanvas: pendulumScaleCanvasRef,
-        pendulumEffectCanvas: pendulumEffectCanvasRef,
-        typeCanvas: typeCanvasRef,
-        effectCanvas: effectCanvasRef,
-        nameCanvas: nameCanvasRef,
-        attributeCanvas: attributeCanvasRef,
-        statCanvas: statCanvasRef,
-        setIdCanvas: setIdCanvasRef,
+        specialFrameCanvasRef,
+        cardIconCanvasRef,
+        pendulumScaleCanvasRef,
+        pendulumEffectCanvasRef,
+        typeCanvasRef,
+        effectCanvasRef,
+        nameCanvasRef,
+        attributeCanvasRef,
+        statCanvasRef,
+        setIdCanvasRef,
         passwordCanvasRef,
         creatorCanvas: creatorCanvasRef,
         stickerCanvas: stickerCanvasRef,
@@ -215,9 +217,9 @@ function App() {
         <div id="app"
             /** Prevent accidentally replace the page when dragging image into card art input. */
             onDrop={() => { }}
-            className={softMode ? 'reduced-color-motion' : ''}
             style={{
                 backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                height: isMobileDevice() ? '-webkit-fill-available' : '100vh',
                 ...({
                     '--card-height': `${CanvasConst.height}px`,
                     '--card-width': `${CanvasConst.width}px`,
@@ -316,10 +318,10 @@ function App() {
                             <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={1111} />
                             <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="password" ref={passwordCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="creator" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="sticker" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="finish" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="passwordCanvas" ref={passwordCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="creatorCanvas" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="stickerCanvas" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                            <canvas id="finishCanvas" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas className="crop-canvas" ref={previewCanvasRef} />
                         </StyledCardCanvasGroupContainer>
                     </div>

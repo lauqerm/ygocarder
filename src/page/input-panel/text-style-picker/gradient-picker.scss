@@ -1,10 +1,10 @@
 .controls-wrapper.gradient-picker-container {
     position: relative;
     .csh {
-        margin-bottom: 0.5rem;
+        margin-bottom: var(--spacing-sm);
     }
     .cs.active > div {
-        box-shadow: 0 0 0px 3px #ffffffaa;
+        box-shadow: 0 0 0 3px #ffffffaa;
     }
     .stop-color-picker-container {
         padding: var(--spacing);
@@ -19,11 +19,11 @@
     }
     .gradient-angle-control {
         position: absolute;
-        top: 59px;
-        padding: 0 0.5rem;
-        margin-top: 5px;   // Alignment with gradient color input
+        top: 61px; // Alignment with gradient color input
+        padding: 0 var(--spacing-sm);
+        margin-top: 5px; // Alignment with gradient color input
         h2 {
-            padding: 0.5rem 0;
+            padding: var(--spacing-sm) 0;
         }
     }
     .angle-picker-container {
@@ -39,7 +39,7 @@
         }
         .ai {
             margin: 0;
-            margin-top: 0.5rem;
+            margin-top: var(--spacing-sm);
             background: var(--main-slider);
             justify-content: space-between;
             line-height: 1.4;
@@ -51,7 +51,8 @@
                     background: var(--sub-secondary);
                 }
             }
-            span, input {
+            span,
+            input {
                 color: var(--color-heavy);
             }
         }
@@ -63,14 +64,16 @@
         flex-direction: column;
         align-self: end;
         .stop-point-offset-input {
-            margin-bottom: 5px;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-vendor);
+            font-size: var(--fs-sm);
         }
         .ant-btn.remove-stop-color {
-            font-size: 12px;
+            font-size: var(--fs-sm);
             color: var(--color-heavy);
             background: var(--main-danger);
-            border: 1px solid var(--sub-danger);
-            margin-left: 5px;
+            border: var(--bw) solid var(--sub-danger);
+            margin-left: var(--spacing-xs);
             &:hover {
                 background-color: var(--sub-danger);
                 box-shadow: none;
@@ -79,10 +82,10 @@
     }
     .ant-btn.add-stop-color {
         width: 100%;
-        font-size: 12px;
+        font-size: var(--fs-sm);
         color: var(--color-heavy);
         background: var(--main-tertiary);
-        border: 1px solid var(--sub-tertiary);
+        border: var(--bw) solid var(--sub-tertiary);
         margin: 3px 0; // Alignment
         &:hover {
             background-color: var(--sub-tertiary);

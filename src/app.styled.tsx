@@ -3,8 +3,8 @@ import styled from 'styled-components';
 export const StyledDataButtonPanelContainer = styled.div`
     display: flex;
     column-gap: var(--spacing);
-    border-radius: 5px;
-    font-size: 19px;
+    border-radius: var(--br-lg);
+    font-size: var(--fs-4xl);
     line-height: 1.5;
     margin: auto;
     max-width: var(--card-width);
@@ -13,22 +13,22 @@ export const StyledDataButtonPanelContainer = styled.div`
     padding: var(--spacing);
     padding-right: 0;
     text-align: center;
-    text-shadow: 0px 1px 2px black;
+    text-shadow: 0 1px 2px black;
     .anticon {
         cursor: pointer;
     }
     button {
         color: white;
-        border-radius: 4px;
+        border-radius: var(--br-lg);
         outline: none !important;
         cursor: pointer;
     }
     .save-button {
         flex: 1;
-        font-size: 20px;
-        border: 1px solid var(--sub-secondary);
+        font-size: var(--fs-xl);
+        border: var(--bw) solid var(--sub-secondary);
         font-weight: 500;
-        box-shadow: 0 0 2px 1px #333;
+        box-shadow: var(--bs-button);
     }
     #save-button-waiting {
         cursor: wait;
@@ -48,7 +48,7 @@ export const StyledDataButtonPanelContainer = styled.div`
     .save-button-container {
         display: flex;
         flex: 1;
-        font-size: 14px;
+        font-size: var(--fs);
         line-height: 1.35;
         position: relative;
     }
@@ -58,10 +58,10 @@ export const StyledDataButtonPanelContainer = styled.div`
         grid-template-columns: 1fr 1fr;
         column-gap: var(--spacing);
         button {
-            font-size: 13px;
+            font-size: var(--fs);
             background-color: var(--main-tertiary);
-            border: 1px solid var(--sub-tertiary);
-            box-shadow: 0 0 2px 1px #333;
+            border: var(--bw) solid var(--sub-tertiary);
+            box-shadow: var(--bs-button);
             &:hover {
                 background-color: var(--sub-tertiary);
                 box-shadow: none;
@@ -115,15 +115,15 @@ export const StyledCardCanvasGroupContainer = styled.div`
         width: var(--card-width);
         height: var(--card-height);
         .anticon {
-            font-size: 50px;
+            font-size: var(--fs-4xl);
         }
         .canvas-guard-alert {
             position: absolute;
             top: 0;
             right: 0;
             color: white;
-            padding: 5px var(--spacing);
-            border-radius: 0 0 0 5px;
+            padding: var(--spacing-xs) var(--spacing);
+            border-radius: 0 0 0 var(--br-lg);
             background-color: var(--main-active);
             box-shadow:
                 0 3px 6px rgba(0, 0, 0, 0.16),
@@ -154,7 +154,7 @@ export const StyledAppLoading = styled.div`
 	text-shadow:
 		0 1px #333,
 		0 2px #111;
-	font-size: 30px;
+	font-size: var(--fs-3xl);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -164,8 +164,8 @@ export const StyledByMe = styled.div`
 	position: fixed;
 	right: var(--spacing);
 	bottom: 0;
-	font-size: 8px;
+	font-size: var(--fs-xs);
 	opacity: 0.5;
-	padding: 1px 4px;
+	padding: var(--spacing-px) var(--spacing-xs);
 	color: var(--color-dim);
 `;

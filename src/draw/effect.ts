@@ -18,21 +18,28 @@ import { tokenizeText } from './text-util';
 const {
     width: CanvasWidth,
 } = CanvasConst;
-export const drawEffect = (
+export const drawEffect = ({
+    ctx,
+    content,
+    isNormal = false,
+    fontData = EffectFontData.tcg,
+    sizeList = EffectCoordinateData['tcg-type'],
+    condenseTolerant = 'strict',
+    format,
+    furiganaHelper,
+}: {
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
-    _isPendulumEffect = false,
-    isNormal = false,
-    fontData: FontData = EffectFontData.tcg,
-    sizeList: CoordinateData[] = EffectCoordinateData['tcg-type'],
-    condenseTolerant: CondenseType = 'strict',
+    isNormal?: boolean,
+    fontData?: FontData,
+    sizeList?: CoordinateData[],
+    condenseTolerant?: CondenseType,
     format: string,
     furiganaHelper: boolean,
-) => {
+}) => {
     let effectSizeLevel = 0;
     if (!ctx || !content) return effectSizeLevel;
 
-    let tStart = performance.now();
     const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
     const tolerantPerSentence: Record<string, number> = format === 'tcg'
         ? CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
@@ -204,7 +211,5 @@ export const drawEffect = (
         }
     }
 
-    /** @todo clean log */
-    console.info('Time end', performance.now() - tStart);
     return effectSizeLevel;
 };

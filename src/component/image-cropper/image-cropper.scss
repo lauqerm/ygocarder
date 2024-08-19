@@ -1,11 +1,11 @@
 .card-image-cropper {
-    display: flex;
-    flex-direction: column;
-    grid-column-gap: var(--spacing);
-    row-gap: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	grid-column-gap: var(--spacing);
+	row-gap: var(--spacing-sm);
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
-		min-height: 104px;	// Alignment
+		min-height: 104px; // Alignment
 	}
 	.disabled,
 	.disabled .anticon {
@@ -16,7 +16,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		gap: 0.5rem;
+		gap: var(--spacing-sm);
 	}
 	.ant-radio-group {
 		.ant-input-group-addon {
@@ -24,7 +24,7 @@
 		}
 	}
 	.card-image-input {
-		margin-top: 5px;
+		margin-top: var(--spacing-xs);
 		&.input-inactive {
 			display: none;
 		}
@@ -34,10 +34,10 @@
 		display: grid;
 		grid-template-columns: max-content 1fr;
 		.link-marker-chooser {
-			margin-right: 0.5rem;
+			margin-right: var(--spacing-sm);
 		}
 		.card-image-source-input-title {
-			min-height: 34px;	// Alignment
+			min-height: 34px; // Alignment
 			grid-column: span 2;
 			line-height: 1;
 		}
@@ -46,7 +46,7 @@
 		}
 	}
 	.online-image-tip {
-		margin-top: 5px;
+		margin-top: var(--spacing-xs);
 		line-height: 1.25;
 	}
 	.card-cropper {
@@ -59,7 +59,9 @@
 		max-height: 400px;
 	}
 	.ReactCrop {
-		box-shadow: 0 1px 3px rgba(0,0,0,0.36), 0 1px 2px rgba(0,0,0,0.48);
+		box-shadow:
+			0 1px 3px rgba(0, 0, 0, 0.36),
+			0 1px 2px rgba(0, 0, 0, 0.48);
 	}
 }
 

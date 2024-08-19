@@ -15,7 +15,7 @@ const StyledPostPendulumInputContainer = styled.div`
     grid-template-areas:
         "type-input input-helper"
         "condense-input help-button";
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     align-items: center;
     .formatting-help-button {
         grid-area: help-button;

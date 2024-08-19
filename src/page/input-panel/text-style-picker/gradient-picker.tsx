@@ -194,7 +194,7 @@ export const TextGradientPicker = ({
                 }}
             >Add Point ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
             <div className="angle-picker-container">
-                <h2>Angle</h2>
+                <h2>Gradient Direction</h2>
                 <AnglePicker angle={angle} size={120} setAngle={setAngle} />
             </div>
         </div>

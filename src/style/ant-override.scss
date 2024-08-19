@@ -1,4 +1,3 @@
-
 // [OVERWRITE ANTD DEFAULT]
 .input-overlay,
 .card-info-panel,
@@ -16,7 +15,7 @@
     .ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
         background-color: var(--main-level-1);
         color: var(--color-heavy);
-        text-shadow: 0 1px #222;
+        text-shadow: var(--ts);
     }
     .ant-input-group-addon {
         padding-left: 0;
@@ -33,7 +32,7 @@
     }
     .ant-checkbox-wrapper {
         color: var(--color-vendor);
-        text-shadow: 0 1px #222;
+        text-shadow: var(--ts);
     }
     .field-title,
     .ant-btn.download-button,
@@ -42,7 +41,7 @@
         border-color: transparent;
         background-color: transparent;
         color: var(--color-vendor);
-        text-shadow: 0 1px #222;
+        text-shadow: var(--ts);
         user-select: none;
     }
     textarea,
@@ -58,12 +57,11 @@
             border-color: var(--sub-active);
         }
     }
-    --border-radius: 2px;
     .radio-train .ant-radio-button-wrapper:first-child {
-        border-radius: var(--border-radius) 0 0 var(--border-radius);
+        border-radius: var(--br) 0 0 var(--br);
     }
     .radio-train .ant-radio-button-wrapper:last-child {
-        border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        border-radius: 0 var(--br) var(--br) 0;
     }
     .radio-train-input-group,
     .ant-input-affix-wrapper,
@@ -71,9 +69,9 @@
     .ant-input-wrapper .ant-input:last-child,
     textarea.ant-input,
     .ant-input-group > .ant-input-affix-wrapper:not(:first-child) {
-        border-radius: var(--border-radius);
-        border-top-left-radius: var(--border-radius);
-        border-bottom-left-radius: var(--border-radius);
+        border-radius: var(--br);
+        border-top-left-radius: var(--br);
+        border-bottom-left-radius: var(--br);
     }
     .anticon {
         color: var(--color-heavy);
@@ -92,7 +90,7 @@ span.ant-input-affix-wrapper {
     .ant-input-affix-wrapper {
         background-color: var(--main-level-1);
         color: var(--color-heavy);
-        text-shadow: 0 1px #222;
+        text-shadow: var(--ts);
         .anticon {
             color: var(--color-heavy);
         }
@@ -154,7 +152,7 @@ div.ant-slider {
 }
 .ant-checkbox-checked {
     &::after {
-        border: 1px solid var(--main-active);
+        border: var(--bw) solid var(--main-active);
     }
     .ant-checkbox-inner {
         background-color: var(--main-active);
@@ -244,7 +242,7 @@ button.ant-btn {
         background-color: var(--main-level-4);
         .ant-drawer-title {
             color: var(--color);
-            font-size: 1.25em;
+            font-size: var(--fs-lg);
         }
         .ant-drawer-close {
             color: var(--color);
@@ -268,10 +266,10 @@ button.ant-btn {
         }
     }
     .ant-modal-body {
-        padding: 1rem;
+        padding: var(--spacing-lg);
     }
     .ant-modal-footer {
         border-color: var(--sub-level-1);
-        padding: 1rem;
+        padding: var(--spacing-lg);
     }
 }

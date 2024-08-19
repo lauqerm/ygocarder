@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { RadioTrain, TrainGridStyle } from './input-train';
 
 export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
-    padding: 5px;
+    padding: var(--spacing-xs);
     .radio-train {
         display: flex;
         flex-wrap: wrap;
@@ -16,7 +16,7 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
         color: var(--color-heavy);
     }
     .frame-auto-checkbox {
-        margin-bottom: 5px;
+        margin-bottom: var(--spacing-xs);
     }
     ${TrainGridStyle}
 `;
@@ -32,19 +32,9 @@ export const StyledInputLabelWithButton = styled.div`
 export const StyledNameSetIdInputContainer = styled.div`
     display: flex;
     align-items: center;
-    margin-top: 0.5rem;
+    margin-top: var(--spacing-sm);
     flex-wrap: wrap;
-    row-gap: 0.5rem;
-    .card-info-sub-family {
-        padding-right: 1em;
-        margin-right: 1em;
-        border-right: 1px solid #ccc;
-        &:empty {
-            padding: 0;
-            margin: 0;
-            border: none;
-        }
-    }
+    row-gap: var(--spacing-sm);
 `;
 
 export const StyledFormatRadioTrain = styled(RadioTrain)`

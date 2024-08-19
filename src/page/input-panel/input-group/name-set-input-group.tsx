@@ -12,7 +12,7 @@ import styled from 'styled-components';
 const StyledNameInputContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     width: 100%;
     .name-input {
         flex: 3;

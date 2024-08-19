@@ -5,20 +5,20 @@ export const StandaloneLabel = styled.div`
     border-color: transparent;
     background-color: transparent;
     color: var(--color-vendor);
-    text-shadow: 0 1px #222;
+    text-shadow: var(--ts);
     user-select: none;
     display: inline-block;
     height: 32px;
-    width: 105px;
+    width: var(--width-label);
     line-height: 30px;
     position: relative;
-    min-width: 105px;
+    min-width: var(--width-label);
     text-align: right;
-    padding-right: 11px;
+    padding-right: var(--spacing-antd);
 `;
 
 export const StyledDropdownOption = styled.div`
-    padding: 5px var(--spacing);
+    padding: var(--spacing-xs) var(--spacing);
     cursor: pointer;
     &:hover {
         background-color: var(--sub-active);
@@ -31,11 +31,11 @@ export const StyledDropdownOption = styled.div`
     }
 `;
 export const StyledDropdownContainer = styled.div`
-    border: 1px solid var(--sub-level-1);
-    border-radius: 4px;
+    border: var(--bw) solid var(--sub-level-1);
+    border-radius: var(--br-lg);
     background-color: var(--main-level-3);
-    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.06);
-    padding: 5px 0;
+    box-shadow: -2px -2px var(--spacing-xs) #000000ff;
+    padding: var(--spacing-xs) 0;
     color: var(--color);
 `;
 export const StyledDropdown = {

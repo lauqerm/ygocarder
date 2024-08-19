@@ -6,7 +6,7 @@ const StyledFrameContainer = styled.div<{ $withPillar: boolean }>`
     ${({ $withPillar }) => $withPillar ? 'grid-template-columns: max-content 1fr;' : 'grid-template-columns: 1fr;'}
     > label {
         cursor: pointer;
-        padding: 0 2px;
+        padding: 0 var(--spacing-xxs);
         text-transform: capitalize;
         text-align: center;
     }
@@ -22,7 +22,7 @@ export const FrameInfoBlock = ({
     className,
 }: Omit<FrameInfo, 'edition' | 'labelColor'> & { className?: string }) => {
     return <StyledFrameContainer
-        className={className}
+        className={`frame-info-block ${className ?? ''}`}
         $withPillar={!!(labelBackgroundColor || labelBackgroundColorList)}
     >
         {labelBackgroundColorList

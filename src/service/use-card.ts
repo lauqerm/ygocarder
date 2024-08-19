@@ -2,7 +2,7 @@ import { Card, getDefaultCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
-import { decodeCardWithCompatibility } from 'src/util';
+import { decodeCardWithCompatibility, migrateCardData } from 'src/util';
 
 /**
  * Acquire saved card when the session is just initialized. URL source is preferred over local storage source.
@@ -14,11 +14,9 @@ export const retrieveSavedCard = () => {
 
         const cardURLData = (new URLSearchParams(window.location.search)).get('data');
         if (cardURLData) {
-            const decodedCard = decodeCardWithCompatibility(cardURLData);
-
-            return decodedCard;
+            return decodeCardWithCompatibility(cardURLData);
         } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-            return JSON.parse(localCardData) as Card;
+            return migrateCardData(JSON.parse(localCardData)) as Card;
         }
         return getDefaultCard();
     } catch (e) {

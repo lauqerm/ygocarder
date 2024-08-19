@@ -245,7 +245,9 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
                 <div>
                     <div className="card-effect-letter-helper">
-                        <StandaloneLabel className="standalone-label">Effect</StandaloneLabel>
+                        <StandaloneLabel className="standalone-label">
+                            Effect
+                        </StandaloneLabel>
                         <CharPicker
                             targetId={pickerTarget.id}
                             onPick={pickerTarget.setValue}

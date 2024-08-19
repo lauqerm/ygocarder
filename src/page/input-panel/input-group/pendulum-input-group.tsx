@@ -2,7 +2,7 @@ import { Checkbox, Input, Popover } from 'antd';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { RadioTrain } from '../input-train';
 import { FrameInfoBlock } from 'src/component';
-import { CardTextArea, CardTextInput, CardTextInputRef } from '../input-text';
+import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
@@ -16,41 +16,41 @@ const StyledPendulumFrameInputContainer = styled.div`
     cursor: pointer;
     box-shadow: var(--bs-input);
     vertical-align: bottom;
-    box-shadow: 0 0 2px 0 #333;
-    border-radius: 4px;
-    .frame-info-block {
-        border-radius: 0 4px 4px 0;
+    box-shadow: var(--bs-button);
+    border-radius: var(--br-lg);
+    .pendulum-frame-info-block {
+        border-radius: 0 var(--br-lg) var(--br-lg) 0;
         line-height: 1.25;
         background-color: var(--main-level-4);
         min-width: 100px;
         overflow: hidden;
-        border: 1px solid var(--sub-level-1);
+        border: var(--bw) solid var(--sub-level-1);
     }
     .pendulum-frame-label {
         display: inline-block;
         background: var(--main-level-4);
-        border: 1px solid var(--sub-level-1);
+        border: var(--bw) solid var(--sub-level-1);
         border-right: none;
-        padding: 1px 5px;
-        border-radius: 4px 0 0 4px;
+        padding: var(--spacing-px) var(--spacing-xs);
+        border-radius: var(--br-lg) 0 0 var(--br-lg);
         line-height: 1.25;
         &:last-child {
-            border-radius: 4px;
-            border-right: 1px solid var(--sub-level-1);
+            border-radius: var(--br-lg);
+            border-right: var(--bw) solid var(--sub-level-1);
         }
     }
 `;
 const StyledPendulumInputContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 0.5rem;
-    row-gap: 0.5rem;
+    column-gap: var(--spacing-sm);
+    row-gap: var(--spacing-sm);
     .joined-row {
         grid-column: span 2;
         .standalone-label {
             min-width: 0;
             width: unset;
-            padding-left: 11px;
+            padding-left: var(--spacing-antd);
         }
         .pendulum-checkbox {
             /** Alignment **/
@@ -63,10 +63,10 @@ const StyledPendulumInputContainer = styled.div`
         .pendulum-checkbox-placeholder {
             display: inline-block;
             /** Alignment **/
-            width: 105px;
+            width: var(--width-label);
         }
         .pendulum-frame-input {
-            margin-right: 1rem;
+            margin-right: var(--spacing-lg);
         }
         .ant-checkbox-wrapper {
             margin-right: var(--spacing);
@@ -116,7 +116,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         setCard,
         getUpdater,
     })));
-    const pendulumEffectInputRef = useRef<CardTextInputRef>(null);
+    const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
     const [isMirrorScale, setMirrorScale] = useState(true);
     const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
     const changeToPendulum = (e: any) => setCard(currentCard => {
@@ -194,8 +194,8 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 <StyledPendulumFrameInputContainer className="pendulum-frame-input">
                     <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
                     {currentPendulumFrame
-                        ? <FrameInfoBlock className="frame-info-block" {...currentPendulumFrame} />
-                        : <FrameInfoBlock className="frame-info-block" name="Auto" />}
+                        ? <FrameInfoBlock className="pendulum-frame-info-block" {...currentPendulumFrame} />
+                        : <FrameInfoBlock className="pendulum-frame-info-block" name="Auto" />}
                 </StyledPendulumFrameInputContainer>
             </Popover>}
             {(isPendulum && showCreativeOption)

@@ -222,7 +222,7 @@ export const legacyRebuildCardData = (
 };
 
 /** Migrate old version of card data into the new version without information loss */
-const migrateCardData = (card: Record<string, any>) => {
+export const migrateCardData = (card: Record<string, any>) => {
     const migratedCard = {
         ...getEmptyCard(),
         ...clone(card)

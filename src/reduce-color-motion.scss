@@ -2,7 +2,7 @@
     --color-vendor: #e0e0ff;
     --sub-level-1: #333333;
     --main-link: #8989bb;
-    --sub-link: #9999bb;
+    --sub-link: #9b9bbf;
     --main-level-1-active: #444455;
     --main-active: #8888aa;
     --sub-active: #8888bb;
@@ -14,11 +14,12 @@
     --sub-secondary: #8a8ac6;
     --main-tertiary: #555599;
     --sub-tertiary: #5555a9;
+    --bs-1: 0 0 0 1px #333333;
     // .data-button-panel .save-button {
     //     animation: none;
     // }
     .icon-button {
-        border: 1px solid var(--main-level-4);
+        border: var(--bw) solid var(--main-level-4);
     }
     .data-button-panel .save-button {
         background: linear-gradient(135deg, #6363ad 0%, #8888a9 50%, #6363ad 100%);
@@ -34,14 +35,14 @@
         .pendulum-frame-label {
             border-color: var(--main-level-4);
         }
-        .frame-info-block {
+        .pendulum-frame-info-block {
             border: none;
-            border-left: 1px solid var(--sub-level-1);
+            border-left: var(--bw) solid var(--sub-level-1);
         }
-		.frame-info-block-label {
-			border: 1px solid var(--main-level-4);
-			border-left: none;
-		}
+        .frame-info-block-label {
+            border: var(--bw) solid var(--main-level-4);
+            border-left: none;
+        }
     }
     .radio-train.format-radio {
         .ant-radio-button-wrapper-checked {

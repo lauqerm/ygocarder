@@ -5,5 +5,6 @@ export * from './image';
 export * from './letter';
 export * from './line-analyze';
 export * from './name';
-export * from './predefine';
+export * from './predefine-image';
+export * from './predefine-text';
 export * from './type-ability';

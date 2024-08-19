@@ -14,7 +14,7 @@ import { StyledInputLabelWithButton } from '../input-panel.styled';
 const StyledFooterInputContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     .checkbox-input {
         align-self: center;
         .ant-checkbox + span {
@@ -26,8 +26,8 @@ const StyledFooterInputContainer = styled.div`
         grid-column: span 2;
     }
     .sticker-input .ant-radio-button-wrapper {
-        padding-left: 8px;
-        padding-right: 8px;
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
     }
 `;
 

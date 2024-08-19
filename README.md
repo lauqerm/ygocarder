@@ -1,24 +1,8 @@
-<!-- Name with background -->
+Comment code
 Dark synchro style
-<!-- Testing -->
-<!-- Character need treatment: ！ ( ) -->
-Remaining Todos
-<!-- Dictionary -->
 Extended art over frame
-<!-- Flip letter -->
-<!-- Reduce font bundle size -->
 Dialect (Chef Special Recipe for example)
-<!-- Remove fixed width? -->
 Zoom
-<!-- Refactor styling -->
-<!-- Reduce amount of component memo -->
-<!-- Credit -->
-<!-- Remaining font data (OCG spell for example) -->
-<!-- Beatrice text style -->
-<!-- Foil too dim? -->
-<!-- Overlay foil should leave art outside -->
-<!-- Finish size optimize (Somehow it is bigger) -->
-<!-- Render optimize -->
 
 ## YGO Carder
 

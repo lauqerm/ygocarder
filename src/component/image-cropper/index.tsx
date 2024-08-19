@@ -289,6 +289,9 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 {isLoading && <Loading.FullView />}
                 <ReactCrop key={`${sourceType}${ratio}${isMigrated}`}
                     src={sourceType === 'internal' ? internalSource : externalSource}
+                    imageStyle={{
+                        backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/transparent-tile.png")`
+                    }}
                     onImageLoaded={onLoad}
                     onImageError={() => {
                         onTainted();

@@ -22,8 +22,8 @@ export const TrainGridStyle = css`
     .radio-train-input-group {
 		display: flex;
 		flex-wrap: wrap;
-		column-gap: 5px;
-		row-gap: 5px;
+		column-gap: var(--spacing-xs);
+		row-gap: var(--spacing-xs);
 		box-shadow: none;
 		border-radius: none;
 		.ant-radio-button-wrapper:first-child,
@@ -35,25 +35,25 @@ export const TrainGridStyle = css`
 			text-transform: capitalize;
 			white-space: nowrap;
 			border: none;
-			box-shadow: 0 0 0 1px var(--sub-level-1);
+			box-shadow: var(--bs-1);
 			padding: 0;
 			min-width: 90px;
 			height: 28px;
 			line-height: 28px;
 			text-align: center;
 			text-shadow: none;
-			font-size: 13px;
+			font-size: var(--fs-sm);
 			&:hover {
-				outline: 1px solid var(--main-active);
-				outline-offset: 1px;
+				outline: var(--bw) solid var(--main-active);
+				outline-offset: var(--bw);
 			}
 			&::before {
 				display: none;
 			}
 		}
 		.ant-radio-button-wrapper-checked {
-			outline: 1px solid var(--main-active);
-			outline-offset: 1px;
+			outline: var(--bw) solid var(--main-active);
+			outline-offset: var(--bw);
 		}
 	}
 `;

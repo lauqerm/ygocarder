@@ -11,11 +11,11 @@ const rotate = keyframes`
 const StyledSettingPanel = styled.div`
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     background-color: var(--main-level-3);
-    padding: 0.5rem;
-    border: 1px solid var(--sub-level-1);
-    border-radius: 4px;
+    padding: var(--spacing-sm);
+    border: var(--bw) solid var(--sub-level-1);
+    border-radius: var(--br-lg);
     color: var(--color);
 `;
 const StyledSettingButtonContainer = styled.div<{ $softMode?: boolean }>`
@@ -25,12 +25,12 @@ const StyledSettingButtonContainer = styled.div<{ $softMode?: boolean }>`
         label {
             cursor: pointer;
             line-height: 1;
-            font-size: 0.65em;
-            margin-top: 0.25rem;
+            font-size: var(--fs-xs);
+            margin-top: var(--spacing-xs);
         }
     }
     .anticon-setting {
-        font-size: 1.5em;
+        font-size: var(--fs-xl);
         justify-self: center;
         > svg {
             ${({ $softMode }) => $softMode ? '' : css`animation: ${rotate} 12s linear infinite;`}

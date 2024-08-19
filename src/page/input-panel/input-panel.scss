@@ -2,16 +2,16 @@
     .card-overlay-input {
         display: flex;
         flex-wrap: wrap;
-        margin-bottom: 0.5rem;
-        row-gap: 0.5rem;
+        margin-bottom: var(--spacing-sm);
+        row-gap: var(--spacing-sm);
     }
     .foil-radio.radio-train {
         display: inline-flex;
     }
     .card-opacity-input {
         display: grid;
-        grid-template-columns: 105px 1fr;
-        margin-bottom: 0.5rem;
+        grid-template-columns: var(--width-label) 1fr;
+        margin-bottom: var(--spacing-sm);
         .standalone-addon.ant-input-group-addon {
             height: 25px; // Alignment
             line-height: 20px;
@@ -20,14 +20,14 @@
     .main-info {
         display: flex;
         align-items: flex-start;
-        margin-top: 0.5rem;
-        column-gap: 0.5rem;
-        row-gap: 0.5rem;
+        margin-top: var(--spacing-sm);
+        column-gap: var(--spacing-sm);
+        row-gap: var(--spacing-sm);
         .main-info-first {
             flex: 1;
             display: flex;
             flex-direction: column;
-            row-gap: 0.5rem;
+            row-gap: var(--spacing-sm);
             #card-effect {
                 min-height: 13rem;
             }
@@ -61,10 +61,22 @@
         &:not(.disable) {
             cursor: pointer;
         }
+        &:hover {
+            color: var(--sub-active);
+            .anticon {
+                color: var(--sub-active);
+            }
+        }
         &.active {
             color: var(--main-active);
             .anticon {
                 color: var(--main-active);
+            }
+            &:hover {
+                color: var(--sub-active);
+                .anticon {
+                    color: var(--sub-active);
+                }
             }
         }
     }
@@ -85,13 +97,13 @@
     }
 
     .ant-input-group-addon {
-        min-width: 105px;
+        min-width: var(--width-label);
         text-align: right;
     }
     .standalone-addon.ant-input-group-addon {
         display: inline-block;
         height: 32px;
-        width: 105px;
+        width: var(--width-label);
         line-height: 30px;
         position: relative;
     }
@@ -101,7 +113,7 @@
         align-items: center;
     }
     .ant-checkbox-wrapper + .ant-checkbox-wrapper {
-        margin-left: 5px;
+        margin-left: var(--spacing-xs);
     }
     .ant-checkbox-wrapper:last-child > span {
         padding-right: 0;

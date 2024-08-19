@@ -50,7 +50,7 @@ const StyledCharPickerContainer = styled.div`
         .ant-btn {
             background-color: var(--main-level-1);
             color: var(--color-heavy);
-            text-shadow: 0 1px #222;
+            text-shadow: var(--ts);
             font-family: Segoe UI Symbol, sans-serif;
             border: 1px solid var(--sub-level-1);
             border-radius: 0;
@@ -63,10 +63,10 @@ const StyledCharPickerContainer = styled.div`
                 color: var(--main-active);
             }
             &:first-child {
-                border-radius: 3px 0 0 3px;
+                border-radius: var(--br) 0 0 var(--br);
             }
             &:last-child {
-                border-radius: 0 3px 3px 0;
+                border-radius: 0 var(--br) var(--br) 0;
             }
         }
         /** Currently char picker no longer movable */
@@ -74,8 +74,8 @@ const StyledCharPickerContainer = styled.div`
             cursor: grabbing;
             background-color: var(--main-level-2);
             height: unset;
-            font-size: 20px;
-            height: 20px;
+            font-size: var(--fs-xl);
+            height: var(--fs-xl);
             line-height: 1;
             padding: 0;
             text-align: center;
