@@ -2,7 +2,7 @@
 Dark synchro style
 <!-- Testing -->
 <!-- Character need treatment: ！ ( ) -->
-Remainig Todos
+Remaining Todos
 <!-- Dictionary -->
 Extended art over frame
 <!-- Flip letter -->
@@ -10,7 +10,7 @@ Extended art over frame
 Dialect (Chef Special Recipe for example)
 <!-- Remove fixed width? -->
 Zoom
-Refactor styling
+<!-- Refactor styling -->
 <!-- Reduce amount of component memo -->
 <!-- Credit -->
 <!-- Remaining font data (OCG spell for example) -->
