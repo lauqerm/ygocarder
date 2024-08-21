@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
     clearCanvas,
     draw1stEdition,
     drawCreatorText,
     drawEffect,
-    drawFrom,
-    drawWithSizeFrom,
-    drawMonsterType,
     drawName,
     drawScale,
     drawStat,
@@ -15,27 +12,28 @@ import {
     drawCardIcon,
     drawSticker,
     drawPassword,
+    getFinishIterator,
+    drawTypeAbility,
+    getEffectSizeAndCoordinate,
+    drawAsset,
+    getLayoutDrawFunction,
+    drawLinkRatingText,
+    drawPredefinedMark,
 } from 'src/draw';
 import {
     CanvasConst,
     MasterDuelCanvas,
     NO_ATTRIBUTE,
-    ST_ICON_SYMBOL,
-    arrowPositionList,
     getArtCanvasCoordinate,
     getDefaultCardOpacity,
     PendulumEffectFontData,
     PendulumEffectCoordinate,
     FinishMap,
     ArtFinishMap,
-    FrameInfoMap,
-    EffectCoordinateData,
-    TCGVanillaTypeStatFontList,
-    EffectFontData,
     CardOpacity,
+    CardArtCanvasCoordinateMap,
 } from 'src/model';
 import {
-    checkLightFrame,
     checkLink,
     checkMonster,
     checkNormal,
@@ -49,9 +47,6 @@ import { useCard } from './use-card';
 const {
     height: CanvasHeight,
     width: CanvasWidth,
-    topToPendulumStructure,
-    pendulumStructureHeight,
-    leftToPendulumStructure,
 } = CanvasConst;
 type DrawerProp = {
     imageChangeCount: number,
@@ -68,7 +63,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         previewCanvasRef,
         specialFrameCanvasRef,
         attributeCanvasRef,
-        creatorCanvas,
+        creatorCanvasRef,
         effectCanvasRef,
         nameCanvasRef,
         passwordCanvasRef,
@@ -76,11 +71,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         pendulumScaleCanvasRef,
         setIdCanvasRef,
         statCanvasRef,
-        stickerCanvas,
+        stickerCanvasRef,
         cardIconCanvasRef,
         typeCanvasRef,
-        finishCanvas,
-        lightboxCanvas,
+        finishCanvasRef,
+        lightboxCanvasRef,
     } = canvasMap;
     const {
         format,
@@ -89,7 +84,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumFrame: basePendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
+        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
         atk, def, linkMap,
         attribute,
         cardIcon, subFamily, star,
@@ -99,13 +94,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         furiganaHelper,
     } = card;
 
-    const pendulumFrame = basePendulumFrame === 'auto'
+    const bottomFrame = pendulumFrame === 'auto'
         ? isPendulum
             ? 'spell'
             : frame
-        : basePendulumFrame;
+        : pendulumFrame;
 
     const hasArtFrame = opacity.artFrame;
+    const condenseTolerant = effectStyle?.condenseTolerant;
 
     const isNormal = checkNormal(card);
     const isXyz = checkXyz(card);
@@ -113,49 +109,26 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
 
-    const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(pendulumFrame);
+    const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(bottomFrame);
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join('/');
-    const statInEffect = basePendulumFrame !== 'auto' || isPendulum
+    const statInEffect = pendulumFrame !== 'auto' || isPendulum
         ? !!(atk || def || (isLink && linkMap.length))
         : isMonster;
+    const typeInEffect = cardIcon === 'auto'
+        ? isMonster || isSpeedSkill
+        : cardIcon !== 'st' || isLink;
 
     const {
         isInitializing,
         imageChangeCount,
         pendulumSize = 'medium',
     } = props;
+    const readyToDraw = active && isInitializing === false;
 
-    const loopFinish = useCallback(async (
-        ctx?: CanvasRenderingContext2D | null,
-        name?: string,
-        caller?: (finishType: string) => Promise<any>,
-    ) => {
-        if (!ctx || !Array.isArray(finish) || finish.length <= 0) return Promise.resolve();
-        for (const finishType of finish) {
-            const finishInformation = FinishMap[finishType];
-            if (caller && FinishMap[finishType]) {
-                const { partInstructionMap } = finishInformation;
-                const instructionList = name ? partInstructionMap[name] ?? [] : [];
-
-                if (instructionList.length) {
-                    for (const { blendMode = 'source-over', opacity = 1 } of instructionList) {
-                        ctx.globalCompositeOperation = blendMode;
-                        ctx.globalAlpha = opacity;
-
-                        await caller(finishType);
-                    }
-                } else {
-                    await caller(finishType);
-                }
-                ctx.globalAlpha = 1;
-                ctx.globalCompositeOperation = 'source-over';
-            }
-        }
-        ctx.globalAlpha = 1;
-        ctx.globalCompositeOperation = 'source-over';
-    }, [finish]);
+    const loopFinish = useMemo(() => getFinishIterator(finish, FinishMap), [finish]);
+    const loopArtFinish = useMemo(() => getFinishIterator([artFinish], ArtFinishMap), [artFinish]);
 
     const drawingPipeline = useRef<Record<string, { name: string, order: number, rerun: number, instructor: () => Promise<any> }>>({
         frame: {
@@ -210,440 +183,322 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = specialFrameCanvasRef.current?.getContext('2d');
-            const previewCtx = previewCanvasRef.current;
-            const effectBoxY = 860, effectBoxX = 35;
-            const backgroundEffectBoxY = effectBoxY + 24, backgroundEffectBoxX = effectBoxX + 19;
-            const artBoxY = 170, artBoxX = 60;
-            const baseFill = '#404040';
+        if (!readyToDraw) return;
+        const ctx = specialFrameCanvasRef.current?.getContext('2d');
+        const previewCanvas = previewCanvasRef.current;
 
-            drawingPipeline.current.specialFrame.rerun += 1;
-            drawingPipeline.current.specialFrame.instructor = async () => {
-                clearCanvas(ctx);
-                if (!ctx) return;
-                /** Vẽ một lớp màu để loại bỏ các trường hợp transparent */
+        drawingPipeline.current.specialFrame.rerun += 1;
+        drawingPipeline.current.specialFrame.instructor = async () => {
+            if (!clearCanvas(ctx)) return;
+            const {
+                artBorder: keepArtBorder,
+                body: opacityBody,
+                artFrame: rigidFrame,
+                baseFill,
+            } = { ...getDefaultCardOpacity(), ...opacity };
+
+            const fillBaseColor = (x: number, y: number, w: number, h: number) => {
                 ctx.fillStyle = baseFill;
-                ctx.fillRect(0, 0, CanvasWidth, CanvasHeight);
-
-                const {
-                    artX,
-                    artY,
-                    artFinishX,
-                    artFinishY,
-                    artWidth,
-                } = getArtCanvasCoordinate(isPendulum, opacity);
-                const drawArtwork = () => {
-                    if (previewCtx && ctx) {
-                        const { width: imageWidth, height: imageHeight } = previewCtx;
-
-                        if (imageHeight > 0) {
-                            ctx.drawImage(
-                                previewCtx,
-                                0, 0,
-                                imageWidth, imageHeight,
-                                artX, artY,
-                                artWidth, artWidth / (imageWidth / imageHeight),
-                            );
-                        }
-                    }
-                };
-
-                const {
-                    body: opacityBody,
-                    name: opacityName,
-                    pendulum: opacityPendulum,
-                    text: opacityText,
-                    artFrame: useArtFrame,
-                } = { ...getDefaultCardOpacity(), ...opacity };
-                const hasFoil = foil !== 'normal';
-
-                /** Artwork ở dưới cùng */
-                if (previewCtx && ctx) drawArtwork();
-
-                /** Frame chính gồm nửa trên và nửa dưới và phần ở name */
-                ctx.globalAlpha = useArtFrame ? opacityBody / 100 : 0;
-                await drawFrom(ctx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
-                await drawFrom(ctx, `/asset/image/frame-pendulum/frame-pendulum-${pendulumFrame}.png`, 0, 0);
-
-                if (useArtFrame) {
-                    /** Ta vẽ thêm một box bên dưới để name box không bị xuyên thấu 100% nếu không có frame nền */
-                    ctx.fillStyle = `${FrameInfoMap[frame]?.labelBackgroundColor ?? ''}11`;
-                    ctx.fillRect(44, 47, 726, 91);
-                }
-                ctx.globalAlpha = opacityName / 100;
-
-                await drawFrom(ctx, `/asset/image/frame/frame-name-box-${frame}.png`, 0, 0);
-
-                ctx.globalAlpha = 1;
-
-                /** Vẽ card dạng thường, thứ tự các lớp như mô tả */
-                if (!isPendulum) {
-
-                    /** 1: Background cho card text dựa trên nửa dưới */
-                    ctx.globalAlpha = opacityText / 100;
-                    await drawFrom(
-                        ctx,
-                        `/asset/image/background/background-text-${pendulumFrame}.png`,
-                        backgroundEffectBoxX, backgroundEffectBoxY,
-                    );
-                    ctx.globalAlpha = 1;
-
-                    /** 2: Khung artwork và khung effect */
-                    let artFrameSource = '';
-                    if (!useArtFrame) { }
-                    else if (isXyz || isSpeedSkill) {
-                        artFrameSource = `/asset/image/frame/frame-art-${frame}.png`;
-                    } else if (isLink || ['zarc', 'hamon', 'uria', 'raviel'].includes(frame)) {
-                        artFrameSource = '/asset/image/frame/frame-art-special.png';
-                    } else {
-                        artFrameSource = '/asset/image/frame/frame-art.png';
-                    }
-                    await drawFrom(ctx, artFrameSource, artBoxX, artBoxY);
-                    /** Foil và khung của speed skill xung đột, nên nếu đè foil thì ta không cần vẽ khung effect cho speed skill */
-                    if (!hasFoil && isSpeedSkill && basePendulumFrame === 'auto') {
-                        await drawFrom(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
-                    } else {
-                        await drawFrom(ctx, '/asset/image/frame/frame-effect-box.png', effectBoxX, effectBoxY);
-                    }
-
-                    /** 3: Foil cho các khung */
-                    if (hasFoil) {
-                        if (useArtFrame) {
-                            await drawFrom(ctx, `/asset/image/frame/frame-art-${foil}.png`, artBoxX, artBoxY);
-                        }
-                        await drawFrom(ctx, `/asset/image/frame/frame-effect-box-${foil}.png`, effectBoxX, effectBoxY);
-                    }
-
-                    /** 4: Finish cho khung artwork */
-                    if (useArtFrame) {
-                        await loopFinish(ctx, 'frame-art', finishType => drawFrom(ctx, `/asset/image/finish/finish-${finishType}-frame-art.png`, 0, 0));
-                    }
-
-                }
-
-                /** Vẽ card dạng pendulum, chỉ có card link (có arrow) là không áp dụng được */
-                if (isPendulum && !isLink) {
-                    /** Vì ta không có frame đặc trưng cho pendulum, mà chỉ là khung pendulum đè lên frame thường, vậy nên artwork sẽ bị giới hạn
-                     * bởi frame thường (art pendulum dài hơn). Để khắc phục ta sẽ vẽ lại artwork đè lên frame, nhưng chỉ phần artwork nằm trong khung
-                     * pendulum.
-                     */
-                    if (previewCtx && ctx && previewCtx.height > 0) {
-                        const { width: imageWidth, height: imageHeight } = previewCtx;
-                        const imageScaledRatio = artWidth / imageWidth;
-                        const sourceOffsetX = opacityBody < 100
-                            ? (leftToPendulumStructure - artX) / imageScaledRatio
-                            : 0;
-                        const destinationOffsetX = sourceOffsetX * imageScaledRatio;
-                        const sourceOffsetY = opacityBody < 100
-                            ? (topToPendulumStructure - artY) / imageScaledRatio
-                            : 0;
-                        const destinationOffsetY = sourceOffsetY * imageScaledRatio;
-                        const offsetHeight = opacityBody < 100
-                            ? imageHeight - (pendulumStructureHeight / imageScaledRatio)
-                            : 0;
-
-                        /** Vẽ một lớp màu để loại bỏ các trường hợp transparent */
-                        ctx.fillStyle = baseFill;
-                        ctx.fillRect(
-                            artX + destinationOffsetX,
-                            artY + destinationOffsetY,
-                            artWidth - destinationOffsetX * 2,
-                            artWidth / (imageWidth / imageHeight) - offsetHeight * imageScaledRatio,
-                        );
-                        ctx.drawImage(
-                            previewCtx,
-                            sourceOffsetX, sourceOffsetY,
-                            imageWidth - sourceOffsetX * 2, imageHeight - offsetHeight,
-                            artX + destinationOffsetX, artY + destinationOffsetY,
-                            artWidth - destinationOffsetX * 2, artWidth / (imageWidth / imageHeight) - offsetHeight * imageScaledRatio,
-                        );
-                    }
-                    /** Vì ảnh tràn viền mới vẽ sẽ đè lên name box, ta vẽ lại ở đây */
-                    ctx.globalAlpha = opacityName / 100;
-                    await drawFrom(ctx, `/asset/image/frame/frame-name-box-${frame}.png`, 0, 0);
-
-                    ctx.globalAlpha = 1;
-
-                    /** Vẽ background cho card text và pendulum text */
-                    ctx.globalAlpha = opacityPendulum / 100;
-                    await drawFrom(ctx, `/asset/image/background/background-pendulum-${pendulumFrame}.png`, 55, 738);
-                    ctx.globalAlpha = opacityText / 100;
-                    await drawFrom(ctx, `/asset/image/background/background-text-${pendulumFrame}.png`, backgroundEffectBoxX, backgroundEffectBoxY);
-                    ctx.globalAlpha = 1;
-                }
-                /** Stat border ngăn cách stat và effect */
-                if (statInEffect) {
-                    await drawFrom(ctx, '/asset/image/frame/frame-stat-border.png', 0, 1070);
-                }
-
-                const pendulumSizeSuffix = isPendulum ? `-pendulum-${pendulumSize}` : '';
-                /** Art Finish */
-                const applyArtFinish = useArtFrame && opacityBody > 0;
-                const artFinishInformation = ArtFinishMap[artFinish];
-                if (applyArtFinish && artFinishInformation) {
-                    const { instructionList } = artFinishInformation;
-
-                    for (const { blendMode = 'source-over', opacity = 1 } of instructionList) {
-                        ctx.globalCompositeOperation = blendMode;
-                        ctx.globalAlpha = opacity;
-                        await drawFrom(ctx, `/asset/image/finish/art-finish-${artFinish}${pendulumSizeSuffix}.png`, artFinishX, artFinishY);
-                    }
-                    ctx.globalAlpha = 1;
-                    ctx.globalCompositeOperation = 'source-over';
-                }
-                await loopFinish(ctx, 'art', type => {
-                    return drawFrom(
-                        ctx,
-                        `/asset/image/finish/finish-${type}-${applyArtFinish ? 'art' : 'unart'}${pendulumSizeSuffix}.png`,
-                        artFinishX, artFinishY,
-                    );
-                });
-                /** Scale and pendulum frame */
-                if (isPendulum && !isLink) {
-                    await drawFrom(ctx, `/asset/image/frame-pendulum/frame-pendulum-scale-${pendulumSize}.png`, 0, 750);
-
-                    await drawFrom(ctx, `/asset/image/frame-pendulum/frame${pendulumSizeSuffix}${useArtFrame ? '' : '-artless'}.png`, 30, 185);
-                    const pendulumFrameStructureSource = `/asset/image/frame-pendulum/frame${pendulumSizeSuffix}`
-                        + (hasFoil ? `-${foil}` : '')
-                        + (useArtFrame ? '' : '-artless')
-                        + '.png';
-                    await drawFrom(ctx, pendulumFrameStructureSource, 30, 185);
-
-                    if (useArtFrame) {
-                        await loopFinish(
-                            ctx,
-                            'pendulum-frame-art',
-                            finishType => drawFrom(ctx, `/asset/image/finish/finish-${finishType}-pendulum-frame-art-${pendulumSize}.png`, 0, 0)
-                        );
-                    }
-                }
-
-                /** Outer border và foil tương ứng */
-                await drawFrom(ctx, `/asset/image/frame/frame-border${hasFoil ? `-${foil}` : ''}.png`, 0, 0);
-                await loopFinish(ctx, 'border', type => drawFrom(ctx, `/asset/image/finish/finish-${type}-border.png`, 0, 0));
-                /** Finish cho các loại nền */
-                await loopFinish(ctx, 'frame', type => {
-                    return drawFrom(ctx, `/asset/image/finish/finish-${type}-frame${pendulumSizeSuffix}.png`, 0, 0);
-                });
-                if (useArtFrame) {
-                    await loopFinish(ctx, 'frame-background', type => {
-                        return drawFrom(ctx, `/asset/image/finish/finish-${type}-frame-background${pendulumSizeSuffix}.png`, 0, 0);
-                    });
-                } else {
-                    await loopFinish(ctx, 'name', type => {
-                        return drawFrom(ctx, `/asset/image/finish/finish-${type}-name.png`, 0, 0);
-                    });
-                }
-
-                /** Link map, foil cho link arrow và link number */
-                if (!isPendulum && isLink) {
-                    if (hasFoil) {
-                        await drawFrom(ctx, `/asset/image/link/link-overlay-arrow-${foil}${useArtFrame ? '' : '-artless'}.png`, 0, 175);
-                    }
-                    /** Ta vẽ lại art frame ở đây, vì art frame cần nằm trên foil nhưng lại phải nằm dưới link arrow, vậy nên ta sẽ vẽ foil trước,
-                     * sau đó vẽ frame rồi vẽ foil artless (chỉ có link arrow) sau cùng
-                     */
-                    if (useArtFrame) {
-                        await loopFinish(ctx, 'frame-art', finishType => drawFrom(ctx, `/asset/image/finish/finish-${finishType}-frame-art.png`));
-                    }
-                    await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
-                        .map(async entry => {
-                            const { left, top, height, width } = arrowPositionList[entry - 1];
-                            const isActive = linkMap.includes(`${entry}`);
-                            const baseLink = `/asset/image/link/link-inactive-${entry}`;
-                            const activeLink = `/asset/image/link/link-active-${entry}`;
-                            const coordinate = [left, top, width, height] as const;
-
-                            await drawWithSizeFrom(ctx, `${baseLink}-base${useArtFrame ? '' : '-full'}.png`, ...coordinate);
-                            await drawWithSizeFrom(ctx, `${baseLink}-core.png`, ...coordinate);
-                            if (isActive) {
-                                await drawWithSizeFrom(ctx, `${activeLink}-base.png`, ...coordinate);
-                                return drawWithSizeFrom(ctx, `${activeLink}-core.png`, ...coordinate);
-                            } else return;
-                        })
-                    );
-                    if (hasFoil) {
-                        await drawFrom(ctx, `/asset/image/link/link-overlay-arrow-${foil}-artless.png`, 0, 175);
-                    }
-                    await drawFrom(ctx, '/asset/image/link/link-text.png', 600, 1080);
-
-                    ctx.textAlign = 'right';
-                    ctx.scale(1.2, 1);
-                    ctx.font = 'bold 35.55px Yugioh Rush Duel Numbers V4';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`${linkMap.length}`, 623.36, 1105.01);
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    ctx.textAlign = 'left';
-                }
-
-                /** Overlay bevel, vì các bevel không overlap, không cần chờ tuần tự */
-                await Promise.all(isXyz || isSpeedSkill
-                    ? [
-                        drawFrom(ctx, `/asset/image/frame/frame-name-bevel-${frame}.png`, 0, 0),
-                        drawFrom(ctx, `/asset/image/frame/frame-border-bevel-${frame}.png`, 0, 0),
-                    ]
-                    : [
-                        drawFrom(ctx, '/asset/image/frame/frame-name-bevel.png', 0, 0),
-                        drawFrom(ctx, '/asset/image/frame/frame-border-bevel.png', 0, 0),
-                    ]);
-
-                    /** @todo TESTING extended art over frame */
-                    // if (previewCtx && ctx) drawArtwork();
-                    // ctx.globalAlpha = opacityText / 100;
-                    // await drawFrom(
-                    //     ctx,
-                    //     `/asset/image/background/background-text-${pendulumFrame}.png`,
-                    //     backgroundEffectBoxX, backgroundEffectBoxY,
-                    // );
-                    // ctx.globalAlpha = 1;
-                    // if (!hasFoil && isSpeedSkill && basePendulumFrame === 'auto') {
-                    //     await drawFrom(ctx, '/asset/image/frame/frame-effect-box-speed-skill.png', effectBoxX, effectBoxY);
-                    // } else {
-                    //     await drawFrom(ctx, '/asset/image/frame/frame-effect-box.png', effectBoxX, effectBoxY);
-                    // }
-                    // if (hasFoil) {
-                    //     await drawFrom(ctx, `/asset/image/frame/frame-effect-box-${foil}.png`, effectBoxX, effectBoxY);
-                    // }
-
-                /** Predefined text */
-                const predefinedTextColor = lightFooter ? 'white' : 'black';
-                if (isDuelTerminalCard) {
-                    await drawFrom(ctx, `/asset/image/text/text-duel-terminal-${predefinedTextColor}.png`, 160, 1120);
-                }
-                if (isSpeedCard) {
-                    const coordinate: [number, number, number, number] = isPendulum
-                        ? [200, 1088, 196, 20]
-                        : isLink
-                            ? [155, 855, 196, 20]
-                            : [80, 850, 245, 25];
-
-                    await drawWithSizeFrom(ctx, `/asset/image/text/text-speed-duel-${predefinedTextColor}.png`, ...coordinate);
-                }
-
-                /** Finish cho tổng thể frame, lưu ý lớp finish này vẫn nằm dưới một vài canvas khác như name hay effect */
-                await loopFinish(ctx, 'overlay', overlayType => drawFrom(ctx, `/asset/image/finish/finish-${overlayType}-overlay.png`, 0, 0));
+                ctx.fillRect(x, y, w, h);
             };
-        }
+            const artBorder = opacityBody > 0 ? true : keepArtBorder;
+
+            /** Base colored background so the card is not see-through even with transparent artwork */
+            fillBaseColor(0, 0, CanvasWidth, CanvasHeight);
+
+            const {
+                drawFrame,
+                drawCardArt,
+                drawPendulumScaleIcon,
+                drawLinkArrowMap,
+
+                drawNameBackground,
+                drawEffectBackground,
+
+                drawFrameBorder,
+                drawNameBorder,
+                drawArtBorder,
+                drawPendulumBorder,
+                drawBorderPendulumFinish,
+                drawEffectBorder,
+                drawCardBorder,
+
+                drawArtBorderFoil,
+                drawEffectBorderFoil,
+                drawLinkMapFoil,
+
+                drawNameFinish,
+                drawArtFinish,
+                drawArtOverlayFinish,
+                drawArtBorderFinish,
+                drawPendulumArtBorderFinish,
+                drawFrameFinish,
+                drawFrameBackgroundFinish,
+                drawOverlayFinish,
+                drawCardBorderFinish,
+
+                calculateCardArtRedrawCoordination,
+            } = getLayoutDrawFunction({
+                ctx,
+                previewCanvas,
+                frame, bottomFrame,
+                foil,
+                pendulumSize,
+                opacity: { ...getDefaultCardOpacity(), ...opacity },
+                isLink, isSpeedSkill, isXyz,
+                isPendulum,
+                loopFinish,
+                loopArtFinish,
+            });
+
+            /** Start with artwork at the bottom, then main frame, then outer card border. */
+            if (previewCanvas && ctx && rigidFrame) drawCardArt();
+            await drawFrame();
+            await drawCardBorder();
+            await drawCardBorderFinish();
+
+            /** @summary Draw NON-PENDULUM card layout */
+            if (!isPendulum) {
+                if (rigidFrame) {
+                    await drawNameBackground();
+                    await drawEffectBackground();
+                    await drawEffectBorder();
+                    /** Foil DOES NOT contains shadow, so it relies on the shadow of the border below. */
+                    await drawEffectBorderFoil();
+                }
+                await drawArtBorder();
+                await drawArtBorderFoil();
+                await drawArtBorderFinish();
+            }
+
+            /** @summary Draw PENDULUM-LIKE card layout. Does not apply to Link frame since it contains link arrows. */
+            if (isPendulum && !isLink && rigidFrame) {
+                /** Since pendulum art boundary is wider, we cannot relies on the artwork under frame, instead we must draw the artwork again, this time with different size. */
+                if (previewCanvas && ctx && previewCanvas.height > 0) {
+                    const { width: imageWidth, height: imageHeight } = previewCanvas;
+                    const {
+                        sourceOffsetX, sourceOffsetY,
+                        offsetHeight,
+                        destinationX, destinationY,
+                        destinationWidth, destinationHeight,
+                    } = calculateCardArtRedrawCoordination(previewCanvas);
+
+                    /** To avoid stacking transprency, we clear the area before redrawing */
+                    fillBaseColor(
+                        destinationX, destinationY,
+                        destinationWidth, destinationHeight,
+                    );
+                    ctx.drawImage(
+                        previewCanvas,
+                        sourceOffsetX, sourceOffsetY,
+                        imageWidth - sourceOffsetX * 2, imageHeight - offsetHeight,
+                        destinationX, destinationY,
+                        destinationWidth, destinationHeight,
+                    );
+                }
+
+                await drawNameBackground();
+                await drawEffectBackground(true);
+            }
+
+            /** We must draw art finish first because pendulum's border have those little corners that spread into the artwork. */
+            await drawArtFinish();
+            await drawArtOverlayFinish();
+
+            /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if rigidFrame is false */
+            if (isPendulum && !isLink && rigidFrame) {
+                await drawPendulumScaleIcon();
+                /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
+                await drawPendulumBorder(artBorder, 'normal');
+                await drawPendulumBorder(artBorder, foil);
+                await drawPendulumArtBorderFinish();
+                if (artBorder) await drawBorderPendulumFinish();
+            }
+
+            if (rigidFrame) {
+                await drawFrameFinish();
+                await drawNameFinish();
+            }
+            if (artBorder) await drawFrameBackgroundFinish();
+
+            /** Overlay behavior here. If rigid frame is off, card image will extends beyond the current art border (on top of it). The extended card image is still below name, level, attribute, effect (both card and pendulum) and other predefined texts. */
+            if (!rigidFrame) {
+                if (isLink) {
+                    /** For link layout, the artwork is above the art border, but still below the link arrows */
+                    await drawArtBorderFinish();
+                } else if (isPendulum) {
+                    /** We want to fill the area inside pendulum border only, so that the outside frame remains intact. */
+                    const extraHeightRatio = CardArtCanvasCoordinateMap.fullCard.ratio
+                        / CardArtCanvasCoordinateMap.extendedPendulum.ratio;
+                    /** Fill area with base color before start draw overlay artwork. In this case we do not want to fill everywhere, we just need to fill exactly the area contains inside pendulum border frame. */
+                    if (previewCanvas && ctx && previewCanvas.height > 0) {
+                        const {
+                            destinationX, destinationY,
+                            destinationWidth, destinationHeight,
+                        } = calculateCardArtRedrawCoordination(
+                            previewCanvas,
+                            { ...getDefaultCardOpacity(), ...opacity, body: 100, artFrame: true },
+                            extraHeightRatio,
+                        );
+    
+                        fillBaseColor(
+                            destinationX, destinationY,
+                            destinationWidth, destinationHeight,
+                        );
+                    }
+                    if (artBorder) {
+                        await drawPendulumBorder(artBorder, 'normal');
+                        await drawPendulumBorder(artBorder, foil);
+                    }
+                    await drawPendulumArtBorderFinish();
+                }
+                await drawNameBackground();
+                await drawNameFinish();
+                await drawNameBorder();
+                if (previewCanvas && ctx) drawCardArt();
+                await drawArtOverlayFinish();
+
+                /** Redraw various part here because the extended artwork may overlap with those */
+                if (isPendulum && !isLink) {
+                    await drawEffectBackground(true);
+                    await drawPendulumScaleIcon();
+                    await drawPendulumBorder(false, 'normal');
+                    await drawPendulumBorder(false, foil);
+                    await drawBorderPendulumFinish();
+                } else {
+                    await drawEffectBackground();
+                    await drawEffectBorder();
+                    await drawEffectBorderFoil();
+                }
+                await drawFrameFinish();
+            }
+
+            if (statInEffect) await drawAsset(ctx, 'frame/frame-stat-border.png', 0, 1070);
+
+            /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
+            if (!isPendulum && isLink) {
+                await drawLinkArrowMap(linkMap);
+                await drawLinkMapFoil(false);
+                await drawLinkRatingText(ctx, linkMap);
+            }
+
+            if (rigidFrame) drawNameBorder();
+
+            await drawFrameBorder();
+
+            await drawPredefinedMark({
+                ctx,
+                type: lightFooter ? 'white' : 'black',
+                isDuelTerminalCard, isSpeedCard,
+                isLink, isPendulum,
+            });
+
+            await drawOverlayFinish();
+        };
     }, [
-        active,
-        imageChangeCount,
-        isInitializing,
-        // artCanvas,
-        foil,
-        loopFinish, artFinish,
-        frame,
-        isLink,
-        isPendulum,
-        isXyz,
-        isSpeedCard,
-        linkMap,
-        lightFooter,
-        pendulumFrame,
-        pendulumSize,
+        readyToDraw,
         previewCanvasRef,
         specialFrameCanvasRef,
-        isMonster,
-        isSpeedSkill,
+        frame,
+        bottomFrame,
+        foil,
         isDuelTerminalCard,
-        basePendulumFrame,
+        isLink,
+        isPendulum,
+        isSpeedCard,
+        isSpeedSkill,
+        isXyz,
+        lightFooter,
+        linkMap,
+        loopArtFinish,
+        loopFinish,
         opacity,
+        pendulumSize,
         statInEffect,
+        imageChangeCount, // Special dependency
     ]);
 
     /** DRAW ATTRIBUTE */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = attributeCanvasRef.current?.getContext('2d');
-            drawingPipeline.current.attribute.rerun += 1;
-            drawingPipeline.current.attribute.instructor = async () => {
-                if (!ctx) return;
-                ctx.clearRect(0, 0, CanvasWidth, 148.125);
+        if (!readyToDraw) return;
 
-                await drawFrom(ctx, `/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
-                await loopFinish(ctx, 'attribute', type => drawFrom(ctx, `/asset/image/finish/finish-${type}-attribute.png`, 678, 55));
-            };
-        }
-    }, [active, isInitializing, attribute, attributeCanvasRef, format, isSpeedSkill, loopFinish]);
+        const ctx = attributeCanvasRef.current?.getContext('2d');
+        drawingPipeline.current.attribute.rerun += 1;
+        drawingPipeline.current.attribute.instructor = async () => {
+            if (!clearCanvas(ctx, CanvasWidth, 148.125)) return;
+
+            await drawAsset(ctx, `attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
+            await loopFinish(ctx, 'attribute', type => drawAsset(ctx, `finish/finish-${type}-attribute.png`, 678, 55));
+        };
+    }, [readyToDraw, attribute, attributeCanvasRef, format, loopFinish]);
 
     /** DRAW STAR (NEG. LEVEL - LEVEL - RANK) - ST ICON */
-    useEffect(
-        () => {
-            if (active && isInitializing === false) {
-                const ctx = cardIconCanvasRef.current?.getContext('2d');
-                drawingPipeline.current.star.rerun += 1;
-                drawingPipeline.current.star.instructor = () => {
-                    ctx?.clearRect(0, 0, CanvasWidth, 222);
-                    if (isLink) return new Promise(resolve => resolve(true));
-                    const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
-                    return drawCardIcon({
+    useEffect(() => {
+        if (!readyToDraw) return;
+
+        const ctx = cardIconCanvasRef.current?.getContext('2d');
+        drawingPipeline.current.star.rerun += 1;
+        drawingPipeline.current.star.instructor = () => {
+            if (!clearCanvas(ctx, CanvasWidth, 222) || isLink) return new Promise(resolve => resolve(true));
+
+            const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
+            return drawCardIcon({
+                ctx,
+                cardIcon: normalizedCardIcon,
+                star: star ?? 0,
+                onStarDraw: coordinate => normalizedCardIcon === 'st'
+                    ? Promise.resolve()
+                    : loopFinish(
                         ctx,
-                        cardIcon: normalizedCardIcon,
-                        star: star ?? 0,
-                        onStarDraw: coordinate => normalizedCardIcon === 'st'
-                            ? Promise.resolve()
-                            : loopFinish(
-                                ctx,
-                                'star',
-                                type => drawFrom(ctx, `/asset/image/finish/finish-${type}-star.png`, ...coordinate),
-                            ),
-                    });
-                };
-            }
-        },
-        [
-            active,
-            isInitializing,
-            isLink,
-            star,
-            cardIconCanvasRef,
-            loopFinish,
-            cardIcon,
-            frame,
-        ],
-    );
+                        'star',
+                        type => drawAsset(ctx, `finish/finish-${type}-star.png`, ...coordinate),
+                    ),
+            });
+        };
+    }, [
+        readyToDraw,
+        cardIcon,
+        cardIconCanvasRef,
+        frame,
+        isLink,
+        loopFinish,
+        star,
+    ]);
 
     /** DRAW SCALE */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
+        if (!readyToDraw) return;
+        const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
 
-            ctx?.clearRect(0, 0, 813, 889);
-            if (ctx && isPendulum) {
-                drawScale(ctx, pendulumScaleBlue ?? 0, 84.4, 790);
-                drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790);
-            }
+        if (!clearCanvas(ctx)) return;
+        if (isPendulum) {
+            drawScale(ctx, pendulumScaleBlue ?? 0, 84.4, 790);
+            drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790);
         }
-    }, [active, isInitializing, isPendulum, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
+    }, [readyToDraw, isPendulum, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
 
     /** DRAW NAME */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = nameCanvasRef.current?.getContext('2d');
-            drawingPipeline.current.name.rerun += 1;
-            drawingPipeline.current.name.instructor = async () => {
-                const cloneNode = nameCanvasRef.current?.cloneNode() as HTMLCanvasElement | undefined;
-                ctx?.clearRect(0, 0, CanvasWidth, 148.125);
-                if (!ctx || !cloneNode) return;
+        if (!readyToDraw) return;
+        const ctx = nameCanvasRef.current?.getContext('2d');
+        drawingPipeline.current.name.rerun += 1;
+        drawingPipeline.current.name.instructor = async () => {
+            const cloneNode = nameCanvasRef.current?.cloneNode() as HTMLCanvasElement | undefined;
+            if (!clearCanvas(ctx) || !cloneNode) return;
 
-                const edge = format === 'tcg' ? 60 : 68;
-                const lineWidth = attribute === NO_ATTRIBUTE
+            await drawName(
+                ctx,
+                name,
+                format === 'tcg' ? 60 : 68, 115.5375,
+                attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 694 : 678)
-                    : (format === 'tcg' ? 606 : 598);
-
-                await drawName(
-                    ctx,
-                    name,
-                    edge, 115.5375,
-                    lineWidth,
-                    resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
-                    { isSpeedSkill, format, cloneNode, frame, furiganaHelper },
-                );
-            };
-        }
+                    : (format === 'tcg' ? 606 : 598),
+                resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
+                { isSpeedSkill, format, cloneNode, frame, furiganaHelper },
+            );
+        };
     }, [
-        active,
-        isInitializing,
+        readyToDraw,
         attribute,
         foil,
         format,
@@ -658,265 +513,190 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
     /** DRAW STAT (ATK / DEF) */
     useEffect(() => {
-        (() => {
-            if (!active) return;
-            const ctx = statCanvasRef.current?.getContext('2d');
-            clearCanvas(ctx);
+        if (!readyToDraw) return;
+        const ctx = statCanvasRef.current?.getContext('2d');
 
-            if (!ctx || !statInEffect) return;
+        if (!clearCanvas(ctx) || !statInEffect) return;
 
-            drawStatText(ctx, 'ATK', 432.10, 1106.494);
-            drawStat(ctx, atk, 508.824, 1106.494);
-            if (!isLink) {
-                drawStatText(ctx, 'DEF', 600.85, 1106.494);
-                drawStat(ctx, def, 673.865, 1106.494);
-            }
-        })();
-    }, [active, isInitializing, atk, def, isLink, isMonster, statCanvasRef, statInEffect]);
+        drawStatText(ctx, 'ATK', 432.10, 1106.494);
+        drawStat(ctx, atk, 508.824, 1106.494);
+        if (!isLink) {
+            drawStatText(ctx, 'DEF', 600.85, 1106.494);
+            drawStat(ctx, def, 673.865, 1106.494);
+        }
+    }, [readyToDraw, atk, def, isLink, isMonster, statCanvasRef, statInEffect]);
 
     /** DRAW SET ID */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = setIdCanvasRef.current?.getContext('2d');
-            clearCanvas(ctx);
-            drawSetId(
-                ctx,
-                setId,
-                {
-                    isLink, isPendulum,
-                    withShadow: pendulumFrame === 'zarc' || hasArtFrame === false,
-                    format,
-                    lightFooter,
-                }
-            );
-        }
-    }, [active, isInitializing, format, isLink, isPendulum, lightFooter, setIdCanvasRef, setId, isSpeedSkill, pendulumFrame, hasArtFrame]);
+        if (!readyToDraw) return;
+        const ctx = setIdCanvasRef.current?.getContext('2d');
+
+        if (!clearCanvas(ctx)) return;
+
+        drawSetId(
+            ctx,
+            setId,
+            {
+                isLink, isPendulum,
+                withShadow: bottomFrame === 'zarc' || !hasArtFrame,
+                format,
+                lightFooter,
+            }
+        );
+    }, [readyToDraw, format, isLink, isPendulum, lightFooter, setIdCanvasRef, setId, isSpeedSkill, bottomFrame, hasArtFrame]);
 
     /** DRAW FIRST EDITION NOTICE AND PASSWORD */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = passwordCanvasRef.current?.getContext('2d');
-            clearCanvas(ctx);
-            if (!ctx) return;
+        if (!readyToDraw) return;
+        const ctx = passwordCanvasRef.current?.getContext('2d');
+        if (!clearCanvas(ctx)) return;
 
-            const endOfPassword = drawPassword({
+        const endOfPassword = drawPassword({
+            ctx,
+            password,
+            lightFooter,
+            withShadow: bottomFrame === 'zarc' || !hasArtFrame,
+        });
+        if (isFirstEdition && !isDuelTerminalCard) {
+            ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
+
+            draw1stEdition(
                 ctx,
-                password,
-                lightFooter,
-                hasShadow: hasArtFrame === false,
-            });
-            if (isFirstEdition && !isDuelTerminalCard) {
-                ctx.fillStyle = lightFooter ? '#fff' : '#000';
-
-                draw1stEdition(
-                    ctx,
-                    Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0),
-                    isSpeedSkill ? -2 : 0,
-                );
-            }
+                Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0),
+                isSpeedSkill ? -2 : 0,
+            );
         }
     }, [
-        active,
-        isInitializing,
+        readyToDraw,
         isDuelTerminalCard,
         isFirstEdition,
         password,
         passwordCanvasRef,
         lightFooter,
         format,
-        pendulumFrame,
         hasArtFrame,
-        isPendulum,
         isSpeedSkill,
+        bottomFrame,
     ]);
 
     /** DRAW CREATOR TEXT */
     useEffect(() => {
-        (() => {
-            if (!active || isInitializing) return;
+        if (!readyToDraw) return;
 
-            drawCreatorText({
-                ctx: creatorCanvas.current?.getContext('2d'),
-                format,
-                value: creator,
-                alignment: 'right',
-                baselineOffset: isSpeedSkill ? -2 : 0,
-                hasShadow: hasArtFrame === false,
-                lightFooter,
-            });
-        })();
-    }, [active, isInitializing, isPendulum, lightFooter, creator, creatorCanvas, format, hasArtFrame, isSpeedSkill]);
+        drawCreatorText({
+            ctx: creatorCanvasRef.current?.getContext('2d'),
+            format,
+            value: creator,
+            alignment: 'right',
+            baselineOffset: isSpeedSkill ? -2 : 0,
+            hasShadow: !hasArtFrame,
+            lightFooter,
+        });
+    }, [readyToDraw, isPendulum, lightFooter, creator, creatorCanvasRef, format, hasArtFrame, isSpeedSkill]);
 
     /** DRAW STICKER */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            drawingPipeline.current.sticker.rerun += 1;
-            drawingPipeline.current.sticker.instructor = async () => {
-                return await drawSticker({
-                    ctx: stickerCanvas.current?.getContext('2d'),
-                    sticker,
-                });
-            };
-        }
-    }, [active, isInitializing, sticker, stickerCanvas]);
+        if (!readyToDraw) return;
+
+        drawingPipeline.current.sticker.rerun += 1;
+        drawingPipeline.current.sticker.instructor = async () => {
+            return await drawSticker({
+                ctx: stickerCanvasRef.current?.getContext('2d'),
+                sticker,
+            });
+        };
+    }, [readyToDraw, sticker, stickerCanvasRef]);
 
     /** DRAW CARD EFFECT + TYPE ABILITY */
-    const drawTypeAbility = useCallback(async (
-        ctx: CanvasRenderingContext2D | null | undefined,
-        size: 'small' | 'medium' | 'large',
-    ) => {
-        if (ctx) {
-            ctx?.clearRect(0, 0, CanvasWidth, 1037);
-            const willDrawTypeAbility = normalizedTypeAbility.length > 0;
-            const willDrawIcon = normalizedSubFamily !== 'NO ICON' && size === 'large';
-            const typeAbilityWithIcon = normalizedTypeAbility
-                + (willDrawIcon ? ST_ICON_SYMBOL : '');
-            const normalizedTypeAbilityText = willDrawTypeAbility
-                ? format === 'tcg'
-                    ? size === 'large'
-                        ? `[  ${typeAbilityWithIcon}  ]`
-                        : `[${typeAbilityWithIcon}]`
-                    : `【${typeAbilityWithIcon}】`
-                : '';
-            if (!willDrawTypeAbility) return;
-
-            /** Special treatment for speed skill */
-            ctx.fillStyle = checkLightFrame(frame) && !checkSpeedSkill({ frame }) && size === 'large'
-                ? '#ffffff'
-                : '#000000';
-            const { iconPositionList, xRatio } = drawMonsterType({
-                ctx,
-                format,
-                size,
-                value: normalizedTypeAbilityText,
-                metricMethod: !isMonster ? 'compact' : undefined,
-                furiganaHelper,
-            });
-            let offsetY = format === 'ocg' ? -4 : 0;
-            let offsetX = format === 'ocg' ? -3 : 0;
-
-            if (willDrawIcon) {
-                const { edge, baseline } = iconPositionList[0];
-                await drawWithSizeFrom(
-                    ctx,
-                    `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                    image => edge + image.naturalWidth * 0.175 * xRatio + offsetX,
-                    image => baseline - image.naturalWidth * 0.8 + offsetY,
-                    image => image.naturalWidth,
-                    image => image.naturalWidth,
-                );
-            } else {
-                /** Currently, draw icon in place of monster type is undesirable, as the icon seems out of place and user may not know how to turn them off properly if they want to. */
-                // await Promise.all(iconPositionList.map(({ edge, baseline, size }) => {
-                //     const iconSize = size * 0.9;
-
-                //     return drawWithSizeFrom(
-                //         ctx,
-                //         `/asset/image/sub-family/subfamily-${normalizedSubFamily.toLowerCase()}.png`,
-                //         () => edge + size * 0.125,
-                //         baseline - size * 0.850,
-                //         () => iconSize,
-                //         () => iconSize,
-                //     );
-                // }));
-            }
-
-            return iconPositionList;
-        }
-    }, [normalizedTypeAbility, normalizedSubFamily, format, isMonster, furiganaHelper, frame]);
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = effectCanvasRef.current?.getContext('2d');
-            const typeCtx = typeCanvasRef.current?.getContext('2d');
+        if (!readyToDraw) return;
 
-            drawingPipeline.current.typeAbility.rerun += 1;
-            drawingPipeline.current.typeAbility.instructor = async () => {
-                ctx?.clearRect(0, 0, CanvasWidth, 1110.938);
-                if (!ctx || !typeCtx) return;
-                const typeInEffect = cardIcon === 'auto'
-                    ? isMonster || isSpeedSkill
-                    : cardIcon !== 'st' || isLink;
-                const coordinateKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
-                    .filter(entry => entry !== '').join('-');
-                const fontDataKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
-                    .filter(entry => entry !== '').join('-');
+        const ctx = effectCanvasRef.current?.getContext('2d');
+        const typeCtx = typeCanvasRef.current?.getContext('2d');
 
-                const fontData = EffectFontData[fontDataKey];
-                if (statInEffect && typeInEffect && isNormal && format === 'tcg') fontData.fontList = TCGVanillaTypeStatFontList;
+        drawingPipeline.current.typeAbility.rerun += 1;
+        drawingPipeline.current.typeAbility.instructor = async () => {
+            if (!clearCanvas(ctx) || !clearCanvas(typeCtx)) return;
 
-                const effectIndexSize = drawEffect({
-                    ctx,
-                    content: effect,
-                    isNormal,
-                    fontData,
-                    sizeList: EffectCoordinateData[coordinateKey],
-                    condenseTolerant: effectStyle?.condenseTolerant,
+            const effectIndexSize = drawEffect({
+                ctx,
+                content: effect,
+                isNormal,
+                condenseTolerant,
+                format,
+                furiganaHelper,
+                ...getEffectSizeAndCoordinate({
                     format,
-                    furiganaHelper,
-                });
-                if (!typeInEffect) {
-                    await drawTypeAbility(typeCtx, 'large');
-                } else {
-                    await drawTypeAbility(typeCtx, effectIndexSize === 0 ? 'medium' : 'small');
-                }
-            };
-        }
+                    statInEffect,
+                    typeInEffect,
+                    isNormal,
+                }),
+            });
+            await drawTypeAbility({
+                ctx: typeCtx,
+                format,
+                frame,
+                furiganaHelper,
+                isMonster,
+                size: !typeInEffect
+                    ? 'large'
+                    : effectIndexSize === 0 ? 'medium' : 'small',
+                subFamily: normalizedSubFamily,
+                typeAbility: normalizedTypeAbility,
+            });
+        };
     }, [
-        active,
-        isInitializing,
-        cardIcon,
-        drawTypeAbility,
+        readyToDraw,
+        typeInEffect,
+        statInEffect,
+        condenseTolerant,
         effect,
         effectCanvasRef,
-        effectStyle?.condenseTolerant,
         format,
+        frame,
         furiganaHelper,
-        isLink,
         isMonster,
         isNormal,
-        isSpeedSkill,
-        statInEffect,
+        normalizedSubFamily,
+        normalizedTypeAbility,
         typeCanvasRef,
     ]);
 
     /** DRAW PENDULUM EFFECT */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
-            ctx?.clearRect(0, 0, 813, 889);
+        if (!readyToDraw) return;
+        const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
 
-            if (isPendulum) {
-                drawEffect({
-                    ctx,
-                    content: pendulumEffect,
-                    isNormal: false,
-                    fontData: PendulumEffectFontData[format],
-                    sizeList: PendulumEffectCoordinate,
-                    condenseTolerant: effectStyle?.condenseTolerant,
-                    format,
-                    furiganaHelper,
-                });
-            }
+        if (!clearCanvas(ctx)) return;
+        if (isPendulum) {
+            drawEffect({
+                ctx,
+                content: pendulumEffect,
+                isNormal: false,
+                fontData: PendulumEffectFontData[format],
+                sizeList: PendulumEffectCoordinate,
+                condenseTolerant,
+                format,
+                furiganaHelper,
+            });
         }
-    }, [active, isInitializing, effectStyle?.condenseTolerant, format, isPendulum, pendulumEffectCanvasRef, pendulumEffect, furiganaHelper]);
+    }, [readyToDraw, condenseTolerant, format, isPendulum, pendulumEffectCanvasRef, pendulumEffect, furiganaHelper]);
 
     /** DRAW TOTAL OVERLAY */
     useEffect(() => {
-        if (active && isInitializing === false) {
-            const ctx = finishCanvas.current?.getContext('2d');
+        if (!readyToDraw) return;
+        const ctx = finishCanvasRef.current?.getContext('2d');
 
-            drawingPipeline.current.overlay.rerun += 1;
-            drawingPipeline.current.overlay.instructor = async () => {
-                ctx?.clearRect(0, 0, CanvasWidth, CanvasHeight);
-                if (!ctx) return;
-                await loopFinish(
-                    ctx,
-                    'total-overlay',
-                    overlayType => drawFrom(ctx, `/asset/image/finish/finish-${overlayType}-total-overlay.png`, 0, 0),
-                );
-            };
-        }
-    }, [active, isInitializing, finishCanvas, loopFinish, name]);
+        drawingPipeline.current.overlay.rerun += 1;
+        drawingPipeline.current.overlay.instructor = async () => {
+            if (!clearCanvas(ctx)) return;
+            await loopFinish(
+                ctx,
+                'total-overlay',
+                overlayType => drawAsset(ctx, `finish/finish-${overlayType}-total-overlay.png`, 0, 0),
+            );
+        };
+    }, [readyToDraw, finishCanvasRef, loopFinish, name]);
 
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useRef(async (exportProps: {
@@ -969,14 +749,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     return Promise.resolve();
                 }));
             // await generateLayer(frameCanvas, exportCtx);
-            const previewCtx = previewCanvasRef.current;
-            if (previewCtx && exportCtx) {
+            const previewCanvas = previewCanvasRef.current;
+            if (previewCanvas && exportCtx) {
                 const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity);
-                const { width: imageWidth, height: imageHeight } = previewCtx;
+                const { width: imageWidth, height: imageHeight } = previewCanvas;
 
                 if (imageHeight > 0) {
                     exportCtx.drawImage(
-                        previewCtx,
+                        previewCanvas,
                         0, 0,
                         imageWidth, imageHeight,
                         artX, artY,
@@ -996,12 +776,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 statCanvasRef,
                 setIdCanvasRef,
                 passwordCanvasRef,
-                creatorCanvas,
-                stickerCanvas,
-                finishCanvas,
+                creatorCanvasRef,
+                stickerCanvasRef,
+                finishCanvasRef,
             ].map(currentlayer => generateLayer(currentlayer, exportCtx)));
 
-            lightboxCanvas.current?.getContext('2d')?.drawImage(canvasRef, 0, 0);
+            lightboxCanvasRef.current?.getContext('2d')?.drawImage(canvasRef, 0, 0);
         }
     }).current;
 

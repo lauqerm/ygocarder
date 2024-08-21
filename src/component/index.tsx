@@ -34,7 +34,7 @@ export const StyledDropdownContainer = styled.div`
     border: var(--bw) solid var(--sub-level-1);
     border-radius: var(--br-lg);
     background-color: var(--main-level-3);
-    box-shadow: -2px -2px var(--spacing-xs) #000000ff;
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05); // Mimic antd
     padding: var(--spacing-xs) 0;
     color: var(--color);
 `;

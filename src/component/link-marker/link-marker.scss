@@ -39,6 +39,7 @@
     .link-marker-reset,
     .link-marker-button {
         cursor: pointer;
+        border-radius: var(--br-lg);
         &:hover {
             background-color: var(--sub-level-1);
         }

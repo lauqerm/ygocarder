@@ -28,10 +28,11 @@ export const getDefaultCard = () => ({
         unit: 'px',
         aspect: 1,
     } as Partial<ReactCrop.Crop>,
-    linkMap: ['1',
+    linkMap: [
+        '1',
         '3',
         '7',
-        '9'
+        '9',
     ] as string[],
     isPendulum: false,
     pendulumFrame: 'auto',
@@ -105,10 +106,28 @@ export const getEmptyCard = (): Card => ({
 });
 
 export const OpacityList = [
-    { value: 'body' as const, label: 'Card' },
-    { value: 'name' as const, label: 'Name' },
-    { value: 'pendulum' as const, label: 'Pendulum' },
-    { value: 'text' as const, label: 'Effect' },
+    {
+        type: 'body' as const,
+        subType: 'artBorder' as const,
+        label: 'Card',
+        tooltip: 'Keep art border even if card body is transparent.',
+    },
+    {
+        type: 'name' as const,
+        subType: 'nameBorder' as const,
+        label: 'Name',
+        tooltip: 'Draw name border and finish whenever possible.',
+    },
+    {
+        type: 'pendulum' as const,
+        label: 'Pendulum',
+        tooltip: null,
+    },
+    {
+        type: 'text' as const,
+        label: 'Effect',
+        tooltip: null,
+    },
 ];
 
 export type FrameInfo = {

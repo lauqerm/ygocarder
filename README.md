@@ -1,6 +1,6 @@
 Comment code
 Dark synchro style
-Extended art over frame
+Split art and effect border for pendulum?
 Dialect (Chef Special Recipe for example)
 Zoom
 

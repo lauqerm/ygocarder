@@ -1,10 +1,10 @@
 import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/model';
 import { condense, createFontGetter } from 'src/util';
-import { tokenizeText } from './text-util';
-import { drawLine } from './text';
-import { createLineList } from './line-analyze';
-import { normalizeCardText } from './text-normalize';
-import { clearCanvas } from './canvas-util';
+import { tokenizeText } from '../text-util';
+import { drawLine } from '../text';
+import { createLineList } from '../line-analyze';
+import { normalizeCardText } from '../text-normalize';
+import { clearCanvas } from '../canvas-util';
 
 export const drawCreatorText = ({
     ctx,
@@ -23,8 +23,7 @@ export const drawCreatorText = ({
     lightFooter: boolean,
     hasShadow?: boolean,
 }) => {
-    clearCanvas(ctx);
-    if (!ctx) return;
+    if (!clearCanvas(ctx)) return;
 
     ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
     ctx.shadowColor = hasShadow
@@ -32,7 +31,7 @@ export const drawCreatorText = ({
         : '#000000';
     ctx.shadowOffsetY = 0;
     ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = hasShadow ? 1 : 0;
+    ctx.shadowBlur = hasShadow ? 4 : 0;
 
     const { trueEdge, trueBaseline, trueWidth } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];

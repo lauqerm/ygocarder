@@ -1,4 +1,4 @@
-import { CanvasConst } from 'src/model';
+import { CanvasConst, FinishInformation, FinishMap } from 'src/model';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
@@ -87,8 +87,48 @@ export const fillTextRightWithSpacing = (
 
 export const clearCanvas = (
     ctx: CanvasRenderingContext2D | null | undefined,
-) => {
+    width = CanvasWidth,
+    height = CanvasHeight,
+): ctx is CanvasRenderingContext2D => {
     if (ctx) {
-        ctx.clearRect(0, 0, CanvasWidth, CanvasHeight);
+        ctx.clearRect(0, 0, width, height);
+
+        return true;
+    };
+    return false;
+};
+
+export const getFinishIterator = (
+    finish: string[],
+    finishMap: Record<string, FinishInformation> = FinishMap,
+) => {
+    return async (
+        ctx?: CanvasRenderingContext2D | null,
+        name?: string,
+        caller?: (finishType: string) => Promise<any>,
+    ) => {
+        if (!ctx || !Array.isArray(finish) || finish.length <= 0) return Promise.resolve();
+        for (const finishType of finish) {
+            const finishInformation = finishMap[finishType];
+            if (caller && finishMap[finishType]) {
+                const { partInstructionMap } = finishInformation;
+                const instructionList = name ? partInstructionMap[name] ?? [] : [];
+
+                if (instructionList.length) {
+                    for (const { blendMode = 'source-over', opacity = 1 } of instructionList) {
+                        ctx.globalCompositeOperation = blendMode;
+                        ctx.globalAlpha = opacity;
+
+                        await caller(finishType);
+                    }
+                } else {
+                    await caller(finishType);
+                }
+                ctx.globalAlpha = 1;
+                ctx.globalCompositeOperation = 'source-over';
+            }
+        }
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
     };
 };

@@ -6,15 +6,40 @@ import {
     EffectCoordinateData,
     CondenseTolerantMap,
     FontData,
-} from '../model';
-import { condense, createFontGetter } from '../util';
-import { createLineList } from './line-analyze';
-import { drawLine } from './text';
-import { analyzeLine } from './text-analyze';
-import { normalizeCardText, splitEffect } from './text-normalize';
-import { tokenizeText } from './text-util';
+    TCGVanillaTypeStatFontList,
+} from '../../model';
+import { condense, createFontGetter } from '../../util';
+import { createLineList } from '../line-analyze';
+import { drawLine } from '../text';
+import { analyzeLine } from '../text-analyze';
+import { normalizeCardText, splitEffect } from '../text-normalize';
+import { tokenizeText } from '../text-util';
 
-/** @summary Block => Paragraph => Sentence => Token => Fragment => Letter **/
+export const getEffectSizeAndCoordinate = ({
+    format,
+    isNormal,
+    statInEffect,
+    typeInEffect,
+}: {
+    format: string,
+    statInEffect: boolean,
+    typeInEffect: boolean,
+    isNormal: boolean,
+}) => {
+    const coordinateKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
+        .filter(entry => entry !== '').join('-');
+    const fontDataKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
+        .filter(entry => entry !== '').join('-');
+
+    const fontData = EffectFontData[fontDataKey];
+    if (statInEffect && typeInEffect && isNormal && format === 'tcg') fontData.fontList = TCGVanillaTypeStatFontList;
+
+    return {
+        fontData,
+        sizeList: EffectCoordinateData[coordinateKey],
+    };
+};
+
 const {
     width: CanvasWidth,
 } = CanvasConst;

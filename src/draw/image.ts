@@ -39,8 +39,20 @@ export const drawFrom = async (
         }
     });
 };
+export const drawAsset = async (
+    ctx: CanvasRenderingContext2D | null | undefined,
+    source: string,
+    sx: number | ((image: HTMLImageElement) => number) = 0,
+    sy: number | ((image: HTMLImageElement) => number) = 0,
+) => {
+    return drawFrom(
+        ctx,
+        '/asset/image/' + source,
+        sx, sy,
+    );
+};
 
-export const drawWithSizeFrom = async (
+export const drawFromWithSize = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
     sx: number | ((image: HTMLImageElement) => number),
@@ -81,4 +93,17 @@ export const drawWithSizeFrom = async (
             };
         }
     });
+};
+export const drawAssetWithSize: typeof drawFromWithSize = async (
+    ctx,
+    source,
+    sx, sy,
+    dw, dh,
+) => {
+    return drawFromWithSize(
+        ctx,
+        '/asset/image/' + source,
+        sx, sy,
+        dw, dh,
+    );
 };

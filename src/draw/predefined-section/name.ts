@@ -1,10 +1,18 @@
-import { FootTextRegex, NameFontDataMap, TCG_LETTER_JOINLIST, DefaultFontSizeData, getDefaultNameStyle, NameStyle, PatternMap } from 'src/model';
+import {
+    DefaultFontSizeData,
+    FootTextRegex,
+    NameFontDataMap,
+    NameStyle,
+    PatternMap,
+    TCG_LETTER_JOINLIST,
+    getDefaultNameStyle,
+} from 'src/model';
 import { parsePalette, createFontGetter, condense } from 'src/util';
-import { tokenizeText } from './text-util';
-import { drawLine } from './text';
-import { createLineList } from './line-analyze';
-import { normalizeCardText } from './text-normalize';
-import { drawFrom, drawWithSizeFrom } from './image';
+import { tokenizeText } from '../text-util';
+import { drawLine } from '../text';
+import { createLineList } from '../line-analyze';
+import { normalizeCardText } from '../text-normalize';
+import { drawAsset, drawAssetWithSize } from '../image';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -203,11 +211,11 @@ export const drawName = async (
         if (patternImage && cloneNode) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             /** Một số pattern cần nền của frame */
-            await drawFrom(cloneCtx, `/asset/image/frame/frame-${frame}.png`, 0, 0);
-            await drawFrom(cloneCtx, `/asset/image/frame/frame-name-box-${frame}.png`, 0, 0);
+            await drawAsset(cloneCtx, `frame/frame-${frame}.png`, 0, 0);
+            await drawAsset(cloneCtx, `frame/frame-name-box-${frame}.png`, 0, 0);
             cloneCtx.globalCompositeOperation = patternBlendMode;
-            await drawWithSizeFrom(
-                cloneCtx, `/asset/image/finish-name/${patternImage}.png`,
+            await drawAssetWithSize(
+                cloneCtx, `finish-name/${patternImage}.png`,
                 edge, trueBaseline - maxAscent,
                 trueWidth,
                 maxAscent + maxDescent,

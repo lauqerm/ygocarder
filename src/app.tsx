@@ -104,10 +104,10 @@ function App() {
         statCanvasRef,
         setIdCanvasRef,
         passwordCanvasRef,
-        creatorCanvas: creatorCanvasRef,
-        stickerCanvas: stickerCanvasRef,
-        finishCanvas: finishCanvasRef,
-        lightboxCanvas: lightboxCanvasRef,
+        creatorCanvasRef,
+        stickerCanvasRef,
+        finishCanvasRef,
+        lightboxCanvasRef,
     });
 
     const [imageChangeCount, setImageChangeCount] = useState(0);

@@ -114,7 +114,8 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             onTakePicker={onTakePicker}
         />
         {isOCG && <Tooltip
-            overlay="Automatically annotates popular kanji characters with furigana. Manual-input furigana are unaffected."
+            overlay="Automatically annotates popular kanji characters with corresponding furigana."
+            overlayClassName="long-tooltip-overlay"
         >
             <Checkbox
                 className="input-kanji-helper"
@@ -130,7 +131,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         >
             <span>
                 Condense <Explanation
-                    content={'Higher condense limit will prefer compressing words instead of adding new lines'}
+                    content={'Higher condense limit will prefer compressing words instead of adding new lines.'}
                 />
             </span>
         </RadioTrain>

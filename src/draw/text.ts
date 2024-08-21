@@ -35,6 +35,17 @@ import { TextDrawer, drawLetter, getLetterWidth } from './letter';
 import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 
+/**
+ * @summary Text hierachy
+ *   * Letter: Individual (1) letter. E.g. "a", "1", "み", "装", "-", "①"
+ *   * Fragment: Multiple letters with decorate control characters. E.g. "{無|む}", "Damage"
+ *   * Token: Multiple fragments with group control characters (NB_WORD_OPEN and NB_WORD_CLOSE) or a whole word, splitted by space or other breakable letters. E.g. "⦉{相|あい}{手|て}⦊"
+ *   * Sentence: Sequence of tokens.  E.g. "Cannot be destroyed by battle or card effects"
+ *   * Paragraph: Consecutive sentences without new line characters ("\n").
+ *   * Block: Whole text in a section.
+ * 
+ * Line: Line is a special unit, when a sentence hit the end of current text box, it wrap to new line without using the actual new line character. In this case the sentence is broke down into multiple lines. Line can be manully enforced with line control characters (NB_LINE_OPEN and NB_LINE_CLOSE), or created from text split function.
+ * **/
 export const drawLine = ({
     ctx,
     tokenList,

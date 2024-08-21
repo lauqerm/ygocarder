@@ -194,7 +194,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         {showCreativeOption && <div className="card-opacity-input">
             <label className="standalone-addon ant-input-group-addon">
                 Opacity <Explanation
-                    content={'May affect behavior of some finish types'}
+                    content={'May affect behavior of some finish types.'}
                 />
             </label>
             <OpacityPicker ref={opacityPickerRef}

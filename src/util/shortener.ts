@@ -15,6 +15,9 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         name: 'opnm',
         text: 'optx',
         artFrame: 'opaf',
+        artBorder: 'opab',
+        nameBorder: 'opnb',
+        baseFill: 'opbf',
     },
     finish: 'fn',
     art: 'ar',
@@ -248,7 +251,7 @@ export const migrateCardData = (card: Record<string, any>) => {
 
     if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
 
-    if (migratedCard.opacity === undefined) migratedCard.opacity = getDefaultCardOpacity();
+    migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;

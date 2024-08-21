@@ -103,6 +103,7 @@ export const StyledCardCanvasGroupContainer = styled.div`
     #export-canvas {
         display: none;
         z-index: 100;
+        pointer-events: all;
     }
     #export-canvas-guard {
         position: absolute;

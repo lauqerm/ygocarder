@@ -13,10 +13,10 @@ export type MasterDuelCanvas = {
     statCanvasRef: React.RefObject<HTMLCanvasElement>,
     setIdCanvasRef: React.RefObject<HTMLCanvasElement>,
     passwordCanvasRef: React.RefObject<HTMLCanvasElement>,
-    creatorCanvas: React.RefObject<HTMLCanvasElement>,
-    stickerCanvas: React.RefObject<HTMLCanvasElement>,
-    finishCanvas: React.RefObject<HTMLCanvasElement>,
-    lightboxCanvas: React.RefObject<HTMLCanvasElement>,
+    creatorCanvasRef: React.RefObject<HTMLCanvasElement>,
+    stickerCanvasRef: React.RefObject<HTMLCanvasElement>,
+    finishCanvasRef: React.RefObject<HTMLCanvasElement>,
+    lightboxCanvasRef: React.RefObject<HTMLCanvasElement>,
 };
 
 /** Các thông số được làm tròn thay vì upscale để đảm bảo độ mịn */
@@ -28,20 +28,17 @@ export const CanvasConst = {
     leftToPendulumStructure: 52,
 };
 
-export type CardOpacity = {
-    body: number,
-    pendulum: number,
-    text: number,
-    name: number,
-    artFrame: boolean,
-};
 export const getDefaultCardOpacity = () => ({
     body: 100,
     pendulum: 100,
     text: 100,
     name: 100,
+    baseFill: '#404040',
+    artBorder: true,
+    nameBorder: true,
     artFrame: true,
 });
+export type CardOpacity = ReturnType<typeof getDefaultCardOpacity>;
 export const CardArtCanvasCoordinateMap = {
     normal: {
         artFinishX: 100,

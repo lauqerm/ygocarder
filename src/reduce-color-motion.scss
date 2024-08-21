@@ -44,6 +44,14 @@
             border-left: none;
         }
     }
+    .link-marker-chooser {
+        .link-marker-reset,
+        .link-marker-button {
+            &:hover {
+                background-color: #222236;
+            }
+        }
+    }
     .radio-train.format-radio {
         .ant-radio-button-wrapper-checked {
             &.ocg-button {
