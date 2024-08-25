@@ -40,7 +40,7 @@ import { drawMarker } from './canvas-util';
  *   * Letter: Individual (1) letter. E.g. "a", "1", "み", "装", "-", "①"
  *   * Fragment: Multiple letters with decorate control characters. E.g. "{無|む}", "Damage"
  *   * Token: Multiple fragments with group control characters (NB_WORD_OPEN and NB_WORD_CLOSE) or a whole word, splitted by space or other breakable letters. E.g. "⦉{相|あい}{手|て}⦊"
- *   * Sentence: Sequence of tokens.  E.g. "Cannot be destroyed by battle or card effects"
+ *   * Sentence: Sequence of tokens. E.g. "Cannot be destroyed by battle or card effects"
  *   * Paragraph: Consecutive sentences without new line characters ("\n").
  *   * Block: Whole text in a section.
  * 
@@ -467,7 +467,7 @@ export const drawLine = ({
             }
         }
         previousTokenGap = tokenRightGap * xRatio;
-        if (debug) drawMarker({ ctx, baseline, trueEdge: tokenEdge, width: totalTokenWidth * xRatio, xRatio });
+        if (debug) drawMarker({ ctx, baseline, edge: tokenEdge, width: totalTokenWidth * xRatio, xRatio });
         tokenEdge += totalTokenWidth * xRatio + accumulatedSpace + indent;
     }
 

@@ -90,7 +90,7 @@ export const getLayoutDrawFunction = ({
     const applyArtFinish = !boundless && artBorder;
 
     const resultAPI = {
-        /** Calculate new art coordination for creative mode, some configuration may result in the art getting drawn at different location compare to default one use by `drawArtwork` function */
+        /** Calculate new art coordination for creative mode, some configuration may result in the art getting drawn at different location compare to default one used by `drawArtwork` function */
         calculateCardArtRedrawCoordination(
             imageCanvas: HTMLCanvasElement,
             customOpacity?: CardOpacity,

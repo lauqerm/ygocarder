@@ -1,4 +1,4 @@
-/** All these css are to ensure the picker popover is ALWAYS display, even if it is not visible. Display hidden style used in popover mess up badly with the image cropper, so we must ensure it display properply. It does not need to be visible on screen, but it must be painted in the browser. */
+/** All these css are to ensure the picker popover is ALWAYS display, even if it is not visible. Display hidden style used in popover mess up badly with the image cropper, so we must ensure to display it properply. It does not need to be visible on screen, but it must be painted in the browser. */
 .layout-picker-overlay {
     z-index: -1;
     &.ant-popover-hidden {

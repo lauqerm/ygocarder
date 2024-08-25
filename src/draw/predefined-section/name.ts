@@ -10,7 +10,7 @@ import {
 import { parsePalette, createFontGetter, condense } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
-import { createLineList } from '../line-analyze';
+import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 
@@ -81,7 +81,7 @@ export const drawName = async (
     value: string,
     edge: number,
     trueBaseline: number,
-    trueWidth: number,
+    width: number,
     style: Partial<NameStyle>,
     option: {
         frame: string,
@@ -177,7 +177,7 @@ export const drawName = async (
                     median,
                     paragraphList: [quoteConvertedValue],
                     format, textData,
-                    trueWidth,
+                    width,
                 });
 
                 if (currentLineCount > 1) return false;
@@ -217,7 +217,7 @@ export const drawName = async (
             await drawAssetWithSize(
                 cloneCtx, `finish-name/${patternImage}.png`,
                 edge, trueBaseline - maxAscent,
-                trueWidth,
+                width,
                 maxAscent + maxDescent,
             );
             ctx.globalCompositeOperation = 'source-in';

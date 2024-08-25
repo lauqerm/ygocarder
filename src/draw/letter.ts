@@ -15,10 +15,19 @@ import {
     nonBreakableSymbolRegex,
 } from 'src/model';
 
-/** Trả về độ dài thực của letter (không phụ thuộc vào scale), nếu thông số `xRatio` được truyền, các ký tự constant width như bullet
- * sẽ được phóng to lên tương ứng.
+/**
+ * Return the width of a letter. This function return true width of a scalable letter, but will return the inverse-scaled width of a non-scalable letter (based on the `xRatio` property). For example:
+ *  * Canvas does not scaled: Letter "A" return 50px, while letter "①" (non-scalable) return 50px.
+ *  * Canvas scaled down by 0.5: Letter "A" return 50px, while letter "①" (non-scalable) return 100px.
+ *
+ * Each letter has 3 main values:
+ *  * `width`: The width of a character based on font size, for example all kanji with the same font size will have the same width, because each letter is designed within a consistent box.
+ *  * `actualBoundWidth`: The width of actual image of a character based on its shape, for example letter of the sokuon "ァ" will have actualBoundingWidth much smaller than the kanji letter "道", even though they have the same font-size (and therefore same width).
+ *  * `boundWidth`: It is actualBoundWidth + small padding at left and right so that the letter does not stick closely to each other.
  * 
- * BOLD font weight WILL make this function run incorrectly
+ * `metricMethod` dictate the ratio and calculation method of a letter, used for different use-cases.
+ * 
+ * DO NOT apply font weight to the canvas while calling this function, as the result will become inconsistent.
  */
 export const getLetterWidth = ({
     ctx,
@@ -41,10 +50,6 @@ export const getLetterWidth = ({
         width: 0,
         boundWidth: 0,
     };
-
-    // Compact metricMethod
-    // Width = (bound width) + spacing * 2
-    // Bound width không được nhỏ hơn min bound width, tính theo tỷ lệ % ứng với từng ký tự
 
     const metric = ctx.measureText(letter);
     const {
@@ -138,7 +143,9 @@ export type TextDrawer = (props: {
     scaledEdge: number,
     scaledBaseline: number,
 }) => void;
-/** Vẽ ký tự lẻ, hàm này chịu ảnh hưởng bởi transform ratio. */
+/** 
+ * Draw the letter with a provided worker. This function is affected by scaled canvas. It take true edge as paramter, but will pass scaled edge to the worker.
+ */
 export const drawLetter = ({
     ctx,
     baseline,

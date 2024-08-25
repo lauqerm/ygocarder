@@ -4,60 +4,62 @@ const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
 export const randomDarkColor = () => '#000000'.replace(/0/g, () => (~~(Math.random() * 12 + 2)).toString(16));
 
-/** Vẽ một vệt thẳng để làm mốc, bị ảnh hưởng bởi xRatio */
+/** Draw a straight line with random color, used to measurement debug. It take true edge and width, but will draw based on the current scale ratio. */
 export const drawMarker = ({
     ctx,
     color = randomDarkColor(), width,
     offset = 4,
-    trueEdge, baseline,
+    edge, baseline,
     xRatio,
 }: {
     ctx: CanvasRenderingContext2D,
     color?: string, width: number,
     offset?: number,
-    trueEdge: number, baseline: number,
+    edge: number, baseline: number,
     xRatio: number,
 }) => {
     const currentFillStyle = ctx.fillStyle;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.rect(trueEdge / xRatio, baseline + 1 + Math.random() * offset, width / xRatio, 2);
-    ctx.fill();
+    ctx.rect(edge / xRatio, baseline + 1 + Math.random() * offset, width / xRatio, 2);
+    // ctx.fill();
     ctx.fillStyle = currentFillStyle;
 };
 
-/** Nguyên tắc về letterSpacing:
- * * LetterSpacing được tính theo tỷ lệ độ dài chữ cái. Default là 0.
- * * 2 chữ cái liên tiếp nhau có độ dài là x và y, nếu LetterSpacing là 0 thì chúng đứng sát nhau.
- * * Với LetterSpacing =/= 0, mỗi chữ được tăng (giảm) chiều dài bằng một nửa tỷ lệ LetterSpacing, như vậy hai chữ ghép lại sẽ tạo thành
- * tỷ lệ LetterSpacing chuẩn. Ví dụ LetterSpacing là 0.5, thì mỗi chữ sẽ có thêm khoảng cách bằng 50% độ dài con chữ.
+/**
+ * @summary Letter spacing rules:
+ * * It is based on the letter width (so each letter has different spacing), default is no spacing (0).
+ * * Positive letter spacing will create a gap between each letter, and vice versa.
+ * * Each letter distribute the gap evenly to their left and right side. So for example if letter spacing is 50% (0.5), it will have a gap equal to 25% (0.25) of its width.
  */
+
+/** Draw a left-aligned text with provided letter spacing. This function take true edge and baseline. It return the right side of the newly created text. */
 export const fillTextLeftWithSpacing = (
     ctx: CanvasRenderingContext2D | null | undefined,
     str: string,
-    letterSpacing: number,
+    letterSpacingRatio: number,
     edge: number,
     baseline: number,
     option?: {
         stroke?: boolean,
     }
 ) => {
-    if (ctx && str) {
-        const { stroke = false } = option ?? {};
-        ctx.textAlign = 'left';
-        const charList = str.split('');
-        let curLeft = edge;
+    if (!ctx || !str) return edge;
 
-        charList.forEach(char => {
-            ctx.fillText(char, curLeft, baseline);
-            if (stroke) ctx.strokeText(char, curLeft, baseline);
-            curLeft += ctx.measureText(char).width * (2 + letterSpacing) / 2;
-        });
+    const { stroke = false } = option ?? {};
+    ctx.textAlign = 'left';
+    const charList = str.split('');
+    let curLeft = edge;
 
-        return curLeft;
-    }
-    return 0;
+    charList.forEach(char => {
+        ctx.fillText(char, curLeft, baseline);
+        if (stroke) ctx.strokeText(char, curLeft, baseline);
+        curLeft += ctx.measureText(char).width * (2 + letterSpacingRatio) / 2;
+    });
+
+    return curLeft;
 };
+/** Draw a right-aligned text with provided letter spacing. This function take true edge and baseline. It return the left side of the newly created text. */
 export const fillTextRightWithSpacing = (
     ctx: CanvasRenderingContext2D | null | undefined,
     str: string,
@@ -68,23 +70,23 @@ export const fillTextRightWithSpacing = (
         stroke?: boolean,
     }
 ) => {
-    if (ctx && str) {
-        const { stroke = false } = option ?? {};
-        ctx.textAlign = 'right';
-        const charList = str.split('');
-        let curRight = edge;
+    if (!ctx || !str) return edge;
 
-        charList.forEach((c, index) => {
-            const char = charList[charList.length - index - 1];
-            ctx.fillText(char, curRight, baseline);
-            if (stroke) ctx.strokeText(char, curRight, baseline);
-            curRight -= ctx.measureText(char).width * (2 + letterSpacing) / 2;
-        });
-        return curRight;
-    };
-    return edge;
+    const { stroke = false } = option ?? {};
+    ctx.textAlign = 'right';
+    const charList = str.split('');
+    let curRight = edge;
+
+    charList.forEach((c, index) => {
+        const char = charList[charList.length - index - 1];
+        ctx.fillText(char, curRight, baseline);
+        if (stroke) ctx.strokeText(char, curRight, baseline);
+        curRight -= ctx.measureText(char).width * (2 + letterSpacing) / 2;
+    });
+    return curRight;
 };
 
+/** Clear current canvas, it also ensure canvas existed so we do not need to check for afterward. */
 export const clearCanvas = (
     ctx: CanvasRenderingContext2D | null | undefined,
     width = CanvasWidth,
@@ -98,6 +100,7 @@ export const clearCanvas = (
     return false;
 };
 
+/** Each finish object may contain many parts, each part has its own set of instruction. This function will abstract all the looping logic so we can instantly apply a finish to some card's part. */
 export const getFinishIterator = (
     finish: string[],
     finishMap: Record<string, FinishInformation> = FinishMap,

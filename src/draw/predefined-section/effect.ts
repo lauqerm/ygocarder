@@ -9,7 +9,7 @@ import {
     TCGVanillaTypeStatFontList,
 } from '../../model';
 import { condense, createFontGetter } from '../../util';
-import { createLineList } from '../line-analyze';
+import { createLineList } from '../line';
 import { drawLine } from '../text';
 import { analyzeLine } from '../text-analyze';
 import { normalizeCardText, splitEffect } from '../text-normalize';
@@ -97,7 +97,7 @@ export const drawEffect = ({
             lineCount,
         } = fontSizeData;
         const { trueEdge, trueWidth: trueWidthStart, trueBaseline: trueBaselineStart } = sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1];
-        const trueWidth = (isNormal && format === 'tcg') ? trueWidthStart - 2 : trueWidthStart;
+        const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 : trueWidthStart;
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
@@ -126,7 +126,7 @@ export const drawEffect = ({
                     paragraphList,
                     additionalLineCount,
                     format, textData,
-                    trueWidth,
+                    width,
                 });
                 lineListWithRatio = currentLineList;
 
@@ -161,7 +161,7 @@ export const drawEffect = ({
                                 median,
                                 paragraphList: [line],
                                 format, textData,
-                                trueWidth,
+                                width,
                             });
     
                             if (currentLineCount > 1) return false;
@@ -180,7 +180,7 @@ export const drawEffect = ({
                 effectiveMedian,
             }) => {
                 const xRatio = effectiveMedian / 1000;
-                const { tokenList, extraSpace } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width: trueWidth });
+                const { tokenList, extraSpace } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width });
 
                 ctx.scale(xRatio, yRatio);
                 drawLine({
@@ -205,7 +205,7 @@ export const drawEffect = ({
                             median,
                             paragraphList: [effectFlavorCondition],
                             format, textData,
-                            trueWidth,
+                            width,
                         });
 
                         if (currentLineCount > 1) return false;

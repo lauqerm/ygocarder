@@ -2,7 +2,7 @@ import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/
 import { condense, createFontGetter } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
-import { createLineList } from '../line-analyze';
+import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
 import { clearCanvas } from '../canvas-util';
 
@@ -33,7 +33,7 @@ export const drawCreatorText = ({
     ctx.shadowOffsetX = 0;
     ctx.shadowBlur = hasShadow ? 3 : 0;
 
-    const { trueEdge, trueBaseline, trueWidth } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
+    const { trueEdge, trueBaseline, trueWidth: width } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];
     const { font } = fontData;
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
@@ -68,7 +68,7 @@ export const drawCreatorText = ({
                     median,
                     paragraphList: [normalizedText],
                     format, textData: internalTextData,
-                    trueWidth,
+                    width,
                 });
         
                 if (currentLineCount > 1) return false;

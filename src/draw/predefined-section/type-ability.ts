@@ -3,7 +3,7 @@ import { condense, createFontGetter , checkLightFrame, checkSpeedSkill } from 's
 import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON } from 'src/model';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
-import { createLineList } from '../line-analyze';
+import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
 import { drawAssetWithSize } from '../image';
 
@@ -31,7 +31,7 @@ export const drawTypeAbilityText = ({
         edgeAlignment = 'left',
         trueEdge,
         trueBaseline,
-        trueWidth,
+        trueWidth: width,
     } = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
     const fontData = getTypeAbilityFontData()[format];
     if (metricMethod) fontData.metricMethod = metricMethod;
@@ -59,7 +59,7 @@ export const drawTypeAbilityText = ({
                 median,
                 paragraphList: [normalizedText],
                 format, textData,
-                trueWidth,
+                width,
             });
     
             if (currentLineCount > 1) return false;
