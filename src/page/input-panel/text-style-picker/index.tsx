@@ -1,5 +1,5 @@
 import { Checkbox, Popover } from 'antd';
-import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, memo } from 'react';
+import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {
@@ -36,7 +36,7 @@ export type TextStylePicker = {
     showExtraDecorativeOption: boolean,
     onChange: (type: NameStyleType, style: Partial<NameStyle>) => void,
 };
-export const TextStylePicker = memo(forwardRef(({
+export const TextStylePicker = forwardRef(({
     frameInfo,
     defaultType,
     defaultValue,
@@ -159,7 +159,7 @@ export const TextStylePicker = memo(forwardRef(({
                                 </StyledPredefinedContainer>
                             </div>}
                         >
-                            <span>
+                            <span className="name-style-option-label">
                                 <span className={`ant-radio ${isStylePredefined ? 'ant-radio-checked' : ''}`}>
                                     <input type="radio" className="ant-radio-input" value="predefined" />
                                     <span className="ant-radio-inner" />
@@ -411,7 +411,4 @@ export const TextStylePicker = memo(forwardRef(({
             </span>
         </span>
     </div>;
-}), (l, r) => {
-    return l.frameInfo === r.frameInfo
-        && l.showExtraDecorativeOption === r.showExtraDecorativeOption;
 });

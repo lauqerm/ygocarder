@@ -4,6 +4,7 @@ import { useCard } from './use-card';
 import { CardOpacity } from 'src/model';
 
 export type UseCardExport = {
+    isTainted: boolean,
     isInitializing: boolean,
     drawCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportRef: React.MutableRefObject<{
@@ -17,6 +18,7 @@ export type UseCardExport = {
     onDownloadError: () => void,
 };
 export const useCardExport = ({
+    isTainted,
     isInitializing,
     drawCanvasRef,
     exportRef,
@@ -35,7 +37,7 @@ export const useCardExport = ({
 
     const download = useCallback(() => {
         const canvasRef = drawCanvasRef.current;
-        if (canvasRef) try {
+        if (canvasRef && !isTainted) try {
             const normalizedName = name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
             var link = document.createElement('a');
             link.download = normalizedName
@@ -47,7 +49,7 @@ export const useCardExport = ({
             onDownloadError();
         }
         document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
-    }, [drawCanvasRef, name, onDownloadError]);
+    }, [drawCanvasRef, isTainted, name, onDownloadError]);
     const onSave = () => {
         document.querySelector('#export-canvas-guard')?.classList.add('guard-on');
         if (exportRef.current.queuedPipeline === false) {

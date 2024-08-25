@@ -1,5 +1,15 @@
-import { arrowPositionList, CanvasConst, CardOpacity, Foil, getArtCanvasCoordinate } from 'src/model';
+import {
+    arrowPositionList,
+    BackgroundType,
+    CanvasConst,
+    CardOpacity,
+    Foil,
+    getArtCanvasCoordinate,
+    NO_ATTRIBUTE,
+} from 'src/model';
 import { drawAsset, drawAssetWithSize } from '../image';
+import { getCardIconFromFrame } from 'src/util';
+import { drawStarIcon } from './with-image';
 
 const {
     topToPendulumStructure,
@@ -8,8 +18,15 @@ const {
 } = CanvasConst;
 export const getLayoutDrawFunction = ({
     ctx,
-    previewCanvas,
+    artworkCanvas,
+    backgroundCanvas,
+    format,
+    hasBackground,
     frame, bottomFrame,
+    backgroundType,
+    cardIcon,
+    attribute,
+    star,
     foil,
     pendulumSize,
     opacity,
@@ -19,8 +36,15 @@ export const getLayoutDrawFunction = ({
     loopArtFinish,
 }: {
     ctx: CanvasRenderingContext2D,
-    previewCanvas: HTMLCanvasElement | null,
+    artworkCanvas: HTMLCanvasElement | null,
+    backgroundCanvas: HTMLCanvasElement | null,
+    format: string,
     frame: string, bottomFrame: string,
+    hasBackground: boolean,
+    backgroundType: BackgroundType,
+    cardIcon: string,
+    attribute: string,
+    star: number,
     foil: Foil,
     pendulumSize: string,
     opacity: CardOpacity,
@@ -44,7 +68,7 @@ export const getLayoutDrawFunction = ({
         name: opacityName,
         pendulum: opacityPendulum,
         text: opacityText,
-        artFrame: rigidFrame,
+        boundless,
     } = opacity;
     const {
         artX,
@@ -63,9 +87,58 @@ export const getLayoutDrawFunction = ({
         ? frame
         : 'normal';
     const nameBorderType = frameBorderType;
-    const applyArtFinish = rigidFrame && artBorder;
+    const applyArtFinish = !boundless && artBorder;
 
-    return {
+    const resultAPI = {
+        /** Calculate new art coordination for creative mode, some configuration may result in the art getting drawn at different location compare to default one use by `drawArtwork` function */
+        calculateCardArtRedrawCoordination(
+            imageCanvas: HTMLCanvasElement,
+            customOpacity?: CardOpacity,
+            extraHeightRatio = 1,
+            customBackgroundType?: BackgroundType,
+        ) {
+            const normalizedOpacity = customOpacity ?? opacity;
+            const {
+                body: bodyOpacity
+            } = normalizedOpacity;
+            const {
+                artX,
+                artY,
+                artWidth,
+            } = getArtCanvasCoordinate(isPendulum, normalizedOpacity, customBackgroundType);
+            const { width: imageWidth, height: imageHeight } = imageCanvas;
+            const imageScaledRatio = artWidth / imageWidth;
+            const sourceOffsetX = bodyOpacity < 100
+                ? (leftToPendulumStructure - artX) / imageScaledRatio
+                : 0;
+            const destinationOffsetX = sourceOffsetX * imageScaledRatio;
+            const sourceOffsetY = bodyOpacity < 100
+                ? (topToPendulumStructure - artY) / imageScaledRatio
+                : 0;
+            const destinationOffsetY = sourceOffsetY * imageScaledRatio;
+            const offsetHeight = bodyOpacity < 100
+                ? imageHeight - (pendulumStructureHeight / imageScaledRatio)
+                : 0;
+
+            const destinationX = artX + destinationOffsetX;
+            const destinationY = artY + destinationOffsetY;
+            const destinationWidth = artWidth - destinationOffsetX * 2;
+            const destinationHeight = artWidth / (imageWidth / imageHeight) * extraHeightRatio - offsetHeight * imageScaledRatio;
+
+            return {
+                imageScaledRatio,
+                sourceOffsetX,
+                sourceOffsetY,
+                destinationOffsetX,
+                destinationOffsetY,
+                offsetHeight,
+                destinationX,
+                destinationY,
+                destinationWidth,
+                destinationHeight,
+            };
+        },
+
         /** Main frame consists of top half and bottom half (for pendulum-like) card */
         drawFrame: async () => {
             ctx.globalAlpha = opacityBody / 100;
@@ -75,17 +148,96 @@ export const getLayoutDrawFunction = ({
         },
         /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas */
         drawCardArt: () => {
-            if (!previewCanvas || !ctx) return;
-            const { width: imageWidth, height: imageHeight } = previewCanvas;
+            if (!artworkCanvas || !ctx) return;
+            const { width: imageWidth, height: imageHeight } = artworkCanvas;
 
             if (imageHeight <= 0) return;
             ctx.drawImage(
-                previewCanvas,
+                artworkCanvas,
                 0, 0,
                 imageWidth, imageHeight,
                 artX, artY,
                 artWidth, artWidth / (imageWidth / imageHeight),
             );
+        },
+        drawBackground: (
+            boundary?: 'pendulum',
+        ) => {
+            if (!backgroundCanvas || !ctx || !hasBackground) return;
+            const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
+
+            if (backgroundHeight <= 0) return;
+            if (boundary === 'pendulum') {
+                let redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(backgroundCanvas);
+
+                if (backgroundType === 'full') {
+                    redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(
+                        backgroundCanvas,
+                        { ...opacity, body: 0 },
+                        undefined,
+                        'full',
+                    );
+                } else if (backgroundType === 'fit') {
+                    redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(
+                        backgroundCanvas,
+                        opacity,
+                        undefined,
+                        'fit'
+                    );
+                }
+
+                const {
+                    sourceOffsetX: backgroundSourceOffsetX, sourceOffsetY: backgroundSourceOffsetY,
+                    offsetHeight: backgroundOffsetHeight,
+                    destinationX: backgroundDestinationX, destinationY: backgroundDestinationY,
+                    destinationWidth: backgroundDestinationWidth, destinationHeight: backgroundDestinationHeight,
+                } = redrawCoordination;
+                ctx.drawImage(
+                    backgroundCanvas,
+                    backgroundSourceOffsetX, backgroundSourceOffsetY,
+                    backgroundWidth - backgroundSourceOffsetX * 2, backgroundHeight - backgroundOffsetHeight,
+                    backgroundDestinationX, backgroundDestinationY,
+                    backgroundDestinationWidth, backgroundDestinationHeight,
+                );
+                return;
+            }
+
+            const {
+                artX,
+                artY,
+                artWidth,
+            } = getArtCanvasCoordinate(
+                isPendulum,
+                { ...opacity, boundless: true },
+                backgroundType,
+            );
+            ctx.drawImage(
+                backgroundCanvas,
+                0, 0,
+                backgroundWidth, backgroundHeight,
+                artX, artY,
+                artWidth, artWidth / (backgroundWidth / backgroundHeight)
+            );
+        },
+        drawAttribute: async () => {
+            await drawAsset(ctx, `attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
+        },
+        drawStar: async () => {
+            const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
+            await drawStarIcon({
+                ctx,
+                cardIcon: normalizedCardIcon,
+                star: star ?? 0,
+                onStarDraw: async coordinate => {
+                    return normalizedCardIcon === 'st'
+                        ? Promise.resolve()
+                        : await loopFinish(
+                            ctx,
+                            'star',
+                            async type => drawAsset(ctx, `finish/finish-${type}-star.png`, ...coordinate),
+                        );
+                },
+            });
         },
         drawPendulumScaleIcon: async () => {
             await drawAsset(ctx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 750);
@@ -100,7 +252,7 @@ export const getLayoutDrawFunction = ({
                     const activeLink = `link/link-active-${entry}`;
                     const coordinate = [left, top, width, height] as const;
 
-                    await drawAssetWithSize(ctx, `${baseLink}-base${rigidFrame ? '' : '-full'}.png`, ...coordinate);
+                    await drawAssetWithSize(ctx, `${baseLink}-base${boundless ? '-full' : ''}.png`, ...coordinate);
                     await drawAssetWithSize(ctx, `${baseLink}-core.png`, ...coordinate);
                     if (isActive) {
                         await drawAssetWithSize(ctx, `${activeLink}-base.png`, ...coordinate);
@@ -195,10 +347,15 @@ export const getLayoutDrawFunction = ({
             if (artBorder || nameBorder) await loopFinish(
                 ctx,
                 'name',
-                type => {
+                async type => {
                     return drawAsset(ctx, `finish/finish-${type}-name.png`, 0, 0);
                 },
             );
+        },
+        drawAttributeFinish: async () => {
+            if (attribute !== NO_ATTRIBUTE) {
+                await loopFinish(ctx, 'attribute', async type => drawAsset(ctx, `finish/finish-${type}-attribute.png`, 678, 55));
+            }
         },
         drawArtFinish: async () => {
             if (applyArtFinish) await loopArtFinish(
@@ -222,7 +379,7 @@ export const getLayoutDrawFunction = ({
             await loopFinish(
                 ctx,
                 'art-overlay',
-                type => {
+                async type => {
                     return drawAsset(
                         ctx,
                         'finish/finish'
@@ -241,7 +398,7 @@ export const getLayoutDrawFunction = ({
                 await loopFinish(
                     ctx,
                     'art-border',
-                    finishType => drawAsset(ctx, `finish/finish-${finishType}-art-border.png`, 0, 0),
+                    async finishType => drawAsset(ctx, `finish/finish-${finishType}-art-border.png`, 0, 0),
                 );
             }
         },
@@ -256,14 +413,14 @@ export const getLayoutDrawFunction = ({
             await loopFinish(
                 ctx,
                 'border-pendulum',
-                finishType => drawAsset(ctx, `finish/finish-${finishType}-border-pendulum-${pendulumSize}.png`, 0, 0)
+                async finishType => drawAsset(ctx, `finish/finish-${finishType}-border-pendulum-${pendulumSize}.png`, 0, 0)
             );
         },
         drawFrameFinish: async () => {
             await loopFinish(
                 ctx,
                 'frame',
-                type => {
+                async type => {
                     return drawAsset(ctx, `finish/finish-${type}-frame${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`, 0, 0);
                 },
             );
@@ -272,65 +429,19 @@ export const getLayoutDrawFunction = ({
             await loopFinish(
                 ctx,
                 'frame-background',
-                type => {
+                async type => {
                     return drawAsset(ctx, `finish/finish-${type}-frame-background${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`, 0, 0);
                 },
             );
         },
         /** Unlike total overlay, this finish lies below card text (name, effect, etc...) */
         drawOverlayFinish: async () => {
-            await loopFinish(ctx, 'overlay', overlayType => drawAsset(ctx, `finish/finish-${overlayType}-overlay.png`, 0, 0));
+            await loopFinish(ctx, 'overlay', async overlayType => drawAsset(ctx, `finish/finish-${overlayType}-overlay.png`, 0, 0));
         },
         drawCardBorderFinish: async () => {
-            await loopFinish(ctx, 'card-border', type => drawAsset(ctx, `finish/finish-${type}-card-border.png`, 0, 0));
+            await loopFinish(ctx, 'card-border', async type => drawAsset(ctx, `finish/finish-${type}-card-border.png`, 0, 0));
         },
-
-        /** Calculate new art coordination for creative mode, some configuration may result in the art getting drawn at different location compare to default one use by `drawArtwork` function */
-        calculateCardArtRedrawCoordination: (
-            previewCanvas: HTMLCanvasElement,
-            customOpacity?: CardOpacity,
-            extraHeightRatio = 1,
-        ) => {
-            const normalizedOpacity = customOpacity ?? opacity;
-            const {
-                body: bodyOpacity
-            } = normalizedOpacity;
-            const {
-                artX,
-                artY,
-                artWidth,
-            } = getArtCanvasCoordinate(isPendulum, normalizedOpacity);
-            const { width: imageWidth, height: imageHeight } = previewCanvas;
-            const imageScaledRatio = artWidth / imageWidth;
-            const sourceOffsetX = bodyOpacity < 100
-                ? (leftToPendulumStructure - artX) / imageScaledRatio
-                : 0;
-            const destinationOffsetX = sourceOffsetX * imageScaledRatio;
-            const sourceOffsetY = bodyOpacity < 100
-                ? (topToPendulumStructure - artY) / imageScaledRatio
-                : 0;
-            const destinationOffsetY = sourceOffsetY * imageScaledRatio;
-            const offsetHeight = bodyOpacity < 100
-                ? imageHeight - (pendulumStructureHeight / imageScaledRatio)
-                : 0;
-
-            const destinationX = artX + destinationOffsetX;
-            const destinationY = artY + destinationOffsetY;
-            const destinationWidth = artWidth - destinationOffsetX * 2;
-            const destinationHeight = artWidth / (imageWidth / imageHeight) * extraHeightRatio - offsetHeight * imageScaledRatio;
-
-            return {
-                imageScaledRatio,
-                sourceOffsetX,
-                sourceOffsetY,
-                destinationOffsetX,
-                destinationOffsetY,
-                offsetHeight,
-                destinationX,
-                destinationY,
-                destinationWidth,
-                destinationHeight,
-            };
-        }
     };
+
+    return resultAPI;
 };

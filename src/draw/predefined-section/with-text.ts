@@ -147,7 +147,7 @@ export const drawSetId = (
         : '#000000';
     ctx.shadowOffsetY = 0;
     ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = withShadow && !isPendulum ? 4 : 0;
+    ctx.shadowBlur = withShadow && !isPendulum ? 3 : 0;
     ctx.font = `${withShadow ? 'bold' : ''} 22px stone-serif-regular`;
     if (format === 'ocg') {
         spacing = 0.145;
@@ -184,7 +184,7 @@ export const drawPassword = ({
         : '#000000';
     ctx.shadowOffsetY = 0;
     ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = withShadow ? 4 : 0;
+    ctx.shadowBlur = withShadow ? 3 : 0;
 
     return fillTextLeftWithSpacing(ctx, password, 0.1, 37.031, 1150.931);
 };

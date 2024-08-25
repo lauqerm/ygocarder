@@ -1,6 +1,6 @@
 import { clearCanvas } from '../canvas-util';
 import { condense, createFontGetter , checkLightFrame, checkSpeedSkill } from 'src/util';
-import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData } from 'src/model';
+import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON } from 'src/model';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line-analyze';
@@ -112,7 +112,7 @@ export const drawTypeAbility = async ({
     if (!clearCanvas(ctx)) return;
 
     const willDrawTypeAbility = typeAbility.length > 0;
-    const willDrawIcon = subFamily !== 'NO ICON' && size === 'large';
+    const willDrawIcon = subFamily !== NO_ICON && size === 'large';
     const typeAbilityWithIcon = typeAbility
         + (willDrawIcon ? ST_ICON_SYMBOL : '');
     const normalizedTypeAbilityText = willDrawTypeAbility

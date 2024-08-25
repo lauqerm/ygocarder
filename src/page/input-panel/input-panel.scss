@@ -161,16 +161,17 @@
             text-align: left;
             background-color: var(--main-level-3);
             margin: 0;
-            padding: var(--spacing-xxs) var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-xs);
             font-size: var(--fs-sm);
             .ant-checkbox-wrapper {
                 color: var(--color);
             }
         }
         h3 {
+            padding: var(--spacing-xxs) var(--spacing-xs);
             background-color: var(--main-level-4);
-            border-bottom: var(--bw) solid #7a7a7a;
-            cursor: pointer;
+            border-bottom: var(--bw) solid var(--sub-level-4);
+            &.inactive,
             &:last-child {
                 border-bottom-color: transparent;
             }
@@ -179,7 +180,7 @@
             color: var(--color-heavy);
             background-color: var(--main-level-3);
             > div > span > div {
-                outline: var(--bw) solid #7a7a7a !important;
+                outline: var(--bw) solid var(--sub-level-4) !important;
             }
         }
         .flexbox-fix {
@@ -198,12 +199,11 @@
         .line-position {
             display: grid;
             grid-template-columns: max-content 1fr;
-            grid-template-rows: max-content max-content max-content 1fr;
             column-gap: var(--spacing-sm);
             row-gap: var(--spacing-sm);
             font-size: var(--fs-sm);
-            padding: var(--spacing);
-            padding-bottom: 0;
+            padding: 0 var(--spacing);
+            padding-bottom: var(--spacing-xs);
             > :first-child {
                 &::before {
                     content: "";

@@ -46,13 +46,19 @@
 		}
 	}
 	.online-image-tip {
+		color: var(--color);
 		margin-top: var(--spacing-xs);
 		line-height: 1.25;
+		&.image-warning {
+			color: var(--main-danger);
+			text-align: center;
+		}
 	}
 	.card-cropper {
 		max-height: 400px;
 		min-height: 50px;
 		position: relative;
+		line-height: 0;
 	}
 	.ReactCrop__image {
 		max-width: 100%;
@@ -63,10 +69,4 @@
 			0 1px 3px rgba(0, 0, 0, 0.36),
 			0 1px 2px rgba(0, 0, 0, 0.48);
 	}
-}
-
-.image-warning {
-	color: var(--main-danger);
-	line-height: 1.25;
-	text-align: center;
 }

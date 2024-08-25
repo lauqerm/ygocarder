@@ -14,6 +14,8 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         pendulum: 'oppd',
         name: 'opnm',
         text: 'optx',
+        boundless: 'opbl',
+        /** legacy */
         artFrame: 'opaf',
         artBorder: 'opab',
         nameBorder: 'opnb',
@@ -30,6 +32,18 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         height: 'arh',
         unit: 'aru',
         aspect: 'ara',
+    },
+    hasBackground: 'hbg',
+    background: 'bg',
+    backgroundType: 'bgt',
+    backgroundCrop: {
+        _newKey: 'bgc',
+        x: 'bgx',
+        y: 'bgy',
+        width: 'bgw',
+        height: 'bgh',
+        unit: 'bgu',
+        aspect: 'bga',
     },
     name: 'na',
     nameStyleType: 'nst',
@@ -231,27 +245,36 @@ export const migrateCardData = (card: Record<string, any>) => {
         ...clone(card)
     };
 
-    if (migratedCard.effectStyle === undefined) {
+    if (migratedCard.effectStyle == null) {
         migratedCard.effectStyle = {
             ...getEmptyCard().effectStyle
         };
     }
 
-    if (migratedCard.version === undefined) migratedCard.version = 1;
-    if (migratedCard.format === undefined) migratedCard.format = 'tcg';
-    if (migratedCard.pendulumFrame === undefined) migratedCard.pendulumFrame = 'auto';
-    if (migratedCard.finish === undefined) migratedCard.finish = [];
+    if (migratedCard.version == null) migratedCard.version = 1;
+    if (migratedCard.format == null) migratedCard.format = 'tcg';
+    if (migratedCard.pendulumFrame == null) migratedCard.pendulumFrame = 'auto';
+    if (migratedCard.finish == null) migratedCard.finish = [];
 
-    if (migratedCard.artFinish === undefined) migratedCard.artFinish = 'normal';
+    if (migratedCard.artFinish == null) migratedCard.artFinish = 'normal';
     if ((migratedCard as any).picture && !card.art) migratedCard.art = (migratedCard as any).picture;
     delete (migratedCard as any).picture;
 
     if ((migratedCard as any).pictureCrop && !card.artCrop) migratedCard.artCrop = (migratedCard as any).pictureCrop;
     delete (migratedCard as any).pictureCrop;
 
-    if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
+    /** Seems like no image is fine for now. */
+    // if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
+    if ((migratedCard.art ?? '') === '') migratedCard.art = '';
 
+    if (typeof (migratedCard.opacity as any).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
+        migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
+        delete (migratedCard.opacity as any).artFrame;
+    }
     migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
+
+    if ((migratedCard.background ?? '') === '') migratedCard.background = '';
+    if (migratedCard.hasBackground == null && (migratedCard.background || migratedCard.opacity.baseFill)) migratedCard.hasBackground = true;
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;

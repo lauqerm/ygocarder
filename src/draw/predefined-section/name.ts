@@ -212,7 +212,7 @@ export const drawName = async (
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             /** Một số pattern cần nền của frame */
             await drawAsset(cloneCtx, `frame/frame-${frame}.png`, 0, 0);
-            await drawAsset(cloneCtx, `frame/frame-name-box-${frame}.png`, 0, 0);
+            await drawAsset(cloneCtx, `background/background-name-${frame}.png`, 0, 0);
             cloneCtx.globalCompositeOperation = patternBlendMode;
             await drawAssetWithSize(
                 cloneCtx, `finish-name/${patternImage}.png`,

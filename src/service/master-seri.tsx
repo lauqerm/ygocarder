@@ -9,7 +9,6 @@ import {
     drawStat,
     drawStatText,
     drawSetId,
-    drawCardIcon,
     drawSticker,
     drawPassword,
     getFinishIterator,
@@ -32,6 +31,7 @@ import {
     ArtFinishMap,
     CardOpacity,
     CardArtCanvasCoordinateMap,
+    DEFAULT_BASE_FILL_COLOR,
 } from 'src/model';
 import {
     checkLink,
@@ -39,7 +39,6 @@ import {
     checkNormal,
     checkSpeedSkill,
     checkXyz,
-    getCardIconFromFrame,
     resolveNameStyle,
 } from 'src/util';
 import { useCard } from './use-card';
@@ -52,7 +51,7 @@ type DrawerProp = {
     imageChangeCount: number,
     pendulumSize?: 'medium',
     isInitializing: boolean,
-}
+};
 export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas, props: DrawerProp) => {
     const {
         card,
@@ -60,9 +59,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const {
         drawCanvasRef,
         // artCanvas,
-        previewCanvasRef,
+        artworkCanvasRef,
+        backgroundCanvasRef,
         specialFrameCanvasRef,
-        attributeCanvasRef,
         creatorCanvasRef,
         effectCanvasRef,
         nameCanvasRef,
@@ -79,6 +78,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     } = canvasMap;
     const {
         format,
+        hasBackground, backgroundType,
         frame, foil, finish, artFinish, opacity,
         name, nameStyle, nameStyleType,
         effect,
@@ -100,7 +100,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             : frame
         : pendulumFrame;
 
-    const hasArtFrame = opacity.artFrame;
     const condenseTolerant = effectStyle?.condenseTolerant;
 
     const isNormal = checkNormal(card);
@@ -109,6 +108,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
 
+    const { body = 100, boundless } = opacity;
+    const requireShadow = !!(body < 50 || boundless);
     const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(bottomFrame);
 
     const normalizedSubFamily = subFamily.toUpperCase();
@@ -133,12 +134,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const drawingPipeline = useRef<Record<string, { name: string, order: number, rerun: number, instructor: () => Promise<any> }>>({
         frame: {
             name: 'frame',
-            order: 0,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-        star: {
-            name: 'star',
             order: 1,
             rerun: 0,
             instructor: () => Promise.resolve(),
@@ -185,23 +180,25 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = specialFrameCanvasRef.current?.getContext('2d');
-        const previewCanvas = previewCanvasRef.current;
+        const artworkCanvas = artworkCanvasRef.current;
+        const backgroundCanvas = backgroundCanvasRef.current;
 
         drawingPipeline.current.specialFrame.rerun += 1;
         drawingPipeline.current.specialFrame.instructor = async () => {
             if (!clearCanvas(ctx)) return;
+            const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
                 artBorder: keepArtBorder,
                 body: opacityBody,
-                artFrame: rigidFrame,
+                boundless,
                 baseFill,
-            } = { ...getDefaultCardOpacity(), ...opacity };
+            } = normalizedOpacity;
 
             const fillBaseColor = (x: number, y: number, w: number, h: number) => {
-                ctx.fillStyle = baseFill;
+                ctx.fillStyle = hasBackground ? baseFill : DEFAULT_BASE_FILL_COLOR;
                 ctx.fillRect(x, y, w, h);
             };
-            const artBorder = opacityBody > 0 ? true : keepArtBorder;
+            const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
 
             /** Base colored background so the card is not see-through even with transparent artwork */
             fillBaseColor(0, 0, CanvasWidth, CanvasHeight);
@@ -209,8 +206,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             const {
                 drawFrame,
                 drawCardArt,
+                drawBackground,
                 drawPendulumScaleIcon,
                 drawLinkArrowMap,
+                drawStar,
+                drawAttribute,
 
                 drawNameBackground,
                 drawEffectBackground,
@@ -223,6 +223,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 drawEffectBorder,
                 drawCardBorder,
 
+                drawAttributeFinish,
                 drawArtBorderFoil,
                 drawEffectBorderFoil,
                 drawLinkMapFoil,
@@ -240,11 +241,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 calculateCardArtRedrawCoordination,
             } = getLayoutDrawFunction({
                 ctx,
-                previewCanvas,
+                artworkCanvas, backgroundCanvas,
+                format,
                 frame, bottomFrame,
+                hasBackground,
+                backgroundType,
+                attribute,
+                cardIcon, star,
                 foil,
                 pendulumSize,
-                opacity: { ...getDefaultCardOpacity(), ...opacity },
+                opacity: normalizedOpacity,
                 isLink, isSpeedSkill, isXyz,
                 isPendulum,
                 loopFinish,
@@ -252,14 +258,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             });
 
             /** Start with artwork at the bottom, then main frame, then outer card border. */
-            if (previewCanvas && ctx && rigidFrame) drawCardArt();
+            if (backgroundCanvas && ctx) drawBackground();
+            if (artworkCanvas && ctx && !boundless) drawCardArt();
             await drawFrame();
             await drawCardBorder();
             await drawCardBorderFinish();
 
             /** @summary Draw NON-PENDULUM card layout */
             if (!isPendulum) {
-                if (rigidFrame) {
+                if (!boundless) {
                     await drawNameBackground();
                     await drawEffectBackground();
                     await drawEffectBorder();
@@ -272,26 +279,28 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             }
 
             /** @summary Draw PENDULUM-LIKE card layout. Does not apply to Link frame since it contains link arrows. */
-            if (isPendulum && !isLink && rigidFrame) {
+            if (isPendulum && !isLink && !boundless) {
                 /** Since pendulum art boundary is wider, we cannot relies on the artwork under frame, instead we must draw the artwork again, this time with different size. */
-                if (previewCanvas && ctx && previewCanvas.height > 0) {
-                    const { width: imageWidth, height: imageHeight } = previewCanvas;
+                if (artworkCanvas && ctx && artworkCanvas.height > 0) {
+                    const { width: artWidth, height: artHeight } = artworkCanvas;
                     const {
                         sourceOffsetX, sourceOffsetY,
                         offsetHeight,
                         destinationX, destinationY,
                         destinationWidth, destinationHeight,
-                    } = calculateCardArtRedrawCoordination(previewCanvas);
+                    } = calculateCardArtRedrawCoordination(artworkCanvas);
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
                     fillBaseColor(
                         destinationX, destinationY,
                         destinationWidth, destinationHeight,
                     );
+
+                    drawBackground('pendulum');
                     ctx.drawImage(
-                        previewCanvas,
+                        artworkCanvas,
                         sourceOffsetX, sourceOffsetY,
-                        imageWidth - sourceOffsetX * 2, imageHeight - offsetHeight,
+                        artWidth - sourceOffsetX * 2, artHeight - offsetHeight,
                         destinationX, destinationY,
                         destinationWidth, destinationHeight,
                     );
@@ -305,24 +314,24 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             await drawArtFinish();
             await drawArtOverlayFinish();
 
-            /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if rigidFrame is false */
-            if (isPendulum && !isLink && rigidFrame) {
+            /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
+            if (isPendulum && !isLink && !boundless) {
                 await drawPendulumScaleIcon();
                 /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
-                await drawPendulumBorder(artBorder, 'normal');
-                await drawPendulumBorder(artBorder, foil);
+                await drawPendulumBorder(hasArtBorder, 'normal');
+                await drawPendulumBorder(hasArtBorder, foil);
                 await drawPendulumArtBorderFinish();
-                if (artBorder) await drawBorderPendulumFinish();
+                if (hasArtBorder) await drawBorderPendulumFinish();
             }
 
-            if (rigidFrame) {
+            if (!boundless) {
                 await drawFrameFinish();
                 await drawNameFinish();
             }
-            if (artBorder) await drawFrameBackgroundFinish();
+            if (hasArtBorder) await drawFrameBackgroundFinish();
 
-            /** Overlay behavior here. If rigid frame is off, card image will extends beyond the current art border (on top of it). The extended card image is still below name, level, attribute, effect (both card and pendulum) and other predefined texts. */
-            if (!rigidFrame) {
+            /** Boundless art behavior here. If rigid frame is off, card image will extends beyond the current art border (on top of it). The extended card image is still below name, level, attribute, effect (both card and pendulum) and other predefined texts. */
+            if (boundless) {
                 if (isLink) {
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
                     await drawArtBorderFinish();
@@ -331,13 +340,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     const extraHeightRatio = CardArtCanvasCoordinateMap.fullCard.ratio
                         / CardArtCanvasCoordinateMap.extendedPendulum.ratio;
                     /** Fill area with base color before start draw overlay artwork. In this case we do not want to fill everywhere, we just need to fill exactly the area contains inside pendulum border frame. */
-                    if (previewCanvas && ctx && previewCanvas.height > 0) {
+                    if (artworkCanvas && ctx && artworkCanvas.height > 0) {
                         const {
                             destinationX, destinationY,
                             destinationWidth, destinationHeight,
                         } = calculateCardArtRedrawCoordination(
-                            previewCanvas,
-                            { ...getDefaultCardOpacity(), ...opacity, body: 100, artFrame: true },
+                            artworkCanvas,
+                            { ...getDefaultCardOpacity(), ...opacity, body: 100, boundless: false },
                             extraHeightRatio,
                         );
     
@@ -345,17 +354,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                             destinationX, destinationY,
                             destinationWidth, destinationHeight,
                         );
+                        drawBackground('pendulum');
                     }
-                    if (artBorder) {
-                        await drawPendulumBorder(artBorder, 'normal');
-                        await drawPendulumBorder(artBorder, foil);
+                    if (hasArtBorder) {
+                        await drawPendulumBorder(hasArtBorder, 'normal');
+                        await drawPendulumBorder(hasArtBorder, foil);
                     }
                     await drawPendulumArtBorderFinish();
                 }
                 await drawNameBackground();
                 await drawNameFinish();
                 await drawNameBorder();
-                if (previewCanvas && ctx) drawCardArt();
+                if (artworkCanvas && ctx) drawCardArt();
                 await drawArtOverlayFinish();
 
                 /** Redraw various part here because the extended artwork may overlap with those */
@@ -382,26 +392,34 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 await drawLinkRatingText(ctx, linkMap);
             }
 
-            if (rigidFrame) drawNameBorder();
-
+            await drawAttribute();
+            await drawAttributeFinish();
+            await drawStar();
+            if (!boundless) await drawNameBorder();
             await drawFrameBorder();
-
             await drawPredefinedMark({
                 ctx,
-                type: lightFooter ? 'white' : 'black',
+                type: (lightFooter && !isPendulum) ? 'white' : 'black',
+                bordered: (opacityBody < 50 || boundless) && !isPendulum,
                 isDuelTerminalCard, isSpeedCard,
                 isLink, isPendulum,
             });
-
             await drawOverlayFinish();
         };
     }, [
         readyToDraw,
-        previewCanvasRef,
+        artworkCanvasRef,
+        backgroundCanvasRef,
         specialFrameCanvasRef,
         frame,
+        format,
+        hasBackground,
+        backgroundType,
+        attribute,
         bottomFrame,
         foil,
+        star,
+        cardIcon,
         isDuelTerminalCard,
         isLink,
         isPendulum,
@@ -416,53 +434,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         pendulumSize,
         statInEffect,
         imageChangeCount, // Special dependency
-    ]);
-
-    /** DRAW ATTRIBUTE */
-    useEffect(() => {
-        if (!readyToDraw) return;
-
-        const ctx = attributeCanvasRef.current?.getContext('2d');
-        drawingPipeline.current.attribute.rerun += 1;
-        drawingPipeline.current.attribute.instructor = async () => {
-            if (!clearCanvas(ctx, CanvasWidth, 148.125)) return;
-
-            await drawAsset(ctx, `attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
-            await loopFinish(ctx, 'attribute', type => drawAsset(ctx, `finish/finish-${type}-attribute.png`, 678, 55));
-        };
-    }, [readyToDraw, attribute, attributeCanvasRef, format, loopFinish]);
-
-    /** DRAW STAR (NEG. LEVEL - LEVEL - RANK) - ST ICON */
-    useEffect(() => {
-        if (!readyToDraw) return;
-
-        const ctx = cardIconCanvasRef.current?.getContext('2d');
-        drawingPipeline.current.star.rerun += 1;
-        drawingPipeline.current.star.instructor = () => {
-            if (!clearCanvas(ctx, CanvasWidth, 222) || isLink) return new Promise(resolve => resolve(true));
-
-            const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
-            return drawCardIcon({
-                ctx,
-                cardIcon: normalizedCardIcon,
-                star: star ?? 0,
-                onStarDraw: coordinate => normalizedCardIcon === 'st'
-                    ? Promise.resolve()
-                    : loopFinish(
-                        ctx,
-                        'star',
-                        type => drawAsset(ctx, `finish/finish-${type}-star.png`, ...coordinate),
-                    ),
-            });
-        };
-    }, [
-        readyToDraw,
-        cardIcon,
-        cardIconCanvasRef,
-        frame,
-        isLink,
-        loopFinish,
-        star,
     ]);
 
     /** DRAW SCALE */
@@ -480,10 +451,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     /** DRAW NAME */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = nameCanvasRef.current?.getContext('2d');
         drawingPipeline.current.name.rerun += 1;
         drawingPipeline.current.name.instructor = async () => {
+            const ctx = nameCanvasRef.current?.getContext('2d');
             const cloneNode = nameCanvasRef.current?.cloneNode() as HTMLCanvasElement | undefined;
+
             if (!clearCanvas(ctx) || !cloneNode) return;
 
             await drawName(
@@ -491,7 +463,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 name,
                 format === 'tcg' ? 60 : 68, 115.5375,
                 attribute === NO_ATTRIBUTE
-                    ? (format === 'tcg' ? 694 : 678)
+                    ? (format === 'tcg' ? 690 : 674)
                     : (format === 'tcg' ? 606 : 598),
                 resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
                 { isSpeedSkill, format, cloneNode, frame, furiganaHelper },
@@ -538,12 +510,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             setId,
             {
                 isLink, isPendulum,
-                withShadow: bottomFrame === 'zarc' || !hasArtFrame,
+                withShadow: requireShadow && !isPendulum,
                 format,
                 lightFooter,
             }
         );
-    }, [readyToDraw, format, isLink, isPendulum, lightFooter, setIdCanvasRef, setId, isSpeedSkill, bottomFrame, hasArtFrame]);
+    }, [readyToDraw, format, isLink, isPendulum, lightFooter, setIdCanvasRef, setId, isSpeedSkill, bottomFrame, requireShadow]);
 
     /** DRAW FIRST EDITION NOTICE AND PASSWORD */
     useEffect(() => {
@@ -555,7 +527,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             ctx,
             password,
             lightFooter,
-            withShadow: bottomFrame === 'zarc' || !hasArtFrame,
+            withShadow: bottomFrame === 'zarc' || requireShadow,
         });
         if (isFirstEdition && !isDuelTerminalCard) {
             ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
@@ -574,7 +546,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         passwordCanvasRef,
         lightFooter,
         format,
-        hasArtFrame,
+        requireShadow,
         isSpeedSkill,
         bottomFrame,
     ]);
@@ -589,10 +561,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             value: creator,
             alignment: 'right',
             baselineOffset: isSpeedSkill ? -2 : 0,
-            hasShadow: !hasArtFrame,
+            hasShadow: requireShadow,
             lightFooter,
         });
-    }, [readyToDraw, isPendulum, lightFooter, creator, creatorCanvasRef, format, hasArtFrame, isSpeedSkill]);
+    }, [readyToDraw, isPendulum, lightFooter, creator, creatorCanvasRef, format, requireShadow, isSpeedSkill]);
 
     /** DRAW STICKER */
     useEffect(() => {
@@ -749,14 +721,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     return Promise.resolve();
                 }));
             // await generateLayer(frameCanvas, exportCtx);
-            const previewCanvas = previewCanvasRef.current;
-            if (previewCanvas && exportCtx) {
+            const artworkCanvas = artworkCanvasRef.current;
+            if (artworkCanvas && exportCtx) {
                 const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity);
-                const { width: imageWidth, height: imageHeight } = previewCanvas;
+                const { width: imageWidth, height: imageHeight } = artworkCanvas;
 
                 if (imageHeight > 0) {
                     exportCtx.drawImage(
-                        previewCanvas,
+                        artworkCanvas,
                         0, 0,
                         imageWidth, imageHeight,
                         artX, artY,
@@ -767,7 +739,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             await generateLayer(specialFrameCanvasRef, exportCtx);
             await Promise.all([
                 nameCanvasRef,
-                attributeCanvasRef,
                 cardIconCanvasRef,
                 pendulumScaleCanvasRef,
                 pendulumEffectCanvasRef,

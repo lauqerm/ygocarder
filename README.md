@@ -1,9 +1,3 @@
-Comment code
-Dark synchro style
-Split art and effect border for pendulum?
-Dialect (Chef Special Recipe for example)
-Zoom
-
 ## YGO Carder
 
 * Template provided by: [Grezar](https://www.deviantart.com/grezar) and [9558able](https://www.deviantart.com/9558able)

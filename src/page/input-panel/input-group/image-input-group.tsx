@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useCard } from 'src/service';
 import { ImageCropper, ImageCropperRef, LinkMarkChooser } from 'src/component';
 import { RadioTrain } from '../input-train';
@@ -22,7 +22,7 @@ export type ImageInputGroupRef = {
 export type ImageInputGroup = {
     isLink: boolean,
     showExtraDecorativeOption: boolean,
-    receivingCanvasRef: HTMLCanvasElement | null,
+    receivingCanvas: HTMLCanvasElement | null,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
     onTainted: ImageCropper['onTainted'],
     onSourceLoaded: ImageCropper['onSourceLoaded'],
@@ -30,7 +30,7 @@ export type ImageInputGroup = {
 export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>(({
     isLink,
     showExtraDecorativeOption,
-    receivingCanvasRef,
+    receivingCanvas,
     onSourceLoaded,
     onTainted,
     onCropChange,
@@ -75,23 +75,28 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         }));
     }, [onCropChange, setCard]);
 
+    useEffect(() => {
+        imageCropperRef.current?.setRatio(getArtCanvasCoordinate(isPendulum, opacity).ratio);
+    }, [opacity, isPendulum]);
+
     useImperativeHandle(ref, () => ({
         setValue: ({ art, artCrop }) => {
-            if (art && artCrop) imageCropperRef.current?.forceExternalSource(art, artCrop);
+            if (typeof art === 'string' && artCrop) {
+                imageCropperRef.current?.forceExternalSource(art, artCrop);
+            }
         }
     }));
 
     return <ImageCropper
         ref={imageCropperRef}
-        noRedrawNumber={1}
         defaultExternalSource={art}
         defaultCropInfo={artCrop}
-        previewCanvasRef={receivingCanvasRef}
+        receivingCanvas={receivingCanvas}
         onSourceChange={changePicture}
         onCropChange={changeImageCrop}
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
-        ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
+        defaultRatio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
         beforeCropper={showExtraDecorativeOption
             ? <StyledImageRadioTrain
                 className="art-finish-checkbox fill-input-train"

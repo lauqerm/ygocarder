@@ -97,6 +97,10 @@
 				margin: 0;
 				margin-left: 0;
 			}
+			.name-style-option-label {
+				display: inline-block;
+				height: 100%;
+			}
 		}
 		.card-info-panel {
 			margin-left: var(--spacing);
@@ -322,6 +326,44 @@
 		.password-input,
 		.checkbox-input {
 			grid-column: span 1;
+		}
+	}
+	.layout-picker-overlay {
+		.overlay-no-background-image {
+			i {
+				width: 245px; // Alignemnt
+			}
+			.card-image-cropper {
+				.card-image-source-input {
+					width: 245px; // Alignemnt
+				}
+			}
+		}
+		i {
+			width: 375px;
+		}
+		.card-image-cropper {
+			grid-template-columns: 1fr;
+			gap: var(--spacing);
+			.card-image-source-input {
+				width: 375px;
+				margin-right: 0;
+				padding-right: 0;
+				border-right: none;
+			}
+			.ant-popover-inner-content {
+				width: 375px;
+			}
+		}
+		.layout-picker-panel {
+			display: flex;
+			gap: var(--spacing);
+			.radio-train-input-group {
+				flex-wrap: wrap;
+				.ant-radio-button-wrapper {
+					flex: 1 0 150px;
+				}
+			}
 		}
 	}
 }

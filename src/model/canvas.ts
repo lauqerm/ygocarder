@@ -1,5 +1,18 @@
+export const BackgroundTypeList = [
+    {
+        value: 'fit' as const,
+        label: 'Fit to art border',
+    },
+    {
+        value: 'full' as const,
+        label: 'Span all the card',
+    },
+];
+export type BackgroundType = typeof BackgroundTypeList[0]['value'];
+
 export type MasterDuelCanvas = {
-    previewCanvasRef: React.RefObject<HTMLCanvasElement>,
+    artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
+    backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
     drawCanvasRef: React.RefObject<HTMLCanvasElement>,
     // artCanvas: React.RefObject<HTMLCanvasElement>,
     specialFrameCanvasRef: React.RefObject<HTMLCanvasElement>,
@@ -9,7 +22,6 @@ export type MasterDuelCanvas = {
     typeCanvasRef: React.RefObject<HTMLCanvasElement>,
     effectCanvasRef: React.RefObject<HTMLCanvasElement>,
     nameCanvasRef: React.RefObject<HTMLCanvasElement>,
-    attributeCanvasRef: React.RefObject<HTMLCanvasElement>,
     statCanvasRef: React.RefObject<HTMLCanvasElement>,
     setIdCanvasRef: React.RefObject<HTMLCanvasElement>,
     passwordCanvasRef: React.RefObject<HTMLCanvasElement>,
@@ -28,15 +40,16 @@ export const CanvasConst = {
     leftToPendulumStructure: 52,
 };
 
+export const DEFAULT_BASE_FILL_COLOR = '#404040';
 export const getDefaultCardOpacity = () => ({
     body: 100,
     pendulum: 100,
     text: 100,
     name: 100,
-    baseFill: '#404040',
+    baseFill: DEFAULT_BASE_FILL_COLOR,
     artBorder: true,
     nameBorder: true,
-    artFrame: true,
+    boundless: false,
 });
 export type CardOpacity = ReturnType<typeof getDefaultCardOpacity>;
 export const CardArtCanvasCoordinateMap = {
@@ -47,7 +60,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 100,
         artY: 219,
         ratio: 1,
-        type: 'normal',
+        type: 'normal' as const,
     },
     pendulum: {
         artFinishX: 56,
@@ -56,7 +69,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 1.325,
-        type: 'pendulum',
+        type: 'pendulum' as const,
     },
     extendedCard: {
         artFinishX: 100,
@@ -65,7 +78,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 0.775,
-        type: 'extendedCard',
+        type: 'extendedCard' as const,
     },
     extendedPendulum: {
         artFinishX: 56,
@@ -74,7 +87,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 0.775,
-        type: 'extendedPendulum',
+        type: 'extendedPendulum' as const,
     },
     truePendulum: {
         artFinishX: 56,
@@ -83,7 +96,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 1.057,
-        type: 'truePendulum',
+        type: 'truePendulum' as const,
     },
     fullCard: {
         artFinishX: 100,
@@ -92,7 +105,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 28,
         artY: 28,
         ratio: 0.670,
-        type: 'fullCard',
+        type: 'fullCard' as const,
     },
     fullPendulum: {
         artFinishX: 56,
@@ -101,21 +114,26 @@ export const CardArtCanvasCoordinateMap = {
         artX: 28,
         artY: 28,
         ratio: 0.670,
-        type: 'fullPendulum',
+        type: 'fullPendulum' as const,
     },
 };
 export const getArtCanvasCoordinate = (
     isPendulum: boolean,
     opacity?: Partial<CardOpacity>,
+    backgroundType?: BackgroundType,
 ) => {
     const {
-        artFrame,
+        boundless,
         body,
         pendulum,
         text,
     } = { ...getDefaultCardOpacity(), ...opacity };
+    const normalizedBoundless = backgroundType === 'fit'
+        ? false
+        : boundless;
 
-    const artType = artFrame === false || body < 100
+    if (backgroundType === 'full') return CardArtCanvasCoordinateMap.fullCard;
+    const artType = normalizedBoundless || body < 100
         ? isPendulum
             ? 'fullPendulum'
             : 'fullCard'

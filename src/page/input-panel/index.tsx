@@ -26,7 +26,7 @@ import { TextStylePicker, TextStylePickerRef } from './text-style-picker';
 import { CheckboxTrain, FrameTrain, RadioTrain } from './input-train';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useSetting } from '../../service';
-import { OpacityPicker, OpacityPickerRef } from './opacity-picker';
+import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
     CardIconInputGroup,
     EffectInputGroup,
@@ -52,9 +52,13 @@ import './input-panel.scss';
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
 }
-export type CardInputPanel = {} & Pick<ImageInputGroup, 'receivingCanvasRef' | 'onCropChange' | 'onTainted' | 'onSourceLoaded'>;
+export type CardInputPanel = {
+    artworkCanvas: ImageInputGroup['receivingCanvas'],
+    backgroundCanvas: ImageInputGroup['receivingCanvas'],
+} & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'>;
 export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel>(({
-    receivingCanvasRef,
+    artworkCanvas,
+    backgroundCanvas,
     onCropChange,
     onTainted,
     onSourceLoaded,
@@ -96,7 +100,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const [stylePickerResetCount, setStylePickerResetCount] = useState(0);
 
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
-    const opacityPickerRef = useRef<OpacityPickerRef>(null);
+    const layoutPickerRef = useRef<OpacityPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
     const pendulumInputGroupRef = useRef<PendulumInputGroupRef>(null);
     const effectInputGroupRef = useRef<EffectInputGroupRef>(null);
@@ -114,17 +118,23 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const changeFormat = (formatValue: string | number) => {
         setCard(currentCard => {
             const nextFormat = `${formatValue}`;
-            const foramtSwappedCard = changeCardFormat(currentCard, nextFormat);
-            postPendulumInputGroupRef.current?.setValue({ typeAbility: foramtSwappedCard.typeAbility });
+            const formatSwappedCard = changeCardFormat(currentCard, nextFormat);
+            postPendulumInputGroupRef.current?.setValue({ typeAbility: formatSwappedCard.typeAbility });
 
-            return foramtSwappedCard;
+            const { name, setId, effect, typeAbility, creator } = formatSwappedCard;
+            nameSetIdInputGroupRef.current?.setValue({ name, setId });
+            effectInputGroupRef.current?.setValue(effect);
+            postPendulumInputGroupRef.current?.setValue({ typeAbility });
+            footerInputGroupRef.current?.setValue({ creator });
+
+            return formatSwappedCard;
         });
     };
     const changeFoil = useMemo(() => getUpdater('foil'), [getUpdater]);
     const onFinishChange = useMemo(() => getUpdater('finish'), [getUpdater]);
     const changeOpacity = useCallback((opacity: CardOpacity) => setCard(curr => ({ ...curr, opacity })), [setCard]);
     const changeAttribute = useMemo(() => getUpdater('attribute'), [getUpdater]);
-    const changeNameStyle = (type: NameStyleType, value: Partial<NameStyle>) => {
+    const changeNameStyle = useCallback((type: NameStyleType, value: Partial<NameStyle>) => {
         setCard(currentCard => {
             return {
                 ...currentCard,
@@ -132,7 +142,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 nameStyle: value,
             };
         });
-    };
+    }, [setCard]);
 
     const attributeList = useMemo(() => getAttributeList(format), [format]);
 
@@ -141,15 +151,17 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     }, [nameStyle]);
 
     useEffect(() => {
-        opacityPickerRef.current?.setValue(opacity);
+        layoutPickerRef.current?.setValue(opacity);
     }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
-        forceCardData: (card) => {
+        forceCardData: card => {
             setStylePickerResetCount(cnt => cnt + 1);
             const {
                 name,
                 art, artCrop,
+                background, backgroundCrop,
+                opacity,
                 setId,
                 pendulumEffect,
                 typeAbility,
@@ -159,6 +171,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             } = card;
 
             imageInputGroupRef.current?.setValue({ art, artCrop });
+            layoutPickerRef.current?.setValue({ ...opacity, background, backgroundCrop });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             effectInputGroupRef.current?.setValue(effect);
@@ -193,14 +206,17 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
         {showCreativeOption && <div className="card-opacity-input">
             <label className="standalone-addon ant-input-group-addon">
-                Opacity <Explanation
+                Layout <Explanation
                     content={'May affect behavior of some finish types.'}
                 />
             </label>
-            <OpacityPicker ref={opacityPickerRef}
+            <LayoutPicker ref={layoutPickerRef}
                 defaultValue={opacity}
-                isPendulum={isPendulum}
+                receivingCanvas={backgroundCanvas}
                 onChange={changeOpacity}
+                onTainted={onTainted}
+                onCropChange={onCropChange}
+                onSourceLoaded={onSourceLoaded}
             />
         </div>}
 
@@ -264,7 +280,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             </div>
             <div className="main-info-second">
                 <ImageInputGroup ref={imageInputGroupRef}
-                    receivingCanvasRef={receivingCanvasRef}
+                    receivingCanvas={artworkCanvas}
                     isLink={isLink}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     onSourceLoaded={onSourceLoaded}

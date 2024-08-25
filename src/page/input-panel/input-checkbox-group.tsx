@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Checkbox } from 'antd';
+import { Checkbox, Tooltip } from 'antd';
 import { useCard } from '../../service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -32,11 +32,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
     const onFirstEditionChange = useCallback((e: any) => setCard(currentCard => {
         const nextValue = e.target.checked;
 
-        return {
-            ...currentCard,
-            isFirstEdition: nextValue,
-            isDuelTerminalCard: nextValue ? false : currentCard.isDuelTerminalCard,
-        };
+        return { ...currentCard, isFirstEdition: nextValue };
     }), [setCard]);
     const onDuelTerminalCardChange = useCallback((e: any) => setCard(currentCard => {
         const nextValue = e.target.checked;
@@ -44,11 +40,17 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
         return {
             ...currentCard,
             isDuelTerminalCard: nextValue,
-            isFirstEdition: nextValue ? false : currentCard.isFirstEdition,
+            isSpeedCard: nextValue ? false : currentCard.isSpeedCard,
         };
     }), [setCard]);
     const onSpeedCardChange = useCallback((e: any) => setCard(currentCard => {
-        return { ...currentCard, isSpeedCard: e.target.checked };
+        const nextValue = e.target.checked;
+
+        return {
+            ...currentCard,
+            isSpeedCard: e.target.checked,
+            isDuelTerminalCard: nextValue ? false : currentCard.isDuelTerminalCard,
+        };
     }), [setCard]);
 
     return <StyledCheckboxGroup className="checkbox-input">
@@ -59,19 +61,23 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
         >
             {'1st Edition'}
         </Checkbox>
-        <Checkbox
-            className="input-speed"
-            onChange={onSpeedCardChange}
-            checked={isSpeedCard}
-        >
-            {'Speed'}
-        </Checkbox>
-        <Checkbox
-            className="input-terminal"
-            onChange={onDuelTerminalCardChange}
-            checked={isDuelTerminalCard}
-        >
-            {'Duel Terminal'}
-        </Checkbox>
+        <Tooltip overlayClassName="long-tooltip-overlay" overlay="Will turn off Duel Terminal mark.">
+            <Checkbox
+                className="input-speed"
+                onChange={onSpeedCardChange}
+                checked={isSpeedCard}
+            >
+                {'Speed'}
+            </Checkbox>
+        </Tooltip>
+        <Tooltip overlayClassName="long-tooltip-overlay" overlay="Will turn off Speed Duel mark.">
+            <Checkbox
+                className="input-terminal"
+                onChange={onDuelTerminalCardChange}
+                checked={isDuelTerminalCard}
+            >
+                {'Duel Terminal'}
+            </Checkbox>
+        </Tooltip>
     </StyledCheckboxGroup>;
 };

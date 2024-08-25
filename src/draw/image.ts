@@ -45,7 +45,7 @@ export const drawAsset = async (
     sx: number | ((image: HTMLImageElement) => number) = 0,
     sy: number | ((image: HTMLImageElement) => number) = 0,
 ) => {
-    return drawFrom(
+    return await drawFrom(
         ctx,
         '/asset/image/' + source,
         sx, sy,
@@ -100,7 +100,7 @@ export const drawAssetWithSize: typeof drawFromWithSize = async (
     sx, sy,
     dw, dh,
 ) => {
-    return drawFromWithSize(
+    return await drawFromWithSize(
         ctx,
         '/asset/image/' + source,
         sx, sy,

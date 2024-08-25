@@ -1,4 +1,13 @@
-import { frameList, IconList, AttributeList, StickerList, FoilList, CondenseTolerantLabelMap, NameFontDataMap } from '../../model';
+import {
+    frameList,
+    IconList,
+    AttributeList,
+    StickerList,
+    FoilList,
+    CondenseTolerantLabelMap,
+    NameFontDataMap,
+    NO_ATTRIBUTE,
+} from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -62,7 +71,7 @@ export const getFrameButtonList = () => frameList.map(({ name, labelBackgroundCo
 }));
 
 export const getAttributeList = (format: string) => AttributeList.map(({ name }) => ({
-    label: name === 'NONE'
+    label: name === NO_ATTRIBUTE
         ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
     value: name,

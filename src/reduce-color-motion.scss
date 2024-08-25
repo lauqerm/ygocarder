@@ -43,6 +43,9 @@
             border: var(--bw) solid var(--main-level-4);
             border-left: none;
         }
+        .anticon {
+            transform: translateY(1px); // Alignment
+        }
     }
     .link-marker-chooser {
         .link-marker-reset,

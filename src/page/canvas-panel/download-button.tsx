@@ -3,12 +3,14 @@ import { MasterDuelCanvas } from 'src/model';
 import { useCardExport, useMasterSeriDrawer } from 'src/service';
 
 export type DownloadButton = {
+    isTainted: boolean,
     isInitializing: boolean,
     imageChangeCount: number,
     canvasMap: MasterDuelCanvas,
     onDownloadError: () => void,
 };
 export const DownloadButton = ({
+    isTainted,
     isInitializing,
     imageChangeCount,
     canvasMap,
@@ -30,6 +32,7 @@ export const DownloadButton = ({
         queuedPipeline: false,
     });
     const { onSave } = useCardExport({
+        isTainted,
         isInitializing,
         drawCanvasRef,
         exportRef,
@@ -37,6 +40,7 @@ export const DownloadButton = ({
         onDownloadError,
     });
 
+    if (isTainted) return null;
     return <div className="save-button-container">
         <div id="save-button-waiting" />
         <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Download</button>

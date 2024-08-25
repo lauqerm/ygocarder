@@ -31,7 +31,7 @@ export const drawCreatorText = ({
         : '#000000';
     ctx.shadowOffsetY = 0;
     ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = hasShadow ? 4 : 0;
+    ctx.shadowBlur = hasShadow ? 3 : 0;
 
     const { trueEdge, trueBaseline, trueWidth } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];

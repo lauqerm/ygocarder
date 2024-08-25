@@ -71,7 +71,8 @@ function App() {
     const [lightboxVisible, setLightboxVisible] = useState(false);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
-    const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+    const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
+    const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     // const artCanvasRef = useRef<HTMLCanvasElement>(null);
     const specialFrameCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -81,7 +82,6 @@ function App() {
     const typeCanvasRef = useRef<HTMLCanvasElement>(null);
     const effectCanvasRef = useRef<HTMLCanvasElement>(null);
     const nameCanvasRef = useRef<HTMLCanvasElement>(null);
-    const attributeCanvasRef = useRef<HTMLCanvasElement>(null);
     const statCanvasRef = useRef<HTMLCanvasElement>(null);
     const setIdCanvasRef = useRef<HTMLCanvasElement>(null);
     const passwordCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,7 +90,8 @@ function App() {
     const finishCanvasRef = useRef<HTMLCanvasElement>(null);
     const lightboxCanvasRef = useRef<HTMLCanvasElement>(null);
     const [canvasMap] = useState({
-        previewCanvasRef,
+        artworkCanvasRef,
+        backgroundCanvasRef,
         drawCanvasRef,
         // artCanvas: artCanvasRef,
         specialFrameCanvasRef,
@@ -100,7 +101,6 @@ function App() {
         typeCanvasRef,
         effectCanvasRef,
         nameCanvasRef,
-        attributeCanvasRef,
         statCanvasRef,
         setIdCanvasRef,
         passwordCanvasRef,
@@ -265,22 +265,24 @@ function App() {
                                 }
                             }}>Import Data</button>
                         </div>
-                        {!isTainted
-                            ? <DownloadButton
-                                canvasMap={canvasMap}
-                                imageChangeCount={imageChangeCount}
-                                isInitializing={isInitializing}
-                                onDownloadError={alertDownloadError}
-                            />
-                            : <div id="save-button-tainted" className="save-button-container">
-                                <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
-                            </div>}
+                        <DownloadButton
+                            canvasMap={canvasMap}
+                            imageChangeCount={imageChangeCount}
+                            isTainted={isTainted}
+                            isInitializing={isInitializing}
+                            onDownloadError={alertDownloadError}
+                        />
+                        {isTainted && <div id="save-button-tainted" className="save-button-container">
+                            <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
+                        </div>}
                     </StyledDataButtonPanelContainer>
                     <div className="card-canvas-container">
                         <StyledCardCanvasGroupContainer className="card-canvas-group">
                             <Tooltip title="Reset">
                                 <ResetButton className="reset-button" onClick={() => {
-                                    const consent = window.confirm('This will reset your card information back to default, make sure you export the current data first!');
+                                    const consent = window.confirm(
+                                        'This will reset your card information back to default, make sure you export the current data first!',
+                                    );
 
                                     if (consent) {
                                         const { setCard, card } = useCard.getState();
@@ -310,7 +312,6 @@ function App() {
                             {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
                             <canvas id="specialFrameCanvas" key={canvasKey} ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
-                            <canvas id="attributeCanvas" ref={attributeCanvasRef} width={CanvasWidth} height={148} />
                             <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />
                             <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />
                             <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={889} />
@@ -322,13 +323,15 @@ function App() {
                             <canvas id="creatorCanvas" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="stickerCanvas" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                             <canvas id="finishCanvas" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas className="crop-canvas" ref={previewCanvasRef} />
+                            <canvas className="crop-canvas" ref={artworkCanvasRef} />
+                            <canvas className="crop-canvas" ref={backgroundCanvasRef} />
                         </StyledCardCanvasGroupContainer>
                     </div>
                 </div>
                 {isInitializing === false && <CardInputPanel
                     ref={cardInputRef}
-                    receivingCanvasRef={previewCanvasRef.current}
+                    artworkCanvas={artworkCanvasRef.current}
+                    backgroundCanvas={backgroundCanvasRef.current}
                     onSourceLoaded={rerenderAllImage}
                     onCropChange={rerenderCardImage}
                     onTainted={markTaintedImage}

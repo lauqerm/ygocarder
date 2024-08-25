@@ -69,7 +69,7 @@ export const resolveNameStyle = ({
         headTextFillStyle: lightHeader ? '#ffffff' : '#000000',
     };
     if (nameStyleType === 'predefined') {
-        const resultNameStyle = PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value;
+        const resultNameStyle = { ...PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value };
         if (!PresetNameStyleMap[resultNameStyle.preset ?? 'commonB'].value.font) {
             resultNameStyle.font = contextualFont;
         }

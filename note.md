@@ -10,3 +10,11 @@
 * <https://en.wikipedia.org/wiki/Ch%C5%8Donpu>
 * <https://en.wikipedia.org/wiki/Half-width_kana>
 * <https://unicodelookup.com/#circle/3>
+
+### Improvements backlog
+
+* Dark synchro style syntax
+* TCG Normal effect style syntax
+* Split art and effect border for pendulum
+* OCG's letter dialect ("Chef Special Recipe" OCG for example)
+* In-place zoom

@@ -7,7 +7,7 @@ const {
     width: CanvasWidth,
 } = CanvasConst;
 
-export const drawCardIcon = async ({
+export const drawStarIcon = async ({
     ctx,
     cardIcon,
     star,
@@ -33,6 +33,7 @@ export const drawCardIcon = async ({
             : (CanvasWidth - totalWidth) / 2 + totalWidth;
 
     let offset = 0 - (starWidth + startSpacing);
+
     return Promise.all([...Array(starCount)]
         .map(async () => {
             offset += (starWidth + startSpacing);
@@ -67,6 +68,7 @@ export const drawPredefinedMark = async ({
     isLink,
     isDuelTerminalCard,
     isSpeedCard,
+    bordered,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     type: string,
@@ -74,20 +76,27 @@ export const drawPredefinedMark = async ({
     isLink: boolean,
     isDuelTerminalCard: boolean,
     isSpeedCard: boolean,
+    bordered: boolean,
 }) => {
     if (!ctx) return;
 
     if (isDuelTerminalCard) {
-        await drawAsset(ctx, `text/text-duel-terminal-${type}.png`, 160, 1120);
+        const coordinate: [number, number, number, number] = isPendulum
+            ? [250, 1087, 180, 20]
+            : isLink
+                ? [151, 848, 216, 24]
+                : [80, 843, 270, 30];
+
+        await drawAssetWithSize(ctx, `text/text-duel-terminal-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
     }
     if (isSpeedCard) {
         const coordinate: [number, number, number, number] = isPendulum
-            ? [200, 1088, 196, 20]
+            ? [250, 1090, 176.4, 18]
             : isLink
-                ? [155, 855, 196, 20]
+                ? [151, 855, 215.6, 22]
                 : [80, 850, 245, 25];
 
-        await drawAssetWithSize(ctx, `text/text-speed-duel-${type}.png`, ...coordinate);
+        await drawAssetWithSize(ctx, `text/text-speed-duel-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
     }
 };
 

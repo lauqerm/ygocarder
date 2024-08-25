@@ -139,7 +139,6 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                     }}
                 />
             </div>
-            <div />
         </div>
         <h2>Color</h2>
         <CompactPicker color={color} onChangeComplete={color => setValue(cur => ({ ...cur, color: color.hex }))} />

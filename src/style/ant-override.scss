@@ -82,7 +82,8 @@
 }
 
 span.ant-input-affix-wrapper {
-    background-color: transparent;
+    border-color: var(--sub-level-1);
+    background-color: var(--main-level-1);
 }
 .ant-input-group {
     .ant-radio-button-wrapper,

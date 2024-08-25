@@ -28,15 +28,18 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
 }
 
 export type ImageCropperRef = {
+    setRatio: (ratio: number) => void,
     forceExternalSource: (artLink: string, cropInfo: Partial<ReactCrop.Crop>) => void,
 }
 export type ImageCropper = {
-    noRedrawNumber?: number,
+    title?: React.ReactNode,
+    backgroundColor?: string,
+    className?: string,
     defaultExternalSource?: string,
-    previewCanvasRef?: HTMLCanvasElement | null,
+    receivingCanvas?: HTMLCanvasElement | null,
     children?: React.ReactNode,
     beforeCropper?: React.ReactNode,
-    ratio?: number,
+    defaultRatio?: number,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     onSourceChange?: (source: string) => void,
     onSourceLoaded?: () => void,
@@ -44,12 +47,14 @@ export type ImageCropper = {
     onTainted: () => void,
 }
 export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
-    noRedrawNumber = 0,
+    title = 'Card Art',
+    backgroundColor,
+    className,
     defaultExternalSource = '',
-    previewCanvasRef,
+    receivingCanvas,
     children,
     beforeCropper,
-    ratio = 1,
+    defaultRatio = 1,
     defaultCropInfo,
     onSourceLoaded = () => { },
     onSourceChange = () => { },
@@ -60,6 +65,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         crossorigin,
         // setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
+    const [redrawSignal, setRedrawSignal] = useState(0);
+    const [ratio, setRatio] = useState(defaultRatio);
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [inputMode, setInputMode] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
@@ -71,7 +78,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
     const [isMigrated, setMigrated] = useState(defaultCropInfo.unit === '%');
 
-    const applyInternalSource = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const applyOfflineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setLoading(true);
             const reader = new FileReader();
@@ -93,7 +100,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         imgRef.current = img;
     }, [onSourceLoaded]);
 
-    const applyExternalSource = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const applyOnlineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
 
         setLoading(true);
@@ -105,12 +112,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
     useEffect(() => {
         const image = imgRef.current;
-        const canvas = previewCanvasRef;
-        if (!completedCrop || !canvas || !image) return;
+        if (!completedCrop || !receivingCanvas || !image) return;
 
         /** Upsize canvas để nâng cao chất lượng ảnh */
-        canvas.style.transform = 'scale(2)';
-        const ctx = canvas.getContext('2d');
+        receivingCanvas.style.transform = 'scale(2)';
+        const ctx = receivingCanvas.getContext('2d');
         if (!ctx || ratio <= 0) return;
 
         const { naturalHeight, naturalWidth } = image;
@@ -182,11 +188,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 };
             }
         }
-        // const boundingWidth = Math.ceil(canvas.getBoundingClientRect().width);
-        // const boundingHeight = Math.ceil(canvas.getBoundingClientRect().height);
+        // const boundingWidth = Math.ceil(receivingCanvas.getBoundingClientRect().width);
+        // const boundingHeight = Math.ceil(receivingCanvas.getBoundingClientRect().height);
 
-        canvas.width = (drawWidth ?? 0);
-        canvas.height = (drawHeight ?? 0);
+        receivingCanvas.width = (drawWidth ?? 0);
+        receivingCanvas.height = (drawHeight ?? 0);
 
         ctx.drawImage(
             image,
@@ -207,37 +213,44 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             setCrop(fitCropData);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ratio, completedCrop, previewCanvasRef, noRedrawNumber]);
+    }, [completedCrop, receivingCanvas, redrawSignal]);
 
     useImperativeHandle(forwardedRef, () => ({
+        setRatio: ratio => {
+            setRatio(ratio);
+            setRedrawSignal(cur => cur + 1);
+        },
         forceExternalSource: (source, cropInfo) => {
-            const inUseSource = sourceType === 'internal' ? internalSource : externalSource;
-            if (inUseSource !== source) {
+            const currentSourceType = sourceType === 'internal' ? internalSource : externalSource;
+            if (currentSourceType !== source) {
                 setLoading(true);
                 setSourceType('external');
                 setInputMode('external');
                 onSourceChange(source);
                 setExternalSource(source);
             }
+            setRatio(cropInfo.aspect ?? 1);
             setMigrated(cropInfo.unit === '%');
             setCrop(cropInfo);
+            setCompletedCrop(cropInfo);
+            // setRedrawSignal(cur => cur + 1);
         }
     }));
 
-    const isDownloadable = previewCanvasRef && !isLoading && completedCrop?.width && completedCrop?.height;
+    const isDownloadable = receivingCanvas && !isLoading && completedCrop?.width && completedCrop?.height;
     return (
-        <div className="card-image-cropper">
+        <div className={`card-image-cropper ${className}`}>
             <div className="card-image-source-input">
                 {children}
                 <div className="card-image-source-input-container">
                     <div className="card-image-source-input-title">
                         <span className="field-title">
-                            Card Art <IconButton
+                            {title} <IconButton
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
                                 tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
                                 iconProps={{
-                                    onClick: () => (isDownloadable && previewCanvasRef) && generateDownload(previewCanvasRef, completedCrop)
+                                    onClick: () => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)
                                 }}
                             />
                         </span>
@@ -266,20 +279,22 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     </div>
                     <div className={['card-image-input', inputMode === 'external' ? '' : 'input-inactive'].join(' ')}>
                         <Input key="key"
-                            placeholder="https://my-online-image..."
+                            placeholder="Image link"
                             value={externalSource}
-                            onChange={applyExternalSource} maxLength={512}
+                            onChange={applyOnlineSource}
+                            maxLength={512}
+                            allowClear
                         />
                         {error
                             ? <div className="online-image-tip image-warning">
-                                Could not load this image, please try another link.
+                                Image not found.
                             </div>
                             : <div className="online-image-tip">
                                 You may use popular hosts such as imgur.
                             </div>}
                     </div>
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
-                        <Input type="file" accept="image/*" onChange={applyInternalSource} />
+                        <Input type="file" accept="image/*" onChange={applyOfflineSource} />
                         <hr />
                     </div>
                 </div>
@@ -287,16 +302,29 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             {beforeCropper}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
-                <ReactCrop key={`${sourceType}${ratio}${isMigrated}`}
+                <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
                     src={sourceType === 'internal' ? internalSource : externalSource}
-                    imageStyle={{
-                        backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/transparent-tile.png")`
-                    }}
+                    imageStyle={backgroundColor
+                        ? {
+                            backgroundColor,
+                        }
+                        : {
+                            backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/transparent-tile.png")`
+                        }}
                     onImageLoaded={onLoad}
                     onImageError={() => {
-                        onTainted();
-                        setError('Tainted image');
+                        setError('Image error');
                         setLoading(false);
+                        if (sourceType === 'external' && (externalSource ?? '') === '' && receivingCanvas) {
+                            const { width, height } = receivingCanvas;
+                            const ctx = receivingCanvas.getContext('2d');
+
+                            ctx?.clearRect(0, 0, width, height);
+                            if (completedCrop) onCropChange(completedCrop, sourceType);
+                            onSourceLoaded();
+                        } else {
+                            onTainted();
+                        }
                         // setCrossOrigin(undefined);
                     }}
                     crop={crop}

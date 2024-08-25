@@ -1,4 +1,4 @@
-import { CardOpacity, getDefaultCardOpacity } from './canvas';
+import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
 import { CondenseType } from './font-data-effect';
 import { getDefaultNameStyle, NameStyle, NameStyleType } from './name-preset';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -16,16 +16,27 @@ export const getDefaultCard = () => ({
     nameStyleType: 'auto' as NameStyleType,
     nameStyle: getDefaultNameStyle() as Partial<NameStyle>,
     attribute: 'LIGHT',
-    subFamily: 'NO ICON',
+    subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6,
     art: 'https://i.imgur.com/h5kXZeC.png',
     artCrop: {
         x: 0,
-        y: 12,
-        width: 269,
-        height: 269,
-        unit: 'px',
+        y: 4,
+        width: 100,
+        height: 89.5,
+        unit: '%',
+        aspect: 1,
+    } as Partial<ReactCrop.Crop>,
+    hasBackground: false,
+    background: '',
+    backgroundType: 'fit' as BackgroundType,
+    backgroundCrop: {
+        x: 0,
+        y: 4,
+        width: 100,
+        height: 89.5,
+        unit: '%',
         aspect: 1,
     } as Partial<ReactCrop.Crop>,
     linkMap: [
@@ -70,16 +81,27 @@ export const getEmptyCard = (): Card => ({
     nameStyleType: 'auto',
     nameStyle: getDefaultNameStyle(),
     attribute: 'LIGHT',
-    subFamily: 'NO ICON',
+    subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6,
     art: 'https://i.imgur.com/jjtCuG5.png',
     artCrop: {
         x: 0,
-        y: 12,
-        width: 269,
-        height: 269,
-        unit: 'px',
+        y: 4,
+        width: 100,
+        height: 89.5,
+        unit: '%',
+        aspect: 1,
+    },
+    hasBackground: false,
+    background: '',
+    backgroundType: 'fit',
+    backgroundCrop: {
+        x: 0,
+        y: 4,
+        width: 100,
+        height: 89.5,
+        unit: '%',
         aspect: 1,
     },
     linkMap: [],
@@ -110,13 +132,13 @@ export const OpacityList = [
         type: 'body' as const,
         subType: 'artBorder' as const,
         label: 'Card',
-        tooltip: 'Keep art border even if card body is transparent.',
+        tooltip: 'Keep art border even if the card\'s body is transparent.',
     },
     {
         type: 'name' as const,
         subType: 'nameBorder' as const,
         label: 'Name',
-        tooltip: 'Draw name border and finish whenever possible.',
+        tooltip: 'Draw name\'s border and finish whenever possible.',
     },
     {
         type: 'pendulum' as const,
@@ -268,8 +290,9 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
 };
 export const frameList = Object.values(FrameInfoMap);
 
+export const NO_ICON = 'NO ICON';
 export const IconList = [
-    { label: <CloseCircleOutlined />, value: 'NO ICON' },
+    { label: <CloseCircleOutlined />, value: NO_ICON },
     { label: 'Field', value: 'FIELD' },
     { label: 'Continuous', value: 'CONTINUOUS' },
     { label: 'Quick-Play', value: 'QUICK-PLAY' },
