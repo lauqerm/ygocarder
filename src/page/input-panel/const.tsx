@@ -7,10 +7,12 @@ import {
     CondenseTolerantLabelMap,
     NameFontDataMap,
     NO_ATTRIBUTE,
+    NO_ICON,
 } from '../../model';
 import { ArtFinishMap, FinishMap } from 'src/model/finish';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
 export const FormatButtonList = [
     {
@@ -70,15 +72,21 @@ export const getFrameButtonList = () => frameList.map(({ name, labelBackgroundCo
     edition,
 }));
 
-export const getAttributeList = (format: string) => AttributeList.map(({ name }) => ({
+export const getAttributeList = (format: string) => AttributeList.map(({ label, name }) => ({
     label: name === NO_ATTRIBUTE
         ? <CloseCircleOutlined />
-        : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />,
+        : <Tooltip overlay={label}>
+            <img alt={label} src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`} />
+            </Tooltip>,
     value: name,
 }));
 
 export const STIconButtonList = IconList.map(({ label, value }) => ({
-    label,
+    label: value === NO_ICON
+        ? <CloseCircleOutlined />
+        : <Tooltip overlay={label}>
+            <img alt={`${label}`} src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`} />
+        </Tooltip>,
     value,
 }));
 
@@ -92,7 +100,10 @@ export const IconTypeMap: Record<string, { value: string, label: React.ReactNode
     'st': {
         value: 'st',
         label: 'Icon',
-        fullLabel: 'Spell/Trap Icon',
+        fullLabel: <>
+            Spell/Trap Icon
+            <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`} />
+        </>,
     },
     'level': {
         value: 'level',

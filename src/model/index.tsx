@@ -343,38 +343,47 @@ export const AttributeList = [
     },
     {
         name: 'DARK',
+        label: 'Dark',
         color: '#b41dda',
     },
     {
         name: 'EARTH',
+        label: 'Earth',
         color: '#8d8e8e',
     },
     {
         name: 'FIRE',
+        label: 'Fire',
         color: '#e51b23',
     },
     {
         name: 'LIGHT',
+        label: 'Light',
         color: '#bfae32',
     },
     {
         name: 'WATER',
+        label: 'Water',
         color: '#008ecd',
     },
     {
         name: 'WIND',
+        label: 'Wind',
         color: '#28ab35',
     },
     {
         name: 'DIVINE',
+        label: 'Divine',
         color: '#ef6300',
     },
     {
         name: 'SPELL',
+        label: 'Spell',
         color: '#1b8f83',
     },
     {
         name: 'TRAP',
+        label: 'TRAP',
         color: '#c32a8c',
     },
 ];

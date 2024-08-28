@@ -18,7 +18,7 @@ import {
     START_OF_LINE_ALPHABET_OFFSET,
     ST_ICON_SYMBOL,
     SquareBracketLetterRegex,
-    TCGLetterRegex,
+    TCGSpecialLetterRegex,
     TextData,
     WholeWordRegex,
     getBulletSpacing,
@@ -36,6 +36,8 @@ import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 
 /**
+ * This is the heart and soul of drawer, please test throughly for each change.
+ * 
  * @summary Text hierachy
  *   * Letter: Individual (1) letter. E.g. "a", "1", "み", "装", "-", "①"
  *   * Fragment: Multiple letters with decorate control characters. E.g. "{無|む}", "Damage"
@@ -50,7 +52,7 @@ export const drawLine = ({
     ctx,
     tokenList,
     trueEdge, trueBaseline,
-    extraSpace = 0,
+    spaceWidth = 0,
     xRatio: baseXRatio, yRatio = 1,
     textData,
     format,
@@ -64,7 +66,7 @@ export const drawLine = ({
     yRatio?: number,
     trueEdge: number,
     trueBaseline: number,
-    extraSpace?: number,
+    spaceWidth?: number,
     textData: TextData,
     textDrawer?: TextDrawer,
     debug?: boolean,
@@ -161,6 +163,7 @@ export const drawLine = ({
             : 0;
 
         let fragmentEdge = tokenEdge + indent;
+        console.log('🚀 ~ token:', token, fragmentEdge);
         let currentRightGap = previousTokenGap;
         let accumulatedSpace = 0;
         /** Độ dài tăng thêm do gap từ token trước đó */
@@ -220,8 +223,8 @@ export const drawLine = ({
                 stopApplyOrdinalFont();
                 applyAsymmetricScale(xRatio, yRatio);
 
-                fragmentEdge += extraSpace;
-                accumulatedSpace += extraSpace;
+                fragmentEdge += spaceWidth;
+                accumulatedSpace += spaceWidth;
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
@@ -305,7 +308,7 @@ export const drawLine = ({
                     trueEdge: footTextFragmentEdge,
                     xRatio,
                     yRatio,
-                    extraSpace: 0,
+                    spaceWidth: 0,
                     textDrawer,
                     debug: false,
                 });
@@ -348,9 +351,9 @@ export const drawLine = ({
                 ctx.shadowOffsetY = currentShadowOffsetY;
                 ctx.shadowBlur = currentShadowBlur;
 
-                fragmentEdge += Math.max(footTextWidth * xRatio, headTextWidth) - lostLeftWidth + extraSpace;
+                fragmentEdge += Math.max(footTextWidth * xRatio, headTextWidth) - lostLeftWidth + spaceWidth;
                 currentRightGap = rightGap;
-                accumulatedSpace += extraSpace;
+                accumulatedSpace += spaceWidth;
             }
             else if (WholeWordRegex.test(fragment)) {
                 const normalizedWordSpacingRatio = wordLetterSpacing
@@ -400,7 +403,7 @@ export const drawLine = ({
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter(drawLetterofWordParameter);
                         stopApplyNumberFont();
-                    } else if (TCGLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                    } else if (TCGSpecialLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
                         applySymbolFont();
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter(drawLetterofWordParameter);
@@ -419,7 +422,7 @@ export const drawLine = ({
                 ctx.letterSpacing = '0px';
             }
             /** Một số ký tự dùng font đặc biệt */
-            else if (TCGLetterRegex.test(fragment) && fontStyle === 'tcg') {
+            else if (TCGSpecialLetterRegex.test(fragment) && fontStyle === 'tcg') {
                 const letter = fragment;
                 applySymbolFont();
 
@@ -444,7 +447,7 @@ export const drawLine = ({
                     letter,
                     fontStyle,
                     metricMethod,
-                    lastOfLine: nextFragment === undefined,
+                    isLastOfLine: nextFragment === undefined,
                     xRatio,
                 });
                 const letterWidth = letterMetric.boundWidth * letterSpacingRatio * xRatio;
@@ -459,8 +462,8 @@ export const drawLine = ({
                     (format === 'ocg' || (format === 'tcg' && /\s+/.test(letter)))
                     && NoSpaceRegex.test(letter) !== true
                 ) {
-                    fragmentEdge += extraSpace;
-                    accumulatedSpace += extraSpace;
+                    fragmentEdge += spaceWidth;
+                    accumulatedSpace += spaceWidth;
                 }
                 if (!OCGNoOverheadGapRegex.test(letter)) currentRightGap = rightGap;
                 previousTokenRebalanceOffset = 0;

@@ -39,7 +39,7 @@ export const FLAVOR_CONDITION_SOURCE = `(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\
 
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]';
-export const TCGLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
+export const TCGSpecialLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
 export const OCG_KEYWORD_SOURCE = `(${OCG_KEYWORD_JOIN_REGEX})(?![^{]*})`;
@@ -99,9 +99,11 @@ export const MAX_LINE_REVERSE_INDENT = 20;
 export const START_OF_LINE_ALPHABET_OFFSET = 4;
 
 export const RUBY_REGEX = /{[^{}]+?}/;
+/** If foot text consist of multiple letter and overflow mode is `condense`, head text will also condense but with a smaller rate (that mean they are less compressed), this is the bonus rate. So if foot text is compressed by 50%, head text only got compressed by 40%. */
 export const RUBY_BONUS_RATIO = 0.1;
 
 export const BREAKABLE_LETTER = '\\s\\-/';
+/** Default ratio to calculate the gap of a letter. We do not want head text to overlap, so a letter cannot give more space than half of it size. 40% is nice enough. */
 export const LETTER_GAP_RATIO = -0.4;
 export const GAP_PER_WIDTH_RATIO = -2.25;
 export const GAP_PADDING_RATIO = 0.03125;

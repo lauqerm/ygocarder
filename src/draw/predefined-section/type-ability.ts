@@ -52,6 +52,7 @@ export const drawTypeAbilityText = ({
     ctx.font = fontGetter.getFont();
     ctx.textAlign = 'left';
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper });
+    console.log('🚀 ~ normalizedText:', normalizedText);
     const internalEffectiveMedian = condense(
         median => {
             const { currentLineCount, currentLineList } = createLineList({
@@ -143,7 +144,7 @@ export const drawTypeAbility = async ({
         const { edge, baseline } = iconPositionList[0];
         await drawAssetWithSize(
             ctx,
-            `sub-family/subfamily-${subFamily.toLowerCase()}.png`,
+            `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
             image => edge + image.naturalWidth * 0.175 * xRatio + offsetX,
             image => baseline - image.naturalWidth * 0.8 + offsetY,
             image => image.naturalWidth,
@@ -156,7 +157,7 @@ export const drawTypeAbility = async ({
 
         //     return drawAssetWithSize(
         //         ctx,
-        //         `sub-family/subfamily-${subFamily.toLowerCase()}.png`,
+        //         `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
         //         () => edge + size * 0.125,
         //         baseline - size * 0.850,
         //         () => iconSize,

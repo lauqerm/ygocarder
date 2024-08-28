@@ -74,8 +74,8 @@ export const drawEffect = ({
             '3': 800,
         };
     const {
-        body: effectBody,
-        flavorCondition: effectFlavorCondition,
+        effectText,
+        effectFlavorCondition,
         fullLineList,
     } = splitEffect(normalizedContent, isNormal);
 
@@ -85,7 +85,7 @@ export const drawEffect = ({
      * * Flavor condition của Normal monster
      */
     const additionalLineCount = (fullLineList.length ?? 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
-    const paragraphList = effectBody ? effectBody.split('\n') : [];
+    const paragraphList = effectText ? effectText.split('\n') : [];
 
     const { font, fontList } = fontData;
     const yRatio = 1;
@@ -180,7 +180,7 @@ export const drawEffect = ({
                 effectiveMedian,
             }) => {
                 const xRatio = effectiveMedian / 1000;
-                const { tokenList, extraSpace } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width });
+                const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width });
 
                 ctx.scale(xRatio, yRatio);
                 drawLine({
@@ -188,7 +188,7 @@ export const drawEffect = ({
                     tokenList,
                     xRatio, yRatio,
                     trueEdge, trueBaseline,
-                    extraSpace,
+                    spaceWidth,
                     textData,
                     format,
                 });

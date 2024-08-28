@@ -86,7 +86,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         : IconDropdownLabel;
     return !isLink
         ? iconTypeData.value === 'st'
-            ? <RadioTrain value={subFamily} onChange={changeSubFamily} optionList={STIconButtonList}>
+            ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={STIconButtonList}>
                 {DropdownChildren}
             </RadioTrain>
             : <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={changeStar} optionList={StarButtonList}>

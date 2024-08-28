@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'antd/dist/antd.css';
 import './app.scss';
 import './style/index.scss';
@@ -27,6 +27,9 @@ import {
     StyledCardCanvasGroupContainer,
     StyledDataButtonPanelContainer,
 } from './app.styled';
+import { HotKeys } from 'react-hotkeys';
+import { DownloadButtonRef } from './page/canvas-panel/download-button';
+import { useShallow } from 'zustand/react/shallow';
 
 const ErrorAlert = styled.span`
     color: var(--main-danger);
@@ -62,8 +65,19 @@ const ResetButton = styled(OverlayButton)`
 `;
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const AppGlobalHotkeyMap = {
+    EXPORT: ['ctrl+d', 'command+d'],
+    IMPORT: ['ctrl+f', 'command+f'],
+    DOWNLOAD: ['ctrl+s', 'command+s'],
+};
 function App() {
-    const softMode = useSetting(state => state.setting.reduceMotionColor);
+    const {
+        allowHotkey,
+        softMode,
+    } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor } }) => ({
+        softMode: reduceMotionColor,
+        allowHotkey,
+    })));
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
@@ -109,6 +123,8 @@ function App() {
         finishCanvasRef,
         lightboxCanvasRef,
     });
+
+    const downloadButtonRef = useRef<DownloadButtonRef>(null);
 
     const [imageChangeCount, setImageChangeCount] = useState(0);
 
@@ -192,6 +208,49 @@ function App() {
         else documentClassList.remove('reduced-color-motion');
     }, [softMode]);
 
+    const importData = useCallback((event?: { preventDefault: () => void }) => {
+        if (!allowHotkey) return;
+
+        event?.preventDefault();
+        const cardData = window.prompt('Paste your card data here');
+        const setCard = useCard.getState().setCard;
+
+        if (cardData) {
+            const decodedCard = decodeCardWithCompatibility(cardData);
+            setCard(decodedCard);
+            setImageChangeCount(cnt => cnt + 1);
+            cardInputRef.current?.forceCardData(decodedCard);
+        }
+    }, [allowHotkey]);
+
+    const exportData = useCallback((event?: { preventDefault: () => void }) => {
+        if (!allowHotkey) return;
+
+        event?.preventDefault();
+        if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
+        const exportableCard = useCard.getState().card;
+
+        window.prompt(
+            'Save card data for later use',
+            `${compressCardData(exportableCard)}`,
+        );
+    }, [allowHotkey, sourceType]);
+
+    const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }) => {
+        if (!allowHotkey) return;
+
+        event?.preventDefault();
+        downloadButtonRef.current?.download();
+    }, [allowHotkey]);
+
+    const hotkeyHandlerMap = useMemo(() => {
+        return {
+            IMPORT: importData,
+            EXPORT: exportData,
+            DOWNLOAD: downloadFromHotkey,
+        };
+    }, [downloadFromHotkey, exportData, importData]);
+
     const alertDownloadError = useCallback(() => {
         setTainted(true);
         alert('Could not save card, please manually save it by right click the card → Choose "Save image as..."');
@@ -214,147 +273,135 @@ function App() {
     }, []);
 
     return (
-        <div id="app"
-            /** Prevent accidentally replace the page when dragging image into card art input. */
-            onDrop={() => { }}
-            style={{
-                backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
-                height: isMobileDevice() ? '-webkit-fill-available' : '100vh',
-                ...({
-                    '--card-height': `${CanvasConst.height}px`,
-                    '--card-width': `${CanvasConst.width}px`,
-                }),
-            }}
-        >
-            {ocgStyleFile && <link rel="stylesheet" type="text/css" href={ocgStyleFile} />}
-            <div
-                className={'app-container'}
+        <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
+            <div id="app"
+                /** Prevent accidentally replace the page when dragging image into card art input. */
+                onDrop={() => { }}
                 style={{
-                    backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/dark-denim-3.png")`,
+                    backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                    height: isMobileDevice() ? '-webkit-fill-available' : '100vh',
+                    ...({
+                        '--card-height': `${CanvasConst.height}px`,
+                        '--card-width': `${CanvasConst.width}px`,
+                    }),
                 }}
             >
-                {isInitializing && <StyledAppLoading className="app-loading">
-                    {error.length > 0
-                        ? <ErrorAlert>
-                            {error}
-                        </ErrorAlert>
-                        : 'Loading fonts and scripts...'}
-                </StyledAppLoading>}
-                {/* <div className="card-filter-panel"></div> */}
-                <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
-                    <StyledDataButtonPanelContainer className="data-button-panel">
-                        <div className="imexport">
-                            <button onClick={() => {
-                                if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
-                                const exportableCard = useCard.getState().card;
-
-                                window.prompt(
-                                    'Save card data for later use',
-                                    `${compressCardData(exportableCard)}`,
-                                );
-                            }}>Export Data</button>
-                            <button onClick={() => {
-                                const cardData = window.prompt('Paste your card data here');
-                                const setCard = useCard.getState().setCard;
-
-                                if (cardData) {
-                                    const decodedCard = decodeCardWithCompatibility(cardData);
-                                    setCard(decodedCard);
-                                    setImageChangeCount(cnt => cnt + 1);
-                                    cardInputRef.current?.forceCardData(decodedCard);
-                                }
-                            }}>Import Data</button>
-                        </div>
-                        <DownloadButton
-                            canvasMap={canvasMap}
-                            imageChangeCount={imageChangeCount}
-                            isTainted={isTainted}
-                            isInitializing={isInitializing}
-                            onDownloadError={alertDownloadError}
-                        />
-                        {isTainted && <div id="save-button-tainted" className="save-button-container">
-                            <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
-                        </div>}
-                    </StyledDataButtonPanelContainer>
-                    <div className="card-canvas-container">
-                        <StyledCardCanvasGroupContainer className="card-canvas-group">
-                            <Tooltip title="Reset">
-                                <ResetButton className="reset-button" onClick={() => {
-                                    const consent = window.confirm(
-                                        'This will reset your card information back to default, make sure you export the current data first!',
-                                    );
-
-                                    if (consent) {
-                                        const { setCard, card } = useCard.getState();
-                                        const defaultCard = getDefaultCard();
-                                        const contextualDefaultCardData = card.format === 'tcg'
-                                            ? defaultCard
-                                            : changeCardFormat(defaultCard, 'ocg');
-
-                                        setCard(contextualDefaultCardData);
-                                        setImageChangeCount(cnt => cnt + 1);
-                                        cardInputRef.current?.forceCardData(contextualDefaultCardData);
-                                    }
-                                }}>
-                                    <ClearOutlined />
-                                </ResetButton>
-                            </Tooltip>
-                            <Tooltip title="View full size">
-                                <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
-                                    <ZoomInOutlined />
-                                </LightboxButton>
-                            </Tooltip>
-                            <canvas id="export-canvas" key={canvasKey + 0.1} ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            {/** Overlay guarding seems very janky, cursor should suffix for now */}
-                            <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
-                                {/* <div className="canvas-guard-alert">Generating...</div> */}
+                {ocgStyleFile && <link rel="stylesheet" type="text/css" href={ocgStyleFile} />}
+                <div
+                    className={'app-container'}
+                    style={{
+                        backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/dark-denim-3.png")`,
+                    }}
+                >
+                    {isInitializing && <StyledAppLoading className="app-loading">
+                        {error.length > 0
+                            ? <ErrorAlert>
+                                {error}
+                            </ErrorAlert>
+                            : 'Loading fonts and scripts...'}
+                    </StyledAppLoading>}
+                    {/* <div className="card-filter-panel"></div> */}
+                    <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
+                        <StyledDataButtonPanelContainer className="data-button-panel">
+                            <div className="imexport">
+                                <Tooltip overlay={allowHotkey ? <>Ctrl-D / ⌘-D</> : null}>
+                                    <button onClick={exportData}>Export Data</button>
+                                </Tooltip>
+                                <Tooltip overlay={allowHotkey ? <>Ctrl-F / ⌘-F</> : null}>
+                                    <button onClick={importData}>Import Data</button>
+                                </Tooltip>
                             </div>
-                            {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
-                            <canvas id="specialFrameCanvas" key={canvasKey} ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
-                            <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />
-                            <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />
-                            <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={889} />
-                            <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={1037} />
-                            <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={1111} />
-                            <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="passwordCanvas" ref={passwordCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="creatorCanvas" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="stickerCanvas" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas id="finishCanvas" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                            <canvas className="crop-canvas" ref={artworkCanvasRef} />
-                            <canvas className="crop-canvas" ref={backgroundCanvasRef} />
-                        </StyledCardCanvasGroupContainer>
+                            <DownloadButton ref={downloadButtonRef}
+                                canvasMap={canvasMap}
+                                imageChangeCount={imageChangeCount}
+                                isTainted={isTainted}
+                                isInitializing={isInitializing}
+                                onDownloadError={alertDownloadError}
+                            />
+                            {isTainted && <div id="save-button-tainted" className="save-button-container">
+                                <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
+                            </div>}
+                        </StyledDataButtonPanelContainer>
+                        <div className="card-canvas-container">
+                            <StyledCardCanvasGroupContainer className="card-canvas-group">
+                                <Tooltip title="Reset">
+                                    <ResetButton className="reset-button" onClick={() => {
+                                        const consent = window.confirm(
+                                            'This will reset your card information back to default, make sure you export the current data first!',
+                                        );
+
+                                        if (consent) {
+                                            const { setCard, card } = useCard.getState();
+                                            const defaultCard = getDefaultCard();
+                                            const contextualDefaultCardData = card.format === 'tcg'
+                                                ? defaultCard
+                                                : changeCardFormat(defaultCard, 'ocg');
+
+                                            setCard(contextualDefaultCardData);
+                                            setImageChangeCount(cnt => cnt + 1);
+                                            cardInputRef.current?.forceCardData(contextualDefaultCardData);
+                                        }
+                                    }}>
+                                        <ClearOutlined />
+                                    </ResetButton>
+                                </Tooltip>
+                                <Tooltip title="View full size">
+                                    <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
+                                        <ZoomInOutlined />
+                                    </LightboxButton>
+                                </Tooltip>
+                                <canvas id="export-canvas" key={canvasKey + 0.1} ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                {/** Overlay guarding seems very janky, cursor should suffix for now */}
+                                <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
+                                    {/* <div className="canvas-guard-alert">Generating...</div> */}
+                                </div>
+                                {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
+                                <canvas id="specialFrameCanvas" key={canvasKey} ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
+                                <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />
+                                <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />
+                                <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={889} />
+                                <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={1037} />
+                                <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={1111} />
+                                <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="passwordCanvas" ref={passwordCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="creatorCanvas" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="stickerCanvas" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="finishCanvas" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas className="crop-canvas" ref={artworkCanvasRef} />
+                                <canvas className="crop-canvas" ref={backgroundCanvasRef} />
+                            </StyledCardCanvasGroupContainer>
+                        </div>
                     </div>
+                    {isInitializing === false && <CardInputPanel
+                        ref={cardInputRef}
+                        artworkCanvas={artworkCanvasRef.current}
+                        backgroundCanvas={backgroundCanvasRef.current}
+                        onSourceLoaded={rerenderAllImage}
+                        onCropChange={rerenderCardImage}
+                        onTainted={markTaintedImage}
+                    />}
                 </div>
-                {isInitializing === false && <CardInputPanel
-                    ref={cardInputRef}
-                    artworkCanvas={artworkCanvasRef.current}
-                    backgroundCanvas={backgroundCanvasRef.current}
-                    onSourceLoaded={rerenderAllImage}
-                    onCropChange={rerenderCardImage}
-                    onTainted={markTaintedImage}
-                />}
+                {/** Pixel perfect for card image */}
+                <Modal
+                    width="843px"
+                    wrapClassName="card-lightbox-overlay"
+                    visible={lightboxVisible}
+                    forceRender={true}
+                    onCancel={() => setLightboxVisible(false)}
+                    footer={null}
+                >
+                    <canvas key={canvasKey + 0.1}
+                        id="lightbox-canvas"
+                        ref={lightboxCanvasRef}
+                        width={CanvasWidth}
+                        height={CanvasHeight}
+                    />
+                </Modal>
+                <StyledByMe className="by-me">Made by Lauqerm</StyledByMe>
             </div>
-            {/** Pixel perfect for card image */}
-            <Modal
-                width="843px"
-                wrapClassName="card-lightbox-overlay"
-                visible={lightboxVisible}
-                forceRender={true}
-                onCancel={() => setLightboxVisible(false)}
-                footer={null}
-            >
-                <canvas key={canvasKey + 0.1}
-                    id="lightbox-canvas"
-                    ref={lightboxCanvasRef}
-                    width={CanvasWidth}
-                    height={CanvasHeight}
-                />
-            </Modal>
-            <StyledByMe className="by-me">Made by Lauqerm</StyledByMe>
-        </div>
+        </HotKeys>
     );
 }
 

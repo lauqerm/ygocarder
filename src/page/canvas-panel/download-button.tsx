@@ -1,7 +1,11 @@
-import { useRef } from 'react';
+import { notification } from 'antd';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { MasterDuelCanvas } from 'src/model';
-import { useCardExport, useMasterSeriDrawer } from 'src/service';
+import { useCardExport, useMasterSeriDrawer, useSetting } from 'src/service';
 
+export type DownloadButtonRef = {
+    download: () => void,
+}
 export type DownloadButton = {
     isTainted: boolean,
     isInitializing: boolean,
@@ -9,13 +13,14 @@ export type DownloadButton = {
     canvasMap: MasterDuelCanvas,
     onDownloadError: () => void,
 };
-export const DownloadButton = ({
+export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     isTainted,
     isInitializing,
     imageChangeCount,
     canvasMap,
     onDownloadError,
-}: DownloadButton) => {
+}, ref) => {
+    const allowHotkey = useSetting(state => state.setting.allowHotkey);
     const { onExport } = useMasterSeriDrawer(
         true,
         canvasMap,
@@ -40,9 +45,25 @@ export const DownloadButton = ({
         onDownloadError,
     });
 
+    useImperativeHandle(ref, () => ({
+        download: () => {
+            if (isTainted) {
+                notification.error({
+                    message: 'Your card is tainted, you must save manually',
+                    description: 'Right click the card → Choose "Save image as..."',
+                });
+                return;
+            }
+            onSave();
+            return;
+        }
+    }));
+
     if (isTainted) return null;
     return <div className="save-button-container">
         <div id="save-button-waiting" />
-        <button className="save-button" id="save-button-ready" onClick={() => onSave()}>Download</button>
+        <button className="save-button" id="save-button-ready" onClick={onSave}>
+            Download{allowHotkey ? <> (Ctrl-S / ⌘-S)</> : null}
+        </button>
     </div>;
-};
+});

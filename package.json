@@ -16,6 +16,7 @@
     "react": "^17.0.1",
     "react-color": "^2.19.3",
     "react-dom": "^17.0.1",
+    "react-hotkeys": "^2.0.0",
     "react-image-crop": "^8.6.6",
     "react-input-slider": "^6.0.0",
     "react-linear-gradient-picker": "^3.0.1",

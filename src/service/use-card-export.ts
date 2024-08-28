@@ -76,6 +76,11 @@ export const useCardExport = ({
 
     useEffect(() => {
         let relevant = true;
+        let confirmReload = (ev: Event) => {
+            ev.preventDefault();
+            console.log('hi');
+            return 'Leave right now may make you lose unsaved progress, proceed?';
+        };
         if (isInitializing === false) {
             localStorage.setItem('card-data', JSON.stringify(currentCard));
             localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
@@ -88,6 +93,7 @@ export const useCardExport = ({
             (async () => {
                 const canvasRef = drawCanvasRef.current;
                 if (canvasRef) {
+                    window.addEventListener('beforeunload', confirmReload);
                     document.getElementById('export-canvas')?.classList.remove('js-export-available');
                     document.getElementById('export-canvas-guard')?.setAttribute('style', '');
                     document.getElementById('save-button-waiting')?.setAttribute('style', 'display: block');
@@ -108,6 +114,7 @@ export const useCardExport = ({
                             document.getElementById('export-canvas')?.classList.add('js-export-available');
                             document.getElementById('export-canvas-guard')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
+                            window.removeEventListener('beforeunload', confirmReload);
 
                             if (pendingSave.current) {
                                 pendingSave.current = false;
@@ -120,6 +127,7 @@ export const useCardExport = ({
         }
 
         return () => {
+            window.removeEventListener('beforeunload', confirmReload);
             relevant = false;
         };
     });

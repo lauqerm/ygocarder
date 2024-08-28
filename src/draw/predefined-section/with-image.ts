@@ -41,7 +41,7 @@ export const drawStarIcon = async ({
                 leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
                 145,
             ];
-            await drawAsset(ctx, `sub-family/subfamily-${cardIcon}.png`, ...coordinate);
+            await drawAsset(ctx, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
             return await onStarDraw(coordinate);
         })
     );

@@ -54,8 +54,8 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
 
     useImperativeHandle(ref, () => ({
         setValue: ({ name, setId }) => {
-            if (name) nameInputRef.current?.setValue(name);
-            if (setId) setIdInputRef.current?.setValue(setId);
+            if (typeof name === 'string') nameInputRef.current?.setValue(name);
+            if (typeof setId === 'string') setIdInputRef.current?.setValue(setId);
         }
     }));
 

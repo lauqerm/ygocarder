@@ -130,15 +130,20 @@ export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline
 };
 
 /**
- * Trả về độ dài biểu kiến của phần head của ruby (không phụ thuộc scale).
- * * Ruby quá dài có thể chiếm dụng không gian hai bên của nó, nếu những bên này không có ruby hoặc ruby ít.
- * * Nếu token hiện tại có gap phải đủ lớn, footText của token kế tiếp sẽ dịch qua bên trái một khoảng để rebalance lại cự ly giữa các footText với nhau, headText vẫn giữ nguyên ("Beyond the Pendulum" OCG)
- * * Lượng chữ càng nhiều thì cự ly giữa các chữ càng khít lại. ("PenduLuMoon" OCG)
- * * Từ bên trái có thể được chiếm dụng, nhưng không thể bị đẩy dịch. ("Joyous Melffys" OCG)
- * * Furigana có thể tràn ra rìa trái để foot text canh chuẩn lề. ("Beyond the Pendulum" OCG)
- * * Furigana không bị nén ("Recette de Poisson (Fish Recipe)" OCG) cho đến khi độ dài chênh lệch giữa headText và footText quá lớn ("PenduLuMoon" OCG). Một số trường hợp khác ép headText lại để không vượt quá footText ("Number C92: Heart-eartH Chaos Dragon" OCG)
- * * Nếu cả câu chỉ có 1 token và token này có nhiều footLetter thì furigana nén lại để fit với footLetter ("Amaze Attraction Viking Vortex" OCG).
- * * Furigana không thể vượt qua các ký tự fixed width như bullet, ordinal. ("Pendulum Dimension" OCG)
+ * This function analyze head text of a token, and return various information: its width (same calculation rule with `analyzeToken`), alignment type, gap as well as drawing information (letter spacing and customized condense ratio).
+ * 
+ * @summary All ruby (head text) rules:
+ * * A token may or may not has head text.
+ * * Head text take space above foot text, if foot text still has space left, the token has negative gap. On the other hand if head text is too long it may growth out of foot text's vertical boundary (overflowing), in this case the token has positive gap.
+ * * Head text with positive gap may take negative gap from the previous token. Read knoweledge diagram for a visual presentation. They take available gap in such a way that head text never overlap with each other, and foot text also does not overlap with each other.
+ * * Foot text may got pushed around a bit so empty space is distributed uniformly ("Beyond the Pendulum" OCG). The current implementation cannot achieve such effect automatically, but only to a degree.
+ * * Head text above a single letter is always center-aligned. Head text above multiple letters is align using space-around distribution if it does not overflow, and center otherwise.
+ * * Head text that is way too long compare to its foot text underneath will be condensed and has negative letter spacing ("PenduLuMoon" OCG), in some cases make it completely unreadable.
+ * * Head text of the first token of a line can "spill" out of line's boundary. ("Beyond the Pendulum" OCG) Even if this is the case, all foot text must be perfectly aligned vertically.
+ * * Head text above a single letter will not be condensed ("Recette de Poisson (Fish Recipe)" OCG) unless forced to by special syntax.
+ * * Head text above multiple-letters foot text condeses with a slower rate than normal ("Number C92: Heart-eartH Chaos Dragon" OCG).
+ * * Head text above a whole line will be condensed so it does not overflow ("Amaze Attraction Viking Vortex" OCG).
+ * * Those letters does not have gap, and therefore does not allow head text to overflow over them: Bullet ●, ordinal letter lie ⑤ ("Pendulum Dimension" OCG).
  * */
 export const analyzeHeadText = ({
     footText, footTextWidth,
@@ -167,16 +172,21 @@ export const analyzeHeadText = ({
     const condenseHeadText = headTextLetterWidth / footTextWidth * sentenceXRatio;
     let alignCenterLetterSpacing = headTextSpacing;
     let internalXRatio = 0;
+    /** We use width ratio between head text (letters only) and foot text to determine that it is too long or not. For each ratio threshold, a different treatment is applied. */
     if (condenseHeadText <= 0.95) {
+        /** Most case fall to this category */
         alignCenterLetterSpacing = headTextSpacing;
     }
     else if (condenseHeadText <= 1.175) {
+        /** If the head text is a bit too long, we force all head text's letters to stay close together. Example like "EX" - Extra Deck in OCG. */
         alignCenterLetterSpacing = 0;
     }
     else if (condenseHeadText <= 1.575) {
+        /** If the head text is too long, we start to introduce negative spacing. Example like "S" - Synchro in OCG. */
         alignCenterLetterSpacing = headTextSpacing * -1/4;
     }
     else {
+        /** If the head text is way too long, not only we introduce negative spacing, but also condense the actual letter. "P" - Pendulum is a notorious example. */
         internalXRatio = 0.66;
         alignCenterLetterSpacing = headTextSpacing * -1/4;
     }
@@ -186,8 +196,8 @@ export const analyzeHeadText = ({
 
     const alignCenterHeadTextWidth = headTextLetterWidth * ((xRatio && !fitFootText)
         ? xRatio
-        : (!internalXRatio || fitFootText) ? 1 : internalXRatio)
-        + alignCenterLetterSpacing * (headText.length - 1);
+            : (!internalXRatio || fitFootText) ? 1 : internalXRatio)
+            + alignCenterLetterSpacing * (headText.length - 1);
     const alignEvenlyLetterSpacing = noHeadText ? 0 : (footTextWidth - headTextLetterWidth) / headText.length;
     const alignEvenlyHeadTextWidth = footTextWidth;
 
@@ -226,13 +236,14 @@ export const analyzeHeadText = ({
         trueHeadTextWidth,
         headTextWidth,
         /**
-         * Canh giữa nếu footText có 1 ký tự hoặc nếu headText canh giữa dài hơn footText, space-around trong trường hợp còn lại
-         * * `[gap][letter + spacing][gap]`
-         * * `[half-gap][letter][gap][letter][half-gap]`
+         * Simple visualization:
+         * * Center: `[gap][letter + spacing][gap]`
+         * * Space-around: `[half-gap][letter][gap][letter][half-gap]`
          */
         alignment,
-        /** * Gap dương, furigana chiếm thêm chỗ
-         * * Gap âm, furigana có thể nhường chỗ
+        /** 
+         * * Positive gap will take space from other.
+         * * Negative app allow other to use their space.
          */
         halfGap,
         headTextXRatio: alignment === 'center' ? internalXRatio : 0,
@@ -240,13 +251,14 @@ export const analyzeHeadText = ({
 };
 
 /**
- * Tính phần chiều dài bên trái đã mất (nếu có) do ảnh hưởng bởi gap phải. lostLeftWidth luôn dương.
- * * Nếu prevGap dương (đẩy phải)
- *    * Nếu curGap dương (đẩy trái): Không mất chiều dài
- *    * Nếu curGap âm (hút trái): Mất đi một phần bên trái, nhưng không quá phần chiều dài mà prevGap có thể cho
- * * Nếu prevGap âm (hút phải)
- *    * Nếu curGap dương (đẩy trái): Mất đi một phần bên trái, nhưng không quá những gì prevGap có thể nhận
- *    * Nếu curGap âm (hút trái): Không mất chiều dài
+ * Calculate the lost width from the left side of a token becaues of gap. This width is scalar and therefore ALWAYS positive. Visit knowledge diagram for a clearer visualization.
+ * 
+ * * If the previous gap is positive (push to their right):
+ *   * If current gap is positive (push to the left): No space is lost, they simply stand next to each other.
+ *   * If current gap is negative (previous token pull them): Current token lose some width, but no more than what the previous token can take.
+ * * If the previous gap is negative (pull the next token to them):
+ *   * If current gap is positive (push to the left): Current token lose some width, but no more than what the previous token can give.
+ *   * If current gap is negative (previous token pull them): No space is lost, they do not interfere with each other.
  */
 export const getLostLeftWidth = (prevGap: number, curGap: number) => {
     return prevGap >= 0

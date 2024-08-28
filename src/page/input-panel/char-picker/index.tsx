@@ -55,7 +55,6 @@ const StyledCharPickerContainer = styled.div`
             border: 1px solid var(--sub-level-1);
             border-radius: 0;
             padding: 0 var(--spacing);
-            height: 25px;
             + .ant-btn {
                 border-left-width: 0;
             }

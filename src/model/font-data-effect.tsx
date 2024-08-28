@@ -110,26 +110,26 @@ export const EffectFontData: Record<string, FontData> = {
     'ocg': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7, wordLetterSpacing: 0.09 },
-            { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 8, wordLetterSpacing: 0.09 },
+            { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7 },
+            { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 8 },
         ]
     },
     'ocg-stat': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7, wordLetterSpacing: 0.09 },
+            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
         ]
     },
     'ocg-type-stat': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6, wordLetterSpacing: 0.09 },
+            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6 },
         ]
     },
     'ocg-type': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7, wordLetterSpacing: 0.09 },
+            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
         ]
     },
 };
@@ -158,7 +158,6 @@ export const PendulumEffectFontData: Record<string, FontData> = {
                 lineHeight: 25.2,
                 headTextFontRatio: 0.325,
                 lineCount: 5,
-                wordLetterSpacing: 0.09,
             },
         ],
     },

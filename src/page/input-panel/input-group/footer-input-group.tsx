@@ -66,10 +66,10 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
 
     useImperativeHandle(ref, () => ({
         setValue: ({ password, creator, atk, def }) => {
-            if (atk) atkInputRef.current?.setValue(atk);
-            if (def) defInputRef.current?.setValue(def);
-            if (password) passwordInputRef.current?.setValue(password);
-            if (creator) creatorInputRef.current?.setValue(creator);
+            if (typeof atk === 'string') atkInputRef.current?.setValue(atk);
+            if (typeof def === 'string') defInputRef.current?.setValue(def);
+            if (typeof password === 'string') passwordInputRef.current?.setValue(password);
+            if (typeof creator === 'string') creatorInputRef.current?.setValue(creator);
         }
     }));
 

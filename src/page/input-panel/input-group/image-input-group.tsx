@@ -76,11 +76,13 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     }, [onCropChange, setCard]);
 
     useEffect(() => {
-        imageCropperRef.current?.setRatio(getArtCanvasCoordinate(isPendulum, opacity).ratio);
+        console.log('ImageInputGroup 2', getArtCanvasCoordinate(isPendulum, opacity).ratio);
+            imageCropperRef.current?.setRatio(getArtCanvasCoordinate(isPendulum, opacity).ratio);
     }, [opacity, isPendulum]);
 
     useImperativeHandle(ref, () => ({
         setValue: ({ art, artCrop }) => {
+            console.log('useImperativeHandle', art, artCrop);
             if (typeof art === 'string' && artCrop) {
                 imageCropperRef.current?.forceExternalSource(art, artCrop);
             }
@@ -96,7 +98,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         onCropChange={changeImageCrop}
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
-        defaultRatio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
+        ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
         beforeCropper={showExtraDecorativeOption
             ? <StyledImageRadioTrain
                 className="art-finish-checkbox fill-input-train"

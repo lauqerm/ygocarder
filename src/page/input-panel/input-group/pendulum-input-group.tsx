@@ -20,11 +20,14 @@ const StyledPendulumFrameInputContainer = styled.div`
     border-radius: var(--br-lg);
     .pendulum-frame-info-block {
         border-radius: 0 var(--br-lg) var(--br-lg) 0;
-        line-height: 1.25;
+        line-height: 2; // Alignment
         background-color: var(--main-level-4);
         min-width: 100px;
         overflow: hidden;
         border: var(--bw) solid var(--sub-level-1);
+        .frame-info-block-label {
+            padding: var(--spacing-px) var(--spacing-xs);
+        }
     }
     .pendulum-frame-label {
         display: inline-block;
@@ -33,7 +36,7 @@ const StyledPendulumFrameInputContainer = styled.div`
         border-right: none;
         padding: var(--spacing-px) var(--spacing-xs);
         border-radius: var(--br-lg) 0 0 var(--br-lg);
-        line-height: 1.25;
+        line-height: 2; // Alignment
         &:last-child {
             border-radius: var(--br-lg);
             border-right: var(--bw) solid var(--sub-level-1);
@@ -55,7 +58,9 @@ const StyledPendulumInputContainer = styled.div`
         .pendulum-checkbox {
             /** Alignment **/
             width: 95px;
+            line-height: 32px;
             text-align: right;
+            font-weight: 500;
             > span {
                 padding-right: 0;
             }

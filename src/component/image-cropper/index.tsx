@@ -26,6 +26,31 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
         1
     );
 }
+const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | null, ratio: number) => {
+    if (!image) return crop;
+    console.log('🚀 ~ normalizeCrop ~ crop:', crop, image.src);
+    const { width: cropWidth, height: cropHeight, x = 0, y = 0 } = crop;
+    if (x < 0) return { ...crop, x: 0 };
+    if (y < 0) return { ...crop, y: 0 };
+    const { naturalHeight, naturalWidth } = image;
+    const width = cropWidth ?? 0;
+    const height = cropHeight ?? 0;
+    /** Kiểm tra ratio hiện tại, nếu width và height đã ở ratio chuẩn, ta không tính toán lại để tránh tích lũy sai số */
+    const acceptableError = (naturalHeight > naturalWidth ? naturalHeight : naturalWidth) * 0.05;
+    const isRatioAcceptable = Math.abs(height * naturalHeight * ratio - width * naturalWidth) <= acceptableError;
+
+    return {
+        ...crop,
+        x: x < 0 ? 0 : x,
+        y: y < 0 ? 0 : y,
+        height: isRatioAcceptable
+            ? height
+            : width * image.naturalWidth /** Restore original size */
+                / ratio /** Get height with corresponding aspect ratio */
+                / image.naturalHeight /** Convert back to percent */,
+        aspect: ratio,
+    };
+};
 
 export type ImageCropperRef = {
     setRatio: (ratio: number) => void,
@@ -39,8 +64,8 @@ export type ImageCropper = {
     receivingCanvas?: HTMLCanvasElement | null,
     children?: React.ReactNode,
     beforeCropper?: React.ReactNode,
-    defaultRatio?: number,
     defaultCropInfo: Partial<ReactCrop.Crop>,
+    ratio: number,
     onSourceChange?: (source: string) => void,
     onSourceLoaded?: () => void,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
@@ -54,8 +79,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     receivingCanvas,
     children,
     beforeCropper,
-    defaultRatio = 1,
     defaultCropInfo,
+    ratio,
     onSourceLoaded = () => { },
     onSourceChange = () => { },
     onCropChange = () => { },
@@ -66,7 +91,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         // setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [redrawSignal, setRedrawSignal] = useState(0);
-    const [ratio, setRatio] = useState(defaultRatio);
+    // const [ratio, setRatio] = useState(defaultRatio);
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [inputMode, setInputMode] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
@@ -74,9 +99,16 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     const [error, setError] = useState<any>(null);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
-    const [crop, setCrop] = useState<Partial<ReactCrop.Crop>>(defaultCropInfo);
-    const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
+    const [crop, setCrop] = useState({
+        current: defaultCropInfo,
+        completed: null as ReactCrop.Crop | null,
+    });
+    // const [completedCrop, setCompletedCrop] = useState<ReactCrop.Crop | null>(null);
     const [isMigrated, setMigrated] = useState(defaultCropInfo.unit === '%');
+    const {
+        current: currentCrop,
+        completed: completedCrop,
+    } = crop;
 
     const applyOfflineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -93,12 +125,48 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         } else alert('No file uploaded');
     };
 
+    const pendingCrop = useRef({
+        source: '',
+        crop: null as Partial<ReactCrop.Crop> | null,
+    });
     const onLoad = useCallback((img: HTMLImageElement) => {
         setLoading(false);
         setError(null);
         onSourceLoaded();
         imgRef.current = img;
-    }, [onSourceLoaded]);
+        console.log('on load', img.src, pendingCrop.current.source, pendingCrop.current.crop, ratio);
+        if (img.src === pendingCrop.current.source && pendingCrop.current.crop) {
+            console.log('with pending', pendingCrop.current.crop, ratio);
+            const internalId = pendingId.current;
+            setTimeout(() => {
+                console.log('after pending', internalId, pendingId.current, pendingCrop.current.crop);
+                if (internalId !== pendingId.current || !pendingCrop.current.crop) return;
+                const normalizedCrop = normalizeCrop(pendingCrop.current.crop, img, ratio);
+                console.log('releasing', pendingCrop.current.crop, normalizeCrop(pendingCrop.current.crop, img, ratio));
+                setCrop({
+                    completed: normalizedCrop,
+                    current: normalizedCrop,
+                });
+                pendingCrop.current = {
+                    source: '',
+                    crop: null,
+                };
+            }, 250);
+        } else {
+            setTimeout(() => {
+            console.log('default');
+                setCrop(cur => {
+                    const normalizedCrop = normalizeCrop(cur.current, img, ratio);
+                        console.log('releasing default', cur.current, normalizeCrop(cur.current, img, ratio));
+
+                    return {
+                        completed: normalizedCrop,
+                        current: normalizedCrop,
+                    };
+                });
+            }, 250);
+        }
+    }, [onSourceLoaded, ratio]);
 
     const applyOnlineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
@@ -114,10 +182,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const image = imgRef.current;
         if (!completedCrop || !receivingCanvas || !image) return;
 
+        const { aspect: ratio } = completedCrop;
+
         /** Upsize canvas để nâng cao chất lượng ảnh */
         receivingCanvas.style.transform = 'scale(2)';
         const ctx = receivingCanvas.getContext('2d');
-        if (!ctx || ratio <= 0) return;
+        if (!ctx || typeof ratio !== 'number' || ratio <= 0) return;
 
         const { naturalHeight, naturalWidth } = image;
         const zoomX = naturalWidth / image.width;
@@ -210,33 +280,56 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             onCropChange(completedCrop, sourceType);
         }
         if (fitCropData) {
-            setCrop(fitCropData);
+            setCrop(cur => ({ ...cur, current: fitCropData }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, receivingCanvas, redrawSignal]);
 
+    useEffect(() => {
+        setCrop(cur => {
+            console.log('set ratio', ratio, imgRef.current, cur.current);
+            if (imgRef.current != null && cur.current) {
+                const newValue = normalizeCrop(cur.current, imgRef.current, ratio);
+                console.log('🚀 ~ useEffect ~ ratio:', ratio);
+                return {
+                    current: newValue,
+                    completed: newValue,
+                };
+            }
+            return cur;
+        });
+    }, [ratio]);
+
+    const pendingId = useRef(0);
     useImperativeHandle(forwardedRef, () => ({
         setRatio: ratio => {
-            setRatio(ratio);
-            setRedrawSignal(cur => cur + 1);
+            // setRatio(ratio);
+            // setRedrawSignal(cur => cur + 1);
         },
         forceExternalSource: (source, cropInfo) => {
-            const currentSourceType = sourceType === 'internal' ? internalSource : externalSource;
-            if (currentSourceType !== source) {
+            console.log('🚀 ~ useImperativeHandle ~ source, cropInfo:', source, cropInfo, `${sourceType}-${isMigrated}-${redrawSignal}`);
+            const currentSource = sourceType === 'internal' ? internalSource : externalSource;
+            if (currentSource !== source) {
                 setLoading(true);
                 setSourceType('external');
                 setInputMode('external');
                 onSourceChange(source);
                 setExternalSource(source);
             }
-            setRatio(cropInfo.aspect ?? 1);
+            // setRatio(cropInfo.aspect ?? 1);
             setMigrated(cropInfo.unit === '%');
-            setCrop(cropInfo);
-            setCompletedCrop(cropInfo);
-            // setRedrawSignal(cur => cur + 1);
+            pendingId.current += 1;
+            pendingCrop.current = {
+                source,
+                crop: cropInfo,
+            };
+            // setCrop(cropInfo);
+            // setCompletedCrop(cropInfo);
+            setRedrawSignal(cur => cur + 1);
         }
     }));
 
+    console.log('current', crop, completedCrop, externalSource, pendingCrop.current.crop);
     const isDownloadable = receivingCanvas && !isLoading && completedCrop?.width && completedCrop?.height;
     return (
         <div className={`card-image-cropper ${className}`}>
@@ -296,6 +389,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
                         <Input type="file" accept="image/*" onChange={applyOfflineSource} />
                         <hr />
+                        Offline image cannot be exported or auto-saved.
                     </div>
                 </div>
             </div>
@@ -313,6 +407,10 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         }}
                     onImageLoaded={onLoad}
                     onImageError={() => {
+                        pendingCrop.current = {
+                            source: '',
+                            crop: null,
+                        };
                         setError('Image error');
                         setLoading(false);
                         if (sourceType === 'external' && (externalSource ?? '') === '' && receivingCanvas) {
@@ -327,33 +425,17 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         }
                         // setCrossOrigin(undefined);
                     }}
-                    crop={crop}
+                    crop={currentCrop}
                     onChange={(cropData, percentCropData) => {
+                        if (pendingCrop.current.crop) return;
+                        console.log('🚀 ~ percentCropData:', percentCropData, pendingCrop.current.crop);
                         const image = imgRef.current;
 
                         if (isMigrated) {
-                            setCrop(() => {
-                                if (!image) return percentCropData;
-                                const { width: cropWidth, height: cropHeight, x = 0, y = 0 } = percentCropData;
-                                if (x < 0) return { ...percentCropData, x: 0 };
-                                if (y < 0) return { ...percentCropData, y: 0 };
-                                const { naturalHeight, naturalWidth } = image;
-                                const width = cropWidth ?? 0;
-                                const height = cropHeight ?? 0;
-                                /** Kiểm tra ratio hiện tại, nếu width và height đã ở ratio chuẩn, ta không tính toán lại để tránh tích lũy sai số */
-                                const acceptableError = (naturalHeight > naturalWidth ? naturalHeight : naturalWidth) * 0.05;
-                                const isRatioAcceptable = Math.abs(height * naturalHeight * ratio - width * naturalWidth) <= acceptableError;
-
+                            setCrop(cur => {
                                 return {
-                                    ...percentCropData,
-                                    x: x < 0 ? 0 : x,
-                                    y: y < 0 ? 0 : y,
-                                    height: isRatioAcceptable
-                                        ? height
-                                        : width * image.naturalWidth /** Restore original size */
-                                        / ratio /** Get height with corresponding aspect ratio */
-                                        / image.naturalHeight /** Convert back to percent */,
-                                    aspect: ratio,
+                                    ...cur,
+                                    current: normalizeCrop(percentCropData, image, ratio)
                                 };
                             });
                         }
@@ -365,32 +447,36 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                          * phải thích nghi lại. Nếu ratio đã là percent thì nghĩa là image đã được thích nghi.
                         */
                         else {
-                            setCrop(() => {
-                                if (!image) return cropData;
+                            setCrop(cur => {
+                                if (!image) return { ...cur, current: cropData };
                                 const oldHeightToWidthRatio = 300 / 375;
                                 const newHeightToWidthRatio = 400 / 300;
                                 const { width: imageWidth, height: imageHeight } = image;
                                 const isHeightRestricted = (imageHeight / imageWidth) >= oldHeightToWidthRatio;
 
-                                if (!isHeightRestricted) return percentCropData;
+                                if (!isHeightRestricted) return { ...cur, current: percentCropData };
                                 const newX = Math.min((cropData.x ?? 0) * newHeightToWidthRatio, imageWidth);
                                 const newY = Math.min((cropData.y ?? 0) * newHeightToWidthRatio, imageHeight);
                                 const newWidth = Math.min((cropData.width ?? 0) * newHeightToWidthRatio, imageWidth);
 
                                 return {
-                                    unit: '%',
-                                    x: newX / imageWidth * 100,
-                                    y: newY / imageHeight * 100,
-                                    width: newWidth / imageWidth * 100,
-                                    height: newWidth / (ratio ?? 1) / imageHeight * 100,
-                                    aspect: ratio,
+                                    ...cur,
+                                    current: {
+                                        unit: '%',
+                                        x: newX / imageWidth * 100,
+                                        y: newY / imageHeight * 100,
+                                        width: newWidth / imageWidth * 100,
+                                        height: newWidth / (ratio ?? 1) / imageHeight * 100,
+                                        aspect: ratio,
+                                    },
                                 };
                             });
                             setMigrated(true);
                         }
                     }}
                     onComplete={(_, percentData) => {
-                        setCompletedCrop(percentData);
+                        console.log('🚀 ~ onComplete ~ percentData:', percentData);
+                        if (!pendingCrop.current.crop) setCrop(cur => ({ ...cur, completed: percentData }));
                     }}
                     ruleOfThirds={true}
                     crossorigin={crossorigin}

@@ -69,7 +69,7 @@ export const createLineList = ({
                     + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0)
                 : 0;
             let tokenWidth = totalWidth / (unCompressedFlag > 0 ? baseXRatio : 1) + indent;
-            /** Last token is not allowed to become overflow (no known cases). */
+            /** Last token is not allowed to become overflow (no known cases said otherwise). */
             if (currentLineWidth + tokenWidth > scaledWidth) {
                 let line = wordList.join('').trim();
                 if (unCompressedFlag > 0) line = line + NB_UNCOMPRESSED_END;
@@ -102,6 +102,7 @@ export const createLineList = ({
             }
         }
 
+        /** If no more tokens left in the sentence, wrap them into the last line. */
         let line = wordList.join('').trim();
         if (unCompressedFlag > 0) line = line + NB_UNCOMPRESSED_END;
         if (unCompressedFlag < 0) line = NB_UNCOMPRESSED_START + line;

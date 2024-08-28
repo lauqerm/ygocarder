@@ -32,7 +32,7 @@ import {
 export const getLetterWidth = ({
     ctx,
     letter,
-    lastOfLine = false,
+    isLastOfLine = false,
     debug,
     fontStyle,
     xRatio,
@@ -40,7 +40,7 @@ export const getLetterWidth = ({
 }: {
     ctx: CanvasRenderingContext2D,
     letter: string,
-    lastOfLine?: boolean,
+    isLastOfLine?: boolean,
     fontStyle: string,
     xRatio: number,
     metricMethod?: MetricMethod,
@@ -73,7 +73,7 @@ export const getLetterWidth = ({
             Math.max(0.450, width * spacingRatio) * kerningScaleRatio,
         );
     let boundWidth = actualBoundWidth;
-    let offsetRatio = (lastOfLine
+    let offsetRatio = (isLastOfLine
         ? OCGLastOfLineOffsetMap[letter]
         : OCGOffsetMap[letter]) ?? 0;
 
@@ -106,7 +106,7 @@ export const getLetterWidth = ({
         boundWidth = actualBoundWidth * 2;
     }
     else if (OCGIncreasedWidthRegex.test(letter)) {
-        boundWidth = actualBoundWidth * 1.250 * (lastOfLine ? OCG_REDUCED_AT_END_LINE_RATIO : 1);
+        boundWidth = actualBoundWidth * 1.250 * (isLastOfLine ? OCG_REDUCED_AT_END_LINE_RATIO : 1);
     }
     else if (HiraganaRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.750);
@@ -144,7 +144,7 @@ export type TextDrawer = (props: {
     scaledBaseline: number,
 }) => void;
 /** 
- * Draw the letter with a provided worker. This function is affected by scaled canvas. It take true edge as paramter, but will pass scaled edge to the worker.
+ * Draw the letter with a provided worker. It take true edge as paramter, but will pass scaled edge to the worker.
  */
 export const drawLetter = ({
     ctx,

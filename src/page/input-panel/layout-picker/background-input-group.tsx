@@ -93,7 +93,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         onCropChange={changeBackgroundCrop}
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
-        defaultRatio={getArtCanvasCoordinate(isPendulum, opacity, backgroundType).ratio}
+        ratio={getArtCanvasCoordinate(isPendulum, opacity, backgroundType).ratio}
         beforeCropper={null}
     >
         {children}

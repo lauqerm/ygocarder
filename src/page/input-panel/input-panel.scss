@@ -41,6 +41,8 @@
         width: 100%;
         position: relative;
         z-index: 3;
+        height: 32px; // Alignment
+        align-content: center;
         .ant-input-affix-wrapper {
             outline: none !important;
             &:hover {
@@ -111,6 +113,7 @@
         display: grid;
         grid-template-columns: max-content 1fr;
         align-items: center;
+        padding-bottom: var(--spacing-sm);
     }
     .ant-checkbox-wrapper + .ant-checkbox-wrapper {
         margin-left: var(--spacing-xs);

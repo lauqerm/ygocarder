@@ -1,7 +1,7 @@
 import {
     FontData,
     BULLET_LETTER,
-    TCGLetterRegex,
+    TCGSpecialLetterRegex,
     OCGAlphabetRegex,
     MAX_LINE_REVERSE_INDENT,
     START_OF_LINE_ALPHABET_OFFSET,
@@ -29,8 +29,14 @@ import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from '
 import { createFontGetter } from 'src/util';
 import { getLetterWidth } from './letter';
 
-/** Trả về độ dài thực của token (không phụ thuộc vào scale), nếu thông số `xRatio` được truyền, các ký tự constant width như bullet
- * sẽ được phóng to lên tương ứng.
+/** 
+ * Return information of a token.
+ * @returns
+ *  * `totalWidth`: The width of the token based on xRatio. In the same fashion with `getLetterWidth`, we get the true width for scalable letter, and inverse-scaled width of a non-scalable letter. `totalWidth` does no include whitespaces since they are not calculate traditionally.
+ *  * `leftMostLetter`: The left most letter of a token (not counting control characters), there is a special treatment based on what is the left most letter of a token (mainly indentation).
+ *  * `spaceCount`: Number of whitespaces in a token, their width will be calculated afterward.
+ *  * `spaceAtEnd`: Whether or not the token end with a space, for example most of English word requires a whitespace between words, while Japanese does not. We also does not allow a line to end with a whitespace unless it is the last line.
+ *  * `rightGap`, `leftGap`: Gap of a token based on its overhead letters. The token may consist of multiple letters each with their own gap, so it is easy to see that right and left gap of a token is respectively left gap of the leftmost letter and right gap of the rightmost letter.
  */
 export const analyzeToken = ({
     ctx,
@@ -59,7 +65,7 @@ export const analyzeToken = ({
     if (!ctx || !rawToken) return {
         totalWidth: 0,
         leftMostLetter: '',
-        space: 0,
+        spaceCount: 0,
         spaceAtEnd: false,
         rightGap: 0,
         leftGap: 0,
@@ -97,82 +103,80 @@ export const analyzeToken = ({
     const token = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
     const letterSpacingRatio = 1 + letterSpacing / 2;
     let leftMostLetter = '';
-    /** Tính số đo của 1 token */
     let totalWidth = 0;
-    /** Số lượng khoảng trắng có trong token */
     let spaceCount = 0;
-    /** Ở cuối token có space hay không, vì trong một vài trường hợp ta bỏ space ở cuối */
     let spaceAtEnd = false;
-    const lastOfLine = nextToken === undefined;
-    /** Gap chừa lại được cho furigana của token, như vậy right gap của token này là left gap của token kế tiếp */
+    const isLastOfLine = nextToken === undefined;
+    /** The right gap of a token will influence the left gap of the next token */
     let currentRightGap = previousTokenGap ?? 0;
-    /** Bị ảnh hưởng bởi tokenRebalanceOffset */
+    /** Whether or not it is affected by rebalance calculation */
     let offsetable = false;
     let leftMostGap = 0;
-    /** 3 nhóm trong token:
-     * * Nhóm ruby
-     * * Ký tự lẻ
-     */
+
     const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
     for (let cnt = 0; cnt < fragmentList.length; cnt++) {
-        const isLeftmost = cnt === 0;
+        const isLeftmostFragment = cnt === 0;
         const fragment = fragmentList[cnt];
 
-        /** Symbol S/T không bị compress */
+        /** S/T symbol is unscalable (it does not condense no matter the ratio) */
         if (fragment === ST_ICON_SYMBOL) {
             currentRightGap = 0;
             const fragmentWidth = iconSymbolWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio;
-            if (isLeftmost) {
+
+            if (isLeftmostFragment) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
             }
         }
-        /** Bullet symbol không bị compress, tham khảo "Agave Dragon" */
+        /** Bullet symbol is unscalable ("Agave Dragon" OCG/TCG) */
         else if (fragment === BULLET_LETTER) {
             currentRightGap = 0;
             const fragmentWidth = bulletSymbolWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio;
-            if (isLeftmost) {
+
+            if (isLeftmostFragment) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
             }
         }
-        /** Copyright symbol © không bị compress */
+        /** Copyright symbol © is unscalable (creator text) */
         else if (/[©]/.test(fragment)) {
             currentRightGap = 0;
             applyLargerText(largeSymbolRatio);
             const fragmentWidth = ctx.measureText(fragment).width / xRatio;
             stopApplyLargerText();
-
             totalWidth += fragmentWidth * letterSpacingRatio;
-            if (isLeftmost) {
+
+            if (isLeftmostFragment) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
             }
         }
-        /** OCG Ordinal symbol không bị compress */
+        /** OCG Ordinal symbol is unscalable */
         else if (/[①-⑳]/.test(fragment)) {
             currentRightGap = 0;
             applyOrdinalFont();
             const fragmentWidth = ctx.measureText(fragment).width / xRatio;
             stopApplyOrdinalFont();
-
             totalWidth += fragmentWidth * letterSpacingRatio;
+
             spaceCount += 1;
-            if (isLeftmost) {
+            if (isLeftmostFragment) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
             }
         }
-        /** Cụm ruby cần tách đôi các phần */
+        /** Process ruby syntax */
         else if (RUBY_REGEX.test(fragment)) {
             const [footText, rubyType, headText = ''] = fragment.replaceAll(/{|}/g, '').split(/(\|+)/);
             const fitFootText = rubyType === '||';
+            /** Calculate foot text's width */
             const {
                 totalWidth: footTextWidth,
             } = analyzeToken({ ctx, token: footText, nextToken, xRatio, letterSpacing, previousTokenGap: 0, format, textData });
 
+            /** Calculate head text's width */
             applyFuriganaFont();
             const headTextLetterWidth = headText
                 .split('')
@@ -180,6 +184,7 @@ export const analyzeToken = ({
                 .reduce((acc, cur) => acc + cur, 0);
             stopApplyFuriganaFont();
 
+            /** Calculate gap */
             const { halfGap: baseHalfGap, headTextWidth } = analyzeHeadText({
                 headText,
                 headTextLetterWidth: headTextLetterWidth / xRatio,
@@ -204,41 +209,57 @@ export const analyzeToken = ({
             totalWidth += boundWidth - lostLeftWidth;
             spaceCount += 1;
 
-            if (isLeftmost) {
+            if (isLeftmostFragment) {
                 offsetable = true;
                 leftMostGap = leftGap;
                 leftMostLetter = footText[0];
             }
         }
-        // Ta assume các ký tự dùng symbol font trong whole word (ví dụ ";"), có độ dài tương ứng với font thường (chỉ khác hình dạng)
+        /** Process whole word. Because the font has contextual kerning, the width when we draw the whole word will be different compare to the width when we draw each letter next to each other, sometimes the different may become noticeable (for example in the word "AWA", there is a very noticeable distance between these letters), so we try to simulate that behavior. */
         else if (WholeWordRegex.test(fragment)) {
+            /** Whole word may have their own spacing ratio */
             const normalizedWordSpacingRatio = wordLetterSpacing
                 ? 1 + wordLetterSpacing / 2
                 : letterSpacingRatio;
             ctx.letterSpacing = `${(normalizedWordSpacingRatio - 1) * currentFont.getFontInfo().sizeAsNumber}px`;
+
             let remainFragment = fragment;
             let fragmentWidth = 0;
+            /** A simple algorithm to simulate contextual kerning, for each letter, we do these steps:
+             * * Split the current word into two part: The first letter and the rest of the word.
+             * * Calculate the width of a letter, then calculate the width of the remaining word.
+             * * By subtract them, we will have the actual width of a letter, when put into the word and affected by contextual kerning.
+             */
             while (remainFragment !== '') {
                 let currentLetter = remainFragment[0];
                 let nextRemainFragment = remainFragment.slice(1);
                 let actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                /** Square brackets ("[" and "]") may have different scaling */
                 if (SquareBracketLetterRegex.test(currentLetter)) {
                     applyScale(squareBracketRatio);
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     reverseScale(squareBracketRatio);
-                } else if (CapitalLetterRegex.test(currentLetter)) {
+                }
+                /** Captial letters may have different scaling */
+                else if (CapitalLetterRegex.test(currentLetter)) {
                     applyScale(capitalLetterRatio);
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     reverseScale(capitalLetterRatio);
-                } else if (NumberRegex.test(currentLetter)) {
+                }
+                /** Number letters may use different font, for the sake of simplicity, we assume that the font does not affect (too much) to the letter's width. In short, we assume that the letter "8" in font X have the same width with the letter "8" in font Y, just different shape. */
+                else if (NumberRegex.test(currentLetter)) {
                     applyNumberFont();
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     stopApplyNumberFont();
-                } else if (TCGLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                }
+                /** Special symbol in TCG card ("Evil☆Twin") may use different font, again we assume the letter have similar size. */
+                else if (TCGSpecialLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
                     applySymbolFont();
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     stopApplySymbolFont();
-                } else {
+                }
+                /** No special treatment for the usual letters */
+                else {
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                 }
                 fragmentWidth += actualLetterWidth;
@@ -252,14 +273,14 @@ export const analyzeToken = ({
             totalWidth += fragmentWidth - lostLeftWidth;
             currentRightGap = rightGap;
 
-            if (isLeftmost) {
+            if (isLeftmostFragment) {
                 leftMostGap = leftGap;
                 leftMostLetter = fragment[0];
             }
             ctx.letterSpacing = '0px';
         }
-        /** Một số ký tự dùng font đặc biệt */
-        else if (TCGLetterRegex.test(fragment) && fontStyle === 'tcg') {
+        /** Special symbol in TCG card ("Evil☆Twin") may use different font */
+        else if (TCGSpecialLetterRegex.test(fragment) && fontStyle === 'tcg') {
             applySymbolFont();
             const fragmentWidth = ctx.measureText(fragment).width * letterSpacingRatio;
             stopApplySymbolFont();
@@ -270,14 +291,14 @@ export const analyzeToken = ({
 
             totalWidth += fragmentWidth - lostLeftWidth;
             currentRightGap = rightGap;
-            if (isLeftmost) {
+
+            if (isLeftmostFragment) {
                 leftMostGap = leftGap;
                 leftMostLetter = fragment[0];
             }
         }
-        /** Các ký tự còn lại */
         else {
-            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, lastOfLine, fontStyle, metricMethod, xRatio });
+            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, isLastOfLine, fontStyle, metricMethod, xRatio });
             const fragmentWidth = boundWidth * letterSpacingRatio;
             const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);
             const rightGap = leftGap;
@@ -287,12 +308,12 @@ export const analyzeToken = ({
             currentRightGap = rightGap;
             if (
                 (format === 'ocg' || (format === 'tcg' && /\s+/.test(fragment)))
-                && NoSpaceRegex.test(fragment) !== true
+                && NoSpaceRegex.test(fragment) === false
             ) {
                 spaceCount += 1;
                 if (cnt === fragmentList.length - 1) spaceAtEnd = true;
             }
-            if (isLeftmost) {
+            if (isLeftmostFragment) {
                 leftMostGap = leftGap;
                 leftMostLetter = fragment[0];
             }
@@ -305,7 +326,7 @@ export const analyzeToken = ({
 
     return {
         totalWidth,
-        space: spaceCount,
+        spaceCount,
         spaceAtEnd,
         leftMostLetter,
         rightGap: currentRightGap,
@@ -315,9 +336,9 @@ export const analyzeToken = ({
 };
 
 /**
- * * Tính toán tổng không gian cho tất cả từ trong dòng (bao gồm cả bullet, special symbol, vv...)
- * * Lấy độ dài của line trừ cho tổng không gian kể trên, ta được không gian trống
- * * Chia không gian trống này vào giữa các từ (align justify)
+ * Analyze a line again after we split it with suitable ratio. Text in line are justify-aligned, so we will calculate the sum of width of all tokens, then distribute the remaining space to the amount of whitespaces in the line, that means each whitespace will have additional width add into them so that the line fit perfectly into the available space.
+ * 
+ * Special treatment for last line of a paragraph, because the last line may not be filled entirely unlike all the lines above, we will decide a threshold for them, if the remaining space is too large, we do not distribute them and just left the line as-is.
  */
 export const analyzeLine = ({
     ctx,
@@ -338,7 +359,7 @@ export const analyzeLine = ({
 }) => {
     const tokenList = tokenizeText(line);
     let totalContentWidth = 0;
-    let spaceCount = 0;
+    let lineSpaceCount = 0;
     let currentGap = 0;
 
     for (let cnt = 0, xRatio = baseXRatio; cnt < tokenList.length; cnt++) {
@@ -354,7 +375,7 @@ export const analyzeLine = ({
             continue;
         }
         const {
-            space,
+            spaceCount,
             totalWidth,
             spaceAtEnd,
             leftGap,
@@ -369,10 +390,10 @@ export const analyzeLine = ({
 
         currentGap = rightGap * xRatio;
         totalContentWidth += totalWidth * xRatio + indent;
-        spaceCount += space - (spaceAtEnd && nextToken === undefined ? 1 : 0);
+        lineSpaceCount += spaceCount - (spaceAtEnd && nextToken === undefined ? 1 : 0);
     }
-    const expectedSpaceWidth = spaceCount > 0 ? (width - totalContentWidth) / spaceCount : 0;
-    const extraSpace = isLast
+    const expectedSpaceWidth = lineSpaceCount > 0 ? (width - totalContentWidth) / lineSpaceCount : 0;
+    const spaceWidth = isLast
         ? format === 'tcg'
             ? expectedSpaceWidth > 1.500 ? 0 : expectedSpaceWidth
             : expectedSpaceWidth > 3.250 ? 0 : expectedSpaceWidth
@@ -380,6 +401,6 @@ export const analyzeLine = ({
 
     return {
         tokenList,
-        extraSpace,
+        spaceWidth,
     };
 };

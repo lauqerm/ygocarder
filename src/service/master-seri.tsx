@@ -113,7 +113,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(bottomFrame);
 
     const normalizedSubFamily = subFamily.toUpperCase();
-    const normalizedTypeAbility = typeAbility.map(text => text.trim()).join('/');
+    const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : '/');
     const statInEffect = pendulumFrame !== 'auto' || isPendulum
         ? !!(atk || def || (isLink && linkMap.length))
         : isMonster;
@@ -394,7 +394,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
 
             await drawAttribute();
             await drawAttributeFinish();
-            await drawStar();
+            if (!isLink) await drawStar();
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
             await drawPredefinedMark({
@@ -463,8 +463,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                 name,
                 format === 'tcg' ? 60 : 68, 115.5375,
                 attribute === NO_ATTRIBUTE
-                    ? (format === 'tcg' ? 690 : 674)
-                    : (format === 'tcg' ? 606 : 598),
+                    ? (format === 'tcg' ? 688 : 674)
+                    : (format === 'tcg' ? 608 : 598),
                 resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
                 { isSpeedSkill, format, cloneNode, frame, furiganaHelper },
             );
