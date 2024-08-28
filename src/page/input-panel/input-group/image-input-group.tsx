@@ -76,13 +76,11 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     }, [onCropChange, setCard]);
 
     useEffect(() => {
-        console.log('ImageInputGroup 2', getArtCanvasCoordinate(isPendulum, opacity).ratio);
             imageCropperRef.current?.setRatio(getArtCanvasCoordinate(isPendulum, opacity).ratio);
     }, [opacity, isPendulum]);
 
     useImperativeHandle(ref, () => ({
         setValue: ({ art, artCrop }) => {
-            console.log('useImperativeHandle', art, artCrop);
             if (typeof art === 'string' && artCrop) {
                 imageCropperRef.current?.forceExternalSource(art, artCrop);
             }

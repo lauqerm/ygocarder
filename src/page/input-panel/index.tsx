@@ -170,7 +170,6 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 creator, password,
             } = card;
 
-            console.log('reset', art, artCrop);
             imageInputGroupRef.current?.setValue({ art, artCrop });
             layoutPickerRef.current?.setValue({ ...opacity, background, backgroundCrop });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });

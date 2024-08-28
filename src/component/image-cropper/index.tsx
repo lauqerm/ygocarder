@@ -28,7 +28,6 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
 }
 const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | null, ratio: number) => {
     if (!image) return crop;
-    console.log('🚀 ~ normalizeCrop ~ crop:', crop, image.src);
     const { width: cropWidth, height: cropHeight, x = 0, y = 0 } = crop;
     if (x < 0) return { ...crop, x: 0 };
     if (y < 0) return { ...crop, y: 0 };
@@ -134,15 +133,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         setError(null);
         onSourceLoaded();
         imgRef.current = img;
-        console.log('on load', img.src, pendingCrop.current.source, pendingCrop.current.crop, ratio);
+        /** @todo Check if we really need timeout delay here */
         if (img.src === pendingCrop.current.source && pendingCrop.current.crop) {
-            console.log('with pending', pendingCrop.current.crop, ratio);
             const internalId = pendingId.current;
             setTimeout(() => {
-                console.log('after pending', internalId, pendingId.current, pendingCrop.current.crop);
                 if (internalId !== pendingId.current || !pendingCrop.current.crop) return;
                 const normalizedCrop = normalizeCrop(pendingCrop.current.crop, img, ratio);
-                console.log('releasing', pendingCrop.current.crop, normalizeCrop(pendingCrop.current.crop, img, ratio));
                 setCrop({
                     completed: normalizedCrop,
                     current: normalizedCrop,
@@ -154,10 +150,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             }, 250);
         } else {
             setTimeout(() => {
-            console.log('default');
                 setCrop(cur => {
                     const normalizedCrop = normalizeCrop(cur.current, img, ratio);
-                        console.log('releasing default', cur.current, normalizeCrop(cur.current, img, ratio));
 
                     return {
                         completed: normalizedCrop,
@@ -287,10 +281,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
     useEffect(() => {
         setCrop(cur => {
-            console.log('set ratio', ratio, imgRef.current, cur.current);
             if (imgRef.current != null && cur.current) {
                 const newValue = normalizeCrop(cur.current, imgRef.current, ratio);
-                console.log('🚀 ~ useEffect ~ ratio:', ratio);
                 return {
                     current: newValue,
                     completed: newValue,
@@ -307,7 +299,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             // setRedrawSignal(cur => cur + 1);
         },
         forceExternalSource: (source, cropInfo) => {
-            console.log('🚀 ~ useImperativeHandle ~ source, cropInfo:', source, cropInfo, `${sourceType}-${isMigrated}-${redrawSignal}`);
             const currentSource = sourceType === 'internal' ? internalSource : externalSource;
             if (currentSource !== source) {
                 setLoading(true);
@@ -329,7 +320,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         }
     }));
 
-    console.log('current', crop, completedCrop, externalSource, pendingCrop.current.crop);
     const isDownloadable = receivingCanvas && !isLoading && completedCrop?.width && completedCrop?.height;
     return (
         <div className={`card-image-cropper ${className}`}>
@@ -428,7 +418,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     crop={currentCrop}
                     onChange={(cropData, percentCropData) => {
                         if (pendingCrop.current.crop) return;
-                        console.log('🚀 ~ percentCropData:', percentCropData, pendingCrop.current.crop);
                         const image = imgRef.current;
 
                         if (isMigrated) {
@@ -475,7 +464,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         }
                     }}
                     onComplete={(_, percentData) => {
-                        console.log('🚀 ~ onComplete ~ percentData:', percentData);
                         if (!pendingCrop.current.crop) setCrop(cur => ({ ...cur, completed: percentData }));
                     }}
                     ruleOfThirds={true}

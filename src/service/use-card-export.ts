@@ -78,7 +78,6 @@ export const useCardExport = ({
         let relevant = true;
         let confirmReload = (ev: Event) => {
             ev.preventDefault();
-            console.log('hi');
             return 'Leave right now may make you lose unsaved progress, proceed?';
         };
         if (isInitializing === false) {

@@ -52,7 +52,6 @@ export const drawTypeAbilityText = ({
     ctx.font = fontGetter.getFont();
     ctx.textAlign = 'left';
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper });
-    console.log('🚀 ~ normalizedText:', normalizedText);
     const internalEffectiveMedian = condense(
         median => {
             const { currentLineCount, currentLineList } = createLineList({

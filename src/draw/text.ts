@@ -163,7 +163,6 @@ export const drawLine = ({
             : 0;
 
         let fragmentEdge = tokenEdge + indent;
-        console.log('🚀 ~ token:', token, fragmentEdge);
         let currentRightGap = previousTokenGap;
         let accumulatedSpace = 0;
         /** Độ dài tăng thêm do gap từ token trước đó */
