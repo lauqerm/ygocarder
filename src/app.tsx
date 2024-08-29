@@ -27,9 +27,18 @@ import {
     StyledCardCanvasGroupContainer,
     StyledDataButtonPanelContainer,
 } from './app.styled';
-import { HotKeys } from 'react-hotkeys';
+import { configure, HotKeys } from 'react-hotkeys';
 import { DownloadButtonRef } from './page/canvas-panel/download-button';
 import { useShallow } from 'zustand/react/shallow';
+
+configure({
+    ignoreTags: [],
+});
+const AppGlobalHotkeyMap = {
+    EXPORT: ['ctrl+d', 'command+d'],
+    IMPORT: ['ctrl+e', 'command+e'],
+    DOWNLOAD: ['ctrl+s', 'command+s'],
+};
 
 const ErrorAlert = styled.span`
     color: var(--main-danger);
@@ -65,11 +74,6 @@ const ResetButton = styled(OverlayButton)`
 `;
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
-const AppGlobalHotkeyMap = {
-    EXPORT: ['ctrl+d', 'command+d'],
-    IMPORT: ['ctrl+f', 'command+f'],
-    DOWNLOAD: ['ctrl+s', 'command+s'],
-};
 function App() {
     const {
         allowHotkey,
@@ -220,6 +224,8 @@ function App() {
             setCard(decodedCard);
             setImageChangeCount(cnt => cnt + 1);
             cardInputRef.current?.forceCardData(decodedCard);
+            /** Allow navigate input panel right away */
+            document.querySelector<HTMLElement>('.radio-train-input-group')?.focus();
         }
     }, [allowHotkey]);
 
@@ -307,7 +313,7 @@ function App() {
                                 <Tooltip overlay={allowHotkey ? <>Ctrl-D / ⌘-D</> : null}>
                                     <button onClick={exportData}>Export Data</button>
                                 </Tooltip>
-                                <Tooltip overlay={allowHotkey ? <>Ctrl-F / ⌘-F</> : null}>
+                                <Tooltip overlay={allowHotkey ? <>Ctrl-E / ⌘-E</> : null}>
                                     <button onClick={importData}>Import Data</button>
                                 </Tooltip>
                             </div>

@@ -7,6 +7,7 @@ import {
     CondenseTolerantMap,
     FontData,
     TCGVanillaTypeStatFontList,
+    DefaultTCGNormalFontData,
 } from '../../model';
 import { condense, createFontGetter } from '../../util';
 import { createLineList } from '../line';
@@ -31,8 +32,11 @@ export const getEffectSizeAndCoordinate = ({
     const fontDataKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
         .filter(entry => entry !== '').join('-');
 
-    const fontData = EffectFontData[fontDataKey];
-    if (statInEffect && typeInEffect && isNormal && format === 'tcg') fontData.fontList = TCGVanillaTypeStatFontList;
+    let fontData = EffectFontData[fontDataKey];
+    if (statInEffect && typeInEffect && isNormal && format === 'tcg') {
+        fontData = DefaultTCGNormalFontData;
+        fontData.fontList = TCGVanillaTypeStatFontList;
+    }
 
     return {
         fontData,

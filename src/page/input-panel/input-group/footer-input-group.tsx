@@ -95,9 +95,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
                 <div className="input-label">Password</div>
                 <IconButton
-                    containerProps={{
-                        onClick: () => passwordInputRef.current?.setValue(randomPassword())
-                    }}
+                    onClick={() => passwordInputRef.current?.setValue(randomPassword())}
                     Icon={SyncOutlined}
                     tooltipProps={{ overlay: 'Randomize' }}
                 />

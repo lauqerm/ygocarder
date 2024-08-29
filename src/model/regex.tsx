@@ -38,7 +38,7 @@ export const nonBreakableSymbolRegex = new RegExp(NON_BREAKABLE_SYMBOL_SOURCE);
 export const FLAVOR_CONDITION_SOURCE = `(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*${NB_WORD_OPEN}?\\([\\w\\W]+\\)${NB_WORD_CLOSE}?)\\s*$`;
 
 /** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
-export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]';
+export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]\\\\';
 export const TCGSpecialLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
@@ -84,10 +84,24 @@ export const OCGOffsetMap: Record<string, number> = {
     '｢': 0,
     '｣': 0,
     '：': 0.5,
+    '>': 0.25,
+    '<': -0.25,
 };
 export const OCGLastOfLineOffsetMap: Record<string, number> = {
     '。': -0.5,
     '：': -0.75,
+};
+export const OCGBoxSpacingRatioMap: Record<string, number> = {
+    '>': 0.125,
+    '<': 0.125,
+};
+export const TCGOffsetMap: Record<string, number> = {
+    '\\': -0.075,
+};
+export const TCGLastOfLineOffsetMap: Record<string, number> = {
+};
+export const TCGBoxSpacingRatioMap: Record<string, number> = {
+    '\\': 0.3,
 };
 
 export const OCG_REDUCED_AT_END_LINE_RATIO = 0.500;

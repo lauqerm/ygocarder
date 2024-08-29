@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHand
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {
-    PresetNameStyleList,
     PresetNameStyleMap,
     NameStyle,
     NameStyleType,
@@ -11,19 +10,18 @@ import {
     FrameInfo,
 } from '../../../model';
 import debounce from 'lodash.debounce';
-import { stringifyPalette, useRefresh } from 'src/util';
+import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import { NameFontOptionList } from '../const';
 import { StyledDropdown } from 'src/component';
 import {
-    StyledPredefinedContainer,
-    StyledPredefinedOption,
     StyledPatternContainer,
     StyledPatternOption,
     StyledPickerButton,
 } from './style-picker.styled';
 import { useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
+import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import './style-picker.scss';
 
 export type TextStylePickerRef = {
@@ -43,6 +41,9 @@ export const TextStylePicker = forwardRef(({
     showExtraDecorativeOption,
     onChange: undebouncedOnChange,
 }: TextStylePicker, ref: ForwardedRef<TextStylePickerRef>) => {
+    const optionGridRef = useRef<PredefinedOptionGridRef>(null);
+    const [focus, setFocus] = useState(-1);
+    const [predefinedDropdownVisible, setPredefinedDropdownVisible] = useState(false);
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
     const [customStyleSignal, sendCustomStyleSignal] = useRefresh();
@@ -98,70 +99,104 @@ export const TextStylePicker = forwardRef(({
     };
     const isStyleCustom = type === 'custom';
     const isStylePredefined = type === 'predefined';
-    return <div className="ant-input-group-wrapper name-color-input">
+    const optionInputContainerId = 'name-style-option-input-container';
+    const applyAutoStyle = () => {
+        setType('auto');
+        if (type !== 'auto') onChange('auto', value);
+    };
+    const applyPredefinedStyle = () => {
+        const presetValue = value.preset
+            ? PresetNameStyleMap[value.preset]?.value
+            : {};
+        setType('predefined');
+        setValue(cur => ({ ...cur, ...presetValue }));
+        onChange('predefined', { ...value, ...presetValue });
+    };
+    const applyCustomStyle = () => {
+        setType('custom');
+        if (type !== 'custom') onChange('custom', value);
+    };
+    return <div className="ant-input-group-wrapper text-style-input">
         <span className="ant-input-wrapper ant-input-group">
             <span className="ant-input-group-addon">Name Style</span>
             <span className="name-style-input-container">
-                <div className="ant-radio-group ant-radio-group-outline">
+                <div
+                    id={optionInputContainerId}
+                    className="ant-radio-group ant-radio-group-outline name-style-option-input-container"
+                    {...getNavigationProps({
+                        setFocus,
+                        optionLength: 3,
+                        onKeyPress: e => {
+                            if (focus === 1 && (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ')) {
+                                e.preventDefault();
+                                setFocus(1);
+                                setPredefinedDropdownVisible(true);
+                                /** Popover takes time to mount / become visible */
+                                setTimeout(() => {
+                                    if (focus === 1) optionGridRef.current?.focus();
+                                }, 200);
+
+                                return false;
+                            }
+                        },
+                        onTrigger() {
+                            if (focus === 0) applyAutoStyle();
+                            if (focus === 1) applyPredefinedStyle();
+                            if (focus === 2) applyCustomStyle();
+                        },
+                    })}
+                >
                     <label
-                        className={`ant-radio-wrapper ${type === 'auto' ? 'ant-radio-wrapper-checked' : ''}`}
-                        onClick={() => {
-                            setType('auto');
-                            if (type !== 'auto') onChange('auto', value);
-                        }}
+                        className={mergeClass(
+                            'ant-radio-wrapper',
+                            type === 'auto' && 'ant-radio-wrapper-checked',
+                            focus === 0 && 'ant-radio-focused',
+                        )}
+                        onClick={() => applyAutoStyle()}
                     >
                         <span className={`ant-radio ${type === 'auto' ? 'ant-radio-checked' : ''}`}>
-                            <input type="radio" className="ant-radio-input" value="auto" />
+                            <input tabIndex={-1} type="radio" className="ant-radio-input" value="auto" />
                             <span className="ant-radio-inner" />
                         </span>
                         <span className="ant-radio-label">Auto</span>
                     </label>
                     <span className="name-style-option-break" />
                     <label
-                        className={`ant-radio-wrapper ${isStylePredefined ? 'ant-radio-wrapper-checked' : ''}`}
-                        onClick={() => {
-                            const presetValue = value.preset
-                                ? PresetNameStyleMap[value.preset]?.value
-                                : {};
-                            setType('predefined');
-                            setValue(cur => ({ ...cur, ...presetValue }));
-                            onChange('predefined', { ...value, ...presetValue });
-                        }}
+                        className={mergeClass(
+                            'ant-radio-wrapper',
+                            isStylePredefined && 'ant-radio-wrapper-checked',
+                            focus === 1 && 'ant-radio-focused',
+                        )}
+                        onClick={() => applyPredefinedStyle()}
                     >
                         <Popover
+                            visible={predefinedDropdownVisible}
+                            onVisibleChange={setPredefinedDropdownVisible}
+                            trigger={['hover', 'click']}
                             placement="bottomLeft"
                             overlayClassName="predefined-picker-overlay"
                             content={<div className="overlay-event-absorber">
-                                <StyledPredefinedContainer>
-                                    {PresetNameStyleList.map(({ key, image, label }) => {
-                                        return <StyledPredefinedOption key={key}
-                                            className={`preset-item ${value.preset === key && isStylePredefined ? 'menu-active' : ''}`}
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                const presetValue = key
-                                                    ? PresetNameStyleMap[key]?.value
-                                                    : {};
-                                                setType('predefined');
-                                                setValue(cur => ({ ...cur, ...presetValue }));
-                                                onChange('predefined', { ...value, ...presetValue });
-                                            }}
-                                        >
-                                            {/** Tooltip currently is not really helpful, and gives poor UX */}
-                                            {/* <Tooltip title={label} placement="right"> */}
-                                            <img
-                                                className="preset-preview"
-                                                src={`${process.env.PUBLIC_URL}/${image}`}
-                                                alt={label}
-                                            />
-                                            {/* </Tooltip> */}
-                                        </StyledPredefinedOption>;
-                                    })}
-                                </StyledPredefinedContainer>
+                                <PredefinedOptionGrid ref={optionGridRef}
+                                    active={isStylePredefined}
+                                    value={value}
+                                    onCancel={() => {
+                                        setPredefinedDropdownVisible(false);
+                                        document.getElementById(optionInputContainerId)?.focus();
+                                    }}
+                                    onClick={({ key }) => {
+                                        const presetValue = key
+                                            ? PresetNameStyleMap[key]?.value
+                                            : {};
+                                        setType('predefined');
+                                        setValue(cur => ({ ...cur, ...presetValue }));
+                                        onChange('predefined', { ...value, ...presetValue });
+                                    }}
+                                />
                             </div>}
                         >
                             <span className="name-style-option-label">
                                 <span className={`ant-radio ${isStylePredefined ? 'ant-radio-checked' : ''}`}>
-                                    <input type="radio" className="ant-radio-input" value="predefined" />
+                                    <input tabIndex={-1} type="radio" className="ant-radio-input" value="predefined" />
                                     <span className="ant-radio-inner" />
                                 </span>
                                 <span className="ant-radio-label">Predefined</span>
@@ -170,15 +205,16 @@ export const TextStylePicker = forwardRef(({
                     </label>
                     <span className="name-style-option-break" />
                     <label
-                        className={`ant-radio-wrapper ${type === 'custom' ? 'ant-radio-wrapper-checked' : ''}`}
-                        onClick={() => {
-                            setType('custom');
-                            if (type !== 'custom') onChange('custom', value);
-                        }}
+                        className={mergeClass(
+                            'ant-radio-wrapper',
+                            isStyleCustom && 'ant-radio-wrapper-checked',
+                            focus === 2 && 'ant-radio-focused',
+                        )}
+                        onClick={() => applyCustomStyle()}
                     >
                         <span>
-                            <span className={`ant-radio ${type === 'custom' ? 'ant-radio-checked' : ''}`}>
-                                <input type="radio" className="ant-radio-input" value="custom" />
+                            <span className={`ant-radio ${isStyleCustom ? 'ant-radio-checked' : ''}`}>
+                                <input tabIndex={-1} type="radio" className="ant-radio-input" value="custom" />
                                 <span className="ant-radio-inner" />
                             </span>
                             <span className="ant-radio-label ant-radio-label-custom">Custom</span>

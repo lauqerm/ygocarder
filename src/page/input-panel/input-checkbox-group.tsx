@@ -58,6 +58,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
             className="input-1st"
             onChange={onFirstEditionChange}
             checked={isFirstEdition}
+            tabIndex={0}
         >
             {'1st Edition'}
         </Checkbox>
@@ -66,6 +67,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
                 className="input-speed"
                 onChange={onSpeedCardChange}
                 checked={isSpeedCard}
+                tabIndex={0}
             >
                 {'Speed'}
             </Checkbox>
@@ -75,6 +77,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
                 className="input-terminal"
                 onChange={onDuelTerminalCardChange}
                 checked={isDuelTerminalCard}
+                tabIndex={0}
             >
                 {'Duel Terminal'}
             </Checkbox>

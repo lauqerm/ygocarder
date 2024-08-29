@@ -10,6 +10,58 @@ import { FrameInfoMap } from 'src/model';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
+import { getNavigationProps } from 'src/util';
+
+type BottomFrameOptionGridRef = {
+    focus: () => void,
+};
+type BottomFrameOptionGrid = {
+    pendulumFrame: string,
+    frameList: ReturnType<typeof getFrameButtonList>,
+    onChange: (value: string | number) => void,
+    onCancel: () => void,
+};
+const BottomFrameOptionGrid = forwardRef<BottomFrameOptionGridRef, BottomFrameOptionGrid>(({
+    frameList,
+    pendulumFrame,
+    onChange,
+    onCancel,
+}, ref) => {
+    const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [focus, setFocus] = useState(0);
+
+    useImperativeHandle(ref, () => ({
+        focus: () => inputRef.current?.focus(),
+    }));
+
+    return <StyledPendulumFrameContainer
+        className="pendulum-frame-picker"
+        {...getNavigationProps({
+            stopPropagation: true,
+            optionLength: frameList.length,
+            setFocus,
+            onTrigger: () => {
+                if (focus >= 0) onChange(frameList[focus].value);
+            },
+            onCancel,
+        })}
+    >
+        <Checkbox ref={inputRef}
+            className="frame-auto-checkbox"
+            checked={pendulumFrame === 'auto'}
+            onChange={e => {
+                onChange(e.target.checked ? 'auto' : recentCustomPendulumFrame.current);
+            }}
+        >Auto</Checkbox>
+        <RadioTrain
+            className="frame-radio"
+            value={pendulumFrame}
+            onChange={onChange}
+            optionList={frameList}
+        />
+    </StyledPendulumFrameContainer>;
+});
 
 const StyledPendulumFrameInputContainer = styled.div`
     display: inline-flex;
@@ -18,6 +70,9 @@ const StyledPendulumFrameInputContainer = styled.div`
     vertical-align: bottom;
     box-shadow: var(--bs-button);
     border-radius: var(--br-lg);
+    &:focus-visible {
+        outline: 2px solid var(--focus);
+    }
     .pendulum-frame-info-block {
         border-radius: 0 var(--br-lg) var(--br-lg) 0;
         line-height: 2; // Alignment
@@ -121,8 +176,11 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         setCard,
         getUpdater,
     })));
+    const containerRef = useRef<HTMLDivElement>(null);
+    const bottomFrameOptionGridRef = useRef<BottomFrameOptionGridRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
     const [isMirrorScale, setMirrorScale] = useState(true);
+    const [frameDropdownVisible, setFrameDropdownVisibleVisible] = useState(false);
     const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
     const changeToPendulum = (e: any) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
@@ -164,7 +222,9 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     }));
 
     const currentPendulumFrame = FrameInfoMap[pendulumFrame];
-    return <StyledPendulumInputContainer className="pendulum-input">
+    return <StyledPendulumInputContainer
+        className="pendulum-input"
+    >
         <div className="joined-row pendulum-option">
             {frame !== 'link'
                 ? <Checkbox
@@ -174,29 +234,38 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 >Pendulum</Checkbox>
                 : <div className="pendulum-checkbox-placeholder" />}
             {showCreativeOption && <Popover
+                visible={frameDropdownVisible}
+                onVisibleChange={setFrameDropdownVisibleVisible}
+                trigger={['hover', 'click']}
                 placement="bottom"
                 overlayClassName="pendulum-frame-picker-overlay"
                 content={<div className="overlay-event-absorber">
-                    <StyledPendulumFrameContainer
-                        className="pendulum-frame-picker"
-                    >
-                        <Checkbox
-                            className="frame-auto-checkbox"
-                            checked={pendulumFrame === 'auto'}
-                            onChange={e => {
-                                changeBottomFrame(e.target.checked ? 'auto' : recentCustomPendulumFrame.current);
-                            }}
-                        >Auto</Checkbox>
-                        <RadioTrain
-                            className="frame-radio"
-                            value={pendulumFrame}
-                            onChange={changeBottomFrame}
-                            optionList={frameList}
-                        />
-                    </StyledPendulumFrameContainer>
+                    <BottomFrameOptionGrid ref={bottomFrameOptionGridRef}
+                        frameList={frameList}
+                        pendulumFrame={pendulumFrame}
+                        onCancel={() => {
+                            setFrameDropdownVisibleVisible(false);
+                            containerRef.current?.focus();
+                        }}
+                        onChange={changeBottomFrame}
+                    />
                 </div>}
             >
-                <StyledPendulumFrameInputContainer className="pendulum-frame-input">
+                <StyledPendulumFrameInputContainer ref={containerRef}
+                    className="pendulum-frame-input"
+                    tabIndex={0}
+                    onKeyDown={e => {
+                        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
+                            setFrameDropdownVisibleVisible(true);
+                            /** Popover takes time to mount / become visible */
+                            setTimeout(() => {
+                                bottomFrameOptionGridRef.current?.focus();
+                            }, 200);
+
+                            return false;
+                        }
+                    }}
+                >
                     <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
                     {currentPendulumFrame
                         ? <FrameInfoBlock className="pendulum-frame-info-block" {...currentPendulumFrame} />

@@ -2,9 +2,16 @@ import { css } from 'styled-components';
 
 export const InputTrainStyle = css`
     display: flex;
+    .checkbox-train-input-group,
     .radio-train-input-group {
         display: flex;
         flex: 1 1 auto;
+		&:focus-visible {
+			.radio-train-focused,
+			.checkbox-train-focused {
+				background-color: var(--main-level-3);
+			}
+		}
     }
     .ant-radio-button-wrapper {
         user-select: none;
@@ -19,13 +26,17 @@ export const InputTrainStyle = css`
 `;
 
 export const TrainGridStyle = css`
+    .checkbox-train-input-group,
     .radio-train-input-group {
 		display: flex;
 		flex-wrap: wrap;
 		column-gap: var(--spacing-xs);
 		row-gap: var(--spacing-xs);
 		box-shadow: none;
-		border-radius: none;
+		border-radius: 0;
+		&:focus-visible {
+			outline: 3px solid var(--focus); // +1 width size to account for shadow
+		}
 		.ant-radio-button-wrapper:first-child,
 		.ant-radio-button-wrapper:last-child {
 			border-radius: 0;

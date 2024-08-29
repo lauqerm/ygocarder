@@ -396,7 +396,7 @@ export const analyzeLine = ({
     const spaceWidth = isLast
         ? format === 'tcg'
             ? expectedSpaceWidth > 1.500 ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 3.250 ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > 3.650 ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {

@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { InputTrainStyle } from './input-train.styled';
+import { useState } from 'react';
+import { getNavigationProps } from 'src/util';
 
 const StyledCheckboxTrainContainer = styled.div`
     ${InputTrainStyle}
@@ -13,32 +15,55 @@ export type CheckboxTrain = {
 }
 export const CheckboxTrain = ({
     onChange,
-    value,
+    value: activeValue,
     optionList,
     children,
     className,
 }: CheckboxTrain) => {
+    const [focus, setFocus] = useState(-1);
+    const optionLength = optionList.length;
+
     return <StyledCheckboxTrainContainer
-        className={['ant-radio-group ant-radio-group-outline radio-train', className].join(' ')}
+        className={['ant-radio-group ant-radio-group-outline checkbox-train', className].join(' ')}
     >
         {children && <label className="standalone-addon ant-input-group-addon">{children}</label>}
-        <div className="radio-train-input-group">
-            {optionList.map(entry => {
-                const isChecked = Array.isArray(value) ? value.includes(`${entry.value}`) : false;
+        <div
+            className="checkbox-train-input-group"
+            {...getNavigationProps({
+                setFocus,
+                optionLength,
+                onTrigger: () => {
+                    const target = optionList[focus];
+                    if (target) {
+                        const isChecked = Array.isArray(activeValue) ? activeValue.includes(`${target.value}`) : false;
+                        onChange(isChecked
+                            ? activeValue.filter(currentValue => `${target.value}` !== currentValue)
+                            : [...activeValue, `${target.value}`]);
+                    }
+                },
+            })}
+        >
+            {optionList.map((entry, index) => {
+                const { label, value, props } = entry;
+                const isChecked = Array.isArray(activeValue) ? activeValue.includes(`${value}`) : false;
 
-                return <label key={entry.value}
-                    {...entry.props}
-                    className={`ant-radio-button-wrapper ${isChecked ? 'ant-radio-button-wrapper-checked' : ''}`}
+                return <label key={value}
+                    {...props}
+                    className={[
+                        'ant-radio-button-wrapper',
+                        isChecked ? 'ant-radio-button-wrapper-checked' : '',
+                        focus === index ? 'checkbox-train-focused' : '',
+                    ].join(' ')}
                     onClick={() => {
                         onChange(isChecked
-                            ? value.filter(currentValue => `${entry.value}` !== currentValue)
-                            : [...value, `${entry.value}`]);
+                            ? activeValue.filter(currentValue => `${value}` !== currentValue)
+                            : [...activeValue, `${value}`]);
                     }}
                 >
                     <span className={`ant-radio-button ${isChecked ? 'ant-radio-button-checked' : ''}`}>
                         <span className="ant-radio-button-inner"></span>
                     </span>
-                    <span className="label">{entry.label}</span>
+                    <span className="label">{label}</span>
                 </label>;
             })}
         </div>

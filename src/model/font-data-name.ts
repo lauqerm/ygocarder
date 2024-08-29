@@ -72,6 +72,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                 fontSize: 64,
                 headTextFontRatio: 0.190,
                 headTextSpacing: 3,
+                letterSpacing: -0.03,
                 lineCount: 1,
                 lineHeight: 64,
                 offsetY: 0,

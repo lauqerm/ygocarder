@@ -190,7 +190,7 @@ export const analyzeHeadText = ({
         internalXRatio = 0.66;
         alignCenterLetterSpacing = headTextSpacing * -1/4;
     }
-    if (fitFootText || xRatio) {
+    if (fitFootText || xRatio < 1) {
         alignCenterLetterSpacing = headTextSpacing;
     }
 

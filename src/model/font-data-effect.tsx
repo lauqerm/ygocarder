@@ -69,6 +69,13 @@ const DefaultTCGEffectFontData: FontData = {
     fontStyle: 'tcg',
     fontList: [],
 };
+export const DefaultTCGNormalFontData: FontData = {
+    ...DefaultEffectFontData,
+    font: '"stone-serif-regular"',
+    headTextHeightRatio: 0.750,
+    fontStyle: 'tcg',
+    fontList: [],
+};
 const DefaultOCGEffectFontData: FontData = {
     ...DefaultEffectFontData,
     font: '"Yu-Gi-Oh! DF Leisho 3"',
@@ -135,11 +142,11 @@ export const EffectFontData: Record<string, FontData> = {
 };
 
 export const TCGVanillaTypeStatFontList = [
-    { bulletSymbolWidth: 23, fontSize: 22.3, lineHeight: 24.9, lineCount: 6 },
-    { bulletSymbolWidth: 23, fontSize: 17.68, lineHeight: 21.5, lineCount: 7 },
-    { bulletSymbolWidth: 23, fontSize: 16.65, lineHeight: 18.8, lineCount: 8 },
-    { bulletSymbolWidth: 19, fontSize: 14.79, lineHeight: 16.7, lineCount: 9 },
-    { bulletSymbolWidth: 19, fontSize: 13.29, lineHeight: 15.0, lineCount: 10 },
+    { bulletSymbolWidth: 23, fontSize: 21.8, lineHeight: 24.9, lineCount: 6 },
+    { bulletSymbolWidth: 23, fontSize: 17.28, lineHeight: 21.5, lineCount: 7 },
+    { bulletSymbolWidth: 23, fontSize: 16.28, lineHeight: 18.8, lineCount: 8 },
+    { bulletSymbolWidth: 19, fontSize: 14.46, lineHeight: 16.7, lineCount: 9 },
+    { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10 },
 ];
 
 export const PendulumEffectFontData: Record<string, FontData> = {

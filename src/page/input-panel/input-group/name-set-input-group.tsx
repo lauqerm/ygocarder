@@ -79,9 +79,7 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
             addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
                 <div className="input-label">Set ID</div>
                 <IconButton
-                    containerProps={{
-                        onClick: () => setIdInputRef.current?.setValue(randomSetID(format))
-                    }}
+                    onClick={() => setIdInputRef.current?.setValue(randomSetID(format))}
                     Icon={SyncOutlined}
                     tooltipProps={{ overlay: 'Randomize' }}
                 />

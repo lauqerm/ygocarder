@@ -4,14 +4,18 @@ import {
     HiraganaRegex,
     KatakanaRegex,
     MetricMethod,
+    NoSpaceRegex,
+    OCGBoxSpacingRatioMap,
     OCGDotRegex,
+    OCGIncreasedLevel2WidthRegex,
     OCGIncreasedWidthRegex,
+    OCGLastOfLineOffsetMap,
     OCGNumberRegex,
     OCGOffsetMap,
-    OCGIncreasedLevel2WidthRegex,
     OCG_REDUCED_AT_END_LINE_RATIO,
-    OCGLastOfLineOffsetMap,
-    NoSpaceRegex,
+    TCGBoxSpacingRatioMap,
+    TCGLastOfLineOffsetMap,
+    TCGOffsetMap,
     nonBreakableSymbolRegex,
 } from 'src/model';
 
@@ -51,6 +55,15 @@ export const getLetterWidth = ({
         boundWidth: 0,
     };
 
+    const boxSpacingRatioMap = fontStyle === 'tcg'
+        ? TCGBoxSpacingRatioMap
+        : OCGBoxSpacingRatioMap;
+    const offsetMap = fontStyle === 'tcg'
+        ? TCGOffsetMap
+        : OCGOffsetMap;
+    const lastOfLineOffsetMap = fontStyle === 'tcg'
+        ? TCGLastOfLineOffsetMap
+        : OCGLastOfLineOffsetMap;
     const metric = ctx.measureText(letter);
     const {
         width,
@@ -66,25 +79,30 @@ export const getLetterWidth = ({
     const spacingRatio = metricMethod === 'name' || metricMethod === 'compact' || metricMethod === 'furigana'
             ? 0.046875
             : 0;
-    let letterBoxSpacing = metricMethod === 'furigana'
-        ? 0
-        : Math.min(
-            width * 0.075,
-            Math.max(0.450, width * spacingRatio) * kerningScaleRatio,
-        );
     let boundWidth = actualBoundWidth;
     let offsetRatio = (isLastOfLine
-        ? OCGLastOfLineOffsetMap[letter]
-        : OCGOffsetMap[letter]) ?? 0;
+        ? lastOfLineOffsetMap[letter]
+        : offsetMap[letter]) ?? 0;
 
-    if (fontStyle === 'tcg') return {
-        width,
-        actualBoundWidth,
-        boundWidth: width,
-        metric,
-        offsetRatio,
-    };
+    if (fontStyle === 'tcg') {
+        let letterBoxSpacing = (boxSpacingRatioMap[letter] ?? 0) * width;
 
+        return {
+            width,
+            actualBoundWidth,
+            boundWidth: width + 2 * letterBoxSpacing,
+            metric,
+            offsetRatio,
+        };
+    }
+
+    let letterBoxSpacing = (boxSpacingRatioMap[letter] ?? 0) * width
+        + (metricMethod === 'furigana'
+            ? 0
+            : Math.min(
+                width * 0.075,
+                Math.max(0.450, width * spacingRatio) * kerningScaleRatio,
+            ));
     let letterRatio = 1;
     let endLineRatio = 1;
     let standardMetricRatio = 1.000;

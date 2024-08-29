@@ -29,6 +29,11 @@
 			display: none;
 		}
 	}
+	.card-image-source-type-input {
+		.ant-radio-button-wrapper:focus-within {
+			background: var(--main-level-3);
+		}
+	}
 	.card-image-source-input {
 		flex: 1;
 		display: grid;

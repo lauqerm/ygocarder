@@ -8,14 +8,12 @@
     .foil-radio.radio-train {
         display: inline-flex;
     }
-    .card-opacity-input {
+    .card-layout-input {
         display: grid;
         grid-template-columns: var(--width-label) 1fr;
         margin-bottom: var(--spacing-sm);
-        .standalone-addon.ant-input-group-addon {
-            height: 25px; // Alignment
-            line-height: 20px;
-        }
+        align-content: center;
+        min-height: 32px; // Alignment
     }
     .main-info {
         display: flex;
@@ -37,11 +35,11 @@
             text-align: center;
         }
     }
-    .name-color-input {
+    .text-style-input {
         width: 100%;
         position: relative;
         z-index: 3;
-        height: 32px; // Alignment
+        min-height: 32px; // Alignment
         align-content: center;
         .ant-input-affix-wrapper {
             outline: none !important;

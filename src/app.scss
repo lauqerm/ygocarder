@@ -22,6 +22,7 @@ html {
     --main-level-1-active: #333333;
     --sub-level-1: #222222;
 
+    --focus: #70d9ff;
     --main-link: #27a9e6;
     --sub-link: #2badea;
     --main-active: #1890ff;
@@ -198,6 +199,10 @@ hr {
 /** Avoid annoying user agent style, should have use css reset? */
 input:-internal-autofill-selected {
     background-color: unset !important;
+}
+
+:focus-visible {
+    outline: 2px solid var(--focus);
 }
 
 /** Custom Scrollbar **/

@@ -21,8 +21,10 @@
 			grid-column: span 2;
 		}
 		.card-image-source-input-title,
+		.checkbox-train:not(.frame-radio),
 		.radio-train:not(.frame-radio) {
 			.ant-radio-group,
+			.checkbox-train-input-group,
 			.radio-train-input-group {
 				flex-wrap: wrap;
 				row-gap: var(--spacing-xxs);
@@ -68,7 +70,7 @@
 		.card-preview-panel {
 			flex: 0 0 500px;
 		}
-		.name-color-input .ant-radio-group label {
+		.text-style-input .ant-radio-group label {
 			.ant-radio-label {
 				display: inline-block;
 			}
@@ -81,7 +83,7 @@
 		.checkbox-input {
 			grid-column: span 1;
 		}
-		.name-color-input {
+		.text-style-input {
 			.style-picker {
 				display: flex;
 				margin-top: var(--spacing-xs);

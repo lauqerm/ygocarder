@@ -15,7 +15,7 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
                 const previewUrl = window.URL.createObjectURL(blob);
 
                 const anchor = document.createElement('a');
-                anchor.download = 'cropPreview.png';
+                anchor.download = 'crop-preview.png';
                 anchor.href = URL.createObjectURL(blob);
                 anchor.click();
 
@@ -332,12 +332,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
                                 tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
-                                iconProps={{
-                                    onClick: () => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)
-                                }}
+                                onClick={() => (isDownloadable && receivingCanvas)
+                                        && generateDownload(receivingCanvas, completedCrop)}
                             />
                         </span>
                         <Radio.Group
+                            className="card-image-source-type-input"
                             onChange={e => {
                                 const value = e.target.value;
                                 setInputMode(value);

@@ -87,7 +87,7 @@ export const FormattingHelpDrawer = () => {
                     <br />
                     The behavior may be differents based on the input.
                     <br />
-                    You can turn on/off hotkey usage in setting <SettingFilled />.
+                    You can turn on/off hotkey usage in Setting <SettingFilled />.
                 </p>
                 <h2>Non-breakable line</h2>
                 Wrap a line of text inside a <StyledCode>{'['}</StyledCode> and <StyledCode>{']'}</StyledCode> to prevent the text from breaking down into multiple lines.
@@ -183,9 +183,10 @@ export const FormattingHelpDrawer = () => {
         </Drawer>
         <Button
             className="formatting-help-button"
+            type="primary"
             onClick={() => {
                 setDrawerOpen(true);
-            }} type="primary"
+            }}
         >
             Formatting Help <BulbFilled />
         </Button>

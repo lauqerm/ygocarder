@@ -12,3 +12,16 @@
         height: 100%;
     }
 }
+.name-style-option-input-container {
+    &:focus-visible {
+        outline: none;
+        .ant-radio-label {
+            color: var(--sub-active);
+        }
+    }
+}
+.ant-radio-focused {
+    .ant-radio-inner {
+        outline: 2px solid var(--focus);
+    }
+}

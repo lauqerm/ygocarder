@@ -22,18 +22,36 @@ const StyledIconButtonContainer = styled.span`
 
 export type IconButton = {
     Icon: typeof SyncOutlined,
+    onClick: () => void,
     iconProps?: ExtractProps<typeof SyncOutlined>,
     tooltipProps: ExtractProps<typeof Tooltip>,
     containerProps?: React.HTMLAttributes<HTMLSpanElement>,
 }
 export const IconButton = ({
     Icon,
+    onClick,
     iconProps,
     tooltipProps,
     containerProps,
 }: IconButton) => {
+    const { className, onClick: customOnClick, onKeyDown, ...restContainerProps } = containerProps ?? {};
+
     return <Tooltip {...tooltipProps}>
-        <StyledIconButtonContainer {...containerProps} className={['icon-button', containerProps?.className ?? ''].join(' ')}>
+        <StyledIconButtonContainer
+            tabIndex={0}
+            {...restContainerProps}
+            onClick={e => {
+                onClick();
+                customOnClick?.(e);
+            }}
+            onKeyDown={e => {
+                onKeyDown?.(e);
+                if (e.key === 'Enter') {
+                    onClick();
+                }
+            }}
+            className={['icon-button', className ?? ''].join(' ')}
+        >
             <Icon {...iconProps} />
         </StyledIconButtonContainer>
     </Tooltip>;

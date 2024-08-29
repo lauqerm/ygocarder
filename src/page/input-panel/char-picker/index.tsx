@@ -122,7 +122,8 @@ export const CharPicker = ({
     //     target!.style.transform = transform;
     // }, []);
 
-    return <StyledCharPickerContainer className="char-picker-container">
+    /** No tabIndex here because this is not an essential input, but rather a QoL component */
+    return <StyledCharPickerContainer tabIndex={-1} className="char-picker-container">
         {<div id={'char-picker'} className="char-picker">
             {/* <div className="handler">
                 <EllipsisOutlined />
@@ -136,7 +137,11 @@ export const CharPicker = ({
                 'Ɐ',
                 'Я',
             ].map(entry => {
-                return <button key={entry} className="ant-btn" onClick={() => internalOnPick(entry)}>{entry}</button>;
+                return <button key={entry}
+                    tabIndex={-1}
+                    className="ant-btn"
+                    onClick={() => internalOnPick(entry)}
+                >{entry}</button>;
             })}
         </div>}
         {/* <Moveable

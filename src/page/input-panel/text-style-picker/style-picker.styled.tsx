@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const StyledPickerButton = styled.div<{ $active?: boolean, $softMode: boolean }>`
     background-color: var(--main-level-4);
     ${({ $active }) => $active ? 'border: var(--bw) solid var(--main-active);' : 'border: var(--bw) solid var(--sub-level-1);'}
-    padding: var(--spacing-px) var(--spacing-xs);
+    padding: var(--spacing-xxs) var(--spacing-xs);
     margin: calc(-1 * var(--spacing-xxs)) 0;
     border-radius: var(--br-lg);
     box-shadow: var(--bs-button);
@@ -70,6 +70,10 @@ export const StyledPredefinedContainer = styled(StyledDropdown.Container)`
     grid-template-columns: repeat(4, 120px);
     gap: var(--spacing-sm);
     padding: var(--spacing-xs);
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--focus) inset;
+    }
 `;
 export const StyledPredefinedOption = styled.div`
     line-height: 0;
@@ -80,6 +84,9 @@ export const StyledPredefinedOption = styled.div`
         &:hover {
             outline: var(--bw-lg) solid var(--sub-active);
         }
+    }
+    &.preset-item-focused {
+        outline: var(--bw-lg) solid var(--sub-active);
     }
     :hover {
         outline: var(--bw-lg) solid var(--sub-active);

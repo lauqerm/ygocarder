@@ -19,6 +19,9 @@ const StyledPostPendulumInputContainer = styled.div`
     align-items: center;
     .formatting-help-button {
         grid-area: help-button;
+        &:focus {
+            box-shadow: 0 0 0 2px var(--focus);
+        }
     }
     .input-kanji-helper {
         grid-area: input-helper;

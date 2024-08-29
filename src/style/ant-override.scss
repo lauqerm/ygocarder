@@ -47,6 +47,7 @@
     textarea,
     .ant-checkbox,
     .radio-train-input-group,
+    .checkbox-train-input-group,
     .ant-input-affix-wrapper {
         box-shadow: var(--bs-input);
     }
@@ -57,13 +58,16 @@
             border-color: var(--sub-active);
         }
     }
-    .radio-train .ant-radio-button-wrapper:first-child {
+    .radio-train .ant-radio-button-wrapper:first-child,
+    .checkbox-train .ant-radio-button-wrapper:first-child {
         border-radius: var(--br) 0 0 var(--br);
     }
-    .radio-train .ant-radio-button-wrapper:last-child {
+    .radio-train .ant-radio-button-wrapper:last-child,
+    .checkbox-train .ant-radio-button-wrapper:last-child {
         border-radius: 0 var(--br) var(--br) 0;
     }
     .radio-train-input-group,
+    .checkbox-train-input-group,
     .ant-input-affix-wrapper,
     .ant-input-wrapper .ant-input:first-child,
     .ant-input-wrapper .ant-input:last-child,
@@ -162,9 +166,12 @@ div.ant-slider {
 }
 
 .ant-checkbox-wrapper:hover .ant-checkbox-inner,
-.ant-checkbox:hover .ant-checkbox-inner,
-.ant-checkbox-input:focus + .ant-checkbox-inner {
+.ant-checkbox:hover .ant-checkbox-inner {
     border-color: var(--main-active);
+}
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+    border: 1px solid var(--sub-active);
+    box-shadow: 0 0 0 2px var(--sub-active);
 }
 .ant-checkbox-checked {
     &::after {

@@ -204,7 +204,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             </CheckboxTrain>}
         </div>
 
-        {showCreativeOption && <div className="card-opacity-input">
+        {showCreativeOption && <div className="card-layout-input">
             <label className="standalone-addon ant-input-group-addon">
                 Layout <Explanation
                     content={'May affect behavior of some finish types.'}

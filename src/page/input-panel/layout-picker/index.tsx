@@ -17,6 +17,8 @@ const StyledLayoutPickerContainer = styled.div`
     flex-wrap: wrap;
     column-gap: var(--spacing-sm);
     row-gap: var(--spacing-sm);
+    padding: 2px 0;
+    align-items: center;
     .slider-label,
     .ant-slider,
     .slider-padding {
@@ -27,7 +29,7 @@ const StyledLayoutPickerContainer = styled.div`
         display: inline-flex;
         column-gap: var(--spacing-xs);
         border-right: none;
-        padding: 0 var(--spacing-xs);
+        padding: var(--spacing-xxs) var(--spacing-xs);
         border-radius: var(--br) 0 0 var(--br);
         box-shadow: var(--bs-input);
     }
@@ -35,8 +37,8 @@ const StyledLayoutPickerContainer = styled.div`
         margin: 0;
         border-left: none;
         border-right: none;
-        height: 25px;
-        padding-top: 9px; // Alignment
+        height: 28px; // Alignment
+        padding-top: 11px; // Alignment
     }
     .slider-padding {
         border-left: none;
@@ -58,11 +60,14 @@ const StyledLayoutPickerContainer = styled.div`
             }
         }
     }
-    .ant-input-number {
-        height: 25px; // Alignment
+    .ant-input-number.ant-input-number-sm {
+        height: 28px; // Alignment
         width: unset;
         border-radius: 0;
         box-shadow: var(--bs-input);
+        .ant-input-number-input {
+            height: 26px; // Alignment
+        }
     }
     .background-preview {
         display: inline-block;
