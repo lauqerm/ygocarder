@@ -1,4 +1,4 @@
-/** Một số ký tự OCG sử dụng dạng halfwidth thay vì dạng fullwidth phổ thông và ngược lại, ta cần chủ động map lại. */
+/** Normalize various variant of a general letter into a single version for easier manage. For example OCG has their own version of full-width alphabet characters and digits. */
 export const tcgToOCGLetterMap: Record<string, string> = {
     '０': '0',
     '１': '1',
@@ -240,6 +240,7 @@ export const ocgNumberCircleMap: Record<string, string> = {
     '(20)': '⑳',
 };
 
+/** Automatically convert popular OCG terms into their TCG counterpart. Never introduce machine translation here :'( */
 export const ocgToTCGTermMap: Record<string, string> = {
     /** monster type */
     '水族': 'Aqua',
@@ -283,7 +284,7 @@ export const ocgToTCGTermMap: Record<string, string> = {
     '通常': 'Normal',
     '効果': 'Effect',
     '儀式': 'Ritual',
-    'フュージョン': 'Fusion', // Nằm trên vì có độ ưu tiên thấp hơn
+    'フュージョン': 'Fusion', // This is Fusion in Rush Duel, when we translate this map into TCG one these two entries will have the same "Fusion" key. We place this one above so it will got overwritten by the normal OCG text for Fusion in the master series.
     '融合': 'Fusion',
     'シンクロ': 'Synchro',
     'エクシーズ': 'Xyz',

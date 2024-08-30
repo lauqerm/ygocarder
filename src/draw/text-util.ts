@@ -49,6 +49,7 @@ export const getTextWorker = (
             .setSize(numberFontMemory.size)
             .getFont();
     };
+
     let symbolFontMemory = fontController.getFontInfo();
     const applySymbolFont = () => {
         symbolFontMemory = fontController.getFontInfo();
@@ -60,6 +61,7 @@ export const getTextWorker = (
             .setSize(symbolFontMemory.size)
             .getFont();
     };
+
     let ordinalFontMemory = fontController.getFontInfo();
     const applyOrdinalFont = () => {
         ordinalFontMemory = fontController.getFontInfo();
@@ -71,12 +73,15 @@ export const getTextWorker = (
             .setSize(ordinalFontMemory.size)
             .getFont();
     };
+
     const resetScale = () => {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     };
+
     const applyAsymmetricScale = (xRatio = 1, yRatio = 1) => {
         ctx.scale(xRatio, yRatio);
     };
+
     let furiganaFontMemory = fontController.getFontInfo();
     const applyFuriganaFont = (bold = false) => {
         furiganaFontMemory = fontController.getFontInfo();
@@ -89,12 +94,15 @@ export const getTextWorker = (
             .setSize(furiganaFontMemory.size)
             .getFont();
     };
+
     const applyScale = (xScale = 1, yScale = xScale) => {
         ctx.scale(xScale, yScale);
     };
+
     const reverseScale = (scaleValue = 1) => {
         ctx.scale(1 / scaleValue, 1 / scaleValue);
     };
+
     let largerTextFontMemory = fontController.getFontInfo();
     const applyLargerText = (fontRatio = 1) => {
         largerTextFontMemory = fontController.getFontInfo();
@@ -118,7 +126,10 @@ export const getTextWorker = (
     };
 };
 
-/** spaceAfter là khoảng trắng giữa bullet và ký tự kế tiếp, OCG không có khoảng trắng */
+/** We do not actually use the ● letter for bullet, instead we a draw a black circle with fixed size. Bullets not only does not condense, but also does not actually scale with font-size. They are the same size even if we use smaller font to add more lines ("Agave Dragon" TCG), this in turn prevent us from reducing the font size too small.
+ * 
+ * In TCG the space behind bullet is fixed, so multiple lines with bullet at the start will align perfectly, it is not seems to be the case in OCG.
+*/
 export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline: number, width: number, spaceAfter: number) => {
     const bulletRadius = (width - spaceAfter) / 2;
     ctx.beginPath();
@@ -143,7 +154,7 @@ export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline
  * * Head text above a single letter will not be condensed ("Recette de Poisson (Fish Recipe)" OCG) unless forced to by special syntax.
  * * Head text above multiple-letters foot text condeses with a slower rate than normal ("Number C92: Heart-eartH Chaos Dragon" OCG).
  * * Head text above a whole line will be condensed so it does not overflow ("Amaze Attraction Viking Vortex" OCG).
- * * Those letters does not have gap, and therefore does not allow head text to overflow over them: Bullet ●, ordinal letter lie ⑤ ("Pendulum Dimension" OCG).
+ * * Those letters do not have gap, and therefore do not allow head text to overflow over them: Bullet ●, ordinal letter lie ⑤ ("Pendulum Dimension" OCG).
  * */
 export const analyzeHeadText = ({
     footText, footTextWidth,

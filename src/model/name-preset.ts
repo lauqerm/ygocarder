@@ -252,7 +252,12 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
 };
 export const PresetNameStyleList = Object.values(PresetNameStyleMap);
 
-export const PatternMap: Record<string, { key: string, patternImage: string, blendMode: GlobalCompositeOperation, overrideFill?: boolean }> = {
+export const PatternMap: Record<string, {
+    key: string,
+    patternImage: string,
+    blendMode: GlobalCompositeOperation,
+    overrideFill?: boolean,
+}> = {
     none: {
         key: 'none',
         patternImage: '',

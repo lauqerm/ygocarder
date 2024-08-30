@@ -46,7 +46,7 @@ export const createLineList = ({
             const nextToken = tokenList[cnt + 1];
             /** Because NB_UNCOMPRESS control letters may affect multiple lines, but we want to reduce the dependencies between each line as much as possible (in other words, each line should not know about the line below or above it).
              * To solve this, we will automatically add a NB_UNCOMPRESS_END letter to the end of a sentence, if it has an unclosed NB_UNCOMPRESS_START letter somewhere. Then we will add a NB_UNCOMPRESS_START letter immediately at the start of the next line.
-             * Control letters does not get draw so this will not affect the calculation result.
+             * Control letters do not get draw so this will not affect the calculation result.
              */
             if (token === NB_UNCOMPRESSED_START) {
                 unCompressedFlag += 1;

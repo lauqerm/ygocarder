@@ -1,6 +1,7 @@
 // import { useCallback, useEffect, useState } from 'react';
 // import Moveable from 'react-moveable';
 // import { EllipsisOutlined } from '@ant-design/icons';
+import { Explanation } from 'src/component';
 import styled from 'styled-components';
 
 export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
@@ -42,10 +43,17 @@ export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
 
 const StyledCharPickerContainer = styled.div`
     z-index: 10;
+    display: inline-grid;
+    grid-template-columns: 1fr max-content;
+    align-items: center;
+    column-gap: var(--spacing-sm);
+    .char-picker-guideline {
+
+    }
     .char-picker {
         z-index: 1;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
         .handler,
         .ant-btn {
             background-color: var(--main-level-1);
@@ -144,6 +152,17 @@ export const CharPicker = ({
                 >{entry}</button>;
             })}
         </div>}
+        <div className="char-picker-guideline">
+            <Explanation
+                content={<>
+                    How to use:
+                    <ul>
+                        <li>At any text field, click at the position you want to insert.</li>
+                        <li>Click the letter.</li>
+                    </ul>
+                </>}
+            />
+        </div>
         {/* <Moveable
             target={target}
             container={null}

@@ -37,6 +37,7 @@ configure({
 const AppGlobalHotkeyMap = {
     EXPORT: ['ctrl+d', 'command+d'],
     IMPORT: ['ctrl+e', 'command+e'],
+    VIEW: ['ctrl+b', 'command+b'],
     DOWNLOAD: ['ctrl+s', 'command+s'],
 };
 
@@ -253,6 +254,7 @@ function App() {
         return {
             IMPORT: importData,
             EXPORT: exportData,
+            VIEW: () => setLightboxVisible(true),
             DOWNLOAD: downloadFromHotkey,
         };
     }, [downloadFromHotkey, exportData, importData]);
@@ -351,7 +353,10 @@ function App() {
                                         <ClearOutlined />
                                     </ResetButton>
                                 </Tooltip>
-                                <Tooltip title="View full size">
+                                <Tooltip title={<>
+                                    Original size
+                                    {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
+                                </>}>
                                     <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
                                         <ZoomInOutlined />
                                     </LightboxButton>

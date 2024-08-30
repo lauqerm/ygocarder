@@ -1,3 +1,15 @@
+/** Dicitionary that convert popular letters combination into a fragment block with (most of the time) corresponding furigana attached.
+ * 
+ * This is created based on pure survey only. Also this is based on regex, so do not add too many entries into this one. Around 300 would be a nice limit to stop, after all this is just a helper. There are much more rules and block words in practice that we basically have no way to collect and implement.
+ * 
+ * Each dicitionary entry has at most 4 fields.
+ *  * `shortForm`: Pure letters without decoration, act as the primary key in this dictionary.
+ *  * `regexForm`: Some words may blend inside fragment and will get falsely detected, especially English letter. For example "銀翼のAXE－サリー" OCG has letter X in its name, which maybe detected as Xyz Monster. Regex form will (try to) solve this problem.
+ *  * `rubyForm`: The full version of `shortForm`, with furigana and control characters attached.
+ *  * `rubyFormName`: In very rare case, the same `shortForm` has different treatment based on the section it belong in. This field (if existed) will be preferred when converting the name of the card.
+ * 
+ * Overall we want to sort this list based on the length of the shortForm, so we match larger entry first. For example, the letter "族" appears both as a standalone letter and in the word "種族", we naturally want to match the word "種族" first.
+ */
 export const ocgKeywordDataList = [
     {
         shortForm: '特殊召喚',
@@ -470,6 +482,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{取|と}り{除|ぞ}い',
     },
     {
+        shortForm: '除く',
+        rubyForm: '{除|のぞ}く',
+    },
+    {
         shortForm: '行う',
         rubyForm: '{行|おこな}う',
     },
@@ -854,6 +870,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '中',
         rubyForm: '{中|なか}',
+    },
+    {
+        shortForm: '加',
+        rubyForm: '{加|くわ}',
     },
     {
         shortForm: '選',

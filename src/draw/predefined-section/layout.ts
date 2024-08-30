@@ -16,6 +16,7 @@ const {
     pendulumStructureHeight,
     leftToPendulumStructure,
 } = CanvasConst;
+/** Various function used to draw the layout of a card is abstracted to this factory. */
 export const getLayoutDrawFunction = ({
     ctx,
     artworkCanvas,
@@ -90,7 +91,12 @@ export const getLayoutDrawFunction = ({
     const applyArtFinish = !boundless && artBorder;
 
     const resultAPI = {
-        /** Calculate new art coordination for creative mode, some configuration may result in the art getting drawn at different location compare to default one used by `drawArtwork` function */
+        /** Calculate new art coordination for creative mode, some configurations may result in the art getting drawn at different location compare to default one used by `drawArtwork` function. A lots of calculation is involved here since we:
+         * 
+         *  * Trying to draw only a portion of the image.
+         *  * The source image has totally different size compare to the destination boundary.
+         *  * Various anchor points must be located based on the current card layout. Kinda regret making this feature, but they work pretty well so.
+         */
         calculateCardArtRedrawCoordination(
             imageCanvas: HTMLCanvasElement,
             customOpacity?: CardOpacity,
@@ -139,14 +145,14 @@ export const getLayoutDrawFunction = ({
             };
         },
 
-        /** Main frame consists of top half and bottom half (for pendulum-like) card */
+        /** Main frame consists of top half and bottom half (for pendulum-like) card. */
         drawFrame: async () => {
             ctx.globalAlpha = opacityBody / 100;
             await drawAsset(ctx, `frame/frame-${frame}.png`, 0, 0);
             await drawAsset(ctx, `frame-pendulum/frame-pendulum-${bottomFrame}.png`, 0, 0);
             ctx.globalAlpha = 1;
         },
-        /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas */
+        /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas. */
         drawCardArt: () => {
             if (!artworkCanvas || !ctx) return;
             const { width: imageWidth, height: imageHeight } = artworkCanvas;
@@ -317,7 +323,7 @@ export const getLayoutDrawFunction = ({
                 30, 185,
             );
         },
-        /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied. */
+        /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied. In fact the effect border of speed skill is kinda buggy and not align really well, but we can't really do anything about it. Speed skill is also just a non-standard frame. */
         drawEffectBorder: async () => {
             if (!hasFoil && bottomFrame === 'speed-skill') {
                 await drawAsset(ctx, 'frame/effect-border-speed-skill.png', effectBoxX, effectBoxY);
@@ -434,7 +440,7 @@ export const getLayoutDrawFunction = ({
                 },
             );
         },
-        /** Unlike total overlay, this finish lies below card text (name, effect, etc...) */
+        /** Unlike total overlay, this finish layer lies below card text (name, effect, etc...) */
         drawOverlayFinish: async () => {
             await loopFinish(ctx, 'overlay', async overlayType => drawAsset(ctx, `finish/finish-${overlayType}-overlay.png`, 0, 0));
         },

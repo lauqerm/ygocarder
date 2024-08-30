@@ -7,6 +7,7 @@ import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
 import { drawAssetWithSize } from '../image';
 
+/** Small and medium size are used for type / ability text in effect box. Large type is used for "Spell/Trap type" under card's name. */
 const sizeMap: Record<string, number> = {
     small: 0,
     medium: 1,

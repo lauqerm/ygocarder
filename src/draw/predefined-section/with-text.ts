@@ -72,6 +72,7 @@ export const drawStatText = (
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 };
 
+/** Stats have two special case: "?" stat ("Slifer the Sky Dragon" TCG) and "∞" stat ("Divine Serpent Geh" Anime) */
 export const drawStat = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string | number,

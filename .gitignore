@@ -28,6 +28,7 @@ yarn-error.log*
 /project-font
 /project-image
 /backup
+/ygocarder
 
 # GIMP
 *.xcf

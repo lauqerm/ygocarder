@@ -8,7 +8,7 @@ import { GAP_PADDING_RATIO, RUBY_BONUS_RATIO } from 'src/model';
 /** Fill head text, by furigana rules, they have their own scaling space so they do not necessarily respect current ratio of the foot text. This function receive true coordinations.
  * 
  * Head text has four cases of compression:
- * * Case 1: They does not condense at all, this is the default case for single-letter foot text.
+ * * Case 1: They do not condense at all, this is the default case for single-letter foot text.
  * * Case 2: They condense with a smaller rate compare to foot text, this is the default case for multiple-letters foot text.
  * * Case 3: They condense because the head text is way wider than the foot text, especially in the case of single-letter foot text.
  * * Case 4: They condense because overflow mode is explicitly set to `condense` by compressable ruby syntax. This prevent them from growth out of foot text's boundary, and has the highest priority, but only apply in the case of multiple-letters foot text.

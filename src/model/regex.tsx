@@ -22,8 +22,8 @@ export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
 export const NB_UNCOMPRESSED_START = '⟬';
 export const NB_UNCOMPRESSED_END = '⟭';
-/** Loại bỏ tất cả ký tự control và furigana */
-export const FootTextRegex = new RegExp(`[${[
+/** Remove all control characters */
+export const NormalizeTextRegex = new RegExp(`[${[
     NB_WORD_OPEN,
     NB_WORD_CLOSE,
     NB_LINE_OPEN,
@@ -35,9 +35,10 @@ export const FootTextRegex = new RegExp(`[${[
 export const NON_BREAKABLE_SYMBOL_SOURCE = `${NB_WORD_OPEN}|${NB_WORD_CLOSE}`;
 export const nonBreakableSymbolRegex = new RegExp(NON_BREAKABLE_SYMBOL_SOURCE);
 
-export const FLAVOR_CONDITION_SOURCE = `(\n^[\r\t\f\v \u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]*${NB_WORD_OPEN}?\\([\\w\\W]+\\)${NB_WORD_CLOSE}?)\\s*$`;
+/** Pretty hard to automatically detect condition clause inside flavor text. We must assume that the clause is always put inside a parentheses (as official cards do). */
+export const FLAVOR_CONDITION_SOURCE = `(\\n^[\\r\\t\\f\\v \\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]*\\n${NB_WORD_OPEN}?\\([\\w\\W]+\\)${NB_WORD_CLOSE}?)\\s*$`;
 
-/** Không sử dụng cờ `g` vì cờ này sẽ advance internal state của regex khi test */
+/** Small reminder: `g` flag turn regex into stateful, and cannot be reused without reset it first. */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]\\\\';
 export const TCGSpecialLetterRegex = new RegExp(`[^${TCG_LETTER_JOINLIST}]`);
 
@@ -48,9 +49,7 @@ export const CHIISAI_KANA_JOINLIST = 'ヽヾーァィゥェォッャュョヮヵ
 export const ChiisaiRegex = new RegExp(`[${CHIISAI_KANA_JOINLIST}]`);
 
 export const OCG_RUBY_SOURCE = '{[^{}]+?}';
-/** Các ký tự sau không được ở đầu dòng, vậy nên ta nối nó với một ký tự phía trước */
 export const NOT_START_OF_LINE_SOURCE = `.[${CHIISAI_KANA_JOINLIST})\\]｝〕〉》」｣』】〙〗〟'"’”｠»‐゠–〜？!‼⁇⁈⁉・、:;,。.｡､]+`;
-/** Các ký tự sau không được ở cuối dòng, vậy nên ta nối nó với một ký tự phía sau. ● là ký tự đại diện cho bullet. */
 export const NOT_END_OF_LINE_SOURCE = '[(\\[｛〔〈《「｢『【〘〖〝\'"‘“｟«●]+.';
 export const NOT_SPLIT_SOURCE = '.[—...‥〳〴〵)]+[^\\s]';
 export const OCG_BULLET_SOURCE = '[①-⑳]：.';
@@ -79,8 +78,8 @@ const OCG_NO_OVERHEAD_GAP_JOINLIST = '：';
 export const OCGNoOverheadGapRegex = new RegExp(`[${OCG_NO_OVERHEAD_GAP_JOINLIST}]`);
 
 export const OCGOffsetMap: Record<string, number> = {
-    '。': 0,
-    '､': 0,
+    '。': -0.2,
+    '､': -0.2,
     '｢': 0,
     '｣': 0,
     '：': 0.5,
@@ -96,7 +95,7 @@ export const OCGBoxSpacingRatioMap: Record<string, number> = {
     '<': 0.125,
 };
 export const TCGOffsetMap: Record<string, number> = {
-    '\\': -0.075,
+    '\\': -0.025,
 };
 export const TCGLastOfLineOffsetMap: Record<string, number> = {
 };

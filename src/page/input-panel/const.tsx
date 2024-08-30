@@ -9,7 +9,7 @@ import {
     NO_ATTRIBUTE,
     NO_ICON,
 } from '../../model';
-import { ArtFinishMap, FinishMap } from 'src/model/finish';
+import { ArtFinishMap, FinishMap } from 'src/model/foil-finish';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';

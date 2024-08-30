@@ -11,7 +11,7 @@ export const BackgroundTypeList = [
 export type BackgroundType = typeof BackgroundTypeList[0]['value'];
 
 /**
- * @summary
+ * @summary About x y headache.
  * 
  * * Normal (True): Actual position / size on the card. If the coordinate / size is multiplied by a ratio, it is likely a normal value.
  * * Scaled: Position or size on a hypothesis (scaled) canvas. For example a 1000px wide canvas with scaleX of 0.5 can be treated as a 2000px wide canvas with scaleX of 1. So draw a point at x 50 in this hypothesis canvas will result an actual point at x = 25. If the coordinate / size is divided by a ratio, it is likely a scaled value.
@@ -38,7 +38,7 @@ export type MasterDuelCanvas = {
     lightboxCanvasRef: React.RefObject<HTMLCanvasElement>,
 };
 
-/** Các thông số được làm tròn thay vì upscale để đảm bảo độ mịn */
+/** Some coordination data must be rounded into nearest integer so it does not create those janky ghost pixels. */
 export const CanvasConst = {
     width: 813,
     height: 1185,
@@ -78,6 +78,7 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 1.325,
         type: 'pendulum' as const,
     },
+    /** Normal distribution, with artwork extends under effect's box. */
     extendedCard: {
         artFinishX: 100,
         artFinishY: 219,
@@ -87,6 +88,7 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 0.775,
         type: 'extendedCard' as const,
     },
+    /** Pendulum distribution, with artwork extends under pendulum effect's box and effect's box. */
     extendedPendulum: {
         artFinishX: 56,
         artFinishY: 213,
@@ -96,6 +98,7 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 0.775,
         type: 'extendedPendulum' as const,
     },
+    /** Pendulum distribution, with artwork extends under pendulum effect's box. It is actually the "default" mode of pendulum cards in practices. But most of the time the artwork only cut the visible image part because it is very hard to find the full image of a card unless an official source provide it. */
     truePendulum: {
         artFinishX: 56,
         artFinishY: 213,
@@ -105,6 +108,7 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 1.057,
         type: 'truePendulum' as const,
     },
+    /** Normal distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
     fullCard: {
         artFinishX: 100,
         artFinishY: 219,
@@ -114,6 +118,7 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 0.670,
         type: 'fullCard' as const,
     },
+    /** Pendulum distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
     fullPendulum: {
         artFinishX: 56,
         artFinishY: 213,

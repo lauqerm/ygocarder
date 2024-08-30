@@ -29,6 +29,7 @@
     "zustand": "^4.5.2"
   },
   "resolutions": {
+    "@babel/core": "7.25.2",
     "@types/react": "17.0.80",
     "react-error-overlay": "6.0.9"
   },
@@ -61,6 +62,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.0-placeholder-for-preset-env.2",
     "@types/jest": "^26.0.19",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^14.14.16",

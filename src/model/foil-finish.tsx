@@ -5,6 +5,8 @@ const type8CommonInstruction: FinishInstruction[] = [
     { blendMode: 'multiply', opacity: 0.55 },
 ];
 
+/** @summary Web engine has less blend mode than photoshop (or any desktop image manipulators for that matter), the behavior of similar blend mode is also different a lot of time, so we currently we cannot have a 1:1 conversion between photoshop layer into canvas. */
+
 export type FinishInformation = {
     value: string,
     label: React.ReactNode,
@@ -132,3 +134,22 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
         },
     },
 };
+
+export const FoilList = [
+    {
+        name: 'normal' as const,
+        label: 'None',
+        color: '#747b95',
+    },
+    {
+        name: 'gold' as const,
+        label: 'Gold',
+        color: '#cfa65f',
+    },
+    {
+        name: 'platinum' as const,
+        label: 'Platinum',
+        color: '#b1b1b1',
+    },
+];
+export type Foil = typeof FoilList[0]['name'];

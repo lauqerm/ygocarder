@@ -23,7 +23,7 @@ export const drawStarIcon = async ({
     const starCount = Math.min(13, star);
     const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
     const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
-    /** Level 13 được canh giữa thay vì canh từ một trong hai lề */
+    /** Level / Rank 13 is center-aligned. */
     const leftEdge = starCount <= 12
         ? reverseAlign
             ? 85.9125 - starWidth
@@ -60,7 +60,7 @@ export const drawSticker = async ({
     return drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
 };
 
-/** Duel terminal mark and Speed card mark */
+/** Duel terminal mark and Speed card mark. They overlap if draw together, so we make them mutually exclusive. Maybe it is not worth the effort. */
 export const drawPredefinedMark = async ({
     ctx,
     type,

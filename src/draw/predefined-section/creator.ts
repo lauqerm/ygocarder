@@ -38,6 +38,7 @@ export const drawCreatorText = ({
     const { font } = fontData;
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
 
+    /** Calculation */
     let textData = {
         fontLevel: 0,
         fontData,
@@ -81,6 +82,8 @@ export const drawCreatorText = ({
         textData = internalTextData;
         if (internalEffectiveMedian >= 1000) break;
     }
+
+    /** Drawing */
     const xRatio = internalEffectiveMedian / 1000;
     const yRatio = 1;
     ctx.scale(xRatio, yRatio);

@@ -71,7 +71,6 @@ export const getLetterWidth = ({
         actualBoundingBoxRight,
     } = metric;
     const actualBoundWidth = actualBoundingBoxLeft + actualBoundingBoxRight;
-    // const boundRatio = actualBoundWidth / width;
     let kerningScaleRatio = 1;
     if (metricMethod === 'name') {
         kerningScaleRatio = 1 + (1 - xRatio) * 8;

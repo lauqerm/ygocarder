@@ -1,4 +1,4 @@
-import { notification } from 'antd';
+import { notification, Tooltip } from 'antd';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { MasterDuelCanvas } from 'src/model';
 import { useCardExport, useMasterSeriDrawer, useSetting } from 'src/service';
@@ -62,8 +62,10 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     if (isTainted) return null;
     return <div className="save-button-container">
         <div id="save-button-waiting" />
-        <button className="save-button" id="save-button-ready" onClick={onSave}>
-            Download{allowHotkey ? <> (Ctrl-S / ⌘-S)</> : null}
-        </button>
+        <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
+            <button className="save-button" id="save-button-ready" onClick={onSave}>
+                Download
+            </button>
+        </Tooltip>
     </div>;
 });

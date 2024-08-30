@@ -16,6 +16,7 @@ import { analyzeLine } from '../text-analyze';
 import { normalizeCardText, splitEffect } from '../text-normalize';
 import { tokenizeText } from '../text-util';
 
+/** Sections inside effect box (stats and type) will affect the amount of line and applicaable font size use for the text. */
 export const getEffectSizeAndCoordinate = ({
     format,
     isNormal,
@@ -70,7 +71,7 @@ export const drawEffect = ({
     if (!ctx || !content) return effectSizeLevel;
 
     const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
-    const tolerantPerSentence: Record<string, number> = format === 'tcg'
+    const tolerancePerSentence: Record<string, number> = format === 'tcg'
         ? CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
         : {
             '1': 800,
@@ -83,16 +84,12 @@ export const drawEffect = ({
         fullLineList,
     } = splitEffect(normalizedContent, isNormal);
 
-    /**
-     * Line không thuộc effect bao gồm:
-     * * Material của Extra Deck monster
-     * * Flavor condition của Normal monster
-     */
     const additionalLineCount = (fullLineList.length ?? 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
     const paragraphList = effectText ? effectText.split('\n') : [];
 
     const { font, fontList } = fontData;
     const yRatio = 1;
+    /** We basically go through each font size, then iterating the content multiple time with different condense ratio until the text is both fit inside the max amount of lines AND the ratio is larger than the current limit threshold. */
     while (effectSizeLevel < fontList.length) {
         const fontSizeData = fontList[effectSizeLevel];
         const {
@@ -100,7 +97,11 @@ export const drawEffect = ({
             lineHeight,
             lineCount,
         } = fontSizeData;
-        const { trueEdge, trueWidth: trueWidthStart, trueBaseline: trueBaselineStart } = sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1];
+        const {
+            trueEdge,
+            trueWidth: trueWidthStart,
+            trueBaseline: trueBaselineStart,
+        } = sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1];
         const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 : trueWidthStart;
 
         const currentFont = createFontGetter();
@@ -120,8 +121,6 @@ export const drawEffect = ({
         let lineListWithRatio: { line: string, isLast: boolean, effectiveMedian: number }[] = [];
 
         // [FIND SUITABLE CONDENSE RATIO]
-        /** Trả về median cuối cùng sau khi lặp tối đa, median nhỏ hơn 200 sẽ được quy về 200, trên thực tế data không thể nào đạt
-        tới median 200, trừ phi vượt giới hạn bình thường nhiều lần */
         const effectiveMedian = condense(
             median => {
                 const { currentLineList, currentLineCount } = createLineList({
@@ -141,7 +140,8 @@ export const drawEffect = ({
         );
 
         // [START DRAWING]
-        const tolerantValue = tolerantPerSentence[`${paragraphList.length}`] ?? tolerantPerSentence['3'];
+        /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
+        const tolerantValue = tolerancePerSentence[`${paragraphList.length}`] ?? tolerancePerSentence['3'];
         if (
             (effectiveMedian < tolerantValue)
             && (effectSizeLevel < fontList.length - 1)
@@ -151,9 +151,7 @@ export const drawEffect = ({
             ctx.clearRect(0, 0, CanvasWidth, 1111);
 
             let trueBaseline = trueBaselineStart + lineHeight;
-            /** Full line list - ví dụ material, luôn nằm trong 1 dòng duy nhất và có hệ số condense riêng so với phần còn lại của effect, tham
-             * khảo "Galaxy-Eyes Cipher X Dragon"
-             */
+            /** Naturally, non-brekable lines have their own condense ratio. */
             const fullLineListWithRatio = fullLineList.map(line => {
                 return {
                     line,
@@ -175,6 +173,7 @@ export const drawEffect = ({
                 };
             });
 
+            /** Draw each line based on their token list and corresponding ratio. */
             [
                 ...fullLineListWithRatio,
                 ...lineListWithRatio,
@@ -200,7 +199,7 @@ export const drawEffect = ({
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
             });
 
-            /** Condition của Flavor Text không in nghiêng, tham khảo "Summoned Skull" */
+            /** Condition clause of flavor text in TCG cards do not use italic font style ("Summoned Skull" TCG). */
             if (effectFlavorCondition.length > 0) {
                 const internalEffectiveMedian = condense(
                     median => {
@@ -221,7 +220,12 @@ export const drawEffect = ({
                 ctx.scale(xRatio, yRatio);
                 ctx.font = currentFont.setStyle('').getFont();
                 let tokenList = tokenizeText(effectFlavorCondition);
-                // Loại dấu carrige return đầu tiên
+                /** We use two new line character to identify condition clause among flavor text. Because in normal case the user will try to put in many new lines to ensure that the condition clause is placed at bottom of the card text.
+                 * 
+                 * But this method has a caveat: For example if current line limit is 6, and the flavor text already take 5 lines. If user put the condition clause at line 6, it is indistinguishable from a normal paragraph, and therefore drawn with italic font. But if user put a new line between, it will force the draw function to increase the line limit into 7.
+                 * 
+                 * To combat this, we perform a simple remove that additional new line, that means if conditional clause is present, two new lines in textare actually result only one new line. This does not create much hassle since user rarely notice this behavior.
+                 * */
                 tokenList = tokenList[0] === '\n'
                     ? tokenList.slice(1)
                     : tokenList;

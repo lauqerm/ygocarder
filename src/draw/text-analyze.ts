@@ -365,7 +365,7 @@ export const analyzeLine = ({
     for (let cnt = 0, xRatio = baseXRatio; cnt < tokenList.length; cnt++) {
         const token = tokenList[cnt];
         const nextToken = tokenList[cnt + 1];
-        /** Bật / tắt chế độ không nén */
+        /** Non-compressable mode */
         if (token === NB_UNCOMPRESSED_START) {
             xRatio = 1;
             continue;
@@ -382,6 +382,7 @@ export const analyzeLine = ({
             rightGap,
             leftMostLetter,
         } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData, format });
+        /** Check `createLineList` function about first token indentation. */
         const indent = (
             (cnt === 0 && leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT, leftGap * xRatio) * -1 : 0)
             +

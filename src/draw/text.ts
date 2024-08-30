@@ -36,7 +36,7 @@ import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 
 /**
- * This is the heart and soul of drawer, please test throughly for each change.
+ * This is the heart and soul of drawer, please test this thoroughly for each change.
  * 
  * @summary Text hierachy
  *   * Letter: Individual (1) letter. E.g. "a", "1", "み", "装", "-", "①"
@@ -110,13 +110,15 @@ export const drawLine = ({
     const baseline = trueBaseline / yRatio;
     let previousTokenGap = 0;
     let iconPositionList: { edge: number, size: number, baseline: number }[] = [];
-    /** Rebalance */
     let previousTokenRebalanceOffset = 0;
     let tokenEdge = trueEdge;
 
+    /** To reach a acceptable degree of calculation, we usually need to look ahead 1 or 2 next tokens, same with fragments. */
+    /** To prevent cascading calculation, we disconnect the relationship between fragments and tokens. We use all information to calculate an empty space for each token, then fragments of that token is drawn inside that empty space assuming they would fit. In other words, drawing fragments of a token DOES NOT interfere with the next token. That means in theory we can skip all fragments of a token to draw the next token right away.
+     */
     for (let tokenCnt = 0, xRatio = baseXRatio; tokenCnt < tokenList.length; tokenCnt++) {
         const token = tokenList[tokenCnt];
-        /** Bật / tắt chế độ không nén */
+        /** Turn on/off non-condenseable mode */
         if (token === NB_UNCOMPRESSED_START) {
             xRatio = 1;
             ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -145,43 +147,41 @@ export const drawLine = ({
             textDrawer,
         };
         const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
+        /** Analyze current token again, this will dictate the width of a token, no matter what is actually drawn. We expect to draw nothing but the calculation must stay correct. */
         const {
             leftMostLetter,
             leftGap,
             rightGap: tokenRightGap,
             totalWidth: totalTokenWidth,
+            spaceCount,
         } = analyzeToken({
             token, nextToken, previousTokenGap: previousTokenGap / xRatio, ...analyzeTokenParameter,
         });
 
-        /** Token ở đầu line có quyền âm ngược ra lề trái, tuy nhiên footText không được tràn ra khỏi lề, ngoài ra ta giới hạn
-         * việc âm ngược để tránh tràn headText quá nhiều
-         */
+        /** Again, first token indentation. */
         const indent = tokenCnt === 0
             ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT, leftGap * xRatio) * -1 : 0)
                 + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0)
             : 0;
-
         let fragmentEdge = tokenEdge + indent;
         let currentRightGap = previousTokenGap;
-        let accumulatedSpace = 0;
-        /** Độ dài tăng thêm do gap từ token trước đó */
 
+        /** Draw all the fragments of a token. */
         for (let fragmentCnt = 0; fragmentCnt < fragmentList.length; fragmentCnt++) {
             const fragment = fragmentList[fragmentCnt];
             const nextFragment = fragmentList[fragmentCnt + 1] ?? nextToken;
             const next2ndFragment = fragmentList[tokenCnt + 2] ?? next2ndToken;
 
-            /** Không vẽ các ký tự này */
+            /** These fragments do not have any visual */
             if (token === NB_UNCOMPRESSED_START || token === NB_UNCOMPRESSED_END) {}
-            /** Symbol S/T không bị compress, ta vẽ symbol S/T riêng, ở đây chỉ chừa chỗ trống */
+            /** We do not actually draw S/T Icon here, but we record its position and leave a suitable space for it. */
             else if (fragment === ST_ICON_SYMBOL) {
                 iconPositionList.push({ edge: fragmentEdge, size: iconSymbolWidth, baseline });
                 fragmentEdge += iconSymbolWidth * letterSpacingRatio;
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
-            /** Symbol ● không bị compress */
+            /** Bullet symbol ● is not condenseable, and has specialized draw worker. */
             else if (fragment === BULLET_LETTER) {
                 resetScale();
                 drawBullet(ctx, fragmentEdge, trueBaseline, bulletSymbolWidth, getBulletSpacing(format));
@@ -191,7 +191,7 @@ export const drawLine = ({
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
-            /** OCG Copyright symbol không bị compress */
+            /** Copyright symbol © is not condenseable and use larger font. */
             else if (/[©]/.test(fragment)) {
                 resetScale();
                 applyLargerText(largeSymbolRatio);
@@ -208,7 +208,7 @@ export const drawLine = ({
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
-            /** OCG Ordinal symbol không bị compress */
+            /** OCG Ordinal symbol is not condenseable and use different font. */
             else if (/[①-⑳]/.test(fragment)) {
                 resetScale();
                 applyOrdinalFont();
@@ -223,21 +223,21 @@ export const drawLine = ({
                 applyAsymmetricScale(xRatio, yRatio);
 
                 fragmentEdge += spaceWidth;
-                accumulatedSpace += spaceWidth;
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
-            /** Cụm ruby cần tách đôi các phần */
+            /** Fragment with overhead text. */
             else if (RUBY_REGEX.test(fragment)) {
                 const [footText, rubyType, headText = ''] = fragment.replaceAll(/{|}/g, '').split(/(\|+)/);
                 const fitFootText = rubyType === '||';
-                /** Ta assume cụm ruby không lồng nhau */
+                /** We do not support nested overhead text. */
                 const { totalWidth: footTextWidth } = analyzeToken({
                     token: footText, nextToken: nextFragment,
                     previousTokenGap: 0,
                     ...analyzeTokenParameter,
                 });
 
+                /** Calculate letter width first before deciding the spacing. */
                 applyFuriganaFont();
                 const headTextLetterWidth = headText
                     .split('')
@@ -245,6 +245,7 @@ export const drawLine = ({
                     .reduce((acc, cur) => acc + cur, 0);
                 stopApplyFuriganaFont();
 
+                /** Notice what is scaled and what is not in those params. It is a headache to work with sometime. */
                 const {
                     headTextWidth,
                     halfGap: baseHalfGap,
@@ -265,9 +266,8 @@ export const drawLine = ({
                     : baseHalfGap;
                 const rightGap = halfGap;
                 const leftGap = halfGap;
-                /** Phần không gian mất đi do fragment âm vào gap phải của token trước (nếu có) */
+                /** Lost left width because of negative gap of the previous fragment OR token */
                 const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
-                /** Phần không gian trống bên trái còn lại */
                 const vacantLeftWidth = leftGap > 0 ? leftGap - lostLeftWidth : 0;
 
                 const {
@@ -279,13 +279,13 @@ export const drawLine = ({
                     ...analyzeTokenParameter,
                 });
                 const nextLeftGap = nextUncompressedLeftGap * xRatio;
-                /** Phần không gian mất đi do next gap âm vào fragment (nếu có) */
                 const lostRightWidth = getLostLeftWidth(rightGap, nextLeftGap);
                 const vacantRightWidth = rightGap > 0 ? rightGap - lostRightWidth : 0;
                 const totalVacantSpace = vacantLeftWidth + vacantRightWidth;
                 let rebalancedSpace = 0;
                 let nextTokenRebalanceOffset = 0;
 
+                /** Rebalance tactic here. In essential, we try to calculate the empty space of a fragment. These spaces are because the head text is too long compare to the foot text underneath. Then we divide those spaces in such a way that the foot text has roughly equal space each side so they looks more pleasant. */
                 if (totalVacantSpace > 0 && nextLeftGap >= -2 && isNextTokenOffsetable) {
                     rebalancedSpace = (totalVacantSpace + Math.max(nextLeftGap, 0) * 2) / 3;
                     nextTokenRebalanceOffset = Math.max(nextLeftGap, 0) - rebalancedSpace;
@@ -298,6 +298,7 @@ export const drawLine = ({
                     + previousTokenRebalanceOffset;
                 previousTokenRebalanceOffset = nextTokenRebalanceOffset;
 
+                /** Draw actual foot text here */
                 drawLine({
                     ctx,
                     format,
@@ -312,6 +313,7 @@ export const drawLine = ({
                     debug: false,
                 });
 
+                /** Head text may have different text style than foot text, so we store the current style before start drawing head text. */
                 const currentFillStyle = ctx.fillStyle;
                 const currentStrokeStyle = ctx.strokeStyle;
                 const currentShadowColor = ctx.shadowColor;
@@ -326,7 +328,7 @@ export const drawLine = ({
                     ctx.shadowOffsetY = 0;
                     ctx.shadowBlur = 0;
                 }
-                /** Lùi edge của head text nếu xuất hiện trường hợp head text overflow vào gap âm */
+                /** Draw head text here, remember head text and foot text most of the time do not align at all. */
                 const headTextFragmentEdge = fragmentEdge - lostLeftWidth;
                 fillHeadText({
                     ctx,
@@ -343,6 +345,7 @@ export const drawLine = ({
                     fitFootText,
                     headTextOverflow,
                 });
+                /** Restore foot text's original style */
                 ctx.fillStyle = currentFillStyle;
                 ctx.strokeStyle = currentStrokeStyle;
                 ctx.shadowColor = currentShadowColor;
@@ -352,28 +355,31 @@ export const drawLine = ({
 
                 fragmentEdge += Math.max(footTextWidth * xRatio, headTextWidth) - lostLeftWidth + spaceWidth;
                 currentRightGap = rightGap;
-                accumulatedSpace += spaceWidth;
             }
+            /** Draw "whole words". */
             else if (WholeWordRegex.test(fragment)) {
                 const normalizedWordSpacingRatio = wordLetterSpacing
                     ? 1 + wordLetterSpacing / 2
                     : letterSpacingRatio;
                 ctx.letterSpacing = `${(normalizedWordSpacingRatio - 1) * currentFont.getFontInfo().sizeAsNumber}px`;
 
-                // Vấn đề: Ta không thể tính gap nếu không biết độ dài chính xác của fragment, tuy nhiên như vậy ta phải lặp lại việc tính fragment hai lần (một lần tính chiều dài, một lần vẽ). Để đơn giản ta lấy rawWidth của fragment và coi như độ dài của fragment khi tính gap. Vì ta assume là captial letter ratio hay number font không ảnh hưởng quá lớn lên fragment width.
+                /**
+                 * A problem here: We cannot calculate the gap of a fragment unless knowing its actual width, so that means we must calculate it first, then calculate the gap, then go back and calculate the actual width all over again when we draw. These are doable but it make this ugly long code become needlessly more ugly and long. So we just naively measure the word without any kind of special treatment, take the gap based on it and call it a day.
+                 * 
+                 * Even if the actual width of the fragment is different than when we measure it naively, the gap ratio itself have a bit of room for error (around 40% when maximum is 50%), so most of the time we can avoid any overlap unless in extreme condensing situation.
+                 */
                 const fragmentNaiveWidth = ctx.measureText(fragment).width * xRatio;
                 const leftGap = Math.max(defaultGap, fragmentNaiveWidth * gapRatio);
                 const rightGap = leftGap;
                 const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
                 fragmentEdge -= lostLeftWidth;
 
-                // Độ dài từng chữ sẽ khác tổng độ dài khi ghép chữ, do letter spacing và conditional kerning
+                /** Read the comment in `analyzeToken` function, we repeat exactly the treatment there, the different is we actually draw the letter along the way. */
                 let remainFragment = fragment;
                 let currentPosition = fragmentEdge;
                 while (remainFragment !== '') {
                     let currentLetter = remainFragment[0];
                     let nextRemainFragment = remainFragment.slice(1);
-                    /** Độ dài thực của ký tự khi đứng trong từ */
                     let actualLetterWidth = 0;
                     const drawLetterofWordParameter = { ...drawLetterParameter, letter: currentLetter, edge: currentPosition };
                     if (SquareBracketLetterRegex.test(currentLetter)) {
@@ -420,7 +426,7 @@ export const drawLine = ({
                 previousTokenRebalanceOffset = 0;
                 ctx.letterSpacing = '0px';
             }
-            /** Một số ký tự dùng font đặc biệt */
+            /** Some specific letter ("Evil★Twin's Trouble Sunny" TCG) requires different font. */
             else if (TCGSpecialLetterRegex.test(fragment) && fontStyle === 'tcg') {
                 const letter = fragment;
                 applySymbolFont();
@@ -439,6 +445,7 @@ export const drawLine = ({
                 currentRightGap = rightGap;
                 previousTokenRebalanceOffset = 0;
             }
+            /** All other fragments */
             else {
                 const letter = fragment;
                 const letterMetric = getLetterWidth({
@@ -462,15 +469,16 @@ export const drawLine = ({
                     && NoSpaceRegex.test(letter) !== true
                 ) {
                     fragmentEdge += spaceWidth;
-                    accumulatedSpace += spaceWidth;
                 }
                 if (!OCGNoOverheadGapRegex.test(letter)) currentRightGap = rightGap;
                 previousTokenRebalanceOffset = 0;
             }
         }
+
+        /** Make space for the next token, as we can see it does not involve any variables from the fragment drawing process. */
         previousTokenGap = tokenRightGap * xRatio;
         if (debug) drawMarker({ ctx, baseline, edge: tokenEdge, width: totalTokenWidth * xRatio, xRatio });
-        tokenEdge += totalTokenWidth * xRatio + accumulatedSpace + indent;
+        tokenEdge += totalTokenWidth * xRatio + spaceCount * spaceWidth + indent;
     }
 
     return {
