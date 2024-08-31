@@ -155,7 +155,7 @@ export const TextGradientPicker = ({
         };
     }, [palette]);
 
-    /** Callback này yêu cầu memoize từ bên ngoài */
+    /** @todo REMEMBER to memorize the callback before passing into this component */
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {
@@ -169,7 +169,6 @@ export const TextGradientPicker = ({
         };
     }, [palette, angle, memoizedOnChange]);
 
-    /** "controls-wrapper" là class định danh của GradientPicker, không được bỏ */
     return <div className="controls-wrapper gradient-picker-container">
         <div className="gradient-angle-control">
             <h2>
@@ -212,7 +211,7 @@ export const TextGradientPicker = ({
                     pickerRef.current?.setColor(stopColor);
                 },
             }}>
-                {/** Children được clone để populate props, vậy nên không cần pass props ở đây */}
+                {/** Under the hood this children will be cloned with pre-populate props, so it seemingly work even though we do not pass anything here. */}
                 <WrappedColorPicker ref={pickerRef}
                     onOffsetChange={changePalette}
                     onRemove={id => {

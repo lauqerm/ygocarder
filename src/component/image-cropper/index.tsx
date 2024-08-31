@@ -26,15 +26,41 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
         1
     );
 }
+
+/**
+ * Historic reason: cropData initially used `px` as unit, but this create a hard link between cropData and size of the cropper (NOT the actual image). This means the cropData only match a specific cropper size, and will become incorrect if the size change (which is happening when we got to v2).
+ * 
+ * So from now on every cropData with `px` unit in it (old data) will be converted into the new one that use `%` data, which is more tricky to calculate but remove the link entirely.
+ */
 const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | null, ratio: number) => {
     if (!image) return crop;
-    const { width: cropWidth, height: cropHeight, x = 0, y = 0 } = crop;
+    const { width: cropWidth, height: cropHeight, x = 0, y = 0, unit } = crop;
+
+    /** Migrate old unit */
+    if (unit === 'px') {
+        const newHeightToWidthRatio = 400 / 300;
+        const { width: imageWidth, height: imageHeight } = image;
+
+        const nextX = Math.min((x ?? 0) * newHeightToWidthRatio, imageWidth);
+        const nextY = Math.min((y ?? 0) * newHeightToWidthRatio, imageHeight);
+        const newWidth = Math.min((cropWidth ?? 0) * newHeightToWidthRatio, imageWidth);
+
+        return {
+            unit: '%' as 'px' | '%',
+            x: nextX / imageWidth * 100,
+            y: nextY / imageHeight * 100,
+            width: newWidth / imageWidth * 100,
+            height: newWidth / (ratio ?? 1) / imageHeight * 100,
+            aspect: ratio,
+        };
+    }
+
     if (x < 0) return { ...crop, x: 0 };
     if (y < 0) return { ...crop, y: 0 };
     const { naturalHeight, naturalWidth } = image;
     const width = cropWidth ?? 0;
     const height = cropHeight ?? 0;
-    /** Kiểm tra ratio hiện tại, nếu width và height đã ở ratio chuẩn, ta không tính toán lại để tránh tích lũy sai số */
+    /** Avoid recalculate if current ratio is in acceptable limit, so we don't cascade calculation error */
     const acceptableError = (naturalHeight > naturalWidth ? naturalHeight : naturalWidth) * 0.05;
     const isRatioAcceptable = Math.abs(height * naturalHeight * ratio - width * naturalWidth) <= acceptableError;
 
@@ -143,6 +169,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     completed: normalizedCrop,
                     current: normalizedCrop,
                 });
+                setMigrated(true);
                 pendingCrop.current = {
                     source: '',
                     crop: null,
@@ -158,6 +185,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         current: normalizedCrop,
                     };
                 });
+                setMigrated(true);
             }, 250);
         }
     }, [onSourceLoaded, ratio]);
@@ -178,7 +206,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
         const { aspect: ratio } = completedCrop;
 
-        /** Upsize canvas để nâng cao chất lượng ảnh */
+        /** Increase image size for a bit */
         receivingCanvas.style.transform = 'scale(2)';
         const ctx = receivingCanvas.getContext('2d');
         if (!ctx || typeof ratio !== 'number' || ratio <= 0) return;
@@ -190,9 +218,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const pixelRatio = window.devicePixelRatio;
 
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-        /** Làm mượt thông số crop để image không bị vỡ.
-         * Ta dùng floor để an toàn, tránh tích tụ sai số
-         */
+        /** Snap sizing into whole pixel for a more crispy image. */
         let expectedDrawWidth = Math.floor((completedCrop.width ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100));
         let drawWidth = Math.min(naturalWidth, expectedDrawWidth);
         let expectedDrawHeight = Math.floor(expectedDrawWidth / ratio);
@@ -209,21 +235,21 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         if (drawWidth <= 0 || drawHeight <= 0) return;
 
         let fitCropData: Partial<ReactCrop.Crop> | undefined = undefined;
-        /** Fit crop frame vào ảnh nếu nó bị tràn (ví dụ do thay đổi về ratio). Ta cố gắng để crop frame lớn nhất có thể. */
+        /** If the crop section is overflowed (mainly because change of ratio), we try to snap it back to the cropper. */
         if (
-            // Tràn kích thước
+            // Size overflow
             (drawCoordinateX + drawWidth) > naturalWidth
             || (drawCoordinateY + drawHeight) > naturalHeight
-            // Tràn lề
+            // Edge overflow
             || drawCoordinateX < 0
             || drawCoordinateY < 0
-            // Tràn tỷ lệ
+            // Ratio overflow
             || Math.abs((expectedDrawWidth - drawWidth) / drawWidth) > 0.01
             || Math.abs((expectedDrawHeight - drawHeight) / drawHeight) > 0.01
         ) {
-            /** Xác định chiều mà frame có thể extend tối đa */
+            /** Try to maximize new crop section's area */
             const prominentSide = ratio * naturalHeight > naturalWidth ? 'width' : 'height';
-            /** Canh giữa lại crop frame */
+            /** Automatically center current crop section. @todo For the best UX, it should actually be proportional based on the x and y before the snap. */
             if (prominentSide === 'width') {
                 drawWidth = naturalWidth;
                 drawHeight = drawWidth / ratio;
@@ -307,15 +333,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 onSourceChange(source);
                 setExternalSource(source);
             }
-            // setRatio(cropInfo.aspect ?? 1);
             setMigrated(cropInfo.unit === '%');
             pendingId.current += 1;
             pendingCrop.current = {
                 source,
                 crop: cropInfo,
             };
-            // setCrop(cropInfo);
-            // setCompletedCrop(cropInfo);
             setRedrawSignal(cur => cur + 1);
         }
     }));
@@ -416,52 +439,16 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         // setCrossOrigin(undefined);
                     }}
                     crop={currentCrop}
-                    onChange={(cropData, percentCropData) => {
+                    onChange={(_, percentCropData) => {
                         if (pendingCrop.current.crop) return;
                         const image = imgRef.current;
 
-                        if (isMigrated) {
-                            setCrop(cur => {
-                                return {
-                                    ...cur,
-                                    current: normalizeCrop(percentCropData, image, ratio)
-                                };
-                            });
-                        }
-                        /** Ban đầu cropData có unit là px, nhưng sau đó convert qua percent để đảm bảo có thể reapply
-                         * mà không phụ thuộc vào size crop component.
-                         * 
-                         * Ta có một lần migrate ở đây, ban đầu crop component có max height là 300 và max width là 375,
-                         * max height giờ đã được tăng lên 400, nghĩa là các image trước đó bị giới hạn 300px height sẽ
-                         * phải thích nghi lại. Nếu ratio đã là percent thì nghĩa là image đã được thích nghi.
-                        */
-                        else {
-                            setCrop(cur => {
-                                if (!image) return { ...cur, current: cropData };
-                                const oldHeightToWidthRatio = 300 / 375;
-                                const newHeightToWidthRatio = 400 / 300;
-                                const { width: imageWidth, height: imageHeight } = image;
-                                const isHeightRestricted = (imageHeight / imageWidth) >= oldHeightToWidthRatio;
-
-                                if (!isHeightRestricted) return { ...cur, current: percentCropData };
-                                const newX = Math.min((cropData.x ?? 0) * newHeightToWidthRatio, imageWidth);
-                                const newY = Math.min((cropData.y ?? 0) * newHeightToWidthRatio, imageHeight);
-                                const newWidth = Math.min((cropData.width ?? 0) * newHeightToWidthRatio, imageWidth);
-
-                                return {
-                                    ...cur,
-                                    current: {
-                                        unit: '%',
-                                        x: newX / imageWidth * 100,
-                                        y: newY / imageHeight * 100,
-                                        width: newWidth / imageWidth * 100,
-                                        height: newWidth / (ratio ?? 1) / imageHeight * 100,
-                                        aspect: ratio,
-                                    },
-                                };
-                            });
-                            setMigrated(true);
-                        }
+                        setCrop(cur => {
+                            return {
+                                ...cur,
+                                current: normalizeCrop(percentCropData, image, ratio)
+                            };
+                        });
                     }}
                     onComplete={(_, percentData) => {
                         if (!pendingCrop.current.crop) setCrop(cur => ({ ...cur, completed: percentData }));

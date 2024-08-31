@@ -293,6 +293,7 @@ export const ocgToTCGTermMap: Record<string, string> = {
     'マキシマム': 'Maximum',
     'トークン': 'Token',
     '特殊召喚': 'Special Summon',
+    'ダークシンクロモンスター': 'Dark Synchro',
     /** ability */
     'チューナー': 'Tuner',
     'デュアル': 'Gemini',

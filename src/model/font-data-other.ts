@@ -89,7 +89,7 @@ export const tcgTypeAbilityFontData: FontData = {
             lineHeight: 44.5,
             lineCount: 1,
             iconSymbolWidth: 45,
-            // Noticeable baseline mismatch when this ratio reach 0.9, some rounding magic fuckery is ongoing on here
+            // Noticeable baseline mismatch when this ratio reach 0.9, some rounding magic fuckery is going on here
             capitalLetterRatio: 0.90001,
             squareBracketRatio: 0.94001,
             letterSpacing: -0.03,

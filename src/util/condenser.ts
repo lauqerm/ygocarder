@@ -1,10 +1,30 @@
 const MAX_CONDENSER_THRESHOLD = 1000;
-/** Thuật toán tìm kiếm đơn giản như sau
- * 1. Bước nhảy mặc định là 100
- * 1. Tìm từ trên xuống, chừng nào giá trị hiện tại còn lớn hơn giá trị yêu cầu
- * 1. Nếu giá trị hiện tại bằng giá trị yêu cầu => Kết thúc
- * 1. Nếu giá trị hiện tại nhỏ hơn giá trị yêu cầu nghĩa là đã đi quá, nhảy lên lại một bậc
- * 1. Giảm bước nhảy đi 10 lần, lặp lại từ bước 2 với bước nhảy mới
+/** Simple iteration method
+ * 1 The initial threshold is 1000, initial step is 100, max step count is 30.
+ * 1. If current threshold satisfy the driver, or step count is already 0, return the current threshold.
+ * 1. Step down the threshold, and keep stepdown until driver return satisfy signal, reduce step count by 1 for each step made.
+ * 1. Otherwise if step value is less than 1, finish with the current threshold.
+ * 1. Otherwise step up the threshold by 1 step, and cut down the step value tenfold. Repeat from step 2.
+ * 
+ * Example, we want to reach satisfy target at 487:
+ *
+```
+Curr  Step    Count Explain
+1000  100     30    Initial
+900   100     29    Down
+800   100     28    Down
+700   100     27    Down
+600   100     26    Down
+500   100     25    Down
+400   100     24    Down
+500   10      24    Up => Step / 10
+490   10      23    Down
+480   10      22    Down
+490   1       21    Up => Step / 10
+489   1       20    Down
+488   1       19    Down
+487   1       18    Down => Satisfy
+ * ```
  */
 export const createCondenser = (minThreshold = 0, maxThreshold = MAX_CONDENSER_THRESHOLD) => {
     let min = minThreshold;
@@ -13,12 +33,13 @@ export const createCondenser = (minThreshold = 0, maxThreshold = MAX_CONDENSER_T
     let lastEffective = median;
     let iterateCount = 30;
     let magnitude = 100;
+    let magnitudeReductionRatio = 10;
 
     const reverseSearch = () => {
         if (magnitude === 1) finish();
         else {
             median += magnitude;
-            magnitude /= 10;
+            magnitude /= magnitudeReductionRatio;
             median -= magnitude;
         }
 
@@ -77,7 +98,7 @@ export const condense = (
     const condenser = createCondenser();
     while (condenser.getIterateCount() >= 0) {
         if (condenser.getIterateCount() <= 0) {
-            /** Trả về median cuối cùng sau khi lặp tối đa, median nhỏ hơn minThreshold sẽ được quy về minThreshold, để tránh việc phải deal với threshold 0 */
+            /** Support minThreshold here, we don't want to deal with 0. In practices, most text become unreadable when condense with ratio of 400 or lower. */
             const finalMedian = condenser.getMedian();
 
             effectiveMedian = finalMedian;
@@ -89,15 +110,15 @@ export const condense = (
                 /** If overflow, lower the median and apply it */
                 condenser.searchDown();
             } else {
-                /** Không làm gì thêm nếu không cần compress */
+                /** Return immediately if max threshold is enough to satisfy the driver */
                 if (condenser.getMedian() === MAX_CONDENSER_THRESHOLD) break;
                 else effectiveMedian = condenser.reverseSearch();
             }
         }
     }
 
-    /** Nếu kết quả cuối cùng không mong muốn (effectiveMedian ngoài ngưỡng), ta chạy lại worker một lần với median được ép về ngưỡng.
-     * Như vậy đảm bảo worker cuối cùng luôn chạy với median sẽ trả về, nếu không worker sẽ chạy với median không mong muốn.
+    /**
+     * Ensure worker does not run with undesirable threshold (it may have side effect depend on the current ratio, for example, scale canvas). So we run worker with the final median one last time so any side effects from it is affected by the ratio we gonna return.
      */
     const forcedMedian = Math.max(minThreshold, Math.min(effectiveMedian, MAX_CONDENSER_THRESHOLD));
     if (forcedMedian !== effectiveMedian) worker(forcedMedian);

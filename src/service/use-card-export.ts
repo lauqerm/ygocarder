@@ -38,7 +38,7 @@ export const useCardExport = ({
     const download = useCallback(() => {
         const canvasRef = drawCanvasRef.current;
         if (canvasRef && !isTainted) try {
-            const normalizedName = name.replaceAll(/\{([^{}|]*)\|?[^{}|]*\}/g, '$1');
+            const normalizedName = normalizedCardName(name);
             var link = document.createElement('a');
             link.download = normalizedName
                 ? `${normalizedName}.png`

@@ -433,7 +433,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         opacity,
         pendulumSize,
         statInEffect,
-        imageChangeCount, // Special dependency
+        imageChangeCount, // Special dependency, do not remove even though it is not used in the effect itself
     ]);
 
     /** DRAW SCALE */

@@ -4,7 +4,7 @@ const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
 export const randomDarkColor = () => '#000000'.replace(/0/g, () => (~~(Math.random() * 12 + 2)).toString(16));
 
-/** Draw a straight line with random color, used to measurement debug. It take true edge and width, but will draw based on the current scale ratio. */
+/** Draw a straight line with random color, used for measurement debug. It take true edge and width, but will draw based on the current scale ratio. */
 export const drawMarker = ({
     ctx,
     color = randomDarkColor(), width,
