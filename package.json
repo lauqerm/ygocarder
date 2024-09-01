@@ -22,6 +22,7 @@
     "react-linear-gradient-picker": "^3.0.1",
     "react-moveable": "^0.27.4",
     "react-scripts": "4.0.1",
+    "source-map-explorer": "^2.5.3",
     "styled-components": "^6.1.11",
     "typescript": "4.2.0-dev.20201211",
     "web-vitals": "^0.2.4",
@@ -34,14 +35,15 @@
     "react-error-overlay": "6.0.9"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "compile": "tsc --noEmit",
-    "lint": "eslint --fix --ext .ts,.tsx ."
+    "deploy": "gh-pages -d build",
+    "eject": "react-scripts eject",
+    "lint": "eslint --fix --ext .ts,.tsx .",
+    "predeploy": "npm run build",
+    "start": "react-scripts start",
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [
