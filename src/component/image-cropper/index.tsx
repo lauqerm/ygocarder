@@ -302,7 +302,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         if (fitCropData) {
             setCrop(cur => ({ ...cur, current: fitCropData }));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, receivingCanvas, redrawSignal]);
 
     useEffect(() => {

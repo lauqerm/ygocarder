@@ -26,7 +26,7 @@ export const retrieveSavedCard = () => {
 };
 
 const VariantConfigMap = {
-    debounce: { type: 'debounce' as const, wait: 200 },
+    debounce: { type: 'debounce' as const, wait: 400 },
     throttle: { type: 'throttle' as const, wait: 1000 },
 };
 export type CardStore = {

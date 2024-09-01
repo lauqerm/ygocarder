@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     clearCanvas,
     draw1stEdition,
@@ -61,7 +61,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         // artCanvas,
         artworkCanvasRef,
         backgroundCanvasRef,
-        specialFrameCanvasRef,
+        frameCanvasRef,
         creatorCanvasRef,
         effectCanvasRef,
         nameCanvasRef,
@@ -144,33 +144,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
-        specialFrame: {
-            name: 'specialFrame',
-            order: 3,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
         sticker: {
             name: 'sticker',
-            order: 4,
+            order: 3,
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
         name: {
             name: 'name',
-            order: 5,
+            order: 4,
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
         typeAbility: {
             name: 'typeAbility',
-            order: 6,
+            order: 5,
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
         overlay: {
             name: 'overlay',
-            order: 7,
+            order: 6,
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
@@ -179,12 +173,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = specialFrameCanvasRef.current?.getContext('2d');
+        const ctx = frameCanvasRef.current?.getContext('2d');
         const artworkCanvas = artworkCanvasRef.current;
         const backgroundCanvas = backgroundCanvasRef.current;
 
-        drawingPipeline.current.specialFrame.rerun += 1;
-        drawingPipeline.current.specialFrame.instructor = async () => {
+        drawingPipeline.current.frame.rerun += 1;
+        drawingPipeline.current.frame.instructor = async () => {
             if (!clearCanvas(ctx)) return;
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
@@ -410,7 +404,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
         readyToDraw,
         artworkCanvasRef,
         backgroundCanvasRef,
-        specialFrameCanvasRef,
+        frameCanvasRef,
         frame,
         format,
         hasBackground,
@@ -671,36 +665,53 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
     }, [readyToDraw, finishCanvasRef, loopFinish, name]);
 
     const drawHistory = useRef<Record<string, number>>({});
-    const onExport = useRef(async (exportProps: {
+    const onExport = useCallback(async (exportProps: {
         isPendulum: boolean,
         opacity: Partial<CardOpacity>,
+        // isRelevant: () => boolean,
     }) => {
         const {
+            // isRelevant,
             isPendulum = false,
             opacity,
         } = exportProps;
         const canvasRef = drawCanvasRef.current;
         const exportCtx = canvasRef?.getContext('2d');
-        const generateLayer = (canvasLayer: React.RefObject<HTMLCanvasElement>, ctx: CanvasRenderingContext2D | null | undefined) => {
+        /** Delay queue and relevant checker is used for potential performance improvement, but currently performance is not a making a hard impact to the app. */
+        const generateLayer = (
+            canvasLayer: React.RefObject<HTMLCanvasElement>,
+            ctx: CanvasRenderingContext2D | null | undefined,
+            delayQueue: number = 0,
+        ) => {
             return new Promise<boolean>(resolve => {
-                if (canvasLayer.current && ctx) {
-                    let layerData = '';
-                    try {
-                        layerData = canvasLayer.current.toDataURL('image/png');
-                    } catch (e) {
-                        console.error(e);
-                    }
-
-                    if (layerData) {
-                        var layer = new Image();
-                        layer.src = layerData;
-                        layer.onload = () => {
-                            ctx.drawImage(layer, 0, 0);
-                            resolve(true);
-                        };
-                        layer.onerror = () => resolve(false);
-                    } else resolve(true);
-                } else resolve(false);
+                setTimeout(() => {
+                    if (canvasLayer.current && ctx) {
+                        try {
+                            canvasLayer.current.toBlob(blob => {
+                                if (blob) {
+                                    const url = URL.createObjectURL(blob);
+                                    if (url) {
+                                        var layer = new Image();
+                                        layer.src = url;
+                                        layer.onload = () => {
+                                            ctx.drawImage(layer, 0, 0);
+                                            URL.revokeObjectURL(url);
+                                            resolve(true);
+                                        };
+                                        layer.onerror = () => {
+                                            URL.revokeObjectURL(url);
+                                            resolve(false);
+                                        };
+                                    } else resolve(true);
+                                }
+                                resolve(false);
+                            });
+                        } catch (e) {
+                            console.error(e);
+                            resolve(false);
+                        }
+                    } else resolve(false);
+                }, delayQueue * 25);
             });
         };
 
@@ -736,25 +747,41 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas
                     );
                 }
             }
-            await generateLayer(specialFrameCanvasRef, exportCtx);
-            await Promise.all([
-                nameCanvasRef,
-                cardIconCanvasRef,
-                pendulumScaleCanvasRef,
-                pendulumEffectCanvasRef,
-                typeCanvasRef,
-                effectCanvasRef,
-                statCanvasRef,
-                setIdCanvasRef,
-                passwordCanvasRef,
-                creatorCanvasRef,
-                stickerCanvasRef,
-                finishCanvasRef,
-            ].map(currentlayer => generateLayer(currentlayer, exportCtx)));
+            /** It is not worth to use promise all here, just let them go sequentially to avoid too much blob generating call. */
+            await generateLayer(frameCanvasRef, exportCtx, 0);
+            await generateLayer(nameCanvasRef, exportCtx, 0);
+            await generateLayer(cardIconCanvasRef, exportCtx, 0);
+            await generateLayer(pendulumScaleCanvasRef, exportCtx, 0);
+            await generateLayer(pendulumEffectCanvasRef, exportCtx, 0);
+            await generateLayer(typeCanvasRef, exportCtx, 0);
+            await generateLayer(effectCanvasRef, exportCtx, 0);
+            await generateLayer(statCanvasRef, exportCtx, 0);
+            await generateLayer(setIdCanvasRef, exportCtx, 0);
+            await generateLayer(passwordCanvasRef, exportCtx, 0);
+            await generateLayer(creatorCanvasRef, exportCtx, 0);
+            await generateLayer(stickerCanvasRef, exportCtx, 0);
+            await generateLayer(finishCanvasRef, exportCtx, 0);
 
             lightboxCanvasRef.current?.getContext('2d')?.drawImage(canvasRef, 0, 0);
         }
-    }).current;
+    }, [
+        artworkCanvasRef, 
+        cardIconCanvasRef, 
+        creatorCanvasRef, 
+        drawCanvasRef, 
+        effectCanvasRef, 
+        finishCanvasRef, 
+        lightboxCanvasRef, 
+        nameCanvasRef, 
+        passwordCanvasRef, 
+        pendulumEffectCanvasRef, 
+        pendulumScaleCanvasRef, 
+        setIdCanvasRef, 
+        frameCanvasRef, 
+        statCanvasRef, 
+        stickerCanvasRef, 
+        typeCanvasRef,
+    ]);
 
     return {
         drawingPipeline,

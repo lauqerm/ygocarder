@@ -18,16 +18,16 @@ export const getNavigationProps = ({
     return {
         tabIndex: 0,
         onFocus: () => {
-            if (debug) console.log('Focus', debug);
+            if (debug) console.info('Navigation Focus', debug);
             setFocus(0);
         },
         onBlur: () => {
-            if (debug) console.log('Blur', debug);
+            if (debug) console.info('Navigation Blur', debug);
             setFocus(-1);
         },
         onKeyDown: (e: React.KeyboardEvent<any>) => {
             if (stopPropagation) e.stopPropagation();
-            if (debug) console.log('Keydown', debug, e.key);
+            if (debug) console.info('Navigation Keydown', debug, e.key);
             if (onKeyPress?.(e) === false) return;
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
                 e.preventDefault();

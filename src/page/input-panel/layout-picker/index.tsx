@@ -216,6 +216,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         return () => {
             relevant = false;
         };
+    /** No need to depend on callback */
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [opacity]);
 

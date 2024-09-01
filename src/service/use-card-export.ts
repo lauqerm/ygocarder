@@ -9,13 +9,15 @@ export type UseCardExport = {
     drawCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportRef: React.MutableRefObject<{
         currentPipeline: Promise<void>;
-        queuedPipeline: boolean;
+        pipelineRunning: boolean;
     }>,
     onExport: (exportProps: {
-        isPendulum: boolean;
-        opacity: Partial<CardOpacity>;
+        isPendulum: boolean,
+        opacity: Partial<CardOpacity>,
+        isRelevant: () => boolean,
     }) => Promise<void>,
     onDownloadError: () => void,
+    onDownloadComplete: () => void,
 };
 export const useCardExport = ({
     isTainted,
@@ -24,6 +26,7 @@ export const useCardExport = ({
     exportRef,
     onExport,
     onDownloadError,
+    onDownloadComplete,
 }: UseCardExport) => {
     const {
         card: currentCard,
@@ -49,12 +52,16 @@ export const useCardExport = ({
             onDownloadError();
         }
         document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
-    }, [drawCanvasRef, isTainted, name, onDownloadError]);
+        onDownloadComplete();
+    }, [drawCanvasRef, isTainted, name, onDownloadComplete, onDownloadError]);
     const onSave = () => {
         document.querySelector('#export-canvas-guard')?.classList.add('guard-on');
-        if (exportRef.current.queuedPipeline === false) {
-            download();
-        } else pendingSave.current = true;
+        /** Prevent split-second download. By using hotkey user is able to perform extremely fast save process before the pipeline start running, thus getting the previous card data instead of the most recent one. */
+        setTimeout(() => {
+            if (exportRef.current.pipelineRunning === false) {
+                download();
+            } else pendingSave.current = true;
+        }, 200);
     };
 
     useEffect(() => {
@@ -85,9 +92,12 @@ export const useCardExport = ({
             localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
 
             /**
-             * Run export pipeline
-             * - While it is running, every effect just mark pipeline as queued, then wait the current pipeline
-             * - If the pipeline is complete and there is no effect, run another pipeline and remove the queue
+             * Run export pipeline:
+             * - Immediately mark the pipeline as running, then run wait for the current pipeline (1).
+             * - If the (1) pipeline is no longer relevant, end effect.
+             * - Otherwise (the current pipeline is the newest), start export pipeline, this export pipeline is now the current pipeline (2).
+             * - If the (2) pipeline is no longer relevant, end effect.
+             * - Otherwise finish the pipeline and write result, also mark the pipeline as no longer running.
              */
             (async () => {
                 const canvasRef = drawCanvasRef.current;
@@ -97,13 +107,13 @@ export const useCardExport = ({
                     document.getElementById('export-canvas-guard')?.setAttribute('style', '');
                     document.getElementById('save-button-waiting')?.setAttribute('style', 'display: block');
 
-                    exportRef.current.queuedPipeline = true;
+                    exportRef.current.pipelineRunning = true;
+                    /** Artifical delay, turn on to test export timing */
                     // await new Promise(resolve => setTimeout(() => resolve(true), 3000));
                     await exportRef.current.currentPipeline;
 
                     if (relevant) {
-                        exportRef.current.currentPipeline = onExport({ isPendulum, opacity });
-                        exportRef.current.queuedPipeline = false;
+                        exportRef.current.currentPipeline = onExport({ isPendulum, opacity, isRelevant: () => relevant });
 
                         await exportRef.current.currentPipeline;
                         if (relevant) {
@@ -114,6 +124,7 @@ export const useCardExport = ({
                             document.getElementById('export-canvas-guard')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
                             window.removeEventListener('beforeunload', confirmReload);
+                            exportRef.current.pipelineRunning = false;
 
                             if (pendingSave.current) {
                                 pendingSave.current = false;

@@ -1,5 +1,5 @@
-import { notification, Tooltip } from 'antd';
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Button, notification, Tooltip } from 'antd';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { MasterDuelCanvas } from 'src/model';
 import { useCardExport, useMasterSeriDrawer, useSetting } from 'src/service';
 
@@ -34,8 +34,12 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     } = canvasMap;
     const exportRef = useRef({
         currentPipeline: Promise.resolve(),
-        queuedPipeline: false,
+        pipelineRunning: false,
     });
+    const [isDownloading, setDownloading] = useState(false);
+    const onDownloadComplete = useCallback(() => {
+        setDownloading(false);
+    }, []);
     const { onSave } = useCardExport({
         isTainted,
         isInitializing,
@@ -43,29 +47,32 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         exportRef,
         onExport,
         onDownloadError,
+        onDownloadComplete,
     });
 
-    useImperativeHandle(ref, () => ({
-        download: () => {
-            if (isTainted) {
-                notification.error({
-                    message: 'Your card is tainted, you must save manually',
-                    description: 'Right click the card → Choose "Save image as..."',
-                });
-                return;
-            }
-            onSave();
+    const download = () => {
+        if (isTainted) {
+            notification.error({
+                message: 'Your card is tainted, you must save manually',
+                description: 'Right click the card → Choose "Save image as..."',
+            });
             return;
         }
+        setDownloading(true);
+        onSave();
+        return;
+    };
+    useImperativeHandle(ref, () => ({
+        download,
     }));
 
     if (isTainted) return null;
     return <div className="save-button-container">
         <div id="save-button-waiting" />
         <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
-            <button className="save-button" id="save-button-ready" onClick={onSave}>
+            <Button className="save-button" loading={isDownloading} id="save-button-ready" onClick={download}>
                 Download
-            </button>
+            </Button>
         </Tooltip>
     </div>;
 });

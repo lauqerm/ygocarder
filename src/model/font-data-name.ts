@@ -17,6 +17,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             fontStyle: 'tcg',
             symbolFont: 'matrix',
             symbolFontRatio: 0.775,
+            headTextHeightRatio: 0.55,
             fontList: [{
                 bulletSymbolWidth: 64,
                 fontSize: 91.5,
@@ -39,6 +40,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             fontStyle: 'tcg',
             symbolFont: 'matrix',
             symbolFontRatio: 0.775,
+            headTextHeightRatio: 0.825,
             weight: 'bold',
             fontList: [{
                 bulletSymbolWidth: 40.67,

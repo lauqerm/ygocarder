@@ -22,7 +22,7 @@ export type MasterDuelCanvas = {
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
     drawCanvasRef: React.RefObject<HTMLCanvasElement>,
     // artCanvas: React.RefObject<HTMLCanvasElement>,
-    specialFrameCanvasRef: React.RefObject<HTMLCanvasElement>,
+    frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,
     pendulumScaleCanvasRef: React.RefObject<HTMLCanvasElement>,
     pendulumEffectCanvasRef: React.RefObject<HTMLCanvasElement>,

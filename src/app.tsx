@@ -94,7 +94,7 @@ function App() {
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
     // const artCanvasRef = useRef<HTMLCanvasElement>(null);
-    const specialFrameCanvasRef = useRef<HTMLCanvasElement>(null);
+    const frameCanvasRef = useRef<HTMLCanvasElement>(null);
     const cardIconCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumScaleCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumEffectCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -113,7 +113,7 @@ function App() {
         backgroundCanvasRef,
         drawCanvasRef,
         // artCanvas: artCanvasRef,
-        specialFrameCanvasRef,
+        frameCanvasRef,
         cardIconCanvasRef,
         pendulumScaleCanvasRef,
         pendulumEffectCanvasRef,
@@ -367,7 +367,7 @@ function App() {
                                     {/* <div className="canvas-guard-alert">Generating...</div> */}
                                 </div>
                                 {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
-                                <canvas id="specialFrameCanvas" key={canvasKey} ref={specialFrameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="frameCanvas" key={canvasKey} ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                                 <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
                                 <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />
                                 <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />
@@ -410,7 +410,9 @@ function App() {
                         height={CanvasHeight}
                     />
                 </Modal>
-                <StyledByMe className="by-me">Made by Lauqerm</StyledByMe>
+                <StyledByMe className="by-me">
+                    Made by Lauqerm <img src="https://i.imgur.com/Ix5cq8k.png" alt="avatar" />
+                </StyledByMe>
             </div>
         </HotKeys>
     );

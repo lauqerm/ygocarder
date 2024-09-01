@@ -29,6 +29,11 @@ export const StyledDataButtonPanelContainer = styled.div`
         border: var(--bw) solid var(--sub-secondary);
         font-weight: 500;
         box-shadow: var(--bs-button);
+        height: 39px; // Alignment
+        line-height: 1;
+        &:focus, &:active {
+            color: white;
+        }
     }
     #save-button-waiting {
         cursor: wait;
@@ -37,6 +42,7 @@ export const StyledDataButtonPanelContainer = styled.div`
         height: 100%;
         top: 0;
         left: 0;
+        z-index: 1;
     }
     #save-button-ready {
         cursor: pointer;
@@ -169,4 +175,8 @@ export const StyledByMe = styled.div`
 	opacity: 0.5;
 	padding: var(--spacing-px) var(--spacing-xs);
 	color: var(--color-dim);
+    img {
+        height: 10px;
+        margin-left: 1px;
+    }
 `;
