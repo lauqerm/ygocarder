@@ -5,7 +5,7 @@ const type8CommonInstruction: FinishInstruction[] = [
     { blendMode: 'multiply', opacity: 0.55 },
 ];
 
-/** @summary Web engine has less blend mode than photoshop (or any desktop image manipulators for that matter), the behavior of similar blend mode is also different a lot of time, so we currently we cannot have a 1:1 conversion between photoshop layer into canvas. */
+/** @summary Web engine has less blend mode than photoshop (or any desktop image manipulators for that matter), the behavior of similar blend mode is also different, so we currently we cannot have a 1:1 conversion between photoshop layer into canvas. */
 
 export type FinishInformation = {
     value: string,

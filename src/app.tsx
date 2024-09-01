@@ -20,8 +20,10 @@ import { Modal, notification, Tooltip } from 'antd';
 import { TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
 import {
+    ErrorAlert,
+    LightboxButton,
+    ResetButton,
     StyledAppLoading,
     StyledByMe,
     StyledCardCanvasGroupContainer,
@@ -31,6 +33,7 @@ import { configure, HotKeys } from 'react-hotkeys';
 import { DownloadButtonRef } from './page/canvas-panel/download-button';
 import { useShallow } from 'zustand/react/shallow';
 
+/** React hotkey setup */
 configure({
     ignoreTags: [],
 });
@@ -40,39 +43,6 @@ const AppGlobalHotkeyMap = {
     VIEW: ['ctrl+b', 'command+b'],
     DOWNLOAD: ['ctrl+s', 'command+s'],
 };
-
-const ErrorAlert = styled.span`
-    color: var(--main-danger);
-`;
-const OverlayButton = styled.div`
-    --overlay-size: 51px;
-    position: absolute;
-    z-index: 101;
-    background: var(--main-primary);
-    border-color: var(--main-active);
-    color: var(--color-heavy);
-    padding: var(--spacing);
-    line-height: 1;
-    font-size: var(--fs-3xl);
-    text-align: center;
-    width: var(--overlay-size);
-    height: var(--overlay-size);
-    border-radius: var(--br-lg);
-    cursor: pointer;
-    box-shadow: var(--bs-1);
-    display: none;
-    &:hover {
-        background: var(--sub-primary);
-    }
-`;
-const LightboxButton = styled(OverlayButton)`
-    top: var(--spacing-xs);
-    right: var(--spacing-xs);
-`;
-const ResetButton = styled(OverlayButton)`
-    top: var(--spacing-xs);
-    right: calc(var(--overlay-size) + 2 * var(--spacing-xs));
-`;
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 function App() {
@@ -112,7 +82,6 @@ function App() {
         artworkCanvasRef,
         backgroundCanvasRef,
         drawCanvasRef,
-        // artCanvas: artCanvasRef,
         frameCanvasRef,
         cardIconCanvasRef,
         pendulumScaleCanvasRef,
@@ -366,7 +335,6 @@ function App() {
                                 <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                     {/* <div className="canvas-guard-alert">Generating...</div> */}
                                 </div>
-                                {/* <canvas id="artCanvas" ref={artCanvasRef} width={CanvasWidth} height={963} /> */}
                                 <canvas id="frameCanvas" key={canvasKey} ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
                                 <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
                                 <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />

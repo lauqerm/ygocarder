@@ -118,7 +118,7 @@ export const condense = (
     }
 
     /**
-     * Ensure worker does not run with undesirable threshold (it may have side effect depend on the current ratio, for example, scale canvas). So we run worker with the final median one last time so any side effects from it is affected by the ratio we gonna return.
+     * Ensure worker does not run with undesirable threshold (it may have side effect depend on the current ratio, for example, scale canvas). So we run worker with the final median one last time to make sure any side effects from it is affected by the ratio we gonna return.
      */
     const forcedMedian = Math.max(minThreshold, Math.min(effectiveMedian, MAX_CONDENSER_THRESHOLD));
     if (forcedMedian !== effectiveMedian) worker(forcedMedian);

@@ -11,7 +11,7 @@ export const randomSetID = (format: string) => {
     return randomCharacter('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4)
         + '-'
         + (format === 'OCG' ? 'JP' : 'EN')
-        /** Most set does not reach 200+, so 0, 1 and 2 has significantly higher chance to roll */
+        /** Most set does not reach 200+ index, so 0, 1 and 2 has significantly higher chance to roll */
         + randomCharacter('0000000000111111111122222222223456789', 1)
         + randomCharacter('0123456789', 2);
 };
@@ -57,4 +57,4 @@ export * from './font';
 export * from './gradient';
 export * from './hook';
 export * from './navigation';
-export * from './shortener';
+export * from './codec';

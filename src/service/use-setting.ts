@@ -22,7 +22,8 @@ export const useSetting = create<SettingStore>((set) => {
 
             if (cachedStore && typeof cachedStore === 'object' && !Array.isArray(cachedStore)) return cachedStore;
             return {};
-        } catch (_e) {
+        } catch (e) {
+            console.error('useSetting: Error when getting cached setting', e);
             return {};
         }
     })();
@@ -39,6 +40,7 @@ export const useSetting = create<SettingStore>((set) => {
                 const newSetting = typeof transformerOrPayload === 'function'
                     ? transformerOrPayload(currentStore.setting)
                     : { ...currentStore.setting, ...transformerOrPayload };
+
                 window.localStorage.setItem('setting', JSON.stringify(newSetting));
 
                 return {

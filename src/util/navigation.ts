@@ -37,7 +37,7 @@ export const getNavigationProps = ({
                 e.preventDefault();
                 setFocus(cur => Math.max(0, optionLength + cur - 1) % optionLength);
             }
-            else if (e.key === 'Enter' || e.key === '  ') {
+            else if (e.key === 'Enter' || e.key === ' ') {
                 onTrigger();
             }
             else if (e.key === 'Escape') {

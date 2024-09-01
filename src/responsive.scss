@@ -283,6 +283,9 @@
 		--resize-ratio: 0.6;
 		--translate-ratio: -20%;
 		flex-wrap: wrap;
+		.card-preview-panel {
+			margin-bottom: var(--spacing-2xl);
+		}
 		.app-header {
 			position: relative;
 			width: 100%;

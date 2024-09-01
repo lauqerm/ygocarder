@@ -180,3 +180,39 @@ export const StyledByMe = styled.div`
         margin-left: 1px;
     }
 `;
+
+export const ErrorAlert = styled.span`
+    color: var(--main-danger);
+`;
+
+export const OverlayButton = styled.div`
+    --overlay-size: 51px;
+    position: absolute;
+    z-index: 101;
+    background: var(--main-primary);
+    border-color: var(--main-active);
+    color: var(--color-heavy);
+    padding: var(--spacing);
+    line-height: 1;
+    font-size: var(--fs-3xl);
+    text-align: center;
+    width: var(--overlay-size);
+    height: var(--overlay-size);
+    border-radius: var(--br-lg);
+    cursor: pointer;
+    box-shadow: var(--bs-1);
+    display: none;
+    &:hover {
+        background: var(--sub-primary);
+    }
+`;
+
+export const LightboxButton = styled(OverlayButton)`
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+`;
+
+export const ResetButton = styled(OverlayButton)`
+    top: var(--spacing-xs);
+    right: calc(var(--overlay-size) + 2 * var(--spacing-xs));
+`;

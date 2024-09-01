@@ -21,6 +21,7 @@ const StyledAppSettingContainer = styled.div`
     padding-left: var(--spacing);
     margin-left: var(--spacing);
 `;
+/** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
 export const AppHeader = () => {
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
@@ -38,7 +39,8 @@ export const AppHeader = () => {
                         content={<div className="disclaimer">
                             <h2>Disclaimer</h2>
                             <ul>
-                                <li>This is a personal project, not an "official" card maker. I do not have any affiliations with any other card makers, be it website, desktop app or mobile app.</li>
+                                <li>This is a personal project, not an "official" card maker. I do not have any affiliations with any other card makers, be it website, desktop app or mobile app. And <a href="https://lauqerm.github.io/ygocarder">lauqerm.github.io/ygocarder</a> is the only site that directly maintained by me.</li>
+                                <li>The code of my site is provided as-is. I hold no liability for any other parties that may use or modify the code of my app on their own sites.</li>
                                 <li>I hold no liability for cards created by this app, including pictures, card text and any product related to it.</li>
                                 <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project. They belong to their respective creators.</li>
                                 <li>If you want to modify card layers, or use it in any public project, please contact <a
@@ -49,7 +51,7 @@ export const AppHeader = () => {
                                     target="_blank"
                                     rel="noreferrer">9558able</a> directly.
                                 </li>
-                                <li>This app is completely free to use, I do not charge any kind of fee, require donation or serve any ads in this site. But this project is open source so I hold no liability for any other parties that may use or modify the code on their own site.</li>
+                                <li>This app is completely free to use, I do not charge any kind of fee, require donation or serve any ads in this site.</li>
                             </ul>
                         </div>}
                     />

@@ -1,6 +1,6 @@
 import { Button, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import { MasterDuelCanvas } from 'src/model';
+import { MasterSeriesCanvas } from 'src/model';
 import { useCardExport, useMasterSeriDrawer, useSetting } from 'src/service';
 
 export type DownloadButtonRef = {
@@ -10,7 +10,7 @@ export type DownloadButton = {
     isTainted: boolean,
     isInitializing: boolean,
     imageChangeCount: number,
-    canvasMap: MasterDuelCanvas,
+    canvasMap: MasterSeriesCanvas,
     onDownloadError: () => void,
 };
 export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({

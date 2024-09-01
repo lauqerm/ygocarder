@@ -17,11 +17,10 @@ export type BackgroundType = typeof BackgroundTypeList[0]['value'];
  * * Scaled: Position or size on a hypothesis (scaled) canvas. For example a 1000px wide canvas with scaleX of 0.5 can be treated as a 2000px wide canvas with scaleX of 1. So draw a point at x 50 in this hypothesis canvas will result an actual point at x = 25. If the coordinate / size is divided by a ratio, it is likely a scaled value.
  * * Inverse-scaled: Position or size on a hypothesis canvas. For example a letter that much has exactly 50px wide on every scale. So in a 1000px wide canvas with scaleX of 0.5 the letter actually has 100px width, and vice versa in a 1000px wide canvas with scaleX of 2.0, the letter will have 25px width only.
  */
-export type MasterDuelCanvas = {
+export type MasterSeriesCanvas = {
     artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
     drawCanvasRef: React.RefObject<HTMLCanvasElement>,
-    // artCanvas: React.RefObject<HTMLCanvasElement>,
     frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,
     pendulumScaleCanvasRef: React.RefObject<HTMLCanvasElement>,

@@ -21,7 +21,7 @@ import {
 } from 'src/draw';
 import {
     CanvasConst,
-    MasterDuelCanvas,
+    MasterSeriesCanvas,
     NO_ATTRIBUTE,
     getArtCanvasCoordinate,
     getDefaultCardOpacity,
@@ -52,13 +52,12 @@ type DrawerProp = {
     pendulumSize?: 'medium',
     isInitializing: boolean,
 };
-export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterDuelCanvas, props: DrawerProp) => {
+export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanvas, props: DrawerProp) => {
     const {
         card,
     } = useCard();
     const {
         drawCanvasRef,
-        // artCanvas,
         artworkCanvasRef,
         backgroundCanvasRef,
         frameCanvasRef,
