@@ -11,6 +11,7 @@ export const drawFrom = async (
 ) => {
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
+        /** @todo Do manual caching really needed? Need proper benchmark for this. */
         if (imageCacheMap[source]?.ready === true) {
             const img = imageCacheMap[source].image;
             const normalizedX = typeof sx === 'number' ? sx : sx(img);

@@ -1,3 +1,1 @@
-export {
-    DownloadButton
-} from './download-button';
+export * from './download-button';

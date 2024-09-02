@@ -13,7 +13,7 @@ import {
     decodeCardWithCompatibility,
     isMobileDevice,
 } from './util';
-import { CardInputPanel, CardInputPanelRef, DownloadButton } from './page';
+import { CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef } from './page';
 import WebFont from 'webfontloader';
 import { changeCardFormat, retrieveSavedCard, useCard, useOCGFont, useSetting } from './service';
 import { Modal, notification, Tooltip } from 'antd';
@@ -30,7 +30,6 @@ import {
     StyledDataButtonPanelContainer,
 } from './app.styled';
 import { configure, HotKeys } from 'react-hotkeys';
-import { DownloadButtonRef } from './page/canvas-panel/download-button';
 import { useShallow } from 'zustand/react/shallow';
 
 /** React hotkey setup */
@@ -63,7 +62,6 @@ function App() {
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
     const drawCanvasRef = useRef<HTMLCanvasElement>(null);
-    // const artCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
     const cardIconCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumScaleCanvasRef = useRef<HTMLCanvasElement>(null);
