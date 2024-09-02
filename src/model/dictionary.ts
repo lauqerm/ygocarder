@@ -214,6 +214,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{表|ひょう}{示|じ}',
     },
     {
+        shortForm: '裏',
+        rubyForm: '{裏|うら}',
+    },
+    {
         shortForm: '罠',
         rubyForm: '{罠|トラップ}',
     },
@@ -475,11 +479,11 @@ export const ocgKeywordDataList = [
     },
     {
         shortForm: '取り除く',
-        rubyForm: '{取|と}り{除|ぞ}く',
+        rubyForm: '{取|と}り{除|のぞ}く',
     },
     {
         shortForm: '取り除い',
-        rubyForm: '{取|と}り{除|ぞ}い',
+        rubyForm: '{取|と}り{除|のぞ}い',
     },
     {
         shortForm: '除く',
@@ -651,6 +655,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{以|い}{上|じょう}',
     },
     {
+        shortForm: '上記',
+        rubyForm: '{上|じょう}{記|き}',
+    },
+    {
         shortForm: '場合',
         rubyForm: '{場|ば}{合|あい}',
     },
@@ -786,6 +794,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '除外',
         rubyForm: '{除|じょ}{外|がい}',
+    },
+    {
+        shortForm: '順',
+        rubyForm: '{順|じゅん}',
     },
     {
         shortForm: '代',
@@ -1022,6 +1034,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '好',
         rubyForm: '{好|す}',
+    },
+    {
+        shortForm: '表',
+        rubyForm: '{表|おもて}',
     },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {
