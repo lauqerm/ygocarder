@@ -38,12 +38,15 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 
     /** Migrate old unit */
     if (unit === 'px') {
+        const oldHeightToWidthRatio = 300 / 375;
         const newHeightToWidthRatio = 400 / 300;
         const { width: imageWidth, height: imageHeight } = image;
 
-        const nextX = Math.min((x ?? 0) * newHeightToWidthRatio, imageWidth);
-        const nextY = Math.min((y ?? 0) * newHeightToWidthRatio, imageHeight);
-        const newWidth = Math.min((cropWidth ?? 0) * newHeightToWidthRatio, imageWidth);
+        const isHeightRestricted = (imageHeight / imageWidth) >= oldHeightToWidthRatio;
+        const scaleRatio = isHeightRestricted ? newHeightToWidthRatio : 1;
+        const nextX = Math.min((x ?? 0) * scaleRatio, imageWidth);
+        const nextY = Math.min((y ?? 0) * scaleRatio, imageHeight);
+        const newWidth = Math.min((cropWidth ?? 0) * scaleRatio, imageWidth);
 
         return {
             unit: '%' as 'px' | '%',
