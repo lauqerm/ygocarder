@@ -1,0 +1,31 @@
+/** OCG Text */
+@font-face {
+	font-family: 'Yu-Gi-Oh! DF Leisho 3';
+	src: url('./font/Yu-Gi-Oh! DF Leisho 3.ttf');
+	font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+/** OCG Furigana */
+@font-face {
+	font-family: 'DFHSGothic-W3-WIN-RKSJ-H';
+	src: url('./font/DFHsg3.ttf');
+    font-style: normal;
+    font-display: swap;
+}
+/** OCG Effect Number */
+@font-face {
+	font-family: 'DFKakuTaiHiStd-W4';
+	src: url('./font/DFKakuTaiHiStd-W4.otf') format('opentype');
+	font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+/** OCG Creator text */
+@font-face {
+	font-family: 'FOT-Rodin Pro M';
+	src: url('./font/FOT-RodinPro-M.ttf');
+	font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
