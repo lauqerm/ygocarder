@@ -999,6 +999,14 @@ export const ocgKeywordDataList = [
         shortForm: '倍',
         rubyForm: '{倍|ばい}',
     },
+    {
+        shortForm: '下',
+        rubyForm: '{下|した}',
+    },
+    {
+        shortForm: '際',
+        rubyForm: '{際|さい}',
+    },
 ];
 export const ocgKeywordDataMap = ocgKeywordDataList.reduce((acc, cur) => {
     acc[cur.shortForm] = cur;
