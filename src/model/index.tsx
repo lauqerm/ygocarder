@@ -116,7 +116,7 @@ export const getEmptyCard = (): Card => ({
         condenseTolerant: 'strict',
     },
     effect: '',
-    setId: 'YGOC-EN001',
+    setId: '',
     atk: '0',
     def: '0',
     password: '',
@@ -124,7 +124,7 @@ export const getEmptyCard = (): Card => ({
     isFirstEdition: false,
     isSpeedCard: false,
     isDuelTerminalCard: false,
-    creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+    creator: '',
     furiganaHelper: true,
 });
 
