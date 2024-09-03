@@ -12,6 +12,8 @@
         "alert.explaination.tainted.third-answer": "Change to other safe and popular image host (\"imgur\" for example) will likely fix the issue. You may try to refresh the page if the issue persists.\nIf you cannot afford to switch to other image hosts, the app will also work mostly just fine, you only need to manually save the card (and keep cautious for potential malicious links).",
         "alert.explaination.tainted.third-question": "How do I fix it?",
         "button.download.label": "Download",
+        "button.download.ongoing.label": "Downloading…",
+        "button.download.resolution.label": "Resolution (px)",
         "button.export.label": "Export Data",
         "button.full-size.label": "Original Size",
         "button.import.label": "Import Data",

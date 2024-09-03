@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { compressCardData, insertUrlParam, normalizedCardName } from 'src/util';
 import { useCard } from './use-card';
 import { CardOpacity } from 'src/model';
+import { useSetting } from './use-setting';
 
 export type UseCardExport = {
     isTainted: boolean,
@@ -31,6 +32,7 @@ export const useCardExport = ({
     const {
         card: currentCard,
     } = useCard();
+    const resolution = useSetting(state => state.setting.resolution);
     const {
         opacity,
         name,
@@ -38,28 +40,49 @@ export const useCardExport = ({
     } = currentCard;
     const pendingSave = useRef(false);
 
-    const download = useCallback(() => {
-        const canvasRef = drawCanvasRef.current;
-        if (canvasRef && !isTainted) try {
-            const normalizedName = normalizedCardName(name);
-            var link = document.createElement('a');
-            link.download = normalizedName
-                ? `${normalizedName}.png`
-                : 'card.png';
-            link.href = canvasRef.toDataURL('image/png');
-            link.click();
-        } catch (e) {
-            onDownloadError();
+    const download = useCallback((size: [number, number] = resolution) => {
+        const drawCanvas = drawCanvasRef.current;
+        /** Clone node so we can resize it as will */
+        const cloneCanvas = drawCanvas?.cloneNode() as HTMLCanvasElement | null;
+        const drawCanvasContext = drawCanvas?.getContext('2d');
+        const cloneCanvasContext = cloneCanvas?.getContext('2d');
+        if (drawCanvas && drawCanvasContext
+            && cloneCanvas && cloneCanvasContext
+            && !isTainted
+        ) {
+            try {
+                if (size) {
+                    cloneCanvas.width = size[0];
+                    cloneCanvas.height = size[1];
+                }
+                /** Resize here */
+                cloneCanvasContext.drawImage(
+                    drawCanvas,
+                    0, 0, drawCanvas.width, drawCanvas.height,
+                    0, 0, cloneCanvas.width, cloneCanvas.height,
+                );
+
+                const normalizedName = normalizedCardName(name);
+                var link = document.createElement('a');
+                link.download = normalizedName
+                    ? `${normalizedName}.png`
+                    : 'card.png';
+                link.href = cloneCanvas.toDataURL('image/png');
+                link.click();
+            } catch (e) {
+                onDownloadError();
+            }
         }
         document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
         onDownloadComplete();
-    }, [drawCanvasRef, isTainted, name, onDownloadComplete, onDownloadError]);
-    const onSave = () => {
+    }, [drawCanvasRef, isTainted, name, resolution, onDownloadComplete, onDownloadError]);
+    const onSave = (size?: [number, number]) => {
         document.querySelector('#export-canvas-guard')?.classList.add('guard-on');
+        const queuingSize = size ? [...size] as [number, number] : undefined;
         /** Prevent split-second download. By using hotkey user is able to perform extremely fast save process before the pipeline start running, thus getting the previous card data instead of the most recent one. */
         setTimeout(() => {
             if (exportRef.current.pipelineRunning === false) {
-                download();
+                download(queuingSize);
             } else pendingSave.current = true;
         }, 200);
     };

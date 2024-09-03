@@ -1,6 +1,8 @@
+import { CanvasConst } from 'src/model';
 import { create } from 'zustand';
 
 export type Setting = {
+    resolution: [number, number],
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
     allowHotkey: boolean,
@@ -12,6 +14,7 @@ export type SettingStore = {
 };
 export const useSetting = create<SettingStore>((set) => {
     const {
+        resolution,
         allowHotkey,
         reduceMotionColor,
         showCreativeOption,
@@ -30,6 +33,9 @@ export const useSetting = create<SettingStore>((set) => {
 
     return {
         setting: {
+            resolution: Array.isArray(resolution) && typeof resolution[0] === 'number' && typeof resolution[1] === 'number'
+                ? resolution as [number, number]
+                : [CanvasConst.width, CanvasConst.height],
             allowHotkey: typeof allowHotkey === 'boolean' ? allowHotkey : true,
             reduceMotionColor: typeof reduceMotionColor === 'boolean' ? reduceMotionColor : false,
             showCreativeOption: typeof showCreativeOption === 'boolean' ? showCreativeOption : true,

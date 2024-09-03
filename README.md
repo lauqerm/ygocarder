@@ -1,3 +1,5 @@
+If you are looking for V1, please visit [ygocarder-v1 repo](https://github.com/lauqerm/ygocarder-v1).
+
 ## YGO Carder
 
 * Template provided by: [Grezar](https://www.deviantart.com/grezar), [9558able](https://www.deviantart.com/9558able), [SlackerMagician](https://www.deviantart.com/slackermagician) and [icycatelf](https://www.deviantart.com/icycatelf).

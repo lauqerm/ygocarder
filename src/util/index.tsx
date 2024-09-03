@@ -37,6 +37,10 @@ export const normalizedCardName = (name: string) => {
     return name.replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1');
 };
 
+export const forceRefocus = (selector = '.radio-train-input-group') => {
+    document.querySelector<HTMLElement>(selector)?.focus();
+};
+
 /** Seriously, what the hell? */
 export const isMobileDevice = () => {
     let check = false;

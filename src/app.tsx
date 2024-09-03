@@ -10,6 +10,7 @@ import {
 } from './model';
 import {
     compressCardData,
+    forceRefocus,
     isMobileDevice,
 } from './util';
 import { CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef } from './page';
@@ -232,7 +233,7 @@ function App() {
             setImageChangeCount(cnt => cnt + 1);
             cardInputRef.current?.forceCardData(decodedCard);
             /** Allow navigate input panel right away */
-            document.querySelector<HTMLElement>('.radio-train-input-group')?.focus();
+            forceRefocus();
         }
     }, [allowHotkey, language]);
 

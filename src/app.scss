@@ -232,7 +232,7 @@ input:-internal-autofill-selected {
 }
 
 /** Slow animation for download button **/
-.data-button-panel .save-button {
+.data-button-panel .button-label {
     background: linear-gradient(135deg, #22c1c3 0%, #298ae9 50%, #22c1c3 100%);
     background-size: 300% 300%;
     animation: SlowPulsating ease infinite 10s;
