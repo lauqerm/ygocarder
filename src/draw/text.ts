@@ -18,7 +18,7 @@ import {
     START_OF_LINE_ALPHABET_OFFSET,
     ST_ICON_SYMBOL,
     SquareBracketLetterRegex,
-    TCGSpecialLetterRegex,
+    TCGSymbolLetterRegex,
     TextData,
     WholeWordRegex,
     getBulletSpacing,
@@ -408,7 +408,7 @@ export const drawLine = ({
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter(drawLetterofWordParameter);
                         stopApplyNumberFont();
-                    } else if (TCGSpecialLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                    } else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
                         applySymbolFont();
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter(drawLetterofWordParameter);
@@ -427,7 +427,7 @@ export const drawLine = ({
                 ctx.letterSpacing = '0px';
             }
             /** Some specific letter ("Evil★Twin's Trouble Sunny" TCG) requires different font. */
-            else if (TCGSpecialLetterRegex.test(fragment) && fontStyle === 'tcg') {
+            else if (TCGSymbolLetterRegex.test(fragment) && fontStyle === 'tcg') {
                 const letter = fragment;
                 applySymbolFont();
 

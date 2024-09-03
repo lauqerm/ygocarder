@@ -56,6 +56,8 @@ html {
     --spacing-2xl: 20px;
     --spacing-antd: 11px;
 
+    // Font
+    --ff-ocg: 'DFHSGothic-W3-WIN-RKSJ-H';
     --fs-xs: 9px;
     --fs-sm: 12px;
     --fs: 14px;
@@ -200,7 +202,7 @@ hr {
     textarea.ant-input {
         font-size: var(--fs-ocg);
         line-height: 1.4666;
-        font-family: "DFHSGothic-W3-WIN-RKSJ-H";
+        font-family: var(--ff-ocg);
     }
 }
 

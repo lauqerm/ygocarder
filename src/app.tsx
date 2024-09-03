@@ -422,7 +422,7 @@ function App() {
                     />
                 </Modal>
                 <StyledByMe className="by-me">
-                    Made by Lauqerm <img src="https://i.imgur.com/Ix5cq8k.png" alt="avatar" />
+                    Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                 </StyledByMe>
             </div>
         </HotKeys>

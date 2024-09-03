@@ -1,7 +1,7 @@
 import {
     FontData,
     BULLET_LETTER,
-    TCGSpecialLetterRegex,
+    TCGSymbolLetterRegex,
     OCGAlphabetRegex,
     MAX_LINE_REVERSE_INDENT,
     START_OF_LINE_ALPHABET_OFFSET,
@@ -253,7 +253,7 @@ export const analyzeToken = ({
                     stopApplyNumberFont();
                 }
                 /** Special symbol in TCG card ("Evil☆Twin") may use different font, again we assume the letter have similar size. */
-                else if (TCGSpecialLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
                     applySymbolFont();
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     stopApplySymbolFont();
@@ -280,7 +280,7 @@ export const analyzeToken = ({
             ctx.letterSpacing = '0px';
         }
         /** Special symbol in TCG card ("Evil☆Twin") may use different font */
-        else if (TCGSpecialLetterRegex.test(fragment) && fontStyle === 'tcg') {
+        else if (TCGSymbolLetterRegex.test(fragment) && fontStyle === 'tcg') {
             applySymbolFont();
             const fragmentWidth = ctx.measureText(fragment).width * letterSpacingRatio;
             stopApplySymbolFont();
