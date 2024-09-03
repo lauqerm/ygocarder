@@ -129,42 +129,42 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     if (isTainted) return null;
     return <div className="save-button-container">
         <div id="save-button-waiting" />
-        <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
-            <StyledDownloadButton className="save-button" id="save-button-ready" onClick={() => download()}>
+        <StyledDownloadButton className="save-button" id="save-button-ready" onClick={() => download()}>
+            <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
                 <div className="button-label">
                     {isDownloading
                         ? language['button.download.ongoing.label']
                         : language['button.download.label']}
                 </div>
-                <Dropdown
-                    disabled={isDownloading}
-                    className="save-button-dropdown"
-                    placement="bottomRight"
-                    overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
-                        <StyledDownloadDropdownLabel disabled>{language['button.download.resolution.label']}</StyledDownloadDropdownLabel>
-                        {[
-                            { width: 549, height: 800 },
-                            { width: 813, height: 1185 },
-                        ].map(({ width, height }) => {
-                            return <StyledDownloadDropdownOption key={`${width}-${height}`}
-                                className={resolution[0] === width && resolution[1] === height ? 'active-resolution' : ''}
-                                onClick={() => {
-                                    updateSetting({
-                                        resolution: [width, height],
-                                    });
-                                    forceRefocus();
-                                }}
-                            >
-                                {width} × {height}
-                            </StyledDownloadDropdownOption>;
-                        })}
-                    </Menu>}
-                >
-                    <div className="button-option" onClick={e => e.stopPropagation()}>
-                        <MenuOutlined />
-                    </div>
-                </Dropdown>
-            </StyledDownloadButton>
-        </Tooltip>
+            </Tooltip>
+            <Dropdown
+                disabled={isDownloading}
+                className="save-button-dropdown"
+                placement="bottomRight"
+                overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
+                    <StyledDownloadDropdownLabel disabled>{language['button.download.resolution.label']}</StyledDownloadDropdownLabel>
+                    {[
+                        { width: 549, height: 800 },
+                        { width: 813, height: 1185 },
+                    ].map(({ width, height }) => {
+                        return <StyledDownloadDropdownOption key={`${width}-${height}`}
+                            className={resolution[0] === width && resolution[1] === height ? 'active-resolution' : ''}
+                            onClick={() => {
+                                updateSetting({
+                                    resolution: [width, height],
+                                });
+                                forceRefocus();
+                            }}
+                        >
+                            {width} × {height}
+                        </StyledDownloadDropdownOption>;
+                    })}
+                </Menu>}
+            >
+                <div className="button-option" onClick={e => e.stopPropagation()}>
+                    <MenuOutlined />
+                </div>
+            </Dropdown>
+        </StyledDownloadButton>
     </div>;
 });

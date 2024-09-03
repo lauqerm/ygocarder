@@ -140,6 +140,14 @@ function App() {
     useEffect(() => {
         if (isMetadataReady) loadDefaultLanguage();
     }, [isMetadataReady, loadDefaultLanguage]);
+    /** Dynamic style, we force inline style into body because app component's style cannot affect overlay component. */
+    useEffect(() => {
+        const applyList = ['fontFamily' as const, 'letterSpacing' as const];
+
+        applyList.forEach(styleName => {
+            document.body.style[styleName] = languageInfo.style?.[styleName] ?? '' as any;
+        });
+    }, [languageInfo]);
 
     useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
@@ -293,6 +301,7 @@ function App() {
             <div id="app"
                 /** Prevent accidentally replace the page when dragging image into card art input. */
                 onDrop={() => { }}
+                className={`language-${languageInfo.codeName}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: isMobileDevice() ? '-webkit-fill-available' : '100vh',

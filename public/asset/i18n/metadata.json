@@ -8,11 +8,15 @@
         "active": true
     },
     "jap": {
-        "name": "日本語",
+        "name": "日本語 (Beta)",
         "formalName": "Japanese",
         "codeName": "jap",
         "initialMessage": "フォントとスクリプトを読み込んでいます…",
         "order": 2,
+        "style": {
+            "fontFamily": "'Yu-Gi-Oh! DF Leisho 3'",
+            "letterSpacing": "-0.25px"
+        },
         "active": true
     },
     "def": {

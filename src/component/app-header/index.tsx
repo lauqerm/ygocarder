@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import { useI18N, useLanguage } from 'src/service';
-// import { Radio } from 'antd';
+import { Radio } from 'antd';
 import './app-header.scss';
 
 export const Affiliation = () => {
@@ -27,9 +27,9 @@ const StyledAppSettingContainer = styled.div`
 export const AppHeader = () => {
     const {
         language,
-        // languageInfo,
-        // languageMetadataMap,
-        // changeLanguage,
+        languageInfo,
+        languageMetadataMap,
+        changeLanguage,
     } = useI18N(({
         languageInfo,
         language,
@@ -48,7 +48,7 @@ export const AppHeader = () => {
             <div className="header-language">
                 <h1>Yugioh Carder</h1>
                 {/** Temporary disable until Japanese is translated */}
-                {/* <Radio.Group value={languageInfo.codeName} size="small">
+                <Radio.Group value={languageInfo.codeName} size="small">
                     {Object.values(languageMetadataMap)
                         .filter(({ active }) => active)
                         .map(({ codeName, name }) => {
@@ -59,7 +59,7 @@ export const AppHeader = () => {
                                 {name}
                             </Radio.Button>;
                         })}
-                </Radio.Group> */}
+                </Radio.Group>
             </div>
             <div className="app-contribution">
                 <span className="app-creator">

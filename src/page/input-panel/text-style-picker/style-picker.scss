@@ -2,6 +2,7 @@
     display: inline-flex;
     column-gap: var(--spacing-sm);
     line-height: 1.15;
+    margin: var(--spacing-xs) 0;
     .disable-overlay {
         position: absolute;
         top: 0;
@@ -13,6 +14,7 @@
     }
 }
 .name-style-option-input-container {
+    margin: var(--spacing-xs) 0;
     &:focus-visible {
         outline: none;
         .ant-radio-label {

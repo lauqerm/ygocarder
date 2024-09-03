@@ -7,6 +7,7 @@ export type LanguageMetadata = {
     initialMessage: string,
     active: boolean,
     order: number,
+    style?: React.CSSProperties,
 };
 export const getDefaultLanguageMetadata = () => ({
     name: 'Default',
@@ -14,7 +15,7 @@ export const getDefaultLanguageMetadata = () => ({
     codeName: 'def',
     initialMessage: '',
     order: 1000,
-    active: false
+    active: false,
 });
 export type RawLanguageData = LanguageMetadata & {
     rawDictionary: Record<string, string>,
