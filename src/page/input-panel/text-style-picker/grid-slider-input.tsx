@@ -3,6 +3,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import PowerSlider from 'react-input-slider';
 import { NameStyle } from 'src/model';
+import { useLanguage } from 'src/service';
 
 export type GridSliderInputRef = {
     setValue: (value: Partial<{
@@ -36,6 +37,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
     labelMap,
     onChange,
 }, ref) => {
+    const language = useLanguage();
     const {
         x: xField,
         y: yField,
@@ -92,7 +94,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
     }));
 
     return <div className={className}>
-        <h2>Position</h2>
+        <h2>{language['input.name-style.slider.position.label']}</h2>
         <div className="line-position">
             <PowerSlider axis="xy"
                 styles={{
@@ -114,14 +116,14 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                 y={y ?? 0}
                 onChange={({ x, y }) => setValue(cur => ({ ...cur, x, y }))} />
             <div className="single-slider">
-                X Offset: <InputNumber
+                {language['input.name-style.slider.x-offset.label']}: <InputNumber
                     size="small"
                     value={x}
                     onChange={value => setValue(cur => ({ ...cur, x: typeof value === 'number' ? value : parseInt(value ?? '0') }))}
                 />
             </div>
             <div className="single-slider">
-                Y Offset: <InputNumber
+                {language['input.name-style.slider.y-offset.label']}: <InputNumber
                     size="small"
                     value={y}
                     onChange={value => setValue(cur => ({ ...cur, y: typeof value === 'number' ? value : parseInt(value ?? '0') }))}
@@ -140,7 +142,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                 />
             </div>
         </div>
-        <h2>Color</h2>
+        <h2>{language['input.name-style.slider.color.label']}</h2>
         <CompactPicker color={color} onChangeComplete={color => setValue(cur => ({ ...cur, color: color.hex }))} />
     </div>;
 });

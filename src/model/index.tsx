@@ -133,23 +133,27 @@ export const OpacityList = [
         type: 'body' as const,
         subType: 'artBorder' as const,
         label: 'Card',
-        tooltip: 'Keep art border even if the card\'s body is transparent.',
+        labelKey: 'input.opacity.body.label',
+        tooltipKey: 'input.opacity.art-border.tooltip',
     },
     {
         type: 'name' as const,
         subType: 'nameBorder' as const,
         label: 'Name',
-        tooltip: 'Draw name\'s border and finish whenever possible.',
+        labelKey: 'input.opacity.name.label',
+        tooltipKey: 'input.opacity.name-border.tooltip',
     },
     {
         type: 'pendulum' as const,
         label: 'Pendulum',
-        tooltip: null,
+        labelKey: 'input.opacity.pendulum.label',
+        tooltipKey: null,
     },
     {
         type: 'text' as const,
         label: 'Effect',
-        tooltip: null,
+        labelKey: 'input.opacity.effect.label',
+        tooltipKey: null,
     },
 ];
 

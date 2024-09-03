@@ -19,3 +19,9 @@
 * OCG's letter dialect ("Chef Special Recipe" OCG for example)
 * In-place zoom
 * Improve UX when rendering card (reduce flashing)
+
+o => i
+e => a
+i => u
+u => e
+a => o

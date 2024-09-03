@@ -1,6 +1,7 @@
 import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { useLanguage } from 'src/service';
 import './link-marker.scss';
 
 export type LinkMarkChooser = {
@@ -13,6 +14,7 @@ export const LinkMarkChooser = ({
 }: LinkMarkChooser) => {
     const [choosenArrow, setChoosenArrow] = useState(defaultValue);
     const rotateMap = [-45, 0, 45, -90, 0, 90, -135, 180, 135];
+    const language = useLanguage();
 
     const literalChoosenArrow = JSON.stringify(choosenArrow);
     useEffect(() => {
@@ -22,13 +24,13 @@ export const LinkMarkChooser = ({
 
     return <div className="link-marker-chooser">
         <div className="title">
-            Link Arrows
+            {language['link-picker.label']}
         </div>
         <div className="container">
-            {[...Array(9)].map((entry, index) => {
+            {[...Array(9)].map((_, index) => {
                 const normalizedIndex = `${index + 1}`;
 
-                if (normalizedIndex === '5') return <Tooltip key="5" overlay="Reset">
+                if (normalizedIndex === '5') return <Tooltip key="5" overlay={language['link-picker.reset.tooltip']}>
                     <div className="link-marker-reset" onClick={() => {
                         setChoosenArrow([]);
                     }}>

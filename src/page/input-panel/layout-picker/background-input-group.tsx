@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
 import { getArtCanvasCoordinate } from 'src/model';
@@ -38,6 +38,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
     onTainted,
     onCropChange,
 }, ref) => {
+    const language = useLanguage();
     const {
         background, backgroundCrop, backgroundType,
         isPendulum,
@@ -84,7 +85,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
 
     return <StyledImageCropper
         ref={imageCropperRef}
-        title="Image"
+        title={language['input.background-image.label']}
         backgroundColor={backgroundColor}
         defaultExternalSource={background}
         defaultCropInfo={backgroundCrop}

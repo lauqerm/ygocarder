@@ -2,6 +2,7 @@
 // import Moveable from 'react-moveable';
 // import { EllipsisOutlined } from '@ant-design/icons';
 import { Explanation } from 'src/component';
+import { useLanguage } from 'src/service';
 import styled from 'styled-components';
 
 export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
@@ -106,6 +107,7 @@ export const CharPicker = ({
     targetId = '',
     onPick = () => {},
 }: CharPicker) => {
+    const language = useLanguage();
     // const [target, setTarget] = useState<HTMLElement | null>(null);
     const internalOnPick = (letter: string) => {
         const inputTarget = document.getElementById(targetId) as HTMLTextAreaElement;
@@ -155,10 +157,10 @@ export const CharPicker = ({
         <div className="char-picker-guideline">
             <Explanation
                 content={<>
-                    How to use:
+                    {language['input.char-picker.guide.header']}
                     <ul>
-                        <li>At any text field, click at the position you want to insert.</li>
-                        <li>Click the letter.</li>
+                        <li>{language['input.char-picker.guide.instruction-1']}</li>
+                        <li>{language['input.char-picker.guide.instruction-2']}</li>
                     </ul>
                 </>}
             />

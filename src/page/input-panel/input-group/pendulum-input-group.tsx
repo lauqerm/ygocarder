@@ -3,7 +3,7 @@ import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { RadioTrain } from '../input-train';
 import { FrameInfoBlock } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { FrameInfoMap } from 'src/model';
@@ -27,6 +27,7 @@ const BottomFrameOptionGrid = forwardRef<BottomFrameOptionGridRef, BottomFrameOp
     onChange,
     onCancel,
 }, ref) => {
+    const language = useLanguage();
     const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
     const inputRef = useRef<HTMLInputElement>(null);
     const [focus, setFocus] = useState(0);
@@ -53,7 +54,7 @@ const BottomFrameOptionGrid = forwardRef<BottomFrameOptionGridRef, BottomFrameOp
             onChange={e => {
                 onChange(e.target.checked ? 'auto' : recentCustomPendulumFrame.current);
             }}
-        >Auto</Checkbox>
+        >{language['input.frame.auto']}</Checkbox>
         <RadioTrain
             className="frame-radio"
             value={pendulumFrame}
@@ -103,7 +104,14 @@ const StyledPendulumInputContainer = styled.div`
     grid-template-columns: 1fr 1fr;
     column-gap: var(--spacing-sm);
     row-gap: var(--spacing-sm);
+    .red-scale {
+        color: var(--sub-red-scale);
+    }
+    .blue-scale {
+        color: var(--sub-blue-scale);
+    }
     .joined-row {
+        position: 'relative';
         grid-column: span 2;
         .standalone-label {
             min-width: 0;
@@ -149,6 +157,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     showExtraDecorativeOption,
     onTakePicker,
 }, ref) => {
+    const language = useLanguage();
     const {
         frame,
         isPendulum,
@@ -231,7 +240,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     className="pendulum-checkbox"
                     onChange={changeToPendulum}
                     checked={isPendulum}
-                >Pendulum</Checkbox>
+                >{language['input.pendulum.label']}</Checkbox>
                 : <div className="pendulum-checkbox-placeholder" />}
             {showCreativeOption && <Popover
                 visible={frameDropdownVisible}
@@ -266,20 +275,26 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         }
                     }}
                 >
-                    <span className="pendulum-frame-label">Bottom Frame <CaretDownOutlined /></span>
+                    <span className="pendulum-frame-label">{language['input.bottom-frame.label']} <CaretDownOutlined /></span>
                     {currentPendulumFrame
                         ? <FrameInfoBlock className="pendulum-frame-info-block" {...currentPendulumFrame} />
-                        : <FrameInfoBlock className="pendulum-frame-info-block" name="Auto" />}
+                        : <FrameInfoBlock className="pendulum-frame-info-block" nameKey="input.frame.auto" />}
                 </StyledPendulumFrameInputContainer>
             </Popover>}
             {(isPendulum && showCreativeOption)
-                && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>Mirror Scale</Checkbox>}
+                && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>
+                    {language['input.mirror-scale.label']}
+                </Checkbox>}
         </div>
         {isPendulum && <>
             <div>
                 <Input
                     addonBefore={<span>
-                        <span style={{ color: 'var(--sub-blue-scale)' }}>Blue</span> Scale
+                        {language['input.scale.label'](
+                            <span className="blue-scale">
+                                {language['input.scale.blue.label']}
+                            </span>
+                        )}
                     </span>}
                     value={pendulumScaleBlue}
                     onChange={e => {
@@ -290,7 +305,11 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             <div>
                 <Input
                     addonBefore={<span>
-                        <span style={{ color: 'var(--sub-red-scale)' }}>Red</span> Scale
+                        {language['input.scale.label'](
+                            <span className="red-scale">
+                                {language['input.scale.red.label']}
+                            </span>
+                        )}
                     </span>}
                     value={pendulumScaleRed}
                     onChange={e => {
@@ -299,7 +318,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     }}
                 />
             </div>
-            <div className="joined-row" style={{ position: 'relative' }}>
+            <div className="joined-row">
                 {/** Explicit label does not looks too good */}
                 {/* <StandaloneLabel className="standalone-label">Pendulum Effect</StandaloneLabel> */}
                 <CardTextArea ref={pendulumEffectInputRef}

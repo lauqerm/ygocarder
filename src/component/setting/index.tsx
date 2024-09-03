@@ -1,4 +1,4 @@
-import { useSetting } from 'src/service';
+import { useLanguage, useSetting } from 'src/service';
 import { SettingFilled } from '@ant-design/icons';
 import styled, { css, keyframes } from 'styled-components';
 import { Checkbox, Popover, Tooltip } from 'antd';
@@ -44,6 +44,7 @@ const StyledSettingButtonContainer = styled.div<{ $softMode?: boolean }>`
     }
 `;
 export const SettingButton = () => {
+    const language = useLanguage();
     const {
         setting,
         updateSetting,
@@ -64,36 +65,36 @@ export const SettingButton = () => {
                     <Checkbox
                         checked={reduceMotionColor}
                         onChange={e => updateSetting({ reduceMotionColor: e.target.checked })}
-                    >Reduce Color and Motion</Checkbox>
+                    >{language['setting.option.soft-mode.label']}</Checkbox>
                 </div>
                 <div>
                     <Checkbox
                         checked={showExtraDecorativeOption}
                         onChange={e => updateSetting({ showExtraDecorativeOption: e.target.checked })}
-                    >Show Extra Decorative Options</Checkbox>
+                    >{language['setting.option.extra-decorative.label']}</Checkbox>
                 </div>
                 <div>
                     <Checkbox
                         checked={showCreativeOption}
                         onChange={e => updateSetting({ showCreativeOption: e.target.checked })}
-                    >Show Creative Options</Checkbox>
+                    >{language['setting.option.creative.label']}</Checkbox>
                 </div>
                 <div>
-                    <Tooltip title="Warning: Using hotkey may affect undo / redo feature." placement="left">
+                    <Tooltip title={language['setting.option.hotkey.tooltip']} placement="left">
                         <Checkbox
                             checked={allowHotkey}
                             onChange={e => updateSetting({ allowHotkey: e.target.checked })}
-                        >Allow hotkey</Checkbox>
+                        >{language['setting.option.hotkey.label']}</Checkbox>
                     </Tooltip>
                 </div>
                 <div>
-                    <small>Settings are saved locally</small>
+                    <small>{language['setting.alert']}</small>
                 </div>
             </StyledSettingPanel>}
         >
             <div className="setting-button-label">
                 <SettingFilled />
-                <label>Setting</label>
+                <label>{language['setting.button.label']}</label>
             </div>
         </Popover>
     </StyledSettingButtonContainer>;

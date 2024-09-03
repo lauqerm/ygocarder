@@ -1,17 +1,5 @@
-export type FontGetter = {
-    getFont: () => string,
-    getFontInfo: () => {
-        style: '' | 'italic' | 'small-caps',
-        size: `${number}px`,
-        sizeAsNumber: number,
-        family: string,
-        weight: '' | 'bold',
-    },
-    setWeight(nextWeight: '' | 'bold'): FontGetter,
-    setStyle(nextStyle: '' | 'italic' | 'small-caps'): FontGetter,
-    setSize(nextSize: number | `${number}px` | ((currentSize: number) => number | `${number}px`)): FontGetter,
-    setFamily(nextFamily: string): FontGetter,
-}
+import { FontGetter } from 'src/model';
+
 export const createFontGetter = (props?: {
     defaultWeight?: '' | 'bold',
     defaultStyle?: '' | 'italic' | 'small-caps',

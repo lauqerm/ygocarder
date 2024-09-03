@@ -135,21 +135,26 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
     },
 };
 
-export const FoilList = [
+export type FoilDictionary = {
+    normal: string,
+    gold: string,
+    platinum: string,
+};
+export const getFoilList = (dictionary: FoilDictionary) => [
     {
         name: 'normal' as const,
-        label: 'None',
+        label: dictionary.normal,
         color: '#747b95',
     },
     {
         name: 'gold' as const,
-        label: 'Gold',
+        label: dictionary.gold,
         color: '#cfa65f',
     },
     {
         name: 'platinum' as const,
-        label: 'Platinum',
+        label: dictionary.platinum,
         color: '#b1b1b1',
     },
 ];
-export type Foil = typeof FoilList[0]['name'];
+export type Foil = ReturnType<typeof getFoilList>[0]['name'];

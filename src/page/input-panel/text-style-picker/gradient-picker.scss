@@ -64,6 +64,8 @@
         flex-direction: column;
         align-self: end;
         .stop-point-offset-input {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: var(--spacing-xs);
             color: var(--color-vendor);
             font-size: var(--fs-sm);

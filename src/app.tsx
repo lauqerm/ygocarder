@@ -10,12 +10,20 @@ import {
 } from './model';
 import {
     compressCardData,
-    decodeCardWithCompatibility,
     isMobileDevice,
 } from './util';
 import { CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef } from './page';
 import WebFont from 'webfontloader';
-import { changeCardFormat, retrieveSavedCard, useCard, useOCGFont, useSetting } from './service';
+import {
+    changeCardFormat,
+    getLanguage,
+    retrieveSavedCard,
+    decodeCardWithCompatibility,
+    useCard,
+    useI18N,
+    useOCGFont,
+    useSetting,
+} from './service';
 import { Modal, notification, Tooltip } from 'antd';
 import { TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
@@ -51,6 +59,31 @@ function App() {
     } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor } }) => ({
         softMode: reduceMotionColor,
         allowHotkey,
+    })));
+    const {
+        isInitiating: isLanguageInitiating,
+        isLoading: isLanguageLoading,
+        language,
+        isMetadataReady,
+        languageInfo,
+        initiate: initiateI18N,
+        loadDefaultLanguage,
+    } = useI18N(useShallow(({
+        isInitiating,
+        isLoading,
+        language,
+        isMetadataReady,
+        languageInfo,
+        initiate,
+        loadDefaultLanguage,
+    }) => ({
+        isInitiating,
+        isLoading,
+        language,
+        isMetadataReady,
+        languageInfo,
+        initiate,
+        loadDefaultLanguage,
     })));
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
@@ -101,6 +134,13 @@ function App() {
     const [imageChangeCount, setImageChangeCount] = useState(0);
 
     useEffect(() => {
+        initiateI18N();
+    }, [initiateI18N]);
+    useEffect(() => {
+        if (isMetadataReady) loadDefaultLanguage();
+    }, [isMetadataReady, loadDefaultLanguage]);
+
+    useEffect(() => {
         const ctx = drawCanvasRef.current?.getContext('2d');
         const setCard = useCard.getState().setCard;
         if (ctx) {
@@ -109,7 +149,7 @@ function App() {
             clearCanvas(ctx);
         }
 
-        WebFont.load({
+        if (isLanguageInitiating === false) WebFont.load({
             custom: {
                 families: [
                     'Matrix-Bold',
@@ -132,19 +172,20 @@ function App() {
             fontinactive(familyName, fvd) {
                 console.error('TCG fontinactive', familyName, fvd);
                 notification.error({
-                    message: `${familyName} font could not be loaded, this will impact your card quality`
+                    message: getLanguage()['error.load.font.tcg'](familyName),
                 });
             },
             inactive: () => {
-                setError('Font could not be loaded');
+                setError(getLanguage()['error.load.font.all-tcg']);
                 setInitializing(false);
             },
         });
-    }, []);
+    }, [isLanguageInitiating]);
 
     const {
         styleContent: ocgStyleFile,
     } = useOCGFont({
+        isLanguageInitiating,
         onBeforeLoad: () => {
             setInitializing(true);
             const ctx = drawCanvasRef.current?.getContext('2d');
@@ -155,18 +196,16 @@ function App() {
             }
         },
         onActive: () => {
-            console.info('OCG Data Loaded');
-
             setInitializing(false);
         },
         onInactive: () => {
-            setError('Data for OCG cards could not be loaded');
+            setError(getLanguage()['error.load.font.all-ocg']);
             setInitializing(false);
         },
         onFontInactive: (familyName, fvd) => {
             console.error('OCG fontinactive', familyName, fvd);
             notification.error({
-                message: `${familyName} font could not be loaded, this will impact your card quality`
+                message: getLanguage()['error.load.font.ocg'](familyName),
             });
         }
     });
@@ -184,7 +223,7 @@ function App() {
         if (!allowHotkey) return;
 
         event?.preventDefault();
-        const cardData = window.prompt('Paste your card data here');
+        const cardData = window.prompt(language['prompt.import.message']);
         const setCard = useCard.getState().setCard;
 
         if (cardData) {
@@ -195,20 +234,20 @@ function App() {
             /** Allow navigate input panel right away */
             document.querySelector<HTMLElement>('.radio-train-input-group')?.focus();
         }
-    }, [allowHotkey]);
+    }, [allowHotkey, language]);
 
     const exportData = useCallback((event?: { preventDefault: () => void }) => {
         if (!allowHotkey) return;
 
         event?.preventDefault();
-        if (sourceType === 'internal') window.alert('Cannot export card data if you use offline image');
+        if (sourceType === 'internal') window.alert(language['prompt.export.offline-warning.message']);
         const exportableCard = useCard.getState().card;
 
         window.prompt(
-            'Save card data for later use',
+            language['prompt.export.message'],
             `${compressCardData(exportableCard)}`,
         );
-    }, [allowHotkey, sourceType]);
+    }, [allowHotkey, language, sourceType]);
 
     const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }) => {
         if (!allowHotkey) return;
@@ -228,8 +267,8 @@ function App() {
 
     const alertDownloadError = useCallback(() => {
         setTainted(true);
-        alert('Could not save card, please manually save it by right click the card → Choose "Save image as..."');
-    }, []);
+        alert(language['prompt.download.tainted.message']);
+    }, [language]);
 
     const rerenderAllImage = useCallback(() => {
         setCanvasKey(cnt => cnt + 1);
@@ -247,6 +286,7 @@ function App() {
         setTainted(true);
     }, []);
 
+    const isLoading = isLanguageLoading || isInitializing;
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
@@ -268,22 +308,26 @@ function App() {
                         backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/dark-denim-3.png")`,
                     }}
                 >
-                    {isInitializing && <StyledAppLoading className="app-loading">
+                    {isLoading && <StyledAppLoading className="app-loading">
                         {error.length > 0
                             ? <ErrorAlert>
                                 {error}
                             </ErrorAlert>
-                            : 'Loading fonts and scripts...'}
+                            : languageInfo.initialMessage ?? ''}
                     </StyledAppLoading>}
                     {/* <div className="card-filter-panel"></div> */}
                     <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                         <StyledDataButtonPanelContainer className="data-button-panel">
                             <div className="imexport">
                                 <Tooltip overlay={allowHotkey ? <>Ctrl-D / ⌘-D</> : null}>
-                                    <button onClick={exportData}>Export Data</button>
+                                    <button onClick={exportData}>
+                                        {language['button.export.label']}
+                                    </button>
                                 </Tooltip>
                                 <Tooltip overlay={allowHotkey ? <>Ctrl-E / ⌘-E</> : null}>
-                                    <button onClick={importData}>Import Data</button>
+                                    <button onClick={importData}>
+                                        {language['button.import.label']}
+                                    </button>
                                 </Tooltip>
                             </div>
                             <DownloadButton ref={downloadButtonRef}
@@ -294,16 +338,16 @@ function App() {
                                 onDownloadError={alertDownloadError}
                             />
                             {isTainted && <div id="save-button-tainted" className="save-button-container">
-                                <span>Manual save by right click the card<br />→ "Save image as..." {TaintedCanvasWarning}</span>
+                                <span>
+                                    {language['alert.download.tainted-first-line']}<br />
+                                    {language['alert.download.tainted-second-line']} <TaintedCanvasWarning /></span>
                             </div>}
                         </StyledDataButtonPanelContainer>
                         <div className="card-canvas-container">
                             <StyledCardCanvasGroupContainer className="card-canvas-group">
-                                <Tooltip title="Reset">
+                                <Tooltip title={language['button.reset.tooltip']}>
                                     <ResetButton className="reset-button" onClick={() => {
-                                        const consent = window.confirm(
-                                            'This will reset your card information back to default, make sure you export the current data first!',
-                                        );
+                                        const consent = window.confirm(language['prompt.reset.message']);
 
                                         if (consent) {
                                             const { setCard, card } = useCard.getState();
@@ -321,7 +365,7 @@ function App() {
                                     </ResetButton>
                                 </Tooltip>
                                 <Tooltip title={<>
-                                    Original size
+                                    {language['button.full-size.label']}
                                     {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
                                 </>}>
                                     <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
@@ -351,7 +395,7 @@ function App() {
                             </StyledCardCanvasGroupContainer>
                         </div>
                     </div>
-                    {isInitializing === false && <CardInputPanel
+                    {isLoading === false && <CardInputPanel
                         ref={cardInputRef}
                         artworkCanvas={artworkCanvasRef.current}
                         backgroundCanvas={backgroundCanvasRef.current}

@@ -2,6 +2,8 @@ import { GithubFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
+import { useI18N, useLanguage } from 'src/service';
+// import { Radio } from 'antd';
 import './app-header.scss';
 
 export const Affiliation = () => {
@@ -23,53 +25,92 @@ const StyledAppSettingContainer = styled.div`
 `;
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
 export const AppHeader = () => {
+    const {
+        language,
+        // languageInfo,
+        // languageMetadataMap,
+        // changeLanguage,
+    } = useI18N(({
+        languageInfo,
+        language,
+        languageMetadataMap,
+        changeLanguage,
+    }) => ({
+        languageInfo,
+        language,
+        languageMetadataMap,
+        changeLanguage,
+    }));
+
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
         <div className="app-description">
-            <h1>Yugioh Carder</h1>
+            <div className="header-language">
+                <h1>Yugioh Carder</h1>
+                {/** Temporary disable until Japanese is translated */}
+                {/* <Radio.Group value={languageInfo.codeName} size="small">
+                    {Object.values(languageMetadataMap)
+                        .filter(({ active }) => active)
+                        .map(({ codeName, name }) => {
+                            return <Radio.Button key={codeName}
+                                value={codeName}
+                                onChange={e => changeLanguage(e.target.value)}
+                            >
+                                {name}
+                            </Radio.Button>;
+                        })}
+                </Radio.Group> */}
+            </div>
             <div className="app-contribution">
                 <span className="app-creator">
-                    GUI: <a
-                            href="https://github.com/lauqerm/ygocarder"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <b>Lauqerm</b>
-                        </a> <Explanation
+                    {language['contributor.gui.label']}: <a
+                        href="https://github.com/lauqerm/ygocarder"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <b>Lauqerm</b>
+                    </a>&nbsp;<Explanation
                         content={<div className="disclaimer">
-                            <h2>Disclaimer</h2>
+                            <h2>{language['contributor.disclaimer.label']}</h2>
                             <ul>
-                                <li>This is a personal project, not an "official" card maker. I do not have any affiliations with any other card makers, be it website, desktop app or mobile app. And <a href="https://lauqerm.github.io/ygocarder">lauqerm.github.io/ygocarder</a> is the only site that directly maintained by me.</li>
-                                <li>The code of my site is provided as-is. I hold no liability for any other parties that may use or modify the code of my app on their own sites.</li>
-                                <li>I hold no liability for cards created by this app, including pictures, card text and any product related to it.</li>
-                                <li>I do not own any of Yu-Gi-Oh card layers and fonts use in this project. They belong to their respective creators.</li>
-                                <li>If you want to modify card layers, or use it in any public project, please contact <a
-                                    href="https://www.deviantart.com/grezar"
-                                    target="_blank"
-                                    rel="noreferrer">Grezar</a> or <a
-                                    href="https://www.deviantart.com/9558able"
-                                    target="_blank"
-                                    rel="noreferrer">9558able</a> directly.
-                                </li>
-                                <li>This app is completely free to use, I do not charge any kind of fee, require donation or serve any ads in this site.</li>
+                                <li>{language['contributor.disclaimer.line-1'](<a key="app-author" href="https://lauqerm.github.io/ygocarder">lauqerm.github.io/ygocarder</a>)}</li>
+                                <li>{language['contributor.disclaimer.line-2']}</li>
+                                <li>{language['contributor.disclaimer.line-3']}</li>
+                                <li>{language['contributor.disclaimer.line-4']}</li>
+                                <li>{language['contributor.disclaimer.line-5'](
+                                    <a key="template-maker-1"
+                                        href="https://www.deviantart.com/grezar"
+                                        target="_blank"
+                                        rel="noreferrer">Grezar</a>,
+                                    <a key="template-maker-2"
+                                        href="https://www.deviantart.com/9558able"
+                                        target="_blank"
+                                        rel="noreferrer">9558able</a>
+                                )}</li>
+                                <li>{language['contributor.disclaimer.line-6']}</li>
                             </ul>
                         </div>}
                     />
                 </span>
                 <span className="template-creator">
-                    Template: <a
-                        href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
-                        target="_blank"
-                        rel="noreferrer"><b>Grezar</b></a>, <a
-                        href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
-                        target="_blank"
-                        rel="noreferrer"><b>9558able</b></a>, <a
-                        href="https://www.deviantart.com/slackermagician"
-                        target="_blank"
-                        rel="noreferrer"><b>SlackerMagician</b></a>, <a
-                        href="https://www.deviantart.com/icycatelf"
-                        target="_blank"
-                        rel="noreferrer"><b>icycatelf</b></a> and others
+                    {language['contributor.template-maker'](
+                        <a key="artist-1"
+                            href="https://www.deviantart.com/grezar/art/SKILL-UPDATE-Series-10-Card-Proxy-Template-686736691"
+                            target="_blank"
+                            rel="noreferrer"><b>Grezar</b></a>,
+                        <a key="artist-2"
+                            href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
+                            target="_blank"
+                            rel="noreferrer"><b>9558able</b></a>,
+                        <a key="artist-3"
+                            href="https://www.deviantart.com/slackermagician"
+                            target="_blank"
+                            rel="noreferrer"><b>SlackerMagician</b></a>,
+                        <a key="artist-4"
+                            href="https://www.deviantart.com/icycatelf"
+                            target="_blank"
+                            rel="noreferrer"><b>icycatelf</b></a>,
+                    )}
                 </span>
             </div>
         </div>
@@ -79,22 +120,18 @@ export const AppHeader = () => {
     </div>;
 };
 
-export const TaintedCanvasWarning = <Explanation
-    overlayClassName="disclaimer-overlay"
-    style={{ display: 'inline-block' }}
-    content={<div className="disclaimer">
-        <h2>What is happening?</h2>
-        <p>
-            You are using an image host that does not get the "approval" needed for the app to use it. Browsers see it as a potential security risk (even if it is not the case), and mark the card as "tainted".
-        </p>
-        <h2>How does it affect me?</h2>
-        <p>
-            A "tainted card" prevents all sort of automatic save. From then on you must save the card manually by right click it → "Save image as...". It is implying that this action is fully of your consent.
-        </p>
-        <h2>How do I fix it?</h2>
-        <p>
-            Change to other safe and popular image host ("imgur" for example) will likely fix the issue. You may try to refresh the page if the issue persists.<br />
-            If you cannot afford to switch to other image hosts, the app will also work mostly just fine, you only need to manually save the card (and keep cautious for potential malicious links).
-        </p>
-    </div>}
-/>;
+export const TaintedCanvasWarning = () => {
+    const language = useLanguage();
+
+    return <Explanation
+        overlayClassName="disclaimer-overlay"
+        content={<div className="disclaimer">
+            <h2>{language['alert.explaination.tainted.first-question']}</h2>
+            <p>{language['alert.explaination.tainted.first-answer']}</p>
+            <h2>{language['alert.explaination.tainted.second-question']}</h2>
+            <p>{language['alert.explaination.tainted.second-answer']}</p>
+            <h2>{language['alert.explaination.tainted.third-question']}</h2>
+            <p>{language['alert.explaination.tainted.third-answer']}</p>
+        </div>}
+    />;
+};

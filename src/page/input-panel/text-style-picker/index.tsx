@@ -1,5 +1,5 @@
 import { Checkbox, Popover } from 'antd';
-import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
+import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, useMemo } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {
@@ -12,14 +12,14 @@ import {
 import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
-import { NameFontOptionList } from '../const';
+import { getNameFontOptionList } from '../const';
 import { StyledDropdown } from 'src/component';
 import {
     StyledPatternContainer,
     StyledPatternOption,
     StyledPickerButton,
 } from './style-picker.styled';
-import { useSetting } from 'src/service';
+import { useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import './style-picker.scss';
@@ -41,6 +41,7 @@ export const TextStylePicker = forwardRef(({
     showExtraDecorativeOption,
     onChange: undebouncedOnChange,
 }: TextStylePicker, ref: ForwardedRef<TextStylePickerRef>) => {
+    const language = useLanguage();
     const optionGridRef = useRef<PredefinedOptionGridRef>(null);
     const [focus, setFocus] = useState(-1);
     const [predefinedDropdownVisible, setPredefinedDropdownVisible] = useState(false);
@@ -53,6 +54,8 @@ export const TextStylePicker = forwardRef(({
         customStyleSignal();
     }, [customStyleSignal]);
     const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
+
+    const fontList = useMemo(() => getNameFontOptionList(language), [language]);
 
     useEffect(() => {
         if (sendCustomStyleSignal !== 0) {
@@ -118,7 +121,7 @@ export const TextStylePicker = forwardRef(({
     };
     return <div className="ant-input-group-wrapper text-style-input">
         <span className="ant-input-wrapper ant-input-group">
-            <span className="ant-input-group-addon">Name Style</span>
+            <span className="ant-input-group-addon">{language['input.name-style.label']}</span>
             <span className="name-style-input-container">
                 <div
                     id={optionInputContainerId}
@@ -158,7 +161,9 @@ export const TextStylePicker = forwardRef(({
                             <input tabIndex={-1} type="radio" className="ant-radio-input" value="auto" />
                             <span className="ant-radio-inner" />
                         </span>
-                        <span className="ant-radio-label">Auto</span>
+                        <span className="ant-radio-label">
+                            {language['input.name-style.type.auto.label']}
+                        </span>
                     </label>
                     <span className="name-style-option-break" />
                     <label
@@ -199,7 +204,9 @@ export const TextStylePicker = forwardRef(({
                                     <input tabIndex={-1} type="radio" className="ant-radio-input" value="predefined" />
                                     <span className="ant-radio-inner" />
                                 </span>
-                                <span className="ant-radio-label">Predefined</span>
+                                <span className="ant-radio-label">
+                                    {language['input.name-style.type.predefined.label']}
+                                </span>
                             </span>
                         </Popover>
                     </label>
@@ -217,7 +224,9 @@ export const TextStylePicker = forwardRef(({
                                 <input tabIndex={-1} type="radio" className="ant-radio-input" value="custom" />
                                 <span className="ant-radio-inner" />
                             </span>
-                            <span className="ant-radio-label ant-radio-label-custom">Custom</span>
+                            <span className="ant-radio-label ant-radio-label-custom">
+                                {language['input.name-style.type.custom.label']}
+                            </span>
                         </span>
                     </label>
                 </div>
@@ -228,7 +237,9 @@ export const TextStylePicker = forwardRef(({
                         content={<div className="overlay-event-absorber">
                             <div className={'custom-style-picker'}>
                                 <div className="custom-style-text">
-                                    <h3>Text Color</h3>
+                                    <h3>
+                                        {language['input.name-style.color.text.label']}
+                                    </h3>
                                     <CompactPicker color={fillStyle} onChangeComplete={color => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, fillStyle: color.hex }));
@@ -237,7 +248,9 @@ export const TextStylePicker = forwardRef(({
                                 </div>
                                 <hr />
                                 <div className="custom-style-text">
-                                    <h3>Ruby Color (<small>Japanese Furigana</small>)</h3>
+                                    <h3>
+                                        {language['input.name-style.color.ruby.label']}
+                                    </h3>
                                     <CompactPicker color={headTextFillStyle} onChangeComplete={color => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
@@ -249,7 +262,7 @@ export const TextStylePicker = forwardRef(({
                         placement="bottom"
                     >
                         <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown color-picker-dropdown">
-                            Color <CaretDownOutlined />
+                            {language['input.name-style.color.label']} <CaretDownOutlined />
                         </StyledPickerButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="shadow-picker"
@@ -262,7 +275,9 @@ export const TextStylePicker = forwardRef(({
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasShadow: !cur.hasShadow }));
                                         customStyleSignal();
-                                    }}>Has Shadow?</Checkbox>
+                                    }}>
+                                        {language['input.name-style.shadow.toggle.label']}
+                                    </Checkbox>
                                 </h3>
                                 {hasShadow && <GridSliderInput ref={shadowPickeRef}
                                     className="custom-style-shadow"
@@ -273,7 +288,7 @@ export const TextStylePicker = forwardRef(({
                                         y: 'shadowOffsetY',
                                     }}
                                     labelMap={{
-                                        shadowBlur: 'Blur',
+                                        shadowBlur: language['input.name-style.slider.blur.label'],
                                     }}
                                     defaultValue={value}
                                     onChange={({ color, width, x, y }) => {
@@ -296,7 +311,7 @@ export const TextStylePicker = forwardRef(({
                             $active={isStyleCustom && hasShadow}
                             className="picker-dropdown shadow-picker-dropdown"
                         >
-                            Shadow <CaretDownOutlined />
+                            {language['input.name-style.shadow.label']} <CaretDownOutlined />
                         </StyledPickerButton>
                     </Popover>}
                     <Popover key="outline-picker"
@@ -309,7 +324,9 @@ export const TextStylePicker = forwardRef(({
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasOutline: !cur.hasOutline }));
                                         customStyleSignal();
-                                    }}>Has outline?</Checkbox>
+                                    }}>
+                                        {language['input.name-style.outline.toggle.label']}
+                                    </Checkbox>
                                 </h3>
                                 {hasOutline && <GridSliderInput ref={outlinePickeRef}
                                     className="custom-style-line"
@@ -320,7 +337,7 @@ export const TextStylePicker = forwardRef(({
                                         y: 'lineOffsetY',
                                     }}
                                     labelMap={{
-                                        lineWidth: 'Thickness',
+                                        lineWidth: language['input.name-style.slider.thickness.label'],
                                     }}
                                     defaultValue={value}
                                     onChange={({ color, width, x, y }) => {
@@ -343,7 +360,7 @@ export const TextStylePicker = forwardRef(({
                             $active={isStyleCustom && hasOutline}
                             className="picker-dropdown outline-picker-dropdown"
                         >
-                            Outline <CaretDownOutlined />
+                            {language['input.name-style.outline.label']} <CaretDownOutlined />
                         </StyledPickerButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="gradient-picker"
@@ -356,7 +373,9 @@ export const TextStylePicker = forwardRef(({
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasGradient: !cur.hasGradient }));
                                         customStyleSignal();
-                                    }}>Has gradient?</Checkbox>
+                                    }}>
+                                        {language['input.name-style.gradient.toggle.label']}
+                                    </Checkbox>
                                 </h3>
                                 {hasGradient && <div className="custom-style-gradient">
                                     <TextGradientPicker
@@ -374,7 +393,7 @@ export const TextStylePicker = forwardRef(({
                             $active={isStyleCustom && hasGradient}
                             className="picker-dropdown gradient-picker-dropdown"
                         >
-                            Gradient <CaretDownOutlined />
+                            {language['input.name-style.gradient.label']} <CaretDownOutlined />
                         </StyledPickerButton>
                     </Popover>}
                     {showExtraDecorativeOption && <Popover key="pattern-picker"
@@ -382,7 +401,9 @@ export const TextStylePicker = forwardRef(({
                         overlayClassName="input-overlay pattern-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <StyledPatternContainer onClick={e => e.stopPropagation()}>
-                                <div className="alert">Pattern will disable shadow and gradient</div>
+                                <div className="alert">
+                                    {language['input.name-style.pattern.alert']}
+                                </div>
                                 {PatternList.map(({ key, patternImage }) => {
                                     return <StyledPatternOption key={key}
                                         className={[
@@ -403,7 +424,7 @@ export const TextStylePicker = forwardRef(({
                                                 alt={key}
                                             />
                                             : <>
-                                                <CloseCircleOutlined /> No Pattern
+                                                <CloseCircleOutlined /> {language['input.name-style.pattern.no-pattern.label']}
                                             </>}
                                     </StyledPatternOption>;
                                 })}
@@ -416,7 +437,7 @@ export const TextStylePicker = forwardRef(({
                             $active={isStyleCustom && typeof pattern === 'string' && pattern !== 'none'}
                             className="picker-dropdown pattern-picker-dropdown"
                         >
-                            Pattern
+                            {language['input.name-style.pattern.label']}
                         </StyledPickerButton>
                     </Popover>}
                     <Popover key="font-picker"
@@ -424,7 +445,7 @@ export const TextStylePicker = forwardRef(({
                         overlayClassName="input-overlay font-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <StyledDropdown.Container>
-                                {NameFontOptionList.map(({ value: fontValue, label }) => {
+                                {fontList.map(({ value: fontValue, label }) => {
                                     return <StyledDropdown.Option key={fontValue}
                                         className={font === fontValue ? 'menu-active' : ''}
                                         onClick={() => {
@@ -440,7 +461,7 @@ export const TextStylePicker = forwardRef(({
                         placement="bottomLeft"
                     >
                         <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
-                            Font
+                            {language['input.name-style.font.label']}
                         </StyledPickerButton>
                     </Popover>
                 </div>

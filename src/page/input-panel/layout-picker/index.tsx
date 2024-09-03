@@ -1,16 +1,19 @@
 import { Checkbox, InputNumber, Popover, Slider, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
-import { BackgroundType, BackgroundTypeList, CardOpacity, DEFAULT_BASE_FILL_COLOR, OpacityList, getDefaultCardOpacity } from 'src/model';
+import { BackgroundType, getBackgroundTypeList, CardOpacity, DEFAULT_BASE_FILL_COLOR, OpacityList, getDefaultCardOpacity } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
 import { ImageCropper } from 'src/component';
 import { RadioTrain } from '../input-train';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
 import './layout-picker.scss';
 
+const StyledBoundlessOverlay = styled.span`
+    white-space: pre-line;
+`;
 const StyledLayoutPickerContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -32,6 +35,9 @@ const StyledLayoutPickerContainer = styled.div`
         padding: var(--spacing-xxs) var(--spacing-xs);
         border-radius: var(--br) 0 0 var(--br);
         box-shadow: var(--bs-input);
+        .ant-checkbox-wrapper {
+            transform: translateY(-1px); // Alignment
+        }
     }
     .ant-slider {
         margin: 0;
@@ -169,6 +175,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     onSourceLoaded,
     onCropChange,
 }, ref) => {
+    const language = useLanguage();
     const {
         hasBackground,
         backgroundType,
@@ -246,21 +253,19 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     return <StyledLayoutPickerContainer className="card-opacity-slider-container">
         <Tooltip
             overlayClassName="long-tooltip-overlay"
-            title={<>
-                Allow the artwork to extend beyond its border.
-                <br />
-                Art finish will not apply to boundless artwork.
-            </>}
+            title={<StyledBoundlessOverlay>
+                {language['input.opacity.boundless.tooltip']}
+            </StyledBoundlessOverlay>}
         >
             <Checkbox
                 className="art-frame"
                 onChange={value => setOpacity(cur => ({ ...cur, boundless: value.target.checked }))}
                 checked={opacity.boundless}
             >
-                {'Boundless'}
+                {language['input.opacity.boundless.label']}
             </Checkbox>
         </Tooltip>
-        {OpacityList.map(({ label, type, subType, tooltip }) => {
+        {OpacityList.map(({ labelKey, type, subType, tooltipKey }) => {
             if (type === 'pendulum' && !isPendulum) return null;
             const activable = !!subType;
             const isActive = subType && opacity[subType];
@@ -299,9 +304,9 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
 
                                             }
                                         }}
-                                    >Has Background?</Checkbox>
+                                    >{language['input.background.toggle-label']}</Checkbox>
                                     <br />
-                                    <i>Define the color and background of the card if you use transparent artwork.</i>
+                                    <i>{language['input.background.description']}</i>
                                 </h3>
                                 <div className={`background-picker ${hasBackground ? '' : 'overlay-no-background'}`}>
                                     <BackgroundInputGroup
@@ -314,7 +319,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                     >
                                         <div className="layout-picker-panel">
                                             <div className="layout-picker-subpanel color-section">
-                                                <h2>Color</h2>
+                                                <h2>{language['input.background-color.label']}</h2>
                                                 <CompactPicker
                                                     color={opacity.baseFill}
                                                     onChangeComplete={color => {
@@ -323,10 +328,13 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                                 />
                                             </div>
                                             {!noBackground && <div className="layout-picker-subpanel type-section">
-                                                <h2>Type</h2>
+                                                <h2>{language['input.background-type.label']}</h2>
                                                 <RadioTrain
                                                     onChange={changeBackgroundType}
-                                                    optionList={BackgroundTypeList}
+                                                    optionList={getBackgroundTypeList({
+                                                        fit: language['input.background-type.fit.label'],
+                                                        full: language['input.background-type.full.label'],
+                                                    })}
                                                     value={backgroundType}
                                                 />
                                             </div>}
@@ -345,13 +353,18 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                 : <BorderOuterOutlined className="no-background-icon" />}
                         </div>
                     </Popover>}
-                    {activable && <Tooltip title={tooltip} overlayClassName="long-tooltip-overlay">
+                    {activable && <Tooltip
+                        title={tooltipKey
+                            ? language[tooltipKey] ?? null
+                            : null} 
+                        overlayClassName="long-tooltip-overlay"
+                    >
                         <Checkbox
                             checked={isActive}
                             onChange={e => subType && setOpacity(cur => ({ ...cur, [subType]: e.target.checked }))}
                         />
                     </Tooltip>}
-                    {label}
+                    {language[labelKey]}
                 </div>
                 <InputNumber
                     size="small"

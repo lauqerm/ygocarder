@@ -43,7 +43,6 @@ export const TrainGridStyle = css`
 		}
 		.ant-radio-button-wrapper {
 			flex: 1;
-			text-transform: capitalize;
 			white-space: nowrap;
 			border: none;
 			box-shadow: var(--bs-1);

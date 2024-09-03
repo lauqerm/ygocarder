@@ -1,7 +1,6 @@
 import { clone } from 'ramda';
 import { JSONUncrush } from '../3rd';
 import { Card, getDefaultCardOpacity, getEmptyCard } from '../model';
-import { notification } from 'antd';
 
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
@@ -111,30 +110,6 @@ const legacyCardFieldShortenMap = {
 const cardFieldShortenMap = {
     ...currentCardFieldShortenMap,
     ...legacyCardFieldShortenMap,
-};
-
-export const decodeCardWithCompatibility = (cardData: Record<string, any> | string | null): Card => {
-    let decodedCard = getEmptyCard();
-    if (!cardData) return decodedCard;
-    try {
-        decodedCard = rebuildCardData(cardData) as Card;
-    } catch (e) {
-        console.error('decodedCard', cardData, e);
-        try {
-            decodedCard = legacyRebuildCardData(cardData, true) as Card;
-            notification.info({
-                message: 'Card data has outdated format',
-                description: 'System will automatically convert it into newer version.',
-            });
-        } catch (e) {
-            console.error('cardData', cardData, e);
-            notification.error({
-                message: 'Card data cannot be decoded',
-                description: 'It is either malformed or not compatible.',
-            });
-        }
-    }
-    return decodedCard;
 };
 
 export const compressCardData = (

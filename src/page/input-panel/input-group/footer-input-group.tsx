@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { CardTextInput, CardTextInputRef } from '../input-text';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { IconButton } from 'src/component';
 import { RadioTrain } from '../input-train';
 import { CardCheckboxGroup } from '../input-checkbox-group';
@@ -43,6 +43,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     showCreativeOption,
     onTakePicker,
 }, ref) => {
+    const language = useLanguage();
     const {
         sticker,
         getUpdater,
@@ -77,14 +78,14 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         {(isMonster || showCreativeOption) && <>
             <CardTextInput ref={atkInputRef}
                 id="atk"
-                addonBefore="ATK"
+                addonBefore={language['input.atk.label']}
                 defaultValue={useCard.getState().card.atk}
                 onChange={changeATK}
                 onTakePicker={onTakePicker}
             />
             <CardTextInput ref={defInputRef}
                 id="def"
-                addonBefore="DEF"
+                addonBefore={language['input.def.label']}
                 defaultValue={useCard.getState().card.def}
                 onChange={changeDEF}
                 onTakePicker={onTakePicker}
@@ -93,11 +94,11 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         <CardTextInput ref={passwordInputRef}
             id="password"
             addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
-                <div className="input-label">Password</div>
+                <div className="input-label">{language['input.password.label']}</div>
                 <IconButton
                     onClick={() => passwordInputRef.current?.setValue(randomPassword())}
                     Icon={SyncOutlined}
-                    tooltipProps={{ overlay: 'Randomize' }}
+                    tooltipProps={{ overlay: language['button.randomize.label'] }}
                 />
             </StyledInputLabelWithButton>}
             defaultValue={useCard.getState().card.password}
@@ -107,7 +108,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         <CardCheckboxGroup />
         <CardTextInput ref={creatorInputRef}
             id="creator"
-            addonBefore="Creator Text"
+            addonBefore={language['input.creator-text.label']}
             defaultValue={useCard.getState().card.creator}
             onChange={changeCreator}
             onTakePicker={onTakePicker}
@@ -118,7 +119,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             onChange={onStickerChange}
             optionList={StickerButtonList}
         >
-            <span>Sticker</span>
+            <span>{language['input.sticker.label']}</span>
         </RadioTrain>
     </StyledFooterInputContainer>;
 });

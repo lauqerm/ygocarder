@@ -6,6 +6,7 @@ import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
+import { useLanguage } from 'src/service';
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
     if (!crop || !canvas) return;
@@ -100,7 +101,7 @@ export type ImageCropper = {
     onTainted: () => void,
 }
 export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
-    title = 'Card Art',
+    title,
     backgroundColor,
     className,
     defaultExternalSource = '',
@@ -114,6 +115,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     onCropChange = () => { },
     onTainted = () => { },
 }: ImageCropper, forwardedRef) => {
+    const language = useLanguage();
     const [
         crossorigin,
         // setCrossOrigin,
@@ -375,13 +377,13 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             value={inputMode}
                         >
                             <Radio.Button value={'external'} checked={inputMode === 'external'}>
-                                Online
+                                {language['image-cropper.source.online.tooltip']}
                             </Radio.Button>
                             <Tooltip title={<div className="image-warning">
-                                Card data with offline image cannot be exported or auto-saved.
+                                {language['image-cropper.offline-warning']}
                             </div>}>
                                 <Radio.Button value={'internal'} checked={inputMode === 'internal'}>
-                                    Offline <ExclamationCircleOutlined />
+                                    {language['image-cropper.source.offline.tooltip']} <ExclamationCircleOutlined />
                                 </Radio.Button>
                             </Tooltip>
                         </Radio.Group>
@@ -396,16 +398,16 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         />
                         {error
                             ? <div className="online-image-tip image-warning">
-                                Image not found.
+                                {language['image-cropper.not-found-warning']}
                             </div>
                             : <div className="online-image-tip">
-                                You may use popular hosts such as imgur.
+                                {language['image-cropper.online-tip']}
                             </div>}
                     </div>
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
                         <Input type="file" accept="image/*" onChange={applyOfflineSource} />
                         <hr />
-                        Offline image cannot be exported or auto-saved.
+                        {language['image-cropper.offline-warning']}
                     </div>
                 </div>
             </div>

@@ -1,0 +1,26 @@
+{
+    "eng": {
+        "name": "English",
+        "formalName": "English",
+        "codeName": "eng",
+        "initialMessage": "Loading fonts and scripts…",
+        "order": 1,
+        "active": true
+    },
+    "jap": {
+        "name": "日本語",
+        "formalName": "Japanese",
+        "codeName": "jap",
+        "initialMessage": "フォントとスクリプトを読み込んでいます…",
+        "order": 2,
+        "active": true
+    },
+    "def": {
+        "name": "Default",
+        "formalName": "Default",
+        "codeName": "def",
+        "initialMessage": "",
+        "order": 1000,
+        "active": false
+    }
+}

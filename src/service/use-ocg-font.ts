@@ -4,12 +4,14 @@ import { useCard } from './use-card';
 import { useShallow } from 'zustand/react/shallow';
 
 export type UseOCGFont = {
+    isLanguageInitiating: boolean,
     onBeforeLoad: () => void,
     onActive: () => void,
     onInactive: () => void,
     onFontInactive: (familyName: string, fvd: string) => void,
 }
 export const useOCGFont = ({
+    isLanguageInitiating,
     onActive,
     onBeforeLoad,
     onFontInactive,
@@ -31,6 +33,7 @@ export const useOCGFont = ({
             (format === 'ocg' || font === 'OCG')
             && ocgReady.current === false
             && loadAttempt.current <= 3
+            && isLanguageInitiating === false
         ) {
             loadAttempt.current += 1;
             setStyleContent(`${process.env.PUBLIC_URL}/asset/ocg-font.css`);
@@ -57,7 +60,7 @@ export const useOCGFont = ({
                 fontinactive: onFontInactive,
             });
         }
-    }, [format, font, onActive, onBeforeLoad, onFontInactive, onInactive]);
+    }, [format, font, isLanguageInitiating, onActive, onBeforeLoad, onFontInactive, onInactive]);
 
     return {
         styleContent,

@@ -16,7 +16,7 @@ import {
     checkMonster,
 } from '../../util';
 import {
-    FoilButtonList,
+    getFoilButtonList,
     getAttributeList,
     FinishButtonList,
     FormatButtonList,
@@ -25,7 +25,7 @@ import { CharPicker } from './char-picker';
 import { TextStylePicker, TextStylePickerRef } from './text-style-picker';
 import { CheckboxTrain, FrameTrain, RadioTrain } from './input-train';
 import { Explanation } from 'src/component/explanation';
-import { changeCardFormat, useCard, useSetting } from '../../service';
+import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
 import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
     CardIconInputGroup,
@@ -63,6 +63,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     onTainted,
     onSourceLoaded,
 }: CardInputPanel, forwardedRef) => {
+    const language = useLanguage();
     const {
         format,
         frame, foil, finish, opacity,
@@ -98,6 +99,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const isLink = checkLink({ frame });
     const isMonster = checkMonster({ frame });
     const [stylePickerResetCount, setStylePickerResetCount] = useState(0);
+    const foilButtonList = useMemo(() => getFoilButtonList({
+        normal: language['input.foil.normal.label'],
+        gold: language['input.foil.gold.label'],
+        platinum: language['input.foil.platinum.label'],
+    }), [language]);
 
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
     const layoutPickerRef = useRef<OpacityPickerRef>(null);
@@ -144,7 +150,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         });
     }, [setCard]);
 
-    const attributeList = useMemo(() => getAttributeList(format), [format]);
+    const attributeList = useMemo(() => getAttributeList(format, language), [format, language]);
 
     useEffect(() => {
         stylePickerRef.current?.setValue({ font: nameStyle.font });
@@ -189,10 +195,10 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
 
         <div className="card-overlay-input">
             <StyledFormatRadioTrain className="format-radio" value={format} onChange={changeFormat} optionList={FormatButtonList}>
-                <span>Format</span>
+                <span>{language['input.format.label']}</span>
             </StyledFormatRadioTrain>
-            <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={FoilButtonList}>
-                <span>Foil</span>
+            <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
+                <span>{language['input.foil.label']}</span>
             </RadioTrain>
             {showExtraDecorativeOption && <CheckboxTrain
                 className="finish-checkbox"
@@ -200,14 +206,14 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 onChange={onFinishChange}
                 optionList={FinishButtonList}
             >
-                <span>Finish</span>
+                <span>{language['input.finish.label']}</span>
             </CheckboxTrain>}
         </div>
 
         {showCreativeOption && <div className="card-layout-input">
             <label className="standalone-addon ant-input-group-addon">
-                Layout <Explanation
-                    content={'May affect behavior of some finish types.'}
+                {language['input.layout.label']} <Explanation
+                    content={language['input.layout.tooltip']}
                 />
             </label>
             <LayoutPicker ref={layoutPickerRef}
@@ -247,7 +253,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                     onChange={changeAttribute}
                     optionList={attributeList}
                 >
-                    <span>Attribute</span>
+                    <span>{language['input.attribute.label']}</span>
                 </RadioTrain>
 
                 {(isPendulum || frame !== 'link' || showCreativeOption)
@@ -262,7 +268,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 <div>
                     <div className="card-effect-letter-helper">
                         <StandaloneLabel className="standalone-label">
-                            Effect
+                            {language['input.effect.label']}
                         </StandaloneLabel>
                         <CharPicker
                             targetId={pickerTarget.id}

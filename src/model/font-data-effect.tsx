@@ -1,4 +1,17 @@
-import { createFontGetter } from 'src/util';
+export type FontGetter = {
+    getFont: () => string,
+    getFontInfo: () => {
+        style: '' | 'italic' | 'small-caps',
+        size: `${number}px`,
+        sizeAsNumber: number,
+        family: string,
+        weight: '' | 'bold',
+    },
+    setWeight(nextWeight: '' | 'bold'): FontGetter,
+    setStyle(nextStyle: '' | 'italic' | 'small-caps'): FontGetter,
+    setSize(nextSize: number | `${number}px` | ((currentSize: number) => number | `${number}px`)): FontGetter,
+    setFamily(nextFamily: string): FontGetter,
+};
 
 export type FontSizeData = {
     fontSize: number,
@@ -50,7 +63,7 @@ export type FontData = {
 export type TextData = {
     fontData: FontData,
     fontLevel: number,
-    currentFont: ReturnType<typeof createFontGetter>,
+    currentFont: FontGetter,
 };
 
 const DefaultEffectFontData = {

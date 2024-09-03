@@ -1,12 +1,19 @@
 import { Popover } from 'antd';
 import { RadioTrain } from '../input-train';
 import { StyledDropdown } from 'src/component';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { CaretDownOutlined } from '@ant-design/icons';
-import { IconTypeList, IconTypeMap, StarButtonList, STIconButtonList } from '../const';
+import { IconTypeList, IconTypeMap, StarButtonList, getSTIconButtonList } from '../const';
 import { checkDarkSynchro, checkXyz } from 'src/util';
+import styled from 'styled-components';
+
+const StyledIconDropdown = styled(StyledDropdown.Container)`
+    img {
+        max-height: 1.3em;
+    }
+`;
 
 export type CardIconInputGroupRef = {}
 export type CardIconInputGroup = {
@@ -19,6 +26,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
     isMonster,
     showCreativeOption,
 }, ref) => {
+    const language = useLanguage();
     const {
         frame,
         subFamily,
@@ -55,23 +63,24 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
             : 'st'
         ]
         : IconTypeMap[cardIcon];
+    const iconDropdownText = language[iconTypeData.labelKey];
     const IconDropdownLabel = showCreativeOption
-        ? <>{iconTypeData.label} <CaretDownOutlined /></>
-        : iconTypeData.label;
+        ? <>{iconDropdownText} <CaretDownOutlined /></>
+        : iconDropdownText;
     const IconDropdown = <Popover key="icon-type-picker"
         trigger={['click']}
         overlayClassName="input-overlay pattern-picker-overlay"
         content={<div className="overlay-event-absorber">
-            <StyledDropdown.Container>
-                {IconTypeList.map(({ fullLabel, value }) => {
+            <StyledIconDropdown>
+                {IconTypeList.map(({ fullLabelKey, value, icon }) => {
                     return <StyledDropdown.Option key={value}
                         className={value === cardIcon ? 'menu-active' : ''}
                         onClick={() => changeCardIcon(value)}
                     >
-                        {fullLabel}
+                        {language[fullLabelKey]}{icon ? <>&nbsp;{icon}</> : null}
                     </StyledDropdown.Option>;
                 })}
-            </StyledDropdown.Container>
+            </StyledIconDropdown>
         </div>}
         placement="bottomRight"
     >
@@ -86,7 +95,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         : IconDropdownLabel;
     return !isLink
         ? iconTypeData.value === 'st'
-            ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={STIconButtonList}>
+            ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={getSTIconButtonList(language)}>
                 {DropdownChildren}
             </RadioTrain>
             : <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={changeStar} optionList={StarButtonList}>

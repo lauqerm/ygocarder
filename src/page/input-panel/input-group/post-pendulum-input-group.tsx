@@ -2,7 +2,7 @@ import { Checkbox, Tooltip } from 'antd';
 import { RadioTrain } from '../input-train';
 import { Explanation, FormattingHelpDrawer } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { CondenseType } from 'src/model';
@@ -52,6 +52,7 @@ export type PostPendulumInputGroup = {} & Pick<CardTextInput, 'onTakePicker'>;
 export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, PostPendulumInputGroup>(({
     onTakePicker,
 }, ref) => {
+    const language = useLanguage();
     const {
         format,
         furiganaHelper,
@@ -110,14 +111,14 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
     const isOCG = format === 'ocg';
     return <StyledPostPendulumInputContainer className={`post-pendulum-input variant-${format}`}>
         <CardTextInput ref={typeAbilityInputRef}
-            addonBefore="Type"
+            addonBefore={language['input.type.label']}
             id="type-ability"
             defaultValue={useCard.getState().card.typeAbility.join(typeAbilitySeparator)}
             onChange={changeTypeAbility}
             onTakePicker={onTakePicker}
         />
         {isOCG && <Tooltip
-            overlay="Automatically annotates popular kanji characters with corresponding furigana."
+            overlay={language['input.furigana-helper.tooltip']}
             overlayClassName="long-tooltip-overlay"
         >
             <Checkbox
@@ -125,7 +126,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
                 onChange={toggleFuriganaHelper}
                 checked={furiganaHelper}
             >
-                {'Furigana Helper'}
+                {language['input.furigana-helper.label']}
             </Checkbox>
         </Tooltip>}
         <RadioTrain className="condense-input" value={`${condenseTolerant}`}
@@ -133,8 +134,8 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             optionList={CondenseThresholdButtonList}
         >
             <span>
-                Condense <Explanation
-                    content={'Higher condense limit will prefer compressing words instead of adding new lines.'}
+                {language['input.condense.label']} <Explanation
+                    content={language['input.condense.tooltip']}
                 />
             </span>
         </RadioTrain>

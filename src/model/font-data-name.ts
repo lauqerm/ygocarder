@@ -2,13 +2,13 @@ import { FontData } from './font-data-effect';
 
 export type NameFontData = {
     value: string,
-    label: React.ReactNode,
+    labelKey: string,
     fontData: FontData,
 };
 export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
     Default: {
         value: 'Default',
-        label: 'Default',
+        labelKey: 'input.name-style.font-type.default',
         fontData: {
             alphabetFont: 'MatrixRegularSmallCaps',
             font: 'MatrixRegularSmallCaps',
@@ -31,7 +31,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
     },
     Arial: {
         value: 'Arial',
-        label: 'Arial (Bold)',
+        labelKey: 'input.name-style.font-type.arial',
         fontData: {
             alphabetFont: 'Arial',
             font: 'Arial',
@@ -55,7 +55,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
     },
     OCG: {
         value: 'OCG',
-        label: 'OCG',
+        labelKey: 'input.name-style.font-type.ocg',
         fontData: {
             alphabetFont: '"Yu-Gi-Oh! DF Leisho 3"',
             font: '"Yu-Gi-Oh! DF Leisho 3"',

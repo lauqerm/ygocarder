@@ -6,6 +6,7 @@ import { getDefaultGradientPalette, parsePalette, stringifyPalette } from 'src/u
 import debounce from 'lodash.debounce';
 import 'react-linear-gradient-picker/dist/index.css';
 import './gradient-picker.scss';
+import { useLanguage } from 'src/service';
 
 type WrappedColorPicker = {
     color?: string,
@@ -24,6 +25,7 @@ const WrappedColorPicker = forwardRef(({
     onOffsetChange,
     onRemove,
 }: WrappedColorPicker, ref: ForwardedRef<WrappedColorPickerRef>) => {
+    const language = useLanguage();
     const [internalColor, setInternalColor] = useState(color);
     const [internalOffset, setInternalOffset] = useState(0);
     const [internalId, setInternalId] = useState(-1);
@@ -50,13 +52,17 @@ const WrappedColorPicker = forwardRef(({
 
     return <div className="stop-point-control-panel">
         <div className="stop-point-offset-input">
-            Stop At: <InputNumber
-                value={internalOffset}
-                size="small"
-                max={100} min={0}
-                onChange={value => debouncedOnChange(typeof value === 'string' ? parseInt(value) : value ?? 0)}
-            />&nbsp;%&nbsp;
-            <Button className="remove-stop-color" size="small" onClick={() => onRemove?.(internalId)}>Remove</Button>
+            <div>
+                {language['input.name-style.gradient.color-stop.label']}: <InputNumber
+                    value={internalOffset}
+                    size="small"
+                    max={100} min={0}
+                    onChange={value => debouncedOnChange(typeof value === 'string' ? parseInt(value) : value ?? 0)}
+                />
+            </div>
+            <Button className="remove-stop-color" size="small" onClick={() => onRemove?.(internalId)}>
+                {language['input.name-style.gradient.color-remove.label']}
+            </Button>
         </div>
         <ChromePicker
             styles={{
@@ -99,6 +105,7 @@ export const TextGradientPicker = ({
     angle: externalAngle = 180,
     memoizedOnChange,
 }: TextGradientPicker) => {
+    const language = useLanguage();
     const pickerRef = useRef<WrappedColorPickerRef>(null);
     const [angle, setAngle] = useState(externalAngle);
     const [palette, setPalette] = useState(() => {
@@ -172,7 +179,7 @@ export const TextGradientPicker = ({
     return <div className="controls-wrapper gradient-picker-container">
         <div className="gradient-angle-control">
             <h2>
-                Color Points
+                {language['input.name-style.gradient.color-point.label']}
             </h2>
             <Button
                 size="small"
@@ -191,9 +198,9 @@ export const TextGradientPicker = ({
                         };
                     });
                 }}
-            >Add Point ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
+            >{language['input.name-style.gradient.add-point.label']} ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
             <div className="angle-picker-container">
-                <h2>Gradient Direction</h2>
+                <h2>{language['input.name-style.gradient.gradient-direction.label']}</h2>
                 <AnglePicker angle={angle} size={120} setAngle={setAngle} />
             </div>
         </div>

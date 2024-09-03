@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Checkbox, Tooltip } from 'antd';
-import { useCard } from '../../service';
+import { useCard, useLanguage } from '../../service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -14,6 +14,7 @@ const StyledCheckboxGroup = styled.div`
 
 export type CardCheckboxGroup = {};
 export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
+    const language = useLanguage();
     const {
         isDuelTerminalCard,
         isFirstEdition,
@@ -60,7 +61,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
             checked={isFirstEdition}
             tabIndex={0}
         >
-            {'1st Edition'}
+            {language['input.1st-edition.label']}
         </Checkbox>
         <Tooltip overlayClassName="long-tooltip-overlay" overlay="Will turn off Duel Terminal mark.">
             <Checkbox
@@ -69,7 +70,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
                 checked={isSpeedCard}
                 tabIndex={0}
             >
-                {'Speed'}
+                {language['input.speed-duel.label']}
             </Checkbox>
         </Tooltip>
         <Tooltip overlayClassName="long-tooltip-overlay" overlay="Will turn off Speed Duel mark.">
@@ -79,7 +80,7 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
                 checked={isDuelTerminalCard}
                 tabIndex={0}
             >
-                {'Duel Terminal'}
+                {language['input.duel-terminal.label']}
             </Checkbox>
         </Tooltip>
     </StyledCheckboxGroup>;

@@ -1,4 +1,5 @@
 import { FrameInfo } from 'src/model';
+import { useLanguage } from 'src/service';
 import styled from 'styled-components';
 
 const StyledFrameContainer = styled.div<{ $withPillar: boolean }>`
@@ -7,7 +8,6 @@ const StyledFrameContainer = styled.div<{ $withPillar: boolean }>`
     > label {
         cursor: pointer;
         padding: 0 var(--spacing-xxs);
-        text-transform: capitalize;
         text-align: center;
     }
 `;
@@ -16,11 +16,13 @@ const StyledFramePillar = styled.div`
     width: 10px;
 `;
 export const FrameInfoBlock = ({
-    name,
+    nameKey,
     labelBackgroundColor,
     labelBackgroundColorList,
     className,
-}: Omit<FrameInfo, 'edition' | 'labelColor'> & { className?: string }) => {
+}: Omit<FrameInfo, 'name' | 'edition' | 'labelColor'> & { className?: string }) => {
+    const language = useLanguage();
+
     return <StyledFrameContainer
         className={`frame-info-block ${className ?? ''}`}
         $withPillar={!!(labelBackgroundColor || labelBackgroundColorList)}
@@ -35,6 +37,6 @@ export const FrameInfoBlock = ({
             : labelBackgroundColor
                 ? <StyledFramePillar style={{ backgroundColor: labelBackgroundColor }} />
                 : null}
-        <label className="frame-info-block-label">{name.replaceAll('-', ' ')}</label>
+        <label className="frame-info-block-label">{language[nameKey]}</label>
     </StyledFrameContainer>;
 };

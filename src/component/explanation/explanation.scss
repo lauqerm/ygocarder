@@ -2,6 +2,7 @@
     font-size: var(--fs);
     color: var(--color-heavy);
     cursor: pointer;
+    display: inline-block;
 }
 .explanation-overlay {
     .ant-popover-inner {

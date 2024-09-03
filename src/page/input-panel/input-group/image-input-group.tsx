@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef, LinkMarkChooser } from 'src/component';
 import { RadioTrain } from '../input-train';
 import { useShallow } from 'zustand/react/shallow';
@@ -35,6 +35,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     onTainted,
     onCropChange,
 }, ref) => {
+    const language = useLanguage();
     const {
         opacity,
         artFinish,
@@ -89,6 +90,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
 
     return <ImageCropper
         ref={imageCropperRef}
+        title={language['input.card-art.label']}
         defaultExternalSource={art}
         defaultCropInfo={artCrop}
         receivingCanvas={receivingCanvas}
@@ -104,7 +106,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
                 onChange={changeArtFinish}
                 optionList={ArtFinishButtonList}
             >
-                <span className="field-title">Art Finish</span>
+                <span className="field-title">{language['input.art-finish.label']}</span>
             </StyledImageRadioTrain>
             : null
         }

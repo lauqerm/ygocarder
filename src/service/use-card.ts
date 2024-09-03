@@ -1,8 +1,36 @@
-import { Card, getDefaultCard } from 'src/model';
+import { Card, getDefaultCard, getEmptyCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
-import { decodeCardWithCompatibility, migrateCardData } from 'src/util';
+import { rebuildCardData, migrateCardData, legacyRebuildCardData } from 'src/util';
+import { notification } from 'antd';
+import { getLanguage } from './use-i18n';
+
+export const decodeCardWithCompatibility = (
+    cardData: Record<string, any> | string | null,
+): Card => {
+    let decodedCard = getEmptyCard();
+    if (!cardData) return decodedCard;
+    try {
+        decodedCard = rebuildCardData(cardData) as Card;
+    } catch (e) {
+        console.error('decodedCard', cardData, e);
+        try {
+            decodedCard = legacyRebuildCardData(cardData, true) as Card;
+            notification.info({
+                message: getLanguage()['service.decode.outdated.message'],
+                description: getLanguage()['service.decode.outdated.description'],
+            });
+        } catch (e) {
+            console.error('cardData', cardData, e);
+            notification.error({
+                message: getLanguage()['service.decode.error.message'],
+                description: getLanguage()['service.decode.error.description'],
+            });
+        }
+    }
+    return decodedCard;
+};
 
 /**
  * Acquire saved card when the session is just initialized. URL source is preferred over local storage source.

@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd';
 import { IconButton } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { SyncOutlined } from '@ant-design/icons';
@@ -23,6 +23,9 @@ const StyledNameInputContainer = styled.div`
         min-width: 250px;
     }
 `;
+const StyledCopyButton = styled.span`
+    cursor: pointer;
+`;
 
 export type NameSetInputGroupRef = {
     setValue: (value: { name?: string, setId?: string }) => void,
@@ -31,6 +34,7 @@ export type NameSetInputGroup = {} & Pick<CardTextInput, 'onTakePicker'>;
 export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGroup>(({
     onTakePicker,
 }, ref) => {
+    const language = useLanguage();
     const {
         name,
         format,
@@ -64,11 +68,11 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
             id="name"
             defaultValue={name}
             addonBefore={<Tooltip title="Copy">
-                <span style={{ cursor: 'pointer' }} onClick={() => {
+                <StyledCopyButton onClick={() => {
                     navigator.clipboard.writeText(normalizedCardName(name));
                 }}>
-                    Name
-                </span>
+                    {language['input.name.label']}
+                </StyledCopyButton>
             </Tooltip>}
             onChange={changeName}
             onTakePicker={onTakePicker}
@@ -77,11 +81,13 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
             id="set-id"
             defaultValue={useCard.getState().card.setId}
             addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
-                <div className="input-label">Set ID</div>
+                <div className="input-label">
+                    {language['input.set-id.label']}
+                </div>
                 <IconButton
                     onClick={() => setIdInputRef.current?.setValue(randomSetID(format))}
                     Icon={SyncOutlined}
-                    tooltipProps={{ overlay: 'Randomize' }}
+                    tooltipProps={{ overlay: language['button.randomize.label'] }}
                 />
             </StyledInputLabelWithButton>}
             onChange={changeSetId}

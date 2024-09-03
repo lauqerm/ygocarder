@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { BulbFilled, SettingFilled } from '@ant-design/icons';
 import './formatting-guide.scss';
+import { useLanguage } from 'src/service';
 
 const StyledCode = styled.span`
     background: var(--main-level-1);
@@ -11,7 +12,10 @@ const StyledCode = styled.span`
     border-radius: var(--br);
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 `;
-const StyledPanel = styled.div`
+const StyledContainer = styled.div`
+    white-space: pre-line;
+`;
+const StyledImageSection = styled.div`
     display: grid;
     grid-template-columns: 615fr 703fr;
     gap: var(--spacing-sm);
@@ -23,7 +27,6 @@ const StyledPanel = styled.div`
         overflow: hidden;
     }
 `;
-
 const StyledImageWithCaptionContainer = styled.div`
     min-width: 0;
     position: relative;
@@ -63,37 +66,37 @@ export const ImageWithCaption = ({
 
 export const FormattingHelpDrawer = () => {
     const [modalOpen, setDrawerOpen] = useState(false);
+    const language = useLanguage();
 
     return <>
         <Drawer
             footer={null}
             visible={modalOpen}
             width={'60%'}
-            title={<div className="overlay-title">Formatting Guide <Button
+            title={<div className="overlay-title">{language['guide.format.label']} <Button
                 size="small"
                 type="primary"
                 onClick={() => {
                     setDrawerOpen(false);
                 }}
-            >Close</Button></div>}
+            >{language['guide.format.close']}</Button></div>}
             className="formattting-guide-overlay"
             onClose={() => {
                 setDrawerOpen(false);
             }}
         >
-            <div>
+            <StyledContainer>
                 <p>
-                    Formatting should work out-of-the-box, but in case you need to fine-tune your cards, here are some additional formatting syntax.
-                    <br />
-                    The behavior may be differents based on the input.
-                    <br />
-                    You can turn on/off hotkey usage in Setting <SettingFilled />.
+                    {language['guide.format.introduction'](<SettingFilled key="icon" />)}.
                 </p>
-                <h2>Non-breakable line</h2>
-                Wrap a line of text inside a <StyledCode>{'['}</StyledCode> and <StyledCode>{']'}</StyledCode> to prevent the text from breaking down into multiple lines.
-                <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl-1'}</StyledCode> or <StyledCode>{'⌘-1'}</StyledCode>.
-                <StyledPanel className="panel-figure">
+                <h2>{language['guide.format.section-1.label']}</h2>
+                {language['guide.format.section-1.content'](
+                    <StyledCode key="open-tag">{'['}</StyledCode>,
+                    <StyledCode key="close-tag">{']'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-1'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-1'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
@@ -106,12 +109,15 @@ export const FormattingHelpDrawer = () => {
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-1-preview.jpg`}
                         caption="Output"
                     />
-                </StyledPanel>
-                <h2>Non-breakable text</h2>
-                Wrap a piece of text inside a <StyledCode>{'{'}</StyledCode> and <StyledCode>{'}'}</StyledCode> to prevent the text from breaking down into multiple lines.
-                <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl-2'}</StyledCode> or <StyledCode>{'⌘-2'}</StyledCode>.
-                <StyledPanel className="panel-figure">
+                </StyledImageSection>
+                <h2>{language['guide.format.section-2.label']}</h2>
+                {language['guide.format.section-2.content'](
+                    <StyledCode key="open-tag">{'{'}</StyledCode>,
+                    <StyledCode key="close-tag">{'}'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-2'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-2'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
@@ -124,12 +130,14 @@ export const FormattingHelpDrawer = () => {
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-2-preview.jpg`}
                         caption="Output"
                     />
-                </StyledPanel>
-                <h2>Ruby</h2>
-                Put a <StyledCode>{'|'}</StyledCode> in between of a non-breakable text to annotate the text with small letters above it.
-                <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl-3'}</StyledCode> or <StyledCode>{'⌘-3'}</StyledCode>.
-                <StyledPanel className="panel-figure">
+                </StyledImageSection>
+                <h2>{language['guide.format.section-3.label']}</h2>
+                {language['guide.format.section-3.content'](
+                    <StyledCode key="separator">{'|'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-3'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-3'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
@@ -142,12 +150,14 @@ export const FormattingHelpDrawer = () => {
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-3-preview.jpg`}
                         caption="Output"
                     />
-                </StyledPanel>
-                <h2>Compressable Ruby</h2>
-                Put a <StyledCode>{'||'}</StyledCode> in between of a non-breakable text to annotate it compressable small letters that does not try to extend beyond the text below it.
-                <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl-4'}</StyledCode> or <StyledCode>{'⌘-4'}</StyledCode>.
-                <StyledPanel className="panel-figure">
+                </StyledImageSection>
+                <h2>{language['guide.format.section-4.label']}</h2>
+                {language['guide.format.section-4.content'](
+                    <StyledCode key="separator">{'||'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-4'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-4'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
@@ -160,12 +170,15 @@ export const FormattingHelpDrawer = () => {
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-4-preview.jpg`}
                         caption="Output"
                     />
-                </StyledPanel>
-                <h2>Non-compressable text</h2>
-                Wrap a piece of text inside a <StyledCode>{'{{'}</StyledCode> and <StyledCode>{'}}'}</StyledCode> to prevent the text from being compressed.
-                <br />
-                If hotkeys are allowed, you can wrap your desired text and press <StyledCode>{'Ctrl-5'}</StyledCode> or <StyledCode>{'⌘-5'}</StyledCode>.
-                <StyledPanel className="panel-figure">
+                </StyledImageSection>
+                <h2>{language['guide.format.section-5.label']}</h2>
+                {language['guide.format.section-5.content'](
+                    <StyledCode key="open-tag">{'{{'}</StyledCode>,
+                    <StyledCode key="close-tag">{'}}'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-5'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-5'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
@@ -178,8 +191,8 @@ export const FormattingHelpDrawer = () => {
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-5-preview.jpg`}
                         caption="Output"
                     />
-                </StyledPanel>
-            </div>
+                </StyledImageSection>
+            </StyledContainer>
         </Drawer>
         <Button
             className="formatting-help-button"
@@ -188,7 +201,7 @@ export const FormattingHelpDrawer = () => {
                 setDrawerOpen(true);
             }}
         >
-            Formatting Help <BulbFilled />
+            {language['guide.format.label']} <BulbFilled />
         </Button>
     </>;
 };

@@ -1,7 +1,7 @@
 import { Button, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { MasterSeriesCanvas } from 'src/model';
-import { useCardExport, useMasterSeriDrawer, useSetting } from 'src/service';
+import { useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
 
 export type DownloadButtonRef = {
     download: () => void,
@@ -20,6 +20,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     canvasMap,
     onDownloadError,
 }, ref) => {
+    const language = useLanguage();
     const allowHotkey = useSetting(state => state.setting.allowHotkey);
     const { onExport } = useMasterSeriDrawer(
         true,
@@ -71,7 +72,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         <div id="save-button-waiting" />
         <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
             <Button className="save-button" loading={isDownloading} id="save-button-ready" onClick={download}>
-                Download
+                {language['button.download.label']}
             </Button>
         </Tooltip>
     </div>;
