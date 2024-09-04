@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 const StyledImageRadioTrain = styled(RadioTrain)`
     .ant-input-group-addon {
-        padding-left: 0;
+        flex: 0;
     }
     .radio-train-input-group .ant-radio-button-wrapper {
         min-width: unset;

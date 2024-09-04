@@ -59,7 +59,7 @@ export const StyledDataButtonPanelContainer = styled.div`
         position: relative;
     }
     .imexport {
-        flex: 0 0 200px;
+        flex: 0 0 210px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         column-gap: var(--spacing);

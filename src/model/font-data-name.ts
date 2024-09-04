@@ -73,7 +73,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             fontList: [{
                 bulletSymbolWidth: 42.67,
                 fontSize: 64,
-                headTextFontRatio: 0.190,
+                headTextFontRatio: 0.175,
                 headTextSpacing: 3,
                 letterSpacing: -0.03,
                 lineCount: 1,
