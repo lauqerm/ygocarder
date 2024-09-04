@@ -19,7 +19,6 @@ import {
     NumberRegex,
     OCGNoOverheadGapRegex,
     GAP_PER_WIDTH_RATIO,
-    GAP_PADDING_RATIO,
     RUBY_REGEX,
     DefaultFontData,
     RUBY_BONUS_RATIO,
@@ -77,6 +76,7 @@ export const analyzeToken = ({
     } = textData;
     const {
         metricMethod,
+        headTextGapRatio = DefaultFontData.headTextGapRatio,
         headTextOverflow = DefaultFontData.headTextOverflow,
         fontStyle,
     } = fontData;
@@ -192,7 +192,7 @@ export const analyzeToken = ({
                 footTextWidth,
                 headTextGap: defaultGap / xRatio,
                 headTextSpacing,
-                gapPadding: GAP_PADDING_RATIO * fontSize / xRatio,
+                gapPadding: headTextGapRatio * fontSize / xRatio,
                 fitFootText,
                 sentenceXRatio: xRatio,
                 xRatio: (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0,

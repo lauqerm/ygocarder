@@ -6,8 +6,9 @@ import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { CondenseType } from 'src/model';
-import { CondenseThresholdButtonList } from '../const';
+import { CondenseThresholdButtonList, IconTypeMap } from '../const';
 import styled from 'styled-components';
+import { checkMonster } from 'src/util';
 
 const StyledPostPendulumInputContainer = styled.div`
     display: grid;
@@ -54,6 +55,8 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
 }, ref) => {
     const language = useLanguage();
     const {
+        frame,
+        cardIcon,
         format,
         furiganaHelper,
         condenseTolerant,
@@ -61,6 +64,8 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         getUpdater,
     } = useCard(useShallow(({
         card: {
+            frame,
+            cardIcon,
             format,
             furiganaHelper,
             effectStyle,
@@ -68,6 +73,8 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         setCard,
         getUpdater,
     }) => ({
+        frame,
+        cardIcon,
         format,
         furiganaHelper,
         condenseTolerant: effectStyle?.condenseTolerant,
@@ -108,10 +115,17 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         }
     }));
 
+    const typeLabel = cardIcon === 'auto'
+        ? checkMonster({ frame })
+            ? 'input.type.monster.label'
+            : 'input.type.st.label'
+        : IconTypeMap[cardIcon].value === 'st'
+            ? 'input.type.st.label'
+            : 'input.type.monster.label';
     const isOCG = format === 'ocg';
     return <StyledPostPendulumInputContainer className={`post-pendulum-input variant-${format}`}>
         <CardTextInput ref={typeAbilityInputRef}
-            addonBefore={language['input.type.label']}
+            addonBefore={language[typeLabel]}
             id="type-ability"
             defaultValue={useCard.getState().card.typeAbility.join(typeAbilitySeparator)}
             onChange={changeTypeAbility}

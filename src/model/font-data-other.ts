@@ -130,7 +130,7 @@ export const ocgTypeAbilityFontData: FontData = {
             lineCount: 1,
             iconSymbolWidth: 45,
             headTextFontRatio: 0.25,
-            headTextSpacing: 6,
+            headTextSpacing: 3,
             letterSpacing: -0.07,
             squareBracketRatio: 1.02501,
         },

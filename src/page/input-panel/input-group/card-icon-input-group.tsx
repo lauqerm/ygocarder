@@ -77,7 +77,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                         className={value === cardIcon ? 'menu-active' : ''}
                         onClick={() => changeCardIcon(value)}
                     >
-                        {language[fullLabelKey]}{icon ? <>&nbsp;{icon}</> : null}
+                        {icon ? <>{icon}&nbsp;</> : null}{language[fullLabelKey]}
                     </StyledDropdown.Option>;
                 })}
             </StyledIconDropdown>

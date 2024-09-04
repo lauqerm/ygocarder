@@ -4,7 +4,6 @@ import {
     DefaultFontData,
     DefaultFontSizeData,
     FragmentSplitRegex,
-    GAP_PADDING_RATIO,
     LETTER_GAP_RATIO,
     MAX_LINE_REVERSE_INDENT,
     NB_UNCOMPRESSED_END,
@@ -79,8 +78,10 @@ export const drawLine = ({
     const fontSizeData = fontData.fontList[fontLevel];
     const {
         headTextFillStyle,
+        headTextBold = DefaultFontData.headTextBold,
         headTextHeightRatio = DefaultFontData.headTextHeightRatio,
         headTextOverflow = DefaultFontData.headTextOverflow,
+        headTextGapRatio = DefaultFontData.headTextGapRatio,
         metricMethod,
         fontStyle,
     } = fontData;
@@ -256,7 +257,7 @@ export const drawLine = ({
                     footTextWidth: footTextWidth * xRatio,
                     headTextGap: defaultGap,
                     headTextSpacing: headTextSpacing * xRatio,
-                    gapPadding: fontSize * GAP_PADDING_RATIO,
+                    gapPadding: fontSize * headTextGapRatio,
                     fitFootText,
                     sentenceXRatio: xRatio,
                     xRatio: (headTextOverflow === 'condense' && footText.length > 1) ? Math.min(1, xRatio + RUBY_BONUS_RATIO) : 0,
@@ -339,6 +340,8 @@ export const drawLine = ({
                     headTextGap: defaultGap,
                     headTextSpacing,
                     headTextHeightRatio,
+                    headTextBold,
+                    headTextGapRatio,
                     xRatio,
                     fontStyle,
                     textWorker,
@@ -366,7 +369,7 @@ export const drawLine = ({
                 /**
                  * A problem here: We cannot calculate the gap of a fragment unless knowing its actual width, so that means we must calculate it first, then calculate the gap, then go back and calculate the actual width all over again when we draw. These are doable but it make this ugly long code become needlessly more ugly and long. So we just naively measure the word without any kind of special treatment, take the gap based on it and call it a day.
                  * 
-                 * Even if the actual width of the fragment is different than when we measure it naively, the gap ratio itself have a bit of room for error (around 40% when maximum is 50%), so most of the time we can avoid any overlap unless in extreme condensing situation.
+                 * Even if the actual width of the fragment is different than when we measure it naively, the gap ratio itself have a bit of room for error (around 50%), so most of the time we can avoid any overlap unless in extreme condensing situation.
                  */
                 const fragmentNaiveWidth = ctx.measureText(fragment).width * xRatio;
                 const leftGap = Math.max(defaultGap, fragmentNaiveWidth * gapRatio);

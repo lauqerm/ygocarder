@@ -117,7 +117,6 @@ export const RUBY_REGEX = /{[^{}]+?}/;
 export const RUBY_BONUS_RATIO = 0.1;
 
 export const BREAKABLE_LETTER = '\\s\\-/';
-/** Default ratio to calculate the gap of a letter. We do not want head text to overlap, so a letter cannot give more space than half of it size. 40% is nice enough. */
-export const LETTER_GAP_RATIO = -0.4;
+/** Default ratio to calculate the gap of a letter. We do not want head text to overlap, so a letter cannot give more space than half of it size. 40-50% is nice enough. */
+export const LETTER_GAP_RATIO = -0.5;
 export const GAP_PER_WIDTH_RATIO = -2.25;
-export const GAP_PADDING_RATIO = 0.03125;

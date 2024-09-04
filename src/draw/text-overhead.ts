@@ -3,7 +3,7 @@ import {
     getTextWorker,
 } from './text-util';
 import { getLetterWidth } from './letter';
-import { GAP_PADDING_RATIO, RUBY_BONUS_RATIO } from 'src/model';
+import { RUBY_BONUS_RATIO } from 'src/model';
 
 /** Fill head text, by furigana rules, they have their own scaling space so they do not necessarily respect current ratio of the foot text. This function receive true coordinations.
  * 
@@ -22,6 +22,8 @@ export const fillHeadText = ({
     headTextGap,
     headTextSpacing,
     headTextHeightRatio,
+    headTextBold,
+    headTextGapRatio,
     xRatio,
     fontStyle,
     textWorker,
@@ -36,6 +38,8 @@ export const fillHeadText = ({
     headTextGap: number,
     headTextSpacing: number,
     headTextHeightRatio: number,
+    headTextBold: boolean,
+    headTextGapRatio: number,
     xRatio: number,
     fontStyle: string,
     textWorker: ReturnType<typeof getTextWorker>,
@@ -58,7 +62,7 @@ export const fillHeadText = ({
         headText, headTextLetterWidth,
         footText, footTextWidth: footTextWidth * xRatio,
         headTextGap, headTextSpacing: headTextSpacing * xRatio,
-        gapPadding: fontSize * GAP_PADDING_RATIO,
+        gapPadding: fontSize * headTextGapRatio,
         fitFootText,
         sentenceXRatio: xRatio,
         xRatio: externalHeadTextXRatio,
@@ -108,7 +112,7 @@ export const fillHeadText = ({
         const boundingOffset = (width - boundWidth) / 2;
         stopApplyFuriganaFont();
 
-        applyFuriganaFont(true);
+        applyFuriganaFont(headTextBold);
         ctx.fillText(letter, currentEdge - boundingOffset, baseline - fontSize * headTextHeightRatio);
         stopApplyFuriganaFont();
         currentEdge += (boundWidth + letterSpacing);
