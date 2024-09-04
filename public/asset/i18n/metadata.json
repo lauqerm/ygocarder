@@ -14,8 +14,8 @@
         "initialMessage": "フォントとスクリプトを読み込んでいます…",
         "order": 2,
         "style": {
-            "fontFamily": "'Yu-Gi-Oh! DF Leisho 3'",
-            "letterSpacing": "-0.25px"
+            "font-family": "'Yu-Gi-Oh! DF Leisho 3'",
+            "--width-label": "140px"
         },
         "active": true
     },

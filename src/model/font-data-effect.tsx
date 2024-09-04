@@ -34,9 +34,8 @@ export const DefaultFontSizeData = {
     squareBracketRatio: 1,
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
-    headTextBold: false,
-    headTextFontRatio: 0.4,
-    headTextSpacing: -0.5,
+    headTextFontRatio: 0.355,
+    headTextSpacing: 0.5,
 };
 
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
@@ -62,7 +61,7 @@ export type FontData = {
 export const DefaultFontData = {
     headTextHeightRatio: 0.800,
     headTextOverflow: 'normal' as 'normal' | 'condense',
-    headTextBold: false,
+    headTextBold: true,
     headTextGapRatio: 0.03125,
 };
 export type TextData = {

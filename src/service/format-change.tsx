@@ -4,6 +4,7 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
     const {
         creator,
         effect,
+        pendulumEffect,
         format,
         isFirstEdition,
         name,
@@ -25,6 +26,7 @@ export const changeCardFormat = (card: Card, targetFormat: string): Card => {
         name: termMap[name] ?? name,
         format: targetFormat,
         effect: termMap[effect] ?? effect,
+        pendulumEffect: termMap[pendulumEffect] ?? pendulumEffect,
         typeAbility: typeAbility.map(entry => termMap[entry] ?? entry),
         creator: termMap[creator] ?? creator,
         setId: newSetId,

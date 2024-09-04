@@ -120,10 +120,12 @@ const StyledPendulumInputContainer = styled.div`
         }
         .pendulum-checkbox {
             /** Alignment **/
-            width: 95px;
+            width: var(--width-label);
             line-height: 32px;
             text-align: right;
             font-weight: 500;
+            margin-right: 0;
+            padding-right: var(--spacing);
             > span {
                 padding-right: 0;
             }
@@ -135,9 +137,6 @@ const StyledPendulumInputContainer = styled.div`
         }
         .pendulum-frame-input {
             margin-right: var(--spacing-lg);
-        }
-        .ant-checkbox-wrapper {
-            margin-right: var(--spacing);
         }
         .ant-checkbox-wrapper + .ant-checkbox-wrapper {
             margin-left: 0;

@@ -142,10 +142,14 @@ function App() {
     }, [isMetadataReady, loadDefaultLanguage]);
     /** Dynamic style, we force inline style into body because app component's style cannot affect overlay component. */
     useEffect(() => {
-        const applyList = ['fontFamily' as const, 'letterSpacing' as const];
+        const applyList = [
+            'font-family',
+            'letter-spacing',
+            '--width-label',
+        ];
 
         applyList.forEach(styleName => {
-            document.body.style[styleName] = languageInfo.style?.[styleName] ?? '' as any;
+            document.body.style.setProperty(styleName, languageInfo.style?.[styleName] ?? '' as any);
         });
     }, [languageInfo]);
 

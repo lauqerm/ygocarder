@@ -125,11 +125,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         setCard(currentCard => {
             const nextFormat = `${formatValue}`;
             const formatSwappedCard = changeCardFormat(currentCard, nextFormat);
-            postPendulumInputGroupRef.current?.setValue({ typeAbility: formatSwappedCard.typeAbility });
 
-            const { name, setId, effect, typeAbility, creator } = formatSwappedCard;
+            const { name, setId, effect, typeAbility, creator, pendulumEffect } = formatSwappedCard;
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             effectInputGroupRef.current?.setValue(effect);
+            pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             postPendulumInputGroupRef.current?.setValue({ typeAbility });
             footerInputGroupRef.current?.setValue({ creator });
 

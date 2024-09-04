@@ -194,7 +194,7 @@ export const analyzeHeadText = ({
             ? 0
             : headTextSpacing * 3;
     }
-    else if (condenseHeadText <= 1.575) {
+    else if (condenseHeadText <= 1.560) {
         /** If the head text is too long, we start to introduce negative spacing. Example like "S" - Synchro in OCG. */
         alignCenterLetterSpacing = headTextSpacing >= 0
             ? headTextSpacing * -1/4
