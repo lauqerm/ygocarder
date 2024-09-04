@@ -141,7 +141,7 @@ export const getLetterWidth = ({
     else {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.750);
     }
-    letterBoxSpacing = metricMethod === 'furigana' ? 0 : 2;
+    letterBoxSpacing = metricMethod === 'furigana' ? 0 : letterBoxSpacing;
 
     const actualLetterWidth = width * letterRatio * endLineRatio;
 
