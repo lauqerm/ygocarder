@@ -115,19 +115,19 @@ export const IconTypeMap: Record<string, { value: string, labelKey: string, full
         value: 'level',
         labelKey: 'input.icon-type.level.label',
         fullLabelKey: 'input.icon-type.level.label',
-        icon: null,
+        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level.png`} />,
     },
     'negative-level': {
         value: 'negative-level',
         labelKey: 'input.icon-type.negative-level.label',
         fullLabelKey: 'input.icon-type.negative-level.label',
-        icon: null,
+        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-negative-level.png`} />,
     },
     'rank': {
         value: 'rank',
         labelKey: 'input.icon-type.rank.label',
         fullLabelKey: 'input.icon-type.rank.label',
-        icon: null,
+        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-rank.png`} />,
     },
 };
 export const IconTypeList = Object.values(IconTypeMap);

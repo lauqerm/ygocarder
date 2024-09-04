@@ -62,6 +62,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
             headTextHeightRatio: 0.775,
             headTextOverflow: 'condense',
+            headTextBold: true,
             metricMethod: 'name',
             numberFont: 'DFKakuTaiHiStd-W4',
             numberFontRatio: 1.00,

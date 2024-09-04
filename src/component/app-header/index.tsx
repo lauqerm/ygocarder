@@ -19,6 +19,7 @@ export const Affiliation = () => {
 
 const StyledAppSettingContainer = styled.div`
     align-content: center;
+    align-self: center;
     border-left: var(--bw) dashed #b1b1b1;
     padding-left: var(--spacing);
     margin-left: var(--spacing);

@@ -152,7 +152,7 @@ export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline
  * * Head text that is way too long compare to its foot text underneath will be condensed and has negative letter spacing ("PenduLuMoon" OCG), in some cases make it completely unreadable.
  * * Head text of the first token of a line can "spill" out of line's boundary. ("Beyond the Pendulum" OCG) Even if this is the case, all foot text must be perfectly aligned vertically.
  * * Head text above a single letter will not be condensed ("Recette de Poisson (Fish Recipe)" OCG) unless forced to by special syntax.
- * * Head text above multiple-letters foot text condeses with a slower rate than normal ("Number C92: Heart-eartH Chaos Dragon" OCG).
+ * * Head text above multiple-letters foot text condeses with a slower rate than normal ("CXyz N.As.Ch. Knight" OCG).
  * * Head text above a whole line will be condensed so it does not overflow ("Amaze Attraction Viking Vortex" OCG).
  * * Those letters do not have gap, and therefore do not allow head text to overflow over them: Bullet ●, ordinal letter lie ⑤ ("Pendulum Dimension" OCG).
  * */
@@ -190,18 +190,24 @@ export const analyzeHeadText = ({
     }
     else if (condenseHeadText <= 1.175) {
         /** If the head text is a bit too long, we force all head text's letters to stay close together. Example like "EX" - Extra Deck in OCG. */
-        alignCenterLetterSpacing = 0;
+        alignCenterLetterSpacing = headTextSpacing >= 0
+            ? 0
+            : headTextSpacing * 3;
     }
     else if (condenseHeadText <= 1.575) {
         /** If the head text is too long, we start to introduce negative spacing. Example like "S" - Synchro in OCG. */
-        alignCenterLetterSpacing = headTextSpacing * -1/4;
+        alignCenterLetterSpacing = headTextSpacing >= 0
+            ? headTextSpacing * -1/4
+            : headTextSpacing * 3;
     }
     else {
         /** If the head text is way too long, not only we introduce negative spacing, but also condense the actual letter. "P" - Pendulum is a notorious example. */
         internalXRatio = 0.66;
-        alignCenterLetterSpacing = headTextSpacing * -1/4;
+        alignCenterLetterSpacing = headTextSpacing >= 0
+            ? headTextSpacing * -1/4
+            : headTextSpacing * 2;
     }
-    if (fitFootText || xRatio < 1) {
+    if (fitFootText || (xRatio > 0 && xRatio < 1)) {
         alignCenterLetterSpacing = headTextSpacing;
     }
 

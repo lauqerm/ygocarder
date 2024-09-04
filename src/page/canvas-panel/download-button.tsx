@@ -30,6 +30,7 @@ const StyledDownloadButton = styled(Button)`
         height: 100%; // Alignment
         align-content: center;
         border-radius: var(--br-lg);
+        line-height: 1.5;
     }
     .button-option {
         position: absolute;

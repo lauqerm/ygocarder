@@ -106,12 +106,14 @@ export const getLetterWidth = ({
     let endLineRatio = 1;
     let standardMetricRatio = 1.000;
     if (OCGDotRegex.test(letter)) {
-        boundWidth = metricMethod === 'furigana' ? actualBoundWidth : actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.500);
+        boundWidth = metricMethod === 'furigana'
+            ? actualBoundWidth
+            : actualBoundWidth * (metricMethod === 'creator' ? 1.750 : 2.500);
         standardMetricRatio = 0.600;
     }
     else if (ChoonpuRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.75);
-        letterBoxSpacing = metricMethod === 'furigana' ? 0 : 2;
+        letterBoxSpacing = 2;
     }
     else if (ChiisaiRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.7);
@@ -139,6 +141,7 @@ export const getLetterWidth = ({
     else {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.750);
     }
+    letterBoxSpacing = metricMethod === 'furigana' ? 0 : 2;
 
     const actualLetterWidth = width * letterRatio * endLineRatio;
 

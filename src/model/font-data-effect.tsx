@@ -34,12 +34,9 @@ export const DefaultFontSizeData = {
     squareBracketRatio: 1,
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
-    headTextFontRatio: 0.325,
-    headTextSpacing: 1,
-};
-export const DefaultFontData = {
-    headTextHeightRatio: 0.800,
-    headTextOverflow: 'normal' as 'normal' | 'condense',
+    headTextBold: false,
+    headTextFontRatio: 0.4,
+    headTextSpacing: -0.5,
 };
 
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
@@ -47,18 +44,26 @@ export type FontData = {
     alphabetFont: string,
     font: string,
     fontList: FontSizeData[],
+    fontStyle: string,
     furiganaFont: string,
+    headTextBold?: boolean,
     headTextFillStyle?: string,
+    headTextGapRatio?: number,
+    headTextHeightRatio?: number,
+    headTextOverflow?: 'normal' | 'condense',
     metricMethod?: MetricMethod,
     numberFont?: string,
     numberFontRatio?: number,
     ordinalFont: string,
-    headTextHeightRatio?: number,
-    fontStyle: string,
     symbolFont: string,
     symbolFontRatio: number,
     weight?: 'bold',
-    headTextOverflow?: 'normal' | 'condense',
+};
+export const DefaultFontData = {
+    headTextHeightRatio: 0.800,
+    headTextOverflow: 'normal' as 'normal' | 'condense',
+    headTextBold: false,
+    headTextGapRatio: 0.03125,
 };
 export type TextData = {
     fontData: FontData,
@@ -74,6 +79,7 @@ const DefaultEffectFontData = {
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     symbolFont: 'matrix',
     symbolFontRatio: 1,
+    headTextGapRatio: 0,
 };
 const DefaultTCGEffectFontData: FontData = {
     ...DefaultEffectFontData,
@@ -176,7 +182,7 @@ export const PendulumEffectFontData: Record<string, FontData> = {
                 bulletSymbolWidth: 16,
                 fontSize: 22.05,
                 lineHeight: 25.2,
-                headTextFontRatio: 0.325,
+                headTextFontRatio: 0.4,
                 lineCount: 5,
             },
         ],

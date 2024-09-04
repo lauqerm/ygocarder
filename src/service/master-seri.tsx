@@ -679,21 +679,24 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         /** Delay queue and relevant checker is used for potential performance improvement, but currently performance is not a making a hard impact to the app. */
         const generateLayer = (
             canvasLayer: React.RefObject<HTMLCanvasElement>,
-            ctx: CanvasRenderingContext2D | null | undefined,
+            exportCtx: CanvasRenderingContext2D | null | undefined,
             delayQueue: number = 0,
         ) => {
             return new Promise<boolean>(resolve => {
                 setTimeout(() => {
-                    if (canvasLayer.current && ctx) {
+                    if (!canvasLayer.current || !exportCtx) resolve(false);
+                    else {
                         try {
                             canvasLayer.current.toBlob(blob => {
-                                if (blob) {
+                                if (!blob) resolve(false);
+                                else {
                                     const url = URL.createObjectURL(blob);
-                                    if (url) {
-                                        var layer = new Image();
+                                    if (!url) resolve(false);
+                                    else {
+                                        const layer = new Image();
                                         layer.src = url;
                                         layer.onload = () => {
-                                            ctx.drawImage(layer, 0, 0);
+                                            exportCtx.drawImage(layer, 0, 0);
                                             URL.revokeObjectURL(url);
                                             resolve(true);
                                         };
@@ -701,15 +704,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                                             URL.revokeObjectURL(url);
                                             resolve(false);
                                         };
-                                    } else resolve(true);
+                                    }
                                 }
-                                resolve(false);
                             });
                         } catch (e) {
                             console.error(e);
                             resolve(false);
                         }
-                    } else resolve(false);
+                    }
                 }, delayQueue * 25);
             });
         };
