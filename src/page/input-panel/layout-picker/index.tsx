@@ -142,6 +142,7 @@ const StyledBaseFillPickerContainer = styled.div`
         }
         .color-section h2 {
             padding-top: 0;
+            padding-left: 0;
         }
     }
     .color-section {

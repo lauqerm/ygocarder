@@ -68,7 +68,7 @@ export type CardStore = {
 };
 export const useCard = create<CardStore>((set, get) => {
     return {
-        card: retrieveSavedCard(),
+        card: getDefaultCard(),
         setCard: cardTransform => {
             if (typeof cardTransform === 'function') set(cur => ({ card: cardTransform(cur.card) }));
             else set({ card: cardTransform });

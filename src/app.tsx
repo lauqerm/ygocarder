@@ -179,7 +179,9 @@ function App() {
                 urls: ['asset/font.css'],
             },
             active: () => {
-                setCard(retrieveSavedCard());
+                const retrievedCard = retrieveSavedCard();
+
+                setCard(retrievedCard);
                 setInitializing(false);
             },
             fontinactive(familyName, fvd) {
@@ -378,10 +380,10 @@ function App() {
                                         <ClearOutlined />
                                     </ResetButton>
                                 </Tooltip>
-                                <Tooltip title={<>
+                                <Tooltip title={<div className="center">
                                     {language['button.full-size.label']}
                                     {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
-                                </>}>
+                                </div>}>
                                     <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
                                         <ZoomInOutlined />
                                     </LightboxButton>

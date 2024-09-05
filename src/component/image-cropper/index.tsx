@@ -325,7 +325,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
     const pendingId = useRef(0);
     useImperativeHandle(forwardedRef, () => ({
-        setRatio: ratio => {
+        setRatio: _ratio => {
             // setRatio(ratio);
             // setRedrawSignal(cur => cur + 1);
         },
@@ -360,8 +360,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
                                 tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
-                                onClick={() => (isDownloadable && receivingCanvas)
-                                        && generateDownload(receivingCanvas, completedCrop)}
+                                onClick={() => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)}
                             />
                         </span>
                         <Radio.Group
@@ -444,16 +443,25 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         // setCrossOrigin(undefined);
                     }}
                     crop={currentCrop}
-                    onChange={(_, percentCropData) => {
-                        if (pendingCrop.current.crop) return;
+                    onChange={(pixelCropData, percentCropData) => {
                         const image = imgRef.current;
-
-                        setCrop(cur => {
-                            return {
-                                ...cur,
-                                current: normalizeCrop(percentCropData, image, ratio)
-                            };
-                        });
+                        if (pendingCrop.current.crop) return;
+                        if (!isMigrated) {
+                            setMigrated(true);
+                            setCrop(cur => {
+                                return {
+                                    ...cur,
+                                    current: normalizeCrop(pixelCropData, image, ratio)
+                                };
+                            });
+                        } else {
+                            setCrop(cur => {
+                                return {
+                                    ...cur,
+                                    current: normalizeCrop(percentCropData, image, ratio)
+                                };
+                            });
+                        }
                     }}
                     onComplete={(_, percentData) => {
                         if (!pendingCrop.current.crop) setCrop(cur => ({ ...cur, completed: percentData }));
