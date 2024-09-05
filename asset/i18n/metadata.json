@@ -19,6 +19,17 @@
         },
         "active": true
     },
+    "vie": {
+        "name": "Tiếng Việt (Beta)",
+        "formalName": "Vietnamese",
+        "codeName": "vie",
+        "initialMessage": "Đang tải phông chữ…",
+        "order": 3,
+        "style": {
+            "--width-label": "130px"
+        },
+        "active": true
+    },
     "def": {
         "name": "Default",
         "formalName": "Default",
