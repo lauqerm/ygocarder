@@ -7,7 +7,7 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     .radio-train {
         display: flex;
         flex-wrap: wrap;
-        max-width: 500px;
+        max-width: 550px;
         .radio-train-input-group {
             gap: var(--spacing);
         }
