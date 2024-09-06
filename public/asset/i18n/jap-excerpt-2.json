@@ -1,0 +1,30 @@
+{
+    "name": "日本語",
+    "formalName": "Japanese",
+    "codeName": "jap",
+    "rawDictionary": {
+        "alert.explaination.tainted.first-answer": "You are using an image host that does not have the necessary \"approval\" for the app to use it. Browsers see it as a potential security risk (even if it is not the case) and mark the card as \"tainted\".",
+        "alert.explaination.tainted.first-question": "What is happening?",
+        "alert.explaination.tainted.second-answer": "A \"tainted card\" prevents all forms of automatic saving. From then on, you must save the card manually by right-clicking it → \"Save image as...\". This implies that the action is fully under your consent.",
+        "alert.explaination.tainted.second-question": "How does it affect me?",
+        "alert.explaination.tainted.third-answer": "Switching to a different, safe, and popular image host (such as \"imgur\") will likely resolve the issue. You may also try refreshing the page if the problem persists. If you cannot switch to another image host, the app will still function mostly as expected; you will just need to manually save the card and remain cautious of potential malicious links.",
+        "alert.explaination.tainted.third-question": "How do I fix it?",
+        "contributor.disclaimer.line-1": "This is a personal project, not an \"official\" card maker. I do not have any affiliations with other card makers, whether they are websites, desktop apps, or mobile apps. {siteLink} is the only one that is directly maintained by me.",
+        "contributor.disclaimer.line-2": "The code for my site is provided as-is. I accept no liability for any parties that may use or modify the code from my app on their own sites.",
+        "contributor.disclaimer.line-3": "I accept no liability for cards created with this app, including images, card text, or any related products.",
+        "contributor.disclaimer.line-4": "I do not own any of the Yu-Gi-Oh card layers or fonts used in this project. They belong to their respective creators.",
+        "contributor.disclaimer.line-5": "If you want to modify card layers or use them in any public project, please contact {author1} or {author2} directly.",
+        "contributor.disclaimer.line-6": "This app is completely free to use. I do not charge any fees, require donations, or serve any ads on this site.",
+        "guide.format.introduction": "Formatting should work out-of-the-box, but in case you need to fine-tune your cards, here are some additional formatting syntax.\nThe behavior may be differents based on the input.\nYou can toggle hotkey usage in Setting {settingIcon}",
+        "guide.format.section-1.content": "Wrap a line in {openTag} and {closeTag} to prevent it from breaking into multiple lines.\nIf hotkeys are enabled, you can select the text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-1.label": "Non-breakable line",
+        "guide.format.section-2.content": "Wrap a piece of text in {openTag} and {closeTag} to prevent it from breaking into multiple lines.\nIf hotkeys are enabled, you can select the text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-2.label": "Non-breakable text",
+        "guide.format.section-3.content": "Put a {separator} in between of a non-breakable text to add small letters above it.\nIf hotkeys are enabled, you can select the text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-3.label": "Ruby",
+        "guide.format.section-4.content": "Put a {separator} in between of a non-breakable text to add compressible small letters that will not extend beyond the text below.\nIf hotkeys are enabled, you can select the text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-4.label": "Compressable Ruby",
+        "guide.format.section-5.content": "Wrap a piece of text in {openTag} and {closeTag} to prevent it from being compressed.\nIf hotkeys are enabled, you can select the text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-5.label": "Non-breakable text"
+    }
+}
