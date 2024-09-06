@@ -189,6 +189,7 @@
         "prompt.download.tainted.message": "Could not save card, please manually save it by right click the card → Choose \"Save image as...\"",
         "prompt.export.message": "Save card data for later use",
         "prompt.export.offline-warning.message": "Cannot export card data if you use offline image",
+        "prompt.import.merge.tooltip": " to import",
         "prompt.import.message": "Paste your card data here",
         "prompt.reset.message": "This will reset your card information back to default, make sure you export the current data first!",
         "service.decode.error.description": "It is either malformed or not compatible.",

@@ -21,6 +21,11 @@
             color: var(--sub-active);
         }
     }
+    /** Make sure that the hoverable zone is also the exact dropdown trigger zone */
+    .name-style-option-label {
+        height: 100%;
+        display: inline-block;
+    }
 }
 .ant-radio-focused {
     .ant-radio-inner {

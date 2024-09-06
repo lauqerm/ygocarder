@@ -48,6 +48,7 @@ configure({
 const AppGlobalHotkeyMap = {
     EXPORT: ['ctrl+d', 'command+d'],
     IMPORT: ['ctrl+e', 'command+e'],
+    MERGE: ['ctrl+g', 'command+g'],
     VIEW: ['ctrl+b', 'command+b'],
     DOWNLOAD: ['ctrl+s', 'command+s'],
 };
@@ -243,6 +244,25 @@ function App() {
 
         if (cardData) {
             const decodedCard = decodeCardWithCompatibility(cardData);
+
+            setCard(decodedCard);
+            setImageChangeCount(cnt => cnt + 1);
+            cardInputRef.current?.forceCardData(decodedCard);
+            /** Allow navigate input panel right away */
+            forceRefocus();
+        }
+    }, [allowHotkey, language]);
+
+    const mergeData = useCallback((event?: { preventDefault: () => void }) => {
+        if (!allowHotkey) return;
+
+        event?.preventDefault();
+        const cardData = window.prompt(language['prompt.import.message']);
+        const setCard = useCard.getState().setCard;
+
+        if (cardData) {
+            const decodedCard = decodeCardWithCompatibility(cardData, useCard.getState().card);
+
             setCard(decodedCard);
             setImageChangeCount(cnt => cnt + 1);
             cardInputRef.current?.forceCardData(decodedCard);
@@ -274,11 +294,12 @@ function App() {
     const hotkeyHandlerMap = useMemo(() => {
         return {
             IMPORT: importData,
+            MERGE: mergeData,
             EXPORT: exportData,
             VIEW: () => setLightboxVisible(true),
             DOWNLOAD: downloadFromHotkey,
         };
-    }, [downloadFromHotkey, exportData, importData]);
+    }, [downloadFromHotkey, exportData, importData, mergeData]);
 
     const alertDownloadError = useCallback(() => {
         setTainted(true);
@@ -340,7 +361,10 @@ function App() {
                                         {language['button.export.label']}
                                     </button>
                                 </Tooltip>
-                                <Tooltip overlay={allowHotkey ? <>Ctrl-E / ⌘-E</> : null}>
+                                <Tooltip overlay={allowHotkey ? <div className="center">
+                                        <div>Ctrl-E / ⌘-E</div>
+                                        <div>Ctrl-G / ⌘-G{language['prompt.import.merge.tooltip']}</div>
+                                    </div> : null}>
                                     <button onClick={importData}>
                                         {language['button.import.label']}
                                     </button>

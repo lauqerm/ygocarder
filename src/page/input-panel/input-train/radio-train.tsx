@@ -11,17 +11,21 @@ export type RadioTrainRef = {
 }
 export type RadioTrain = {
     className?: string,
-    value: string,
+    strict?: boolean,
+    value: string | number,
     optionList: { label: React.ReactNode, value: string | number, props?: React.LabelHTMLAttributes<HTMLLabelElement> }[],
     onChange: (value: string | number) => void,
     children?: React.ReactNode,
+    suffix?: React.ReactNode,
 }
 export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
     onChange,
     value: activeValue,
     optionList,
     children,
+    suffix,
     className,
+    strict = false,
 }, ref) => {
     const [focus, setFocus] = useState(-1);
     const internalRef = useRef<HTMLDivElement>(null);
@@ -50,7 +54,9 @@ export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
         >
             {optionList.map(({ value, props, label }, index) => {
                 const { className } = props ?? {};
-                const isChecked = `${value}` === `${activeValue}`;
+                const isChecked = strict
+                    ? value === activeValue
+                    : `${value}` === `${activeValue}`;
 
                 return <label key={value}
                     {...props}
@@ -69,5 +75,6 @@ export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
                 </label>;
             })}
         </div>
+        {suffix}
     </StyledRadioTrainContainer>;
 });

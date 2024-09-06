@@ -189,13 +189,14 @@ export const legacyReverseCardDataShortener = (
 
 export const rebuildCardData = (
     card: Record<string, any> | string,
+    baseCard?: Card,
 ) => {
     const normalizedCard = typeof card === 'string'
         ? JSON.parse(card)
         : card;
     const fullCard: Record<string, any> = decompressCardData(normalizedCard);
 
-    return migrateCardData(fullCard);
+    return migrateCardData(fullCard, baseCard);
 };
 export const legacyRebuildCardData = (
     card: Record<string, any> | string,
@@ -214,9 +215,9 @@ export const legacyRebuildCardData = (
 };
 
 /** Migrate old version of card data into the new version without information loss */
-export const migrateCardData = (card: Record<string, any>) => {
+export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): Card => {
     const migratedCard = {
-        ...getEmptyCard(),
+        ...baseCard,
         ...clone(card)
     };
 

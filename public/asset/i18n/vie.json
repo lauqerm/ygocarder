@@ -189,6 +189,7 @@
         "prompt.download.tainted.message": "Không thể lưu thẻ. Bạn có thể lưu thủ công bằng cách nhấn chuột phải vào ảnh → Chọn \"Save image as...\"",
         "prompt.export.message": "Lưu lại thông tin thẻ",
         "prompt.export.offline-warning.message": "Không thể lưu thông tin thẻ chứa ảnh tải lên từ thiết bị",
+        "prompt.import.merge.tooltip": " để kết hợp dữ liệu",
         "prompt.import.message": "Dán thông tin thẻ ở đây",
         "prompt.reset.message": "Thao tác này sẽ xóa thẻ và đưa thông tin về lại bản gốc. Hãy đảm bảo bạn đã sao lưu lại thông tin hiện tại!",
         "service.decode.error.description": "Thông tin thẻ bị sai hoặc không còn được hỗ trợ.",

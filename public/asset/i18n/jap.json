@@ -189,6 +189,7 @@
         "prompt.download.tainted.message": "カードを保存できませんでした。カードを右クリックして手動で保存してください。→ 「名前を付けて保存」を選択してください。",
         "prompt.export.message": "後で使用するためにカードデータを保存します",
         "prompt.export.offline-warning.message": "オフライン画像を使用している場合、カードデータをエクスポートできません。",
+        "prompt.import.merge.tooltip": "を押してインポート",
         "prompt.import.message": "ここにカードを貼り付けてください。",
         "prompt.reset.message": "カード情報がデフォルトにリセットされます。現在のデータをまずエクスポートしておくことを確認してください",
         "service.decode.error.description": "形式が不正か、適当性がありません。",

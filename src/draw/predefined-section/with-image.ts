@@ -7,24 +7,27 @@ const {
     width: CanvasWidth,
 } = CanvasConst;
 
-export const drawStarIcon = async ({
+export const drawStarContent = async ({
     ctx,
     cardIcon,
-    star,
+    text,
+    starCount,
     onStarDraw,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     cardIcon: string,
-    star: number,
+    text: string | null,
+    starCount: number,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
 }) => {
     const starWidth = 50;
     const startSpacing = 4;
-    const starCount = Math.min(13, star);
+    const normalizedStarCount = Math.min(13, starCount);
     const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
-    const totalWidth = starWidth * starCount + startSpacing * (starCount - 1);
+    const totalWidth = starWidth * normalizedStarCount + startSpacing * (normalizedStarCount - 1);
+    const baseline = 145;
     /** Level / Rank 13 is center-aligned. */
-    const leftEdge = starCount <= 12
+    const leftEdge = normalizedStarCount <= 12
         ? reverseAlign
             ? 85.9125 - starWidth
             : 728.775
@@ -34,12 +37,25 @@ export const drawStarIcon = async ({
 
     let offset = 0 - (starWidth + startSpacing);
 
-    return Promise.all([...Array(starCount)]
+    if (ctx && text) {
+        console.log('🚀 ~ text:', text);
+        const fontSize = 60;
+        ctx.textAlign = reverseAlign ? 'left' : 'right';
+        ctx.font = `bold ${fontSize}px Yugioh Rush Duel Numbers V4`;
+        ctx.fillStyle = '#000000';
+        const offset = reverseAlign
+            ? 2 * starWidth + startSpacing  /** x2 because we already minus 1 time starWidth when calculating leftEdge */
+            : (starWidth + startSpacing) * -1;
+        ctx.fillText(text, leftEdge +offset, baseline + fontSize * 0.7);
+        ctx.textAlign = 'left';
+    }
+
+    return Promise.all([...Array(normalizedStarCount)]
         .map(async () => {
             offset += (starWidth + startSpacing);
             let coordinate: [number, number] = [
                 leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
-                145,
+                baseline,
             ];
             await drawAsset(ctx, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
             return await onStarDraw(coordinate);

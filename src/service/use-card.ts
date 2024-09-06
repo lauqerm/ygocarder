@@ -8,11 +8,12 @@ import { getLanguage } from './use-i18n';
 
 export const decodeCardWithCompatibility = (
     cardData: Record<string, any> | string | null,
+    baseCard?: Card,
 ): Card => {
     let decodedCard = getEmptyCard();
     if (!cardData) return decodedCard;
     try {
-        decodedCard = rebuildCardData(cardData) as Card;
+        decodedCard = rebuildCardData(cardData, baseCard);
     } catch (e) {
         console.error('decodedCard', cardData, e);
         try {

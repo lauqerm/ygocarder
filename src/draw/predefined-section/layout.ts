@@ -9,7 +9,7 @@ import {
 } from 'src/model';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { getCardIconFromFrame } from 'src/util';
-import { drawStarIcon } from './with-image';
+import { drawStarContent } from './with-image';
 
 const {
     topToPendulumStructure,
@@ -45,7 +45,7 @@ export const getLayoutDrawFunction = ({
     backgroundType: BackgroundType,
     cardIcon: string,
     attribute: string,
-    star: number,
+    star: number | string,
     foil: Foil,
     pendulumSize: string,
     opacity: CardOpacity,
@@ -230,10 +230,13 @@ export const getLayoutDrawFunction = ({
         },
         drawStar: async () => {
             const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
-            await drawStarIcon({
+            await drawStarContent({
                 ctx,
                 cardIcon: normalizedCardIcon,
-                star: star ?? 0,
+                text: typeof star === 'string' ? star : null,
+                starCount: typeof star === 'string'
+                    ? 1
+                    : typeof star === 'number' ? star : 0,
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'
                         ? Promise.resolve()

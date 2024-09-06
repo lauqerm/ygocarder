@@ -1,4 +1,4 @@
-import { Popover } from 'antd';
+import { Input, Popover } from 'antd';
 import { RadioTrain } from '../input-train';
 import { StyledDropdown } from 'src/component';
 import { useCard, useLanguage } from 'src/service';
@@ -12,6 +12,12 @@ import styled from 'styled-components';
 const StyledIconDropdown = styled(StyledDropdown.Container)`
     img {
         max-height: 1.3em;
+    }
+`;
+const StyledCheckboxStarTrain = styled(RadioTrain)`
+    .custom-star-input {
+        margin-left: var(--spacing-sm);
+        width: 5rem;
     }
 `;
 
@@ -98,8 +104,19 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
             ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={getSTIconButtonList(language)}>
                 {DropdownChildren}
             </RadioTrain>
-            : <RadioTrain className="checkbox-star-train" value={`${star}`} onChange={changeStar} optionList={StarButtonList}>
+            : <StyledCheckboxStarTrain
+                className="checkbox-star-train"
+                value={star}
+                onChange={changeStar}
+                optionList={StarButtonList}
+                strict={true}
+                suffix={showCreativeOption && <Input
+                    className="custom-star-input"
+                    value={typeof star === 'number' ? '' : star}
+                    onChange={changeStar}
+                />}
+            >
                 {DropdownChildren}
-            </RadioTrain>
+            </StyledCheckboxStarTrain>
         : null;
 });
