@@ -454,7 +454,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawName(
                 ctx,
                 name,
-                format === 'tcg' ? 60 : 68, 115.5375,
+                format === 'tcg' ? 60 : 68, 116,
                 attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),

@@ -389,7 +389,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     </div>
                     <div className={['card-image-input', inputMode === 'external' ? '' : 'input-inactive'].join(' ')}>
                         <Input key="key"
-                            placeholder="Image link"
+                            placeholder={language['image-cropper.placeholder']}
                             value={externalSource}
                             onChange={applyOnlineSource}
                             maxLength={512}
