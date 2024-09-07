@@ -24,23 +24,23 @@ import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import './style-picker.scss';
 
-export type TextStylePickerRef = {
+export type NameStylePickerRef = {
     setValue: (value: Partial<NameStyle>) => void,
 };
-export type TextStylePicker = {
+export type NameStylePicker = {
     frameInfo?: FrameInfo,
     defaultType: NameStyleType,
     defaultValue: Partial<NameStyle>,
     showExtraDecorativeOption: boolean,
     onChange: (type: NameStyleType, style: Partial<NameStyle>) => void,
 };
-export const TextStylePicker = forwardRef(({
+export const NameStylePicker = forwardRef(({
     frameInfo,
     defaultType,
     defaultValue,
     showExtraDecorativeOption,
     onChange: undebouncedOnChange,
-}: TextStylePicker, ref: ForwardedRef<TextStylePickerRef>) => {
+}: NameStylePicker, ref: ForwardedRef<NameStylePickerRef>) => {
     const language = useLanguage();
     const optionGridRef = useRef<PredefinedOptionGridRef>(null);
     const [focus, setFocus] = useState(-1);
@@ -233,7 +233,7 @@ export const TextStylePicker = forwardRef(({
                 <div className="style-picker">
                     <Popover key="color-picker"
                         trigger={['click']}
-                        overlayClassName="input-overlay style-picker-overlay"
+                        overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'custom-style-picker'}>
                                 <div className="custom-style-text">
@@ -267,7 +267,7 @@ export const TextStylePicker = forwardRef(({
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="shadow-picker"
                         trigger={['click']}
-                        overlayClassName="input-overlay style-picker-overlay"
+                        overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'custom-style-picker'}>
                                 <h3 className="custom-style-expand">
@@ -316,7 +316,7 @@ export const TextStylePicker = forwardRef(({
                     </Popover>}
                     <Popover key="outline-picker"
                         trigger={['click']}
-                        overlayClassName="input-overlay style-picker-overlay"
+                        overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'custom-style-picker'}>
                                 <h3 className="custom-style-expand">
@@ -365,7 +365,7 @@ export const TextStylePicker = forwardRef(({
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="gradient-picker"
                         trigger={['click']}
-                        overlayClassName="input-overlay style-picker-overlay"
+                        overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'custom-style-picker'}>
                                 <h3 className="custom-style-expand">
@@ -398,7 +398,7 @@ export const TextStylePicker = forwardRef(({
                     </Popover>}
                     {showExtraDecorativeOption && <Popover key="pattern-picker"
                         trigger={['click']}
-                        overlayClassName="input-overlay pattern-picker-overlay"
+                        overlayClassName="global-input-overlay pattern-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <StyledPatternContainer onClick={e => e.stopPropagation()}>
                                 <div className="alert">
@@ -442,7 +442,7 @@ export const TextStylePicker = forwardRef(({
                     </Popover>}
                     <Popover key="font-picker"
                         trigger={['click']}
-                        overlayClassName="input-overlay font-picker-overlay"
+                        overlayClassName="global-input-overlay font-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <StyledDropdown.Container>
                                 {fontList.map(({ value: fontValue, label }) => {

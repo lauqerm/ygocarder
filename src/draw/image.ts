@@ -1,6 +1,7 @@
 const imageCacheMap: Record<string, {
     image: HTMLImageElement,
     ready: boolean,
+    error: boolean,
 }> = {};
 
 export const drawFrom = async (
@@ -19,7 +20,7 @@ export const drawFrom = async (
 
             ctx.drawImage(img, normalizedX, normalizedY);
             resolve(true);
-        } else {
+        } else if (imageCacheMap[source]?.error !== true) {
             const img = new Image();
             img.src = process.env.PUBLIC_URL + source;
             img.onload = () => {
@@ -28,16 +29,19 @@ export const drawFrom = async (
 
                 ctx.drawImage(img, normalizedX, normalizedY);
                 imageCacheMap[source].ready = true;
+                imageCacheMap[source].error = false;
                 resolve(true);
             };
             img.onerror = () => {
+                imageCacheMap[source].error = true;
                 resolve(false);
             };
             imageCacheMap[source] = {
                 image: img,
                 ready: false,
+                error: true,
             };
-        }
+        } else resolve(true);
     });
 };
 export const drawAsset = async (
@@ -72,7 +76,7 @@ export const drawFromWithSize = async (
 
             ctx.drawImage(img, normalizedX, normalizedY, normalizedW, normalizedH);
             resolve(true);
-        } else {
+        } else if (imageCacheMap[source]?.error !== true) {
             const img = new Image();
             img.src = process.env.PUBLIC_URL + source;
             img.onload = () => {
@@ -83,16 +87,19 @@ export const drawFromWithSize = async (
     
                 ctx.drawImage(img, normalizedX, normalizedY, normalizedW, normalizedH);
                 imageCacheMap[source].ready = true;
+                imageCacheMap[source].error = false;
                 resolve(true);
             };
             img.onerror = () => {
+                imageCacheMap[source].error = true;
                 resolve(false);
             };
             imageCacheMap[source] = {
                 image: img,
                 ready: false,
+                error: true,
             };
-        }
+        } else resolve(true);
     });
 };
 export const drawAssetWithSize: typeof drawFromWithSize = async (

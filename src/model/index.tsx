@@ -2,7 +2,7 @@ import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
 import { Foil } from './foil-finish';
 import { CondenseType } from './font-data-effect';
 import { NO_ICON } from './icon';
-import { getDefaultNameStyle, NameStyle, NameStyleType } from './name-preset';
+import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
 
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
@@ -51,9 +51,11 @@ export const getDefaultCard = () => ({
     pendulumEffect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
     pendulumScaleRed: '4',
     pendulumScaleBlue: '4',
-    typeAbility: ['Fairy',
+    typeAbility: [
+        'Fairy',
         'Fusion',
-        'Effect'] as string[],
+        'Effect',
+    ] as string[],
     effectStyle: {
         condenseTolerant: 'strict' as CondenseType,
     },
@@ -69,6 +71,10 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     isDuelTerminalCard: false,
     creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
     furiganaHelper: true,
+    statTextStyle: getDefaultTextStyle(),
+    typeTextStyle: getDefaultTextStyle(),
+    effectTextStyle: getDefaultTextStyle(),
+    pendulumTextStyle: getDefaultTextStyle(),
 });
 export const getEmptyCard = (): Card => ({
     version: 0,
@@ -126,6 +132,10 @@ export const getEmptyCard = (): Card => ({
     isDuelTerminalCard: false,
     creator: '',
     furiganaHelper: true,
+    statTextStyle: getDefaultTextStyle(),
+    typeTextStyle: getDefaultTextStyle(),
+    effectTextStyle: getDefaultTextStyle(),
+    pendulumTextStyle: getDefaultTextStyle(),
 });
 
 export const OpacityList = [

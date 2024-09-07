@@ -1,4 +1,5 @@
 import { CanvasConst, FinishInformation, FinishMap } from 'src/model';
+import { CanvasTextStyle } from 'src/service';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
@@ -133,5 +134,36 @@ export const getFinishIterator = (
         }
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = 'source-over';
+    };
+};
+
+const DEFAULT_SHADOW_OFFSET_X = 0;
+const DEFAULT_SHADOW_OFFSET_Y = 0;
+const DEFAULT_SHADOW_BLUR = 0;
+const DEFAULT_SHADOW_COLOR = '#000000';
+const DEFAULT_TEXT_COLOR = '#000000';
+
+export const setTextStyle = ({
+    ctx,
+    x = DEFAULT_SHADOW_OFFSET_X,
+    y = DEFAULT_SHADOW_OFFSET_Y,
+    blur = DEFAULT_SHADOW_BLUR,
+    color = DEFAULT_TEXT_COLOR,
+    shadowColor = DEFAULT_SHADOW_COLOR,
+}: {
+    ctx: CanvasRenderingContext2D,
+} & CanvasTextStyle) => {
+    ctx.shadowOffsetX = x;
+    ctx.shadowOffsetY = y;
+    ctx.shadowBlur = blur;
+    ctx.shadowColor = shadowColor;
+    ctx.fillStyle = color;
+
+    return () => {
+        ctx.shadowOffsetX = DEFAULT_SHADOW_OFFSET_X;
+        ctx.shadowOffsetY = DEFAULT_SHADOW_OFFSET_Y;
+        ctx.shadowBlur = DEFAULT_SHADOW_BLUR;
+        ctx.shadowColor = DEFAULT_SHADOW_COLOR;
+        ctx.fillStyle = DEFAULT_TEXT_COLOR;
     };
 };

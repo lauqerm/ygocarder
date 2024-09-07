@@ -61,7 +61,6 @@ export const drawStatText = (
 ) => {
     if (!ctx) return;
 
-    ctx.fillStyle = '#000';
     ctx.scale(1, 0.98);
     ctx.font = 'bold 35.73px Matrix-Bold';
     const cursorEndOfATK = fillTextLeftWithSpacing(ctx, value, 0.075, edge, baseline / 0.98);

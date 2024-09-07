@@ -1,4 +1,4 @@
-import { clearCanvas } from '../canvas-util';
+import { clearCanvas, setTextStyle } from '../canvas-util';
 import { condense, createFontGetter , checkLightFrame, checkSpeedSkill } from 'src/util';
 import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON } from 'src/model';
 import { tokenizeText } from '../text-util';
@@ -6,6 +6,7 @@ import { drawLine } from '../text';
 import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
 import { drawAssetWithSize } from '../image';
+import { CanvasTextStyle } from 'src/service';
 
 /** Small and medium size are used for type / ability text in effect box. Large type is used for "Spell/Trap type" under card's name. */
 const sizeMap: Record<string, number> = {
@@ -99,6 +100,7 @@ export const drawTypeAbility = async ({
     frame,
     size,
     isMonster,
+    textStyle,
     furiganaHelper,
 }: {
     ctx?: CanvasRenderingContext2D | null,
@@ -108,6 +110,7 @@ export const drawTypeAbility = async ({
     frame: string,
     size: 'small' | 'medium' | 'large',
     isMonster: boolean,
+    textStyle: CanvasTextStyle,
     furiganaHelper: boolean,
 }) => {
     if (!clearCanvas(ctx)) return;
@@ -126,9 +129,11 @@ export const drawTypeAbility = async ({
     if (!willDrawTypeAbility) return;
 
     /** Special treatment for speed skill */
-    ctx.fillStyle = checkLightFrame(frame) && !checkSpeedSkill({ frame }) && size === 'large'
+    const defaultFillStyle = checkLightFrame(frame) && !checkSpeedSkill({ frame }) && size === 'large'
         ? '#ffffff'
         : '#000000';
+    const normalizedStyle = { color: defaultFillStyle, ...textStyle };
+    const resetStyle = setTextStyle({ ctx, ...normalizedStyle });
     const { iconPositionList, xRatio } = drawTypeAbilityText({
         ctx,
         format,
@@ -137,6 +142,8 @@ export const drawTypeAbility = async ({
         metricMethod: !isMonster ? 'compact' : undefined,
         furiganaHelper,
     });
+    resetStyle();
+
     let offsetY = format === 'ocg' ? -4 : 0;
     let offsetX = format === 'ocg' ? -3 : 0;
 

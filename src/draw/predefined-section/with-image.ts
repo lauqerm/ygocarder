@@ -1,7 +1,8 @@
 
 import { CanvasConst } from 'src/model';
 import { drawAsset, drawAssetWithSize } from '../image';
-import { clearCanvas } from '../canvas-util';
+import { clearCanvas, setTextStyle } from '../canvas-util';
+import { CanvasTextStyle } from 'src/service';
 
 const {
     width: CanvasWidth,
@@ -12,12 +13,14 @@ export const drawStarContent = async ({
     cardIcon,
     text,
     starCount,
+    style,
     onStarDraw,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     cardIcon: string,
     text: string | null,
     starCount: number,
+    style?: CanvasTextStyle,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
 }) => {
     const starWidth = 50;
@@ -37,17 +40,17 @@ export const drawStarContent = async ({
 
     let offset = 0 - (starWidth + startSpacing);
 
-    if (ctx && text) {
-        console.log('🚀 ~ text:', text);
-        const fontSize = 60;
+    if (ctx && text && cardIcon !== 'st') {
+        const fontSize = 50;
+        const resetShadow = setTextStyle({ ctx, ...style });
         ctx.textAlign = reverseAlign ? 'left' : 'right';
-        ctx.font = `bold ${fontSize}px Yugioh Rush Duel Numbers V4`;
-        ctx.fillStyle = '#000000';
+        ctx.font = `bold ${fontSize}px RoGSanSrfStd-Bd`;
         const offset = reverseAlign
             ? 2 * starWidth + startSpacing  /** x2 because we already minus 1 time starWidth when calculating leftEdge */
             : (starWidth + startSpacing) * -1;
-        ctx.fillText(text, leftEdge +offset, baseline + fontSize * 0.7);
+        ctx.fillText(text, leftEdge +offset, baseline + fontSize * 0.9);
         ctx.textAlign = 'left';
+        resetShadow();
     }
 
     return Promise.all([...Array(normalizedStarCount)]
@@ -125,9 +128,9 @@ export const drawLinkRatingText = async (
     await drawAsset(ctx, 'link/link-text.png', 600, 1080);
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
-    ctx.font = 'bold 35.55px Yugioh Rush Duel Numbers V4';
+    ctx.font = 'bold 26.55px RoGSanSrfStd-Bd';
     ctx.fillStyle = '#000000';
-    ctx.fillText(`${linkMap.length}`, 623.36, 1105.01);
+    ctx.fillText(`${linkMap.length}`, 622.75, 1105);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';
 };

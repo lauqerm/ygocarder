@@ -1,3 +1,4 @@
+import { CanvasTextStyle } from 'src/service';
 import {
     CanvasConst,
     CondenseType,
@@ -10,6 +11,7 @@ import {
     DefaultTCGNormalFontData,
 } from '../../model';
 import { condense, createFontGetter } from '../../util';
+import { setTextStyle } from '../canvas-util';
 import { createLineList } from '../line';
 import { drawLine } from '../text';
 import { analyzeLine } from '../text-analyze';
@@ -17,7 +19,7 @@ import { normalizeCardText, splitEffect } from '../text-normalize';
 import { tokenizeText } from '../text-util';
 
 /** Sections inside effect box (stats and type) will affect the amount of line and applicaable font size use for the text. */
-export const getEffectSizeAndCoordinate = ({
+export const getEffectFontAndCoordinate = ({
     format,
     isNormal,
     statInEffect,
@@ -53,6 +55,7 @@ export const drawEffect = ({
     content,
     isNormal = false,
     fontData = EffectFontData.tcg,
+    textStyle,
     sizeList = EffectCoordinateData['tcg-type'],
     condenseTolerant = 'strict',
     format,
@@ -62,6 +65,7 @@ export const drawEffect = ({
     content: string,
     isNormal?: boolean,
     fontData?: FontData,
+    textStyle?: CanvasTextStyle,
     sizeList?: CoordinateData[],
     condenseTolerant?: CondenseType,
     format: string,
@@ -141,6 +145,7 @@ export const drawEffect = ({
 
         // [START DRAWING]
         /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
+        const resetStyle = setTextStyle({ ctx, ...textStyle });
         const tolerantValue = tolerancePerSentence[`${paragraphList.length}`] ?? tolerancePerSentence['3'];
         if (
             (effectiveMedian < tolerantValue)
@@ -242,6 +247,7 @@ export const drawEffect = ({
             }
             break;
         }
+        resetStyle();
     }
 
     return effectSizeLevel;

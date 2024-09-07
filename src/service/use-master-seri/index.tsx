@@ -13,11 +13,12 @@ import {
     drawPassword,
     getFinishIterator,
     drawTypeAbility,
-    getEffectSizeAndCoordinate,
+    getEffectFontAndCoordinate,
     drawAsset,
     getLayoutDrawFunction,
     drawLinkRatingText,
     drawPredefinedMark,
+    setTextStyle,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -34,6 +35,7 @@ import {
     DEFAULT_BASE_FILL_COLOR,
 } from 'src/model';
 import {
+    checkLightHeader,
     checkLink,
     checkMonster,
     checkNormal,
@@ -41,7 +43,8 @@ import {
     checkXyz,
     resolveNameStyle,
 } from 'src/util';
-import { useCard } from './use-card';
+import { useCard } from '../use-card';
+import { prepareStyle } from './prepare-style';
 
 const {
     height: CanvasHeight,
@@ -80,6 +83,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         hasBackground, backgroundType,
         frame, foil, finish, artFinish, opacity,
         name, nameStyle, nameStyleType,
+        effectTextStyle, pendulumTextStyle, typeTextStyle, statTextStyle,
         effect,
         effectStyle,
         typeAbility,
@@ -110,6 +114,32 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const { body = 100, boundless } = opacity;
     const requireShadow = !!(body < 50 || boundless);
     const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(bottomFrame);
+    const lightHeader = checkLightHeader(frame);
+    const {
+        levelStyle,
+        resolvedEffectTextStyle,
+        resolvedPendulumEffectTextStyle,
+        resolvedStatTextStyle,
+        resolvedTypeTextStyle,
+    } = useMemo(() => {
+        return prepareStyle({
+            lightFooter,
+            lightHeader,
+            requireShadow,
+            effectTextStyle,
+            pendulumTextStyle,
+            statTextStyle,
+            typeTextStyle,
+        });
+    }, [
+        lightFooter,
+        lightHeader,
+        requireShadow,
+        effectTextStyle,
+        pendulumTextStyle,
+        statTextStyle,
+        typeTextStyle,
+    ]);
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : '/');
@@ -178,7 +208,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         drawingPipeline.current.frame.rerun += 1;
         drawingPipeline.current.frame.instructor = async () => {
-            if (!clearCanvas(ctx)) return;
+            if (!frameCanvasRef.current || !clearCanvas(ctx)) return;
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
                 artBorder: keepArtBorder,
@@ -215,6 +245,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawBorderPendulumFinish,
                 drawEffectBorder,
                 drawCardBorder,
+                drawStatBorder,
 
                 drawAttributeFinish,
                 drawArtBorderFoil,
@@ -233,7 +264,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
                 calculateCardArtRedrawCoordination,
             } = getLayoutDrawFunction({
-                ctx,
+                canvas: frameCanvasRef.current,
                 artworkCanvas, backgroundCanvas,
                 format,
                 frame, bottomFrame,
@@ -376,7 +407,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawFrameFinish();
             }
 
-            if (statInEffect) await drawAsset(ctx, 'frame/frame-stat-border.png', 0, 1070);
+            if (statInEffect) await drawStatBorder(resolvedStatTextStyle.color ?? '#000000');
 
             /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
             if (!isPendulum && isLink) {
@@ -387,7 +418,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
             await drawAttribute();
             await drawAttributeFinish();
-            if (!isLink) await drawStar();
+            if (!isLink) await drawStar({ style: levelStyle });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
             await drawPredefinedMark({
@@ -421,11 +452,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isXyz,
         lightFooter,
         linkMap,
+        resolvedStatTextStyle,
         loopArtFinish,
         loopFinish,
         opacity,
         pendulumSize,
         statInEffect,
+        levelStyle,
         imageChangeCount, // Special dependency, do not remove even though it is not used in the effect itself
     ]);
 
@@ -483,13 +516,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx) || !statInEffect) return;
 
+        const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle });
         drawStatText(ctx, 'ATK', 432.10, 1106.494);
         drawStat(ctx, atk, 508.824, 1106.494);
         if (!isLink) {
             drawStatText(ctx, 'DEF', 600.85, 1106.494);
             drawStat(ctx, def, 673.865, 1106.494);
         }
-    }, [readyToDraw, atk, def, isLink, isMonster, statCanvasRef, statInEffect]);
+        resetStyle();
+    }, [readyToDraw, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);
 
     /** DRAW SET ID */
     useEffect(() => {
@@ -590,12 +625,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 condenseTolerant,
                 format,
                 furiganaHelper,
-                ...getEffectSizeAndCoordinate({
+                ...getEffectFontAndCoordinate({
                     format,
                     statInEffect,
                     typeInEffect,
                     isNormal,
                 }),
+                textStyle: resolvedEffectTextStyle,
             });
             await drawTypeAbility({
                 ctx: typeCtx,
@@ -603,6 +639,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 frame,
                 furiganaHelper,
                 isMonster,
+                textStyle: resolvedTypeTextStyle,
                 size: !typeInEffect
                     ? 'large'
                     : effectIndexSize === 0 ? 'medium' : 'small',
@@ -622,6 +659,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         furiganaHelper,
         isMonster,
         isNormal,
+        resolvedTypeTextStyle,
+        resolvedEffectTextStyle,
         normalizedSubFamily,
         normalizedTypeAbility,
         typeCanvasRef,
@@ -639,13 +678,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 content: pendulumEffect,
                 isNormal: false,
                 fontData: PendulumEffectFontData[format],
+                textStyle: resolvedPendulumEffectTextStyle,
                 sizeList: PendulumEffectCoordinate,
                 condenseTolerant,
                 format,
                 furiganaHelper,
             });
         }
-    }, [readyToDraw, condenseTolerant, format, isPendulum, pendulumEffectCanvasRef, pendulumEffect, furiganaHelper]);
+    }, [readyToDraw, condenseTolerant, format, isPendulum, pendulumEffectCanvasRef, pendulumEffect, furiganaHelper, resolvedPendulumEffectTextStyle]);
 
     /** DRAW TOTAL OVERLAY */
     useEffect(() => {
@@ -789,3 +829,5 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         onExport,
     };
 };
+
+export * from './prepare-style';

@@ -22,7 +22,7 @@ import {
     FormatButtonList,
 } from './const';
 import { CharPicker } from './char-picker';
-import { TextStylePicker, TextStylePickerRef } from './text-style-picker';
+import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
 import { CheckboxTrain, FrameTrain, RadioTrain } from './input-train';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
@@ -42,6 +42,9 @@ import {
     PostPendulumInputGroup,
     PostPendulumInputGroupRef,
 } from './input-group';
+import {
+    TextStylePicker,
+} from './text-style-picker';
 import { useShallow } from 'zustand/react/shallow';
 import {
     StyledFormatRadioTrain,
@@ -94,7 +97,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     const { setting } = useSetting();
     const { showCreativeOption, showExtraDecorativeOption } = setting;
 
-    const stylePickerRef = useRef<TextStylePickerRef>(null);
+    const stylePickerRef = useRef<NameStylePickerRef>(null);
 
     const isLink = checkLink({ frame });
     const isMonster = checkMonster({ frame });
@@ -232,7 +235,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             <NameSetInputGroup ref={nameSetIdInputGroupRef}
                 onTakePicker={setPickerTarget}
             />
-            <TextStylePicker key={stylePickerResetCount} ref={stylePickerRef}
+            <NameStylePicker key={stylePickerResetCount} ref={stylePickerRef}
                 frameInfo={FrameInfoMap[frame as keyof typeof FrameInfoMap]}
                 defaultType={nameStyleType}
                 defaultValue={nameStyle}
@@ -270,6 +273,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                         <StandaloneLabel className="standalone-label">
                             {language['input.effect.label']}
                         </StandaloneLabel>
+                        {showCreativeOption ? <TextStylePicker /> : <div />}
                         <CharPicker
                             targetId={pickerTarget.id}
                             onPick={pickerTarget.setValue}

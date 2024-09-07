@@ -170,7 +170,7 @@ function App() {
                     'MatrixBoldSmallCaps',
                     'MatrixBook',
                     'MatrixRegularSmallCaps',
-                    'Yugioh Rush Duel Numbers V4',
+                    'RoGSanSrfStd-Bd',
                     'YuGiOhITCStoneSerifBSc',
                     'matrix',
                     'palatino-linotype-bold',

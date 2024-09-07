@@ -1,6 +1,6 @@
 import { clone } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { Card, getDefaultCardOpacity, getEmptyCard } from '../model';
+import { Card, getDefaultCardOpacity, getDefaultTextStyle, getEmptyCard } from '../model';
 
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
@@ -93,6 +93,10 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     isDuelTerminalCard: 'idt',
     creator: 'cr',
     furiganaHelper: 'fh',
+    effectTextStyle: 'ets',
+    pendulumTextStyle: 'pts',
+    statTextStyle: 'sts',
+    typeTextStyle: 'tts',
 };
 const legacyCardFieldShortenMap = {
     passcode: 'pc',
@@ -118,8 +122,10 @@ export const compressCardData = (
     serialize = true,
 ) => {
     const condensedCard: Record<string, any> = {};
-    Object.keys(card).forEach(fieldKey => {
-        const fieldValue = card[fieldKey];
+    const normalizedCard = { ...card };
+
+    Object.keys(normalizedCard).forEach(fieldKey => {
+        const fieldValue = normalizedCard[fieldKey];
 
         if (typeof fieldValue === 'object' && fieldValue !== null && !Array.isArray(fieldValue)) {
             const newKey = shortenMap[fieldKey]?._newKey;
@@ -258,6 +264,11 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
     if ((migratedCard as any).passcode && !card.password) migratedCard.password = (migratedCard as any).passcode;
     delete (migratedCard as any).passcode;
+
+    if (!migratedCard.effectTextStyle) migratedCard.effectTextStyle = getDefaultTextStyle();
+    if (!migratedCard.pendulumTextStyle) migratedCard.pendulumTextStyle = getDefaultTextStyle();
+    if (!migratedCard.typeTextStyle) migratedCard.typeTextStyle = getDefaultTextStyle();
+    if (!migratedCard.statTextStyle) migratedCard.statTextStyle = getDefaultTextStyle();
 
     return migratedCard;
 };

@@ -8,8 +8,9 @@ import {
     NO_ATTRIBUTE,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize } from '../image';
-import { getCardIconFromFrame } from 'src/util';
+import { getCardIconFromFrame, hexToRGBA } from 'src/util';
 import { drawStarContent } from './with-image';
+import { CanvasTextStyle } from 'src/service';
 
 const {
     topToPendulumStructure,
@@ -18,7 +19,7 @@ const {
 } = CanvasConst;
 /** Various function used to draw the layout of a card is abstracted to this factory. */
 export const getLayoutDrawFunction = ({
-    ctx,
+    canvas,
     artworkCanvas,
     backgroundCanvas,
     format,
@@ -36,7 +37,7 @@ export const getLayoutDrawFunction = ({
     loopFinish,
     loopArtFinish,
 }: {
-    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
     artworkCanvas: HTMLCanvasElement | null,
     backgroundCanvas: HTMLCanvasElement | null,
     format: string,
@@ -62,6 +63,7 @@ export const getLayoutDrawFunction = ({
         caller?: (finishType: string) => Promise<any>,
     ) => Promise<void>,
 }) => {
+    const ctx = canvas.getContext('2d');
     const {
         artBorder: keepArtBorder,
         nameBorder,
@@ -147,6 +149,8 @@ export const getLayoutDrawFunction = ({
 
         /** Main frame consists of top half and bottom half (for pendulum-like) card. */
         drawFrame: async () => {
+            if (!ctx) return;
+
             ctx.globalAlpha = opacityBody / 100;
             await drawAsset(ctx, `frame/frame-${frame}.png`, 0, 0);
             await drawAsset(ctx, `frame-pendulum/frame-pendulum-${bottomFrame}.png`, 0, 0);
@@ -228,15 +232,16 @@ export const getLayoutDrawFunction = ({
         drawAttribute: async () => {
             await drawAsset(ctx, `attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
         },
-        drawStar: async () => {
+        drawStar: async ({ style }: { style?: CanvasTextStyle }) => {
             const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
             await drawStarContent({
                 ctx,
                 cardIcon: normalizedCardIcon,
                 text: typeof star === 'string' ? star : null,
                 starCount: typeof star === 'string'
-                    ? 1
+                    ? star === '' ? 0 : 1
                     : typeof star === 'number' ? star : 0,
+                style,
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'
                         ? Promise.resolve()
@@ -270,16 +275,53 @@ export const getLayoutDrawFunction = ({
                 })
             );
         },
+        drawStatBorder: async (color: string) => {
+            const rgbaColor = hexToRGBA(color);
+            /** Create clone node for stat border, manipulate it then paste the canvas back */
+            const clonedCanvas = document.createElement('canvas');
+            const statBorderWidth = 813;
+            const statBorderHeight = 20;
+            clonedCanvas.width = statBorderWidth;
+            clonedCanvas.height = statBorderHeight;
+            const clonedCtx = clonedCanvas.getContext('2d', { willReadFrequently: true });
+
+            if (!clonedCtx || !ctx) return;
+            await drawAsset(clonedCtx, 'frame/frame-stat-border.png', 0, 0);
+
+            const statBorderRasterData = clonedCtx.getImageData(0, 0, statBorderWidth, statBorderHeight).data;
+            /** Because the new image data will replace the old one (no blending mode), it will erase the pixel of the current canvas underneath. To solve this we will draw the current canvas into the clone canvas first, before putting new image into it. */
+            clonedCtx.clearRect(0, 0, statBorderWidth, statBorderHeight);
+            clonedCtx.drawImage(canvas, 0, 1070, statBorderWidth, statBorderHeight, 0, 0, statBorderWidth, statBorderHeight);
+            const combinedLayerData = clonedCtx.getImageData(0, 0, statBorderWidth, statBorderHeight);
+            const combinedLayerRasterData = combinedLayerData.data;
+
+            for (let pixelCnt = 0; pixelCnt < combinedLayerRasterData.length; pixelCnt += 4) {
+                /** If raster data is transparency at this pixel, return the whole pixel untouched. Otherwise this pixel is a part of the stat border, and can be manipulated. */
+                if (statBorderRasterData[pixelCnt + 3] > 0) {
+                    /** Change ratio based on the original color value, compare to pitch black #000000 */
+                    combinedLayerRasterData[pixelCnt + 0] = rgbaColor[0] * (1 - statBorderRasterData[pixelCnt + 0] / 255);
+                    combinedLayerRasterData[pixelCnt + 1] = rgbaColor[1] * (1 - statBorderRasterData[pixelCnt + 1] / 255);
+                    combinedLayerRasterData[pixelCnt + 2] = rgbaColor[2] * (1 - statBorderRasterData[pixelCnt + 2] / 255);
+                    combinedLayerRasterData[pixelCnt + 3] = rgbaColor[3] * (statBorderRasterData[pixelCnt + 3] / 255);
+                }
+            }
+
+            ctx.putImageData(combinedLayerData, 0, 1070);
+        },
 
         /** @summary BACKGROUND section */
 
         drawNameBackground: async () => {
+            if (!ctx) return;
+
             ctx.globalAlpha = opacityName / 100;
             await drawAsset(ctx, `background/background-name-${frame}.png`, 0, 0);
             ctx.globalAlpha = 1;
         },
         /** Background is based on bottom frame. This function draws both background for pendulum part and normal effect part. */
         drawEffectBackground: async (withPendulum = false) => {
+            if (!ctx) return;
+
             ctx.globalAlpha = opacityText / 100;
             await drawAsset(
                 ctx,
@@ -320,9 +362,9 @@ export const getLayoutDrawFunction = ({
             await drawAsset(
                 ctx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + `-${foilType}`
-                    + (artBorder ? '' : '-artless')
-                    + '.png',
+                + `-${foilType}`
+                + (artBorder ? '' : '-artless')
+                + '.png',
                 30, 185,
             );
         },
@@ -392,11 +434,11 @@ export const getLayoutDrawFunction = ({
                     return drawAsset(
                         ctx,
                         'finish/finish'
-                            + `-${type}`
-                            + `-${applyArtFinish ? 'art' : 'unart'}`
-                            + '-overlay'
-                            + (isPendulum ? `-pendulum-${pendulumSize}` : '')
-                            + '.png',
+                        + `-${type}`
+                        + `-${applyArtFinish ? 'art' : 'unart'}`
+                        + '-overlay'
+                        + (isPendulum ? `-pendulum-${pendulumSize}` : '')
+                        + '.png',
                         artFinishX, artFinishY,
                     );
                 },

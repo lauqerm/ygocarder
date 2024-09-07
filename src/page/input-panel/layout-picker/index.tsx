@@ -283,7 +283,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         trigger={['click']}
                         onVisibleChange={setBackgroundInputVisible}
                         overlayClassName={[
-                            'input-overlay style-picker-overlay layout-picker-overlay',
+                            'global-input-overlay global-style-picker-overlay layout-picker-overlay',
                             backgroundInputVisible ? 'picker-visible' : '',
                             backgroundInputHidden ? 'picker-hidden' : '',
                         ].join(' ')}

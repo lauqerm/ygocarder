@@ -17,7 +17,7 @@ const StyledIconDropdown = styled(StyledDropdown.Container)`
 const StyledCheckboxStarTrain = styled(RadioTrain)`
     .custom-star-input {
         margin-left: var(--spacing-sm);
-        width: 5rem;
+        width: 6.5rem;
     }
 `;
 
@@ -75,7 +75,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         : iconDropdownText;
     const IconDropdown = <Popover key="icon-type-picker"
         trigger={['click']}
-        overlayClassName="input-overlay pattern-picker-overlay"
+        overlayClassName="global-input-overlay pattern-picker-overlay"
         content={<div className="overlay-event-absorber">
             <StyledIconDropdown>
                 {IconTypeList.map(({ fullLabelKey, value, icon }) => {
@@ -113,7 +113,9 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                 suffix={showCreativeOption && <Input
                     className="custom-star-input"
                     value={typeof star === 'number' ? '' : star}
+                    allowClear
                     onChange={changeStar}
+                    placeholder={language['input.icon-type.custom.placeholder']}
                 />}
             >
                 {DropdownChildren}
