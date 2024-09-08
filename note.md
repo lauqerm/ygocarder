@@ -20,8 +20,6 @@
 * In-place zoom
 * Improve UX when rendering card (reduce flashing)
 
-o => i
-e => a
-i => u
-u => e
-a => o
+### Known issues
+
+* A rather hard one that make card cropper sometimes return wrong crop information upon import. Re-import that same data will fix the issue. This must be a timing problem because the component re-render at the same time it receive imperative information, but currently we have no easy way to reproduce it, and thus unable to effectively fix it.
