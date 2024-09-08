@@ -41,7 +41,8 @@ export const forceRefocus = (selector = '.radio-train-input-group') => {
     document.querySelector<HTMLElement>(selector)?.focus();
 };
 
-export const hexToRGBA = (hex: string) => {
+export const HexColorRegex = /^#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?$/;
+export const hexToRGBA = (hex: string, withAlpha = true) => {
     try {
         const pureHex = hex.replace('#', '');
         let rgbaList = [0, 0, 0, 1];
@@ -63,9 +64,9 @@ export const hexToRGBA = (hex: string) => {
             ];
         }
 
-        return rgbaList.map(entry => isNaN(entry) ? 255 : entry);
+        return rgbaList.map(entry => isNaN(entry) ? 255 : entry).slice(0, withAlpha ? 4 : 3);
     } catch (e) {
-        return [0, 0, 0, 1];
+        return [0, 0, 0, 1].slice(0, withAlpha ? 4 : 3);
     }
 };
 

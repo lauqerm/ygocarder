@@ -42,7 +42,7 @@
         min-height: 32px; // Alignment
         align-content: center;
         .ant-input-affix-wrapper {
-            outline: none !important;
+            outline: none !important;   // Avoid default state styling
             &:hover {
                 border-color: var(--sub-level-1);
             }
@@ -186,16 +186,17 @@
             color: var(--color-heavy);
             background-color: var(--main-level-3);
             > div > span > div {
-                outline: var(--bw) solid var(--sub-level-4) !important;
+                outline: var(--bw) solid var(--sub-level-4) !important; // Override inline style
             }
         }
         .flexbox-fix {
             column-gap: var(--spacing-xs);
             input {
-                color: var(--color-heavy) !important;
-                padding: 0 0 0 var(--spacing-xl) !important;
-                width: 100% !important;
+                color: var(--color-heavy) !important; // Override inline style
+                padding: 0 0 0 var(--spacing-xl) !important; // Override inline style
+                width: 100% !important; // Override inline style
                 transform: translateY(-1px);
+                vertical-align: middle;
             }
             label {
                 line-height: var(--spacing-xl);
@@ -238,9 +239,9 @@
                 grid-template-columns: max-content 1fr;
                 column-gap: var(--spacing-sm);
                 align-items: center;
-                color: hsla(0, 0%, 100%, 0.8);
+                color: var(--color);
                 text-shadow: var(--ts);
-                font-weight: 700;
+                font-weight: 500;
                 .ant-input-number {
                     width: 55px;
                 }
@@ -251,6 +252,6 @@
         }
     }
     .custom-style-picker .chrome-picker .flexbox-fix input {
-        padding: 0 !important;
+        padding: 0 !important; // Override inline style
     }
 }

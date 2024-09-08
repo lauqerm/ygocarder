@@ -167,6 +167,17 @@ export const OpacityList = [
     },
 ];
 
+export const DefaultColorList = [
+    '#4D4D4D', '#999999', '#FFFFFF', '#FF7F7F', '#FFD27F', '#FFFF7F',
+    '#7FFF7F', '#7FBF7F', '#7FFFFF', '#7F7FFF', '#BF7FBF', '#FF7FFF',
+
+    '#333333', '#808080', '#cccccc', '#7F0000', '#7F5200', '#7F7F00',
+    '#007F00', '#004000', '#007F7F', '#00007F', '#400040', '#7F007F',
+
+    '#000000', '#666666', '#B3B3B3', '#FF0000', '#FFA500', '#FFFF00',
+    '#00FF00', '#008000', '#00FFFF', '#0000FF', '#800080', '#FF00FF',
+];
+
 export * from './icon';
 export * from './canvas';
 export * from './coordinate-data';

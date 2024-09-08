@@ -1,7 +1,7 @@
 import { Checkbox, InputNumber, Popover, Slider, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
-import { BackgroundType, getBackgroundTypeList, CardOpacity, DEFAULT_BASE_FILL_COLOR, OpacityList, getDefaultCardOpacity } from 'src/model';
+import { BackgroundType, getBackgroundTypeList, CardOpacity, DEFAULT_BASE_FILL_COLOR, OpacityList, getDefaultCardOpacity, DefaultColorList } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
 import { ImageCropper } from 'src/component';
@@ -148,7 +148,7 @@ const StyledBaseFillPickerContainer = styled.div`
     .color-section {
         > h2 + div {
             > div:first-child {
-                box-shadow: none !important;
+                box-shadow: none !important; // Override inline style
             }
             > div:nth-child(2) {
                 border: var(--bw) solid var(--main-level-1);
@@ -224,8 +224,8 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         return () => {
             relevant = false;
         };
-    /** No need to depend on callback */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        /** No need to depend on callback */
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [opacity]);
 
     useEffect(() => {
@@ -272,7 +272,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             const isActive = subType && opacity[subType];
             return <div key={type}
                 className={[
-                    'card-opacity-slider', 
+                    'card-opacity-slider',
                     isActive ? '' : 'inactive',
                 ].join(' ')}
             >
@@ -322,6 +322,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                             <div className="layout-picker-subpanel color-section">
                                                 <h2>{language['input.background-color.label']}</h2>
                                                 <CompactPicker
+                                                    colors={DefaultColorList}
                                                     color={opacity.baseFill}
                                                     onChangeComplete={color => {
                                                         setOpacity(cur => ({ ...cur, baseFill: color.hex }));
@@ -357,7 +358,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                     {activable && <Tooltip
                         title={tooltipKey
                             ? language[tooltipKey] ?? null
-                            : null} 
+                            : null}
                         overlayClassName="long-tooltip-overlay"
                     >
                         <Checkbox

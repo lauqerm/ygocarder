@@ -8,6 +8,7 @@ import {
     NameStyleType,
     PatternList,
     FrameInfo,
+    DefaultColorList,
 } from '../../../model';
 import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
@@ -240,22 +241,30 @@ export const NameStylePicker = forwardRef(({
                                     <h3>
                                         {language['input.name-style.color.text.label']}
                                     </h3>
-                                    <CompactPicker color={fillStyle} onChangeComplete={color => {
-                                        setType('custom');
-                                        setValue(cur => ({ ...cur, fillStyle: color.hex }));
-                                        customStyleSignal();
-                                    }} />
+                                    <CompactPicker
+                                        colors={DefaultColorList}
+                                        color={fillStyle}
+                                        onChangeComplete={color => {
+                                            setType('custom');
+                                            setValue(cur => ({ ...cur, fillStyle: color.hex }));
+                                            customStyleSignal();
+                                        }}
+                                    />
                                 </div>
                                 <hr />
                                 <div className="custom-style-text">
                                     <h3>
                                         {language['input.name-style.color.ruby.label']}
                                     </h3>
-                                    <CompactPicker color={headTextFillStyle} onChangeComplete={color => {
-                                        setType('custom');
-                                        setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
-                                        customStyleSignal();
-                                    }} />
+                                    <CompactPicker
+                                        colors={DefaultColorList}
+                                        color={headTextFillStyle}
+                                        onChangeComplete={color => {
+                                            setType('custom');
+                                            setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
+                                            customStyleSignal();
+                                        }}
+                                    />
                                 </div>
                             </div>
                         </div>}

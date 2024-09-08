@@ -25,12 +25,14 @@ export const getDefaultNameStyle = () => ({
 export type TextStyle = [
     custom: boolean,
     fillStyle: string,
+    hasShadow: boolean,
     shadow: string,
 ];
 export const getDefaultTextStyle = (): TextStyle => [
     false,
     '#000000',
-    'none',
+    false,
+    '#000000',
 ];
 
 const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameStyle> => ({

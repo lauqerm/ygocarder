@@ -1,6 +1,8 @@
 import {
     ChiisaiRegex,
     ChoonpuRegex,
+    DefaultFontDeviation,
+    FontDeviation,
     HiraganaRegex,
     KatakanaRegex,
     MetricMethod,
@@ -172,6 +174,7 @@ export const drawLetter = ({
     edge,
     letter,
     xRatio,
+    deviation = {},
     letterMetric,
     textDrawer,
 }: {
@@ -181,6 +184,7 @@ export const drawLetter = ({
     edge: number,
     baseline: number,
     xRatio: number,
+    deviation?: FontDeviation,
     textDrawer?: TextDrawer,
 }) => {
     const {
@@ -188,6 +192,11 @@ export const drawLetter = ({
         metric = ctx.measureText(letter),
         offsetRatio = 0,
     } = letterMetric ?? {};
+    const {
+        yOffset: deviationYOffset = DefaultFontDeviation.yOffset,
+        yRatio = DefaultFontDeviation.yRatio,
+    } = deviation;
+
     const letterWidth = metric.width * xRatio;
     const scaledBoundingWidth = boundWidth ? boundWidth * xRatio : letterWidth;
     const worker = textDrawer ?? (({
@@ -201,10 +210,12 @@ export const drawLetter = ({
 
     const boundingOffset = (letterWidth - scaledBoundingWidth) / 2;
     const externalOffset = scaledBoundingWidth * offsetRatio;
+    ctx.scale(1, yRatio);
     worker({
         ctx,
         letter,
         scaledEdge: edge / xRatio - boundingOffset - externalOffset,
-        scaledBaseline: baseline,
+        scaledBaseline: (baseline + deviationYOffset) / yRatio,
     });
+    ctx.scale(1, 1 / yRatio);
 };

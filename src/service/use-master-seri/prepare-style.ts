@@ -8,10 +8,6 @@ export type CanvasTextStyle = {
     shadowColor?: string,
 };
 
-export const ShadowMap: Record<string, string> = {
-    light: '#efefef',
-    dark: '#000000',
-};
 export const prepareStyle = ({
     lightFooter,
     lightHeader,
@@ -39,37 +35,37 @@ export const prepareStyle = ({
         }
         : levelColor;
 
-    const [customEffectText, effectTextFillStyle, effectTextShadow] = effectTextStyle;
+    const [customEffectText, effectTextFillStyle, effectHasShadow, effectTextShadow] = effectTextStyle;
     const resolvedEffectTextStyle: CanvasTextStyle = customEffectText
         ? {
-            ...(effectTextShadow !== 'none' ? { y: 1, blur: 1, shadowColor: ShadowMap[effectTextShadow] } : {}),
+            ...(effectHasShadow ? { y: 0, blur: 4, shadowColor: effectTextShadow } : {}),
             color: effectTextFillStyle,
         }
         : {};
 
-        const [customPendulumEffectText, pendulumEffectTextFillStyle, pendulumEffectTextShadow] = pendulumTextStyle;
-        const resolvedPendulumEffectTextStyle: CanvasTextStyle = customPendulumEffectText
-            ? {
-                ...(pendulumEffectTextShadow !== 'none' ? { y: 1, blur: 1, shadowColor: ShadowMap[pendulumEffectTextShadow] } : {}),
-                color: pendulumEffectTextFillStyle,
-            }
-            : {};
+    const [customPendulumEffectText, pendulumEffectTextFillStyle, pendulumEffectHasShadow, pendulumEffectTextShadow] = pendulumTextStyle;
+    const resolvedPendulumEffectTextStyle: CanvasTextStyle = customPendulumEffectText
+        ? {
+            ...(pendulumEffectHasShadow ? { y: 0, blur: 4, shadowColor: pendulumEffectTextShadow } : {}),
+            color: pendulumEffectTextFillStyle,
+        }
+        : {};
 
-            const [customTypeText, typeTextFillStyle, typeTextShadow] = typeTextStyle;
-            const resolvedTypeTextStyle: CanvasTextStyle = customTypeText
-                ? {
-                    ...(typeTextShadow !== 'none' ? { y: 1, blur: 1, shadowColor: ShadowMap[typeTextShadow] } : {}),
-                    color: typeTextFillStyle,
-                }
-                : {};
+    const [customTypeText, typeTextFillStyle, typeHasShadow, typeTextShadow] = typeTextStyle;
+    const resolvedTypeTextStyle: CanvasTextStyle = customTypeText
+        ? {
+            ...(typeHasShadow ? { y: 1, blur: 1, shadowColor: typeTextShadow } : {}),
+            color: typeTextFillStyle,
+        }
+        : {};
 
-                const [customStatText, statTextFillStyle, statTextShadow] = statTextStyle;
-                const resolvedStatTextStyle: CanvasTextStyle = customStatText
-                    ? {
-                        ...(statTextShadow !== 'none' ? { y: 1, blur: 1, shadowColor: ShadowMap[statTextShadow] } : {}),
-                        color: statTextFillStyle,
-                    }
-                    : {};
+    const [customStatText, statTextFillStyle, statHasShadow, statTextShadow] = statTextStyle;
+    const resolvedStatTextStyle: CanvasTextStyle = customStatText
+        ? {
+            ...(statHasShadow ? { y: 1, blur: 1, shadowColor: statTextShadow } : {}),
+            color: statTextFillStyle,
+        }
+        : {};
 
     return {
         levelStyle,

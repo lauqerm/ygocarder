@@ -9,7 +9,7 @@ export const StyledDataButtonPanelContainer = styled.div`
     margin: auto;
     max-width: var(--card-width);
     min-height: 59px;
-    outline: none !important;
+    outline: none !important;   // Avoid default state styling
     padding: var(--spacing);
     padding-right: 0;
     text-align: center;
@@ -20,7 +20,7 @@ export const StyledDataButtonPanelContainer = styled.div`
     button {
         color: white;
         border-radius: var(--br-lg);
-        outline: none !important;
+        outline: none !important;   // Avoid default state styling
         cursor: pointer;
     }
     .save-button {
@@ -97,7 +97,7 @@ export const StyledCardCanvasGroupContainer = styled.div`
             display: block;
         }
         #export-canvas.js-export-available {
-            display: inline-block !important;
+            display: inline-block !important;   // Override js-controlled inline style
             cursor: default;
         }
         #export-canvas-guard {
@@ -137,7 +137,7 @@ export const StyledCardCanvasGroupContainer = styled.div`
                 0 3px 6px rgba(0, 0, 0, 0.23);
         }
         &.guard-on {
-            display: flex !important;
+            display: flex !important;   // Override js-controlled inline style
         }
     }
     .crop-canvas {

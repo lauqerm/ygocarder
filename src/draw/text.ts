@@ -84,6 +84,7 @@ export const drawLine = ({
         headTextGapRatio = DefaultFontData.headTextGapRatio,
         metricMethod,
         fontStyle,
+        letterDeviationMap = {},
     } = fontData;
     const {
         letterSpacing = DefaultFontSizeData.letterSpacing,
@@ -384,7 +385,12 @@ export const drawLine = ({
                     let currentLetter = remainFragment[0];
                     let nextRemainFragment = remainFragment.slice(1);
                     let actualLetterWidth = 0;
-                    const drawLetterofWordParameter = { ...drawLetterParameter, letter: currentLetter, edge: currentPosition };
+                    const drawLetterofWordParameter = {
+                        ...drawLetterParameter,
+                        deviation: letterDeviationMap[currentLetter],
+                        letter: currentLetter,
+                        edge: currentPosition,
+                    };
                     if (SquareBracketLetterRegex.test(currentLetter)) {
                         applyScale(squareBracketRatio);
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
@@ -465,7 +471,13 @@ export const drawLine = ({
                 const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
 
                 fragmentEdge -= lostLeftWidth;
-                drawLetter({ ...drawLetterParameter, letter, edge: fragmentEdge, letterMetric });
+                drawLetter({
+                    ...drawLetterParameter,
+                    letter,
+                    edge: fragmentEdge,
+                    deviation: letterDeviationMap[letter],
+                    letterMetric,
+                });
                 fragmentEdge += letterWidth;
                 if (
                     (format === 'ocg' || (format === 'tcg' && /\s+/.test(letter)))

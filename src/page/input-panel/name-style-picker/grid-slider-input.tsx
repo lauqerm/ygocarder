@@ -2,7 +2,7 @@ import { InputNumber, Slider } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import PowerSlider from 'react-input-slider';
-import { NameStyle } from 'src/model';
+import { DefaultColorList, NameStyle } from 'src/model';
 import { useLanguage } from 'src/service';
 
 export type GridSliderInputRef = {
@@ -76,8 +76,8 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
         return () => {
             relevant = false;
         };
-    /** No need to depend on handler */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        /** No need to depend on handler */
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
     useImperativeHandle(ref, () => ({
@@ -143,6 +143,10 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
             </div>
         </div>
         <h2>{language['input.name-style.slider.color.label']}</h2>
-        <CompactPicker color={color} onChangeComplete={color => setValue(cur => ({ ...cur, color: color.hex }))} />
+        <CompactPicker
+            colors={DefaultColorList}
+            color={color}
+            onChangeComplete={color => setValue(cur => ({ ...cur, color: color.hex }))}
+        />
     </div>;
 });

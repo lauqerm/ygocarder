@@ -209,6 +209,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.frame.rerun += 1;
         drawingPipeline.current.frame.instructor = async () => {
             if (!frameCanvasRef.current || !clearCanvas(ctx)) return;
+
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
                 artBorder: keepArtBorder,
