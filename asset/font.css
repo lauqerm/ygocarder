@@ -15,9 +15,8 @@
     font-display: swap;
 }
 @font-face {
-    font-family: 'Yugioh Rush Duel Numbers V4';
-    src: url('./font/YugiohRushDuelNumbersV4-Rg.woff2') format('woff2'),
-        url('./font/YugiohRushDuelNumbersV4-Rg.woff') format('woff');
+    font-family: 'RoGSanSrfStd-Bd';
+    src: url('./font/RoGSanSrfStd-Bd.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -63,7 +62,6 @@
 @font-face {
 	font-family: MatrixRegularSmallCaps;
 	src: url('./font/Yu-Gi-Oh Matrix Regular Small Caps 1.ttf');
-	font-weight: 100;
     font-style: normal;
     font-display: swap;
 }
