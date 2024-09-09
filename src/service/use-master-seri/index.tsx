@@ -90,7 +90,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
         atk, def, linkMap,
         attribute,
-        cardIcon, subFamily, star,
+        cardIcon, subFamily, star, starAlignment,
         setId,
         password, creator, sticker,
         isFirstEdition, isDuelTerminalCard, isSpeedCard,
@@ -419,7 +419,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
             await drawAttribute();
             await drawAttributeFinish();
-            if (!isLink) await drawStar({ style: levelStyle });
+            if (!isLink) await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
             await drawPredefinedMark({
@@ -444,6 +444,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         bottomFrame,
         foil,
         star,
+        starAlignment,
         cardIcon,
         isDuelTerminalCard,
         isLink,

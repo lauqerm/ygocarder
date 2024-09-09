@@ -39,7 +39,7 @@ export const DefaultFontSizeData = {
 };
 
 /**
- * @summary For some weird reasons, letter sometime just got deviated from current baseline compare to other letters of the same font. The only known case is with MatrixRegularSmallCaps font with font size bigger than around 85px. This deviation create a small but noticeable disruption in baseline, which currently we are unable to fix. We cannot fix this in canvas, and modify the font directly give no positive result.
+ * @summary For some weird reasons, letter sometime just got deviated from current baseline compare to other letters of the same font only in 1:1 scale. The only known case is with MatrixRegularSmallCaps font with font size bigger than around 85px. This deviation create a small but noticeable disruption in baseline, which currently we are unable to fix. We cannot fix this in canvas, and modify the font directly give no positive result.
  * 
  * So for now we can only hardcode a list of problematic letters with their correpsonding treatment. This is just baffling.
  */

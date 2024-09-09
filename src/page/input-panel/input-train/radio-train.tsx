@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { InputTrainStyle } from './input-train.styled';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { getNavigationProps } from 'src/util';
+import { Tooltip } from 'antd';
 
 const StyledRadioTrainContainer = styled.div`
     ${InputTrainStyle}
@@ -13,7 +14,7 @@ export type RadioTrain = {
     className?: string,
     strict?: boolean,
     value: string | number,
-    optionList: { label: React.ReactNode, value: string | number, props?: React.LabelHTMLAttributes<HTMLLabelElement> }[],
+    optionList: { label: React.ReactNode, value: string | number, tooltipProps?: React.ComponentProps<typeof Tooltip>, props?: React.LabelHTMLAttributes<HTMLLabelElement> }[],
     onChange: (value: string | number) => void,
     children?: React.ReactNode,
     suffix?: React.ReactNode,
@@ -52,27 +53,29 @@ export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
                 },
             })}
         >
-            {optionList.map(({ value, props, label }, index) => {
+            {optionList.map(({ value, props, label, tooltipProps }, index) => {
                 const { className } = props ?? {};
                 const isChecked = strict
                     ? value === activeValue
                     : `${value}` === `${activeValue}`;
 
-                return <label key={value}
-                    {...props}
-                    className={[
-                        'ant-radio-button-wrapper',
-                        isChecked ? 'ant-radio-button-wrapper-checked' : '',
-                        className ?? '',
-                        focus === index ? 'radio-train-focused' : '',
-                    ].join(' ')}
-                    onClick={() => onChange(value)}
-                >
-                    <span className={`ant-radio-button ${isChecked ? 'ant-radio-button-checked' : ''}`}>
-                        <span className="ant-radio-button-inner"></span>
-                    </span>
-                    <span className="label">{label}</span>
-                </label>;
+                return <Tooltip overlay={null} {...tooltipProps}>
+                    <label key={value}
+                        {...props}
+                        className={[
+                            'ant-radio-button-wrapper',
+                            isChecked ? 'ant-radio-button-wrapper-checked' : '',
+                            className ?? '',
+                            focus === index ? 'radio-train-focused' : '',
+                        ].join(' ')}
+                        onClick={() => onChange(value)}
+                    >
+                        <span className={`ant-radio-button ${isChecked ? 'ant-radio-button-checked' : ''}`}>
+                            <span className="ant-radio-button-inner"></span>
+                        </span>
+                        <span className="label">{label}</span>
+                    </label>
+                </Tooltip>;
             })}
         </div>
         {suffix}

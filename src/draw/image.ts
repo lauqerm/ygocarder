@@ -39,7 +39,7 @@ export const drawFrom = async (
             imageCacheMap[source] = {
                 image: img,
                 ready: false,
-                error: true,
+                error: false,
             };
         } else resolve(true);
     });
@@ -97,7 +97,7 @@ export const drawFromWithSize = async (
             imageCacheMap[source] = {
                 image: img,
                 ready: false,
-                error: true,
+                error: false,
             };
         } else resolve(true);
     });

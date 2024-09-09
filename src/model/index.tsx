@@ -20,6 +20,7 @@ export const getDefaultCard = () => ({
     subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6,
+    starAlignment: 'auto',
     art: 'https://i.imgur.com/h5kXZeC.png',
     artCrop: {
         x: 0,
@@ -91,6 +92,7 @@ export const getEmptyCard = (): Card => ({
     subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6,
+    starAlignment: 'auto',
     art: 'https://i.imgur.com/jjtCuG5.png',
     artCrop: {
         x: 0,

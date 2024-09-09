@@ -18,6 +18,8 @@ export const StandaloneLabel = styled.div`
 `;
 
 export const StyledDropdownOption = styled.div`
+    display: flex;
+    align-items: center;
     padding: var(--spacing-xs) var(--spacing);
     cursor: pointer;
     &:hover {

@@ -4,7 +4,7 @@ import { StyledDropdown } from 'src/component';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo } from 'react';
-import { CaretDownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { IconTypeList, IconTypeMap, StarButtonList, getSTIconButtonList } from '../const';
 import { checkDarkSynchro, checkXyz } from 'src/util';
 import styled from 'styled-components';
@@ -18,6 +18,11 @@ const StyledCheckboxStarTrain = styled(RadioTrain)`
     .custom-star-input {
         margin-left: var(--spacing-sm);
         width: 6.5rem;
+    }
+    .checkbox-star-suffix {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        column-gap: var(--spacing-sm);
     }
 `;
 
@@ -38,6 +43,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         subFamily,
         cardIcon,
         star,
+        starAlignment,
         getUpdater,
     } = useCard(useShallow(({
         card: {
@@ -45,6 +51,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
             subFamily,
             cardIcon,
             star,
+            starAlignment,
         },
         getUpdater,
     }) => ({
@@ -52,6 +59,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         subFamily,
         cardIcon,
         star,
+        starAlignment,
         getUpdater,
     })));
     const isDarkSynchro = checkDarkSynchro({ frame });
@@ -60,6 +68,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
     const changeCardIcon = useMemo(() => getUpdater('cardIcon'), [getUpdater]);
     const changeSubFamily = useMemo(() => getUpdater('subFamily'), [getUpdater]);
     const changeStar = useMemo(() => getUpdater('star'), [getUpdater]);
+    const changeStarAlignment = useMemo(() => getUpdater('starAlignment'), [getUpdater]);
 
     useImperativeHandle(ref, () => ({}));
 
@@ -110,13 +119,41 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                 onChange={changeStar}
                 optionList={StarButtonList}
                 strict={true}
-                suffix={showCreativeOption && <Input
-                    className="custom-star-input"
-                    value={typeof star === 'number' ? '' : star}
-                    allowClear
-                    onChange={changeStar}
-                    placeholder={language['input.icon-type.custom.placeholder']}
-                />}
+                suffix={showCreativeOption && <div className="checkbox-star-suffix">
+                    <Input
+                        className="custom-star-input"
+                        value={typeof star === 'number' ? '' : star}
+                        allowClear
+                        onChange={changeStar}
+                        placeholder={language['input.icon-type.custom.placeholder']}
+                    />
+                    <RadioTrain
+                        value={starAlignment}
+                        onChange={changeStarAlignment}
+                        optionList={[
+                            {
+                                value: 'auto',
+                                tooltipProps: { overlay: language['input.icon-type.alignment.auto'] },
+                                label: <CloseCircleOutlined />,
+                            },
+                            {
+                                value: 'left',
+                                tooltipProps: { overlay: language['input.icon-type.alignment.left'] },
+                                label: <AlignLeftOutlined />,
+                            },
+                            {
+                                value: 'center',
+                                tooltipProps: { overlay: language['input.icon-type.alignment.center'] },
+                                label: <AlignCenterOutlined />,
+                            },
+                            {
+                                value: 'right',
+                                tooltipProps: { overlay: language['input.icon-type.alignment.right'] },
+                                label: <AlignRightOutlined />,
+                            },
+                        ]}
+                    />
+                </div>}
             >
                 {DropdownChildren}
             </StyledCheckboxStarTrain>

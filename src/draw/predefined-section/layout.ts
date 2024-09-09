@@ -232,15 +232,14 @@ export const getLayoutDrawFunction = ({
         drawAttribute: async () => {
             await drawAsset(ctx, `attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
         },
-        drawStar: async ({ style }: { style?: CanvasTextStyle }) => {
+        drawStar: async ({ style, starAlignment }: { style?: CanvasTextStyle, starAlignment: string }) => {
             const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
             await drawStarContent({
                 ctx,
                 cardIcon: normalizedCardIcon,
                 text: typeof star === 'string' ? star : null,
-                starCount: typeof star === 'string'
-                    ? star === '' ? 0 : 1
-                    : typeof star === 'number' ? star : 0,
+                star,
+                starAlignment,
                 style,
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'

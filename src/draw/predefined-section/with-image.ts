@@ -12,52 +12,70 @@ export const drawStarContent = async ({
     ctx,
     cardIcon,
     text,
-    starCount,
+    star,
+    starAlignment = 'auto',
     style,
     onStarDraw,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     cardIcon: string,
     text: string | null,
-    starCount: number,
+    star: string | number,
+    starAlignment: string,
     style?: CanvasTextStyle,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
 }) => {
     const starWidth = 50;
     const startSpacing = 4;
-    const normalizedStarCount = Math.min(13, starCount);
-    const reverseAlign = ['rank', 'negative-level'].includes(cardIcon);
-    const totalWidth = starWidth * normalizedStarCount + startSpacing * (normalizedStarCount - 1);
+    let normalizedStarCount = typeof star === 'string'
+        ? star === '' ? 0 : 1
+        : typeof star === 'number' ? star : 0;
+    let totalWidth = starWidth * normalizedStarCount + startSpacing * (normalizedStarCount - 1);
     const baseline = 145;
+
+    let alignment = 'right';
+    if (['rank', 'negative-level'].includes(cardIcon)) alignment = 'left';
+    alignment = starAlignment === 'auto'
+        ? alignment
+        : starAlignment;
+    if (normalizedStarCount > 12) alignment = 'center';
+
+    if (text && alignment === 'center') {
+        normalizedStarCount = 0;
+        totalWidth = 0;
+    }
+
     /** Level / Rank 13 is center-aligned. */
-    const leftEdge = normalizedStarCount <= 12
-        ? reverseAlign
-            ? 85.9125 - starWidth
-            : 728.775
-        : reverseAlign
-            ? (CanvasWidth - totalWidth) / 2 - starWidth
-            : (CanvasWidth - totalWidth) / 2 + totalWidth;
+    const leftEdge = alignment === 'center'
+        ? (CanvasWidth + totalWidth) / 2
+        : alignment === 'left'
+            ? 85.9125 + totalWidth
+            : 728.775;
 
     let offset = 0 - (starWidth + startSpacing);
 
     if (ctx && text && cardIcon !== 'st') {
         const fontSize = 50;
         const resetShadow = setTextStyle({ ctx, ...style });
-        ctx.textAlign = reverseAlign ? 'left' : 'right';
+        ctx.textAlign = alignment === 'left' || alignment === 'right'
+            ? alignment
+            : 'left';
         ctx.font = `bold ${fontSize}px RoGSanSrfStd-Bd`;
-        const offset = reverseAlign
-            ? 2 * starWidth + startSpacing  /** x2 because we already minus 1 time starWidth when calculating leftEdge */
-            : (starWidth + startSpacing) * -1;
-        ctx.fillText(text, leftEdge +offset, baseline + fontSize * 0.9);
+        const offset = alignment === 'center'
+            ? ctx.measureText(text).width / -2
+            : alignment === 'left'
+                ? startSpacing
+                : (starWidth + startSpacing * 2) * -1;
+        ctx.fillText(text, leftEdge + offset, baseline + fontSize * 0.9);
         ctx.textAlign = 'left';
         resetShadow();
     }
 
-    return Promise.all([...Array(normalizedStarCount)]
+    return await Promise.all([...Array(normalizedStarCount)]
         .map(async () => {
             offset += (starWidth + startSpacing);
             let coordinate: [number, number] = [
-                leftEdge + (starWidth + offset) * (reverseAlign ? 1 : -1),
+                leftEdge - (starWidth + offset),
                 baseline,
             ];
             await drawAsset(ctx, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
