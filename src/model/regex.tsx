@@ -83,13 +83,13 @@ export const OCGOffsetMap: Record<string, number> = {
     '､': -0.2,
     '｢': 0,
     '｣': 0,
-    '：': 0.5,
+    '：': 0,
     '>': 0.25,
     '<': -0.25,
 };
 export const OCGLastOfLineOffsetMap: Record<string, number> = {
     '。': -0.5,
-    '：': -0.75,
+    '：': -0.25,
 };
 export const OCGBoxSpacingRatioMap: Record<string, number> = {
     '>': 0.125,
