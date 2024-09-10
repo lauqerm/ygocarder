@@ -1,3 +1,7 @@
+import { CanvasTextStyle } from 'src/service';
+import { hexToRGBA } from 'src/util';
+import { setTextStyle } from './canvas-util';
+
 const imageCacheMap: Record<string, {
     image: HTMLImageElement,
     ready: boolean,
@@ -151,4 +155,62 @@ export const drawAssetWithSize: typeof drawFromWithSize = async (
         sx, sy,
         dw, dh,
     );
+};
+
+export const drawWithColor = async (
+    canvas: HTMLCanvasElement,
+    source: string,
+    color: string,
+    sw: number, sh: number,
+    dx: number, dy: number,
+    cloneCanvasStyle?: CanvasTextStyle,
+) => {
+    const ctx = canvas.getContext('2d');
+    const clonedCanvas = document.createElement('canvas');
+    clonedCanvas.width = sw;
+    clonedCanvas.height = sh;
+    const clonedCtx = clonedCanvas.getContext('2d', { willReadFrequently: true });
+
+    if (!clonedCtx || !ctx) return;
+    await drawAsset(clonedCtx, source, 0, 0);
+
+    const rgbaColor = hexToRGBA(color);
+    const imageRasterData = clonedCtx.getImageData(0, 0, sw, sh).data;
+
+    /** In some rare case, this image need shadow (for example "LINK" text).
+     * So we apply shadow into the clone node, then DRAW THE IMAGE AGAIN. This time image data will be a combined data from both the original image and the newly applied shadow.
+     */
+    const resetStyle = setTextStyle({ ctx: clonedCtx, ...cloneCanvasStyle });
+    await drawAsset(clonedCtx, source, 0, 0);
+    const imageDataWithShadow = clonedCtx.getImageData(0, 0, sw, sh);
+    const imageRasterDataWithShadow = imageDataWithShadow.data;
+    resetStyle();
+
+    /** Because the new image data will replace the old one (no blending mode), it will erase the pixel of the current canvas underneath. To solve this we will draw the current canvas into the clone canvas first, before putting new image into it. */
+    clonedCtx.clearRect(0, 0, sw, sh);
+    clonedCtx.drawImage(canvas, dx, dy, sw, sh, 0, 0, sw, sh);
+
+    const combinedLayerData = clonedCtx.getImageData(0, 0, sw, sh);
+    const combinedLayerRasterData = combinedLayerData.data;
+
+    for (let pixelCnt = 0; pixelCnt < combinedLayerRasterData.length; pixelCnt += 4) {
+        /** If raster data at this pixel have the same coordinate with raster data from the original image, draw it with manipulated color. */
+        if (imageRasterData[pixelCnt + 3] > 0) {
+            /** Change ratio based on the original color value, compare to pitch black #000000 */
+            combinedLayerRasterData[pixelCnt + 0] = rgbaColor[0] * (1 - imageRasterData[pixelCnt + 0] / 255);
+            combinedLayerRasterData[pixelCnt + 1] = rgbaColor[1] * (1 - imageRasterData[pixelCnt + 1] / 255);
+            combinedLayerRasterData[pixelCnt + 2] = rgbaColor[2] * (1 - imageRasterData[pixelCnt + 2] / 255);
+            combinedLayerRasterData[pixelCnt + 3] = rgbaColor[3] * (imageRasterData[pixelCnt + 3] / 255);
+        }
+        /** If raster data at this pixel have the same coordinate with raster data from the image with shadow, draw the shadow. */
+        else if (imageRasterDataWithShadow[pixelCnt + 3] > 0) {
+            combinedLayerRasterData[pixelCnt + 0] = imageRasterDataWithShadow[pixelCnt + 0];
+            combinedLayerRasterData[pixelCnt + 1] = imageRasterDataWithShadow[pixelCnt + 1];
+            combinedLayerRasterData[pixelCnt + 2] = imageRasterDataWithShadow[pixelCnt + 2];
+            combinedLayerRasterData[pixelCnt + 3] = imageRasterDataWithShadow[pixelCnt + 3];
+        }
+        /** Otherwise all other pixel belong to the background canvas, and is untouched. */
+    }
+
+    ctx.putImageData(combinedLayerData, dx, dy);
 };

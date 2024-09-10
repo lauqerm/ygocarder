@@ -1,6 +1,6 @@
 
 import { CanvasConst } from 'src/model';
-import { drawAsset, drawAssetWithSize } from '../image';
+import { drawAsset, drawAssetWithSize, drawWithColor } from '../image';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
 
@@ -138,16 +138,27 @@ export const drawPredefinedMark = async ({
 };
 
 export const drawLinkRatingText = async (
-    ctx?: CanvasRenderingContext2D | null,
-    linkMap?: string[],
+    canvas: HTMLCanvasElement,
+    linkMap: string[],
+    cloneCanvasStyle: CanvasTextStyle,
 ) => {
+    const ctx = canvas.getContext('2d');
+
     if (!ctx || !Array.isArray(linkMap)) return;
 
-    await drawAsset(ctx, 'link/link-text.png', 600, 1080);
+    const color = cloneCanvasStyle.color ?? '#000000';
+    await drawWithColor(
+        canvas,
+        'link/link-text.png',
+        color,
+        120, 30,
+        600, 1080,
+        cloneCanvasStyle,
+    );
+    // await drawAsset(ctx, 'link/link-text.png', 600, 1080);
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
     ctx.font = 'bold 26.55px RoGSanSrfStd-Bd';
-    ctx.fillStyle = '#000000';
     ctx.fillText(`${linkMap.length}`, 622.75, 1105);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';

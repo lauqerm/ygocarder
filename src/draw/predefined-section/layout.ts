@@ -7,8 +7,8 @@ import {
     getArtCanvasCoordinate,
     NO_ATTRIBUTE,
 } from 'src/model';
-import { drawAsset, drawAssetWithSize } from '../image';
-import { getCardIconFromFrame, hexToRGBA } from 'src/util';
+import { drawAsset, drawAssetWithSize, drawWithColor } from '../image';
+import { getCardIconFromFrame } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 
@@ -275,37 +275,13 @@ export const getLayoutDrawFunction = ({
             );
         },
         drawStatBorder: async (color: string) => {
-            const rgbaColor = hexToRGBA(color);
-            /** Create clone node for stat border, manipulate it then paste the canvas back */
-            const clonedCanvas = document.createElement('canvas');
-            const statBorderWidth = 813;
-            const statBorderHeight = 20;
-            clonedCanvas.width = statBorderWidth;
-            clonedCanvas.height = statBorderHeight;
-            const clonedCtx = clonedCanvas.getContext('2d', { willReadFrequently: true });
-
-            if (!clonedCtx || !ctx) return;
-            await drawAsset(clonedCtx, 'frame/frame-stat-border.png', 0, 0);
-
-            const statBorderRasterData = clonedCtx.getImageData(0, 0, statBorderWidth, statBorderHeight).data;
-            /** Because the new image data will replace the old one (no blending mode), it will erase the pixel of the current canvas underneath. To solve this we will draw the current canvas into the clone canvas first, before putting new image into it. */
-            clonedCtx.clearRect(0, 0, statBorderWidth, statBorderHeight);
-            clonedCtx.drawImage(canvas, 0, 1070, statBorderWidth, statBorderHeight, 0, 0, statBorderWidth, statBorderHeight);
-            const combinedLayerData = clonedCtx.getImageData(0, 0, statBorderWidth, statBorderHeight);
-            const combinedLayerRasterData = combinedLayerData.data;
-
-            for (let pixelCnt = 0; pixelCnt < combinedLayerRasterData.length; pixelCnt += 4) {
-                /** If raster data is transparency at this pixel, return the whole pixel untouched. Otherwise this pixel is a part of the stat border, and can be manipulated. */
-                if (statBorderRasterData[pixelCnt + 3] > 0) {
-                    /** Change ratio based on the original color value, compare to pitch black #000000 */
-                    combinedLayerRasterData[pixelCnt + 0] = rgbaColor[0] * (1 - statBorderRasterData[pixelCnt + 0] / 255);
-                    combinedLayerRasterData[pixelCnt + 1] = rgbaColor[1] * (1 - statBorderRasterData[pixelCnt + 1] / 255);
-                    combinedLayerRasterData[pixelCnt + 2] = rgbaColor[2] * (1 - statBorderRasterData[pixelCnt + 2] / 255);
-                    combinedLayerRasterData[pixelCnt + 3] = rgbaColor[3] * (statBorderRasterData[pixelCnt + 3] / 255);
-                }
-            }
-
-            ctx.putImageData(combinedLayerData, 0, 1070);
+            await drawWithColor(
+                canvas,
+                'frame/frame-stat-border.png',
+                color,
+                813, 20,
+                0, 1070,
+            );
         },
 
         /** @summary BACKGROUND section */

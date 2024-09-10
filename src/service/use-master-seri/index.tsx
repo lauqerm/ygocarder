@@ -414,7 +414,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!isPendulum && isLink) {
                 await drawLinkArrowMap(linkMap);
                 await drawLinkMapFoil(false);
-                await drawLinkRatingText(ctx, linkMap);
+                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle });
+                await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle);
+                resetStyle();
             }
 
             await drawAttribute();
