@@ -200,14 +200,19 @@ export const drawWithColor = async (
             combinedLayerRasterData[pixelCnt + 0] = rgbaColor[0] * (1 - imageRasterData[pixelCnt + 0] / 255);
             combinedLayerRasterData[pixelCnt + 1] = rgbaColor[1] * (1 - imageRasterData[pixelCnt + 1] / 255);
             combinedLayerRasterData[pixelCnt + 2] = rgbaColor[2] * (1 - imageRasterData[pixelCnt + 2] / 255);
-            combinedLayerRasterData[pixelCnt + 3] = rgbaColor[3] * (imageRasterData[pixelCnt + 3] / 255);
+            combinedLayerRasterData[pixelCnt + 3] = 255;
         }
         /** If raster data at this pixel have the same coordinate with raster data from the image with shadow, draw the shadow. */
         else if (imageRasterDataWithShadow[pixelCnt + 3] > 0) {
-            combinedLayerRasterData[pixelCnt + 0] = imageRasterDataWithShadow[pixelCnt + 0];
-            combinedLayerRasterData[pixelCnt + 1] = imageRasterDataWithShadow[pixelCnt + 1];
-            combinedLayerRasterData[pixelCnt + 2] = imageRasterDataWithShadow[pixelCnt + 2];
-            combinedLayerRasterData[pixelCnt + 3] = imageRasterDataWithShadow[pixelCnt + 3];
+            const destinationAlpha = imageRasterDataWithShadow[pixelCnt + 3] / 255;
+
+            combinedLayerRasterData[pixelCnt + 0] = (1 - destinationAlpha) * combinedLayerRasterData[pixelCnt + 0]
+                + destinationAlpha * imageRasterDataWithShadow[pixelCnt + 0];
+            combinedLayerRasterData[pixelCnt + 1] = (1 - destinationAlpha) * combinedLayerRasterData[pixelCnt + 1]
+                + destinationAlpha * imageRasterDataWithShadow[pixelCnt + 1];
+            combinedLayerRasterData[pixelCnt + 2] = (1 - destinationAlpha) * combinedLayerRasterData[pixelCnt + 2]
+                + destinationAlpha * imageRasterDataWithShadow[pixelCnt + 2];
+            combinedLayerRasterData[pixelCnt + 3] = 255;
         }
         /** Otherwise all other pixel belong to the background canvas, and is untouched. */
     }
