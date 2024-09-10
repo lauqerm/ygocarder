@@ -309,6 +309,7 @@ export const ocgToTCGTermMap: Record<string, string> = {
     [`自分フィールドの効果モンスター×２体以上
 ①：このカードがモンスターゾーンに存在する限り、相手フィールドのモンスターが効果を発動する度に、その相手の表側表示モンスターにピュアカウンターを１つ置く(最大１つまで）。②：このカードはピュアカウンターが置かれているモンスターが発動した効果を受けない。③：このカードはピュアカウンターが置かれているモンスターとの戦闘では破壊されない。`]: `[2+ Effect Monsters on your field]
 Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
+    '※公式のデュエルでは使用できません。': 'This card cannot be used in a Duel.',
     // eslint-disable-next-line quotes
     '①：１ターンに１度、８００ＬＰを払って発動できる。このカードのＰスケールを1つ上げる。': "Once per turn: You can pay 800 LP, increase this card's Pendulum Scale by 1.",
 };

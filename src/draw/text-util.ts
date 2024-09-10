@@ -26,6 +26,7 @@ export const getTextWorker = (
 ) => {
     const {
         fontSize,
+        ordinalFontRatio = DefaultFontSizeData.ordinalFontRatio,
         headTextFontRatio = DefaultFontSizeData.headTextFontRatio,
     } = fontSizeData;
     const {
@@ -65,7 +66,7 @@ export const getTextWorker = (
     let ordinalFontMemory = fontController.getFontInfo();
     const applyOrdinalFont = () => {
         ordinalFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(ordinalFont).setSize(fontSize / 1.1).getFont();
+        ctx.font = fontController.setFamily(ordinalFont).setSize(fontSize * ordinalFontRatio).getFont();
     };
     const stopApplyOrdinalFont = () => {
         ctx.font = fontController

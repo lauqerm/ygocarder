@@ -54,6 +54,61 @@ export const CreatorFontData: Record<string, FontData> = {
     ocg: ocgCreatorFontData,
 };
 
+export const tcgPasswordFontData: FontData = {
+    font: 'stone-serif-regular',
+    alphabetFont: 'stone-serif-regular',
+    symbolFont: 'matrix',
+    symbolFontRatio: 0.8,
+    ordinalFont: 'stone-serif-regular',
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
+    fontStyle: 'tcg',
+    fontList: [
+        {
+            bulletSymbolWidth: 20.05,
+            fontSize: 22.219,
+            lineHeight: 22.219,
+            lineCount: 1,
+            letterSpacing: 0.1,
+            headTextFontRatio: 0.4,
+            largeSymbolRatio: 1.25,
+        },
+        {
+            bulletSymbolWidth: 20.05,
+            fontSize: 21,
+            lineHeight: 21,
+            lineCount: 1,
+            letterSpacing: 0,
+            headTextFontRatio: 0.4,
+            largeSymbolRatio: 1.25,
+            offsetY: 1,
+        },
+    ],
+};
+export const ocgPasswordFontData: FontData = {
+    font: '"FOT-Rodin Pro M"',
+    alphabetFont: 'stone-serif-regular',
+    symbolFont: 'matrix',
+    symbolFontRatio: 0.8,
+    ordinalFont: '"DFKakuTaiHiStd-W4"',
+    furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
+    fontStyle: 'ocg',
+    metricMethod: 'furigana',
+    fontList: [{
+        bulletSymbolWidth: 20.05,
+        fontSize: 19.0,
+        headTextFontRatio: 0,
+        largeSymbolRatio: 1.25,
+        lineCount: 1,
+        lineHeight: 20.5,
+        ordinalFontOffsetY: 1,
+        ordinalFontRatio: 1.25,
+    }],
+};
+export const PasswordFontData: Record<string, FontData> = {
+    tcg: tcgPasswordFontData,
+    ocg: ocgPasswordFontData,
+};
+
 export const tcgTypeAbilityFontData: FontData = {
     font: 'YuGiOhITCStoneSerifBSc',
     alphabetFont: 'YuGiOhITCStoneSerifBSc',

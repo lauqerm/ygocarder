@@ -55,6 +55,9 @@ export const NOT_END_OF_LINE_SOURCE = '[(\\[｛〔〈《「｢『【〘〖〝\'"
 export const NOT_SPLIT_SOURCE = '.[—...‥〳〴〵)]+[^\\s]';
 export const OCG_BULLET_SOURCE = '[①-⑳]：.';
 
+export const NON_COMPRESSABLE_SOURCE = '[①-⑳※]';
+export const NonCompressableRegex = new RegExp(NON_COMPRESSABLE_SOURCE);
+
 export const OCG_ALPHABET_SOURCE = '[Ａ-Ｚａ-ｚ]';
 export const OCGAlphabetRegex = new RegExp(OCG_ALPHABET_SOURCE);
 

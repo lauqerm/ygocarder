@@ -88,3 +88,16 @@ export const CreatorCoordinateMap: Record<string, CoordinateData> = {
         trueWidth: 380,
     },
 };
+
+export const PasswordCoordinateMap: Record<string, CoordinateData> = {
+    ocg: {
+        trueBaseline: 1148.931,
+        trueEdge: 37.031,
+        trueWidth: 250,
+    },
+    tcg: {
+        trueBaseline: 1149.431,
+        trueEdge: 37.031,
+        trueWidth: 311,
+    },
+};

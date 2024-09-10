@@ -23,6 +23,7 @@ import {
     DefaultFontData,
     RUBY_BONUS_RATIO,
     NON_BREAKABLE_SYMBOL_SOURCE,
+    NonCompressableRegex,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter } from 'src/util';
@@ -154,7 +155,7 @@ export const analyzeToken = ({
             }
         }
         /** OCG Ordinal symbol is unscalable */
-        else if (/[①-⑳]/.test(fragment)) {
+        else if (NonCompressableRegex.test(fragment)) {
             currentRightGap = 0;
             applyOrdinalFont();
             const fragmentWidth = ctx.measureText(fragment).width / xRatio;

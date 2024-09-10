@@ -10,7 +10,6 @@ import {
     drawStatText,
     drawSetId,
     drawSticker,
-    drawPassword,
     getFinishIterator,
     drawTypeAbility,
     getEffectFontAndCoordinate,
@@ -19,6 +18,7 @@ import {
     drawLinkRatingText,
     drawPredefinedMark,
     setTextStyle,
+    drawPasswordText,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -555,11 +555,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const ctx = passwordCanvasRef.current?.getContext('2d');
         if (!clearCanvas(ctx)) return;
 
-        const endOfPassword = drawPassword({
+        const endOfPassword = drawPasswordText({
             ctx,
-            password,
+            value: password,
             lightFooter,
-            withShadow: bottomFrame === 'zarc' || requireShadow,
+            alignment: 'left',
+            format,
+            hasShadow: bottomFrame === 'zarc' || requireShadow,
         });
         if (isFirstEdition && !isDuelTerminalCard) {
             ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
@@ -567,7 +569,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             draw1stEdition(
                 ctx,
                 Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0),
-                isSpeedSkill ? -2 : 0,
+                isSpeedSkill ? -2 : -1,
             );
         }
     }, [

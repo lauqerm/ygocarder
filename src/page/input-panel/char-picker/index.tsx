@@ -146,6 +146,7 @@ export const CharPicker = ({
                 '™',
                 'Ɐ',
                 'Я',
+                '※',
             ].map(entry => {
                 return <button key={entry}
                     tabIndex={-1}

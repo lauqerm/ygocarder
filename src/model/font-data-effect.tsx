@@ -14,28 +14,32 @@ export type FontGetter = {
 };
 
 export type FontSizeData = {
-    fontSize: number,
-    lineHeight: number,
-    lineCount: number,
-    offsetY?: number,
     bulletSymbolWidth: number,
-    iconSymbolWidth?: number,
     capitalLetterRatio?: number,
-    squareBracketRatio?: number,
-    largeSymbolRatio?: number,
-    letterSpacing?: number,
-    wordLetterSpacing?: number,
+    fontSize: number,
     headTextFontRatio?: number,
     headTextSpacing?: number,
+    iconSymbolWidth?: number,
+    largeSymbolRatio?: number,
+    letterSpacing?: number,
+    lineCount: number,
+    lineHeight: number,
+    offsetY?: number,
+    ordinalFontRatio?: number,
+    ordinalFontOffsetY?: number,
+    squareBracketRatio?: number,
+    wordLetterSpacing?: number,
 };
 export const DefaultFontSizeData = {
-    offsetY: 0,
     capitalLetterRatio: 1,
-    squareBracketRatio: 1,
-    largeSymbolRatio: 1.35,
-    letterSpacing: 0,
     headTextFontRatio: 0.355,
     headTextSpacing: 0.5,
+    largeSymbolRatio: 1.35,
+    letterSpacing: 0,
+    offsetY: 0,
+    ordinalFontOffsetY: -2,
+    ordinalFontRatio: 1 / 1.1,
+    squareBracketRatio: 1,
 };
 
 /**

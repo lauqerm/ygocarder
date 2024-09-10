@@ -163,28 +163,3 @@ export const drawSetId = (
         fillTextRightWithSpacing(ctx, value, spacing, 728.78 + xOffset, 871.50 + offsetY);
     }
 };
-
-export const drawPassword = ({
-    ctx,
-    password,
-    withShadow,
-    lightFooter,
-}: {
-    ctx?: CanvasRenderingContext2D | null,
-    password: string,
-    withShadow?: boolean,
-    lightFooter: boolean,
-}) => {
-    if (!ctx) return 0;
-
-    ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
-    ctx.font = `${withShadow ? 'bold' : ''} 22.219px stone-serif-regular`;
-    ctx.shadowColor = withShadow
-        ? lightFooter ? '#000000' : '#ffffff'
-        : '#000000';
-    ctx.shadowOffsetY = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = withShadow ? 3 : 0;
-
-    return fillTextLeftWithSpacing(ctx, password, 0.1, 37.031, 1150.931);
-};

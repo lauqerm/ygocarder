@@ -129,12 +129,12 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             const nextFormat = `${formatValue}`;
             const formatSwappedCard = changeCardFormat(currentCard, nextFormat);
 
-            const { name, setId, effect, typeAbility, creator, pendulumEffect } = formatSwappedCard;
+            const { name, setId, effect, typeAbility, password, creator, pendulumEffect } = formatSwappedCard;
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             effectInputGroupRef.current?.setValue(effect);
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             postPendulumInputGroupRef.current?.setValue({ typeAbility });
-            footerInputGroupRef.current?.setValue({ creator });
+            footerInputGroupRef.current?.setValue({ creator, password });
 
             return formatSwappedCard;
         });

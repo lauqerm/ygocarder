@@ -9,6 +9,7 @@ import {
     NB_UNCOMPRESSED_END,
     NB_UNCOMPRESSED_START,
     NoSpaceRegex,
+    NonCompressableRegex,
     NumberRegex,
     OCGAlphabetRegex,
     OCGNoOverheadGapRegex,
@@ -87,15 +88,16 @@ export const drawLine = ({
         letterDeviationMap = {},
     } = fontData;
     const {
-        letterSpacing = DefaultFontSizeData.letterSpacing,
-        wordLetterSpacing,
-        capitalLetterRatio = DefaultFontSizeData.capitalLetterRatio,
-        squareBracketRatio = DefaultFontSizeData.squareBracketRatio,
-        fontSize,
         bulletSymbolWidth,
+        capitalLetterRatio = DefaultFontSizeData.capitalLetterRatio,
+        fontSize,
+        headTextSpacing = DefaultFontSizeData.headTextSpacing,
         iconSymbolWidth = bulletSymbolWidth,
         largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
-        headTextSpacing = DefaultFontSizeData.headTextSpacing,
+        letterSpacing = DefaultFontSizeData.letterSpacing,
+        ordinalFontOffsetY = DefaultFontSizeData.ordinalFontOffsetY,
+        squareBracketRatio = DefaultFontSizeData.squareBracketRatio,
+        wordLetterSpacing,
     } = fontSizeData;
     const textWorker = getTextWorker(ctx, fontData, fontSizeData, currentFont);
     const {
@@ -211,14 +213,14 @@ export const drawLine = ({
                 previousTokenRebalanceOffset = 0;
             }
             /** OCG Ordinal symbol is not condenseable and use different font. */
-            else if (/[①-⑳]/.test(fragment)) {
+            else if (NonCompressableRegex.test(fragment)) {
                 resetScale();
                 applyOrdinalFont();
                 drawLetter({
                     ...drawLetterParameter,
                     letter: fragment,
                     edge: fragmentEdge * xRatio,
-                    baseline: trueBaseline - 2
+                    baseline: trueBaseline + ordinalFontOffsetY,
                 });
                 fragmentEdge += ctx.measureText(fragment).width * letterSpacingRatio;
                 stopApplyOrdinalFont();
