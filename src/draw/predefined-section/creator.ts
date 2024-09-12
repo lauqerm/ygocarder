@@ -52,7 +52,7 @@ export const drawCreatorText = ({
         const fontGetter = createFontGetter({
             defaultFamily: font,
             defaultSize: `${fontSizeData.fontSize}px`,
-            defaultWeight: format === 'ocg' || hasShadow ? 'bold' : '',
+            defaultWeight: hasShadow ? 'bold' : '',
         });
         let internalTextData = {
             fontLevel,

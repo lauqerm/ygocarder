@@ -42,7 +42,7 @@ export const ocgCreatorFontData: FontData = {
     fontList: [{
         bulletSymbolWidth: 18,
         fontSize: 19.0,
-        letterSpacing: -0.11,
+        letterSpacing: 0.05,
         lineHeight: 20.5,
         lineCount: 1,
         headTextFontRatio: 0,
@@ -86,23 +86,35 @@ export const tcgPasswordFontData: FontData = {
 };
 export const ocgPasswordFontData: FontData = {
     font: '"FOT-Rodin Pro M"',
-    alphabetFont: 'stone-serif-regular',
+    alphabetFont: '"FOT-Rodin Pro M"',
+    numberFont: 'stone-serif-regular',
     symbolFont: 'matrix',
     symbolFontRatio: 0.8,
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontStyle: 'ocg',
     metricMethod: 'furigana',
-    fontList: [{
-        bulletSymbolWidth: 20.05,
-        fontSize: 19.0,
-        headTextFontRatio: 0,
-        largeSymbolRatio: 1.25,
-        lineCount: 1,
-        lineHeight: 20.5,
-        ordinalFontOffsetY: 1,
-        ordinalFontRatio: 1.25,
-    }],
+    fontList: [
+        {
+            bulletSymbolWidth: 20.05,
+            fontSize: 22.219,
+            lineHeight: 22.219,
+            lineCount: 1,
+            letterSpacing: 0.1,
+            headTextFontRatio: 0.4,
+            largeSymbolRatio: 1.25,
+        },
+        {
+            bulletSymbolWidth: 20.05,
+            fontSize: 19.0,
+            headTextFontRatio: 0,
+            largeSymbolRatio: 1.25,
+            lineCount: 1,
+            lineHeight: 20.5,
+            ordinalFontOffsetY: 1,
+            ordinalFontRatio: 1.25,
+        },
+    ],
 };
 export const PasswordFontData: Record<string, FontData> = {
     tcg: tcgPasswordFontData,

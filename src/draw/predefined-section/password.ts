@@ -41,7 +41,7 @@ export const drawPasswordText = ({
 
     /** Calculation */
     let textData = {
-        fontLevel: !isNumberPassword && format === 'tcg' ? 1 : 0,
+        fontLevel: !isNumberPassword ? 1 : 0,
         fontData,
         currentFont: createFontGetter(),
     };
@@ -53,7 +53,7 @@ export const drawPasswordText = ({
         const fontGetter = createFontGetter({
             defaultFamily: font,
             defaultSize: `${fontSizeData.fontSize}px`,
-            defaultWeight: format === 'ocg' || hasShadow ? 'bold' : '',
+            defaultWeight: hasShadow ? 'bold' : '',
         });
         let internalTextData = {
             fontLevel,

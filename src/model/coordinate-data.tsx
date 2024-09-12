@@ -93,7 +93,7 @@ export const PasswordCoordinateMap: Record<string, CoordinateData> = {
     ocg: {
         trueBaseline: 1148.931,
         trueEdge: 37.031,
-        trueWidth: 250,
+        trueWidth: 255,
     },
     tcg: {
         trueBaseline: 1149.431,
