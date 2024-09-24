@@ -8,7 +8,7 @@
         "active": true
     },
     "jap": {
-        "name": "日本語 (Beta)",
+        "name": "日本語",
         "formalName": "Japanese",
         "codeName": "jap",
         "initialMessage": "フォントとスクリプトを読み込んでいます…",
