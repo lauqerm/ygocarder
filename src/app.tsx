@@ -235,8 +235,14 @@ function App() {
         else documentClassList.remove('reduced-color-motion');
     }, [softMode]);
 
-    const importData = useCallback((event?: { preventDefault: () => void }) => {
-        if (!allowHotkey) return;
+    const displayLightbox = useCallback((status?: boolean, fromHotkey = false) => {
+        if (fromHotkey && !allowHotkey) return;
+
+        setLightboxVisible(cur => typeof status === 'boolean' ? status : !cur);
+    }, [allowHotkey]);
+
+    const importData = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
+        if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
         const cardData = window.prompt(language['prompt.import.message']);
@@ -253,8 +259,8 @@ function App() {
         }
     }, [allowHotkey, language]);
 
-    const mergeData = useCallback((event?: { preventDefault: () => void }) => {
-        if (!allowHotkey) return;
+    const mergeData = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
+        if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
         const cardData = window.prompt(language['prompt.import.message']);
@@ -271,8 +277,8 @@ function App() {
         }
     }, [allowHotkey, language]);
 
-    const exportData = useCallback((event?: { preventDefault: () => void }) => {
-        if (!allowHotkey) return;
+    const exportData = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
+        if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
         if (sourceType === 'internal') window.alert(language['prompt.export.offline-warning.message']);
@@ -284,8 +290,8 @@ function App() {
         );
     }, [allowHotkey, language, sourceType]);
 
-    const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }) => {
-        if (!allowHotkey) return;
+    const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
+        if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
         downloadButtonRef.current?.download();
@@ -293,13 +299,13 @@ function App() {
 
     const hotkeyHandlerMap = useMemo(() => {
         return {
-            IMPORT: importData,
-            MERGE: mergeData,
-            EXPORT: exportData,
-            VIEW: () => setLightboxVisible(true),
-            DOWNLOAD: downloadFromHotkey,
+            IMPORT: (event?: { preventDefault: () => void }) => importData(event, true),
+            MERGE: (event?: { preventDefault: () => void }) => mergeData(event, true),
+            EXPORT: (event?: { preventDefault: () => void }) => exportData(event, true),
+            VIEW: () => displayLightbox(true, true),
+            DOWNLOAD: (event?: { preventDefault: () => void }) => downloadFromHotkey(event, true),
         };
-    }, [downloadFromHotkey, exportData, importData, mergeData]);
+    }, [downloadFromHotkey, exportData, importData, mergeData, displayLightbox]);
 
     const alertDownloadError = useCallback(() => {
         setTainted(true);
@@ -408,7 +414,7 @@ function App() {
                                     {language['button.full-size.label']}
                                     {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
                                 </div>}>
-                                    <LightboxButton className="lightbox-button" onClick={() => setLightboxVisible(cur => !cur)}>
+                                    <LightboxButton className="lightbox-button" onClick={() => displayLightbox()}>
                                         <ZoomInOutlined />
                                     </LightboxButton>
                                 </Tooltip>
