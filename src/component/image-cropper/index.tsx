@@ -82,7 +82,7 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 };
 
 export type ImageCropperRef = {
-    setRatio: (ratio: number) => void,
+    hasImage: () => boolean,
     forceExternalSource: (artLink: string, cropInfo: Partial<ReactCrop.Crop>) => void,
 }
 export type ImageCropper = {
@@ -116,12 +116,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     onTainted = () => { },
 }: ImageCropper, forwardedRef) => {
     const language = useLanguage();
+    const fileInputRef = useRef<Input>(null);
     const [
         crossorigin,
         // setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [redrawSignal, setRedrawSignal] = useState(0);
-    // const [ratio, setRatio] = useState(defaultRatio);
     const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
     const [inputMode, setInputMode] = useState<'internal' | 'external'>('external');
     const [internalSource, setInternalSource] = useState('');
@@ -149,10 +149,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                     setInternalSource(reader.result);
                     setSourceType('internal');
                     setInputMode('internal');
+                    setLoading(false);
                 }
             });
             reader.readAsDataURL(e.target.files[0]);
-        } else alert('No file uploaded');
+        } else alert(language['image-cropper.not-found-warning']);
     };
 
     const pendingCrop = useRef({
@@ -325,10 +326,8 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
     const pendingId = useRef(0);
     useImperativeHandle(forwardedRef, () => ({
-        setRatio: _ratio => {
-            // setRatio(ratio);
-            // setRedrawSignal(cur => cur + 1);
-        },
+        hasImage: () => (typeof internalSource === 'string' && internalSource.length > 0 && sourceType === 'internal')
+            || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'external'),
         forceExternalSource: (source, cropInfo) => {
             const currentSource = sourceType === 'internal' ? internalSource : externalSource;
             if (currentSource !== source) {
@@ -359,7 +358,9 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             {title} <IconButton
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
-                                tooltipProps={{ overlay: isDownloadable ? 'Download cropped image' : 'Image is not loaded yet' }}
+                                tooltipProps={{ overlay: isDownloadable
+                                    ? language['image-cropper.download']
+                                    : language['image-cropper.no-download'] }}
                                 onClick={() => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)}
                             />
                         </span>
@@ -404,7 +405,12 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                             </div>}
                     </div>
                     <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
-                        <Input type="file" accept="image/*" onChange={applyOfflineSource} />
+                        <Input ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={applyOfflineSource}
+                            onClick={() => fileInputRef.current?.setValue('')}
+                        />
                         <hr />
                         {language['image-cropper.offline-warning']}
                     </div>

@@ -47,6 +47,8 @@
         "guide.format.section-4.label": "圧縮可能なフリガナ",
         "guide.format.section-5.content": "テキストのを {openTag} と {closeTag} で囲んで、圧縮されないようにします。\nホットキーが有効な場合は、テキストを選択して{hotkey}または{hotkeyAlternative}を押すこともできます。",
         "guide.format.section-5.label": "圧縮されないテキスト",
+        "image-cropper.download": "ダウンロード",
+        "image-cropper.no-download": "画像が見つかりません",
         "image-cropper.not-found-warning": "画像が見つかりません。",
         "image-cropper.offline-warning": "オフライン画像はエクスポートや自動保存できません。",
         "image-cropper.online-tip": "「imgur」のような人気のホストを利用できます。",

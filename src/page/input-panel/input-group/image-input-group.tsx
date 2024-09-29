@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef, LinkMarkChooser } from 'src/component';
 import { RadioTrain } from '../input-train';
@@ -75,10 +75,6 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             artCrop: cropInfo,
         }));
     }, [onCropChange, setCard]);
-
-    useEffect(() => {
-            imageCropperRef.current?.setRatio(getArtCanvasCoordinate(isPendulum, opacity).ratio);
-    }, [opacity, isPendulum]);
 
     useImperativeHandle(ref, () => ({
         setValue: ({ art, artCrop }) => {

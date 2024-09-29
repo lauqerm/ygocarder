@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
@@ -24,6 +24,7 @@ const StyledImageCropper = styled(ImageCropper)`
 `;
 
 export type BackgroundInputGroupRef = {
+    hasImage: () => boolean,
     setValue: (value: { background?: string, backgroundCrop?: Partial<ReactCrop.Crop> }) => void,
 };
 export type BackgroundInputGroup = {
@@ -71,11 +72,8 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         }));
     }, [onCropChange, setCard]);
 
-    useEffect(() => {
-        imageCropperRef.current?.setRatio(getArtCanvasCoordinate(isPendulum, opacity, backgroundType).ratio);
-    }, [backgroundType, opacity, isPendulum]);
-
     useImperativeHandle(ref, () => ({
+        hasImage: () => imageCropperRef.current?.hasImage() ?? false,
         setValue: ({ background, backgroundCrop }) => {
             if (typeof background === 'string' && backgroundCrop) {
                 imageCropperRef.current?.forceExternalSource(background, backgroundCrop);

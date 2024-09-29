@@ -24,6 +24,7 @@
 		}
 	}
 	.card-image-input {
+		color: var(--color-heavy);
 		margin-top: var(--spacing-xs);
 		&.input-inactive {
 			display: none;

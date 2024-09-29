@@ -98,6 +98,7 @@ const StyledLayoutPickerContainer = styled.div`
     }
 `;
 const StyledBaseFillPickerContainer = styled.div`
+    --input-width: 315px;
     &.overlay-no-background-image {
         .card-image-cropper {
             grid-template-columns: 1fr;
@@ -107,6 +108,7 @@ const StyledBaseFillPickerContainer = styled.div`
             line-height: 0;
             width: 0;
             visibility: hidden;
+            position: absolute;
         }
         .card-image-source-input {
             padding-right: 0;
@@ -114,7 +116,7 @@ const StyledBaseFillPickerContainer = styled.div`
             border-right: none;
         }
         i {
-            max-width: 247px; // Alignment
+            max-width: var(--input-width); // Alignment
         }
     }
     i {
@@ -132,8 +134,14 @@ const StyledBaseFillPickerContainer = styled.div`
             width: 0;
             padding: 0;
         }
+        .card-image-input {
+            text-align: center;
+            max-width: var(--input-width);
+        }
     }
     .card-image-source-input {
+        height: 100%;
+        justify-content: start;
         padding-right: var(--spacing-xs);
         margin-right: var(--spacing-xs);
         border-right: var(--bw) solid var(--sub-level-4);
@@ -250,7 +258,8 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         }
     }));
 
-    const noBackground = (background ?? '').length === 0;
+    const noBackground = (background ?? '').length === 0
+        && (backgroundInputRef.current?.hasImage() !== true);
     return <StyledLayoutPickerContainer className="card-opacity-slider-container">
         <Tooltip
             overlayClassName="long-tooltip-overlay"
@@ -299,11 +308,6 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                         checked={hasBackground}
                                         onChange={e => {
                                             changeHasBackground(e);
-                                            const activateBackground = e.target.checked;
-
-                                            if (activateBackground) {
-
-                                            }
                                         }}
                                     >{language['input.background.toggle-label']}</Checkbox>
                                     <br />
@@ -347,7 +351,10 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         </div>}
                         placement="bottom"
                     >
-                        <div className="background-preview" style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}>
+                        <div
+                            className="background-preview"
+                            style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}
+                        >
                             {hasBackground
                                 ? background
                                     ? <img className="background-image-preview" src={background} alt="Background" />
