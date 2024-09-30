@@ -538,6 +538,14 @@ export const ocgKeywordDataList = [
         rubyForm: '{無|む}{効|こう}',
     },
     {
+        shortForm: '無視',
+        rubyForm: '{無|む}{視|し}',
+    },
+    {
+        shortForm: '確認',
+        rubyForm: '{確|かく}{認|にん}',
+    },
+    {
         shortForm: '攻撃',
         rubyForm: '{攻|こう}{撃|げき}',
     },
