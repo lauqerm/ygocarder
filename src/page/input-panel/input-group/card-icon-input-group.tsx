@@ -10,8 +10,8 @@ import { checkDarkSynchro, checkXyz } from 'src/util';
 import styled from 'styled-components';
 
 const StyledIconDropdown = styled(StyledDropdown.Container)`
-    img {
-        max-height: 1.3em;
+    img.icon-image {
+        width: var(--fs-lg);
     }
 `;
 const StyledCheckboxStarTrain = styled(RadioTrain)`

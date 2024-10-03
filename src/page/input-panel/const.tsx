@@ -109,25 +109,41 @@ export const IconTypeMap: Record<string, { value: string, labelKey: string, full
         value: 'st',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon-type.icon.label',
-        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`} />,
+        icon: <img
+            className="icon-image"
+            alt="s/t-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`}
+        />,
     },
     'level': {
         value: 'level',
         labelKey: 'input.icon-type.level.label',
         fullLabelKey: 'input.icon-type.level.label',
-        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level.png`} />,
+        icon: <img
+            className="icon-image"
+            alt="level-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level.png`}
+        />,
     },
     'negative-level': {
         value: 'negative-level',
         labelKey: 'input.icon-type.negative-level.label',
         fullLabelKey: 'input.icon-type.negative-level.label',
-        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-negative-level.png`} />,
+        icon: <img
+            className="icon-image"
+            alt="negative-level-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-negative-level.png`}
+        />,
     },
     'rank': {
         value: 'rank',
         labelKey: 'input.icon-type.rank.label',
         fullLabelKey: 'input.icon-type.rank.label',
-        icon: <img alt="s/t-icon" src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-rank.png`} />,
+        icon: <img
+            className="icon-image"
+            alt="rank-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-rank.png`}
+        />,
     },
 };
 export const IconTypeList = Object.values(IconTypeMap);
