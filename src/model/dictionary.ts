@@ -715,6 +715,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{捨|す}て',
     },
     {
+        shortForm: '行かず',
+        rubyForm: '{行|い}かず',
+    },
+    {
         shortForm: 'CNo．',
         regexForm: '(?<![a-zA-Z])CNo．(?![a-zA-Z])',
         rubyForm: '{CNo．||カオスナンバーズ}',
@@ -798,6 +802,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '順番',
         rubyForm: '{順|じゅん}{番|ばん}',
+    },
+    {
+        shortForm: '限り',
+        rubyForm: '{限|かぎ}り',
     },
     {
         shortForm: '除外',

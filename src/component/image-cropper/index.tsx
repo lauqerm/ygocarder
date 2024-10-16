@@ -4,9 +4,9 @@ import ReactCrop from 'react-image-crop';
 import { DownloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
+import { useLanguage } from 'src/service';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
-import { useLanguage } from 'src/service';
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
     if (!crop || !canvas) return;

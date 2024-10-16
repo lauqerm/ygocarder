@@ -19,7 +19,7 @@ const StyledDownloadDropdownLabel = styled(Menu.Item)`
     }
 `;
 const StyledDownloadDropdownOption = styled(Menu.Item)`
-    &li.jIyIrp.ant-dropdown-menu-item:hover {
+    &li.ant-dropdown-menu-item:hover {
         background-color: var(--sub-active);
     }
     &.active-resolution {
