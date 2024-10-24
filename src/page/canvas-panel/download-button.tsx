@@ -32,7 +32,7 @@ const StyledDownloadButton = styled(Button)`
         padding: 4px 15px;
         height: 100%; // Alignment
         align-content: center;
-        border-radius: var(--br-lg);
+        border-radius: var(--br);
         line-height: 1.5;
     }
     .button-option {
@@ -149,6 +149,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
                     <StyledDownloadDropdownLabel disabled>{language['button.download.resolution.label']}</StyledDownloadDropdownLabel>
                     {[
                         { width: 549, height: 800 },
+                        { width: 561, height: 818 },
                         { width: 813, height: 1185 },
                     ].map(({ width, height }) => {
                         return <StyledDownloadDropdownOption key={`${width}-${height}`}
