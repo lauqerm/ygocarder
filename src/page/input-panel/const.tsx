@@ -76,17 +76,20 @@ export const getFrameButtonList = () => frameList.map(({ name, nameKey, labelBac
     edition,
 }));
 
-export const getAttributeList = (format: string, dictionary: Record<string, string>) => AttributeList.map(({ name, nameKey }) => ({
-    label: name === NO_ATTRIBUTE
-        ? <CloseCircleOutlined />
-        : <Tooltip overlay={dictionary[nameKey]}>
-            <img
-                alt={dictionary[nameKey]}
-                src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
-            />
-            </Tooltip>,
-    value: name,
-}));
+export const getAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => AttributeList
+    .map(({ name, nameKey, isCreative }) => ({
+        label: name === NO_ATTRIBUTE
+            ? <CloseCircleOutlined />
+            : <Tooltip overlay={dictionary[nameKey]}>
+                <img
+                    alt={dictionary[nameKey]}
+                    src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
+                />
+                </Tooltip>,
+        value: name,
+        isCreative,
+    }))
+    .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption);
 
 export const getSTIconButtonList = (dictionary: Record<string, string>) => IconList.map(({ value, nameKey }) => ({
     label: value === NO_ICON

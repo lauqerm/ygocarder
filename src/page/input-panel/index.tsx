@@ -153,7 +153,7 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
         });
     }, [setCard]);
 
-    const attributeList = useMemo(() => getAttributeList(format, language), [format, language]);
+    const attributeList = useMemo(() => getAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
 
     useEffect(() => {
         stylePickerRef.current?.setValue({ font: nameStyle.font });
