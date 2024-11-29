@@ -25,8 +25,8 @@ Other advantages such as foils and additional card frames come from the template
 
 The app of course has multiple shortcomings, many of them are by design, while others may become future plans:
 * No template for Rush Duel - Template for Rush Duel is already available, so maybe I will revisit this idea in the future.
-* No "ultra" card size - While some apps may offer 4K resolution for their card, this app does not. While I think the current card resolution of my app is decently enough, you can always seek for professional up-scale method.
-* No remote saving - This app does not have a dedicated server for such feature, but thanks to that I can serve the app for a long time completely free without the need for any finacial support. The app only provides very simple card information export and import, and your card art should come from online links.
+* No "ultra" card size - While some apps may offer 4K resolution for their card, this app does not. While I think the current card resolution of my app is decently enough, you can always seek for professional up-scale method. Upscaling is a resource-intense operation that requires a powerful server to do which I cannot provide, while most of the user device will hang for a good few minutes trying to run it, so there is no out for this problem in the near future.
+* No remote saving - This app does not have a dedicated server for such feature, but thanks to that I can serve the app for a long time completely free without the need for any financial support. The app only provides very simple card information export and import, and your card art should come from online links.
 
 ### Can I use your source code in my site?
 
