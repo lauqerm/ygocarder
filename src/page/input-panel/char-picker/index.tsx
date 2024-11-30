@@ -48,13 +48,14 @@ const StyledCharPickerContainer = styled.div`
     grid-template-columns: 1fr max-content;
     align-items: center;
     column-gap: var(--spacing-sm);
-    .char-picker-guideline {
 
-    }
     .char-picker {
         z-index: 1;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+        button.ant-btn {
+            padding: 0 var(--spacing-xs);
+        }
         .handler,
         .ant-btn {
             background-color: var(--main-level-1);

@@ -23,6 +23,7 @@ const StyledAppSettingContainer = styled.div`
     border-left: var(--bw) dashed #b1b1b1;
     padding-left: var(--spacing);
     margin-left: var(--spacing);
+    height: 100%;
 `;
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
 export const AppHeader = () => {

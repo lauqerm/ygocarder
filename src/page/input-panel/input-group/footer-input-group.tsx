@@ -5,11 +5,13 @@ import { IconButton } from 'src/component';
 import { RadioTrain } from '../input-train';
 import { CardCheckboxGroup } from '../input-checkbox-group';
 import { randomPassword } from 'src/util';
-import { SyncOutlined } from '@ant-design/icons';
+import { SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useShallow } from 'zustand/react/shallow';
 import { StickerButtonList } from '../const';
 import styled from 'styled-components';
 import { StyledInputLabelWithButton } from '../input-panel.styled';
+import { Dropdown, Menu } from 'antd';
+import { copyrightMap } from 'src/model';
 
 const StyledFooterInputContainer = styled.div`
     display: grid;
@@ -22,7 +24,7 @@ const StyledFooterInputContainer = styled.div`
         }
     }
     .sticker-input,
-    .creator-input {
+    .checkbox-input {
         grid-column: span 2;
     }
     .sticker-input .ant-radio-button-wrapper {
@@ -46,18 +48,24 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     const language = useLanguage();
     const {
         sticker,
+        format,
         getUpdater,
     } = useCard(useShallow(({
-        card: { sticker },
+        card: { sticker, format },
         getUpdater,
     }) => ({
         sticker,
+        format,
         getUpdater,
     })));
     const passwordInputRef = useRef<CardTextInputRef>(null);
     const creatorInputRef = useRef<CardTextInputRef>(null);
     const atkInputRef = useRef<CardTextInputRef>(null);
     const defInputRef = useRef<CardTextInputRef>(null);
+
+    const copyrightList = (format && copyrightMap[format as keyof typeof copyrightMap])
+        ? copyrightMap[format as keyof typeof copyrightMap]
+        : copyrightMap.tcg;
 
     const changeATK = useMemo(() => getUpdater('atk', value => typeof value === 'string' ? value.trim() : value), [getUpdater]);
     const changeDEF = useMemo(() => getUpdater('def', value => typeof value === 'string' ? value.trim() : value), [getUpdater]);
@@ -105,14 +113,39 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             onChange={changePassword}
             onTakePicker={onTakePicker}
         />
-        <CardCheckboxGroup />
         <CardTextInput ref={creatorInputRef}
             id="creator"
-            addonBefore={language['input.creator-text.label']}
+            addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
+                <div className="input-label">{language['input.copyright.label']}</div>
+                <Dropdown
+                    className="save-button-dropdown"
+                    placement="topLeft"
+                    arrow
+                    overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
+                        {copyrightList.map((text, index) => {
+                            return <Menu.Item key={`${index}`}
+                                onClick={() => {
+                                    creatorInputRef.current?.setValue(text);
+                                }}
+                            >
+                                {text}
+                            </Menu.Item>;
+                        })}
+                    </Menu>}
+                >
+                    <div>
+                    <IconButton
+                    onClick={() => {}}
+                        Icon={UnorderedListOutlined}
+                    />
+                    </div>
+                </Dropdown>
+            </StyledInputLabelWithButton>}
             defaultValue={useCard.getState().card.creator}
             onChange={changeCreator}
             onTakePicker={onTakePicker}
         />
+        <CardCheckboxGroup />
         <RadioTrain
             className="sticker-input fill-input-train"
             value={sticker}

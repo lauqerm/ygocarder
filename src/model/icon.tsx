@@ -67,7 +67,7 @@ export const AttributeList = [
     {
         name: 'TRAP',
         nameKey: 'input.attribute.trap',
-        label: 'TRAP',
+        label: 'Trap',
         color: '#c32a8c',
         isCreative: false,
     },

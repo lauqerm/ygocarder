@@ -240,6 +240,20 @@ export const ocgNumberCircleMap: Record<string, string> = {
     '(20)': '⑳',
 };
 
+/** Newest at top */
+export const copyrightMap = {
+    ocg: [
+        '©スタジオ・ダイス／集英社・テレビ東京・KONAMI',
+        '©高橋和希 スタジオ・ダイス／集英社',
+        '©高橋和希／集英社',
+    ],
+    tcg: [
+        '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+        '©1996 KAZUKI TAKAHASHI',
+        '©KAZUKI TAKAHASHI / SHUEISHA',
+    ],
+};
+
 /** Automatically convert popular OCG terms into their TCG counterpart. Never introduce machine translation here :'( */
 export const ocgToTCGTermMap: Record<string, string> = {
     /** monster type */
@@ -301,9 +315,10 @@ export const ocgToTCGTermMap: Record<string, string> = {
     'トゥーン': 'Toon',
     'スピリット': 'Spirit',
     'ユニオン': 'Union',
-    /** creator */
-    '©高橋和希 スタジオ・ダイス／集英社': '©1996 KAZUKI TAKAHASHI',
-    '©スタジオ・ダイス／集英社・テレビ東京・KONAMI': '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+    /** creator copyright */
+    [copyrightMap.ocg[2]]: copyrightMap.tcg[2],
+    [copyrightMap.ocg[1]]: copyrightMap.tcg[1],
+    [copyrightMap.ocg[0]]: copyrightMap.tcg[0],
     /** sample card */
     '{純|ジュン}{狐|こ}': 'Junko',
     [`自分フィールドの効果モンスター×２体以上

@@ -15,6 +15,11 @@
         align-content: center;
         min-height: 32px; // Alignment
     }
+    .attribute-input {
+        .ant-radio-button-wrapper {
+            padding: 0 5px;
+        }
+    }
     .main-info {
         display: flex;
         align-items: flex-start;

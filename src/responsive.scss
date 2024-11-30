@@ -16,7 +16,6 @@
 		.affiliation {
 			border-radius: 0 0 0 var(--br-xl);
 		}
-		.password-input,
 		.checkbox-input {
 			grid-column: span 2;
 		}
@@ -79,7 +78,6 @@
 			display: block;
 			width: 100%;
 		}
-		.password-input,
 		.checkbox-input {
 			grid-column: span 1;
 		}
@@ -166,7 +164,6 @@
 
 @media only screen and (max-width: 1200px) {
 	.app-container {
-		.password-input,
 		.checkbox-input {
 			grid-column: span 2;
 		}
@@ -328,7 +325,6 @@
 		.card-info-panel {
 			padding-top: 0;
 		}
-		.password-input,
 		.checkbox-input {
 			grid-column: span 1;
 		}

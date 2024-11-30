@@ -16,13 +16,14 @@ const StyledIconDropdown = styled(StyledDropdown.Container)`
 `;
 const StyledCheckboxStarTrain = styled(RadioTrain)`
     .custom-star-input {
-        margin-left: var(--spacing-sm);
         width: 6.5rem;
     }
     .checkbox-star-suffix {
-        display: grid;
-        grid-template-columns: max-content max-content;
+        display: flex;
+        flex-wrap: wrap;
         column-gap: var(--spacing-sm);
+        row-gap: var(--spacing-xxs);
+        margin-left: var(--spacing-sm);
     }
 `;
 

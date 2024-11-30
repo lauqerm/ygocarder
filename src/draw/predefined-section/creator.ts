@@ -101,5 +101,8 @@ export const drawCreatorText = ({
     });
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    return result;
+    return {
+        trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
+        ...result,
+    };
 };

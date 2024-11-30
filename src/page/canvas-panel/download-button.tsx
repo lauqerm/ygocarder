@@ -34,6 +34,9 @@ const StyledDownloadButton = styled(Button)`
         align-content: center;
         border-radius: var(--br);
         line-height: 1.5;
+        .label-content {
+            transform: translateY(-1px);
+        }
     }
     .button-option {
         position: absolute;
@@ -136,9 +139,11 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         <StyledDownloadButton className="save-button" id="save-button-ready" onClick={() => download()}>
             <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
                 <div className="button-label">
-                    {isDownloading
-                        ? language['button.download.ongoing.label']
-                        : language['button.download.label']}
+                    <div className="label-content">
+                        {isDownloading
+                            ? language['button.download.ongoing.label']
+                            : language['button.download.label']}
+                    </div>
                 </div>
             </Tooltip>
             <Dropdown

@@ -1,7 +1,7 @@
 import { Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
 import ReactCrop from 'react-image-crop';
-import { DownloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DownloadOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import { useLanguage } from 'src/service';
@@ -383,7 +383,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 {language['image-cropper.offline-warning']}
                             </div>}>
                                 <Radio.Button value={'internal'} checked={inputMode === 'internal'}>
-                                    {language['image-cropper.source.offline.tooltip']} <ExclamationCircleOutlined />
+                                    {language['image-cropper.source.offline.tooltip']}
                                 </Radio.Button>
                             </Tooltip>
                         </Radio.Group>

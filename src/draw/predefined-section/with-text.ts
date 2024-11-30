@@ -30,27 +30,29 @@ export const drawScale = (
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
     edge = 99,
+    baseline = 1150.93,
     baselineOffset = 0,
     option = { stroke: false },
 ) => {
     if (!ctx) return;
 
     const { stroke = false } = option ?? {};
+    const superTextOffset = 7.4;
     ctx.font = 'bold 23.7px palatino-linotype-bold';
 
     let left = edge;
-    ctx.fillText('1', left, 1150.93 + baselineOffset);
-    if (stroke) ctx.strokeText('1', left, 1150.93);
+    ctx.fillText('1', left, baseline + baselineOffset);
+    if (stroke) ctx.strokeText('1', left, baseline);
     left += ctx.measureText('1').width - 2;
 
     ctx.font = 'bold 17.78px palatino-linotype-bold';
-    ctx.fillText('st', left, 1143.53 + baselineOffset);
-    if (stroke) ctx.strokeText('st', left, 1143.53);
+    ctx.fillText('st', left, baseline - superTextOffset + baselineOffset);
+    if (stroke) ctx.strokeText('st', left, baseline - superTextOffset);
     left += ctx.measureText('st').width;
 
     ctx.font = 'bold 22.22px palatino-linotype-bold';
-    ctx.fillText(' Edition', left, 1150.93 + baselineOffset);
-    if (stroke) ctx.strokeText(' Edition', left, 1150.93);
+    ctx.fillText(' Edition', left, baseline + baselineOffset);
+    if (stroke) ctx.strokeText(' Edition', left, baseline);
 };
 
 export const drawStatText = (
