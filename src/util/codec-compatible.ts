@@ -103,6 +103,9 @@ export const ygoCarderToCardMakerData = (card: Card): { result: CompatibleCard, 
         frame,
         externalInfo,
     } = card;
+    console.log('hi', art,
+        artData,
+        artSource);
     const normalizedName = normalizedCardName(name);
     const normalizedEffect = normalizedCardEffect(effect);
     const normalizedPendulumEffect = normalizedCardEffect(pendulumEffect);
@@ -192,6 +195,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
     const normalizedAttribute = reverseAttributeMap[attribute];
     const normalizedFrame = reverseFrameMap[layout];
     const useImageData = isImageData(image);
+    const levelAsNumber = parseInt(level);
 
     let isPartial = normalizedIcon === undefined
         || normalizedAttribute === undefined
@@ -207,7 +211,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
         subFamily: normalizedIcon ?? NO_ICON,
         setId: id,
         frame: normalizedFrame ?? 'normal',
-        star: level,
+        star: `${levelAsNumber}` === level && levelAsNumber <= 13 ? levelAsNumber : level,
         typeAbility: type.split('/').map(entry => entry.trim()),
         art: useImageData ? '' : image,
         artData: useImageData ? image : '',

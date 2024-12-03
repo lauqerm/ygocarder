@@ -158,7 +158,6 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                 setLoading(true);
                 const reader = new FileReader();
                 reader.addEventListener('load', () => {
-                    console.log('🚀 ~ reader.addEventListener ~ reader:', reader);
                     if (typeof reader.result === 'string') {
                         setInternalSource(reader.result);
                         setSourceType('offline');
@@ -351,14 +350,14 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'online'),
         forceSource: (type: 'online' | 'offline', source, cropInfo) => {
             const currentSource = sourceType === 'offline' ? internalSource : externalSource;
-            console.log(title, 'hi', sourceType, internalSource.slice(0, 20), externalSource.slice(0, 20));
             if (currentSource !== source) {
-                console.log(title, 'in hi');
                 setLoading(true);
                 setSourceType(type);
                 setInputMode(type);
                 onSourceChange(type, source);
-                setExternalSource(source);
+                if (type === 'offline') {
+                    setInternalSource(source);
+                } else setExternalSource(source);
             }
             setMigrated(cropInfo.unit === '%');
             pendingId.current += 1;
@@ -395,7 +394,14 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 if (
                                     ((internalSource ?? '').length > 0 && value === 'offline')
                                     || ((externalSource ?? '').length > 0 && value === 'online')
-                                ) setSourceType(value);
+                                ) {
+                                    setSourceType(value);
+                                    if (value === 'offline') {
+                                        onSourceChange('offline', internalSource);
+                                    } else {
+                                        onSourceChange('online', externalSource);
+                                    }
+                                }
                             }}
                             value={inputMode}
                         >

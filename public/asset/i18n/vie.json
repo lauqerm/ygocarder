@@ -63,7 +63,7 @@
         "image-cropper.download": "Tải xuống ảnh hiện tại",
         "image-cropper.no-download": "Chưa tải xong ảnh",
         "image-cropper.not-found-warning": "Không có ảnh.",
-        "image-cropper.offline-warning": "Ứng dụng sẽ không thể lưu ảnh tải lên từ thiết bị.",
+        "image-cropper.offline-warning": "Bạn sẽ không thể chia sẻ link nếu dùng ảnh từ thiết bị.",
         "image-cropper.online-tip": "Nên dùng các trang đăng ảnh phổ biến như \"imgur\".",
         "image-cropper.placeholder": "Đường dẫn",
         "image-cropper.source.offline.tooltip": "Tải lên",

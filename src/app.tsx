@@ -263,7 +263,6 @@ function App() {
                     card: decodedCard,
                     isPartial,
                 } = decodeCardWithCompatibility(cardData);
-                console.log('🚀 ~ App ~ decodedCard:', decodedCard);
 
                 if (isPartial) {
                     notification.info({
@@ -335,7 +334,7 @@ function App() {
         if (fromHotkey && !allowHotkey && !download) return;
 
         event?.preventDefault();
-        if (sourceType === 'offline') window.alert(language['prompt.export.offline-warning.message']);
+        if (sourceType === 'offline' && download === false) window.alert(language['prompt.export.offline-warning.message']);
 
         try {
             const cardData = useCard.getState().card;

@@ -77,7 +77,6 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
     const changeArtFinish = useMemo(() => getUpdater('artFinish'), [getUpdater]);
     const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => {
-        console.log('🚀 ~ changeImageCrop ~ cropInfo:', cropInfo, sourceType);
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(curr => ({
             ...curr,
@@ -87,7 +86,6 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
 
     useImperativeHandle(ref, () => ({
         setValue: ({ art, artCrop, artData, artSource }) => {
-            console.log('🚀 ~ useImperativeHandle ~ art, artCrop, artData, artSource:', art, artCrop, artData, artSource);
             if (artSource === 'offline') {
                 if (typeof artData === 'string' && artCrop) {
                     imageCropperRef.current?.forceSource('offline', artData, artCrop);
