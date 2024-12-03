@@ -50,6 +50,9 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
         'error.load.font.ocg': (familyName: string) => {
             return getDictionaryEntry('error.load.font.ocg').replaceAll('{familyName}', familyName);
         },
+        'error.max-size.description': (fileSize: number) => {
+            return getDictionaryEntry('error.max-size.description').replaceAll('{fileSize}', `${fileSize}`);
+        },
         'contributor.disclaimer.line-1': (siteLink: React.ReactNode) => {
             return applyTemplateNode(
                 getDictionaryEntry('contributor.disclaimer.line-1'),

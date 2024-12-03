@@ -23,6 +23,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     finish: 'fn',
     art: 'ar',
     artData: 'ad',
+    artSource: 'as',
     artFinish: 'afn',
     artCrop: {
         _newKey: 'arc',
@@ -35,6 +36,8 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     hasBackground: 'hbg',
     background: 'bg',
+    backgroundData: 'bgd',
+    backgroundSource: 'bgs',
     backgroundType: 'bgt',
     backgroundCrop: {
         _newKey: 'bgc',
@@ -240,6 +243,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     /** Seems like no image is fine for now. */
     // if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
     if ((migratedCard.art ?? '') === '') migratedCard.art = '';
+    if ((migratedCard.artData ?? '') === '') migratedCard.artData = '';
+    if ((migratedCard.artSource ?? '') === '') migratedCard.artSource = 'online';
 
     if (typeof (migratedCard.opacity as any).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
         migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
@@ -248,7 +253,11 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
 
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
-    if (migratedCard.hasBackground == null && (migratedCard.background || migratedCard.opacity.baseFill)) migratedCard.hasBackground = true;
+    if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
+    if ((migratedCard.backgroundSource ?? '') === '') migratedCard.backgroundSource = 'online';
+    if (migratedCard.hasBackground == null && (migratedCard.background || migratedCard.opacity.baseFill)) {
+        migratedCard.hasBackground = true;
+    }
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;

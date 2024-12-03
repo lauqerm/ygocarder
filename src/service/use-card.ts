@@ -58,19 +58,34 @@ export const decodeCardWithCompatibility = (
 
 /**
  * Acquire saved card when the session is just initialized. URL source is preferred over local storage source.
- * 
- * @todo If local storage soure has art data, should we merge it into URL source? Is it too confusing.
  */
-export const retrieveSavedCard = () => {
+export const retrieveSavedCard = (): Card => {
     try {
         const localCardVersion = window.localStorage.getItem('card-version');
-        const localCardData = window.localStorage.getItem('card-data');
+        const stringifedLocalCardData = window.localStorage.getItem('card-data');
+        const localCardData = stringifedLocalCardData
+            ? migrateCardData(JSON.parse(stringifedLocalCardData))
+            : null;
 
-        const cardURLData = (new URLSearchParams(window.location.search)).get('data');
-        if (cardURLData) {
-            return decodeCardWithCompatibility(cardURLData).card;
+        const urlCardData = (new URLSearchParams(window.location.search)).get('data');
+        if (urlCardData) {
+            /**
+             * Because url card does not store offline image, we search for local storage to match the image if possible.
+             * The trick here is that everytime user want to unload the tab, we save the current card data (including the offline image) into local storage first. That way:
+             *   * If they reload the tab, the offline image can be restored from local storage. Even if they have many tabs, the tab they are going to reload will save (become the newest one) before reloading, and display the exact image.
+             *   * If they duplicate the tab, the new tab will read from the local storage so the offline will be duplicated as well.
+             *   * If they re-open the tab, the latest tab already save before being closed, so re-open it restore the exact image.
+             *   * If they close multiple tab, and want to re-open the one that is not the latest tab, we have no luck here.
+             */
+            const { card } = decodeCardWithCompatibility(urlCardData);
+            if (card.artSource === 'offline') return {
+                ...card,
+                artData: localCardData?.artData ?? '',
+            };
+
+            return decodeCardWithCompatibility(urlCardData).card;
         } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
-            return migrateCardData(JSON.parse(localCardData)) as Card;
+            return localCardData;
         }
         return getDefaultCard();
     } catch (e) {

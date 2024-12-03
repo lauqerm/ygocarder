@@ -23,6 +23,7 @@ export const getDefaultCard = () => ({
     starAlignment: 'auto',
     art: 'https://i.imgur.com/h5kXZeC.png',
     artData: '',
+    artSource: 'online',
     artCrop: {
         x: 0,
         y: 4,
@@ -33,6 +34,8 @@ export const getDefaultCard = () => ({
     } as Partial<ReactCrop.Crop>,
     hasBackground: false,
     background: '',
+    backgroundData: '',
+    backgroundSource: 'online',
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: {
         x: 0,
@@ -100,6 +103,7 @@ export const getEmptyCard = (): Card => ({
     starAlignment: 'auto',
     art: 'https://i.imgur.com/jjtCuG5.png',
     artData: '',
+    artSource: 'online',
     artCrop: {
         x: 0,
         y: 4,
@@ -110,6 +114,8 @@ export const getEmptyCard = (): Card => ({
     },
     hasBackground: false,
     background: '',
+    backgroundData: '',
+    backgroundSource: 'online',
     backgroundType: 'fit',
     backgroundCrop: {
         x: 0,

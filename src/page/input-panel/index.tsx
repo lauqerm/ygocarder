@@ -168,8 +168,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
             setStylePickerResetCount(cnt => cnt + 1);
             const {
                 name,
-                art, artCrop,
-                background, backgroundCrop,
+                art, artCrop, artData, artSource,
+                background, backgroundCrop, backgroundData, backgroundSource,
                 opacity,
                 setId,
                 pendulumEffect,
@@ -179,8 +179,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 creator, password,
             } = card;
 
-            imageInputGroupRef.current?.setValue({ art, artCrop });
-            layoutPickerRef.current?.setValue({ ...opacity, background, backgroundCrop });
+            imageInputGroupRef.current?.setValue({ art, artCrop, artData, artSource });
+            layoutPickerRef.current?.setValue({
+                ...opacity,
+                background, backgroundCrop, backgroundData, backgroundSource,
+            });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             effectInputGroupRef.current?.setValue(effect);

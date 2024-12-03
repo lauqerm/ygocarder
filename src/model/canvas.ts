@@ -147,7 +147,7 @@ export const getArtCanvasCoordinate = (
         : boundless;
 
     if (backgroundType === 'full') return CardArtCanvasCoordinateMap.fullCard;
-    const artType = normalizedBoundless || body < 100
+    const artSource = normalizedBoundless || body < 100
         ? isPendulum
             ? 'fullPendulum'
             : 'fullCard'
@@ -161,5 +161,5 @@ export const getArtCanvasCoordinate = (
                 ? 'extendedCard'
                 : 'normal';
 
-    return CardArtCanvasCoordinateMap[artType];
+    return CardArtCanvasCoordinateMap[artSource];
 };

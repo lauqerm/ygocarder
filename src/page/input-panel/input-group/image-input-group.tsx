@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList } from '../const';
 import { getArtCanvasCoordinate } from 'src/model';
 import styled from 'styled-components';
+import { notification } from 'antd';
 
 const StyledImageRadioTrain = styled(RadioTrain)`
     .ant-input-group-addon {
@@ -17,13 +18,18 @@ const StyledImageRadioTrain = styled(RadioTrain)`
 `;
 
 export type ImageInputGroupRef = {
-    setValue: (value: { art?: string, artCrop?: Partial<ReactCrop.Crop> }) => void,
+    setValue: (value: {
+        art?: string,
+        artData?: string,
+        artSource?: string,
+        artCrop?: Partial<ReactCrop.Crop>,
+    }) => void,
 };
 export type ImageInputGroup = {
     isLink: boolean,
     showExtraDecorativeOption: boolean,
     receivingCanvas: HTMLCanvasElement | null,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
     onTainted: ImageCropper['onTainted'],
     onSourceLoaded: ImageCropper['onSourceLoaded'],
 };
@@ -41,7 +47,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         artFinish,
         linkMap,
         isPendulum,
-        art, artCrop,
+        art, artCrop, artData, artSource,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
@@ -50,7 +56,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             artFinish,
             linkMap,
             isPendulum,
-            art, artCrop,
+            art, artCrop, artData, artSource,
         },
         getUpdater,
         setCard,
@@ -59,16 +65,19 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         artFinish,
         linkMap,
         isPendulum,
-        art, artCrop,
+        art, artCrop, artData, artSource,
         getUpdater,
         setCard,
     })));
     const imageCropperRef = useRef<ImageCropperRef>(null);
 
     const changeLinkMap = useMemo(() => getUpdater('linkMap'), [getUpdater]);
-    const changePicture = useMemo(() => getUpdater('art'), [getUpdater]);
+    const changeArt = useMemo(() => getUpdater('art'), [getUpdater]);
+    const changeArtData = useMemo(() => getUpdater('artData'), [getUpdater]);
+    const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
     const changeArtFinish = useMemo(() => getUpdater('artFinish'), [getUpdater]);
-    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => {
+    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => {
+        console.log('🚀 ~ changeImageCrop ~ cropInfo:', cropInfo, sourceType);
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(curr => ({
             ...curr,
@@ -77,9 +86,16 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     }, [onCropChange, setCard]);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ art, artCrop }) => {
-            if (typeof art === 'string' && artCrop) {
-                imageCropperRef.current?.forceExternalSource(art, artCrop);
+        setValue: ({ art, artCrop, artData, artSource }) => {
+            console.log('🚀 ~ useImperativeHandle ~ art, artCrop, artData, artSource:', art, artCrop, artData, artSource);
+            if (artSource === 'offline') {
+                if (typeof artData === 'string' && artCrop) {
+                    imageCropperRef.current?.forceSource('offline', artData, artCrop);
+                }
+            } else {
+                if (typeof art === 'string' && artCrop) {
+                    imageCropperRef.current?.forceSource('online', art, artCrop);
+                }
             }
         }
     }));
@@ -87,13 +103,25 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     return <ImageCropper
         ref={imageCropperRef}
         title={language['input.card-art.label']}
+        defaultSourceType={artSource}
         defaultExternalSource={art}
+        defaultInternalSource={artData}
         defaultCropInfo={artCrop}
         receivingCanvas={receivingCanvas}
-        onSourceChange={changePicture}
+        onSourceChange={(type, data) => {
+            changeArtSource(type);
+            if (type === 'offline') changeArtData(data);
+            else changeArt(data);
+        }}
         onCropChange={changeImageCrop}
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
+        onMaxSizeExceeded={size => {
+            notification.error({
+                description: language['error.max-size.description'](size),
+                message: language['error.max-size.message'],
+            });
+        }}
         ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
         beforeCropper={showExtraDecorativeOption
             ? <StyledImageRadioTrain

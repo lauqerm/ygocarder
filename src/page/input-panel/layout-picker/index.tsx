@@ -172,6 +172,8 @@ export type LayoutPicker = {
 export type OpacityPickerRef = {
     setValue: (opacity: Partial<CardOpacity> & {
         background?: string,
+        backgroundData?: string,
+        backgroundSource?: string,
         backgroundCrop?: Partial<ReactCrop.Crop>,
         backgroundType?: BackgroundType,
     }) => void,

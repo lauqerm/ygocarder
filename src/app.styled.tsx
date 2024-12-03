@@ -77,10 +77,11 @@ export const StyledDataButtonPanelContainer = styled.div`
         }
         .secondary-button {
             border-radius: 0 var(--br-lg) var(--br-lg) 0;
-            background-color: var(--main-secondary);
-            border: var(--bw) solid var(--main-secondary);
+            background-color: var(--main-primary);
+            border: var(--bw) solid var(--main-primary);
+            border-left: var(--bw) solid var(--sub-level-3);
             &:hover {
-                background-color: var(--sub-secondary);
+                background-color: var(--sub-primary);
             }
         }
         .primary-button.import-button {

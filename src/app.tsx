@@ -92,7 +92,7 @@ function App() {
     })));
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
-    const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
+    const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
     const [canvasKey, setCanvasKey] = useState(0);
     const [lightboxVisible, setLightboxVisible] = useState(false);
 
@@ -263,6 +263,7 @@ function App() {
                     card: decodedCard,
                     isPartial,
                 } = decodeCardWithCompatibility(cardData);
+                console.log('🚀 ~ App ~ decodedCard:', decodedCard);
 
                 if (isPartial) {
                     notification.info({
@@ -334,7 +335,7 @@ function App() {
         if (fromHotkey && !allowHotkey && !download) return;
 
         event?.preventDefault();
-        if (sourceType === 'internal') window.alert(language['prompt.export.offline-warning.message']);
+        if (sourceType === 'offline') window.alert(language['prompt.export.offline-warning.message']);
 
         try {
             const cardData = useCard.getState().card;

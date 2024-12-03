@@ -90,6 +90,7 @@ export const ygoCarderToCardMakerData = (card: Card): { result: CompatibleCard, 
         def,
         art,
         artData,
+        artSource,
         password,
         creator,
         attribute,
@@ -153,7 +154,7 @@ export const ygoCarderToCardMakerData = (card: Card): { result: CompatibleCard, 
         boxSize: 'Normal',
         rarity: 'Common',
         /** For other card maker, inline art data is preferred over art link */
-        image: (typeof artData === 'string' && artData.length > 0) ? artData : art,
+        image: artSource === 'offline' ? artData : art,
         ...rest,
     };
 
@@ -179,6 +180,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
         level,
         link,
         pendulum,
+        /** @todo Rarity compatible is possible? */
         rarity,
         serial,
         type,
@@ -189,6 +191,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
     const normalizedIcon = reverseCardIconMap[icon];
     const normalizedAttribute = reverseAttributeMap[attribute];
     const normalizedFrame = reverseFrameMap[layout];
+    const useImageData = isImageData(image);
 
     let isPartial = normalizedIcon === undefined
         || normalizedAttribute === undefined
@@ -206,8 +209,9 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
         frame: normalizedFrame ?? 'normal',
         star: level,
         typeAbility: type.split('/').map(entry => entry.trim()),
-        art: isImageData(image) ? '' : image,
-        artData: isImageData(image) ? image : '',
+        art: useImageData ? '' : image,
+        artData: useImageData ? image : '',
+        artSource: useImageData ? 'offline' : 'online',
         linkMap: [
             link?.topLeft === true ? '1' : null,
             link?.topCenter === true ? '2' : null,

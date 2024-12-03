@@ -105,6 +105,18 @@ export const useCardExport = ({
     }, [name]);
 
     useEffect(() => {
+        let saveBeforeReload = () => {
+            localStorage.setItem('card-data', JSON.stringify(currentCard));
+            localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+        };
+        window.addEventListener('beforeunload', saveBeforeReload);
+
+        return () => {
+            window.removeEventListener('beforeunload', saveBeforeReload);
+        };
+    });
+
+    useEffect(() => {
         let relevant = true;
         let confirmReload = (ev: Event) => {
             ev.preventDefault();
