@@ -22,6 +22,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     finish: 'fn',
     art: 'ar',
+    artData: 'ad',
     artFinish: 'afn',
     artCrop: {
         _newKey: 'arc',
@@ -100,6 +101,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     pendulumTextStyle: 'pts',
     statTextStyle: 'sts',
     typeTextStyle: 'tts',
+    externalInfo: 'ei',
 };
 const legacyCardFieldShortenMap = {
     passcode: 'pc',
@@ -122,7 +124,6 @@ const cardFieldShortenMap = {
 export const compressCardData = (
     card: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
-    serialize = true,
 ) => {
     const condensedCard: Record<string, any> = {};
     const normalizedCard = { ...card };
@@ -134,7 +135,7 @@ export const compressCardData = (
             const newKey = shortenMap[fieldKey]?._newKey;
 
             if (newKey) {
-                condensedCard[newKey] = compressCardData(fieldValue, shortenMap[fieldKey], false);
+                condensedCard[newKey] = compressCardData(fieldValue, shortenMap[fieldKey]);
             }
         } else {
             const newFieldKey = shortenMap[fieldKey];
@@ -143,7 +144,6 @@ export const compressCardData = (
         }
     });
 
-    if (serialize) return JSON.stringify(condensedCard);
     return condensedCard;
 };
 
@@ -196,17 +196,6 @@ export const legacyReverseCardDataShortener = (
     return fullCard;
 };
 
-export const rebuildCardData = (
-    card: Record<string, any> | string,
-    baseCard?: Card,
-) => {
-    const normalizedCard = typeof card === 'string'
-        ? JSON.parse(card)
-        : card;
-    const fullCard: Record<string, any> = decompressCardData(normalizedCard);
-
-    return migrateCardData(fullCard, baseCard);
-};
 export const legacyRebuildCardData = (
     card: Record<string, any> | string,
     isCondensed = false,

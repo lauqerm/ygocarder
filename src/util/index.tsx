@@ -33,10 +33,6 @@ export function insertUrlParam(key: string, value: string) {
     }
 };
 
-export const normalizedCardName = (name: string) => {
-    return name.replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1');
-};
-
 export const forceRefocus = (selector = '.radio-train-input-group') => {
     document.querySelector<HTMLElement>(selector)?.focus();
 };
@@ -85,9 +81,11 @@ export function mergeClass(...args: (boolean | string | undefined | null)[]) {
 }
 
 export * from './categorize';
+export * from './codec';
+export * from './codec-compatible';
 export * from './condenser';
 export * from './font';
 export * from './gradient';
 export * from './hook';
 export * from './navigation';
-export * from './codec';
+export * from './normalize';

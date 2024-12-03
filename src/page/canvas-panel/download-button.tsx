@@ -93,6 +93,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         {
             imageChangeCount,
             isInitializing,
+            language,
         },
     );
     const {

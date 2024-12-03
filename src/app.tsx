@@ -6,14 +6,17 @@ import './responsive.scss';
 import './reduce-color-motion.scss';
 import {
     CanvasConst,
+    Card,
     getDefaultCard,
 } from './model';
 import {
     compressCardData,
     forceRefocus,
     isMobileDevice,
+    normalizedCardName,
+    ygoCarderToCardMakerData,
 } from './util';
-import { CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef } from './page';
+import { CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef, ImportButton } from './page';
 import WebFont from 'webfontloader';
 import {
     changeCardFormat,
@@ -25,10 +28,10 @@ import {
     useOCGFont,
     useSetting,
 } from './service';
-import { Modal, notification, Tooltip } from 'antd';
+import { Dropdown, Menu, Modal, notification, Tooltip } from 'antd';
 import { TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
-import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
+import { ZoomInOutlined, ClearOutlined, DownloadOutlined } from '@ant-design/icons';
 import {
     ErrorAlert,
     LightboxButton,
@@ -241,21 +244,45 @@ function App() {
         setLightboxVisible(cur => typeof status === 'boolean' ? status : !cur);
     }, [allowHotkey]);
 
-    const importData = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
-        if (fromHotkey && !allowHotkey) return;
+    const importData = useCallback((
+        event?: { preventDefault: () => void },
+        fromHotkey = false,
+        directData: string | undefined = undefined,
+    ) => {
+        if (fromHotkey && !allowHotkey && !directData) return;
 
         event?.preventDefault();
-        const cardData = window.prompt(language['prompt.import.message']);
-        const setCard = useCard.getState().setCard;
+        try {
+            const cardData = directData
+                ? directData
+                : window.prompt(language['prompt.import.message']);
+            const setCard = useCard.getState().setCard;
 
-        if (cardData) {
-            const decodedCard = decodeCardWithCompatibility(cardData);
+            if (cardData) {
+                const {
+                    card: decodedCard,
+                    isPartial,
+                } = decodeCardWithCompatibility(cardData);
 
-            setCard(decodedCard);
-            setImageChangeCount(cnt => cnt + 1);
-            cardInputRef.current?.forceCardData(decodedCard);
-            /** Allow navigate input panel right away */
-            forceRefocus();
+                if (isPartial) {
+                    notification.info({
+                        message: language['service.decode.partial.message'],
+                        description: language['service.decode.partial.description'],
+                    });
+                }
+
+                setCard(decodedCard);
+                setImageChangeCount(cnt => cnt + 1);
+                cardInputRef.current?.forceCardData(decodedCard);
+                /** Allow navigate input panel right away */
+                forceRefocus();
+            }
+        } catch (e) {
+            console.error(e);
+            notification.error({
+                message: language['error.import.error.message'],
+                description: language['error.import.error.description'],
+            });
         }
     }, [allowHotkey, language]);
 
@@ -263,31 +290,94 @@ function App() {
         if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
-        const cardData = window.prompt(language['prompt.import.message']);
-        const setCard = useCard.getState().setCard;
+        try {
+            const cardData = window.prompt(language['prompt.import.message']);
+            const setCard = useCard.getState().setCard;
 
-        if (cardData) {
-            const decodedCard = decodeCardWithCompatibility(cardData, useCard.getState().card);
+            if (cardData) {
+                const {
+                    card: decodedCard,
+                    isPartial,
+                } = decodeCardWithCompatibility(cardData, useCard.getState().card);
 
-            setCard(decodedCard);
-            setImageChangeCount(cnt => cnt + 1);
-            cardInputRef.current?.forceCardData(decodedCard);
-            /** Allow navigate input panel right away */
-            forceRefocus();
+                if (isPartial) {
+                    notification.info({
+                        message: language['service.decode.partial.message'],
+                        description: language['service.decode.partial.description'],
+                    });
+                }
+
+                setCard(decodedCard);
+                setImageChangeCount(cnt => cnt + 1);
+                cardInputRef.current?.forceCardData(decodedCard);
+                /** Allow navigate input panel right away */
+                forceRefocus();
+            }
+        } catch (e) {
+            console.error(e);
+            notification.error({
+                message: language['error.import.error.message'],
+                description: language['error.import.error.description'],
+            });
         }
     }, [allowHotkey, language]);
 
-    const exportData = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
-        if (fromHotkey && !allowHotkey) return;
+    const exportData = useCallback((
+        event?: { preventDefault: () => void },
+        fromHotkey = false,
+        download = false,
+        converter: (card: Card) => ({ isPartial: boolean, result: Record<string, any> }) = card => ({
+            isPartial: false,
+            result: compressCardData(card),
+        }),
+    ) => {
+        if (fromHotkey && !allowHotkey && !download) return;
 
         event?.preventDefault();
         if (sourceType === 'internal') window.alert(language['prompt.export.offline-warning.message']);
-        const exportableCard = useCard.getState().card;
 
-        window.prompt(
-            language['prompt.export.message'],
-            `${compressCardData(exportableCard)}`,
-        );
+        try {
+            const cardData = useCard.getState().card;
+            const {
+                isPartial,
+                result: exportableCard,
+            } = converter(cardData);
+
+            if (isPartial) {
+                notification.info({
+                    message: language['service.decode.partial.message'],
+                    description: language['service.decode.partial.description'],
+                });
+            }
+            if (download) {
+                const blob = new Blob([`${JSON.stringify(exportableCard)}`], { type: 'application/json' });
+                const link = document.createElement('a');
+    
+                link.download = normalizedCardName(cardData.name);
+                link.href = window.URL.createObjectURL(blob);
+                link.dataset.downloadurl = ['application/json', link.download, link.href].join(':');
+    
+                const downloadEvent = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                });
+    
+                link.dispatchEvent(downloadEvent);
+                link.remove();
+            } else {
+                window.prompt(
+                    language['prompt.export.message'],
+                    `${JSON.stringify(exportableCard)}`,
+                );
+            }
+        } catch (e) {
+            console.error(e);
+            notification.error({
+                message: language['error.export.message'],
+                description: language['error.export.description'],
+            });
+        }
     }, [allowHotkey, language, sourceType]);
 
     const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
@@ -363,18 +453,47 @@ function App() {
                         <StyledDataButtonPanelContainer className="data-button-panel">
                             <div className="imexport">
                                 <Tooltip overlay={allowHotkey ? <>Ctrl-D / ⌘-D</> : null}>
-                                    <button onClick={exportData}>
+                                    <button className="primary-button export-button" onClick={exportData}>
                                         {language['button.export.label']}
                                     </button>
                                 </Tooltip>
-                                <Tooltip overlay={allowHotkey ? <div className="center">
-                                        <div>Ctrl-E / ⌘-E</div>
-                                        <div>Ctrl-G / ⌘-G{language['prompt.import.merge.tooltip']}</div>
-                                    </div> : null}>
-                                    <button onClick={importData}>
+                                <Dropdown 
+                                    overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
+                                        {[
+                                            {
+                                                label: language['button.export.for-ygocarder.label'],
+                                                converter: undefined,
+                                            },
+                                            {
+                                                label: language['button.export.for-other.label'],
+                                                converter: ygoCarderToCardMakerData,
+                                            },
+                                        ].map(({ converter, label }, index) => {
+                                            return <Menu.Item key={`${index}`}
+                                                onClick={() => exportData(undefined, false, true, converter)}
+                                            >
+                                                {label}
+                                            </Menu.Item>;
+                                        })}
+                                    </Menu>}
+                                >
+                                    <button className="secondary-button export-custom">
+                                        <DownloadOutlined />
+                                    </button>
+                                </Dropdown>
+                                <Tooltip
+                                    overlay={allowHotkey
+                                        ? <div className="center">
+                                            <div>Ctrl-E / ⌘-E</div>
+                                            <div>Ctrl-G / ⌘-G{language['prompt.import.merge.tooltip']}</div>
+                                        </div>
+                                        : null}
+                                >
+                                    <button className="primary-button import-button" onClick={importData}>
                                         {language['button.import.label']}
                                     </button>
                                 </Tooltip>
+                                <ImportButton importData={importData} language={language} />
                             </div>
                             <DownloadButton ref={downloadButtonRef}
                                 canvasMap={canvasMap}

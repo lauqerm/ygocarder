@@ -19,9 +19,10 @@ export const getDefaultCard = () => ({
     attribute: 'LIGHT',
     subFamily: NO_ICON,
     cardIcon: 'auto',
-    star: 6,
+    star: 6 as number | string,
     starAlignment: 'auto',
     art: 'https://i.imgur.com/h5kXZeC.png',
+    artData: '',
     artCrop: {
         x: 0,
         y: 4,
@@ -78,6 +79,8 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     typeTextStyle: getDefaultTextStyle(),
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
+    /** Extra information come from different card source such as ygopro custom card maker */
+    externalInfo: {} as Record<string, any>,
 });
 export const getEmptyCard = (): Card => ({
     version: 0,
@@ -96,6 +99,7 @@ export const getEmptyCard = (): Card => ({
     star: 6,
     starAlignment: 'auto',
     art: 'https://i.imgur.com/jjtCuG5.png',
+    artData: '',
     artCrop: {
         x: 0,
         y: 4,
@@ -143,6 +147,7 @@ export const getEmptyCard = (): Card => ({
     typeTextStyle: getDefaultTextStyle(),
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
+    externalInfo: {},
 });
 
 export const OpacityList = [
@@ -185,8 +190,8 @@ export const DefaultColorList = [
     '#00FF00', '#008000', '#00FFFF', '#0000FF', '#800080', '#FF00FF',
 ];
 
-export * from './icon';
 export * from './canvas';
+export * from './compatible-card';
 export * from './coordinate-data';
 export * from './dictionary';
 export * from './foil-finish';
@@ -195,6 +200,7 @@ export * from './font-data-name';
 export * from './font-data-other';
 export * from './format';
 export * from './frame';
+export * from './icon';
 export * from './link';
 export * from './name-preset';
 export * from './regex';

@@ -140,7 +140,9 @@ export const useCardExport = ({
 
                         await exportRef.current.currentPipeline;
                         if (relevant) {
-                            const condensedCard = compressCardData(currentCard);
+                            /** Never include art data here, it will easily exceed the limit of url length */
+                            const normalizedCard = { ...currentCard, artData: '' };
+                            const condensedCard = JSON.stringify(compressCardData(normalizedCard));
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
                             document.getElementById('export-canvas')?.classList.add('js-export-available');

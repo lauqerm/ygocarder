@@ -1,0 +1,1 @@
+export const isImageData = (data: any) => typeof data === 'string' && data.startsWith('data:image/');

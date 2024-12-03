@@ -46,6 +46,8 @@ import {
 } from 'src/util';
 import { useCard } from '../use-card';
 import { prepareStyle } from './prepare-style';
+import { LanguageDataDictionary } from '../use-i18n';
+import { notification } from 'antd';
 
 const {
     height: CanvasHeight,
@@ -55,9 +57,10 @@ type DrawerProp = {
     imageChangeCount: number,
     pendulumSize?: 'medium',
     isInitializing: boolean,
+    language: LanguageDataDictionary,
 };
 /**
- * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline`.
+ * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline` instead of immediately draw their part, these operations will be iterated sequentially by another effect when export.
  */
 export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanvas, props: DrawerProp) => {
     const {
@@ -204,6 +207,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isInitializing,
         imageChangeCount,
         pendulumSize = 'medium',
+        language,
     } = props;
     const readyToDraw = active && isInitializing === false;
 
@@ -837,7 +841,17 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         return instructor();
                     }
                     return Promise.resolve();
-                }));
+                })).catch(e => {
+                    console.error(e);
+                    /** Ensure it does not fire repeatedly */
+                    const key = 'fail-to-draw-notification';
+                    notification.close(key);
+                    notification.error({
+                        key,
+                        message: language['error.draw.error.message'],
+                        description: language['error.draw.error.description'],
+                    });
+                });
             // await generateLayer(frameCanvas, exportCtx);
             const artworkCanvas = artworkCanvasRef.current;
             if (artworkCanvas && exportCtx) {
@@ -872,6 +886,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             lightboxCanvasRef.current?.getContext('2d')?.drawImage(canvasRef, 0, 0);
         }
     }, [
+        language,
         artworkCanvasRef, 
         cardIconCanvasRef, 
         creatorCanvasRef, 

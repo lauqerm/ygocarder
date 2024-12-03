@@ -1,19 +1,39 @@
-import { Card, getDefaultCard, getEmptyCard } from 'src/model';
+import { Card, CompatibleCard, getDefaultCard, getEmptyCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
-import { rebuildCardData, migrateCardData, legacyRebuildCardData } from 'src/util';
+import { migrateCardData, legacyRebuildCardData, isYgoCarderCard, isCompactYgoCarderCard, decompressCardData, cardMakerToYgoCarderData } from 'src/util';
 import { notification } from 'antd';
 import { getLanguage } from './use-i18n';
 
 export const decodeCardWithCompatibility = (
     cardData: Record<string, any> | string | null,
     baseCard?: Card,
-): Card => {
+): {
+    card: Card,
+    isPartial: boolean,
+} => {
     let decodedCard = getEmptyCard();
-    if (!cardData) return decodedCard;
+    let isPartial = false;
+    if (!cardData) return { isPartial, card: decodedCard };
     try {
-        decodedCard = rebuildCardData(cardData, baseCard);
+        const normalizedCard = typeof cardData === 'string'
+            ? JSON.parse(cardData) as Record<string, any>
+            : cardData;
+
+        if (isYgoCarderCard(normalizedCard)) {
+            decodedCard = migrateCardData(normalizedCard, baseCard);
+        }
+        else if (isCompactYgoCarderCard(normalizedCard)) {
+            const fullCard: Record<string, any> = decompressCardData(normalizedCard);
+    
+            decodedCard = migrateCardData(fullCard, baseCard);
+        }
+        else {
+            const { isPartial: isPartialCard, result } = cardMakerToYgoCarderData(normalizedCard as CompatibleCard);
+            isPartial = isPartialCard;
+            decodedCard = result;
+        }
     } catch (e) {
         console.error('decodedCard', cardData, e);
         try {
@@ -30,11 +50,16 @@ export const decodeCardWithCompatibility = (
             });
         }
     }
-    return decodedCard;
+    return {
+        isPartial,
+        card: decodedCard,
+    };
 };
 
 /**
  * Acquire saved card when the session is just initialized. URL source is preferred over local storage source.
+ * 
+ * @todo If local storage soure has art data, should we merge it into URL source? Is it too confusing.
  */
 export const retrieveSavedCard = () => {
     try {
@@ -43,7 +68,7 @@ export const retrieveSavedCard = () => {
 
         const cardURLData = (new URLSearchParams(window.location.search)).get('data');
         if (cardURLData) {
-            return decodeCardWithCompatibility(cardURLData);
+            return decodeCardWithCompatibility(cardURLData).card;
         } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
             return migrateCardData(JSON.parse(localCardData)) as Card;
         }

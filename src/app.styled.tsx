@@ -59,19 +59,32 @@ export const StyledDataButtonPanelContainer = styled.div`
         position: relative;
     }
     .imexport {
-        flex: 0 0 210px;
+        flex: 0 0 270px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: var(--spacing);
+        grid-template-columns: 1fr max-content 1fr max-content;
         button {
+            align-content: center;
             font-size: var(--fs);
             background-color: var(--main-tertiary);
             border: var(--bw) solid var(--sub-tertiary);
-            box-shadow: var(--bs-button);
             &:hover {
                 background-color: var(--sub-tertiary);
                 box-shadow: none;
             }
+        }
+        .primary-button {
+            border-radius: var(--br-lg) 0 0 var(--br-lg);
+        }
+        .secondary-button {
+            border-radius: 0 var(--br-lg) var(--br-lg) 0;
+            background-color: var(--main-secondary);
+            border: var(--bw) solid var(--main-secondary);
+            &:hover {
+                background-color: var(--sub-secondary);
+            }
+        }
+        .primary-button.import-button {
+            margin-left: var(--spacing);
         }
     }
 `;
