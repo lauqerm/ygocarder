@@ -76,6 +76,14 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
                 { artist1, artist2, artist3, artist4 },
             );
         },
+        'converter.header.warning.label': (
+            maxAmount: number,
+        ) => {
+            return applyTemplateNode(
+                getDictionaryEntry('converter.header.warning.label'),
+                { maxAmount },
+            );
+        },
         'guide.format.introduction': (settingIcon: React.ReactNode) => {
             return applyTemplateNode(
                 getDictionaryEntry('guide.format.introduction'),

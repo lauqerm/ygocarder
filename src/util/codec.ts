@@ -255,7 +255,9 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
     if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
     if ((migratedCard.backgroundSource ?? '') === '') migratedCard.backgroundSource = 'online';
-    if (migratedCard.hasBackground == null && (migratedCard.background || migratedCard.opacity.baseFill)) {
+    if (migratedCard.hasBackground == null
+        && (migratedCard.background || migratedCard.backgroundData || migratedCard.opacity.baseFill)
+    ) {
         migratedCard.hasBackground = true;
     }
 

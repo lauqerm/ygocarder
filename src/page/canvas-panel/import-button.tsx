@@ -3,12 +3,8 @@ import { useRef } from 'react';
 import styled from 'styled-components';
 import { UploadOutlined } from '@ant-design/icons';
 import { LanguageDataDictionary } from 'src/service';
+import { StyledActionIconButton } from './styled';
 
-const StyledImportButton = styled.button`
-    input {
-        display: none;
-    }  
-`;
 export type ImportButton = {
     language: LanguageDataDictionary,
     importData: (
@@ -27,7 +23,7 @@ export const ImportButton = ({
     const ygoCarderImportInputRef = useRef<HTMLInputElement>(null);
 
     return <Tooltip overlay={language['button.import.tooltip']}>
-        <StyledImportButton
+        <StyledActionIconButton
             className="secondary-button import-custom"
             onClick={() => {
                 const target = document.getElementById(id);
@@ -62,7 +58,7 @@ export const ImportButton = ({
                 }}
             />
             <UploadOutlined />
-        </StyledImportButton>
+        </StyledActionIconButton>
     </Tooltip>;
 };
 

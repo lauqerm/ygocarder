@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { StyledActionIconButton } from './page';
 
 export const StyledDataButtonPanelContainer = styled.div`
     display: flex;
@@ -59,30 +60,22 @@ export const StyledDataButtonPanelContainer = styled.div`
         position: relative;
     }
     .imexport {
-        flex: 0 0 270px;
+        flex: 0 0 200px;
         display: grid;
         grid-template-columns: 1fr max-content 1fr max-content;
-        button {
+        .primary-button {
             align-content: center;
             font-size: var(--fs);
             background-color: var(--main-tertiary);
             border: var(--bw) solid var(--sub-tertiary);
+            border-radius: var(--br-lg) 0 0 var(--br-lg);
             &:hover {
                 background-color: var(--sub-tertiary);
                 box-shadow: none;
             }
         }
-        .primary-button {
-            border-radius: var(--br-lg) 0 0 var(--br-lg);
-        }
-        .secondary-button {
+        ${StyledActionIconButton} {
             border-radius: 0 var(--br-lg) var(--br-lg) 0;
-            background-color: var(--main-primary);
-            border: var(--bw) solid var(--main-primary);
-            border-left: var(--bw) solid var(--sub-level-3);
-            &:hover {
-                background-color: var(--sub-primary);
-            }
         }
         .primary-button.import-button {
             margin-left: var(--spacing);

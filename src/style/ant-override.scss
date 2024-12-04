@@ -267,6 +267,25 @@ button.ant-btn {
     display: inline-block;
 }
 
+.ant-modal {
+    .ant-modal-header {
+        background-color: var(--main-level-4);
+        padding: var(--spacing-lg);
+        .ant-modal-title {
+            color: var(--color);
+            font-size: var(--fs-lg);
+        }
+        .ant-modal-close {
+            color: var(--color);
+            &:hover {
+                color: var(--color-heavy);
+            }
+        }
+    }
+    .ant-modal-close-x {
+        line-height: 53px; /** Alignment */
+    }
+}
 .ant-drawer {
     .ant-drawer-header {
         background-color: var(--main-level-4);

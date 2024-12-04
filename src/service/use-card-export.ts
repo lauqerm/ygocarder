@@ -153,7 +153,7 @@ export const useCardExport = ({
                         await exportRef.current.currentPipeline;
                         if (relevant) {
                             /** Never include art data here, it will easily exceed the limit of url length */
-                            const normalizedCard = { ...currentCard, artData: '' };
+                            const normalizedCard = { ...currentCard, artData: '', backgroundData: '' };
                             const condensedCard = JSON.stringify(compressCardData(normalizedCard));
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 

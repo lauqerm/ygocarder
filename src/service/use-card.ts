@@ -2,7 +2,7 @@ import { Card, CompatibleCard, getDefaultCard, getEmptyCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
-import { migrateCardData, legacyRebuildCardData, isYgoCarderCard, isCompactYgoCarderCard, decompressCardData, cardMakerToYgoCarderData } from 'src/util';
+import { migrateCardData, legacyRebuildCardData, checkYgoCarderCard, checkCompactYgoCarderCard, decompressCardData, cardMakerToYgoCarderData } from 'src/util';
 import { notification } from 'antd';
 import { getLanguage } from './use-i18n';
 
@@ -21,10 +21,10 @@ export const decodeCardWithCompatibility = (
             ? JSON.parse(cardData) as Record<string, any>
             : cardData;
 
-        if (isYgoCarderCard(normalizedCard)) {
+        if (checkYgoCarderCard(normalizedCard)) {
             decodedCard = migrateCardData(normalizedCard, baseCard);
         }
-        else if (isCompactYgoCarderCard(normalizedCard)) {
+        else if (checkCompactYgoCarderCard(normalizedCard)) {
             const fullCard: Record<string, any> = decompressCardData(normalizedCard);
     
             decodedCard = migrateCardData(fullCard, baseCard);
@@ -78,12 +78,16 @@ export const retrieveSavedCard = (): Card => {
              *   * If they close multiple tab, and want to re-open the one that is not the latest tab, we have no luck here.
              */
             const { card } = decodeCardWithCompatibility(urlCardData);
-            if (card.artSource === 'offline') return {
-                ...card,
-                artData: localCardData?.artData ?? '',
-            };
+            const { artSource, backgroundSource } = card;
+            if (artSource === 'online' && backgroundSource === 'online') {
+                return decodeCardWithCompatibility(urlCardData).card;
+            }
 
-            return decodeCardWithCompatibility(urlCardData).card;
+            const combinedCard = { ...card };
+            if (artSource === 'offline') combinedCard.artData = localCardData?.artData ?? '';
+            if (backgroundSource === 'offline') combinedCard.backgroundData = localCardData?.backgroundData ?? '';
+
+            return combinedCard;
         } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
             return localCardData;
         }

@@ -2,7 +2,7 @@ import { Card, CompatibleCard, getDefaultCard, NO_ATTRIBUTE, NO_ICON } from 'src
 import { normalizedCardEffect, normalizedCardName } from './normalize';
 import { isImageData } from './other';
 
-export const isYgoCarderCard = (object: Record<string, any>): object is Card => {
+export const checkYgoCarderCard = (object: Record<string, any>): object is Card => {
     try {
         /** No need to check the whole object (we mainly want to distinguish this with ygopro structure), so just need a few presentative fields */
         return 'isFirstEdition' in object
@@ -13,7 +13,7 @@ export const isYgoCarderCard = (object: Record<string, any>): object is Card => 
         return false;
     }
 };
-export const isCompactYgoCarderCard = (object: Record<string, any>): object is Card => {
+export const checkCompactYgoCarderCard = (object: Record<string, any>): object is Card => {
     try {
         return 'ife' in object
             && 'ar' in object

@@ -465,7 +465,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         };
                         setError('Image error');
                         setLoading(false);
-                        if (sourceType === 'online' && (externalSource ?? '') === '' && receivingCanvas) {
+                        if (!receivingCanvas) onTainted();
+                        else if (
+                            (sourceType === 'online' && (externalSource ?? '') === '')
+                            || (sourceType === 'offline' && (internalSource ?? '') === '')
+                        ) {
                             const { width, height } = receivingCanvas;
                             const ctx = receivingCanvas.getContext('2d');
 

@@ -94,3 +94,4 @@ export * from './gradient';
 export * from './hook';
 export * from './navigation';
 export * from './normalize';
+export * from './other';

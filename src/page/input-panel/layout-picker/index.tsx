@@ -248,9 +248,9 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     }, []);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ background, backgroundCrop, ...newValue }) => {
-            if (typeof background === 'string' && backgroundCrop) {
-                backgroundInputRef.current?.setValue({ background, backgroundCrop });
+        setValue: ({ background, backgroundCrop, backgroundData, backgroundSource, ...newValue }) => {
+            if ((typeof background === 'string' || typeof backgroundData === 'string') && backgroundCrop) {
+                backgroundInputRef.current?.setValue({ background, backgroundCrop, backgroundData, backgroundSource });
             }
             for (const key in newValue) {
                 if (newValue[key as keyof CardOpacity] !== opacity[key as keyof CardOpacity]) {

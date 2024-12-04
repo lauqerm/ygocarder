@@ -11,12 +11,13 @@ import {
 } from './model';
 import {
     compressCardData,
+    downloadBlob,
     forceRefocus,
     isMobileDevice,
     normalizedCardName,
     ygoCarderToCardMakerData,
 } from './util';
-import { CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef, ImportButton } from './page';
+import { BatchConverter, CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef, ImportButton, StyledActionIconButton } from './page';
 import WebFont from 'webfontloader';
 import {
     changeCardFormat,
@@ -334,7 +335,9 @@ function App() {
         if (fromHotkey && !allowHotkey && !download) return;
 
         event?.preventDefault();
-        if (sourceType === 'offline' && download === false) window.alert(language['prompt.export.offline-warning.message']);
+        if (sourceType === 'offline' && download === false) {
+            window.alert(language['prompt.export.offline-warning.message']);
+        }
 
         try {
             const cardData = useCard.getState().card;
@@ -351,20 +354,11 @@ function App() {
             }
             if (download) {
                 const blob = new Blob([`${JSON.stringify(exportableCard)}`], { type: 'application/json' });
-                const link = document.createElement('a');
-    
-                link.download = normalizedCardName(cardData.name);
-                link.href = window.URL.createObjectURL(blob);
-                link.dataset.downloadurl = ['application/json', link.download, link.href].join(':');
-    
-                const downloadEvent = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                });
-    
-                link.dispatchEvent(downloadEvent);
-                link.remove();
+                downloadBlob(
+                    normalizedCardName(cardData.name),
+                    blob,
+                    'application/json',
+                );
             } else {
                 window.prompt(
                     language['prompt.export.message'],
@@ -477,9 +471,9 @@ function App() {
                                         })}
                                     </Menu>}
                                 >
-                                    <button className="secondary-button export-custom">
+                                    <StyledActionIconButton className="secondary-button export-custom">
                                         <DownloadOutlined />
-                                    </button>
+                                    </StyledActionIconButton>
                                 </Dropdown>
                                 <Tooltip
                                     overlay={allowHotkey
@@ -489,12 +483,16 @@ function App() {
                                         </div>
                                         : null}
                                 >
-                                    <button className="primary-button import-button" onClick={importData}>
+                                    <button
+                                        className="primary-button import-button"
+                                        onClick={importData}
+                                    >
                                         {language['button.import.label']}
                                     </button>
                                 </Tooltip>
                                 <ImportButton importData={importData} language={language} />
                             </div>
+                            <BatchConverter language={language} />
                             <DownloadButton ref={downloadButtonRef}
                                 canvasMap={canvasMap}
                                 imageChangeCount={imageChangeCount}

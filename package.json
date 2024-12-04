@@ -10,6 +10,7 @@
     "@types/lodash.throttle": "^4.1.9",
     "antd": "4.9.4",
     "html2canvas": "^1.0.0-rc.7",
+    "jszip": "^3.10.1",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.0.8",
     "ramda": "^0.27.1",
@@ -67,6 +68,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "7.21.0-placeholder-for-preset-env.2",
     "@types/jest": "^26.0.19",
+    "@types/jszip": "^3.4.1",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^14.14.16",
     "@types/ramda": "^0.27.34",

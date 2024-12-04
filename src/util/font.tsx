@@ -30,9 +30,15 @@ export const createFontGetter = (props?: {
             return this;
         },
         setSize(nextSize) {
-            const calculatedSize = typeof nextSize === 'function' ? nextSize(sizeAsNumber) : nextSize;
-            size = typeof calculatedSize === 'number' ? `${calculatedSize}px` : calculatedSize;
-            sizeAsNumber = typeof calculatedSize === 'number' ? calculatedSize : parseFloat(calculatedSize.replaceAll('px', ''));
+            const calculatedSize = typeof nextSize === 'function'
+                ? nextSize(sizeAsNumber)
+                : nextSize;
+            size = typeof calculatedSize === 'number'
+                ? `${calculatedSize}px`
+                : calculatedSize;
+            sizeAsNumber = typeof calculatedSize === 'number'
+                ? calculatedSize
+                : parseFloat(calculatedSize.replaceAll('px', ''));
             return this;
         },
         setFamily(nextFamily) {
