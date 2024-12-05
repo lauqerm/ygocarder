@@ -177,6 +177,7 @@ export type OpacityPickerRef = {
         backgroundCrop?: Partial<ReactCrop.Crop>,
         backgroundType?: BackgroundType,
     }) => void,
+    isLoading: () => boolean,
 };
 export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     receivingCanvas,
@@ -248,6 +249,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     }, []);
 
     useImperativeHandle(ref, () => ({
+        isLoading: () => backgroundInputRef.current?.isLoading() ?? false,
         setValue: ({ background, backgroundCrop, backgroundData, backgroundSource, ...newValue }) => {
             if ((typeof background === 'string' || typeof backgroundData === 'string') && backgroundCrop) {
                 backgroundInputRef.current?.setValue({ background, backgroundCrop, backgroundData, backgroundSource });

@@ -341,6 +341,10 @@ function App() {
         if (sourceType === 'offline' && download === false) {
             window.alert(language['prompt.export.offline-warning.message']);
         }
+        if (sourceType === 'online' && cardInputRef.current?.isLoading()) {
+            window.alert(language['error.export.image-loading.message']);
+            return;
+        }
 
         try {
             const cardData = useCard.getState().card;
@@ -478,6 +482,7 @@ function App() {
                                         <DownloadOutlined />
                                     </StyledActionIconButton>
                                 </Dropdown>
+                                <div />
                                 <Tooltip
                                     overlay={allowHotkey
                                         ? <div className="center">

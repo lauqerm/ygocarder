@@ -44,6 +44,7 @@
         "error.draw.error.message": "Fail to draw",
         "error.export.description": "Card data may have errors or incomplete.",
         "error.export.message": "Export failed",
+        "error.export.image-loading.message": "Image is still loading, you should not export your card yet.",
         "error.import.error.description": "Card data may have errors or incomplete.",
         "error.import.error.message": "Import failed",
         "error.load.font.all-ocg": "OCGカードのデータを読み込めませんでした",

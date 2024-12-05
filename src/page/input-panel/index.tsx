@@ -54,6 +54,7 @@ import './input-panel.scss';
 
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
+    isLoading: () => boolean,
 }
 export type CardInputPanel = {
     artworkCanvas: ImageInputGroup['receivingCanvas'],
@@ -164,6 +165,8 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
+        isLoading: () => (imageInputGroupRef.current?.isLoading() ?? false)
+            || (layoutPickerRef.current?.isLoading() ?? false),
         forceCardData: card => {
             setStylePickerResetCount(cnt => cnt + 1);
             const {

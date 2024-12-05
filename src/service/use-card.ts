@@ -36,13 +36,11 @@ export const decodeCard = (
 
         if (checkYgoCarderCard(normalizedCard)) {
             decodedCard = migrateCardData(normalizedCard, baseCard);
-        }
-        else if (checkCompactYgoCarderCard(normalizedCard)) {
+        } else if (checkCompactYgoCarderCard(normalizedCard)) {
             const fullCard: Record<string, any> = decompressCardData(normalizedCard);
     
             decodedCard = migrateCardData(fullCard, baseCard);
-        }
-        else {
+        } else {
             const { isPartial: isPartialCard, result } = cardMakerToYgoCarderData(normalizedCard as CompatibleCard);
             isPartial = isPartialCard;
             decodedCard = result;

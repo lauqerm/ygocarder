@@ -24,6 +24,7 @@ export type ImageInputGroupRef = {
         artSource?: string,
         artCrop?: Partial<ReactCrop.Crop>,
     }) => void,
+    isLoading: () => boolean,
 };
 export type ImageInputGroup = {
     isLink: boolean,
@@ -85,6 +86,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     }, [onCropChange, setCard]);
 
     useImperativeHandle(ref, () => ({
+        isLoading: () => imageCropperRef.current?.isLoading() ?? false,
         setValue: ({ art, artCrop, artData, artSource }) => {
             if (artSource === 'offline') {
                 if (typeof artData === 'string' && artCrop) {

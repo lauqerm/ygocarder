@@ -44,6 +44,7 @@
         "error.draw.error.message": "Không vẽ được thẻ",
         "error.export.description": "Dữ liệu có thể bị sai hoặc không đầy đủ.",
         "error.export.message": "Xuất dữ liệu thất bại",
+        "error.export.image-loading.message": "Nên chờ đến khi ảnh được tải về hoàn tất trước khi xuất dữ liệu.",
         "error.import.error.description": "Dữ liệu có thể bị sai hoặc không đầy đủ.",
         "error.import.error.message": "Nhập dữ liệu thất bại",
         "error.load.font.all-ocg": "Không tải được dữ liệu cho thẻ OCG",

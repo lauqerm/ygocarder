@@ -62,7 +62,7 @@ export const StyledDataButtonPanelContainer = styled.div`
     .imexport {
         flex: 0 0 200px;
         display: grid;
-        grid-template-columns: 1fr max-content 1fr max-content;
+        grid-template-columns: 1fr max-content var(--spacing) 1fr max-content;
         .primary-button {
             align-content: center;
             font-size: var(--fs);
@@ -76,9 +76,6 @@ export const StyledDataButtonPanelContainer = styled.div`
         }
         ${StyledActionIconButton} {
             border-radius: 0 var(--br-lg) var(--br-lg) 0;
-        }
-        .primary-button.import-button {
-            margin-left: var(--spacing);
         }
     }
 `;

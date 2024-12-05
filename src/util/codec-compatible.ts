@@ -15,8 +15,8 @@ export const checkYgoCarderCard = (object: Record<string, any>): object is Card 
     try {
         /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
         return 'isFirstEdition' in object
-            && 'art' in object
-            && 'background' in object;
+            && 'typeAbility' in object
+            && 'setId' in object;
     } catch (e) {
         console.error(e);
         return false;
@@ -25,8 +25,8 @@ export const checkYgoCarderCard = (object: Record<string, any>): object is Card 
 export const checkCompactYgoCarderCard = (object: Record<string, any>): object is Card => {
     try {
         return 'ife' in object
-            && 'ar' in object
-            && 'bg' in object;
+            && 'ta' in object
+            && 'si' in object;
     } catch (e) {
         console.error(e);
         return false;

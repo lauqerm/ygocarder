@@ -32,6 +32,7 @@ export type BackgroundInputGroupRef = {
         backgroundSource?: string,
         backgroundCrop?: Partial<ReactCrop.Crop>,
     }) => void,
+    isLoading: () => boolean,
 };
 export type BackgroundInputGroup = {
     children?: React.ReactNode,
@@ -81,6 +82,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
     }, [onCropChange, setCard]);
 
     useImperativeHandle(ref, () => ({
+        isLoading: () => imageCropperRef.current?.isLoading() ?? false,
         hasImage: () => imageCropperRef.current?.hasImage() ?? false,
         setValue: ({ background, backgroundCrop, backgroundData, backgroundSource }) => {
             if (backgroundSource === 'offline') {

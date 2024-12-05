@@ -82,6 +82,7 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 };
 
 export type ImageCropperRef = {
+    isLoading: () => boolean,
     hasImage: () => boolean,
     forceSource: (type: 'online' | 'offline', artLinkOrData: string, cropInfo: Partial<ReactCrop.Crop>) => void,
 }
@@ -346,6 +347,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
     const pendingId = useRef(0);
     useImperativeHandle(forwardedRef, () => ({
+        isLoading: () => isLoading,
         hasImage: () => (typeof internalSource === 'string' && internalSource.length > 0 && sourceType === 'offline')
             || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'online'),
         forceSource: (type: 'online' | 'offline', source, cropInfo) => {
