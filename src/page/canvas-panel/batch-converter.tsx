@@ -1,7 +1,7 @@
-import { Modal, notification } from 'antd';
+import { Modal, notification, Tooltip } from 'antd';
 import { StyledActionIconButton } from './styled';
 import { RetweetOutlined, ArrowRightOutlined, CloseOutlined } from '@ant-design/icons';
-import { decodeCardWithCompatibility, LanguageDataDictionary } from 'src/service';
+import { decodeCard, LanguageDataDictionary } from 'src/service';
 import styled from 'styled-components';
 import { useState } from 'react';
 import {
@@ -97,8 +97,8 @@ export type BatchConverter = {
 export const BatchConverter = ({
     language,
 }: BatchConverter) => {
-    const fileLimit = 5;
-    const [visible, setVisible] = useState(true);
+    const fileLimit = 50;
+    const [visible, setVisible] = useState(false);
     const [isRunning, setRunning] = useState(false);
     const [isReverse, setReverse] = useState(false);
     const [fileList, setFileList] = useState<{ file: File, name: string }[]>([]);
@@ -131,20 +131,24 @@ export const BatchConverter = ({
                                     return;
                                 }
 
-                                const resultObject = JSON.parse(result);
-                                const isYgoCarderCard = checkYgoCarderCard(resultObject);
-                                const isCompactYgoCarderCard = checkCompactYgoCarderCard(resultObject);
+                                let resultObject = JSON.parse(result);
+                                /** Ensure compact mode, remember we only accept non-compress card data as a quality-of-life. Normal card data should always be in compact mode */
+                                if (checkYgoCarderCard(resultObject)) {
+                                    resultObject = compressCardData(resultObject);
+                                }
+
+                                const isYgoCarderCard = checkCompactYgoCarderCard(resultObject);
                                 let convertedCard: Record<string, any> | null = null;
                                 if (isReverse) {
                                     /** Ygocarder into other vendor */
                                     convertedCard = isYgoCarderCard
-                                        ? ygoCarderToCardMakerData(resultObject).result
+                                        ? ygoCarderToCardMakerData(decodeCard(resultObject).card).result
                                         : resultObject;
                                 } else {
                                     /** Other vendor into ygocarder */
                                     convertedCard = isYgoCarderCard
                                         ? resultObject
-                                        : compressCardData(decodeCardWithCompatibility(resultObject).card);
+                                        : compressCardData(decodeCard(resultObject).card);
                                 }
 
                                 if (!convertedCard) {
@@ -186,7 +190,7 @@ export const BatchConverter = ({
             }}
         >
             <div className="controller">
-                <label>ygopro / duelingnexus / neocardmaker</label>
+                <label>YGOPro / DuelingNexus / NeoCardMaker</label>
                 <div>
                     <button
                         className={mergeClass('toggle-button', isReverse ? 'reverse' : '')}
@@ -243,11 +247,13 @@ export const BatchConverter = ({
                 </div>
             </div>
         </StyledBatchConverterModal>
-        <StyledActionIconButton
-            className="batch-converter"
-            onClick={() => setVisible(true)}
-        >
-            <RetweetOutlined />
-        </StyledActionIconButton>
+        <Tooltip overlay={language['converter.header.label']}>
+            <StyledActionIconButton
+                className="batch-converter"
+                onClick={() => setVisible(true)}
+            >
+                <RetweetOutlined />
+            </StyledActionIconButton>
+        </Tooltip>
     </>;
 };

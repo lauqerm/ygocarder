@@ -1,5 +1,5 @@
 import { Input, Radio, Tooltip } from 'antd';
-import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
@@ -103,7 +103,7 @@ export type ImageCropper = {
     onTainted: () => void,
     onMaxSizeExceeded: (size: number) => void,
 }
-export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
+export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     title,
     backgroundColor,
     className,

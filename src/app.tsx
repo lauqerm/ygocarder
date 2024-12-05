@@ -23,7 +23,7 @@ import {
     changeCardFormat,
     getLanguage,
     retrieveSavedCard,
-    decodeCardWithCompatibility,
+    decodeCard,
     useCard,
     useI18N,
     useOCGFont,
@@ -263,7 +263,7 @@ function App() {
                 const {
                     card: decodedCard,
                     isPartial,
-                } = decodeCardWithCompatibility(cardData);
+                } = decodeCard(cardData);
 
                 if (isPartial) {
                     notification.info({
@@ -299,7 +299,7 @@ function App() {
                 const {
                     card: decodedCard,
                     isPartial,
-                } = decodeCardWithCompatibility(cardData, useCard.getState().card);
+                } = decodeCard(cardData, useCard.getState().card);
 
                 if (isPartial) {
                     notification.info({
@@ -327,7 +327,10 @@ function App() {
         event?: { preventDefault: () => void },
         fromHotkey = false,
         download = false,
-        converter: (card: Card) => ({ isPartial: boolean, result: Record<string, any> }) = card => ({
+        converter: (
+            card: Card,
+            artRef: HTMLCanvasElement | null,
+        ) => ({ isPartial: boolean, result: Record<string, any> }) = card => ({
             isPartial: false,
             result: compressCardData(card),
         }),
@@ -344,7 +347,7 @@ function App() {
             const {
                 isPartial,
                 result: exportableCard,
-            } = converter(cardData);
+            } = converter(cardData, artworkCanvasRef.current);
 
             if (isPartial) {
                 notification.info({

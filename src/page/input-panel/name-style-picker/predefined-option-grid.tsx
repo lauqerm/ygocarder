@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyledPredefinedContainer, StyledPredefinedOption } from './style-picker.styled';
 import { NameStyle, PresetNameStyle, PresetNameStyleList } from 'src/model';
 import { getNavigationProps, mergeClass } from 'src/util';
+import { Tooltip } from 'antd';
 
 export type PredefinedOptionGridRef = {
     focus: () => void,
@@ -58,13 +59,13 @@ export const PredefinedOptionGrid = forwardRef<PredefinedOptionGridRef, Predefin
                 }}
             >
                 {/** Tooltip currently is not really helpful, and gives poor UX */}
-                {/* <Tooltip title={label} placement="right"> */}
+                <Tooltip title={label} placement="right">
                 <img
                     className="preset-preview"
                     src={`${process.env.PUBLIC_URL}/${image}`}
                     alt={label}
                 />
-                {/* </Tooltip> */}
+                </Tooltip>
             </StyledPredefinedOption>;
         })}
     </StyledPredefinedContainer>;

@@ -36,12 +36,12 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
         /** Expectation: Odd slots belong to actual string, even slots belong to template node, we use index base */
         const splittedString = template.split(splitRegex);
 
-        return <>
+        return <React.Fragment key={template}>
             {splittedString.map((entry, index) => {
                 if (index % 2 === 0) return <React.Fragment key={`${entry}-${index}`}>{entry}</React.Fragment>;
                 return nodeMap[entry];
             })}
-        </>;
+        </React.Fragment>;
     };
     const specializedDictionary = {
         'error.load.font.tcg': (familyName: string) => {

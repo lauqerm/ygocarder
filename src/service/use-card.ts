@@ -2,11 +2,24 @@ import { Card, CompatibleCard, getDefaultCard, getEmptyCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
-import { migrateCardData, legacyRebuildCardData, checkYgoCarderCard, checkCompactYgoCarderCard, decompressCardData, cardMakerToYgoCarderData } from 'src/util';
+import {
+    migrateCardData,
+    legacyRebuildCardData,
+    checkYgoCarderCard,
+    checkCompactYgoCarderCard,
+    decompressCardData,
+    cardMakerToYgoCarderData,
+} from 'src/util';
 import { notification } from 'antd';
 import { getLanguage } from './use-i18n';
 
-export const decodeCardWithCompatibility = (
+/** This method decode the following data into ygocarder uncompress data:
+ * * Compressed legacy ygocarder data
+ * * Uncompress ygocarder data (return as is)
+ * * Compressed ygocarder data
+ * * Other vendor data
+ */
+export const decodeCard = (
     cardData: Record<string, any> | string | null,
     baseCard?: Card,
 ): {
@@ -77,10 +90,10 @@ export const retrieveSavedCard = (): Card => {
              *   * If they re-open the tab, the latest tab already save before being closed, so re-open it restore the exact image.
              *   * If they close multiple tab, and want to re-open the one that is not the latest tab, we have no luck here.
              */
-            const { card } = decodeCardWithCompatibility(urlCardData);
+            const { card } = decodeCard(urlCardData);
             const { artSource, backgroundSource } = card;
             if (artSource === 'online' && backgroundSource === 'online') {
-                return decodeCardWithCompatibility(urlCardData).card;
+                return decodeCard(urlCardData).card;
             }
 
             const combinedCard = { ...card };

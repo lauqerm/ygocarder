@@ -290,7 +290,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 <Input
                     addonBefore={<span>
                         {language['input.scale.label'](
-                            <span className="blue-scale">
+                            <span key="blue-scale"  className="blue-scale">
                                 {language['input.scale.blue.label']}
                             </span>
                         )}
@@ -299,13 +299,14 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     onChange={e => {
                         onBlueScaleChange(e);
                         if (isMirrorScale) onRedScaleChange(e);
-                    }} />
+                    }}
+                />
             </div>
             <div>
                 <Input
                     addonBefore={<span>
                         {language['input.scale.label'](
-                            <span className="red-scale">
+                            <span key="red-scale" className="red-scale">
                                 {language['input.scale.red.label']}
                             </span>
                         )}

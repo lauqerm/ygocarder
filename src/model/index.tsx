@@ -82,7 +82,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     typeTextStyle: getDefaultTextStyle(),
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
-    /** Extra information come from different card source such as ygopro custom card maker */
+    /** Extra information come from different card source such as YGOPro custom card maker */
     externalInfo: {} as Record<string, any>,
 });
 export const getEmptyCard = (): Card => ({

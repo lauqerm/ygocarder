@@ -1,10 +1,19 @@
-import { Card, CompatibleCard, getDefaultCard, NO_ATTRIBUTE, NO_ICON } from 'src/model';
+import {
+    Card,
+    CompatibleCard,
+    getDefaultCard,
+    NO_ATTRIBUTE,
+    NO_ICON,
+    PresetNameStyle,
+    PresetNameStyleMap,
+    getDefaultNameStyle,
+} from 'src/model';
 import { normalizedCardEffect, normalizedCardName } from './normalize';
 import { isImageData } from './other';
 
 export const checkYgoCarderCard = (object: Record<string, any>): object is Card => {
     try {
-        /** No need to check the whole object (we mainly want to distinguish this with ygopro structure), so just need a few presentative fields */
+        /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
         return 'isFirstEdition' in object
             && 'art' in object
             && 'background' in object;
@@ -34,8 +43,8 @@ const cardIconMap: Record<string, string> = {
     [NO_ICON]: 'None',
 };
 const reverseCardIconMap = Object.entries(cardIconMap).reduce<Record<string, string>>((acc, cur) => {
-    const [ocgTerm, tcgTerm] = cur;
-    acc[tcgTerm] = ocgTerm;
+    const [vendorValue, ourValue] = cur;
+    acc[ourValue] = vendorValue;
 
     return acc;
 }, {});
@@ -52,8 +61,8 @@ const attributeMap: Record<string, string> = {
     DIVINE: 'Divine',
 };
 const reverseAttributeMap = Object.entries(attributeMap).reduce<Record<string, string>>((acc, cur) => {
-    const [ocgTerm, tcgTerm] = cur;
-    acc[tcgTerm] = ocgTerm;
+    const [vendorValue, ourValue] = cur;
+    acc[ourValue] = vendorValue;
 
     return acc;
 }, {});
@@ -74,12 +83,57 @@ const frameMap: Record<string, string> = {
     'speed-skill': 'Skill',
 };
 const reverseFrameMap = Object.entries(frameMap).reduce<Record<string, string>>((acc, cur) => {
-    const [ocgTerm, tcgTerm] = cur;
-    acc[tcgTerm] = ocgTerm;
+    const [vendorValue, ourValue] = cur;
+    acc[ourValue] = vendorValue;
 
     return acc;
 }, {});
-export const ygoCarderToCardMakerData = (card: Card): { result: CompatibleCard, isPartial: boolean } => {
+
+const reverseRarityMap: Record<string, { key: string, text?: string, artFinish?: string, finish?: string[] }> = {
+    'common': {
+        key: '',
+    },
+    'rare': {
+        key: 'rare--',
+        text: 'rare',
+    },
+    'secret': {
+        key: 'secretGradient-type3-',
+        text: 'secretGradient',
+        artFinish: 'type3',
+    },
+    'ultra': {
+        key: 'ultra-type3-',
+        text: 'ultra',
+        artFinish: 'type3',
+    },
+    'rainbow': {
+        key: 'platinum-type1-type1',
+        text: 'platinum',
+        artFinish: 'type1',
+        finish: ['type1'],
+    },
+};
+const rarityMap = Object.entries(reverseRarityMap).reduce<Record<string, string>>((acc, cur) => {
+    const [vendorKey, vendorValue] = cur;
+    acc[vendorValue.key] = vendorKey;
+
+    return acc;
+}, {});
+
+/**
+ * Why artRef and backgroundRef here?
+ * 
+ * The main problem is that ygocarder deal with a full image and allow user to crop their best fit, while:
+ * * Other vendors merely squeeze them to fit inside the boundary (and therefore may destroy its ratio).
+ * * Other vendor do not store online link, even if you use online link, it will get the data and converted them into base64 regardless.
+ * 
+ * That means the crop and full image information only matter for ygocarder data, as other vendor does not support any operation regarding the full image, and only care about the cropped part. So when we export ygocarder data, we will retain full image information / image link, but when export other vendor data, we only get the cropped part of the image, hence while we need the ref here.
+ */
+export const ygoCarderToCardMakerData = (
+    card: Card,
+    artRef?: HTMLCanvasElement | null,
+): { result: CompatibleCard, isPartial: boolean } => {
     const {
         name,
         star,
@@ -102,24 +156,35 @@ export const ygoCarderToCardMakerData = (card: Card): { result: CompatibleCard, 
         linkMap,
         frame,
         externalInfo,
+        nameStyle,
+        nameStyleType,
+        artFinish,
+        finish,
     } = card;
-    console.log('hi', art,
-        artData,
-        artSource);
     const normalizedName = normalizedCardName(name);
     const normalizedEffect = normalizedCardEffect(effect);
     const normalizedPendulumEffect = normalizedCardEffect(pendulumEffect);
     const normalizedIcon = cardIconMap[subFamily];
     const normalizedAttribute = attributeMap[attribute];
     const normalizedFrame = frameMap[frame];
-    const { pendulum, ...rest } = externalInfo ?? {};
+    const normalizedRarity = nameStyleType === 'predefined'
+        ? rarityMap[
+            [
+                nameStyle.preset,
+                artFinish,
+                finish.join('|'),
+            ].join('-')
+        ]
+        : 'common';
+    const { pendulum, rarity, ...rest } = externalInfo ?? {};
 
     let isPartial = name !== normalizedName
         || effect !== normalizedEffect
         || pendulumEffect !== normalizedPendulumEffect
         || normalizedIcon === undefined
         || normalizedAttribute === undefined
-        || normalizedFrame === undefined;
+        || normalizedFrame === undefined
+        || normalizedRarity === undefined;
     const result = {
         version: '1.0.0',
         name: normalizedName,
@@ -155,9 +220,13 @@ export const ygoCarderToCardMakerData = (card: Card): { result: CompatibleCard, 
         },
         layout: normalizedFrame ?? 'Normal',
         boxSize: 'Normal',
-        rarity: 'Common',
+        rarity: normalizedRarity ?? rarity,
         /** For other card maker, inline art data is preferred over art link */
-        image: artSource === 'offline' ? artData : art,
+        image: artRef
+            ? artRef.toDataURL('image/jpeg')
+            : artSource === 'offline'
+                ? artData
+                : art,
         ...rest,
     };
 
@@ -183,7 +252,6 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
         level,
         link,
         pendulum,
-        /** @todo Rarity compatible is possible? */
         rarity,
         serial,
         type,
@@ -196,13 +264,27 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
     const normalizedFrame = reverseFrameMap[layout];
     const useImageData = isImageData(image);
     const levelAsNumber = parseInt(level);
+    const normalizedRarity = reverseRarityMap[rarity.toLowerCase()];
 
     let isPartial = normalizedIcon === undefined
         || normalizedAttribute === undefined
-        || normalizedFrame === undefined;
+        || normalizedFrame === undefined
+        || normalizedRarity === undefined;
+    const {
+        finish,
+        artFinish,
+        text,
+    } = normalizedRarity ?? {};
+    const namePreset = text ? PresetNameStyleMap[text as PresetNameStyle] : null;
+    const baseCard = getDefaultCard();
     const result: Card = {
-        ...getDefaultCard(),
+        ...baseCard,
+        finish: finish ?? [],
         name,
+        nameStyleType: text ? 'predefined' : 'auto',
+        nameStyle: namePreset
+            ? namePreset.value
+            : getDefaultNameStyle(),
         atk,
         def,
         attribute: normalizedAttribute ?? NO_ATTRIBUTE,
@@ -216,6 +298,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
         art: useImageData ? '' : image,
         artData: useImageData ? image : '',
         artSource: useImageData ? 'offline' : 'online',
+        artFinish: artFinish ?? 'normal',
         linkMap: [
             link?.topLeft === true ? '1' : null,
             link?.topCenter === true ? '2' : null,
@@ -235,6 +318,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
             version,
             variant,
             boxSize,
+            rarity,
             pendulum: {
                 boxSize: pendulumBoxSize,
                 boxSizeEnabled,
