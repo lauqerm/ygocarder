@@ -12,13 +12,24 @@
     }
     .header-language {
         display: inline-grid;
-        grid-template-columns: max-content 1fr;
+        grid-template-columns: max-content 1fr max-content;
         gap: var(--spacing);
         margin-bottom: var(--spacing-xxs);
         .ant-radio-button-wrapper {
             > span:nth-child(2) {
                 font-size: 0.85em;
                 letter-spacing: 0.02em;
+            }
+        }
+        .bug-report {
+            width: 1.5rem;
+            height: 1.5rem;
+            text-align: center;
+            border: var(--bw) solid var(--sub-level-1);
+            background-color: var(--main-level-4);
+            border-radius: var(--br-lg);
+            &:hover {
+                background: var(--sub-danger);
             }
         }
     }
@@ -74,7 +85,7 @@
     border-bottom: var(--bw) solid var(--main-level-1);
     display: grid;
     grid-template-columns: max-content 1fr;
-    align-items: center;
+    align-items: baseline;
     gap: var(--spacing-xs);
     line-height: 1;
     .version {

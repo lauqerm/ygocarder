@@ -1,7 +1,7 @@
 import { Input, Radio, Tooltip } from 'antd';
-import React, { useState, useCallback, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
-import { DownloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DownloadOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import { useLanguage } from 'src/service';
@@ -82,28 +82,34 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 };
 
 export type ImageCropperRef = {
+    isLoading: () => boolean,
     hasImage: () => boolean,
-    forceExternalSource: (artLink: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+    forceSource: (type: 'online' | 'offline', artLinkOrData: string, cropInfo: Partial<ReactCrop.Crop>) => void,
 }
 export type ImageCropper = {
     title?: React.ReactNode,
     backgroundColor?: string,
     className?: string,
+    defaultSourceType?: string,
+    defaultInternalSource?: string,
     defaultExternalSource?: string,
     receivingCanvas?: HTMLCanvasElement | null,
     children?: React.ReactNode,
     beforeCropper?: React.ReactNode,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     ratio: number,
-    onSourceChange?: (source: string) => void,
+    onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
     onSourceLoaded?: () => void,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'internal' | 'external') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
     onTainted: () => void,
+    onMaxSizeExceeded: (size: number) => void,
 }
-export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
+export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     title,
     backgroundColor,
     className,
+    defaultSourceType,
+    defaultInternalSource = '',
     defaultExternalSource = '',
     receivingCanvas,
     children,
@@ -114,7 +120,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
     onSourceChange = () => { },
     onCropChange = () => { },
     onTainted = () => { },
+    onMaxSizeExceeded = () => { },
 }: ImageCropper, forwardedRef) => {
+    const normalizedDefaultSource = defaultSourceType === 'offline'
+        ? 'offline'
+        : 'online';
     const language = useLanguage();
     const fileInputRef = useRef<Input>(null);
     const [
@@ -122,9 +132,9 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         // setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [redrawSignal, setRedrawSignal] = useState(0);
-    const [sourceType, setSourceType] = useState<'internal' | 'external'>('external');
-    const [inputMode, setInputMode] = useState<'internal' | 'external'>('external');
-    const [internalSource, setInternalSource] = useState('');
+    const [sourceType, setSourceType] = useState<'offline' | 'online'>(normalizedDefaultSource);
+    const [inputMode, setInputMode] = useState<'offline' | 'online'>(normalizedDefaultSource);
+    const [internalSource, setInternalSource] = useState(defaultInternalSource);
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState<any>(null);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
@@ -142,17 +152,25 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
     const applyOfflineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            setLoading(true);
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-                if (typeof reader.result === 'string') {
-                    setInternalSource(reader.result);
-                    setSourceType('internal');
-                    setInputMode('internal');
-                    setLoading(false);
-                }
-            });
-            reader.readAsDataURL(e.target.files[0]);
+            const targetFile = e.target.files[0];
+            const maxFileSize = 4;
+
+            if (targetFile.size < maxFileSize * 1024 * 1024) {
+                setLoading(true);
+                const reader = new FileReader();
+                reader.addEventListener('load', () => {
+                    if (typeof reader.result === 'string') {
+                        setInternalSource(reader.result);
+                        setSourceType('offline');
+                        setInputMode('offline');
+                        onSourceChange('offline', reader.result);
+                        setLoading(false);
+                    }
+                });
+                reader.readAsDataURL(targetFile);
+            } else {
+                onMaxSizeExceeded(maxFileSize);
+            }
         } else alert(language['image-cropper.not-found-warning']);
     };
 
@@ -200,9 +218,9 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         const source = e.target.value;
 
         setLoading(true);
-        setSourceType('external');
-        setInputMode('external');
-        onSourceChange(source);
+        setSourceType('online');
+        setInputMode('online');
+        onSourceChange('online', source);
         setExternalSource(source);
     };
 
@@ -255,7 +273,10 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
         ) {
             /** Try to maximize new crop section's area */
             const prominentSide = ratio * naturalHeight > naturalWidth ? 'width' : 'height';
-            /** Automatically center current crop section. @todo For the best UX, it should actually be proportional based on the x and y before the snap. */
+            /**
+             * Automatically center current crop section.
+             * @todo For the best UX, it should actually be proportional based on the x and y before the snap.
+             * */
             if (prominentSide === 'width') {
                 drawWidth = naturalWidth;
                 drawHeight = drawWidth / ratio;
@@ -301,7 +322,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             drawWidth,
             drawHeight,
         );
-        if (sourceType === 'internal' && (internalSource ?? '').length <= 0) { }
+        if (sourceType === 'offline' && (internalSource ?? '').length <= 0) { }
         else if (ratio === completedCrop.aspect) {
             onCropChange(completedCrop, sourceType);
         }
@@ -326,16 +347,19 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
 
     const pendingId = useRef(0);
     useImperativeHandle(forwardedRef, () => ({
-        hasImage: () => (typeof internalSource === 'string' && internalSource.length > 0 && sourceType === 'internal')
-            || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'external'),
-        forceExternalSource: (source, cropInfo) => {
-            const currentSource = sourceType === 'internal' ? internalSource : externalSource;
+        isLoading: () => isLoading,
+        hasImage: () => (typeof internalSource === 'string' && internalSource.length > 0 && sourceType === 'offline')
+            || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'online'),
+        forceSource: (type: 'online' | 'offline', source, cropInfo) => {
+            const currentSource = sourceType === 'offline' ? internalSource : externalSource;
             if (currentSource !== source) {
                 setLoading(true);
-                setSourceType('external');
-                setInputMode('external');
-                onSourceChange(source);
-                setExternalSource(source);
+                setSourceType(type);
+                setInputMode(type);
+                onSourceChange(type, source);
+                if (type === 'offline') {
+                    setInternalSource(source);
+                } else setExternalSource(source);
             }
             setMigrated(cropInfo.unit === '%');
             pendingId.current += 1;
@@ -370,25 +394,32 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 const value = e.target.value;
                                 setInputMode(value);
                                 if (
-                                    ((internalSource ?? '').length > 0 && value === 'internal')
-                                    || ((externalSource ?? '').length > 0 && value === 'external')
-                                ) setSourceType(value);
+                                    ((internalSource ?? '').length > 0 && value === 'offline')
+                                    || ((externalSource ?? '').length > 0 && value === 'online')
+                                ) {
+                                    setSourceType(value);
+                                    if (value === 'offline') {
+                                        onSourceChange('offline', internalSource);
+                                    } else {
+                                        onSourceChange('online', externalSource);
+                                    }
+                                }
                             }}
                             value={inputMode}
                         >
-                            <Radio.Button value={'external'} checked={inputMode === 'external'}>
+                            <Radio.Button value={'online'} checked={inputMode === 'online'}>
                                 {language['image-cropper.source.online.tooltip']}
                             </Radio.Button>
                             <Tooltip title={<div className="image-warning">
                                 {language['image-cropper.offline-warning']}
                             </div>}>
-                                <Radio.Button value={'internal'} checked={inputMode === 'internal'}>
-                                    {language['image-cropper.source.offline.tooltip']} <ExclamationCircleOutlined />
+                                <Radio.Button value={'offline'} checked={inputMode === 'offline'}>
+                                    {language['image-cropper.source.offline.tooltip']}
                                 </Radio.Button>
                             </Tooltip>
                         </Radio.Group>
                     </div>
-                    <div className={['card-image-input', inputMode === 'external' ? '' : 'input-inactive'].join(' ')}>
+                    <div className={['card-image-input', inputMode === 'online' ? '' : 'input-inactive'].join(' ')}>
                         <Input key="key"
                             placeholder={language['image-cropper.placeholder']}
                             value={externalSource}
@@ -404,7 +435,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                                 {language['image-cropper.online-tip']}
                             </div>}
                     </div>
-                    <div className={['card-image-input', inputMode === 'internal' ? '' : 'input-inactive'].join(' ')}>
+                    <div className={['card-image-input', inputMode === 'offline' ? '' : 'input-inactive'].join(' ')}>
                         <Input ref={fileInputRef}
                             type="file"
                             accept="image/*"
@@ -420,7 +451,7 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
-                    src={sourceType === 'internal' ? internalSource : externalSource}
+                    src={sourceType === 'offline' ? internalSource : externalSource}
                     imageStyle={backgroundColor
                         ? {
                             backgroundColor,
@@ -436,7 +467,11 @@ export const ImageCropper = React.forwardRef<ImageCropperRef, ImageCropper>(({
                         };
                         setError('Image error');
                         setLoading(false);
-                        if (sourceType === 'external' && (externalSource ?? '') === '' && receivingCanvas) {
+                        if (!receivingCanvas) onTainted();
+                        else if (
+                            (sourceType === 'online' && (externalSource ?? '') === '')
+                            || (sourceType === 'offline' && (internalSource ?? '') === '')
+                        ) {
                             const { width, height } = receivingCanvas;
                             const ctx = receivingCanvas.getContext('2d');
 

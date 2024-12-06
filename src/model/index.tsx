@@ -19,9 +19,11 @@ export const getDefaultCard = () => ({
     attribute: 'LIGHT',
     subFamily: NO_ICON,
     cardIcon: 'auto',
-    star: 6,
+    star: 6 as number | string,
     starAlignment: 'auto',
     art: 'https://i.imgur.com/h5kXZeC.png',
+    artData: '',
+    artSource: 'online',
     artCrop: {
         x: 0,
         y: 4,
@@ -32,6 +34,8 @@ export const getDefaultCard = () => ({
     } as Partial<ReactCrop.Crop>,
     hasBackground: false,
     background: '',
+    backgroundData: '',
+    backgroundSource: 'online',
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: {
         x: 0,
@@ -69,13 +73,17 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     sticker: 'holo5',
     isFirstEdition: true,
     isSpeedCard: false,
+    isLimitedEdition: false,
     isDuelTerminalCard: false,
+    isLegacyCard: false,
     creator: '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
     furiganaHelper: true,
     statTextStyle: getDefaultTextStyle(),
     typeTextStyle: getDefaultTextStyle(),
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
+    /** Extra information come from different card source such as YGOPro custom card maker */
+    externalInfo: {} as Record<string, any>,
 });
 export const getEmptyCard = (): Card => ({
     version: 0,
@@ -94,6 +102,8 @@ export const getEmptyCard = (): Card => ({
     star: 6,
     starAlignment: 'auto',
     art: 'https://i.imgur.com/jjtCuG5.png',
+    artData: '',
+    artSource: 'online',
     artCrop: {
         x: 0,
         y: 4,
@@ -104,6 +114,8 @@ export const getEmptyCard = (): Card => ({
     },
     hasBackground: false,
     background: '',
+    backgroundData: '',
+    backgroundSource: 'online',
     backgroundType: 'fit',
     backgroundCrop: {
         x: 0,
@@ -131,13 +143,17 @@ export const getEmptyCard = (): Card => ({
     sticker: 'no-sticker',
     isFirstEdition: false,
     isSpeedCard: false,
+    isLimitedEdition: false,
     isDuelTerminalCard: false,
+    isLegacyCard: false,
+    /** Or copyright */
     creator: '',
     furiganaHelper: true,
     statTextStyle: getDefaultTextStyle(),
     typeTextStyle: getDefaultTextStyle(),
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
+    externalInfo: {},
 });
 
 export const OpacityList = [
@@ -173,15 +189,15 @@ export const DefaultColorList = [
     '#4D4D4D', '#999999', '#FFFFFF', '#FF7F7F', '#FFD27F', '#FFFF7F',
     '#7FFF7F', '#7FBF7F', '#7FFFFF', '#7F7FFF', '#BF7FBF', '#FF7FFF',
 
-    '#333333', '#808080', '#cccccc', '#7F0000', '#7F5200', '#7F7F00',
-    '#007F00', '#004000', '#007F7F', '#00007F', '#400040', '#7F007F',
-
-    '#000000', '#666666', '#B3B3B3', '#FF0000', '#FFA500', '#FFFF00',
+    '#333333', '#808080', '#cccccc', '#FF0000', '#FFA500', '#FFFF00',
     '#00FF00', '#008000', '#00FFFF', '#0000FF', '#800080', '#FF00FF',
+
+    '#000000', '#666666', '#B3B3B3', '#7F0000', '#7F5200', '#7F7F00',
+    '#007F00', '#004000', '#007F7F', '#00007F', '#400040', '#7F007F',
 ];
 
-export * from './icon';
 export * from './canvas';
+export * from './compatible-card';
 export * from './coordinate-data';
 export * from './dictionary';
 export * from './foil-finish';
@@ -190,6 +206,7 @@ export * from './font-data-name';
 export * from './font-data-other';
 export * from './format';
 export * from './frame';
+export * from './icon';
 export * from './link';
 export * from './name-preset';
 export * from './regex';

@@ -97,7 +97,7 @@ export const drawSticker = async ({
     return drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
 };
 
-/** Duel terminal mark and Speed card mark. They overlap if draw together, so we make them mutually exclusive. Maybe it is not worth the effort. */
+/** Duel terminal mark and Speed card mark. */
 export const drawPredefinedMark = async ({
     ctx,
     type,
@@ -119,7 +119,7 @@ export const drawPredefinedMark = async ({
 
     if (isDuelTerminalCard) {
         const coordinate: [number, number, number, number] = isPendulum
-            ? [250, 1087, 180, 20]
+            ? [255, 1072, 175, 35]
             : isLink
                 ? [151, 848, 216, 24]
                 : [80, 843, 270, 30];
@@ -128,13 +128,40 @@ export const drawPredefinedMark = async ({
     }
     if (isSpeedCard) {
         const coordinate: [number, number, number, number] = isPendulum
-            ? [250, 1090, 176.4, 18]
+            ? [255, 1084, 176.4, 25]
             : isLink
-                ? [151, 855, 215.6, 22]
+                ? [151, 854, 215.6, 22]
                 : [80, 850, 245, 25];
 
         await drawAssetWithSize(ctx, `text/text-speed-duel-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
     }
+};
+
+export const drawLimitedEditionMark = async ({
+    ctx,
+    type,
+    isPendulum,
+    isLink,
+    isLegacyCard,
+    widthOffset,
+    bordered,
+}: {
+    ctx: CanvasRenderingContext2D | null | undefined,
+    type: string,
+    isPendulum: boolean,
+    isLink: boolean,
+    isLegacyCard: boolean,
+    /** When the creator text is too long, this mark must be compressed */
+    widthOffset: number,
+    bordered: boolean,
+}) => {
+    const coordinate: [number, number, number, number] = !isLegacyCard || isPendulum
+        ? [145, 1122, 240 - widthOffset, 37]
+        : isLink
+            ? [151, 846, 216, 36]
+            : [80, 843, 240, 40];
+
+    await drawAssetWithSize(ctx, `text/text-limited-edition-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
 };
 
 export const drawLinkRatingText = async (

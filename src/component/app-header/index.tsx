@@ -1,9 +1,9 @@
-import { GithubFilled } from '@ant-design/icons';
+import { GithubFilled, BugOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import { useI18N, useLanguage } from 'src/service';
-import { Radio } from 'antd';
+import { Radio, Tooltip } from 'antd';
 import './app-header.scss';
 
 export const Affiliation = () => {
@@ -23,6 +23,7 @@ const StyledAppSettingContainer = styled.div`
     border-left: var(--bw) dashed #b1b1b1;
     padding-left: var(--spacing);
     margin-left: var(--spacing);
+    height: 100%;
 `;
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
 export const AppHeader = () => {
@@ -48,7 +49,6 @@ export const AppHeader = () => {
         <div className="app-description">
             <div className="header-language">
                 <h1>Yugioh Carder</h1>
-                {/** Temporary disable until Japanese is translated */}
                 <Radio.Group value={languageInfo.codeName} size="small">
                     {Object.values(languageMetadataMap)
                         .filter(({ active }) => active)
@@ -61,6 +61,13 @@ export const AppHeader = () => {
                             </Radio.Button>;
                         })}
                 </Radio.Group>
+                <span className="bug-report">
+                    <Tooltip overlay={language['contributor.bug-report.tooltip']}>
+                        <a href="https://github.com/lauqerm/ygocarder/issues" target="_blank" rel="noreferrer">
+                            <BugOutlined />
+                        </a>
+                    </Tooltip>
+                </span>
             </div>
             <div className="app-contribution">
                 <span className="app-creator">

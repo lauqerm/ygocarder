@@ -162,7 +162,7 @@ export const TextGradientPicker = ({
         };
     }, [palette]);
 
-    /** @todo REMEMBER to memorize the callback before passing into this component */
+    /** @todo REMEMBER to memorize the callback (`memoizedOnChange`) before passing into this component */
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {

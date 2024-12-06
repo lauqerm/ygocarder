@@ -172,9 +172,12 @@ export type LayoutPicker = {
 export type OpacityPickerRef = {
     setValue: (opacity: Partial<CardOpacity> & {
         background?: string,
+        backgroundData?: string,
+        backgroundSource?: string,
         backgroundCrop?: Partial<ReactCrop.Crop>,
         backgroundType?: BackgroundType,
     }) => void,
+    isLoading: () => boolean,
 };
 export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     receivingCanvas,
@@ -246,9 +249,10 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     }, []);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ background, backgroundCrop, ...newValue }) => {
-            if (typeof background === 'string' && backgroundCrop) {
-                backgroundInputRef.current?.setValue({ background, backgroundCrop });
+        isLoading: () => backgroundInputRef.current?.isLoading() ?? false,
+        setValue: ({ background, backgroundCrop, backgroundData, backgroundSource, ...newValue }) => {
+            if ((typeof background === 'string' || typeof backgroundData === 'string') && backgroundCrop) {
+                backgroundInputRef.current?.setValue({ background, backgroundCrop, backgroundData, backgroundSource });
             }
             for (const key in newValue) {
                 if (newValue[key as keyof CardOpacity] !== opacity[key as keyof CardOpacity]) {

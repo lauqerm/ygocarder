@@ -101,5 +101,9 @@ export const drawCreatorText = ({
     });
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    return result;
+    return {
+        /** End edge is alignment insensitive */
+        leftEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
+        ...result,
+    };
 };

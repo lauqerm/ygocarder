@@ -78,7 +78,7 @@ const StyledPendulumFrameInputContainer = styled.div`
         border-radius: 0 var(--br-lg) var(--br-lg) 0;
         line-height: 2; // Alignment
         background-color: var(--main-level-4);
-        min-width: 100px;
+        min-width: 110px;
         overflow: hidden;
         border: var(--bw) solid var(--sub-level-1);
         .frame-info-block-label {
@@ -290,7 +290,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 <Input
                     addonBefore={<span>
                         {language['input.scale.label'](
-                            <span className="blue-scale">
+                            <span key="blue-scale"  className="blue-scale">
                                 {language['input.scale.blue.label']}
                             </span>
                         )}
@@ -299,13 +299,14 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     onChange={e => {
                         onBlueScaleChange(e);
                         if (isMirrorScale) onRedScaleChange(e);
-                    }} />
+                    }}
+                />
             </div>
             <div>
                 <Input
                     addonBefore={<span>
                         {language['input.scale.label'](
-                            <span className="red-scale">
+                            <span key="red-scale" className="red-scale">
                                 {language['input.scale.red.label']}
                             </span>
                         )}

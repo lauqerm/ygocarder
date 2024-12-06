@@ -16,7 +16,6 @@
 		.affiliation {
 			border-radius: 0 0 0 var(--br-xl);
 		}
-		.password-input,
 		.checkbox-input {
 			grid-column: span 2;
 		}
@@ -79,7 +78,6 @@
 			display: block;
 			width: 100%;
 		}
-		.password-input,
 		.checkbox-input {
 			grid-column: span 1;
 		}
@@ -166,7 +164,6 @@
 
 @media only screen and (max-width: 1200px) {
 	.app-container {
-		.password-input,
 		.checkbox-input {
 			grid-column: span 2;
 		}
@@ -244,6 +241,21 @@
 		--translate-ratio: -25%;
 		.card-preview-panel {
 			flex: 0 0 415px;
+			.primary-button {
+				padding: 0;
+			}
+			.button-label {
+				/** Alginment with resolution dropdown) */
+				--resolution-dropdown-width: 45px;
+				padding: 0 calc(var(--resolution-dropdown-width) + var(--spacing-sm)) 0 var(--spacing-sm);
+			}
+			.imexport {
+				flex: 0 0 185px;
+				grid-template-columns: 1fr max-content var(--spacing-xs) 1fr max-content;
+			}
+			.data-button-panel {
+				column-gap: var(--spacing-xs);
+			}
 		}
 		.card-info-panel {
 			.main-info {
@@ -328,7 +340,6 @@
 		.card-info-panel {
 			padding-top: 0;
 		}
-		.password-input,
 		.checkbox-input {
 			grid-column: span 1;
 		}

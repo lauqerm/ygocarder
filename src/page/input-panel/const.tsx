@@ -37,7 +37,7 @@ export const FormatButtonList = [
 
 export const getFoilButtonList = (dictionary: FoilDictionary) => {
     return getFoilList(dictionary).map(({ color, name, label }) => ({
-        label,
+        label: name === 'normal' ? <CloseCircleOutlined /> : label,
         value: name,
         props: {
             style: {

@@ -11,13 +11,15 @@ Again, my utmost appreciation to [Grezar](https://www.deviantart.com/grezar), [9
 
 ### My goal
 
-Create an easy-to-use GUI to make Yu-gi-oh cards, for anyone who cannot afford Photoshop or the skill needed to use it.
+Create an easy-to-use GUI to make Yu-Gi-Oh! cards, for anyone who cannot afford Photoshop or the skill needed to use it.
+
+Even though my app support conversion between cards made by this app and cards made by other vendors such as YGOPro, Dueling Nexus and Neo Card Maker, I do not have any affiliation with them.
 
 ### What does it provide?
 
-To put it more correctly: what advantage does my app offer over a dozen Yu-gi-oh card-maker apps out there? For short, it is just 2 things:
+To put it more correctly: what advantage does my app offer over a dozen Yu-Gi-Oh! card-maker apps out there? For short, it is just 2 things:
 * The UI - Most of changes can be made with just a single click or keystroke. Other apps will need you to constantly cycle through multiple dropdowns.
-* Automatic text compression - You may notice modern Yu-gi-oh cards try to compress words to avoid using smaller font sizes. YGO Carder can replicate that behavior rather automatically while other apps will just simply keep reducing font size and adding new lines, or provide you a manual slider without solving any edge cases.
+* Automatic text compression - You may notice modern Yu-Gi-Oh! cards try to compress words to avoid using smaller font sizes. YGO Carder can replicate that behavior rather automatically while other apps will just simply keep reducing font size and adding new lines, or provide you a manual slider without solving any edge cases.
 
 Other advantages such as foils and additional card frames come from the template of use, so again big shout out to template owners who put their time and effort into creating them.
 
@@ -35,3 +37,7 @@ Yes, you are free to fork it and do whatever, just don't claim it is yours. Also
 If you want to modify app's assets, better contact template makers and ask for permission yourself.
 
 You may contact me through [Reddit](https://www.reddit.com/user/lauqerm/), but I rarely respond in time though, I only visit reddit once in a while.
+
+### How to run
+
+If you are already familiar with a React app, just install all the package with `npm install` and run it with `npm start`.

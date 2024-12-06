@@ -34,6 +34,13 @@
             }
         }
     }
+    .app-container {
+        .imexport {
+            .secondary-button {
+                border-left: var(--bw) solid var(--sub-secondary);
+            }
+        }
+    }
     .standalone-addon {
         --main-active: #7272ff;
     }

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { StyledActionIconButton } from './page';
 
 export const StyledDataButtonPanelContainer = styled.div`
     display: flex;
@@ -59,19 +60,22 @@ export const StyledDataButtonPanelContainer = styled.div`
         position: relative;
     }
     .imexport {
-        flex: 0 0 210px;
+        flex: 0 0 200px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: var(--spacing);
-        button {
+        grid-template-columns: 1fr max-content var(--spacing) 1fr max-content;
+        .primary-button {
+            align-content: center;
             font-size: var(--fs);
             background-color: var(--main-tertiary);
             border: var(--bw) solid var(--sub-tertiary);
-            box-shadow: var(--bs-button);
+            border-radius: var(--br-lg) 0 0 var(--br-lg);
             &:hover {
                 background-color: var(--sub-tertiary);
                 box-shadow: none;
             }
+        }
+        ${StyledActionIconButton} {
+            border-radius: 0 var(--br-lg) var(--br-lg) 0;
         }
     }
 `;

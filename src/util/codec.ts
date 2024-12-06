@@ -22,6 +22,8 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     finish: 'fn',
     art: 'ar',
+    artData: 'ad',
+    artSource: 'as',
     artFinish: 'afn',
     artCrop: {
         _newKey: 'arc',
@@ -34,6 +36,8 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     hasBackground: 'hbg',
     background: 'bg',
+    backgroundData: 'bgd',
+    backgroundSource: 'bgs',
     backgroundType: 'bgt',
     backgroundCrop: {
         _newKey: 'bgc',
@@ -92,12 +96,15 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     isFirstEdition: 'ife',
     isSpeedCard: 'isp',
     isDuelTerminalCard: 'idt',
+    isLimitedEdition: 'ile',
+    isLegacyCard: 'ilc',
     creator: 'cr',
     furiganaHelper: 'fh',
     effectTextStyle: 'ets',
     pendulumTextStyle: 'pts',
     statTextStyle: 'sts',
     typeTextStyle: 'tts',
+    externalInfo: 'ei',
 };
 const legacyCardFieldShortenMap = {
     passcode: 'pc',
@@ -120,7 +127,6 @@ const cardFieldShortenMap = {
 export const compressCardData = (
     card: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
-    serialize = true,
 ) => {
     const condensedCard: Record<string, any> = {};
     const normalizedCard = { ...card };
@@ -132,7 +138,7 @@ export const compressCardData = (
             const newKey = shortenMap[fieldKey]?._newKey;
 
             if (newKey) {
-                condensedCard[newKey] = compressCardData(fieldValue, shortenMap[fieldKey], false);
+                condensedCard[newKey] = compressCardData(fieldValue, shortenMap[fieldKey]);
             }
         } else {
             const newFieldKey = shortenMap[fieldKey];
@@ -141,7 +147,6 @@ export const compressCardData = (
         }
     });
 
-    if (serialize) return JSON.stringify(condensedCard);
     return condensedCard;
 };
 
@@ -194,17 +199,6 @@ export const legacyReverseCardDataShortener = (
     return fullCard;
 };
 
-export const rebuildCardData = (
-    card: Record<string, any> | string,
-    baseCard?: Card,
-) => {
-    const normalizedCard = typeof card === 'string'
-        ? JSON.parse(card)
-        : card;
-    const fullCard: Record<string, any> = decompressCardData(normalizedCard);
-
-    return migrateCardData(fullCard, baseCard);
-};
 export const legacyRebuildCardData = (
     card: Record<string, any> | string,
     isCondensed = false,
@@ -249,6 +243,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     /** Seems like no image is fine for now. */
     // if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
     if ((migratedCard.art ?? '') === '') migratedCard.art = '';
+    if ((migratedCard.artData ?? '') === '') migratedCard.artData = '';
+    if ((migratedCard.artSource ?? '') === '') migratedCard.artSource = 'online';
 
     if (typeof (migratedCard.opacity as any).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
         migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
@@ -257,7 +253,13 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
 
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
-    if (migratedCard.hasBackground == null && (migratedCard.background || migratedCard.opacity.baseFill)) migratedCard.hasBackground = true;
+    if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
+    if ((migratedCard.backgroundSource ?? '') === '') migratedCard.backgroundSource = 'online';
+    if (migratedCard.hasBackground == null
+        && (migratedCard.background || migratedCard.backgroundData || migratedCard.opacity.baseFill)
+    ) {
+        migratedCard.hasBackground = true;
+    }
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;
@@ -270,7 +272,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (!migratedCard.pendulumTextStyle) migratedCard.pendulumTextStyle = getDefaultTextStyle();
     if (!migratedCard.typeTextStyle) migratedCard.typeTextStyle = getDefaultTextStyle();
     if (!migratedCard.statTextStyle) migratedCard.statTextStyle = getDefaultTextStyle();
-
+    if (typeof migratedCard.isLimitedEdition === 'undefined') migratedCard.isLimitedEdition = false;
+    if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
 
     return migratedCard;

@@ -140,7 +140,7 @@ const InlineColorPicker = ({
 
 const StyledTextStyleContainer = styled.div`
     display: inline-grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr max-content;
     column-gap: var(--spacing-xxs);
     padding: var(--spacing-px);
     margin-right: var(--spacing-sm);
@@ -152,8 +152,12 @@ const StyledTextStyleContainer = styled.div`
         border-color: var(--main-active);
     }
     .text-style-preview-section {
-        width: 8px;
+        width: 7px;
         height: 28px; // Alignment
+    }
+    .text-style-label {
+        padding: var(--spacing-xxs);
+        line-height: 1.7;
     }
 `;
 const StyledTextStylePicker = styled.div`
@@ -340,6 +344,7 @@ export const TextStylePicker = () => {
                     }}
                 />;
             })}
+            <span className="text-style-label">{language['input.text-style.custom-effect.label']}</span>
         </StyledTextStyleContainer>
     </Popover>;
 };

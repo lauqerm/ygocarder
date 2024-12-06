@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyledPredefinedContainer, StyledPredefinedOption } from './style-picker.styled';
 import { NameStyle, PresetNameStyle, PresetNameStyleList } from 'src/model';
 import { getNavigationProps, mergeClass } from 'src/util';
+// import { Tooltip } from 'antd';
 
 export type PredefinedOptionGridRef = {
     focus: () => void,

@@ -14,7 +14,7 @@
 ### Improvements backlog
 
 * Dark synchro style syntax
-* TCG Normal effect style syntax
+* TCG Normal effect style syntax (TCG Flavor text use different style)
 * Split art and effect border for pendulum
 * OCG's letter dialect ("Chef Special Recipe" OCG for example)
 * In-place zoom

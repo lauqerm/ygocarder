@@ -67,7 +67,7 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
         <CardTextInput ref={nameInputRef}
             id="name"
             defaultValue={name}
-            addonBefore={<Tooltip title="Copy">
+            addonBefore={<Tooltip title={language['input.name.tooltip']}>
                 <StyledCopyButton onClick={() => {
                     navigator.clipboard.writeText(normalizedCardName(name));
                 }}>

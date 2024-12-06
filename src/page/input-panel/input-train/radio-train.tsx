@@ -59,8 +59,8 @@ export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
                     ? value === activeValue
                     : `${value}` === `${activeValue}`;
 
-                return <Tooltip overlay={null} {...tooltipProps}>
-                    <label key={value}
+                return <Tooltip key={value} overlay={null} {...tooltipProps}>
+                    <label
                         {...props}
                         className={[
                             'ant-radio-button-wrapper',

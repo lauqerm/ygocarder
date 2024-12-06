@@ -124,11 +124,18 @@ span.ant-input-affix-wrapper {
 }
 ul.ant-dropdown-menu {
     background: var(--main-level-3);
+    border: var(--bw) solid var(--sub-level-1);
     .ant-dropdown-menu-item {
         color: var(--color-heavy);
         &:hover {
             background: var(--sub-active);
         }
+    }
+}
+.ant-dropdown-show-arrow.ant-dropdown-placement-topLeft {
+    .ant-dropdown-arrow {
+        border-right-color: var(--sub-level-1);
+        border-bottom-color: var(--sub-level-1);
     }
 }
 
@@ -260,6 +267,25 @@ button.ant-btn {
     display: inline-block;
 }
 
+.ant-modal {
+    .ant-modal-header {
+        background-color: var(--main-level-4);
+        padding: var(--spacing-lg);
+        .ant-modal-title {
+            color: var(--color);
+            font-size: var(--fs-lg);
+        }
+        .ant-modal-close {
+            color: var(--color);
+            &:hover {
+                color: var(--color-heavy);
+            }
+        }
+    }
+    .ant-modal-close-x {
+        line-height: 53px; /** Alignment */
+    }
+}
 .ant-drawer {
     .ant-drawer-header {
         background-color: var(--main-level-4);

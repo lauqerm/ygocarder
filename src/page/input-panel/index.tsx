@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
     Card,
     CardOpacity,
@@ -54,12 +54,13 @@ import './input-panel.scss';
 
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
-}
+    isLoading: () => boolean,
+};
 export type CardInputPanel = {
     artworkCanvas: ImageInputGroup['receivingCanvas'],
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'>;
-export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel>(({
+export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     artworkCanvas,
     backgroundCanvas,
     onCropChange,
@@ -164,12 +165,14 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
     }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
+        isLoading: () => (imageInputGroupRef.current?.isLoading() ?? false)
+            || (layoutPickerRef.current?.isLoading() ?? false),
         forceCardData: card => {
             setStylePickerResetCount(cnt => cnt + 1);
             const {
                 name,
-                art, artCrop,
-                background, backgroundCrop,
+                art, artCrop, artData, artSource,
+                background, backgroundCrop, backgroundData, backgroundSource,
                 opacity,
                 setId,
                 pendulumEffect,
@@ -179,8 +182,11 @@ export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel
                 creator, password,
             } = card;
 
-            imageInputGroupRef.current?.setValue({ art, artCrop });
-            layoutPickerRef.current?.setValue({ ...opacity, background, backgroundCrop });
+            imageInputGroupRef.current?.setValue({ art, artCrop, artData, artSource });
+            layoutPickerRef.current?.setValue({
+                ...opacity,
+                background, backgroundCrop, backgroundData, backgroundSource,
+            });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             effectInputGroupRef.current?.setValue(effect);

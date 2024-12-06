@@ -28,13 +28,14 @@ export function insertUrlParam(key: string, value: string) {
     if (window.history.pushState) {
         let searchParams = new URLSearchParams(window.location.search);
         searchParams.set(key, value);
-        let newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + searchParams.toString();
+        let newurl = window.location.protocol
+            + '//'
+            + window.location.host
+            + window.location.pathname
+            + '?'
+            + searchParams.toString();
         window.history.pushState({ path: newurl }, '', newurl);
     }
-};
-
-export const normalizedCardName = (name: string) => {
-    return name.replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1');
 };
 
 export const forceRefocus = (selector = '.radio-train-input-group') => {
@@ -85,9 +86,12 @@ export function mergeClass(...args: (boolean | string | undefined | null)[]) {
 }
 
 export * from './categorize';
+export * from './codec';
+export * from './codec-compatible';
 export * from './condenser';
 export * from './font';
 export * from './gradient';
 export * from './hook';
 export * from './navigation';
-export * from './codec';
+export * from './normalize';
+export * from './other';

@@ -19,6 +19,7 @@ import {
     drawPredefinedMark,
     setTextStyle,
     drawPasswordText,
+    drawLimitedEditionMark,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -45,6 +46,8 @@ import {
 } from 'src/util';
 import { useCard } from '../use-card';
 import { prepareStyle } from './prepare-style';
+import { LanguageDataDictionary } from '../use-i18n';
+import { notification } from 'antd';
 
 const {
     height: CanvasHeight,
@@ -54,7 +57,17 @@ type DrawerProp = {
     imageChangeCount: number,
     pendulumSize?: 'medium',
     isInitializing: boolean,
+    language: LanguageDataDictionary,
 };
+type DrawingPipeline = {
+    name: string,
+    order: number,
+    rerun: number,
+    instructor: () => Promise<any>,
+};
+/**
+ * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline` instead of immediately draw their part, these operations will be iterated sequentially by another effect when export.
+ */
 export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanvas, props: DrawerProp) => {
     const {
         card,
@@ -93,9 +106,55 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         cardIcon, subFamily, star, starAlignment,
         setId,
         password, creator, sticker,
-        isFirstEdition, isDuelTerminalCard, isSpeedCard,
+        isLegacyCard,
+        isFirstEdition, isDuelTerminalCard, isSpeedCard, isLimitedEdition,
         furiganaHelper,
     } = card;
+
+    const drawingPipeline = useRef<Record<string, DrawingPipeline>>({
+        frame: {
+            name: 'frame',
+            order: 1,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        attribute: {
+            name: 'attribute',
+            order: 2,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        sticker: {
+            name: 'sticker',
+            order: 3,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        creator: {
+            name: 'creator',
+            order: 4,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        name: {
+            name: 'name',
+            order: 5,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        typeAbility: {
+            name: 'typeAbility',
+            order: 6,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        overlay: {
+            name: 'overlay',
+            order: 7,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+    });
 
     const bottomFrame = pendulumFrame === 'auto'
         ? isPendulum
@@ -143,7 +202,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : '/');
-    const statInEffect = pendulumFrame !== 'auto' || isPendulum
+    const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
         ? !!(atk || def || (isLink && linkMap.length))
         : isMonster;
     const typeInEffect = cardIcon === 'auto'
@@ -154,50 +213,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isInitializing,
         imageChangeCount,
         pendulumSize = 'medium',
+        language,
     } = props;
     const readyToDraw = active && isInitializing === false;
 
     const loopFinish = useMemo(() => getFinishIterator(finish, FinishMap), [finish]);
     const loopArtFinish = useMemo(() => getFinishIterator([artFinish], ArtFinishMap), [artFinish]);
-
-    const drawingPipeline = useRef<Record<string, { name: string, order: number, rerun: number, instructor: () => Promise<any> }>>({
-        frame: {
-            name: 'frame',
-            order: 1,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-        attribute: {
-            name: 'attribute',
-            order: 2,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-        sticker: {
-            name: 'sticker',
-            order: 3,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-        name: {
-            name: 'name',
-            order: 4,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-        typeAbility: {
-            name: 'typeAbility',
-            order: 5,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-        overlay: {
-            name: 'overlay',
-            order: 6,
-            rerun: 0,
-            instructor: () => Promise.resolve(),
-        },
-    });
 
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
@@ -563,42 +584,95 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             format,
             hasShadow: bottomFrame === 'zarc' || requireShadow,
         });
-        if (isFirstEdition && !isDuelTerminalCard) {
+        if (isFirstEdition) {
             ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
+            const left = isLegacyCard && !isPendulum
+                ? isLink ? 151 : 89
+                : Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0);
+            const bottom = isLegacyCard && !isPendulum
+                ? 871
+                : 1150.93;
+            const bottomOffset = isLegacyCard && !isPendulum
+                ? 0
+                : isSpeedSkill ? -2 : -1;
 
             draw1stEdition(
                 ctx,
-                Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0),
-                isSpeedSkill ? -2 : -1,
+                left,
+                bottom,
+                bottomOffset,
             );
         }
     }, [
         readyToDraw,
-        isDuelTerminalCard,
         isFirstEdition,
         password,
         passwordCanvasRef,
         lightFooter,
         format,
         requireShadow,
+        isLink,
         isSpeedSkill,
+        isPendulum,
+        isLegacyCard,
         bottomFrame,
     ]);
 
-    /** DRAW CREATOR TEXT */
+    /** DRAW CREATOR (COPYRIGHT) TEXT */
     useEffect(() => {
         if (!readyToDraw) return;
 
-        drawCreatorText({
-            ctx: creatorCanvasRef.current?.getContext('2d'),
-            format,
-            value: creator,
-            alignment: 'right',
-            baselineOffset: isSpeedSkill ? -2 : 0,
-            hasShadow: requireShadow,
-            lightFooter,
-        });
-    }, [readyToDraw, isPendulum, lightFooter, creator, creatorCanvasRef, format, requireShadow, isSpeedSkill]);
+        const ctx = creatorCanvasRef.current?.getContext('2d');
+
+        drawingPipeline.current.creator.rerun += 1;
+        drawingPipeline.current.creator.instructor = async () => {
+            if (!clearCanvas(ctx)) return;
+
+            const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
+            const {
+                body: opacityBody,
+                boundless,
+            } = normalizedOpacity;
+            const endOfCreatorText = drawCreatorText({
+                ctx: creatorCanvasRef.current?.getContext('2d'),
+                format,
+                value: creator,
+                alignment: 'right',
+                baselineOffset: isSpeedSkill ? -2 : 0,
+                hasShadow: requireShadow,
+                lightFooter,
+            });
+            const compactThreshold = format === 'tcg' ? 390 : 350;
+            const compactOffset = format === 'tcg' ? 30 : 40;
+
+            if (isLimitedEdition) {
+                await drawLimitedEditionMark({
+                    ctx,
+                    type: (lightFooter && !isPendulum) ? 'white' : 'black',
+                    bordered: (opacityBody < 50 || boundless) && !isPendulum,
+                    isLink, isPendulum,
+                    widthOffset: (endOfCreatorText?.leftEdge ?? compactThreshold) < compactThreshold
+                        ? compactOffset
+                        : 0,
+                    isLegacyCard,
+                });
+            }
+        };
+    }, [
+        readyToDraw,
+        creator,
+        creatorCanvasRef,
+        effectCanvasRef,
+        format,
+        isLegacyCard,
+        isLimitedEdition,
+        isLink,
+        isPendulum,
+        isSpeedSkill,
+        lightFooter,
+        opacity,
+        requireShadow,
+    ]);
 
     /** DRAW STICKER */
     useEffect(() => {
@@ -777,7 +851,17 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         return instructor();
                     }
                     return Promise.resolve();
-                }));
+                })).catch(e => {
+                    console.error(e);
+                    /** Ensure it does not fire repeatedly */
+                    const key = 'fail-to-draw-notification';
+                    notification.close(key);
+                    notification.error({
+                        key,
+                        message: language['error.draw.error.message'],
+                        description: language['error.draw.error.description'],
+                    });
+                });
             // await generateLayer(frameCanvas, exportCtx);
             const artworkCanvas = artworkCanvasRef.current;
             if (artworkCanvas && exportCtx) {
@@ -812,6 +896,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             lightboxCanvasRef.current?.getContext('2d')?.drawImage(canvasRef, 0, 0);
         }
     }, [
+        language,
         artworkCanvasRef, 
         cardIconCanvasRef, 
         creatorCanvasRef, 

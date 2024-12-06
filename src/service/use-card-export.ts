@@ -105,6 +105,18 @@ export const useCardExport = ({
     }, [name]);
 
     useEffect(() => {
+        let saveBeforeReload = () => {
+            localStorage.setItem('card-data', JSON.stringify(currentCard));
+            localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+        };
+        window.addEventListener('beforeunload', saveBeforeReload);
+
+        return () => {
+            window.removeEventListener('beforeunload', saveBeforeReload);
+        };
+    });
+
+    useEffect(() => {
         let relevant = true;
         let confirmReload = (ev: Event) => {
             ev.preventDefault();
@@ -140,7 +152,9 @@ export const useCardExport = ({
 
                         await exportRef.current.currentPipeline;
                         if (relevant) {
-                            const condensedCard = compressCardData(currentCard);
+                            /** Never include art data here, it will easily exceed the limit of url length */
+                            const normalizedCard = { ...currentCard, artData: '', backgroundData: '' };
+                            const condensedCard = JSON.stringify(compressCardData(normalizedCard));
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
                             document.getElementById('export-canvas')?.classList.add('js-export-available');
