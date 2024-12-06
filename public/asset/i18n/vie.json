@@ -198,6 +198,7 @@
         "input.name-style.type.custom.label": "Tùy chỉnh",
         "input.name-style.type.predefined.label": "Mẫu có sẵn",
         "input.name.label": "Tên",
+        "input.name.tooltip": "Sao chép tên",
         "input.opacity.art-border.tooltip": "Giữ khung ảnh ngay cả với nền thẻ trong suốt.",
         "input.opacity.body.label": "Nền thẻ",
         "input.opacity.boundless.label": "Tràn viền",

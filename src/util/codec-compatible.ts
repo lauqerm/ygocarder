@@ -122,7 +122,7 @@ const rarityMap = Object.entries(reverseRarityMap).reduce<Record<string, string>
 }, {});
 
 /**
- * Why artRef and backgroundRef here?
+ * Why does artRef here?
  * 
  * The main problem is that ygocarder deal with a full image and allow user to crop their best fit, while:
  * * Other vendors merely squeeze them to fit inside the boundary (and therefore may destroy its ratio).

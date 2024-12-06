@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
     Card,
     CardOpacity,
@@ -55,12 +55,12 @@ import './input-panel.scss';
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
     isLoading: () => boolean,
-}
+};
 export type CardInputPanel = {
     artworkCanvas: ImageInputGroup['receivingCanvas'],
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'>;
-export const CardInputPanel = React.forwardRef<CardInputPanelRef, CardInputPanel>(({
+export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     artworkCanvas,
     backgroundCanvas,
     onCropChange,

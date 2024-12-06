@@ -59,6 +59,12 @@ type DrawerProp = {
     isInitializing: boolean,
     language: LanguageDataDictionary,
 };
+type DrawingPipeline = {
+    name: string,
+    order: number,
+    rerun: number,
+    instructor: () => Promise<any>,
+};
 /**
  * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline` instead of immediately draw their part, these operations will be iterated sequentially by another effect when export.
  */
@@ -105,7 +111,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         furiganaHelper,
     } = card;
 
-    const drawingPipeline = useRef<Record<string, { name: string, order: number, rerun: number, instructor: () => Promise<any> }>>({
+    const drawingPipeline = useRef<Record<string, DrawingPipeline>>({
         frame: {
             name: 'frame',
             order: 1,
@@ -196,7 +202,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : '/');
-    const statInEffect = pendulumFrame !== 'auto' || isPendulum
+    const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
         ? !!(atk || def || (isLink && linkMap.length))
         : isMonster;
     const typeInEffect = cardIcon === 'auto'

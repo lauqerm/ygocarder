@@ -198,6 +198,7 @@
         "input.name-style.type.custom.label": "カスタム",
         "input.name-style.type.predefined.label": "プリセット",
         "input.name.label": "カード名",
+        "input.name.tooltip": "コピー",
         "input.opacity.art-border.tooltip": "カードのボディーが透明でも、アートの境界線を保持します。",
         "input.opacity.body.label": "カード枠",
         "input.opacity.boundless.label": "枠なし",

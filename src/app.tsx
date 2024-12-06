@@ -17,7 +17,15 @@ import {
     normalizedCardName,
     ygoCarderToCardMakerData,
 } from './util';
-import { BatchConverter, CardInputPanel, CardInputPanelRef, DownloadButton, DownloadButtonRef, ImportButton, StyledActionIconButton } from './page';
+import {
+    BatchConverter,
+    CardInputPanel,
+    CardInputPanelRef,
+    DownloadButton,
+    DownloadButtonRef,
+    ImportButton,
+    StyledActionIconButton,
+} from './page';
 import WebFont from 'webfontloader';
 import {
     changeCardFormat,

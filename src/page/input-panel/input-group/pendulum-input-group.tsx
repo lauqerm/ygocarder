@@ -78,7 +78,7 @@ const StyledPendulumFrameInputContainer = styled.div`
         border-radius: 0 var(--br-lg) var(--br-lg) 0;
         line-height: 2; // Alignment
         background-color: var(--main-level-4);
-        min-width: 100px;
+        min-width: 110px;
         overflow: hidden;
         border: var(--bw) solid var(--sub-level-1);
         .frame-info-block-label {
