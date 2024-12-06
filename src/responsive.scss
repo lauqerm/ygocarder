@@ -215,12 +215,17 @@
 			}
 		}
 	}
-	.app-header .app-description .app-contribution {
-		.template-creator,
-		.app-creator {
-			grid-column: -1 / 1;
-			white-space: normal;
-			margin-bottom: var(--spacing-xxs);
+	.app-header {
+		.header-language h1 {
+			grid-column: span 3;
+		}
+		.app-description .app-contribution {
+			.template-creator,
+			.app-creator {
+				grid-column: -1 / 1;
+				white-space: normal;
+				margin-bottom: var(--spacing-xxs);
+			}
 		}
 	}
 }
@@ -279,6 +284,9 @@
 @media only screen and (max-width: 860px) {
 	#app {
 		.card-info-panel {
+			.header-language h1 {
+				grid-column: span 1;
+			}
 			.post-pendulum-input {
 				grid-template-areas:
 					"type-input input-helper"

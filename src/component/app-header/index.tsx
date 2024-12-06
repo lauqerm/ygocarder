@@ -49,7 +49,7 @@ export const AppHeader = () => {
         <div className="app-description">
             <div className="header-language">
                 <h1>Yugioh Carder</h1>
-                <Radio.Group value={languageInfo.codeName} size="small">
+                <Radio.Group value={languageInfo.codeName} size="small" className="language-option">
                     {Object.values(languageMetadataMap)
                         .filter(({ active }) => active)
                         .map(({ codeName, name }) => {

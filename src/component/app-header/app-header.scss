@@ -13,7 +13,7 @@
     .header-language {
         display: inline-grid;
         grid-template-columns: max-content 1fr max-content;
-        gap: var(--spacing);
+        column-gap: var(--spacing);
         margin-bottom: var(--spacing-xxs);
         .ant-radio-button-wrapper {
             > span:nth-child(2) {
@@ -31,6 +31,9 @@
             &:hover {
                 background: var(--sub-danger);
             }
+            a {
+                display: block;
+            }
         }
     }
     .app-description {
@@ -45,6 +48,7 @@
             letter-spacing: 1px;
             color: var(--color-heavy);
             text-shadow: -1px 1px 2px #1b1b1b;
+            transform: translateY(2px); // Alignment
             small {
                 font-size: var(--fs-xl);
             }
