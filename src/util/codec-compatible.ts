@@ -264,7 +264,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
     const normalizedFrame = reverseFrameMap[layout];
     const useImageData = isImageData(image);
     const levelAsNumber = parseInt(level);
-    const normalizedRarity = reverseRarityMap[rarity.toLowerCase()];
+    const normalizedRarity = rarity ? reverseRarityMap[rarity.toLowerCase()] : undefined;
 
     let isPartial = normalizedIcon === undefined
         || normalizedAttribute === undefined

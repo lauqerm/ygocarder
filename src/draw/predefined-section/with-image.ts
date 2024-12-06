@@ -143,7 +143,7 @@ export const drawLimitedEditionMark = async ({
     isPendulum,
     isLink,
     isLegacyCard,
-    compacted,
+    widthOffset,
     bordered,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -152,11 +152,11 @@ export const drawLimitedEditionMark = async ({
     isLink: boolean,
     isLegacyCard: boolean,
     /** When the creator text is too long, this mark must be compressed */
-    compacted: boolean,
+    widthOffset: number,
     bordered: boolean,
 }) => {
     const coordinate: [number, number, number, number] = !isLegacyCard || isPendulum
-        ? [145, 1123, compacted ? 210 : 240, 37]
+        ? [145, 1122, 240 - widthOffset, 37]
         : isLink
             ? [151, 846, 216, 36]
             : [80, 843, 240, 40];

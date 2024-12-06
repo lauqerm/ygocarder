@@ -627,7 +627,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 body: opacityBody,
                 boundless,
             } = normalizedOpacity;
-            const endOfCreator = drawCreatorText({
+            const endOfCreatorText = drawCreatorText({
                 ctx: creatorCanvasRef.current?.getContext('2d'),
                 format,
                 value: creator,
@@ -636,6 +636,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 hasShadow: requireShadow,
                 lightFooter,
             });
+            const compactThreshold = format === 'tcg' ? 390 : 350;
+            const compactOffset = format === 'tcg' ? 30 : 40;
 
             if (isLimitedEdition) {
                 await drawLimitedEditionMark({
@@ -643,7 +645,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     type: (lightFooter && !isPendulum) ? 'white' : 'black',
                     bordered: (opacityBody < 50 || boundless) && !isPendulum,
                     isLink, isPendulum,
-                    compacted: (endOfCreator?.trueEdge ?? 390) < 390,
+                    widthOffset: (endOfCreatorText?.leftEdge ?? compactThreshold) < compactThreshold
+                        ? compactOffset
+                        : 0,
                     isLegacyCard,
                 });
             }

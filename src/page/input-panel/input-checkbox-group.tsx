@@ -155,8 +155,10 @@ export const CardCheckboxGroup = (_: CardCheckboxGroup) => {
         if (nextValue) {
             nextIsFirstEdition = isFirstEdition;
             nextIsSpeedCard = nextIsFirstEdition ? false : isSpeedCard;
-            nextIsDuelTerminalCard = nextIsSpeedCard ? false : isDuelTerminalCard;
-            nextIsLimitedEdition = nextIsDuelTerminalCard ? false : isLimitedEdition;
+            nextIsDuelTerminalCard = (nextIsSpeedCard || nextIsFirstEdition) ? false : isDuelTerminalCard;
+            nextIsLimitedEdition = (nextIsDuelTerminalCard || nextIsFirstEdition || nextIsLimitedEdition)
+                ? false
+                : isLimitedEdition;
         } else {
             nextIsFirstEdition = isFirstEdition;
             nextIsLimitedEdition = nextIsFirstEdition ? false : isLimitedEdition;
