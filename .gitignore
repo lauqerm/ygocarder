@@ -33,3 +33,5 @@ yarn-error.log*
 
 # GIMP
 *.xcf
+# Sentry Config File
+.env.sentry-build-plugin

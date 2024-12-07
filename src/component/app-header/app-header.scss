@@ -22,12 +22,12 @@
             }
         }
         .bug-report {
-            width: 1.5rem;
-            height: 1.5rem;
             text-align: center;
             border: var(--bw) solid var(--sub-level-1);
             background-color: var(--main-level-4);
             border-radius: var(--br-lg);
+            padding: 0 var(--spacing-xs);
+            cursor: pointer;
             &:hover {
                 background: var(--sub-danger);
             }

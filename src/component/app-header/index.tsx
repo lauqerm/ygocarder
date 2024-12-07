@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import { useI18N, useLanguage } from 'src/service';
-import { Radio, Tooltip } from 'antd';
+import { Radio } from 'antd';
 import './app-header.scss';
 
 export const Affiliation = () => {
@@ -62,11 +62,9 @@ export const AppHeader = () => {
                         })}
                 </Radio.Group>
                 <span className="bug-report">
-                    <Tooltip overlay={language['contributor.bug-report.tooltip']}>
-                        <a href="https://github.com/lauqerm/ygocarder/issues" target="_blank" rel="noreferrer">
-                            <BugOutlined />
-                        </a>
-                    </Tooltip>
+                    <div id="sentry-bug-report">
+                        {language['contributor.bug-report.tooltip']} <BugOutlined />
+                    </div>
                 </span>
             </div>
             <div className="app-contribution">
