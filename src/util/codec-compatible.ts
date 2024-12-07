@@ -1,7 +1,7 @@
 import {
     Card,
     CompatibleCard,
-    getDefaultCard,
+    getEmptyCard,
     NO_ATTRIBUTE,
     NO_ICON,
     PresetNameStyle,
@@ -276,7 +276,7 @@ export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, 
         text,
     } = normalizedRarity ?? {};
     const namePreset = text ? PresetNameStyleMap[text as PresetNameStyle] : null;
-    const baseCard = getDefaultCard();
+    const baseCard = getEmptyCard();
     const result: Card = {
         ...baseCard,
         finish: finish ?? [],
