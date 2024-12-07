@@ -32,12 +32,15 @@ const WrappedColorPicker = forwardRef(({
     const debouncedOnChange = useRef(debounce(setInternalOffset, 250)).current;
 
     useImperativeHandle(ref, () => ({
-        setColor: ({ color, offset, id }) => {
-            const { min, max, round } = Math;
-
-            setInternalColor(color);
-            setInternalOffset(max(0, min(100, round(parseFloat(offset) * 100))));
-            setInternalId(id);
+        setColor: colorInfo => {
+            if (colorInfo) {
+                const { color, offset, id } = colorInfo;
+                const { min, max, round } = Math;
+    
+                setInternalColor(color);
+                setInternalOffset(max(0, min(100, round(parseFloat(offset) * 100))));
+                setInternalId(id);
+            }
         },
         setCurrentOffset: (id, offset) => {
             const { min, max, round } = Math;
@@ -225,7 +228,9 @@ export const TextGradientPicker = ({
                         setPalette(cur => {
                             const nextColorList = cur.colorList.filter(entry => entry.id !== id);
                             const nextId = nextColorList?.[0].id ?? -1;
-                            if (nextId > 0) pickerRef.current?.setColor(palette.colorList[nextId]);
+                            if (nextId > 0 && palette.colorList[nextId]) {
+                                pickerRef.current?.setColor(palette.colorList[nextId]);
+                            }
 
                             return {
                                 ...getPaletteInfo(nextColorList),
