@@ -36,7 +36,11 @@ export const decodeCard = (
 
         if (checkYgoCarderCard(normalizedCard)) {
             decodedCard = migrateCardData(normalizedCard, baseCard);
-        } else if (checkCompactYgoCarderCard(normalizedCard)) {
+        }
+        /**
+         * If merging card (has base card), always assume compressed card
+         */
+        else if (checkCompactYgoCarderCard(normalizedCard) || baseCard != null) {
             const fullCard: Record<string, any> = decompressCardData(normalizedCard);
     
             decodedCard = migrateCardData(fullCard, baseCard);
