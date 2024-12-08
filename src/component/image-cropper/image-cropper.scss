@@ -75,4 +75,28 @@
 			0 1px 3px rgba(0, 0, 0, 0.36),
 			0 1px 2px rgba(0, 0, 0, 0.48);
 	}
+	.ant-empty {
+		.ant-empty-image:empty {
+			height: 0;
+		}
+	}
+	.force-fitted {
+		.ReactCrop__crop-selection {
+			top: 0 !important;
+			left: 0 !important;
+			width: 100% !important;
+			height: 100% !important;
+		}
+	}
+	.force-fit-toggle {
+		position: absolute;
+		right: var(--spacing);
+		z-index: 1;
+		top: var(--spacing);
+		width: unset;
+		height: unset;
+		padding: var(--spacing-xs);
+		gap: var(--spacing-xs);
+		font-size: var(--fs-sm);
+	}
 }

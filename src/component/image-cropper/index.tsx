@@ -1,9 +1,9 @@
-import { Input, Radio, Tooltip } from 'antd';
+import { Checkbox, Empty, Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
-import { IconButton } from '../icon-button';
+import { IconButton, StyledIconButtonContainer } from '../icon-button';
 import { useLanguage } from 'src/service';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
@@ -90,6 +90,8 @@ export type ImageCropper = {
     title?: React.ReactNode,
     backgroundColor?: string,
     className?: string,
+    /** Stretch or squeeze image so it fit with the provided ratio */
+    forceFit?: boolean,
     defaultSourceType?: string,
     defaultInternalSource?: string,
     defaultExternalSource?: string,
@@ -103,11 +105,13 @@ export type ImageCropper = {
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
     onTainted: () => void,
     onMaxSizeExceeded: (size: number) => void,
+    onForceFitChange?: (status: boolean) => void,
 }
 export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     title,
     backgroundColor,
     className,
+    forceFit,
     defaultSourceType,
     defaultInternalSource = '',
     defaultExternalSource = '',
@@ -121,6 +125,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     onCropChange = () => { },
     onTainted = () => { },
     onMaxSizeExceeded = () => { },
+    onForceFitChange = () => { },
 }: ImageCropper, forwardedRef) => {
     const normalizedDefaultSource = defaultSourceType === 'offline'
         ? 'offline'
@@ -308,20 +313,43 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         // const boundingWidth = Math.ceil(receivingCanvas.getBoundingClientRect().width);
         // const boundingHeight = Math.ceil(receivingCanvas.getBoundingClientRect().height);
 
-        receivingCanvas.width = (drawWidth ?? 0);
-        receivingCanvas.height = (drawHeight ?? 0);
-
-        ctx.drawImage(
-            image,
-            drawCoordinateX,
-            drawCoordinateY,
-            drawWidth,
-            drawHeight,
-            0,
-            0,
-            drawWidth,
-            drawHeight,
-        );
+        if (forceFit) {
+            const prominentSide = ratio * naturalHeight > naturalWidth ? 'width' : 'height';
+            if (prominentSide === 'width') {
+                drawWidth = naturalWidth;
+                drawHeight = drawWidth / ratio;
+            } else {
+                drawWidth = naturalHeight * ratio;
+                drawHeight = naturalHeight;
+            }
+            receivingCanvas.width = drawWidth;
+            receivingCanvas.height = drawHeight;
+            ctx.drawImage(
+                image,
+                0,
+                0,
+                naturalWidth,
+                naturalHeight,
+                0,
+                0,
+                drawWidth,
+                drawHeight,
+            );
+        } else {
+            receivingCanvas.width = (drawWidth ?? 0);
+            receivingCanvas.height = (drawHeight ?? 0);
+            ctx.drawImage(
+                image,
+                drawCoordinateX,
+                drawCoordinateY,
+                drawWidth,
+                drawHeight,
+                0,
+                0,
+                drawWidth,
+                drawHeight,
+            );
+        }
         if (sourceType === 'offline' && (internalSource ?? '').length <= 0) { }
         else if (ratio === completedCrop.aspect) {
             onCropChange(completedCrop, sourceType);
@@ -330,7 +358,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             setCrop(cur => ({ ...cur, current: fitCropData }));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [completedCrop, receivingCanvas, redrawSignal]);
+    }, [completedCrop, receivingCanvas, redrawSignal, forceFit]);
 
     useEffect(() => {
         setCrop(cur => {
@@ -371,7 +399,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         }
     }));
 
-    const isDownloadable = receivingCanvas && !isLoading && completedCrop?.width && completedCrop?.height;
+    const hasImage = (sourceType === 'offline' && (internalSource ?? '').length > 0)
+        || (sourceType === 'online' && (externalSource ?? '').length > 0);
+    const isDownloadable = receivingCanvas && hasImage && !isLoading && completedCrop?.width && completedCrop?.height;
     return (
         <div className={`card-image-cropper ${className}`}>
             <div className="card-image-source-input">
@@ -427,13 +457,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             maxLength={512}
                             allowClear
                         />
-                        {error
-                            ? <div className="online-image-tip image-warning">
-                                {language['image-cropper.not-found-warning']}
-                            </div>
-                            : <div className="online-image-tip">
-                                {language['image-cropper.online-tip']}
-                            </div>}
+                        {<div className="online-image-tip">
+                            {language['image-cropper.online-tip']}
+                        </div>}
                     </div>
                     <div className={['card-image-input', inputMode === 'offline' ? '' : 'input-inactive'].join(' ')}>
                         <Input ref={fileInputRef}
@@ -450,8 +476,14 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             {beforeCropper}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
+                {hasImage && <StyledIconButtonContainer className="force-fit-toggle" onClick={() => onForceFitChange(!forceFit)}>
+                    <Checkbox checked={forceFit} /> <span>{language['image-cropper.force-fit.label']}</span>
+                </StyledIconButtonContainer>}
+                {(!hasImage || error) && <Empty description={language['image-cropper.not-found-warning']} image={null} />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
                     src={sourceType === 'offline' ? internalSource : externalSource}
+                    disabled={forceFit}
+                    className={forceFit ? 'force-fitted' : ''}
                     imageStyle={backgroundColor
                         ? {
                             backgroundColor,

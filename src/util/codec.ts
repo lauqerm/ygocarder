@@ -23,6 +23,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     finish: 'fn',
     art: 'ar',
     artData: 'ad',
+    artFit: 'af',
     artSource: 'as',
     artFinish: 'afn',
     artCrop: {
@@ -36,6 +37,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     hasBackground: 'hbg',
     background: 'bg',
+    backgroundFit: 'bf',
     backgroundData: 'bgd',
     backgroundSource: 'bgs',
     backgroundType: 'bgt',
@@ -245,6 +247,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if ((migratedCard.art ?? '') === '') migratedCard.art = '';
     if ((migratedCard.artData ?? '') === '') migratedCard.artData = '';
     if ((migratedCard.artSource ?? '') === '') migratedCard.artSource = 'online';
+    if (migratedCard.artFit == null) migratedCard.artFit = false;
 
     if (typeof (migratedCard.opacity as any).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
         migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
@@ -255,6 +258,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
     if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
     if ((migratedCard.backgroundSource ?? '') === '') migratedCard.backgroundSource = 'online';
+    if (migratedCard.backgroundFit == null) migratedCard.backgroundFit = false;
     if (migratedCard.hasBackground == null
         && (migratedCard.background || migratedCard.backgroundData || migratedCard.opacity.baseFill)
     ) {

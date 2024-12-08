@@ -48,7 +48,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         artFinish,
         linkMap,
         isPendulum,
-        art, artCrop, artData, artSource,
+        art, artCrop, artData, artSource, artFit,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
@@ -57,7 +57,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             artFinish,
             linkMap,
             isPendulum,
-            art, artCrop, artData, artSource,
+            art, artCrop, artData, artSource, artFit,
         },
         getUpdater,
         setCard,
@@ -66,7 +66,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         artFinish,
         linkMap,
         isPendulum,
-        art, artCrop, artData, artSource,
+        art, artCrop, artData, artSource, artFit,
         getUpdater,
         setCard,
     })));
@@ -75,6 +75,12 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     const changeLinkMap = useMemo(() => getUpdater('linkMap'), [getUpdater]);
     const changeArt = useMemo(() => getUpdater('art'), [getUpdater]);
     const changeArtData = useMemo(() => getUpdater('artData'), [getUpdater]);
+    const changeArtFit = useCallback((status: boolean) => setCard(currentCard => {
+        return {
+            ...currentCard,
+            artFit: status,
+        };
+    }), [setCard]);
     const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
     const changeArtFinish = useMemo(() => getUpdater('artFinish'), [getUpdater]);
     const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => {
@@ -107,6 +113,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         defaultExternalSource={art}
         defaultInternalSource={artData}
         defaultCropInfo={artCrop}
+        forceFit={artFit}
         receivingCanvas={receivingCanvas}
         onSourceChange={(type, data) => {
             changeArtSource(type);
@@ -116,6 +123,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         onCropChange={changeImageCrop}
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
+        onForceFitChange={changeArtFit}
         onMaxSizeExceeded={size => {
             notification.error({
                 description: language['error.max-size.description'](size),

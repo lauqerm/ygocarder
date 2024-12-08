@@ -48,21 +48,21 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
 }, ref) => {
     const language = useLanguage();
     const {
-        background, backgroundCrop, backgroundType, backgroundData, backgroundSource,
+        background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
         isPendulum,
         opacity,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
         card: {
-            background, backgroundCrop, backgroundType, backgroundData, backgroundSource,
+            background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
             isPendulum,
             opacity,
         },
         getUpdater,
         setCard,
     }) => ({
-        background, backgroundCrop, backgroundType, backgroundData, backgroundSource,
+        background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
         isPendulum,
         opacity,
         getUpdater,
@@ -73,6 +73,12 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
     const changeBackgroundSource = useMemo(() => getUpdater('backgroundSource'), [getUpdater]);
     const changeBackground = useMemo(() => getUpdater('background'), [getUpdater]);
     const changeBackgroundData = useMemo(() => getUpdater('backgroundData'), [getUpdater]);
+    const changeBackgroundFit = useCallback((status: boolean) => setCard(currentCard => {
+        return {
+            ...currentCard,
+            backgroundFit: status,
+        };
+    }), [setCard]);
     const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(curr => ({
@@ -106,6 +112,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         defaultExternalSource={background}
         defaultCropInfo={backgroundCrop}
         receivingCanvas={receivingCanvas}
+        forceFit={backgroundFit}
         onSourceChange={(type, data) => {
             changeBackgroundSource(type);
             if (type === 'offline') changeBackgroundData(data);
@@ -114,6 +121,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         onCropChange={changeBackgroundCrop}
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
+        onForceFitChange={changeBackgroundFit}
         onMaxSizeExceeded={size => {
             notification.error({
                 description: language['error.max-size.description'](size),

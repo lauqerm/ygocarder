@@ -23,6 +23,7 @@ export const getDefaultCard = () => ({
     starAlignment: 'auto',
     art: 'https://i.imgur.com/h5kXZeC.png',
     artData: '',
+    artFit: false,
     artSource: 'online',
     artCrop: {
         x: 0,
@@ -35,6 +36,7 @@ export const getDefaultCard = () => ({
     hasBackground: false,
     background: '',
     backgroundData: '',
+    backgroundFit: false,
     backgroundSource: 'online',
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: {
@@ -104,6 +106,7 @@ export const getEmptyCard = (): Card => ({
     art: 'https://i.imgur.com/jjtCuG5.png',
     artData: '',
     artSource: 'online',
+    artFit: false,
     artCrop: {
         x: 0,
         y: 4,
@@ -115,6 +118,7 @@ export const getEmptyCard = (): Card => ({
     hasBackground: false,
     background: '',
     backgroundData: '',
+    backgroundFit: false,
     backgroundSource: 'online',
     backgroundType: 'fit',
     backgroundCrop: {

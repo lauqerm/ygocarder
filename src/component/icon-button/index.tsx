@@ -2,8 +2,9 @@ import { Tooltip } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
 import { ExtractProps } from 'src/type';
 import styled from 'styled-components';
+import React from 'react';
 
-const StyledIconButtonContainer = styled.span`
+export const StyledIconButtonContainer = styled.span`
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -22,6 +23,7 @@ const StyledIconButtonContainer = styled.span`
 
 export type IconButton = {
     Icon: typeof SyncOutlined,
+    children?: React.ReactNode,
     onClick?: () => void,
     iconProps?: ExtractProps<typeof SyncOutlined>,
     tooltipProps?: ExtractProps<typeof Tooltip>,
@@ -29,6 +31,7 @@ export type IconButton = {
 }
 export const IconButton = ({
     Icon,
+    children,
     onClick,
     iconProps,
     tooltipProps,
@@ -52,7 +55,7 @@ export const IconButton = ({
             }}
             className={['icon-button', className ?? ''].join(' ')}
         >
-            <Icon {...iconProps} />
+            <Icon {...iconProps} />{children}
         </StyledIconButtonContainer>
     </Tooltip>;
 };
