@@ -76,7 +76,7 @@
             background: var(--main-danger);
             border: var(--bw) solid var(--sub-danger);
             margin-left: var(--spacing-xs);
-            &:hover {
+            &:enabled:hover {
                 background-color: var(--sub-danger);
                 box-shadow: none;
             }

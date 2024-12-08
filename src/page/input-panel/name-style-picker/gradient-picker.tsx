@@ -4,11 +4,12 @@ import { ChromePicker } from 'react-color';
 import { AnglePicker, ColorPoint, GradientPicker } from 'react-linear-gradient-picker';
 import { getDefaultGradientPalette, parsePalette, stringifyPalette } from 'src/util';
 import debounce from 'lodash.debounce';
+import { useLanguage } from 'src/service';
 import 'react-linear-gradient-picker/dist/index.css';
 import './gradient-picker.scss';
-import { useLanguage } from 'src/service';
 
 type WrappedColorPicker = {
+    disabled?: boolean,
     color?: string,
     onSelect?: (color: string, opacity?: number) => void,
     onOffsetChange?: (id: number, offset: string) => void,
@@ -20,6 +21,7 @@ type WrappedColorPickerRef = {
     setCurrentOffset: (id: number, offset: string) => void,
 }
 const WrappedColorPicker = forwardRef(({
+    disabled,
     color,
     onSelect,
     onOffsetChange,
@@ -63,7 +65,7 @@ const WrappedColorPicker = forwardRef(({
                     onChange={value => debouncedOnChange(typeof value === 'string' ? parseInt(value) : value ?? 0)}
                 />
             </div>
-            <Button className="remove-stop-color" size="small" onClick={() => onRemove?.(internalId)}>
+            <Button className="remove-stop-color" size="small" disabled={disabled} onClick={() => onRemove?.(internalId)}>
                 {language['input.name-style.gradient.color-remove.label']}
             </Button>
         </div>
@@ -223,6 +225,7 @@ export const TextGradientPicker = ({
             }}>
                 {/** Under the hood this children will be cloned with pre-populate props, so it seemingly work even though we do not pass anything here. */}
                 <WrappedColorPicker ref={pickerRef}
+                    disabled={palette.colorList.length <= 1}
                     onOffsetChange={changePalette}
                     onRemove={id => {
                         setPalette(cur => {
