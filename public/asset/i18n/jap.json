@@ -64,6 +64,8 @@
         "error.load.font.tcg": "{familyName}フォントをロード出来ませんでした。そのために、カードの品質が多くに影響されます。",
         "error.max-size.description": "Maximum image size allowed is {fileSize} MB.",
         "error.max-size.message": "File size exceeded",
+        "error.card-max-size.description": "Maximum card size exceeded, please try a smaller image.",
+        "error.card-max-size.message": "Card size exceeded",
         "guide.format.caption.input": "入力",
         "guide.format.caption.output": "出力",
         "guide.format.close": "クローズ",

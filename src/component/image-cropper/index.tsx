@@ -476,7 +476,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             {beforeCropper}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
-                {hasImage && <StyledIconButtonContainer className="force-fit-toggle" onClick={() => onForceFitChange(!forceFit)}>
+                {(hasImage && !error) && <StyledIconButtonContainer className="force-fit-toggle" onClick={() => onForceFitChange(!forceFit)}>
                     <Checkbox checked={forceFit} /> <span>{language['image-cropper.force-fit.label']}</span>
                 </StyledIconButtonContainer>}
                 {(!hasImage || error) && <Empty description={language['image-cropper.not-found-warning']} image={null} />}

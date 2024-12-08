@@ -64,6 +64,8 @@
         "error.load.font.tcg": "{familyName} font could not be loaded, this may impact your card quality",
         "error.max-size.description": "Maximum image size allowed is {fileSize} MB.",
         "error.max-size.message": "File size exceeded",
+        "error.card-max-size.description": "Maximum card size exceeded, please try a smaller image.",
+        "error.card-max-size.message": "Card size exceeded",
         "guide.format.caption.input": "Input",
         "guide.format.caption.output": "Output",
         "guide.format.close": "Close",

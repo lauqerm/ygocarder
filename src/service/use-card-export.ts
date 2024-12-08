@@ -3,6 +3,8 @@ import { compressCardData, insertUrlParam, normalizedCardName } from 'src/util';
 import { useCard } from './use-card';
 import { CardOpacity } from 'src/model';
 import { useSetting } from './use-setting';
+import { notification } from 'antd';
+import { useLanguage } from './use-i18n';
 
 export type UseCardExport = {
     isTainted: boolean,
@@ -29,6 +31,7 @@ export const useCardExport = ({
     onDownloadError,
     onDownloadComplete,
 }: UseCardExport) => {
+    const language = useLanguage();
     const {
         card: currentCard,
     } = useCard();
@@ -123,8 +126,19 @@ export const useCardExport = ({
             return 'Leave right now may make you lose unsaved progress, proceed?';
         };
         if (isInitializing === false) {
-            localStorage.setItem('card-data', JSON.stringify(currentCard));
-            localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+            try {
+                localStorage.setItem('card-data', JSON.stringify(currentCard));
+                localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+            } catch (e) {
+                /** Ensure it does not fire repeatedly */
+                const key = 'fail-to-set-storage-notification';
+                notification.close(key);
+                notification.error({
+                    key,
+                    message: language['error.card-max-size.message'],
+                    description: language['error.card-max-size.description'],
+                });
+            }
 
             /**
              * Run export pipeline:

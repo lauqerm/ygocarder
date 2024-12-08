@@ -64,6 +64,8 @@
         "error.load.font.tcg": "Không tải được phông {familyName}, hãy thử làm mới lại trang.",
         "error.max-size.description": "Chỉ chấp nhận ảnh tối đa {fileSize} MB.",
         "error.max-size.message": "Quá dung lượng tối đa",
+        "error.card-max-size.description": "Hãy dùng ảnh nhỏ hơn nếu có thể.",
+        "error.card-max-size.message": "Quá dung lượng tối đa",
         "guide.format.caption.input": "Nội dung nhập",
         "guide.format.caption.output": "Hiển thị",
         "guide.format.close": "Đóng",
