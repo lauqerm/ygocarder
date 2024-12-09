@@ -111,6 +111,8 @@ export const BatchConverter = ({
             okButtonProps={{
                 disabled: isExceedMaxAmount || isRunning,
             }}
+            okText={language['converter.ok.label']}
+            cancelText={language['converter.cancel.label']}
             onCancel={() => setVisible(false)}
             onOk={async () => {
                 try {

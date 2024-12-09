@@ -24,7 +24,7 @@ const getNameGradient = (
     maxAscent: number,
     maxDescent: number,
 ) => {
-    /** Use the knowledge diagram to understand more about the geometry for this, but basically we want to create a rectangle to put the gradient in, this rectangle can be rotated, but no matter what the rotation angle is, it must be large just enought to contains all the card name inside, no more no less.
+    /** Use the knowledge diagram to understand more about the geometry for this, but basically we want to create a rectangle to put the gradient in, this rectangle can be rotated, but no matter what the rotation angle is, it must be large just enough to contains all the card name inside, no more no less.
      * 
      * This is deceptively hard because each letters has their own "hanging" or "protruding" part, magnified by the fact that the gradient is rotable. */
     const baseKAF = angleAsDegree % 360;
