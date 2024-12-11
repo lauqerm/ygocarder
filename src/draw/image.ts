@@ -20,23 +20,24 @@ export const drawFrom = async (
     if (source.includes('/frame-token')) notification.info({ message: 'draw' });
     return new Promise<boolean>(resolve => {
         /**
-         * @todo There is a very weird bug on android's chrome that make this function draw duplicate image and seemingly random offset, causing two identical images but one overlap a bit with each other.
+         * Manually caching this image is not a good idea? Should have just let the browser do all the work. We are trying to reinvent the wheel here.
          * 
-         * Manually caching this image is not a good idea anyways, should have just let the browser do all the work. We are trying to reinvent the wheel here.
+         * Still, caching image prevent constant flashing when draw, so we will keep it as long as we can until we figure a better UX.
         */
-        // if (imageCacheMap[source]?.ready === true) {
-        //     const image = imageCacheMap[source].image;
-        //     const normalizedX = typeof sx === 'number' ? sx : sx(image);
-        //     const normalizedY = typeof sy === 'number' ? sy : sy(image);
+        if (imageCacheMap[source]?.ready === true) {
+            const image = imageCacheMap[source].image;
+            const normalizedX = typeof sx === 'number' ? sx : sx(image);
+            const normalizedY = typeof sy === 'number' ? sy : sy(image);
 
-        //     ctx.drawImage(image, normalizedX, normalizedY);
-        //     resolve(true);
-        //     return;
-        // }
-        // if (imageCacheMap[source]?.error) {
-        //     resolve(true);
-        //     return;
-        // }
+            ctx.drawImage(image, normalizedX, normalizedY);
+            /** Same treatment for chrome mobile bug */
+            setTimeout(() => resolve(true), 0);
+            return;
+        }
+        if (imageCacheMap[source]?.error) {
+            setTimeout(() => resolve(true), 0);
+            return;
+        }
 
         const imageCached = imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
         const image = imageCached
@@ -70,12 +71,12 @@ export const drawFrom = async (
             { once: true },
         );
 
-        // if (!imageCached) imageCacheMap[source] = {
-        //     image: image,
-        //     ready: false,
-        //     error: false,
-        //     cache: true,
-        // };
+        if (!imageCached) imageCacheMap[source] = {
+            image: image,
+            ready: false,
+            error: false,
+            cache: true,
+        };
     });
 };
 export const drawAsset = async (
@@ -102,21 +103,21 @@ export const drawFromWithSize = async (
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
         /** Check `drawFrom` comment for disable reasons */
-        // if (imageCacheMap[source]?.ready === true) {
-        //     const image = imageCacheMap[source].image;
-        //     const normalizedX = typeof sx === 'number' ? sx : sx(image);
-        //     const normalizedY = typeof sy === 'number' ? sy : sy(image);
-        //     const normalizedW = typeof dw === 'number' ? dw : dw(image);
-        //     const normalizedH = typeof dh === 'number' ? dh : dh(image);
+        if (imageCacheMap[source]?.ready === true) {
+            const image = imageCacheMap[source].image;
+            const normalizedX = typeof sx === 'number' ? sx : sx(image);
+            const normalizedY = typeof sy === 'number' ? sy : sy(image);
+            const normalizedW = typeof dw === 'number' ? dw : dw(image);
+            const normalizedH = typeof dh === 'number' ? dh : dh(image);
 
-        //     ctx.drawImage(image, normalizedX, normalizedY, normalizedW, normalizedH);
-        //     resolve(true);
-        //     return;
-        // }
-        // if (imageCacheMap[source]?.error) {
-        //     resolve(true);
-        //     return;
-        // }
+            ctx.drawImage(image, normalizedX, normalizedY, normalizedW, normalizedH);
+            setTimeout(() => resolve(true), 0);
+            return;
+        }
+        if (imageCacheMap[source]?.error) {
+            setTimeout(() => resolve(true), 0);
+            return;
+        }
 
         const imageCached = imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
         const image = imageCached
@@ -152,12 +153,12 @@ export const drawFromWithSize = async (
             { once: true },
         );
 
-        // if (!imageCached) imageCacheMap[source] = {
-        //     image: image,
-        //     ready: false,
-        //     error: false,
-        //     cache: true,
-        // };
+        if (!imageCached) imageCacheMap[source] = {
+            image: image,
+            ready: false,
+            error: false,
+            cache: true,
+        };
     });
 };
 export const drawAssetWithSize: typeof drawFromWithSize = async (
