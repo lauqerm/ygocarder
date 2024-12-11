@@ -9,7 +9,7 @@ import { useLanguage } from './use-i18n';
 export type UseCardExport = {
     isTainted: boolean,
     isInitializing: boolean,
-    drawCanvasRef: React.RefObject<HTMLCanvasElement>,
+    exportCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportRef: React.MutableRefObject<{
         currentPipeline: Promise<void>;
         pipelineRunning: boolean;
@@ -25,7 +25,7 @@ export type UseCardExport = {
 export const useCardExport = ({
     isTainted,
     isInitializing,
-    drawCanvasRef,
+    exportCanvasRef,
     exportRef,
     onExport,
     onDownloadError,
@@ -44,7 +44,7 @@ export const useCardExport = ({
     const pendingSave = useRef(false);
 
     const download = useCallback((size: [number, number] = resolution) => {
-        const drawCanvas = drawCanvasRef.current;
+        const drawCanvas = exportCanvasRef.current;
         /** Clone node so we can resize it as will */
         const cloneCanvas = drawCanvas?.cloneNode() as HTMLCanvasElement | null;
         const drawCanvasContext = drawCanvas?.getContext('2d');
@@ -78,7 +78,7 @@ export const useCardExport = ({
         }
         document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
         onDownloadComplete();
-    }, [drawCanvasRef, isTainted, name, resolution, onDownloadComplete, onDownloadError]);
+    }, [exportCanvasRef, isTainted, name, resolution, onDownloadComplete, onDownloadError]);
     const onSave = (size?: [number, number]) => {
         document.querySelector('#export-canvas-guard')?.classList.add('guard-on');
         const queuingSize = size ? [...size] as [number, number] : undefined;
@@ -149,7 +149,7 @@ export const useCardExport = ({
              * - Otherwise finish the pipeline and write result, also mark the pipeline as no longer running.
              */
             (async () => {
-                const canvasRef = drawCanvasRef.current;
+                const canvasRef = exportCanvasRef.current;
                 if (canvasRef) {
                     window.addEventListener('beforeunload', confirmReload);
                     document.getElementById('export-canvas')?.classList.remove('js-export-available');
@@ -162,7 +162,11 @@ export const useCardExport = ({
                     await exportRef.current.currentPipeline;
 
                     if (relevant) {
-                        exportRef.current.currentPipeline = onExport({ isPendulum, opacity, isRelevant: () => relevant });
+                        exportRef.current.currentPipeline = onExport({
+                            isPendulum,
+                            opacity,
+                            isRelevant: () => relevant,
+                        });
 
                         await exportRef.current.currentPipeline;
                         if (relevant) {

@@ -110,7 +110,7 @@ function App() {
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
-    const drawCanvasRef = useRef<HTMLCanvasElement>(null);
+    const exportCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
     const cardIconCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumScaleCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -128,7 +128,7 @@ function App() {
     const [canvasMap] = useState({
         artworkCanvasRef,
         backgroundCanvasRef,
-        drawCanvasRef,
+        exportCanvasRef,
         frameCanvasRef,
         cardIconCanvasRef,
         pendulumScaleCanvasRef,
@@ -169,7 +169,7 @@ function App() {
     }, [languageInfo]);
 
     useEffect(() => {
-        const ctx = drawCanvasRef.current?.getContext('2d');
+        const ctx = exportCanvasRef.current?.getContext('2d');
         const setCard = useCard.getState().setCard;
         if (ctx) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -218,7 +218,7 @@ function App() {
         isLanguageInitiating,
         onBeforeLoad: () => {
             setInitializing(true);
-            const ctx = drawCanvasRef.current?.getContext('2d');
+            const ctx = exportCanvasRef.current?.getContext('2d');
             if (ctx) {
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.imageSmoothingQuality = 'high';
@@ -285,15 +285,16 @@ function App() {
                         successMessageText: language['contributor.bug-report.success.label'],
                     }),
                 ],
-                beforeSend(event) {
-                    // Check if it is an exception, and if so, show the report dialog
-                    if (event.exception && event.event_id) {
-                        Sentry.showReportDialog({
-                            eventId: event.event_id,
-                        });
-                    }
-                    return event;
-                  },
+                /** @todo Should we enable dialog here? Because there is no way for us to contact the user back, we will have a very hard time fighting against false positive error. */
+                // beforeSend(event) {
+                //     // Check if it is an exception, and if so, show the report dialog
+                //     if (event.exception && event.event_id) {
+                //         Sentry.showReportDialog({
+                //             eventId: event.event_id,
+                //         });
+                //     }
+                //     return event;
+                // },
                 // Tracing
                 tracesSampleRate: 1.0, //  Capture 100% of the transactions
                 // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
@@ -577,21 +578,24 @@ function App() {
                         <div className="card-canvas-container">
                             <StyledCardCanvasGroupContainer className="card-canvas-group">
                                 <Tooltip title={language['button.reset.tooltip']}>
-                                    <ResetButton className="reset-button" onClick={() => {
-                                        const consent = window.confirm(language['prompt.reset.message']);
+                                    <ResetButton
+                                        className="reset-button"
+                                        onClick={() => {
+                                            const consent = window.confirm(language['prompt.reset.message']);
 
-                                        if (consent) {
-                                            const { setCard, card } = useCard.getState();
-                                            const defaultCard = getDefaultCard();
-                                            const contextualDefaultCardData = card.format === 'tcg'
-                                                ? defaultCard
-                                                : changeCardFormat(defaultCard, 'ocg');
+                                            if (consent) {
+                                                const { setCard, card } = useCard.getState();
+                                                const defaultCard = getDefaultCard();
+                                                const contextualDefaultCardData = card.format === 'tcg'
+                                                    ? defaultCard
+                                                    : changeCardFormat(defaultCard, 'ocg');
 
-                                            setCard(contextualDefaultCardData);
-                                            setImageChangeCount(cnt => cnt + 1);
-                                            cardInputRef.current?.forceCardData(contextualDefaultCardData);
-                                        }
-                                    }}>
+                                                setCard(contextualDefaultCardData);
+                                                setImageChangeCount(cnt => cnt + 1);
+                                                cardInputRef.current?.forceCardData(contextualDefaultCardData);
+                                            }
+                                        }}
+                                    >
                                         <ClearOutlined />
                                     </ResetButton>
                                 </Tooltip>
@@ -603,12 +607,23 @@ function App() {
                                         <ZoomInOutlined />
                                     </LightboxButton>
                                 </Tooltip>
-                                <canvas id="export-canvas" key={canvasKey + 0.1} ref={drawCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas
+                                    key={canvasKey + 0.1}
+                                    id="export-canvas"
+                                    ref={exportCanvasRef}
+                                    width={CanvasWidth}
+                                    height={CanvasHeight}
+                                />
                                 {/** Overlay guarding seems very janky, cursor should suffix for now */}
                                 <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
                                     {/* <div className="canvas-guard-alert">Generating...</div> */}
                                 </div>
-                                <canvas id="frameCanvas" key={canvasKey} ref={frameCanvasRef} width={CanvasWidth} height={CanvasHeight} />
+                                <canvas id="frameCanvas"
+                                    key={canvasKey}
+                                    ref={frameCanvasRef}
+                                    width={CanvasWidth}
+                                    height={CanvasHeight}
+                                />
                                 <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
                                 <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />
                                 <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />

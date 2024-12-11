@@ -1,4 +1,12 @@
 import styled from 'styled-components';
+import { Slider } from 'antd';
+import { ErrorBoundary } from './error-boundary';
+
+export const GuardedSlider = (props: React.ComponentProps<typeof Slider>) => {
+    return <ErrorBoundary fallback={<></>}>
+        <Slider {...props} />
+    </ErrorBoundary>;
+};
 
 export const StandaloneLabel = styled.div`
     font-weight: 500;
@@ -45,13 +53,14 @@ export const StyledDropdown = {
     Option: StyledDropdownOption,
 };
 
-export { ImageCropper } from './image-cropper';
-export type { ImageCropperRef } from './image-cropper';
-export { LinkMarkChooser } from './link-marker';
-export { Loading } from './loading';
+export * from './app-header';
+export * from './error-boundary';
 export * from './explanation';
 export * from './formatting-guide';
 export * from './frame-info-block';
 export * from './icon-button';
 export * from './setting';
-export * from './app-header';
+export type { ImageCropperRef } from './image-cropper';
+export { ImageCropper } from './image-cropper';
+export { LinkMarkChooser } from './link-marker';
+export { Loading } from './loading';

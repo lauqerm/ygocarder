@@ -55,7 +55,9 @@ export const IconButton = ({
             }}
             className={['icon-button', className ?? ''].join(' ')}
         >
-            <Icon {...iconProps} />{children}
+            <>
+                <Icon {...iconProps} />{children}
+            </>
         </StyledIconButtonContainer>
     </Tooltip>;
 };

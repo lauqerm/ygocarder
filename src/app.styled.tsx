@@ -146,9 +146,12 @@ export const StyledCardCanvasGroupContainer = styled.div`
     }
     .crop-canvas {
         position: relative;
+        /** Size here is just a placeholder, crop canvas constantly get its dimensions updated based on the current artwork */
         width: 416px;
         height: 416px;
         z-index: 0;
+        top: 0;
+        left: 0;
         visibility: hidden;
     }
 `;

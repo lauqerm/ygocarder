@@ -73,7 +73,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         card,
     } = useCard();
     const {
-        drawCanvasRef,
+        exportCanvasRef,
         artworkCanvasRef,
         backgroundCanvasRef,
         frameCanvasRef,
@@ -223,13 +223,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = frameCanvasRef.current?.getContext('2d');
-        const artworkCanvas = artworkCanvasRef.current;
-        const backgroundCanvas = backgroundCanvasRef.current;
-
         drawingPipeline.current.frame.rerun += 1;
         drawingPipeline.current.frame.instructor = async () => {
-            if (!frameCanvasRef.current || !clearCanvas(ctx)) return;
+            const ctx = frameCanvasRef.current?.getContext('2d');
+            const artworkCanvas = artworkCanvasRef.current;
+            const backgroundCanvas = backgroundCanvasRef.current;
+
+            if (!clearCanvas(ctx) || !frameCanvasRef.current) return;
 
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
@@ -239,23 +239,34 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 baseFill,
             } = normalizedOpacity;
 
+            /** Extremely weird bug in Chrome Mobile that make this frame draw twice and overlapping each other. The bug appear and disappear consistently with seemingly unrelated actions:
+             * * Choose a finish type with overlay finish fixex the problem, but draw the same overlay manually won't fix it.
+             * * Set default base fill to transparency fix the problem.
+             * 
+             * Because the issue happens on mobile with limited debug capability, we can't quite figure out what is the root cause, but put the fillRect call inside a promise is the only consistent way to resolve this issue.
+             */
             const fillBaseColor = (x: number, y: number, w: number, h: number) => {
-                ctx.fillStyle = hasBackground ? baseFill : DEFAULT_BASE_FILL_COLOR;
-                ctx.fillRect(x, y, w, h);
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        ctx.fillStyle = hasBackground ? baseFill : DEFAULT_BASE_FILL_COLOR;
+                        ctx.fillRect(x, y, w, h);
+                        resolve(true);
+                    }, 0);
+                });
             };
             const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
 
             /** Base colored background so the card is not see-through even with transparent artwork */
-            fillBaseColor(0, 0, CanvasWidth, CanvasHeight);
+            await fillBaseColor(0, 0, CanvasWidth, CanvasHeight);
 
             const {
-                drawFrame,
-                drawCardArt,
-                drawBackground,
-                drawPendulumScaleIcon,
-                drawLinkArrowMap,
-                drawStar,
                 drawAttribute,
+                drawBackground,
+                drawCardArt,
+                drawFrame,
+                drawLinkArrowMap,
+                drawPendulumScaleIcon,
+                drawStar,
 
                 drawNameBackground,
                 drawEffectBackground,
@@ -337,7 +348,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     } = calculateCardArtRedrawCoordination(artworkCanvas);
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
-                    fillBaseColor(
+                    await fillBaseColor(
                         destinationX, destinationY,
                         destinationWidth, destinationHeight,
                     );
@@ -396,7 +407,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                             extraHeightRatio,
                         );
     
-                        fillBaseColor(
+                        await fillBaseColor(
                             destinationX, destinationY,
                             destinationWidth, destinationHeight,
                         );
@@ -765,7 +776,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 furiganaHelper,
             });
         }
-    }, [readyToDraw, condenseTolerant, format, isPendulum, pendulumEffectCanvasRef, pendulumEffect, furiganaHelper, resolvedPendulumEffectTextStyle]);
+    }, [
+        readyToDraw,
+        condenseTolerant,
+        format,
+        isPendulum,
+        pendulumEffectCanvasRef,
+        pendulumEffect,
+        furiganaHelper,
+        resolvedPendulumEffectTextStyle,
+    ]);
 
     /** DRAW TOTAL OVERLAY */
     useEffect(() => {
@@ -794,9 +814,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             isPendulum = false,
             opacity,
         } = exportProps;
-        const canvasRef = drawCanvasRef.current;
-        const exportCtx = canvasRef?.getContext('2d');
-        /** Delay queue and relevant checker is used for potential performance improvement, but currently performance is not a making a hard impact to the app. */
+        const exportCanvas = exportCanvasRef.current;
+        const exportCtx = exportCanvas?.getContext('2d');
+        /** Delay queue and relevant checker is used for potential performance improvement, but currently performance is not making a hard impact to the app. */
         const generateLayer = (
             canvasLayer: React.RefObject<HTMLCanvasElement>,
             exportCtx: CanvasRenderingContext2D | null | undefined,
@@ -836,7 +856,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             });
         };
 
-        if (canvasRef && exportCtx) {
+        if (exportCanvas && exportCtx) {
             exportCtx.clearRect(0, 0, CanvasConst.width, CanvasConst.height);
             await Promise.all(Object
                 .values(drawingPipeline.current)
@@ -893,14 +913,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await generateLayer(stickerCanvasRef, exportCtx, 0);
             await generateLayer(finishCanvasRef, exportCtx, 0);
 
-            lightboxCanvasRef.current?.getContext('2d')?.drawImage(canvasRef, 0, 0);
+            lightboxCanvasRef.current?.getContext('2d')?.drawImage(exportCanvas, 0, 0);
         }
     }, [
         language,
         artworkCanvasRef, 
         cardIconCanvasRef, 
         creatorCanvasRef, 
-        drawCanvasRef, 
+        exportCanvasRef, 
         effectCanvasRef, 
         finishCanvasRef, 
         lightboxCanvasRef, 

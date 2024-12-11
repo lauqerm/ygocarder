@@ -1,10 +1,18 @@
-import { Checkbox, InputNumber, Popover, Slider, Tooltip } from 'antd';
+import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
-import { BackgroundType, getBackgroundTypeList, CardOpacity, DEFAULT_BASE_FILL_COLOR, OpacityList, getDefaultCardOpacity, DefaultColorList } from 'src/model';
+import {
+    BackgroundType,
+    getBackgroundTypeList,
+    CardOpacity,
+    DEFAULT_BASE_FILL_COLOR,
+    OpacityList,
+    getDefaultCardOpacity,
+    DefaultColorList,
+} from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
-import { ImageCropper } from 'src/component';
+import { GuardedSlider, ImageCropper } from 'src/component';
 import { RadioTrain } from '../input-train';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
@@ -386,7 +394,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                     onChange={value => setOpacity(cur => ({ ...cur, [type]: typeof value === 'number' ? value : 100 }))}
                     value={opacity[type] ?? 100}
                 />
-                <Slider
+                <GuardedSlider
                     min={0}
                     max={100}
                     step={5}

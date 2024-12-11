@@ -97,7 +97,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         },
     );
     const {
-        drawCanvasRef,
+        exportCanvasRef,
     } = canvasMap;
     const exportRef = useRef({
         currentPipeline: Promise.resolve(),
@@ -110,7 +110,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     const { onSave } = useCardExport({
         isTainted,
         isInitializing,
-        drawCanvasRef,
+        exportCanvasRef,
         exportRef,
         onExport,
         onDownloadError,

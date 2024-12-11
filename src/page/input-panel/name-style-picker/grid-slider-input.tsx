@@ -1,7 +1,8 @@
-import { InputNumber, Slider } from 'antd';
+import { InputNumber } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import PowerSlider from 'react-input-slider';
+import { GuardedSlider } from 'src/component';
 import { DefaultColorList, NameStyle } from 'src/model';
 import { useLanguage } from 'src/service';
 
@@ -130,7 +131,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                 />
             </div>
             <div className="single-slider">
-                {widthLabel}: <Slider
+                {widthLabel}: <GuardedSlider
                     value={width}
                     min={1}
                     max={10}

@@ -23,7 +23,7 @@ export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'
 export type MasterSeriesCanvas = {
     artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
-    drawCanvasRef: React.RefObject<HTMLCanvasElement>,
+    exportCanvasRef: React.RefObject<HTMLCanvasElement>,
     frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,
     pendulumScaleCanvasRef: React.RefObject<HTMLCanvasElement>,

@@ -51,7 +51,10 @@ export const LinkMarkChooser = ({
                         });
                     }}
                 >
-                    <div className={`link-marker-icon link-marker-icon-${index + 1}`} style={{ transform: `rotate(${rotateMap[index]}deg)` }} />
+                    <div
+                        className={`link-marker-icon link-marker-icon-${index + 1}`}
+                        style={{ transform: `rotate(${rotateMap[index]}deg)` }}
+                    />
                 </div>;
             })}
         </div>

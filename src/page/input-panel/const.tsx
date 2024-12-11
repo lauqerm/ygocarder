@@ -95,7 +95,10 @@ export const getSTIconButtonList = (dictionary: Record<string, string>) => IconL
     label: value === NO_ICON
         ? <CloseCircleOutlined />
         : <Tooltip overlay={dictionary[nameKey]}>
-            <img alt={dictionary[nameKey]} src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`} />
+            <img
+                alt={dictionary[nameKey]}
+                src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`}
+            />
         </Tooltip>,
     value,
 }));
