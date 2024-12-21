@@ -34,6 +34,8 @@ import {
     CardOpacity,
     CardArtCanvasCoordinateMap,
     DEFAULT_BASE_FILL_COLOR,
+    DEFAULT_EFFECT_NORMAL_SIZE,
+    DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
 } from 'src/model';
 import {
     checkLightHeader,
@@ -100,7 +102,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed,
+        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle,
         atk, def, linkMap,
         attribute,
         cardIcon, subFamily, star, starAlignment,
@@ -709,6 +711,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.typeAbility.instructor = async () => {
             if (!clearCanvas(ctx) || !clearCanvas(typeCtx)) return;
 
+            const { condenseTolerant, upSize } = effectStyle ?? {};
+            const normalizedUpSize = effectTextStyle[0] ? upSize : 0;
             const effectIndexSize = drawEffect({
                 ctx,
                 content: effect,
@@ -723,6 +727,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     isNormal,
                 }),
                 textStyle: resolvedEffectTextStyle,
+                option: {
+                    forceRelaxCondenseLimit: DEFAULT_EFFECT_NORMAL_SIZE,
+                    defaultSizeLevel: DEFAULT_EFFECT_NORMAL_SIZE - normalizedUpSize,
+                },
             });
             await drawTypeAbility({
                 ctx: typeCtx,
@@ -733,7 +741,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 textStyle: resolvedTypeTextStyle,
                 size: !typeInEffect
                     ? 'large'
-                    : effectIndexSize === 0 ? 'medium' : 'small',
+                    : effectIndexSize <= DEFAULT_EFFECT_NORMAL_SIZE ? 'medium' : 'small',
                 subFamily: normalizedSubFamily,
                 typeAbility: normalizedTypeAbility,
             });
@@ -742,8 +750,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         readyToDraw,
         typeInEffect,
         statInEffect,
-        condenseTolerant,
+        effectStyle,
         effect,
+        effectTextStyle,
         effectCanvasRef,
         format,
         frame,
@@ -764,6 +773,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
+            const { upSize } = pendulumStyle ?? {};
+            const normalizedUpSize = pendulumTextStyle[0] ? upSize : 0;
             drawEffect({
                 ctx,
                 content: pendulumEffect,
@@ -774,6 +785,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 condenseTolerant,
                 format,
                 furiganaHelper,
+                option: {
+                    forceRelaxCondenseLimit: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
+                    defaultSizeLevel: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE - normalizedUpSize,
+                }
             });
         }
     }, [
@@ -783,6 +798,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isPendulum,
         pendulumEffectCanvasRef,
         pendulumEffect,
+        pendulumStyle,
+        pendulumTextStyle,
         furiganaHelper,
         resolvedPendulumEffectTextStyle,
     ]);

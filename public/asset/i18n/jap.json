@@ -239,6 +239,7 @@
         "input.text-style.section.stat.label": "攻・守・LINKスタイル",
         "input.text-style.section.type.label": "属性・種類スタイル",
         "input.text-style.shadow.label": "シャドウ",
+        "input.text-style.extra-size.label": "サイズ",
         "input.type.monster.label": "モンスターの属性",
         "input.type.st.label": "魔法・罠の種類",
         "link-picker.label": "リンクマーカー",

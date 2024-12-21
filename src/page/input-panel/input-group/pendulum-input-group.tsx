@@ -119,6 +119,7 @@ const StyledPendulumInputContainer = styled.div`
             padding-left: var(--spacing-antd);
         }
         .pendulum-checkbox {
+            display: inline-block;
             /** Alignment **/
             width: var(--width-label);
             line-height: 32px;
@@ -235,11 +236,12 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     >
         <div className="joined-row pendulum-option">
             {frame !== 'link'
-                ? <Checkbox
-                    className="pendulum-checkbox"
-                    onChange={changeToPendulum}
-                    checked={isPendulum}
-                >{language['input.pendulum.label']}</Checkbox>
+                ? <div className="pendulum-checkbox">
+                    <Checkbox
+                        onChange={changeToPendulum}
+                        checked={isPendulum}
+                    >{language['input.pendulum.label']}</Checkbox>
+                </div>
                 : <div className="pendulum-checkbox-placeholder" />}
             {showCreativeOption && <Popover
                 visible={frameDropdownVisible}

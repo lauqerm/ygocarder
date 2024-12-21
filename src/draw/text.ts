@@ -88,6 +88,7 @@ export const drawLine = ({
         letterDeviationMap = {},
     } = fontData;
     const {
+        bulletSymbolOffset = DefaultFontSizeData.bulletSymbolOffset,
         bulletSymbolWidth,
         capitalLetterRatio = DefaultFontSizeData.capitalLetterRatio,
         fontSize,
@@ -188,7 +189,7 @@ export const drawLine = ({
             /** Bullet symbol ● is not condenseable, and has specialized draw worker. */
             else if (fragment === BULLET_LETTER) {
                 resetScale();
-                drawBullet(ctx, fragmentEdge, trueBaseline, bulletSymbolWidth, getBulletSpacing(format));
+                drawBullet(ctx, fragmentEdge, trueBaseline + bulletSymbolOffset, bulletSymbolWidth, getBulletSpacing(format));
                 fragmentEdge += bulletSymbolWidth * letterSpacingRatio;
                 applyAsymmetricScale(xRatio, yRatio);
 

@@ -6,6 +6,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { DefaultColorList } from 'src/model';
 import { useEffect, useState } from 'react';
 import { HexColorRegex, hexToRGBA } from 'src/util';
+import { RadioTrain } from './input-train';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
 /** Spacing in this component mimic react-color's */
 const StyledInlineColorPickerContainer = styled.div`
@@ -115,7 +117,7 @@ const InlineColorPicker = ({
                     ? '#000000'
                     : '#FFFFFF';
 
-                return <div className="color-block" title={hex} style={{ backgroundColor: hex }} onClick={() => onChange?.(hex)}>
+                return <div key={hex} className="color-block" title={hex} style={{ backgroundColor: hex }} onClick={() => onChange?.(hex)}>
                     {internalValue.hex.toUpperCase() === hex && <div
                         className="active-dot"
                         style={{
@@ -140,7 +142,7 @@ const InlineColorPicker = ({
 
 const StyledTextStyleContainer = styled.div`
     display: inline-grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr max-content;
+    grid-template-columns: 1fr max-content;
     column-gap: var(--spacing-xxs);
     padding: var(--spacing-px);
     margin-right: var(--spacing-sm);
@@ -151,9 +153,19 @@ const StyledTextStyleContainer = styled.div`
     &:hover {
         border-color: var(--main-active);
     }
+    .text-style-grid {
+        display: grid;
+        grid-template-columns: 35px 35px;
+        grid-template-rows: 13px 13px; // Alignment
+        gap: var(--spacing-xxs);
+        font-size: var(--fs-xs);
+        text-align: center;
+        line-height: 1.5;
+    }
     .text-style-preview-section {
-        width: 7px;
-        height: 28px; // Alignment
+        background-color: #eaeaea;
+        border-radius: var(--br-sm);
+        box-shadow: 0 0 1px 1px var(--main-level-1) inset;
     }
     .text-style-label {
         padding: var(--spacing-xxs);
@@ -192,7 +204,7 @@ const StyledTextStylePicker = styled.div`
     }
     .radio-train {
         padding: var(--spacing-xs);
-        padding-bottom: 0;
+        padding-top: 0;
         .standalone-addon {
             flex: 1 1 auto;
             text-align: left;
@@ -209,18 +221,22 @@ const StyledTextStylePicker = styled.div`
 const TextStyleInfoMap = {
     effectTextStyle: {
         keyName: 'effectTextStyle' as const,
+        extraKeyname: 'effectStyle' as const,
         labelKey: 'input.text-style.section.effect.label',
     },
     pendulumTextStyle: {
         keyName: 'pendulumTextStyle' as const,
+        extraKeyname: 'pendulumStyle' as const,
         labelKey: 'input.text-style.section.pendulum.label',
     },
     statTextStyle: {
         keyName: 'statTextStyle' as const,
+        extraKeyname: undefined,
         labelKey: 'input.text-style.section.stat.label',
     },
     typeTextStyle: {
         keyName: 'typeTextStyle' as const,
+        extraKeyname: undefined,
         labelKey: 'input.text-style.section.type.label',
     },
 };
@@ -231,6 +247,8 @@ export const TextStylePicker = () => {
         typeTextStyle,
         effectTextStyle,
         pendulumTextStyle,
+        effectStyle,
+        pendulumStyle,
         setCard,
     } = useCard(useShallow(({
         card: {
@@ -238,32 +256,51 @@ export const TextStylePicker = () => {
             typeTextStyle,
             effectTextStyle,
             pendulumTextStyle,
+            effectStyle,
+            pendulumStyle,
         },
         setCard,
-        getUpdater,
     }) => ({
         statTextStyle,
         typeTextStyle,
         effectTextStyle,
         pendulumTextStyle,
+        effectStyle,
+        pendulumStyle,
         setCard,
     })));
 
     const styleList = [
-        { info: TextStyleInfoMap.effectTextStyle, value: effectTextStyle },
-        { info: TextStyleInfoMap.pendulumTextStyle, value: pendulumTextStyle },
-        { info: TextStyleInfoMap.statTextStyle, value: statTextStyle },
-        { info: TextStyleInfoMap.typeTextStyle, value: typeTextStyle },
+        {
+            info: TextStyleInfoMap.effectTextStyle,
+            value: effectTextStyle,
+            extraValue: effectStyle,
+        },
+        {
+            info: TextStyleInfoMap.pendulumTextStyle,
+            value: pendulumTextStyle,
+            extraValue: pendulumStyle,
+        },
+        {
+            info: TextStyleInfoMap.statTextStyle,
+            value: statTextStyle,
+        },
+        {
+            info: TextStyleInfoMap.typeTextStyle,
+            value: typeTextStyle,
+        },
     ];
     return <Popover
         trigger={['click']}
         placement="bottomLeft"
+        // visible={true}
         overlayClassName="global-input-overlay global-style-picker-overlay"
         content={<div className="overlay-event-absorber">
             <StyledTextStylePicker className="custom-style-picker">
-                {styleList.map(({ info, value }) => {
-                    const { keyName, labelKey } = info;
+                {styleList.map(({ info, value, extraValue }) => {
+                    const { keyName, labelKey, extraKeyname } = info;
                     const [custom, fillStyle, hasShadow, shadow] = value;
+                    const { upSize } = extraValue ?? {};
 
                     return <div key={keyName} className="style-section">
                         <h3 className={`custom-style-expand ${custom ? '' : 'inactive'}`}>
@@ -285,6 +322,32 @@ export const TextStylePicker = () => {
                             >{language['input.text-style.custom.label']}</Checkbox>
                         </h3>
                         {custom && <div className="style-picker-section">
+                            {typeof upSize === 'number' && <>
+                                <h2>
+                                    <span className="label">{language['input.text-style.extra-size.label']}</span>
+                                </h2>
+                                <RadioTrain
+                                    value={upSize}
+                                    optionList={[
+                                        { label: <CloseCircleOutlined />, value: 0 },
+                                        { label: '+1', value: 1 },
+                                        { label: '+2', value: 2 },
+                                        { label: '+3', value: 3 },
+                                    ]}
+                                    onChange={value => {
+                                        setCard(currentCard => {
+                                            const newStyle = extraKeyname ? { ...currentCard[extraKeyname] } : undefined;
+                                            if (!newStyle || !extraKeyname) return currentCard;
+
+                                            newStyle.upSize = typeof value === 'number' ? value : 0;
+                                            return {
+                                                ...currentCard,
+                                                [extraKeyname]: newStyle,
+                                            };
+                                        });
+                                    }}
+                                />
+                            </>}
                             <h2>
                                 <Checkbox
                                     className="shadow-checkbox"
@@ -300,7 +363,7 @@ export const TextStylePicker = () => {
                                         });
                                     }}
                                 >
-                                    {language['input.text-style.shadow.label']}
+                                    <span className="label">{language['input.text-style.shadow.label']}</span>
                                 </Checkbox>
                             </h2>
                             {hasShadow && <InlineColorPicker
@@ -332,18 +395,23 @@ export const TextStylePicker = () => {
         </div>}
     >
         <StyledTextStyleContainer className="text-style-preview">
-            {styleList.map(({ info, value }) => {
-                const { keyName } = info;
-                const [custom, fillStyle, hasShadow, shadow] = value;
+            <div className="text-style-grid">
+                {styleList.map(({ info, value, extraValue }) => {
+                    const { keyName } = info;
+                    const [custom, fillStyle, hasShadow, shadow] = value;
+                    const { upSize } = extraValue ?? {};
 
-                return <div key={keyName}
-                    className="text-style-preview-section"
-                    style={{
-                        backgroundColor: (fillStyle ?? '').length === 0 || !custom ? '#000000' : fillStyle,
-                        boxShadow: (custom && hasShadow) ? `0 0 0 2px ${shadow} inset` : ''
-                    }}
-                />;
-            })}
+                    return <div key={keyName}
+                        className="text-style-preview-section"
+                        style={{
+                            color: (fillStyle ?? '').length === 0 || !custom ? '#000000' : fillStyle,
+                            textShadow: (custom && hasShadow) ? `0 0 2px ${shadow}` : 'none'
+                        }}
+                    >
+                        {(upSize && custom) ? <div>Size +{upSize}</div> : 'Normal'}
+                    </div>;
+                })}
+            </div>
             <span className="text-style-label">{language['input.text-style.custom-effect.label']}</span>
         </StyledTextStyleContainer>
     </Popover>;

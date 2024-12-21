@@ -21,7 +21,7 @@ export const getDefaultNameStyle = () => ({
     pattern: 'none',
 });
 
-/** Is it worth it? Store as array significantly reduces data size, but also make the code harder to ready. Maybe we should only apply it to simple fields. */
+/** Is it worth it? Store as array significantly reduces data size, but also make the code harder to read. Maybe we should only apply it to simple fields. */
 export type TextStyle = [
     custom: boolean,
     fillStyle: string,

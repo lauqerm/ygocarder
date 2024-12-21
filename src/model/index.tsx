@@ -65,6 +65,10 @@ export const getDefaultCard = () => ({
     ] as string[],
     effectStyle: {
         condenseTolerant: 'strict' as CondenseType,
+        upSize: 0,
+    },
+    pendulumStyle: {
+        upSize: 0,
     },
     effect: `[2+ Effect Monsters on your field]
 Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
@@ -138,6 +142,10 @@ export const getEmptyCard = (): Card => ({
     typeAbility: [],
     effectStyle: {
         condenseTolerant: 'strict',
+        upSize: 0,
+    },
+    pendulumStyle: {
+        upSize: 0,
     },
     effect: '',
     setId: '',
@@ -150,7 +158,7 @@ export const getEmptyCard = (): Card => ({
     isLimitedEdition: false,
     isDuelTerminalCard: false,
     isLegacyCard: false,
-    /** Or copyright */
+    /** A.k.a copyright */
     creator: '',
     furiganaHelper: true,
     statTextStyle: getDefaultTextStyle(),

@@ -42,6 +42,7 @@ export const getEffectFontAndCoordinate = ({
     }
 
     return {
+        fontDataKey,
         fontData,
         sizeList: EffectCoordinateData[coordinateKey],
     };
@@ -60,6 +61,7 @@ export const drawEffect = ({
     condenseTolerant = 'strict',
     format,
     furiganaHelper,
+    option,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
@@ -70,18 +72,20 @@ export const drawEffect = ({
     condenseTolerant?: CondenseType,
     format: string,
     furiganaHelper: boolean,
+    option?: {
+        /** When the text is up-sized, we don't want to apply the current condense tolerant, because large text looks much worse when compressing at high degree. So when the text is up-sized, condense tolerant automatically set to "relaxed". */
+        forceRelaxCondenseLimit?: number,
+        defaultSizeLevel?: number,
+    },
 }) => {
-    let effectSizeLevel = 0;
+    const {
+        defaultSizeLevel,
+        forceRelaxCondenseLimit,
+    } = option ?? {};
+    let effectSizeLevel = defaultSizeLevel ?? 0;
     if (!ctx || !content) return effectSizeLevel;
 
     const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
-    const tolerancePerSentence: Record<string, number> = format === 'tcg'
-        ? CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
-        : {
-            '1': 800,
-            '2': 800,
-            '3': 800,
-        };
     const {
         effectText,
         effectFlavorCondition,
@@ -94,7 +98,16 @@ export const drawEffect = ({
     const { font, fontList } = fontData;
     const yRatio = 1;
     /** We basically go through each font size, then iterating the content multiple time with different condense ratio until the text is both fit inside the max amount of lines AND the ratio is larger than the current limit threshold. */
-    while (effectSizeLevel < fontList.length) {
+    while (effectSizeLevel < fontList.length && effectSizeLevel >= 0) {
+        const tolerancePerSentence: Record<string, number> = format === 'tcg'
+            ? forceRelaxCondenseLimit && effectSizeLevel < forceRelaxCondenseLimit
+                ? CondenseTolerantMap['relaxed']
+                : CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
+            : {
+                '1': 800,
+                '2': 800,
+                '3': 800,
+            };
         const fontSizeData = fontList[effectSizeLevel];
         const {
             fontSize,

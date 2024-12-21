@@ -6,6 +6,7 @@ html {
     --resize-ratio: 0.7;
     --translate-ratio: -15%;
 
+    --color-contrast: #3b3b3b;
     --color-dim: #9b9b9b;
     --color: #d3d3d6;
     --color-heavy: #eeeeee;
@@ -69,6 +70,7 @@ html {
     --fs-ocg: 15px;
 
     // Border Radius
+    --br-sm: 1px;
     --br: 2px;
     --br-lg: 4px;
     --br-xl: 8px;
@@ -99,6 +101,9 @@ html {
         font-size: var(--fs-lg);
         color: var(--color-vendor);
         padding: var(--spacing-sm) 0;
+        .label {
+            color: var(--color-vendor);
+        }
         &:first-child {
             padding-top: 0;
         }

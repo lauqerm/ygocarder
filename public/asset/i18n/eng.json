@@ -239,6 +239,7 @@
         "input.text-style.section.stat.label": "Stats Style",
         "input.text-style.section.type.label": "Card Type Style",
         "input.text-style.shadow.label": "Shadow",
+        "input.text-style.extra-size.label": "Extra Size",
         "input.type.monster.label": "Type",
         "input.type.st.label": "Type",
         "link-picker.label": "Link Arrows",
