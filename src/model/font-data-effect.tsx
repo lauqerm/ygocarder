@@ -201,6 +201,9 @@ export const EffectFontData: Record<string, FontData> = {
 };
 
 export const TCGVanillaTypeStatFontList = [
+    { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3 },
+    { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
+    { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
     { bulletSymbolWidth: 23, fontSize: 21.8, lineHeight: 24.9, lineCount: 6 },
     { bulletSymbolWidth: 23, fontSize: 17.28, lineHeight: 21.5, lineCount: 7 },
     { bulletSymbolWidth: 23, fontSize: 16.28, lineHeight: 18.8, lineCount: 8 },
