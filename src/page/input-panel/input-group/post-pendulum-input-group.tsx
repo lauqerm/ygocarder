@@ -1,6 +1,5 @@
 import { Checkbox, Tooltip } from 'antd';
-import { RadioTrain } from '../input-train';
-import { Explanation, FormattingHelpDrawer } from 'src/component';
+import { Explanation, FormattingHelpDrawer, RadioTrain } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';

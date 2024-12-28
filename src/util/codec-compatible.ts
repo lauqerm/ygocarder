@@ -10,6 +10,7 @@ import {
 } from 'src/model';
 import { normalizedCardEffect, normalizedCardName } from './normalize';
 import { isImageData } from './other';
+import { compressCardData } from './codec';
 
 export const checkYgoCarderCard = (object: Record<string, any>): object is Card => {
     try {
@@ -121,6 +122,13 @@ const rarityMap = Object.entries(reverseRarityMap).reduce<Record<string, string>
     return acc;
 }, {});
 
+export const ygoCarderToExportableData = (
+    card: Card,
+    _artRef?: HTMLCanvasElement | null,
+) => ({
+    isPartial: card.artSource === 'offline',
+    result: compressCardData(card),
+});
 /**
  * Why does artRef here?
  * 

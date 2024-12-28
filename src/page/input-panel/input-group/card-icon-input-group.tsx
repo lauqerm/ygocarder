@@ -1,6 +1,5 @@
 import { Input, Popover } from 'antd';
-import { RadioTrain } from '../input-train';
-import { StyledDropdown } from 'src/component';
+import { RadioTrain, StyledDropdown } from 'src/component';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo } from 'react';

@@ -1,7 +1,6 @@
 import { Checkbox, Input, Popover } from 'antd';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
-import { RadioTrain } from '../input-train';
-import { FrameInfoBlock } from 'src/component';
+import { FrameInfoBlock, RadioTrain } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';

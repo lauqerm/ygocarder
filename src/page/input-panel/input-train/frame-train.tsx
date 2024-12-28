@@ -1,11 +1,11 @@
 import { useCard, useSetting } from 'src/service';
-import { RadioTrain } from './radio-train';
 import { useCallback, useMemo } from 'react';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { tcgToOCGTermMap } from 'src/model';
 import { TrainGridStyle } from './input-train.styled';
+import { RadioTrain } from 'src/component';
 
 const StyledFrameTrain = styled(RadioTrain)`
 	${TrainGridStyle}

@@ -1,8 +1,7 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
-import { IconButton } from 'src/component';
-import { RadioTrain } from '../input-train';
+import { IconButton, RadioTrain } from 'src/component';
 import { CardCheckboxGroup } from '../input-checkbox-group';
 import { randomPassword } from 'src/util';
 import { SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';

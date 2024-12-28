@@ -6,16 +6,11 @@ import './responsive.scss';
 import './reduce-color-motion.scss';
 import {
     CanvasConst,
-    Card,
     getDefaultCard,
 } from './model';
 import {
-    compressCardData,
-    downloadBlob,
     forceRefocus,
     isMobileDevice,
-    normalizedCardName,
-    ygoCarderToCardMakerData,
 } from './util';
 import {
     BatchConverter,
@@ -23,8 +18,9 @@ import {
     CardInputPanelRef,
     DownloadButton,
     DownloadButtonRef,
+    ExportPanel,
+    ExportPanelRef,
     ImportButton,
-    StyledActionIconButton,
 } from './page';
 import WebFont from 'webfontloader';
 import {
@@ -37,10 +33,10 @@ import {
     useOCGFont,
     useSetting,
 } from './service';
-import { Dropdown, Menu, Modal, notification, Tooltip } from 'antd';
+import { Modal, notification, Tooltip } from 'antd';
 import { TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
-import { ZoomInOutlined, ClearOutlined, DownloadOutlined } from '@ant-design/icons';
+import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
 import {
     ErrorAlert,
     LightboxButton,
@@ -53,7 +49,6 @@ import {
 import { configure, HotKeys } from 'react-hotkeys';
 import { useShallow } from 'zustand/react/shallow';
 import * as Sentry from '@sentry/react';
-
 
 /** React hotkey setup */
 configure({
@@ -146,6 +141,7 @@ function App() {
     });
 
     const downloadButtonRef = useRef<DownloadButtonRef>(null);
+    const exportPanelRef = useRef<ExportPanelRef>(null);
 
     const [imageChangeCount, setImageChangeCount] = useState(0);
 
@@ -387,21 +383,10 @@ function App() {
     const exportData = useCallback((
         event?: { preventDefault: () => void },
         fromHotkey = false,
-        download = false,
-        converter: (
-            card: Card,
-            artRef: HTMLCanvasElement | null,
-        ) => ({ isPartial: boolean, result: Record<string, any> }) = card => ({
-            isPartial: false,
-            result: compressCardData(card),
-        }),
     ) => {
-        if (fromHotkey && !allowHotkey && !download) return;
+        if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
-        if (sourceType === 'offline' && download === false) {
-            window.alert(language['prompt.export.offline-warning.message']);
-        }
         if (sourceType === 'online' && cardInputRef.current?.isLoading()) {
             window.alert(language['error.export.image-loading.message']);
             return;
@@ -409,30 +394,8 @@ function App() {
 
         try {
             const cardData = useCard.getState().card;
-            const {
-                isPartial,
-                result: exportableCard,
-            } = converter(cardData, artworkCanvasRef.current);
 
-            if (isPartial) {
-                notification.info({
-                    message: language['service.decode.partial.message'],
-                    description: language['service.decode.partial.description'],
-                });
-            }
-            if (download) {
-                const blob = new Blob([`${JSON.stringify(exportableCard)}`], { type: 'application/json' });
-                downloadBlob(
-                    normalizedCardName(cardData.name),
-                    blob,
-                    'application/json',
-                );
-            } else {
-                window.prompt(
-                    language['prompt.export.message'],
-                    `${JSON.stringify(exportableCard)}`,
-                );
-            }
+            exportPanelRef.current?.setCardData(cardData);
         } catch (e) {
             console.error(e);
             notification.error({
@@ -514,35 +477,11 @@ function App() {
                     <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
                         <StyledDataButtonPanelContainer className="data-button-panel">
                             <div className="imexport">
-                                <Tooltip overlay={allowHotkey ? <>Ctrl-D / ⌘-D</> : null}>
-                                    <button className="primary-button export-button" onClick={exportData}>
-                                        {language['button.export.label']}
-                                    </button>
-                                </Tooltip>
-                                <Dropdown 
-                                    overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
-                                        {[
-                                            {
-                                                label: language['button.export.for-ygocarder.label'],
-                                                converter: undefined,
-                                            },
-                                            {
-                                                label: language['button.export.for-other.label'],
-                                                converter: ygoCarderToCardMakerData,
-                                            },
-                                        ].map(({ converter, label }, index) => {
-                                            return <Menu.Item key={`${index}`}
-                                                onClick={() => exportData(undefined, false, true, converter)}
-                                            >
-                                                {label}
-                                            </Menu.Item>;
-                                        })}
-                                    </Menu>}
-                                >
-                                    <StyledActionIconButton className="secondary-button export-custom">
-                                        <DownloadOutlined />
-                                    </StyledActionIconButton>
-                                </Dropdown>
+                                <ExportPanel ref={exportPanelRef}
+                                    artworkCanvas={artworkCanvasRef.current}
+                                    allowHotkey={allowHotkey}
+                                    onRequireExportData={exportData}
+                                />
                                 <div />
                                 <Tooltip
                                     overlay={allowHotkey

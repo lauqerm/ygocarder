@@ -12,8 +12,7 @@ import {
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
-import { GuardedSlider, ImageCropper } from 'src/component';
-import { RadioTrain } from '../input-train';
+import { GuardedSlider, ImageCropper, RadioTrain } from 'src/component';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';

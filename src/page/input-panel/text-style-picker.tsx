@@ -6,8 +6,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { DefaultColorList } from 'src/model';
 import { useEffect, useState } from 'react';
 import { HexColorRegex, hexToRGBA } from 'src/util';
-import { RadioTrain } from './input-train';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { RadioTrain } from 'src/component';
 
 /** Spacing in this component mimic react-color's */
 const StyledInlineColorPickerContainer = styled.div`

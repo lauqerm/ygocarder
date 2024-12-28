@@ -1,7 +1,6 @@
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { useCard, useLanguage } from 'src/service';
-import { ImageCropper, ImageCropperRef, LinkMarkChooser } from 'src/component';
-import { RadioTrain } from '../input-train';
+import { ImageCropper, ImageCropperRef, LinkMarkChooser, RadioTrain } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList } from '../const';
 import { getArtCanvasCoordinate } from 'src/model';

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { InputTrainStyle } from './input-train.styled';
 import { useState } from 'react';
 import { getNavigationProps } from 'src/util';
+import { InputTrainStyle } from 'src/component';
 
 const StyledCheckboxTrainContainer = styled.div`
     ${InputTrainStyle}

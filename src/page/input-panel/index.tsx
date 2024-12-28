@@ -9,6 +9,7 @@ import {
 import {
     Affiliation,
     AppHeader,
+    RadioTrain,
     StandaloneLabel,
 } from '../../component';
 import {
@@ -23,7 +24,7 @@ import {
 } from './const';
 import { CharPicker } from './char-picker';
 import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
-import { CheckboxTrain, FrameTrain, RadioTrain } from './input-train';
+import { CheckboxTrain, FrameTrain } from './input-train';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
 import { LayoutPicker, OpacityPickerRef } from './layout-picker';

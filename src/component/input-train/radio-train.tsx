@@ -4,22 +4,33 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { getNavigationProps } from 'src/util';
 import { Tooltip } from 'antd';
 
+declare module 'react' {
+    function forwardRef<T, P = {}>(
+        render: (props: P, ref: React.Ref<T>) => JSX.Element | null
+    ): (props: P & React.RefAttributes<T>) => JSX.Element | null;
+}
+
 const StyledRadioTrainContainer = styled.div`
     ${InputTrainStyle}
 `;
 export type RadioTrainRef = {
     focus: () => void,
 }
-export type RadioTrain = {
+export type RadioTrain<Value = string | number> = {
     className?: string,
     strict?: boolean,
-    value: string | number,
-    optionList: { label: React.ReactNode, value: string | number, tooltipProps?: React.ComponentProps<typeof Tooltip>, props?: React.LabelHTMLAttributes<HTMLLabelElement> }[],
-    onChange: (value: string | number) => void,
+    value: Value,
+    optionList: {
+        label: React.ReactNode,
+        value: Value,
+        tooltipProps?: React.ComponentProps<typeof Tooltip>,
+        props?: React.LabelHTMLAttributes<HTMLLabelElement>,
+    }[],
+    onChange: (value: Value) => void,
     children?: React.ReactNode,
     suffix?: React.ReactNode,
 }
-export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
+const UnrefRadioTrain = <Value extends string | number = string | number>({
     onChange,
     value: activeValue,
     optionList,
@@ -27,7 +38,7 @@ export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
     suffix,
     className,
     strict = false,
-}, ref) => {
+}: RadioTrain<Value>, ref: React.ForwardedRef<RadioTrainRef>) => {
     const [focus, setFocus] = useState(-1);
     const internalRef = useRef<HTMLDivElement>(null);
     const optionLength = optionList.length;
@@ -80,4 +91,5 @@ export const RadioTrain = forwardRef<RadioTrainRef, RadioTrain>(({
         </div>
         {suffix}
     </StyledRadioTrainContainer>;
-});
+};
+export const RadioTrain = forwardRef(UnrefRadioTrain);
