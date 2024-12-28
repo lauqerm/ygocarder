@@ -13,6 +13,9 @@ const StyledExportContainer = styled.div`
     ${StyledActionIconButton} {
         font-size: var(--fs);
     }
+    .radio-train-input-group {
+        flex-wrap: wrap;
+    }
     .export-container-result {
         margin-top: var(--spacing-lg);
         display: grid;
