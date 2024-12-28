@@ -6,12 +6,13 @@ import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
 import copy from 'copy-to-clipboard';
 import { downloadBlob, normalizedCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, CheckOutlined } from '@ant-design/icons';
 import { Card } from 'src/model';
 
 const StyledExportContainer = styled.div`
     ${StyledActionIconButton} {
         font-size: var(--fs);
+        border-left: var(--bw) solid var(--main-primary);
     }
     .radio-train-input-group {
         flex-wrap: wrap;
@@ -40,6 +41,25 @@ const StyledExportContainer = styled.div`
     }
 `;
 
+const StyledCardDataCopyButton = styled(StyledActionIconButton)`
+    position: relative;
+    .copiable-overlay {
+        align-items: center;
+        background-color: var(--color-contrast);
+        font-size: var(--fs);
+        font-weight: bold;
+        border-radius: var(--br);
+        color: var(--color);
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 999;
+    }
+`;
 type CardDataCopyButton = {
     data: string,
     children?: React.ReactNode,
@@ -48,13 +68,24 @@ const CardDataCopyButton = ({
     data,
     children,
 }: CardDataCopyButton) => {
-    return <StyledActionIconButton
-        onClick={() => {
-            copy(data);
+    const [showFlashOverlay, setFlashOverlay] = useState(false);
+    const callFlashNotification = (copyingContent: string) => {
+        copy(copyingContent);
+        setFlashOverlay(true);
+        setTimeout(() => {
+            setFlashOverlay(false);
+        }, 1000);
+    };
+
+    return <StyledCardDataCopyButton
+        onClick={e => {
+            e.stopPropagation();
+            callFlashNotification(data);
         }}
     >
+        {showFlashOverlay ? <div className="copiable-overlay"><CheckOutlined /></div> : null}
         {children}
-    </StyledActionIconButton>;
+    </StyledCardDataCopyButton>;
 };
 
 type ExportMode = 'ygocarder' | 'other';
