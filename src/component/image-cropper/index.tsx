@@ -5,7 +5,6 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton, StyledIconButtonContainer } from '../icon-button';
 import { useLanguage } from 'src/service';
-import { normalizeImageLink } from 'src/util';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
 
@@ -222,13 +221,12 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
     const applyOnlineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
-        const normalizedSource = normalizeImageLink(source);
 
         setLoading(true);
         setSourceType('online');
         setInputMode('online');
-        onSourceChange('online', normalizedSource);
-        setExternalSource(normalizedSource);
+        onSourceChange('online', source);
+        setExternalSource(source);
     };
 
     useEffect(() => {

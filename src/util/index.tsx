@@ -93,6 +93,7 @@ export * from './condenser';
 export * from './font';
 export * from './gradient';
 export * from './hook';
+export * from './imgur';
 export * from './navigation';
 export * from './normalize';
 export * from './other';

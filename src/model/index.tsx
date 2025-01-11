@@ -75,7 +75,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     setId: 'YGOC-EN001',
     atk: '2000',
     def: '2000',
-    password: '18111996',
+    password: '18199611',
     sticker: 'holo5',
     isFirstEdition: true,
     isSpeedCard: false,

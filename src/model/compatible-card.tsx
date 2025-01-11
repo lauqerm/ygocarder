@@ -54,6 +54,24 @@ export const getDefaultYgoproDeckCardSet = () => ({
     set_price: '0.01',
 });
 
+export type YgoproDeckCardMisc = ReturnType<typeof getDefaultYgoproDeckCardMisc>;
+export const getDefaultYgoproDeckCardMisc = () => [
+    {
+        staple: 'No',
+        views: 0,
+        viewsweek: 0,
+        upvotes: 0,
+        downvotes: 0,
+        formats: [] as string[],
+        treated_as: '',
+        tcg_date: '',
+        ocg_date: '',
+        konami_id: 0,
+        has_effect: 1,
+        md_rarity: ''
+    }
+];
+
 export type YgoproDeckCard = ReturnType<typeof getDefaultYgoproDeckCard>;
 export const getDefaultYgoproDeckCard = () => ({
     id: 10000000,
@@ -89,4 +107,5 @@ export const getDefaultYgoproDeckCard = () => ({
             coolstuffinc_price: '0.39'
         }
     ],
+    misc_info: getDefaultYgoproDeckCardMisc() as YgoproDeckCardMisc,
 });

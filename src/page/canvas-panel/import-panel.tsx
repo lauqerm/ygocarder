@@ -5,10 +5,14 @@ import { UploadOutlined } from '@ant-design/icons';
 import { decodeCard, LanguageDataDictionary, useCard } from 'src/service';
 import { StyledActionIconButton } from './styled';
 import { Card, YgoproDeckCard } from 'src/model';
+import { isYgoprodeckImage, uploadToImgur } from 'src/util';
 
 const StyledImportContainer = styled.div`
     .prompt-alert {
         margin-bottom: var(--spacing-sm);
+        .alert {
+            color: var(--main-danger);
+        }
     }
     .import-container-upload {
         margin-top: var(--spacing-sm);
@@ -78,7 +82,11 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
         setLoading(false);
         onClose();
     };
-    const startImport = (cardData: string | Record<string, any> | null, internalMode = mode) => {
+    const startImport = async (
+        cardData: string | Record<string, any> | null,
+        internalMode = mode,
+        imageSurvey = false,
+    ) => {
         try {
             if (cardData) {
                 const {
@@ -95,7 +103,36 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                         description: language['service.decode.partial.description'],
                     });
                 }
-                onImport(decodedCard);
+
+                /**
+                 * Upload image into imgur for usable link. @todo Something need to consider here:
+                 * * The image link change each time even for the same card, so it's a huge waste of resource.
+                 * * The amount of cards is so large that keeping a dictionary to map them is not feasible, and may require constant update.
+                 * * The best method right now is build another dedicated server that can forward resource from YGOPRODeck as an usuable link, which is way more than the scope of this project.
+                 */
+                if (imageSurvey && decodedCard.artSource === 'online' && isYgoprodeckImage(decodedCard.art)) {
+                    const surveyedDecodedCard: Card = { ...decodedCard };
+                    try {
+                        const imgurResponse = await uploadToImgur(decodedCard.art);
+                        if (imgurResponse.status !== 200) {
+                            surveyedDecodedCard.art = 'https://i.imgur.com/jjtCuG5.png';
+                            throw new Error('Imgur response status: ' + imgurResponse.status);
+                        }
+                        const imgurResponseData: { data: { link: string } } = await imgurResponse.json();
+
+                        surveyedDecodedCard.art = imgurResponseData.data.link;
+                    } catch (e) {
+                        /** Failing the upload process does not terminate the import process */
+                        console.error('Upload error:', e);
+                        notification.error({
+                            message: language['prompt.import.imgur.message'],
+                            description: language['prompt.import.imgur.description'],
+                        });
+                    }
+                    onImport(surveyedDecodedCard);
+                } else {
+                    onImport(decodedCard);
+                }
             }
         } catch (e) {
             console.error('Import error:', e);
@@ -120,8 +157,9 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                     startImport(result, 'replace');
                 };
                 reader.readAsText(targetFile);
+                break;
             }
-        }
+        };
     };
     const startRequest = async () => {
         try {
@@ -140,7 +178,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                         /** Potential ygopro deck API */
                         ? normalizedValue
                         /** Attempt to search as a valid card name, an avid user may found out that the text is append as-is, so it's possible to use a rather complex query */
-                        : `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${normalizedValue}&num=10&offset=0`;
+                        : `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${normalizedValue}&num=10&offset=0&misc=yes`;
                     setLoading(true);
                     const response = await fetch(ygoproDeckApi);
                     if (!response.ok) {
@@ -148,12 +186,23 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                     }
 
                     const baseCardData: { data: YgoproDeckCard[] } = await response.json();
-                    /** We find full match here, as fuzzy search may not sort it on top, for example "raigeki" will match "Anti Raigeki" first, instead of the base "Raigeki" */
+                    /** We find full match here, as fuzzy search may not sort it on top, for example "raigeki" will match "Anti Raigeki" first, instead of the base "Raigeki", if no full match is available, we go for most popular result */
                     cardData = baseCardData.data.find(({ name }) => name.toLowerCase() === normalizedValue.toLowerCase())
-                        ?? baseCardData;;
+                        ?? baseCardData.data.sort((l, r) => {
+                            const lMisc = l.misc_info?.[0];
+                            const rMisc = r.misc_info?.[0];
+
+                            if (!lMisc || !rMisc) return 0;
+
+                            /** We prioritize most recently popular card, then all-time popular card */
+                            const viewWeekRatio = (lMisc.viewsweek + 1) / (rMisc.viewsweek + 1);
+                            if (viewWeekRatio > 2) return rMisc.viewsweek - lMisc.viewsweek;
+
+                            return rMisc.views - lMisc.views;
+                        })[0];
                 }
 
-                startImport(cardData);
+                await startImport(cardData, undefined, true);
             }
         } catch (e) {
             console.error('Import error:', e);
@@ -188,6 +237,8 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                         {language['prompt.import.instruction.line-1']}
                         <br />
                         {language['prompt.import.instruction.line-2']}
+                        <br />
+                        <span className="alert">{language['prompt.import.instruction.alert.line-1']}</span>
                     </div>
                     : null}
                 <div className="import-container-input">

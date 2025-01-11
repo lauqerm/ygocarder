@@ -7,7 +7,6 @@ import {
     getDefaultYgoproDeckCard,
     copyrightMap,
 } from 'src/model';
-import { normalizeImageLink } from './normalize';
 
 export const checkYgoproDeckCard = (object: Record<string, any>): object is YgoproDeckCard => {
     try {
@@ -171,7 +170,7 @@ export const ygoproDeckToYgoCarderData = (card: YgoproDeckCard): { result: Card,
     const normalizedPendulumEffect = pend_desc
         ? pend_desc.replaceAll(/^''|''$/g, '')
         : '';
-    const cardImage = normalizeImageLink(card_images[0].image_url_cropped);
+    const cardImage = card_images[0].image_url_cropped;
 
     const baseCard = getEmptyCard();
     const result: Card = {
