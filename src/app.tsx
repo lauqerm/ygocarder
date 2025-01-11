@@ -20,14 +20,14 @@ import {
     DownloadButtonRef,
     ExportPanel,
     ExportPanelRef,
-    ImportButton,
+    ImportPanel,
+    ImportPanelRef,
 } from './page';
 import WebFont from 'webfontloader';
 import {
     changeCardFormat,
     getLanguage,
     retrieveSavedCard,
-    decodeCard,
     useCard,
     useI18N,
     useOCGFont,
@@ -142,6 +142,7 @@ function App() {
 
     const downloadButtonRef = useRef<DownloadButtonRef>(null);
     const exportPanelRef = useRef<ExportPanelRef>(null);
+    const importPanelRef = useRef<ImportPanelRef>(null);
 
     const [imageChangeCount, setImageChangeCount] = useState(0);
 
@@ -302,83 +303,25 @@ function App() {
         }
     }, [language, reportTarget]);
 
-    const importData = useCallback((
+    const importData = useCallback(async (
         event?: { preventDefault: () => void },
         fromHotkey = false,
-        directData: string | undefined = undefined,
     ) => {
-        if (fromHotkey && !allowHotkey && !directData) return;
-
-        event?.preventDefault();
-        try {
-            const cardData = directData
-                ? directData
-                : window.prompt(language['prompt.import.message']);
-            const setCard = useCard.getState().setCard;
-
-            if (cardData) {
-                const {
-                    card: decodedCard,
-                    isPartial,
-                } = decodeCard(cardData);
-
-                if (isPartial) {
-                    notification.info({
-                        message: language['service.decode.partial.message'],
-                        description: language['service.decode.partial.description'],
-                    });
-                }
-
-                setCard(decodedCard);
-                setImageChangeCount(cnt => cnt + 1);
-                cardInputRef.current?.forceCardData(decodedCard);
-                /** Allow navigate input panel right away */
-                forceRefocus();
-            }
-        } catch (e) {
-            console.error(e);
-            notification.error({
-                message: language['error.import.error.message'],
-                description: language['error.import.error.description'],
-            });
-        }
-    }, [allowHotkey, language]);
-
-    const mergeData = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
         if (fromHotkey && !allowHotkey) return;
 
         event?.preventDefault();
-        try {
-            const cardData = window.prompt(language['prompt.import.message']);
-            const setCard = useCard.getState().setCard;
+        importPanelRef.current?.requestImport('replace');
+    }, [allowHotkey]);
 
-            if (cardData) {
-                const {
-                    card: decodedCard,
-                    isPartial,
-                } = decodeCard(cardData, useCard.getState().card);
+    const mergeData = useCallback((
+        event?: { preventDefault: () => void },
+        fromHotkey = false,
+    ) => {
+        if (fromHotkey && !allowHotkey) return;
 
-                if (isPartial) {
-                    notification.info({
-                        message: language['service.decode.partial.message'],
-                        description: language['service.decode.partial.description'],
-                    });
-                }
-
-                setCard(decodedCard);
-                setImageChangeCount(cnt => cnt + 1);
-                cardInputRef.current?.forceCardData(decodedCard);
-                /** Allow navigate input panel right away */
-                forceRefocus();
-            }
-        } catch (e) {
-            console.error(e);
-            notification.error({
-                message: language['error.import.error.message'],
-                description: language['error.import.error.description'],
-            });
-        }
-    }, [allowHotkey, language]);
+        event?.preventDefault();
+        importPanelRef.current?.requestImport('merge');
+    }, [allowHotkey]);
 
     const exportData = useCallback((
         event?: { preventDefault: () => void },
@@ -481,24 +424,23 @@ function App() {
                                     artworkCanvas={artworkCanvasRef.current}
                                     allowHotkey={allowHotkey}
                                     onRequireExportData={exportData}
+                                    onClose={forceRefocus}
                                 />
                                 <div />
-                                <Tooltip
-                                    overlay={allowHotkey
-                                        ? <div className="center">
-                                            <div>Ctrl-E / ⌘-E</div>
-                                            <div>Ctrl-G / ⌘-G{language['prompt.import.merge.tooltip']}</div>
-                                        </div>
-                                        : null}
-                                >
-                                    <button
-                                        className="primary-button import-button"
-                                        onClick={importData}
-                                    >
-                                        {language['button.import.label']}
-                                    </button>
-                                </Tooltip>
-                                <ImportButton importData={importData} language={language} />
+                                <ImportPanel ref={importPanelRef}
+                                    onImport={decodedCard => {
+                                        const setCard = useCard.getState().setCard;
+
+                                        setCard(decodedCard);
+                                        setImageChangeCount(cnt => cnt + 1);
+                                        cardInputRef.current?.forceCardData(decodedCard);
+                                        /** Allow navigate input panel right away */
+                                        forceRefocus();
+                                    }}
+                                    onClose={forceRefocus}
+                                    allowHotkey={allowHotkey}
+                                    language={language}
+                                />
                             </div>
                             <BatchConverter language={language} />
                             <DownloadButton ref={downloadButtonRef}

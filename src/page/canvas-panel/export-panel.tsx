@@ -5,7 +5,7 @@ import { LanguageDataDictionary, useLanguage } from 'src/service';
 import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
 import copy from 'copy-to-clipboard';
-import { downloadBlob, normalizedCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
+import { downloadBlob, normalizeCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
 import { DownloadOutlined, CheckOutlined } from '@ant-design/icons';
 import { Card } from 'src/model';
 
@@ -112,11 +112,13 @@ export type ExportPanel = {
     artworkCanvas: HTMLCanvasElement | null,
     onRequireExportData: () => void,
     allowHotkey: boolean,
+    onClose: () => void,
 };
 export const ExportPanel = forwardRef(({
     artworkCanvas,
     onRequireExportData,
     allowHotkey,
+    onClose,
 }: ExportPanel, ref: React.ForwardedRef<ExportPanelRef>) => {
     const [visible, setVisible] = useState(false);
     const [mode, setMode] = useState<ExportMode>('ygocarder');
@@ -136,7 +138,7 @@ export const ExportPanel = forwardRef(({
     const downloadAsFile = (name: string, rawData: string) => {
         const blob = new Blob([rawData], { type: 'application/json' });
         downloadBlob(
-            normalizedCardName(name),
+            normalizeCardName(name),
             blob,
             'application/json',
         );
@@ -156,7 +158,7 @@ export const ExportPanel = forwardRef(({
                         return {
                             value,
                             isPartial,
-                            name: normalizedCardName(card.name),
+                            name: normalizeCardName(card.name),
                             data: `${JSON.stringify(result)}`,
                         };
                     } catch (e) {
@@ -199,7 +201,10 @@ export const ExportPanel = forwardRef(({
             visible={visible}
             title={language['button.export-modal.label']}
             className="global-overlay"
-            onCancel={() => setVisible(false)}
+            onCancel={() => {
+                setVisible(false);
+                onClose();
+            }}
             cancelText={language['converter.cancel.label']}
             okButtonProps={{
                 style: { display: 'none' },
@@ -222,7 +227,7 @@ export const ExportPanel = forwardRef(({
                         onClick={() => {
                             const blob = new Blob([data], { type: 'application/json' });
                             downloadBlob(
-                                normalizedCardName(name),
+                                normalizeCardName(name),
                                 blob,
                                 'application/json',
                             );

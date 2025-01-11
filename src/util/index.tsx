@@ -87,7 +87,8 @@ export function mergeClass(...args: (boolean | string | undefined | null)[]) {
 
 export * from './categorize';
 export * from './codec';
-export * from './codec-compatible';
+export * from './codec-other-vendor';
+export * from './codec-ygoprodeck';
 export * from './condenser';
 export * from './font';
 export * from './gradient';

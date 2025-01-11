@@ -1,0 +1,377 @@
+import { Menu, Dropdown, Tooltip, Modal, Input, notification } from 'antd';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import styled from 'styled-components';
+import { UploadOutlined } from '@ant-design/icons';
+import { decodeCard, LanguageDataDictionary, useCard } from 'src/service';
+import { StyledActionIconButton } from './styled';
+import { Card, YgoproDeckCard } from 'src/model';
+
+const StyledImportContainer = styled.div`
+    .prompt-alert {
+        margin-bottom: var(--spacing-sm);
+    }
+    .import-container-upload {
+        margin-top: var(--spacing-sm);
+        text-align: center;
+        .import-custom {
+            font-size: var(--fs);
+            margin-left: var(--spacing);
+        }
+        ${StyledActionIconButton} {
+            background-color: var(--main-level-4);
+            border: var(--bw) solid var(--color-contrast);
+            &:hover {
+                background-color: var(--sub-level-4);
+            }
+        }
+    }
+`;
+
+export type ImportPanelRef = {
+    requestImport: (mode: 'replace' | 'merge') => void,
+};
+export type ImportPanel = {
+    language: LanguageDataDictionary,
+    allowHotkey: boolean,
+    onImport: (data: Card) => void,
+    onClose: () => void,
+};
+export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
+    allowHotkey,
+    language,
+    onImport,
+    onClose,
+}, ref) => {
+    const directUploadId = 'import-direct-upload';
+    const uploadId = 'import-upload';
+    const inputId = 'import-textarea';
+    const ygoCarderImportDirectInputRef = useRef<HTMLInputElement>(null);
+    const ygoCarderImportInputRef = useRef<HTMLInputElement>(null);
+    const [inputKey, setInputKey] = useState(0);
+    const [mode, setMode] = useState<'merge' | 'replace'>('replace');
+    const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const focusInput = useCallback(() => {
+        const target = document.getElementById(inputId) as HTMLTextAreaElement | null;
+        if (target) {
+            target.focus();
+            target.select();
+        }
+    }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (visible) focusInput();
+        }, 100);
+    }, [focusInput, visible]);
+
+    useImperativeHandle(ref, () => ({
+        requestImport: mode => {
+            setMode(mode);
+            setVisible(true);
+        }
+    }));
+
+    const cleanup = () => {
+        setInputKey(cur => cur + 1);
+        setVisible(false);
+        setLoading(false);
+        onClose();
+    };
+    const startImport = (cardData: string | Record<string, any> | null, internalMode = mode) => {
+        try {
+            if (cardData) {
+                const {
+                    card: decodedCard,
+                    isPartial,
+                } = decodeCard(
+                    cardData,
+                    internalMode === 'replace' ? undefined : useCard.getState().card,
+                );
+
+                if (isPartial) {
+                    notification.info({
+                        message: language['service.decode.partial.message'],
+                        description: language['service.decode.partial.description'],
+                    });
+                }
+                onImport(decodedCard);
+            }
+        } catch (e) {
+            console.error('Import error:', e);
+            notification.error({
+                message: language['error.import.error.message'],
+                description: language['error.import.error.description'],
+            });
+        }
+    };
+    const getFileAndImport = (fileList?: FileList | null) => {
+        if (fileList) {
+            for (let cnt = 0; cnt <= fileList.length; cnt++) {
+                const targetFile = fileList.item(cnt);
+                if (!targetFile) continue;
+
+                const reader = new FileReader();
+                reader.onload = ({ target }) => {
+                    if (!target) return;
+
+                    const { result } = target;
+                    if (typeof result !== 'string') return;
+                    startImport(result, 'replace');
+                };
+                reader.readAsText(targetFile);
+            }
+        }
+    };
+    const startRequest = async () => {
+        try {
+            const target = document.getElementById(inputId) as HTMLInputElement;
+            if (target) {
+                const { value } = target;
+                const normalizedValue = value.trim() ?? '';
+                let cardData: string | null | Record<string, any> = null;
+
+                /** Potential JSON data */
+                if (normalizedValue.startsWith('{') && normalizedValue.endsWith('}')) {
+                    cardData = normalizedValue;
+                }
+                else {
+                    const ygoproDeckApi = normalizedValue.startsWith('https://db.ygoprodeck.com/api')
+                        /** Potential ygopro deck API */
+                        ? normalizedValue
+                        /** Attempt to search as a valid card name, an avid user may found out that the text is append as-is, so it's possible to use a rather complex query */
+                        : `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${normalizedValue}&num=10&offset=0`;
+                    setLoading(true);
+                    const response = await fetch(ygoproDeckApi);
+                    if (!response.ok) {
+                        throw new Error(`Response status: ${response.status}`);
+                    }
+
+                    const baseCardData: { data: YgoproDeckCard[] } = await response.json();
+                    /** We find full match here, as fuzzy search may not sort it on top, for example "raigeki" will match "Anti Raigeki" first, instead of the base "Raigeki" */
+                    cardData = baseCardData.data.find(({ name }) => name.toLowerCase() === normalizedValue.toLowerCase())
+                        ?? baseCardData;;
+                }
+
+                startImport(cardData);
+            }
+        } catch (e) {
+            console.error('Import error:', e);
+            notification.error({
+                message: language['error.import.error.message'],
+                description: language['error.import.error.description'],
+            });
+        } finally {
+            cleanup();
+        }
+    };
+
+    return <>
+        <Modal
+            visible={visible}
+            title={mode === 'merge'
+                ? language['button.import.merge.label']
+                : language['button.import.label']}
+            className="global-overlay"
+            onCancel={cleanup}
+            okText={language['prompt.import.ok.label']}
+            confirmLoading={loading}
+            cancelButtonProps={{
+                style: { display: 'none' },
+            }}
+            destroyOnClose={false}
+            onOk={startRequest}
+        >
+            <StyledImportContainer>
+                {mode === 'replace'
+                    ? <div className="prompt-alert">
+                        {language['prompt.import.instruction.line-1']}
+                        <br />
+                        {language['prompt.import.instruction.line-2']}
+                    </div>
+                    : null}
+                <div className="import-container-input">
+                    <Input.TextArea key={`input-${inputKey}`}
+                        id={inputId}
+                        className="import-input-raw"
+                        size="small"
+                        placeholder={language['prompt.import.message']}
+                        disabled={loading}
+                        onPressEnter={startRequest}
+                        rows={4}
+                    />
+                </div>
+                {mode === 'replace'
+                    ? <div className="import-container-upload">
+                        <span>{language['prompt.import.alternative.label']}</span>
+                        <StyledActionIconButton
+                            className="import-custom"
+                            onClick={() => {
+                                const target = document.getElementById(uploadId);
+                                if (target) {
+                                    target.click();
+                                }
+                            }}
+                        >
+                            <input ref={ygoCarderImportInputRef}
+                                type="file"
+                                id={uploadId}
+                                accept="application/json"
+                                className="import-upload-input"
+                                onChange={() => {
+                                    const fileList = ygoCarderImportInputRef.current?.files;
+
+                                    getFileAndImport(fileList);
+                                    cleanup();
+                                }}
+                            />
+                            {language['button.import.tooltip']}
+                        </StyledActionIconButton>
+                    </div>
+                    : null}
+            </StyledImportContainer>
+        </Modal>
+        <Tooltip
+            overlay={allowHotkey
+                ? <div className="center">
+                    <div>Ctrl-E / ⌘-E</div>
+                    <div>Ctrl-G / ⌘-G{language['prompt.import.merge.tooltip']}</div>
+                </div>
+                : null}
+        >
+            <button
+                className="primary-button import-button"
+                onClick={() => {
+                    setMode('replace');
+                    setVisible(true);
+                }}
+            >
+                {language['button.import.label']}
+            </button>
+        </Tooltip>
+        <Tooltip overlay={language['button.import.tooltip']}>
+            <StyledActionIconButton
+                className="secondary-button import-custom"
+                onClick={() => {
+                    const target = document.getElementById(directUploadId);
+                    if (target) {
+                        target.click();
+                    }
+                }}
+            >
+                <input ref={ygoCarderImportDirectInputRef}
+                    type="file"
+                    id={directUploadId}
+                    accept="application/json"
+                    className="import-upload-input"
+                    onChange={() => {
+                        const fileList = ygoCarderImportDirectInputRef.current?.files;
+
+                        getFileAndImport(fileList);
+                    }}
+                />
+                <UploadOutlined />
+            </StyledActionIconButton>
+        </Tooltip>
+    </>;
+});
+
+export const StyledImportDropdownOverlay = styled(Menu)`
+    .ant-dropdown-menu-item {
+        padding: 0;
+    }
+    .import-upload-button {
+        /** Mimic antd */
+        cursor: pointer;
+        padding: 5px 12px;
+        background: transparent;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+    .import-upload-input {
+        display: none;
+    }
+`;
+/** Currently the importer can detect both ygocarder and other vendor data, so no need for user to pick. */
+export type UnusedImportButton = ImportPanel & {
+    importData: (
+        event?: {
+            preventDefault: () => void;
+        },
+        fromHotkey?: boolean,
+        directData?: string,
+    ) => void,
+};
+export const UnusedImportButton = ({
+    language,
+    importData,
+}: UnusedImportButton) => {
+    const ygoCarderImportDirectInputRef = useRef<HTMLInputElement>(null);
+    const otherVendorImportInputRef = useRef<HTMLInputElement>(null);
+
+    return <Dropdown
+        forceRender={true}
+        visible={true}
+        overlay={<StyledImportDropdownOverlay onClick={e => e.domEvent.stopPropagation()}>
+            {[
+                {
+                    label: language['button.import.for-ygocarder.label'],
+                    id: 'for-ygocarder',
+                    ref: ygoCarderImportDirectInputRef,
+                    // converter: undefined,
+                },
+                {
+                    label: language['button.import.for-other.label'],
+                    id: 'for-other',
+                    ref: otherVendorImportInputRef,
+                    // converter: ygoCarderToCardMakerData,
+                },
+            ].map(({ label, id, ref }) => {
+                return <Menu.Item key={`${id}`}>
+                    <input ref={ref}
+                        type="file"
+                        id={id}
+                        accept="application/json"
+                        className="import-upload-input"
+                        onChange={() => {
+                            const fileList = ref.current?.files;
+                            if (fileList) {
+                                for (let cnt = 0; cnt <= fileList.length; cnt++) {
+                                    const targetFile = fileList.item(cnt);
+                                    if (!targetFile) continue;
+
+                                    const reader = new FileReader();
+                                    reader.onload = ({ target }) => {
+                                        if (!target) return;
+
+                                        const { result } = target;
+                                        if (typeof result !== 'string') return;
+                                        importData(undefined, false, result);
+                                    };
+                                    reader.readAsText(targetFile);
+                                }
+                            }
+                        }}
+                    />
+                    <button
+                        className="import-upload-button"
+                        type="button"
+                        onClick={() => {
+                            const target = document.getElementById(id);
+                            if (target) {
+                                target.click();
+                            }
+                        }}
+                    >
+                        {label}
+                    </button>
+                </Menu.Item>;
+            })}
+        </StyledImportDropdownOverlay>}
+    >
+        <button className="secondary-button import-custom">
+            <UploadOutlined />
+        </button>
+    </Dropdown>;
+};

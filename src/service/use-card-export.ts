@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { compressCardData, insertUrlParam, normalizedCardName } from 'src/util';
+import { compressCardData, insertUrlParam, normalizeCardName } from 'src/util';
 import { useCard } from './use-card';
 import { CardOpacity } from 'src/model';
 import { useSetting } from './use-setting';
@@ -65,7 +65,7 @@ export const useCardExport = ({
                     0, 0, cloneCanvas.width, cloneCanvas.height,
                 );
 
-                const normalizedName = normalizedCardName(name);
+                const normalizedName = normalizeCardName(name);
                 var link = document.createElement('a');
                 link.download = normalizedName
                     ? `${normalizedName}.png`
@@ -93,7 +93,7 @@ export const useCardExport = ({
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {
-            const normalizedName = normalizedCardName(name);
+            const normalizedName = normalizeCardName(name);
 
             if (relevant) {
                 document.title = normalizedName

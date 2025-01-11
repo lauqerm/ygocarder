@@ -292,3 +292,33 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
     return migratedCard;
 };
+
+export const checkYgoCarderCard = (object: Record<string, any>): object is Card => {
+    try {
+        /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
+        return 'isFirstEdition' in object
+            && 'typeAbility' in object
+            && 'setId' in object;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+};
+export const checkCompactYgoCarderCard = (object: Record<string, any>): object is Card => {
+    try {
+        return 'ife' in object
+            && 'ta' in object
+            && 'si' in object;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+};
+
+export const ygoCarderToExportableData = (
+    card: Card,
+    _artRef?: HTMLCanvasElement | null,
+) => ({
+    isPartial: card.artSource === 'offline',
+    result: compressCardData(card),
+});

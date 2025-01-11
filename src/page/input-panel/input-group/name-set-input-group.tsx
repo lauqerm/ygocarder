@@ -5,7 +5,7 @@ import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { SyncOutlined } from '@ant-design/icons';
-import { normalizedCardName, randomSetID } from 'src/util';
+import { normalizeCardName, randomSetID } from 'src/util';
 import { StyledInputLabelWithButton } from '../input-panel.styled';
 import styled from 'styled-components';
 
@@ -69,7 +69,7 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
             defaultValue={name}
             addonBefore={<Tooltip title={language['input.name.tooltip']}>
                 <StyledCopyButton onClick={() => {
-                    navigator.clipboard.writeText(normalizedCardName(name));
+                    navigator.clipboard.writeText(normalizeCardName(name));
                 }}>
                     {language['input.name.label']}
                 </StyledCopyButton>

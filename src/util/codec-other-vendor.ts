@@ -1,6 +1,6 @@
 import {
     Card,
-    CompatibleCard,
+    OtherMakerCard,
     getEmptyCard,
     NO_ATTRIBUTE,
     NO_ICON,
@@ -8,31 +8,8 @@ import {
     PresetNameStyleMap,
     getDefaultNameStyle,
 } from 'src/model';
-import { normalizedCardEffect, normalizedCardName } from './normalize';
+import { normalizeCardEffect, normalizeCardName } from './normalize';
 import { isImageData } from './other';
-import { compressCardData } from './codec';
-
-export const checkYgoCarderCard = (object: Record<string, any>): object is Card => {
-    try {
-        /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
-        return 'isFirstEdition' in object
-            && 'typeAbility' in object
-            && 'setId' in object;
-    } catch (e) {
-        console.error(e);
-        return false;
-    }
-};
-export const checkCompactYgoCarderCard = (object: Record<string, any>): object is Card => {
-    try {
-        return 'ife' in object
-            && 'ta' in object
-            && 'si' in object;
-    } catch (e) {
-        console.error(e);
-        return false;
-    }
-};
 
 const cardIconMap: Record<string, string> = {
     CONTINUOUS: 'Continuous',
@@ -122,13 +99,6 @@ const rarityMap = Object.entries(reverseRarityMap).reduce<Record<string, string>
     return acc;
 }, {});
 
-export const ygoCarderToExportableData = (
-    card: Card,
-    _artRef?: HTMLCanvasElement | null,
-) => ({
-    isPartial: card.artSource === 'offline',
-    result: compressCardData(card),
-});
 /**
  * Why does artRef here?
  * 
@@ -141,7 +111,7 @@ export const ygoCarderToExportableData = (
 export const ygoCarderToCardMakerData = (
     card: Card,
     artRef?: HTMLCanvasElement | null,
-): { result: CompatibleCard, isPartial: boolean } => {
+): { result: OtherMakerCard, isPartial: boolean } => {
     const {
         name,
         star,
@@ -169,9 +139,9 @@ export const ygoCarderToCardMakerData = (
         artFinish,
         finish,
     } = card;
-    const normalizedName = normalizedCardName(name);
-    const normalizedEffect = normalizedCardEffect(effect);
-    const normalizedPendulumEffect = normalizedCardEffect(pendulumEffect);
+    const normalizedName = normalizeCardName(name);
+    const normalizedEffect = normalizeCardEffect(effect);
+    const normalizedPendulumEffect = normalizeCardEffect(pendulumEffect);
     const normalizedIcon = cardIconMap[subFamily];
     const normalizedAttribute = attributeMap[attribute];
     const normalizedFrame = frameMap[frame];
@@ -244,7 +214,7 @@ export const ygoCarderToCardMakerData = (
     };
 };
 
-export const cardMakerToYgoCarderData = (card: CompatibleCard): { result: Card, isPartial: boolean } => {
+export const cardMakerToYgoCarderData = (card: OtherMakerCard): { result: Card, isPartial: boolean } => {
     const {
         name,
         atk,

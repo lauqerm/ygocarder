@@ -1,4 +1,4 @@
-import { Card, CompatibleCard, getDefaultCard, getEmptyCard } from 'src/model';
+import { Card, OtherMakerCard, YgoproDeckCard, getDefaultCard, getEmptyCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
@@ -9,6 +9,8 @@ import {
     checkCompactYgoCarderCard,
     decompressCardData,
     cardMakerToYgoCarderData,
+    checkYgoproDeckCard,
+    ygoproDeckToYgoCarderData,
 } from 'src/util';
 import { notification } from 'antd';
 import { getLanguage } from './use-i18n';
@@ -31,21 +33,44 @@ export const decodeCard = (
     if (!cardData) return { isPartial, card: decodedCard };
     try {
         const normalizedCard = typeof cardData === 'string'
-            ? JSON.parse(cardData) as Record<string, any>
+            ? JSON.parse(cardData) as Record<string, any> | { data: Record<string, any>[] }
             : cardData;
 
-        if (checkYgoCarderCard(normalizedCard)) {
-            decodedCard = migrateCardData(normalizedCard, baseCard);
-        }
-        /**
-         * If merging card (has base card), always assume compressed card
-         */
-        else if (checkCompactYgoCarderCard(normalizedCard) || baseCard != null) {
+        /** Merge card */
+        if (baseCard) {
             const fullCard: Record<string, any> = decompressCardData(normalizedCard);
-    
-            decodedCard = migrateCardData(fullCard, baseCard);
-        } else {
-            const { isPartial: isPartialCard, result } = cardMakerToYgoCarderData(normalizedCard as CompatibleCard);
+
+            /** First chance, assume it is a partial compressed card */
+            if (Object.keys(fullCard).length > 0) {
+                decodedCard = migrateCardData(fullCard, baseCard);
+            }
+            /** Second chance, assume it is a partial card */
+            else {
+                decodedCard = migrateCardData(normalizedCard, baseCard);
+            }
+        }
+        else if (checkYgoCarderCard(normalizedCard)) {
+            decodedCard = migrateCardData(normalizedCard);
+        }
+        else if (checkCompactYgoCarderCard(normalizedCard)) {
+            const fullCard: Record<string, any> = decompressCardData(normalizedCard);
+
+            decodedCard = migrateCardData(fullCard);
+        }
+        /** User may paste the entire YgoproDeck repsonse, to make it more convenient, we automatically unwrap the first item for them */
+        else if (Array.isArray(normalizedCard.data)) {
+            const unwrappedCard = Array.isArray(normalizedCard.data) ? normalizedCard.data[0] : normalizedCard;
+            const { isPartial: isPartialCard, result } = ygoproDeckToYgoCarderData(unwrappedCard as YgoproDeckCard);
+            isPartial = isPartialCard;
+            decodedCard = result;
+        }
+        else if (checkYgoproDeckCard(normalizedCard)) {
+            const { isPartial: isPartialCard, result } = ygoproDeckToYgoCarderData(normalizedCard as YgoproDeckCard);
+            isPartial = isPartialCard;
+            decodedCard = result;
+        }
+        else {
+            const { isPartial: isPartialCard, result } = cardMakerToYgoCarderData(normalizedCard as OtherMakerCard);
             isPartial = isPartialCard;
             decodedCard = result;
         }
