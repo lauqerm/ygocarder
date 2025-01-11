@@ -1,6 +1,6 @@
 export const uploadToImgur = async (imgLink: string) => {
     const myHeaders = new Headers();
-    myHeaders.append('Authorization', 'Client-ID 5cb17bdde39ff25');
+    myHeaders.append('Authorization', `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`);
 
     const formdata = new FormData();
     formdata.append('image', imgLink);
