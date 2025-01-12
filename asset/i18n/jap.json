@@ -240,6 +240,7 @@
         "input.text-style.custom.label": "カスタム",
         "input.text-style.extra-size.label": "サイズ",
         "input.text-style.section.effect.label": "テクストスタイル",
+        "input.text-style.section.other.label": "Other Text Style",
         "input.text-style.section.pendulum.label": "Ｐテキストスタイル",
         "input.text-style.section.stat.label": "攻・守・LINKスタイル",
         "input.text-style.section.type.label": "属性・種類スタイル",

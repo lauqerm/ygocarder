@@ -240,6 +240,7 @@
         "input.text-style.custom.label": "Custom",
         "input.text-style.extra-size.label": "Extra Size",
         "input.text-style.section.effect.label": "Effect Style",
+        "input.text-style.section.other.label": "Other Text Style",
         "input.text-style.section.pendulum.label": "Pendulum Effect Style",
         "input.text-style.section.stat.label": "Stats Style",
         "input.text-style.section.type.label": "Card Type Style",
