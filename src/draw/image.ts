@@ -1,5 +1,4 @@
 import { CanvasTextStyle } from 'src/service';
-import { hexToRGBA } from 'src/util';
 import { setTextStyle } from './canvas-util';
 import { notification } from 'antd';
 
@@ -175,13 +174,12 @@ export const drawAssetWithSize: typeof drawFromWithSize = async (
     );
 };
 
-export const drawWithColor = async (
+export const drawWithStyle = async (
     canvas: HTMLCanvasElement,
     source: string,
-    color: string,
-    sw: number, sh: number,
     dx: number, dy: number,
-    cloneCanvasStyle?: CanvasTextStyle,
+    sw: number, sh: number,
+    style?: CanvasTextStyle,
 ) => {
     const ctx = canvas.getContext('2d');
     const clonedCanvas = document.createElement('canvas');
@@ -190,50 +188,25 @@ export const drawWithColor = async (
     const clonedCtx = clonedCanvas.getContext('2d', { willReadFrequently: true });
 
     if (!clonedCtx || !ctx) return;
-    await drawAsset(clonedCtx, source, 0, 0);
 
-    const rgbaColor = hexToRGBA(color);
-    const imageRasterData = clonedCtx.getImageData(0, 0, sw, sh).data;
-
-    /** In some rare case, this image need shadow (for example "LINK" text).
-     * So we apply shadow into the clone node, then DRAW THE IMAGE AGAIN. This time image data will be a combined data from both the original image and the newly applied shadow.
-     */
-    const resetStyle = setTextStyle({ ctx: clonedCtx, ...cloneCanvasStyle });
-    await drawAsset(clonedCtx, source, 0, 0);
-    const imageDataWithShadow = clonedCtx.getImageData(0, 0, sw, sh);
-    const imageRasterDataWithShadow = imageDataWithShadow.data;
-    resetStyle();
-
-    /** Because the new image data will replace the old one (no blending mode), it will erase the pixel of the current canvas underneath. To solve this we will draw the current canvas into the clone canvas first, before putting new image into it. */
-    clonedCtx.clearRect(0, 0, sw, sh);
-    clonedCtx.drawImage(canvas, dx, dy, sw, sh, 0, 0, sw, sh);
-
-    const combinedLayerData = clonedCtx.getImageData(0, 0, sw, sh);
-    const combinedLayerRasterData = combinedLayerData.data;
-
-    for (let pixelCnt = 0; pixelCnt < combinedLayerRasterData.length; pixelCnt += 4) {
-        /** If raster data at this pixel have the same coordinate with raster data from the original image, draw it with manipulated color. */
-        if (imageRasterData[pixelCnt + 3] > 0) {
-            /** Change ratio based on the original color value, compare to pitch black #000000 */
-            combinedLayerRasterData[pixelCnt + 0] = rgbaColor[0] * (1 - imageRasterData[pixelCnt + 0] / 255);
-            combinedLayerRasterData[pixelCnt + 1] = rgbaColor[1] * (1 - imageRasterData[pixelCnt + 1] / 255);
-            combinedLayerRasterData[pixelCnt + 2] = rgbaColor[2] * (1 - imageRasterData[pixelCnt + 2] / 255);
-            combinedLayerRasterData[pixelCnt + 3] = 255;
-        }
-        /** If raster data at this pixel have the same coordinate with raster data from the image with shadow, draw the shadow. */
-        else if (imageRasterDataWithShadow[pixelCnt + 3] > 0) {
-            const destinationAlpha = imageRasterDataWithShadow[pixelCnt + 3] / 255;
-
-            combinedLayerRasterData[pixelCnt + 0] = (1 - destinationAlpha) * combinedLayerRasterData[pixelCnt + 0]
-                + destinationAlpha * imageRasterDataWithShadow[pixelCnt + 0];
-            combinedLayerRasterData[pixelCnt + 1] = (1 - destinationAlpha) * combinedLayerRasterData[pixelCnt + 1]
-                + destinationAlpha * imageRasterDataWithShadow[pixelCnt + 1];
-            combinedLayerRasterData[pixelCnt + 2] = (1 - destinationAlpha) * combinedLayerRasterData[pixelCnt + 2]
-                + destinationAlpha * imageRasterDataWithShadow[pixelCnt + 2];
-            combinedLayerRasterData[pixelCnt + 3] = 255;
-        }
-        /** Otherwise all other pixel belong to the background canvas, and is untouched. */
+    /**
+     * * First, we clone a canvas with the same size of the destination one.
+     * * Then, we fill the solid color from custom style into it, now the canvas is colored.
+     * * After that, we draw the asset into the colored canvas, with destination-in mode, this means the asset will only draw on the colored area (opacity factored). This way, we effectively ignore the original color from the asset, and only use the alpha channel.
+     * 
+     * Needless to say this will not work very well with multi-colored asset.
+     * */
+    await drawAssetWithSize(clonedCtx, source, 0, 0, sw, sh);
+    if (style?.color) {
+        clonedCtx.fillStyle = style.color;
+        clonedCtx.fillRect(0, 0, sw, sh);
+        clonedCtx.globalCompositeOperation = 'destination-in';
     }
+    await drawAssetWithSize(clonedCtx, source, 0, 0, sw, sh);
+    clonedCtx.globalCompositeOperation = 'source-over';
 
-    ctx.putImageData(combinedLayerData, dx, dy);
+    /** After that, we draw the cloned canvas back into the main one, and apply corresponding shadow if needed. */
+    const resetMainCanvasStyle = setTextStyle({ ctx, ...style });
+    ctx.drawImage(clonedCanvas, dx, dy);
+    resetMainCanvasStyle();
 };

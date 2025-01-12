@@ -4,7 +4,8 @@ import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
-import { clearCanvas } from '../canvas-util';
+import { clearCanvas, setTextStyle } from '../canvas-util';
+import { CanvasTextStyle } from 'src/service';
 
 export const drawCreatorText = ({
     ctx,
@@ -14,6 +15,7 @@ export const drawCreatorText = ({
     baselineOffset = 0,
     lightFooter,
     hasShadow,
+    textStyle,
 }: {
     ctx?: CanvasRenderingContext2D | null,
     value: string,
@@ -22,16 +24,22 @@ export const drawCreatorText = ({
     baselineOffset?: number,
     lightFooter: boolean,
     hasShadow?: boolean,
+    textStyle?: CanvasTextStyle,
 }) => {
     if (!clearCanvas(ctx)) return;
 
-    ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
-    ctx.shadowColor = hasShadow
-        ? lightFooter ? '#000000' : '#ffffff'
-        : '#000000';
-    ctx.shadowOffsetY = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = hasShadow ? 3 : 0;
+    const resetTextStyle = setTextStyle({
+        ctx,
+        color: lightFooter ? '#ffffff' : '#000000',
+        shadowColor: hasShadow
+            ? lightFooter ? '#000000' : '#ffffff'
+            : '#000000',
+        y: 0,
+        x: 0,
+        blur: hasShadow ? 3 : 0,
+        ...textStyle,
+        ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
+    });
 
     const { trueEdge, trueBaseline, trueWidth: width } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
     const fontData = CreatorFontData[format];
@@ -100,6 +108,7 @@ export const drawCreatorText = ({
         },
     });
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    resetTextStyle();
 
     return {
         /** End edge is alignment insensitive */

@@ -14,6 +14,7 @@ export const prepareStyle = ({
     requireShadow,
     effectTextStyle,
     pendulumTextStyle,
+    otherTextStyle,
     statTextStyle,
     typeTextStyle,
 }: {
@@ -22,6 +23,7 @@ export const prepareStyle = ({
     lightFooter: boolean,
     effectTextStyle: TextStyle,
     pendulumTextStyle: TextStyle,
+    otherTextStyle: TextStyle,
     statTextStyle: TextStyle,
     typeTextStyle: TextStyle,
 }) => {
@@ -67,11 +69,20 @@ export const prepareStyle = ({
         }
         : {};
 
+    const [customOtherEffectText, otherEffectTextFillStyle, otherEffectHasShadow, otherEffectTextShadow] = otherTextStyle;
+    const resolvedOtherEffectTextStyle: CanvasTextStyle = customOtherEffectText
+        ? {
+            ...(otherEffectHasShadow ? { y: 0, blur: 0, shadowColor: otherEffectTextShadow } : {}),
+            color: otherEffectTextFillStyle,
+        }
+        : {};
+
     return {
         levelStyle,
         resolvedEffectTextStyle,
+        resolvedOtherEffectTextStyle,
         resolvedPendulumEffectTextStyle,
-        resolvedTypeTextStyle,
         resolvedStatTextStyle,
+        resolvedTypeTextStyle,
     };
 };

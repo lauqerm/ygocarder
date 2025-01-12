@@ -98,7 +98,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         hasBackground, backgroundType,
         frame, foil, finish, artFinish, opacity,
         name, nameStyle, nameStyleType,
-        effectTextStyle, pendulumTextStyle, typeTextStyle, statTextStyle,
+        effectTextStyle, pendulumTextStyle, typeTextStyle, statTextStyle, otherTextStyle,
         effect,
         effectStyle,
         typeAbility,
@@ -182,6 +182,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedPendulumEffectTextStyle,
         resolvedStatTextStyle,
         resolvedTypeTextStyle,
+        resolvedOtherEffectTextStyle,
     } = useMemo(() => {
         return prepareStyle({
             lightFooter,
@@ -189,6 +190,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             requireShadow,
             effectTextStyle,
             pendulumTextStyle,
+            otherTextStyle,
             statTextStyle,
             typeTextStyle,
         });
@@ -198,6 +200,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         requireShadow,
         effectTextStyle,
         pendulumTextStyle,
+        otherTextStyle,
         statTextStyle,
         typeTextStyle,
     ]);
@@ -459,11 +462,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
             await drawPredefinedMark({
-                ctx,
+                canvas: frameCanvasRef.current,
                 type: (lightFooter && !isPendulum) ? 'white' : 'black',
                 bordered: (opacityBody < 50 || boundless) && !isPendulum,
                 isDuelTerminalCard, isSpeedCard,
                 isLink, isPendulum,
+                textStyle: resolvedOtherEffectTextStyle,
             });
             await drawOverlayFinish();
         };
@@ -491,6 +495,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         lightFooter,
         linkMap,
         resolvedStatTextStyle,
+        resolvedOtherEffectTextStyle,
         loopArtFinish,
         loopFinish,
         opacity,
@@ -579,9 +584,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 withShadow: requireShadow && !isPendulum,
                 format,
                 lightFooter,
+                textStyle: resolvedOtherEffectTextStyle,
             }
         );
-    }, [readyToDraw, format, isLink, isPendulum, lightFooter, setIdCanvasRef, setId, isSpeedSkill, bottomFrame, requireShadow]);
+    }, [
+        readyToDraw,
+        format,
+        isLink,
+        isPendulum,
+        lightFooter,
+        setIdCanvasRef,
+        setId,
+        isSpeedSkill,
+        bottomFrame,
+        requireShadow,
+        resolvedOtherEffectTextStyle,
+    ]);
 
     /** DRAW FIRST EDITION NOTICE AND PASSWORD */
     useEffect(() => {
@@ -596,9 +614,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             alignment: 'left',
             format,
             hasShadow: bottomFrame === 'zarc' || requireShadow,
+            textStyle: resolvedOtherEffectTextStyle,
         });
         if (isFirstEdition) {
-            ctx.fillStyle = lightFooter ? '#ffffff' : '#000000';
             const left = isLegacyCard && !isPendulum
                 ? isLink ? 151 : 89
                 : Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0);
@@ -614,6 +632,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 left,
                 bottom,
                 bottomOffset,
+                {
+                    textStyle: {
+                        color: lightFooter ? '#ffffff' : '#000000',
+                        ...resolvedOtherEffectTextStyle,
+                    }
+                },
             );
         }
     }, [
@@ -629,6 +653,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isPendulum,
         isLegacyCard,
         bottomFrame,
+        resolvedOtherEffectTextStyle,
     ]);
 
     /** DRAW CREATOR (COPYRIGHT) TEXT */
@@ -654,12 +679,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 baselineOffset: isSpeedSkill ? -2 : 0,
                 hasShadow: requireShadow,
                 lightFooter,
+                textStyle: resolvedOtherEffectTextStyle,
             });
             const compactThreshold = format === 'tcg' ? 390 : 350;
             const compactOffset = format === 'tcg' ? 30 : 40;
 
-            if (isLimitedEdition) {
+            if (isLimitedEdition && creatorCanvasRef.current) {
                 await drawLimitedEditionMark({
+                    canvas: creatorCanvasRef.current,
                     ctx,
                     type: (lightFooter && !isPendulum) ? 'white' : 'black',
                     bordered: (opacityBody < 50 || boundless) && !isPendulum,
@@ -668,6 +695,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         ? compactOffset
                         : 0,
                     isLegacyCard,
+                    textStyle: resolvedOtherEffectTextStyle,
                 });
             }
         };
@@ -685,6 +713,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         lightFooter,
         opacity,
         requireShadow,
+        resolvedOtherEffectTextStyle,
     ]);
 
     /** DRAW STICKER */

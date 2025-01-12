@@ -7,7 +7,7 @@ import {
     getArtCanvasCoordinate,
     NO_ATTRIBUTE,
 } from 'src/model';
-import { drawAsset, drawAssetWithSize, drawWithColor } from '../image';
+import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
 import { getCardIconFromFrame } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
@@ -275,12 +275,12 @@ export const getLayoutDrawFunction = ({
             );
         },
         drawStatBorder: async (color: string) => {
-            await drawWithColor(
+            await drawWithStyle(
                 canvas,
                 'frame/frame-stat-border.png',
-                color,
-                813, 20,
                 0, 1070,
+                813, 20,
+                { color },
             );
         },
 
@@ -343,7 +343,9 @@ export const getLayoutDrawFunction = ({
                 30, 185,
             );
         },
-        /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied. In fact the effect border of speed skill is kinda buggy and not align really well, but we can't really do anything about it. Speed skill is also just a non-standard frame. */
+        /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied.
+         * 
+         * In fact the effect border of speed skill is kinda buggy and not align really well, but we can't really do anything about it. Speed skill is also just a non-standard frame. */
         drawEffectBorder: async () => {
             if (!hasFoil && bottomFrame === 'speed-skill') {
                 await drawAsset(ctx, 'frame/effect-border-speed-skill.png', effectBoxX, effectBoxY);

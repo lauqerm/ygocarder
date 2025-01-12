@@ -204,7 +204,7 @@ export const drawLine = ({
                     ...drawLetterParameter,
                     letter: fragment,
                     edge: fragmentEdge * xRatio,
-                    baseline: trueBaseline + (format === 'tcg' ? 2 : 2), /** 2 look a bit better than 1 */
+                    baseline: trueBaseline + (format === 'tcg' ? 1 : 2), /** 1 look a bit better than 2 */
                 });
                 fragmentEdge += ctx.measureText(fragment).width * letterSpacingRatio;
                 stopApplyLargerText();

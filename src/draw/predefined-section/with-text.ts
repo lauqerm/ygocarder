@@ -1,4 +1,5 @@
-import { fillTextLeftWithSpacing, fillTextRightWithSpacing } from '../canvas-util';
+import { CanvasTextStyle } from 'src/service';
+import { fillTextLeftWithSpacing, fillTextRightWithSpacing, setTextStyle } from '../canvas-util';
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -32,11 +33,21 @@ export const draw1stEdition = (
     edge = 99,
     baseline = 1150.93,
     baselineOffset = 0,
-    option = { stroke: false },
+    option: {
+        stroke?: boolean,
+        textStyle?: CanvasTextStyle,
+    } = {
+        stroke: false,
+    },
 ) => {
     if (!ctx) return;
 
-    const { stroke = false } = option ?? {};
+    const { stroke = false, textStyle } = option ?? {};
+    const resetStyle = setTextStyle({
+        ctx,
+        ...textStyle,
+        ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
+    });
     const superTextOffset = 7.4;
     ctx.font = 'bold 23.7px palatino-linotype-bold';
 
@@ -53,6 +64,7 @@ export const draw1stEdition = (
     ctx.font = 'bold 22.22px palatino-linotype-bold';
     ctx.fillText(' Edition', left, baseline + baselineOffset);
     if (stroke) ctx.strokeText(' Edition', left, baseline);
+    resetStyle();
 };
 
 export const drawStatText = (
@@ -135,27 +147,39 @@ export const drawStat = (
 export const drawSetId = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
-    option: { isPendulum: boolean, isLink: boolean, withShadow: boolean, format: string, lightFooter: boolean }
+    option: {
+        isPendulum: boolean,
+        isLink: boolean,
+        withShadow: boolean,
+        format: string,
+        lightFooter: boolean,
+        textStyle?: CanvasTextStyle,
+    }
 ) => {
     if (!ctx) return;
 
-    const { isPendulum, isLink, withShadow, format, lightFooter } = option;
+    const { isPendulum, isLink, withShadow, format, lightFooter, textStyle } = option;
     let spacing = 0.175;
     let offsetY = 0;
     let xOffset = 0;
-    ctx.fillStyle = (lightFooter && !isPendulum) ? '#ffffff' : '#000000';
-    ctx.shadowColor = withShadow
-        ? lightFooter ? '#000000' : '#ffffff'
-        : '#000000';
-    ctx.shadowOffsetY = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowBlur = withShadow && !isPendulum ? 3 : 0;
     ctx.font = `${withShadow ? 'bold' : ''} 22px stone-serif-regular`;
     if (format === 'ocg') {
         spacing = 0.145;
         offsetY = -1;
         xOffset = -3;
     }
+    const resetTextStyle = setTextStyle({
+        ctx,
+        color: (lightFooter && !isPendulum) ? '#ffffff' : '#000000',
+        shadowColor: withShadow
+            ? lightFooter ? '#000000' : '#ffffff'
+            : '#000000',
+        y: 0,
+        x: 0,
+        blur: withShadow && !isPendulum ? 3 : 0,
+        ...textStyle,
+        ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
+    });
 
     if (isPendulum) {
         fillTextLeftWithSpacing(ctx, value, spacing, 66.65 + xOffset, 1105.01 + offsetY);
@@ -164,4 +188,5 @@ export const drawSetId = (
     } else {
         fillTextRightWithSpacing(ctx, value, spacing, 728.78 + xOffset, 871.50 + offsetY);
     }
+    resetTextStyle();
 };

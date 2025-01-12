@@ -155,7 +155,7 @@ const StyledTextStyleContainer = styled.div`
     }
     .text-style-grid {
         display: grid;
-        grid-template-columns: 35px 35px;
+        grid-template-columns: 25px 25px 25px;
         grid-template-rows: 13px 13px; // Alignment
         gap: var(--spacing-xxs);
         font-size: var(--fs-xs);
@@ -187,6 +187,14 @@ const StyledTextStylePicker = styled.div`
     }
     .style-picker-section {
         overflow: hidden;
+        h2.size-picker {
+            padding: var(--spacing-xs);
+        }
+        .inline-radio-train {
+            display: inline-flex;
+            padding-bottom: 0;
+            margin-left: var(--spacing-sm);
+        }
         .shadow-checkbox .ant-checkbox {
             transform: translateY(1px);
         }
@@ -239,35 +247,43 @@ const TextStyleInfoMap = {
         extraKeyname: undefined,
         labelKey: 'input.text-style.section.type.label',
     },
+    otherTextStyle: {
+        keyName: 'otherTextStyle' as const,
+        extraKeyname: undefined,
+        labelKey: 'input.text-style.section.other.label',
+    },
 };
 export const TextStylePicker = () => {
     const language = useLanguage();
     const {
+        effectStyle,
+        effectTextStyle,
+        otherTextStyle,
+        pendulumStyle,
+        pendulumTextStyle,
+        setCard,
         statTextStyle,
         typeTextStyle,
-        effectTextStyle,
-        pendulumTextStyle,
-        effectStyle,
-        pendulumStyle,
-        setCard,
     } = useCard(useShallow(({
         card: {
+            effectStyle,
+            effectTextStyle,
+            otherTextStyle,
+            pendulumStyle,
+            pendulumTextStyle,
             statTextStyle,
             typeTextStyle,
-            effectTextStyle,
-            pendulumTextStyle,
-            effectStyle,
-            pendulumStyle,
         },
         setCard,
     }) => ({
+        effectStyle,
+        effectTextStyle,
+        otherTextStyle,
+        pendulumStyle,
+        pendulumTextStyle,
+        setCard,
         statTextStyle,
         typeTextStyle,
-        effectTextStyle,
-        pendulumTextStyle,
-        effectStyle,
-        pendulumStyle,
-        setCard,
     })));
 
     const styleList = [
@@ -288,6 +304,10 @@ export const TextStylePicker = () => {
         {
             info: TextStyleInfoMap.typeTextStyle,
             value: typeTextStyle,
+        },
+        {
+            info: TextStyleInfoMap.otherTextStyle,
+            value: otherTextStyle,
         },
     ];
     return <Popover
@@ -323,30 +343,31 @@ export const TextStylePicker = () => {
                         </h3>
                         {custom && <div className="style-picker-section">
                             {typeof upSize === 'number' && <>
-                                <h2>
+                                <h2 className="size-picker">
                                     <span className="label">{language['input.text-style.extra-size.label']}</span>
-                                </h2>
-                                <RadioTrain
-                                    value={upSize}
-                                    optionList={[
-                                        { label: <CloseCircleOutlined />, value: 0 },
-                                        { label: '+1', value: 1 },
-                                        { label: '+2', value: 2 },
-                                        { label: '+3', value: 3 },
-                                    ]}
-                                    onChange={value => {
-                                        setCard(currentCard => {
-                                            const newStyle = extraKeyname ? { ...currentCard[extraKeyname] } : undefined;
-                                            if (!newStyle || !extraKeyname) return currentCard;
+                                    <RadioTrain
+                                        className="inline-radio-train"
+                                        value={upSize}
+                                        optionList={[
+                                            { label: <CloseCircleOutlined />, value: 0 },
+                                            { label: '+1', value: 1 },
+                                            { label: '+2', value: 2 },
+                                            { label: '+3', value: 3 },
+                                        ]}
+                                        onChange={value => {
+                                            setCard(currentCard => {
+                                                const newStyle = extraKeyname ? { ...currentCard[extraKeyname] } : undefined;
+                                                if (!newStyle || !extraKeyname) return currentCard;
 
-                                            newStyle.upSize = typeof value === 'number' ? value : 0;
-                                            return {
-                                                ...currentCard,
-                                                [extraKeyname]: newStyle,
-                                            };
-                                        });
-                                    }}
-                                />
+                                                newStyle.upSize = typeof value === 'number' ? value : 0;
+                                                return {
+                                                    ...currentCard,
+                                                    [extraKeyname]: newStyle,
+                                                };
+                                            });
+                                        }}
+                                    />
+                                </h2>
                             </>}
                             <h2>
                                 <Checkbox
@@ -408,7 +429,7 @@ export const TextStylePicker = () => {
                             textShadow: (custom && hasShadow) ? `0 0 2px ${shadow}` : 'none'
                         }}
                     >
-                        {(upSize && custom) ? <div>Size +{upSize}</div> : 'Normal'}
+                        {(upSize && custom) ? <div>+{upSize}</div> : 'Auto'}
                     </div>;
                 })}
             </div>

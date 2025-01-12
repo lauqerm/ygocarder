@@ -111,6 +111,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     pendulumTextStyle: 'pts',
     statTextStyle: 'sts',
     typeTextStyle: 'tts',
+    otherTextStyle: 'ots',
     externalInfo: 'ei',
 };
 const legacyCardFieldShortenMap = {
@@ -286,6 +287,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (!migratedCard.pendulumTextStyle) migratedCard.pendulumTextStyle = getDefaultTextStyle();
     if (!migratedCard.typeTextStyle) migratedCard.typeTextStyle = getDefaultTextStyle();
     if (!migratedCard.statTextStyle) migratedCard.statTextStyle = getDefaultTextStyle();
+    if (!migratedCard.otherTextStyle) migratedCard.otherTextStyle = getDefaultTextStyle();
     if (typeof migratedCard.isLimitedEdition === 'undefined') migratedCard.isLimitedEdition = false;
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';

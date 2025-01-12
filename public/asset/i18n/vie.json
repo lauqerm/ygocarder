@@ -240,6 +240,7 @@
         "input.text-style.custom.label": "Tùy chỉnh",
         "input.text-style.extra-size.label": "Cỡ chữ",
         "input.text-style.section.effect.label": "Màu hiệu ứng",
+        "input.text-style.section.other.label": "Màu đặc thù",
         "input.text-style.section.pendulum.label": "Màu hiệu ứng Pendulum",
         "input.text-style.section.stat.label": "Màu chỉ số",
         "input.text-style.section.type.label": "Màu loại thẻ",

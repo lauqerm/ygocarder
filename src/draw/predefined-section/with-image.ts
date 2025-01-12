@@ -1,6 +1,6 @@
 
 import { CanvasConst } from 'src/model';
-import { drawAsset, drawAssetWithSize, drawWithColor } from '../image';
+import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
 
@@ -99,22 +99,26 @@ export const drawSticker = async ({
 
 /** Duel terminal mark and Speed card mark. */
 export const drawPredefinedMark = async ({
-    ctx,
+    canvas,
     type,
     isPendulum,
     isLink,
     isDuelTerminalCard,
     isSpeedCard,
     bordered,
+    textStyle,
 }: {
-    ctx: CanvasRenderingContext2D | null | undefined,
+    canvas: HTMLCanvasElement,
     type: string,
     isPendulum: boolean,
     isLink: boolean,
     isDuelTerminalCard: boolean,
     isSpeedCard: boolean,
     bordered: boolean,
+    textStyle?: CanvasTextStyle,
 }) => {
+    const ctx = canvas?.getContext('2d');
+
     if (!ctx) return;
 
     if (isDuelTerminalCard) {
@@ -124,7 +128,12 @@ export const drawPredefinedMark = async ({
                 ? [151, 848, 216, 24]
                 : [80, 843, 270, 30];
 
-        await drawAssetWithSize(ctx, `text/text-duel-terminal-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
+        await drawWithStyle(
+            canvas,
+            `text/text-duel-terminal-${type}${bordered ? '-bordered' : ''}.png`,
+            ...coordinate,
+            textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
+        );
     }
     if (isSpeedCard) {
         const coordinate: [number, number, number, number] = isPendulum
@@ -133,20 +142,28 @@ export const drawPredefinedMark = async ({
                 ? [151, 854, 215.6, 22]
                 : [80, 850, 245, 25];
 
-        await drawAssetWithSize(ctx, `text/text-speed-duel-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
+        await drawWithStyle(
+            canvas,
+            `text/text-speed-duel-${type}${bordered ? '-bordered' : ''}.png`,
+            ...coordinate,
+            textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
+        );
     }
 };
 
 export const drawLimitedEditionMark = async ({
     ctx,
+    canvas,
     type,
     isPendulum,
     isLink,
     isLegacyCard,
     widthOffset,
     bordered,
+    textStyle,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
+    canvas: HTMLCanvasElement,
     type: string,
     isPendulum: boolean,
     isLink: boolean,
@@ -154,6 +171,7 @@ export const drawLimitedEditionMark = async ({
     /** When the creator text is too long, this mark must be compressed */
     widthOffset: number,
     bordered: boolean,
+    textStyle?: CanvasTextStyle,
 }) => {
     const coordinate: [number, number, number, number] = !isLegacyCard || isPendulum
         ? [145, 1122, 240 - widthOffset, 37]
@@ -161,32 +179,36 @@ export const drawLimitedEditionMark = async ({
             ? [151, 846, 216, 36]
             : [80, 843, 240, 40];
 
-    await drawAssetWithSize(ctx, `text/text-limited-edition-${type}${bordered ? '-bordered' : ''}.png`, ...coordinate);
+    await drawWithStyle(
+        canvas,
+        `text/text-limited-edition-${type}${bordered ? '-bordered' : ''}.png`,
+        ...coordinate,
+        textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
+    );
 };
 
 export const drawLinkRatingText = async (
     canvas: HTMLCanvasElement,
     linkMap: string[],
-    cloneCanvasStyle: CanvasTextStyle,
+    style: CanvasTextStyle,
 ) => {
     const ctx = canvas.getContext('2d');
 
     if (!ctx || !Array.isArray(linkMap)) return;
 
-    const color = cloneCanvasStyle.color ?? '#000000';
-    await drawWithColor(
+    await drawWithStyle(
         canvas,
         'link/link-text.png',
-        color,
-        120, 30,
         600, 1080,
-        cloneCanvasStyle,
+        120, 30,
+        style,
     );
-    // await drawAsset(ctx, 'link/link-text.png', 600, 1080);
+    const resetStyle = setTextStyle({ ctx, ...style });
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
     ctx.font = 'bold 26.55px RoGSanSrfStd-Bd';
     ctx.fillText(`${linkMap.length}`, 622.75, 1105);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';
+    resetStyle();
 };
