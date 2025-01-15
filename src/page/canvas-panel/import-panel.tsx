@@ -6,6 +6,7 @@ import { decodeCard, LanguageDataDictionary, useCard } from 'src/service';
 import { StyledActionIconButton } from './styled';
 import { Card, YgoproDeckCard } from 'src/model';
 import { isYgoprodeckImage, uploadToImgur } from 'src/util';
+import { JSONUncrush } from 'src/3rd';
 
 const StyledImportContainer = styled.div`
     .prompt-alert {
@@ -167,11 +168,19 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
             if (target) {
                 const { value } = target;
                 const normalizedValue = value.trim() ?? '';
+                let uncrushedValue = '';
+                try {
+                    uncrushedValue = JSONUncrush(decodeURIComponent(normalizedValue));
+                } catch (e) {}
                 let cardData: string | null | Record<string, any> = null;
 
                 /** Potential JSON data */
                 if (normalizedValue.startsWith('{') && normalizedValue.endsWith('}')) {
                     cardData = normalizedValue;
+                }
+                /** Potential crushed data */
+                else if (uncrushedValue.startsWith('{') && uncrushedValue.endsWith('}')) {
+                    cardData = JSON.parse(uncrushedValue);
                 }
                 else {
                     const ygoproDeckApi = normalizedValue.startsWith('https://db.ygoprodeck.com/api')
