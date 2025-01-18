@@ -17,6 +17,7 @@
         "button.export-modal.copy-button.label": "Copy",
         "button.export-modal.download-button.label": "Download",
         "button.export-modal.label": "Export",
+        "button.export-modal.save-button.label": "Save as Image",
         "button.export.for-other.label": "YGOPro / DuelingNexus / NeoCardMaker",
         "button.export.for-ygocarder.label": "Yugioh Carder",
         "button.export.label": "Export",
