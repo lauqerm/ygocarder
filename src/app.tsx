@@ -424,6 +424,7 @@ function App() {
                                     artworkCanvas={artworkCanvasRef.current}
                                     allowHotkey={allowHotkey}
                                     onRequireExportData={exportData}
+                                    onRequireDownload={() => downloadButtonRef.current?.download()}
                                     onClose={forceRefocus}
                                 />
                                 <div />

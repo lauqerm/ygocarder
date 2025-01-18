@@ -20,7 +20,7 @@ const StyledExportContainer = styled.div`
     .export-container-result {
         margin-top: var(--spacing-lg);
         display: grid;
-        grid-template-columns: 100px auto;
+        grid-template-columns: 115px auto;
         gap: var(--spacing-lg);
         align-items: center;
     }
@@ -33,10 +33,11 @@ const StyledExportContainer = styled.div`
         }
     }
     .inline-alert {
+        grid-row: span 2;
         line-height: 1.25;
     }
     .export-input-raw {
-        grid-row: span 2;
+        grid-row: span 3;
         height: 100%;
     }
 `;
@@ -111,12 +112,14 @@ export type ExportPanelRef = {
 export type ExportPanel = {
     artworkCanvas: HTMLCanvasElement | null,
     onRequireExportData: () => void,
+    onRequireDownload: () => void,
     allowHotkey: boolean,
     onClose: () => void,
 };
 export const ExportPanel = forwardRef(({
     artworkCanvas,
     onRequireExportData,
+    onRequireDownload,
     allowHotkey,
     onClose,
 }: ExportPanel, ref: React.ForwardedRef<ExportPanelRef>) => {
@@ -250,6 +253,9 @@ export const ExportPanel = forwardRef(({
                     || (mode === 'ygocarder' && isPartial)) && <div className="inline-alert">
                         {language['prompt.export.offline-warning.message']}
                     </div>}
+                    <StyledActionIconButton onClick={onRequireDownload}>
+                        {language['button.export-modal.save-button.label']}
+                    </StyledActionIconButton>
                 </div>
             </StyledExportContainer>
         </Modal>
