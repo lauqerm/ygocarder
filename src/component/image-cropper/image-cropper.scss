@@ -88,15 +88,38 @@
 			height: 100% !important;
 		}
 	}
-	.force-fit-toggle {
+	.card-image-option {
 		position: absolute;
 		right: var(--spacing);
 		z-index: 1;
 		top: var(--spacing);
-		width: unset;
-		height: unset;
 		padding: var(--spacing-xs);
-		gap: var(--spacing-xs);
-		font-size: var(--fs-sm);
+		border: var(--bw) solid var(--sub-level-1);
+		background-color: var(--main-level-4);
+		border-radius: var(--br-lg);
+		box-shadow: var(--bs-button);
+		.image-option {
+			cursor: pointer;
+			padding: var(--spacing-xxs);
+			border-radius: var(--br);
+			+ .image-option {
+				margin-top: var(--spacing-xs);
+			}
+			&:hover {
+				background-color: var(--sub-level-4);
+			}
+		}
+		.force-fit-option {
+			&.option-active {
+				background-color: var(--main-level-3);
+				box-shadow: 0 0 2px 0 #222222 inset;
+				&:hover {
+					box-shadow: none;
+				}
+			}
+		}
+		.alignment-center-option > .anticon {
+			transform: rotate(90deg);
+		}
 	}
 }

@@ -89,8 +89,6 @@
         "guide.format.section-5.content": "Wrap a piece of text in {openTag} and {closeTag} to prevent the text from being compressed.\nIf hotkeys are allowed, you can select the desired text and press {hotkey} or {hotkeyAlternative}.",
         "guide.format.section-5.label": "Non-breakable text",
         "image-cropper.download": "Download cropped image",
-        "image-cropper.force-fit.label": "Whole art",
-        "image-cropper.no-download": "No image",
         "image-cropper.not-found-warning": "Image not found",
         "image-cropper.offline-warning": "You cannot share card's URL with offline image.",
         "image-cropper.online-tip": "You may use popular hosts such as \"imgur\".",

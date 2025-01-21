@@ -1,12 +1,13 @@
-import { Checkbox, Empty, Input, Radio, Tooltip } from 'antd';
+import { Empty, Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
-import { IconButton, StyledIconButtonContainer } from '../icon-button';
+import { IconButton } from '../icon-button';
 import { useLanguage } from 'src/service';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
+import { mergeClass } from 'src/util';
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
     if (!crop || !canvas) return;
@@ -75,8 +76,8 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
         height: isRatioAcceptable
             ? height
             : width * image.naturalWidth /** Restore original size */
-                / ratio /** Get height with corresponding aspect ratio */
-                / image.naturalHeight /** Convert back to percent */,
+            / ratio /** Get height with corresponding aspect ratio */
+            / image.naturalHeight /** Convert back to percent */,
         aspect: ratio,
     };
 };
@@ -357,7 +358,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         if (fitCropData) {
             setCrop(cur => ({ ...cur, current: fitCropData }));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop, receivingCanvas, redrawSignal, forceFit]);
 
     useEffect(() => {
@@ -412,9 +413,11 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             {title} <IconButton
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
-                                tooltipProps={{ overlay: isDownloadable
-                                    ? language['image-cropper.download']
-                                    : language['image-cropper.no-download'] }}
+                                tooltipProps={{
+                                    overlay: isDownloadable
+                                        ? language['image-cropper.download']
+                                        : language['image-cropper.no-download']
+                                }}
                                 onClick={() => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)}
                             />
                         </span>
@@ -476,9 +479,50 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             {beforeCropper}
             <div className="card-cropper">
                 {isLoading && <Loading.FullView />}
-                {(hasImage && !error) && <StyledIconButtonContainer className="force-fit-toggle" onClick={() => onForceFitChange(!forceFit)}>
-                    <Checkbox checked={forceFit} /> <span>{language['image-cropper.force-fit.label']}</span>
-                </StyledIconButtonContainer>}
+                {(hasImage && !error) && <div className="card-image-option">
+                    <div
+                        className={mergeClass('image-option force-fit-option', forceFit ? 'option-active' : '')}
+                        onClick={() => onForceFitChange(!forceFit)}
+                    >
+                        <FullscreenOutlined />
+                    </div>
+                    {!forceFit && <div className="image-option alignment-center-option" onClick={() => {
+                        setCrop(cur => {
+                            const { width, x } = cur.completed ?? {};
+
+                            if (typeof width !== 'number' || typeof x !== 'number') return cur;
+                            const newCrop: ReactCrop.Crop = {
+                                ...cur.completed,
+                                x: (100 - width) / 2,
+                            };
+
+                            return {
+                                current: newCrop,
+                                completed: newCrop,
+                            };
+                        });
+                    }}>
+                        <VerticalAlignMiddleOutlined />
+                    </div>}
+                    {!forceFit && <div className="image-option alignment-middle-option" onClick={() => {
+                        setCrop(cur => {
+                            const { height, y } = cur.completed ?? {};
+
+                            if (typeof height !== 'number' || typeof y !== 'number') return cur;
+                            const newCrop: ReactCrop.Crop = {
+                                ...cur.completed,
+                                y: (100 - height) / 2,
+                            };
+
+                            return {
+                                current: newCrop,
+                                completed: newCrop,
+                            };
+                        });
+                    }}>
+                        <VerticalAlignMiddleOutlined />
+                    </div>}
+                </div>}
                 {(!hasImage || error) && <Empty description={language['image-cropper.not-found-warning']} image={null} />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
                     src={sourceType === 'offline' ? internalSource : externalSource}
