@@ -89,7 +89,6 @@
         "guide.format.section-5.content": "Bọc nội dung trong cặp {openTag} và {closeTag} sẽ ngăn phần văn bản này bị nén (ảnh minh họa).\nBạn có thể áp dụng cú pháp này bằng phím tắt {hotkey} hoặc {hotkeyAlternative}.",
         "guide.format.section-5.label": "Ngăn một phần văn bản bị nén",
         "image-cropper.download": "Tải xuống ảnh hiện tại",
-        "image-cropper.force-fit.label": "Toàn bộ ảnh",
         "image-cropper.no-download": "Chưa tải xong ảnh",
         "image-cropper.not-found-warning": "Không có ảnh",
         "image-cropper.offline-warning": "Bạn sẽ không thể chia sẻ link nếu dùng ảnh từ thiết bị.",
