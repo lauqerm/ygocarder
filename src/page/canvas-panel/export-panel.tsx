@@ -1,7 +1,7 @@
 import { Dropdown, Input, Menu, Modal, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react';
 import { RadioTrain } from 'src/component';
-import { LanguageDataDictionary, useLanguage } from 'src/service';
+import { LanguageDataDictionary, useCard, useLanguage } from 'src/service';
 import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
 import copy from 'copy-to-clipboard';
@@ -107,7 +107,7 @@ export const getExportModeDataList = (language: LanguageDataDictionary) => [
 ];
 
 export type ExportPanelRef = {
-    setCardData: (card: Card) => void,
+    setCardData: (card: Card, openModal?: boolean) => void,
 };
 export type ExportPanel = {
     artworkCanvas: HTMLCanvasElement | null,
@@ -148,8 +148,8 @@ export const ExportPanel = forwardRef(({
     };
 
     useImperativeHandle(ref, () => ({
-        setCardData: (card: Card) => {
-            setVisible(true);
+        setCardData: (card: Card, openModal = true) => {
+            if (openModal) setVisible(true);
             setInternalCardData(getExportModeDataList(language)
                 .map(({ value, converter }) => {
                     try {
@@ -269,12 +269,27 @@ export const ExportPanel = forwardRef(({
         </Tooltip>
         <Dropdown 
             overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
-                {getExportModeDataList(language).map(({ value, label }, index) => {
+                {getExportModeDataList(language).map(({ converter, label }, index) => {
                     return <Menu.Item key={`${index}`}
-                        onClick={() => downloadAsFile(
-                            internalCardData[value].name,
-                            internalCardData[value].data,
-                        )}
+                        onClick={() => {
+                            try {
+                                const card = useCard.getState().card;
+                                const {
+                                    result,
+                                } = converter(card, artworkCanvas);
+
+                                downloadAsFile(
+                                    normalizeCardName(card.name),
+                                    `${JSON.stringify(result)}`,
+                                );
+                            } catch (e) {
+                                console.error(e);
+                                notification.error({
+                                    message: language['error.export.message'],
+                                    description: language['error.export.description'],
+                                });
+                            }
+                        }}
                     >
                         {label}
                     </Menu.Item>;
