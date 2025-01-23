@@ -35,7 +35,7 @@ export const DefaultFontSizeData = {
     bulletSymbolOffset: 0,
     capitalLetterRatio: 1,
     headTextFontRatio: 0.355,
-    headTextSpacing: 0.5,
+    headTextSpacing: 1.5,
     largeSymbolRatio: 1.35,
     letterSpacing: 0,
     offsetY: 0,
