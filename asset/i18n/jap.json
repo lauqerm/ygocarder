@@ -247,7 +247,7 @@
         "input.text-style.shadow.label": "シャドウ",
         "input.type.monster.label": "モンスターの属性",
         "input.type.st.label": "魔法・罠の種類",
-        "link-picker.label": "リンクマーカー",
+        "link-picker.label": "マーカー",
         "link-picker.reset.tooltip": "リセット",
         "prompt.download.tainted.message": "カードを保存できませんでした。カードを右クリックして手動で保存してください。→ 「名前を付けて保存」を選択してください。",
         "prompt.export.message": "後で使用するためにカードデータを保存します",
