@@ -65,6 +65,15 @@ const StyledLinkMarkChooser = styled.div`
         .container {
             background-color: var(--main-level-4);
             box-shadow: 0 0 0 1px var(--sub-level-4) inset;
+            .link-marker-icon {
+                border-color: transparent transparent #585858 transparent;
+            }
+            .link-marker-button.marker-checked .link-marker-icon {
+                border-color: transparent transparent var(--sub-disabled) transparent;
+            }
+            .link-marker-reset .anticon {
+                color: var(--main-level-4);
+            }
         }
     }
     &.chooser-active {

@@ -43,7 +43,6 @@ export const FrameTrain = ({
             const {
                 typeAbility,
                 isPendulum,
-                isLink,
                 attribute,
                 format,
             } = currentCard;
@@ -64,7 +63,7 @@ export const FrameTrain = ({
                 ...currentCard,
                 frame: nextFrame,
                 isPendulum: nextFrame === 'link' ? false : isPendulum,
-                isLink: nextFrame === 'link' ? true : isLink,
+                isLink: nextFrame === 'link' ? true : false,
                 attribute: isST
                     ? `${nextFrame}`.toUpperCase()
                     : attribute,

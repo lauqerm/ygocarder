@@ -5,9 +5,9 @@ import { DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } fro
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import { useLanguage } from 'src/service';
+import { mergeClass } from 'src/util';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
-import { mergeClass } from 'src/util';
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
     if (!crop || !canvas) return;

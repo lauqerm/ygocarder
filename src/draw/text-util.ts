@@ -187,7 +187,7 @@ export const analyzeHeadText = ({
     /** We use width ratio between head text (letters only) and foot text to determine that it is too long or not. For each ratio threshold, a different treatment is applied. */
     if (condenseHeadText <= 0.95) {
         /** Most case fall to this category */
-        alignCenterLetterSpacing = headTextSpacing;
+        alignCenterLetterSpacing = headTextSpacing * 1;
     }
     else if (condenseHeadText <= 1.175) {
         /** If the head text is a bit too long, we force all head text's letters to stay close together. Example like "EX" - Extra Deck in OCG. */

@@ -228,7 +228,7 @@ export const legacyRebuildCardData = (
 export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): Card => {
     const migratedCard = {
         ...baseCard,
-        ...clone(card)
+        ...clone(card),
     };
 
     migratedCard.effectStyle = {
@@ -277,7 +277,10 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
         migratedCard.hasBackground = true;
     }
 
-    if (migratedCard.isLink == null && migratedCard.frame === 'link' && !migratedCard.isPendulum === false) migratedCard.isLink = true;
+    console.log(migratedCard.isLink, migratedCard.frame);
+    if (card.isLink == null && card.frame === 'link') {
+        migratedCard.isLink = true;
+    }
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;
