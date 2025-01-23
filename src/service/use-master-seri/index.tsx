@@ -452,7 +452,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawLinkArrowMap(linkMap);
                 await drawLinkMapFoil(false);
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle });
-                await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle);
+                if (statInEffect) await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle);
                 resetStyle();
             }
 

@@ -278,6 +278,7 @@ export const cardMakerToYgoCarderData = (card: OtherMakerCard): { result: Card, 
         artData: useImageData ? image : '',
         artSource: useImageData ? 'offline' : 'online',
         artFinish: artFinish ?? 'normal',
+        isLink: normalizedFrame === 'link' && link != null,
         linkMap: [
             link?.topLeft === true ? '1' : null,
             link?.topCenter === true ? '2' : null,

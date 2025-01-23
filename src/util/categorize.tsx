@@ -9,8 +9,8 @@ export const checkXyz = (card: Pick<Card, 'frame'>) => {
 export const checkDarkSynchro = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'dark-synchro';
 };
-export const checkLink = (card: Pick<Card, 'frame'>) => {
-    return card.frame === 'link' && checkMonster(card);
+export const checkLink = (card: Pick<Card, 'isLink'>) => {
+    return card.isLink;
 };
 export const checkSpeedSkill = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'speed-skill' && !checkMonster(card);

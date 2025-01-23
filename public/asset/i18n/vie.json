@@ -247,7 +247,7 @@
         "input.text-style.shadow.label": "Viền",
         "input.type.monster.label": "Loại",
         "input.type.st.label": "Loại",
-        "link-picker.label": "Hướng Link",
+        "link-picker.label": "Link",
         "link-picker.reset.tooltip": "Xóa toàn bộ",
         "prompt.download.tainted.message": "Không thể lưu thẻ. Bạn có thể lưu thủ công bằng cách nhấn chuột phải vào ảnh → Chọn \"Save image as...\"",
         "prompt.export.message": "Lưu lại thông tin thẻ",

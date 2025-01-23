@@ -13,7 +13,6 @@ import {
     StandaloneLabel,
 } from '../../component';
 import {
-    checkLink,
     checkMonster,
 } from '../../util';
 import {
@@ -74,6 +73,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
         isPendulum,
+        isLink,
         attribute,
         getUpdater,
         setCard,
@@ -83,6 +83,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             frame, foil, finish, opacity,
             nameStyleType, nameStyle,
             isPendulum,
+            isLink,
             attribute,
         },
         getUpdater,
@@ -92,6 +93,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
         isPendulum,
+        isLink,
         attribute,
         getUpdater,
         setCard,
@@ -101,7 +103,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
     const stylePickerRef = useRef<NameStylePickerRef>(null);
 
-    const isLink = checkLink({ frame });
     const isMonster = checkMonster({ frame });
     const [stylePickerResetCount, setStylePickerResetCount] = useState(0);
     const foilButtonList = useMemo(() => getFoilButtonList({
@@ -266,7 +267,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                     <span>{language['input.attribute.label']}</span>
                 </RadioTrain>
 
-                {(isPendulum || frame !== 'link' || showCreativeOption)
+                {(isPendulum || showCreativeOption)
                     && <PendulumInputGroup ref={pendulumInputGroupRef}
                         showCreativeOption={showCreativeOption}
                         showExtraDecorativeOption={showExtraDecorativeOption}
@@ -298,7 +299,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             <div className="main-info-second">
                 <ImageInputGroup ref={imageInputGroupRef}
                     receivingCanvas={artworkCanvas}
-                    isLink={isLink}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     onSourceLoaded={onSourceLoaded}
                     onTainted={onTainted}

@@ -26,7 +26,6 @@ export type ImageInputGroupRef = {
     isLoading: () => boolean,
 };
 export type ImageInputGroup = {
-    isLink: boolean,
     showExtraDecorativeOption: boolean,
     receivingCanvas: HTMLCanvasElement | null,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
@@ -34,7 +33,6 @@ export type ImageInputGroup = {
     onSourceLoaded: ImageCropper['onSourceLoaded'],
 };
 export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>(({
-    isLink,
     showExtraDecorativeOption,
     receivingCanvas,
     onSourceLoaded,
@@ -47,6 +45,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         artFinish,
         linkMap,
         isPendulum,
+        isLink,
         art, artCrop, artData, artSource, artFit,
         getUpdater,
         setCard,
@@ -56,6 +55,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             artFinish,
             linkMap,
             isPendulum,
+            isLink,
             art, artCrop, artData, artSource, artFit,
         },
         getUpdater,
@@ -65,6 +65,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         artFinish,
         linkMap,
         isPendulum,
+        isLink,
         art, artCrop, artData, artSource, artFit,
         getUpdater,
         setCard,
@@ -72,6 +73,13 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     const imageCropperRef = useRef<ImageCropperRef>(null);
 
     const changeLinkMap = useMemo(() => getUpdater('linkMap'), [getUpdater]);
+    const changeLinkStatus = useCallback((willBecomeLink: boolean) => setCard(currentCard => {
+        return {
+            ...currentCard,
+            isLink: willBecomeLink,
+            isPendulum: willBecomeLink ? false : currentCard.isPendulum,
+        };
+    }), [setCard]);
     const changeArt = useMemo(() => getUpdater('art'), [getUpdater]);
     const changeArtData = useMemo(() => getUpdater('artData'), [getUpdater]);
     const changeArtFit = useCallback((status: boolean) => setCard(currentCard => {
@@ -142,8 +150,11 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             : null
         }
     >
-        {isLink
-            ? <LinkMarkChooser defaultValue={linkMap} onChange={changeLinkMap} />
-            : <div />}
+        <LinkMarkChooser
+            active={isLink}
+            defaultValue={linkMap}
+            onChange={changeLinkMap}
+            onStatusChange={changeLinkStatus}
+        />
     </ImageCropper>;
 });

@@ -152,7 +152,6 @@ export const drawPredefinedMark = async ({
 };
 
 export const drawLimitedEditionMark = async ({
-    ctx,
     canvas,
     type,
     isPendulum,

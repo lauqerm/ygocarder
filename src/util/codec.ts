@@ -88,6 +88,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     starAlignment: 'sa',
     cardIcon: 'it',
     linkMap: 'lm',
+    isLink: 'il',
     isPendulum: 'ip',
     pendulumFrame: 'pf',
     pendulumEffect: 'pe',
@@ -275,6 +276,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     ) {
         migratedCard.hasBackground = true;
     }
+
+    if (migratedCard.isLink == null && migratedCard.frame === 'link' && !migratedCard.isPendulum === false) migratedCard.isLink = true;
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;

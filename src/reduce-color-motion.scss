@@ -61,10 +61,12 @@
         }
     }
     .link-marker-chooser {
-        .link-marker-reset,
-        .link-marker-button {
-            &:hover {
-                background-color: #222236;
+        &.chooser-active {
+            .link-marker-reset,
+            .link-marker-button {
+                &:hover {
+                    background-color: #222236;
+                }
             }
         }
     }

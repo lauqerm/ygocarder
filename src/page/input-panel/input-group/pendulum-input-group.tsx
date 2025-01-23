@@ -158,7 +158,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
 }, ref) => {
     const language = useLanguage();
     const {
-        frame,
         isPendulum,
         pendulumFrame,
         pendulumScaleBlue,
@@ -167,7 +166,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         getUpdater,
     } = useCard(useShallow(({
         card: {
-            frame,
             isPendulum,
             pendulumFrame,
             pendulumScaleBlue,
@@ -176,7 +174,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         setCard,
         getUpdater,
     }) => ({
-        frame,
         isPendulum,
         pendulumFrame,
         pendulumScaleBlue,
@@ -202,6 +199,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             ...currentCard,
             // opacity: nextOpacity,
             isPendulum: willBecomePendulum,
+            isLink: willBecomePendulum ? false : currentCard.isLink,
         };
     });
     const changeBottomFrame = (value: string | number) => {
@@ -234,14 +232,12 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         className="pendulum-input"
     >
         <div className="joined-row pendulum-option">
-            {frame !== 'link'
-                ? <div className="pendulum-checkbox">
-                    <Checkbox
-                        onChange={changeToPendulum}
-                        checked={isPendulum}
-                    >{language['input.pendulum.label']}</Checkbox>
-                </div>
-                : <div className="pendulum-checkbox-placeholder" />}
+            <div className="pendulum-checkbox">
+                <Checkbox
+                    onChange={changeToPendulum}
+                    checked={isPendulum}
+                >{language['input.pendulum.label']}</Checkbox>
+            </div>
             {showCreativeOption && <Popover
                 visible={frameDropdownVisible}
                 onVisibleChange={setFrameDropdownVisibleVisible}
