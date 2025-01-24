@@ -326,7 +326,18 @@ export const checkCompactYgoCarderCard = (object: Record<string, any>): object i
 export const ygoCarderToExportableData = (
     card: Card,
     _artRef?: HTMLCanvasElement | null,
-) => ({
-    isPartial: card.artSource === 'offline',
-    result: compressCardData(card),
-});
+) => {
+    if (card.artSource === 'offline' || card.backgroundSource === 'offline') {
+        return {
+            isPartial: true,
+            result: compressCardData(card),
+        };
+    }
+    /** Remove art data here, it will easily exceed the limit of text area */
+    const normalizedCard = { ...card, artData: '', backgroundData: '' };
+
+    return {
+        isPartial: false,
+        result: compressCardData(normalizedCard),
+    };
+};

@@ -6,7 +6,12 @@ import styled from 'styled-components';
 import { mergeClass } from 'src/util';
 
 const StyledLinkMarkChooser = styled.div`
-    --link-arrow-size: 20px;
+    --link-arrow-icon-size: 16px;
+    --link-arrow-border-size: 8px;
+    --link-arrow-half-size: 13px;
+    --link-arrow-full-size: calc(var(--link-arrow-half-size) * 2);
+    --link-arrow-margin-inline: calc(var(--link-arrow-half-size) - var(--link-arrow-icon-size) / 2);
+    --link-arrow-margin-block: calc(var(--link-arrow-half-size) - var(--link-arrow-border-size) / 2);
     font-weight: 500;
     color: var(--color-vendor);
     text-shadow: var(--ts);
@@ -22,8 +27,8 @@ const StyledLinkMarkChooser = styled.div`
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr 1fr 1fr;
-        width: 90px;
-        height: 90px;
+        width: calc(3 * var(--link-arrow-full-size));
+        height: calc(3 * var(--link-arrow-full-size));
         column-gap: 0;
         row-gap: 0;
         background-color: var(--main-level-1);
@@ -35,8 +40,8 @@ const StyledLinkMarkChooser = styled.div`
             height: 0;
             border-style: solid;
             position: absolute;
-            margin: var(--spacing) var(--spacing-xs);
-            border-width: 0 var(--spacing) var(--spacing) var(--spacing);
+            margin: var(--link-arrow-margin-block) var(--link-arrow-margin-inline);
+            border-width: 0 var(--link-arrow-border-size) var(--link-arrow-border-size) var(--link-arrow-border-size);
             border-color: transparent transparent #484848 transparent;
         }
         .link-marker-button.marker-checked .link-marker-icon {
@@ -55,7 +60,7 @@ const StyledLinkMarkChooser = styled.div`
         width: 100%;
         height: 100%;
         .anticon {
-            font-size: var(--link-arrow-size);
+            font-size: var(--link-arrow-icon-size);
         }
     }
     .marker-checked {
