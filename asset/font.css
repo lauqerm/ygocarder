@@ -14,6 +14,13 @@
     font-style: normal;
     font-display: swap;
 }
+/** Normal **/
+@font-face {
+    font-family: 'LucidaFax-Italic';
+    src: url('./font/LucidaFax-Italic.ttf');
+    font-style: normal;
+    font-display: swap;
+}
 @font-face {
     font-family: 'RoGSanSrfStd-Bd';
     src: url('./font/RoGSanSrfStd-Bd.otf') format('opentype');
