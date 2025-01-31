@@ -14,6 +14,7 @@
         display: inline-grid;
         grid-template-columns: max-content 1fr max-content;
         column-gap: var(--spacing);
+        row-gap: var(--spacing-sm);
         margin-bottom: var(--spacing-xxs);
         .ant-radio-button-wrapper {
             > span:nth-child(2) {

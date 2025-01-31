@@ -16,6 +16,7 @@ import {
     BatchConverter,
     CardInputPanel,
     CardInputPanelRef,
+    CardManagerPanel,
     DownloadButton,
     DownloadButtonRef,
     ExportPanel,
@@ -101,6 +102,7 @@ function App() {
     const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
     const [canvasKey, setCanvasKey] = useState(0);
     const [lightboxVisible, setLightboxVisible] = useState(false);
+    const [managerVisible, setManagerVisible] = useState(false);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -386,15 +388,21 @@ function App() {
         setTainted(true);
     }, []);
 
+    const toggleManagerMode = useCallback((value: boolean) => {
+        setManagerVisible(value);
+    }, []);
+
     const isLoading = isLanguageLoading || isInitializing;
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
                 /** Prevent accidentally replace the page when dragging image into card art input. */
                 onDrop={() => { }}
-                className={`language-${languageInfo.codeName}`}
+                className={`language-${languageInfo.codeName} manager-${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
-                    backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                    backgroundImage: `url("${
+                        process.env.PUBLIC_URL
+                    }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: isMobileDevice() ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasConst.height}px`,
@@ -532,9 +540,13 @@ function App() {
                         onTainted={markTaintedImage}
                     />}
                 </div>
+                <CardManagerPanel
+                    language={language}
+                    onVisibleChange={toggleManagerMode}
+                />
                 {/** Pixel perfect for card image */}
                 <Modal
-                    width="843px"
+                    width={`${CanvasConst.width + 15 * 2}px`}
                     wrapClassName="card-lightbox-overlay"
                     visible={lightboxVisible}
                     forceRender={true}

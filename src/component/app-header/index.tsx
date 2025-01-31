@@ -17,7 +17,7 @@ export const Affiliation = () => {
     </div>;
 };
 
-const StyledAppSettingContainer = styled.div`
+const StyledAppHeaderButtonContainer = styled.div`
     align-content: center;
     align-self: center;
     border-left: var(--bw) dashed #b1b1b1;
@@ -120,9 +120,9 @@ export const AppHeader = () => {
                 </span>
             </div>
         </div>
-        <StyledAppSettingContainer className="app-setting">
+        <StyledAppHeaderButtonContainer className="app-setting">
             <SettingButton />
-        </StyledAppSettingContainer>
+        </StyledAppHeaderButtonContainer>
     </div>;
 };
 

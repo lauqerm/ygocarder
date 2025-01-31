@@ -1,3 +1,9 @@
+@media only screen and (max-width: 1900px) {
+	.manager-visible .app-container {
+		margin: auto;
+	}
+}
+
 @media only screen and (max-width: 1600px) {
 	#app {
 		padding: 0;
@@ -244,6 +250,11 @@
 	.app-container {
 		--resize-ratio: 0.5;
 		--translate-ratio: -25%;
+		.app-description {
+			.app-contribution {
+				margin-top: var(--spacing-sm);
+			}
+		}
 		.card-preview-panel {
 			flex: 0 0 415px;
 			.primary-button {

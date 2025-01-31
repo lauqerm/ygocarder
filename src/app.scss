@@ -138,6 +138,11 @@ hr {
     overflow-y: scroll;
     position: relative;
 }
+.manager-visible {
+    .app-container {
+        margin-right: 300px;
+    }
+}
 .app-container {
     display: flex;
     max-width: 1600px;
