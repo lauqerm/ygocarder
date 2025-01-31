@@ -18,7 +18,7 @@ import { analyzeLine } from '../text-analyze';
 import { normalizeCardText, splitEffect } from '../text-normalize';
 import { tokenizeText } from '../text-util';
 
-/** Sections inside effect box (stats and type) will affect the amount of line and applicaable font size use for the text. */
+/** Sections inside effect box (stats and type) will affect the amount of line and applicable font size use for the text. */
 export const getEffectFontAndCoordinate = ({
     format,
     isNormal,
@@ -123,7 +123,7 @@ export const drawEffect = ({
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
-            .setStyle(isNormal && format === 'tcg' ? 'italic' : '')
+            .setStyle(isNormal && format === 'tcg' ? '' : '')
             .setWeight(format === 'tcg' ? '' : '')
             .setSize(fontSize)
             .setFamily(font)
@@ -219,13 +219,29 @@ export const drawEffect = ({
 
             /** Condition clause of flavor text in TCG cards do not use italic font style ("Summoned Skull" TCG). */
             if (effectFlavorCondition.length > 0) {
+                const flavorFontData = EffectFontData.tcg;
+                const flavorFontSizeData = flavorFontData.fontList[effectSizeLevel];
+                const {
+                    fontSize,
+                    lineHeight,
+                } = flavorFontSizeData;
+                const flavorTextCurrentFont = createFontGetter();
+                ctx.font = flavorTextCurrentFont
+                    .setSize(fontSize)
+                    .setFamily(flavorFontData.font)
+                    .getFont();
+                const flavorTextData = {
+                    fontData: flavorFontData,
+                    fontLevel: effectSizeLevel,
+                    currentFont: flavorTextCurrentFont,
+                };
                 const internalEffectiveMedian = condense(
                     median => {
                         const { currentLineCount } = createLineList({
                             ctx,
                             median,
                             paragraphList: [effectFlavorCondition],
-                            format, textData,
+                            format, textData: flavorTextData,
                             width,
                         });
 
@@ -236,23 +252,19 @@ export const drawEffect = ({
                 const xRatio = internalEffectiveMedian / 1000;
 
                 ctx.scale(xRatio, yRatio);
-                ctx.font = currentFont.setStyle('').getFont();
-                let tokenList = tokenizeText(effectFlavorCondition);
+                const tokenList = tokenizeText(effectFlavorCondition);
                 /** We use two new line character to identify condition clause among flavor text. Because in normal case the user will try to put in many new lines to ensure that the condition clause is placed at bottom of the card text.
                  * 
                  * But this method has a caveat: For example if current line limit is 6, and the flavor text already take 5 lines. If user put the condition clause at line 6, it is indistinguishable from a normal paragraph, and therefore drawn with italic font. But if user put a new line between, it will force the draw function to increase the line limit into 7.
                  * 
                  * To combat this, we perform a simple remove that additional new line, that means if conditional clause is present, two new lines in textare actually result only one new line. This does not create much hassle since user rarely notice this behavior.
                  * */
-                tokenList = tokenList[0] === '\n'
-                    ? tokenList.slice(1)
-                    : tokenList;
                 drawLine({
                     ctx,
                     tokenList,
                     xRatio, yRatio,
                     trueEdge, trueBaseline,
-                    textData,
+                    textData: flavorTextData,
                     format,
                 });
                 trueBaseline += lineHeight;

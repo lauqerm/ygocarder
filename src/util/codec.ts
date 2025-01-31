@@ -277,7 +277,6 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
         migratedCard.hasBackground = true;
     }
 
-    console.log(migratedCard.isLink, migratedCard.frame);
     if (card.isLink == null && card.frame === 'link') {
         migratedCard.isLink = true;
     }
