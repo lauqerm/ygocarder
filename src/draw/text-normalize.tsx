@@ -41,7 +41,7 @@ export const splitEffect = (effect: string, isNormal = false) => {
     const flavorConditionRegex = new RegExp(FLAVOR_CONDITION_SOURCE, 'm');
     const potentialFlavorConditionText = flavorConditionRegex.exec(effect)?.[1];
     if (potentialFlavorConditionText && isNormal) {
-        effectFlavorCondition = potentialFlavorConditionText;
+        effectFlavorCondition = potentialFlavorConditionText.trim();
         effectText = effectText.replace(potentialFlavorConditionText, '');
     } else effectFlavorCondition = '';
 

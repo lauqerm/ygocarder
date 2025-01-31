@@ -159,7 +159,7 @@ export const drawSetId = (
     if (!ctx) return;
 
     const { isPendulum, isLink, withShadow, format, lightFooter, textStyle } = option;
-    let spacing = 0.175;
+    let spacing = 0.125;
     let offsetY = 0;
     let xOffset = 0;
     ctx.font = `${withShadow ? 'bold' : ''} 22px stone-serif-regular`;

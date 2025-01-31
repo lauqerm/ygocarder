@@ -35,8 +35,8 @@ export const NormalizeTextRegex = new RegExp(`[${[
 export const NON_BREAKABLE_SYMBOL_SOURCE = `${NB_WORD_OPEN}|${NB_WORD_CLOSE}`;
 export const nonBreakableSymbolRegex = new RegExp(NON_BREAKABLE_SYMBOL_SOURCE);
 
-/** Pretty hard to automatically detect condition clause inside flavor text. We must assume that the clause is always put inside a parentheses (as official cards do). */
-export const FLAVOR_CONDITION_SOURCE = `(\\n^[\\r\\t\\f\\v \\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]*\\n${NB_WORD_OPEN}?\\([\\w\\W]+\\)${NB_WORD_CLOSE}?)\\s*$`;
+/** Pretty hard to automatically detect condition clause inside flavor text. We must assume that the clause is always put inside a parentheses or asterisk (as official cards do). */
+export const FLAVOR_CONDITION_SOURCE = `(\\n^[\\r\\t\\f\\v \\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]*\\n${NB_WORD_OPEN}?(\\(|\\*)[\\w\\W]+${NB_WORD_CLOSE}?)\\s*$`;
 
 /** Small reminder: `g` flag turn regex into stateful, and cannot be reused without reset it first. */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]\\\\';
@@ -99,12 +99,14 @@ export const OCGBoxSpacingRatioMap: Record<string, number> = {
     '<': 0.125,
 };
 export const TCGOffsetMap: Record<string, number> = {
-    '\\': -0.025,
+    // Example
+    // '\\': -0.025,
 };
 export const TCGLastOfLineOffsetMap: Record<string, number> = {
 };
 export const TCGBoxSpacingRatioMap: Record<string, number> = {
-    '\\': 0.3,
+    // Example
+    // '\\': 0.3,
 };
 
 export const OCG_REDUCED_AT_END_LINE_RATIO = 0.500;
