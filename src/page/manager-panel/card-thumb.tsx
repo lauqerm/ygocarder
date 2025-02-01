@@ -1,20 +1,24 @@
-import { Card, FrameInfoMap, LinkIndentList, LinkRotateList, NO_ICON } from 'src/model';
-import { getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
+import { FrameInfoMap, LinkIndentList, LinkRotateList, NO_ICON } from 'src/model';
+import { checkMonster, getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
+import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import { Popconfirm, Tooltip } from 'antd';
+import { CardOfList, LanguageDataDictionary } from 'src/service';
+import { useState } from 'react';
 
 const ThumbSize = 56;
 const StyledCardThumb = styled.div`
     display: grid;
     grid-template-columns: max-content 1fr;
-    border-top: var(--bw) solid var(--sub-level-3);
     border-bottom: var(--bw) solid var(--sub-level-3);
     background-color: var(--main-level-1);
     cursor: pointer;
+    position: relative;
     &.active {
-        background-color: var(--main-level-4);
+        background-color: var(--main-level-5);
     }
     &:hover {
-        background-color: var(--sub-level-4);
+        background-color: var(--sub-level-5);
     }
     .right-slot {
         display: grid;
@@ -23,6 +27,12 @@ const StyledCardThumb = styled.div`
         line-height: 1;
         overflow: hidden;
         padding: var(--spacing-xs);
+        border-left: var(--bw) solid var(--main-level-3);
+        .first-row {
+            &:empty:before {
+                content: "\\00a0";
+            }
+        }
         .second-row {
             display: flex;
             column-gap: var(--spacing-xs);
@@ -109,15 +119,62 @@ const StyledCardThumb = styled.div`
             }
         }
     }
+    .action-slot {
+        display: none;
+        padding: var(--spacing-xs);
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--main-level-3);
+        height: 100%;
+        box-shadow: 0 0 3px 0 #222222;
+        cursor: default;
+        &.force-visible {
+            display: block;
+        }
+        .action-container {
+            display: inline-grid;
+            grid-template-columns: max-content;
+            gap: var(--spacing-xs);
+        }
+        .action-button {
+            cursor: pointer;
+            &.action-duplicate:hover {
+                color: var(--main-active);
+            }
+            &.action-delete:hover {
+                color: var(--main-danger);
+            }
+            &.action-download:hover {
+                color: var(--main-online);
+            }
+        }
+    }
+    &:hover {
+        .action-slot {
+            display: block;
+        }
+    }
 `;
 export type CardThumb = {
-    card: Card,
+    card: CardOfList,
     active: boolean,
+    language: LanguageDataDictionary,
+    onDuplicate: (card: CardOfList) => void,
+    onDownload: (card: CardOfList) => void,
+    onSelect: (card: CardOfList) => void,
+    onDelete: (id: string) => void,
 }
 export const CardThumb = ({
     card,
     active,
+    language,
+    onDuplicate,
+    onSelect,
+    onDelete,
+    onDownload,
 }: CardThumb) => {
+    const [actionVisible, setActionVisible] = useState<boolean>(false);
     const {
         name,
         art,
@@ -158,9 +215,15 @@ export const CardThumb = ({
     const normalizedCardIcon = normalizedCardIconType === 'st'
         ? subFamily
         : normalizedCardIconType;
-    // console.log('🚀 ~ artCrop:', star, cardIcon, normalizedCardIcon, subFamily, normalizedCardIconType);
+    const isMonster = checkMonster(card);
+    const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
+        ? !!(atk || def || (isLink && linkMap.length))
+        : isMonster;
 
-    return <StyledCardThumb className={mergeClass(active ? 'active' : '')}>
+    return <StyledCardThumb
+        className={mergeClass('truncate', active ? 'active' : '')}
+        onClick={() => onSelect(card)}
+    >
         <div
             className="left-slot"
         >
@@ -232,13 +295,35 @@ export const CardThumb = ({
                 {(!isLink && normalizedCardIconType !== 'st') && <span className="star-content truncate">{star}</span>}
             </div>
             <div className="third-row truncate">
-                <div>
+                {statInEffect && <div>
                     {atk}
-                </div>
-                {(atk || def) ? <div>&nbsp;/&nbsp;</div> : <div>&nbsp;</div>}
-                <div>
+                </div>}
+                {statInEffect ? <div>&nbsp;/&nbsp;</div> : <div>&nbsp;</div>}
+                {statInEffect && <div>
                     {isLink ? `Link ${linkMap.length}` : def}
-                </div>
+                </div>}
+            </div>
+        </div>
+        <div className={mergeClass('action-slot', actionVisible ? 'force-visible' : '')} onClick={e => e.stopPropagation()}>
+            <div className="action-container">
+                <Tooltip placement="left" title={language['manager.button.duplicate.tooltip']}>
+                    <CopyOutlined className="action-button action-duplicate" onClick={() => onDuplicate(card)} />
+                </Tooltip>
+                <Tooltip placement="left" title={language['manager.button.download.tooltip']}>
+                    <DownloadOutlined className="action-button action-download" onClick={() => onDownload(card)} />
+                </Tooltip>
+                <Popconfirm
+                    placement="left"
+                    title={language['manager.button.delete.label']}
+                    onVisibleChange={status => setActionVisible(status)}
+                    onConfirm={() => onDelete(card.id)}
+                    okText={language['manager.button.delete.confirm.label']}
+                    cancelText={language['manager.button.delete.cancel.label']}
+                >
+                    <Tooltip placement="left" title={language['manager.button.delete.tooltip']}>
+                        <CloseOutlined className="action-button action-delete" />
+                    </Tooltip>
+                </Popconfirm>
             </div>
         </div>
     </StyledCardThumb>;

@@ -36,7 +36,7 @@ export const useCardExport = ({
     const {
         card: currentCard,
     } = useCard();
-    const setActiveCard = useCardList(state => state.setActiveCard);
+    const changeActiveCard = useCardList(state => state.changeActiveCard);
     const resolution = useSetting(state => state.setting.resolution);
     const {
         opacity,
@@ -125,7 +125,7 @@ export const useCardExport = ({
         let relevant = true;
         let confirmReload = (ev: Event) => {
             ev.preventDefault();
-            return language['prompt.leave.warning.label'];
+            return language['prompt.warning.on-leave.label'];
         };
         if (isInitializing === false) {
             try {
@@ -182,7 +182,7 @@ export const useCardExport = ({
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
                             window.removeEventListener('beforeunload', confirmReload);
                             exportRef.current.pipelineRunning = false;
-                            setActiveCard(currentCard);
+                            changeActiveCard(currentCard);
 
                             if (pendingSave.current) {
                                 pendingSave.current = false;
@@ -202,5 +202,6 @@ export const useCardExport = ({
 
     return {
         onSave,
+        isPipelineRunning: () => exportRef.current.pipelineRunning,
     };
 };

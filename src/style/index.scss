@@ -123,6 +123,13 @@ span.ant-input-affix-wrapper {
         border-bottom-color: var(--sub-level-1);
     }
 }
+.ant-popover.ant-popover-placement-left {
+    .ant-popover-content .ant-popover-arrow {
+        right: 5px; // Alignment
+        border-top-color: var(--sub-level-1);
+        border-right-color: var(--sub-level-1);
+    }
+}
 ul.ant-dropdown-menu {
     background: var(--main-level-3);
     border: var(--bw) solid var(--sub-level-1);
@@ -236,12 +243,26 @@ div.ant-slider {
     }
 }
 
-.ant-popover {
+.ant-popover:not(.ant-popconfirm) {
     .ant-popover-inner,
     .ant-popover-inner-content {
         padding: 0;
         border-width: 0;
         background-color: transparent;
+    }
+}
+.ant-popconfirm {
+    .ant-popover-inner {
+        background-color: var(--main-level-4);
+    }
+    .ant-popover-inner-content {
+        padding: var(--spacing-sm);
+    }
+    .ant-popover-buttons {
+        margin: 0;
+    }
+    .ant-popover-message {
+        color: var(--color);
     }
 }
 

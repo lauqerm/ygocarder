@@ -277,6 +277,18 @@
 
         "manager.title": "Card Manager",
         "manager.icon.title": "Manager",
-        "prompt.leave.warning.label": "Leaving right now may make you lose unsaved progress, proceed?"
+        "manager.header.button.download.tooltip": "Download",
+        "manager.header.button.upload.tooltip": "Load",
+        "manager.button.duplicate.tooltip": "Duplicate",
+        "manager.button.delete.tooltip": "Delete",
+        "manager.button.delete.label": "Delete this card?",
+        "manager.button.delete.confirm.label": "Delete",
+        "manager.button.delete.cancel.label": "Cancel",
+        "manager.button.download.tooltip": "Export",
+        "error.csv-import.description": "Could not import CSV file",
+        "error.csv-import.message": "It is empty or malformed.",
+        "prompt.warning.on-change.label": "Switch card right now may make you lose unsaved progress, proceed?",
+        "prompt.warning.on-import.label": "You have unsaved change, you may want to export your list before importing a new one, proceed?",
+        "prompt.warning.on-leave.label": "Leaving right now may make you lose unsaved progress, proceed?"
     }
 }

@@ -6,6 +6,7 @@ import './responsive.scss';
 import './reduce-color-motion.scss';
 import {
     CanvasConst,
+    Card,
     getDefaultCard,
 } from './model';
 import {
@@ -26,6 +27,7 @@ import {
 } from './page';
 import WebFont from 'webfontloader';
 import {
+    CardOfList,
     changeCardFormat,
     getLanguage,
     retrieveSavedCard,
@@ -308,6 +310,22 @@ function App() {
         }
     }, [language, reportTarget]);
 
+    const editCard = useCallback((decodedCard: Card) => {
+        let willChange = true;
+        if (downloadButtonRef.current?.isPipelineRunning() === true) {
+            willChange = window.confirm(language['prompt.warning.on-change.label']);
+        }
+        if (willChange) {
+            const setCard = useCard.getState().setCard;
+    
+            setCard(decodedCard);
+            setImageChangeCount(cnt => cnt + 1);
+            cardInputRef.current?.forceCardData(decodedCard);
+            /** Allow navigate input panel right away */
+            forceRefocus();
+        }
+    }, [language]);
+
     const importData = useCallback(async (
         event?: { preventDefault: () => void },
         fromHotkey = false,
@@ -331,6 +349,7 @@ function App() {
     const exportData = useCallback((
         event?: { preventDefault: () => void },
         fromHotkey = false,
+        data?: Card,
     ) => {
         if (fromHotkey && !allowHotkey) return;
 
@@ -341,7 +360,7 @@ function App() {
         }
 
         try {
-            const cardData = useCard.getState().card;
+            const cardData = data ?? useCard.getState().card;
 
             exportPanelRef.current?.setCardData(cardData);
         } catch (e) {
@@ -352,6 +371,12 @@ function App() {
             });
         }
     }, [allowHotkey, language, sourceType]);
+
+    const exportCardInList = useCallback((card: CardOfList) => {
+        const { id, ...exportableCard } = card;
+
+        exportData(undefined, false, exportableCard);
+    }, [exportData]);
 
     const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
         if (fromHotkey && !allowHotkey) return;
@@ -440,15 +465,7 @@ function App() {
                                 />
                                 <div />
                                 <ImportPanel ref={importPanelRef}
-                                    onImport={decodedCard => {
-                                        const setCard = useCard.getState().setCard;
-
-                                        setCard(decodedCard);
-                                        setImageChangeCount(cnt => cnt + 1);
-                                        cardInputRef.current?.forceCardData(decodedCard);
-                                        /** Allow navigate input panel right away */
-                                        forceRefocus();
-                                    }}
+                                    onImport={editCard}
                                     onClose={forceRefocus}
                                     allowHotkey={allowHotkey}
                                     language={language}
@@ -546,6 +563,8 @@ function App() {
                 <CardManagerPanel
                     language={language}
                     onVisibleChange={toggleManagerMode}
+                    onDownload={exportCardInList}
+                    onSelect={editCard}
                 />
                 {/** Pixel perfect for card image */}
                 <Modal

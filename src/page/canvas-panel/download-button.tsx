@@ -59,6 +59,7 @@ const StyledDownloadButton = styled(Button)`
 `;
 export type DownloadButtonRef = {
     download: () => void,
+    isPipelineRunning: () => boolean,
 }
 export type DownloadButton = {
     isTainted: boolean,
@@ -107,7 +108,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     const onDownloadComplete = useCallback(() => {
         setDownloading(false);
     }, []);
-    const { onSave } = useCardExport({
+    const { onSave, isPipelineRunning } = useCardExport({
         isTainted,
         isInitializing,
         exportCanvasRef,
@@ -131,6 +132,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     };
     useImperativeHandle(ref, () => ({
         download,
+        isPipelineRunning,
     }));
 
     if (isTainted) return null;

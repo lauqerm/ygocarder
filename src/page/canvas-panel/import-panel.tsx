@@ -273,7 +273,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                                 }
                             }}
                         >
-                            <input ref={ygoCarderImportInputRef}
+                            <input key={`file-input-${inputKey}`} ref={ygoCarderImportInputRef}
                                 type="file"
                                 id={uploadId}
                                 accept="application/json"
@@ -319,7 +319,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                     }
                 }}
             >
-                <input ref={ygoCarderImportDirectInputRef}
+                <input key={`direct-file-input-${inputKey}`} ref={ygoCarderImportDirectInputRef}
                     type="file"
                     id={directUploadId}
                     accept="application/json"
@@ -328,6 +328,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                         const fileList = ygoCarderImportDirectInputRef.current?.files;
 
                         getFileAndImport(fileList);
+                        cleanup();
                     }}
                 />
                 <UploadOutlined />

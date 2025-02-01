@@ -2124,6 +2124,13 @@
   "resolved" "https://registry.npmjs.org/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz"
   "version" "2.4.0"
 
+"@types/papaparse@^5.3.15":
+  "integrity" "sha512-JHe6vF6x/8Z85nCX4yFdDslN11d+1pr12E526X8WAfhadOeaOTx5AuIkvDKIBopfvlzpzkdMx4YyvSKCM9oqtw=="
+  "resolved" "https://registry.npmjs.org/@types/papaparse/-/papaparse-5.3.15.tgz"
+  "version" "5.3.15"
+  dependencies:
+    "@types/node" "*"
+
 "@types/parse-json@^4.0.0":
   "integrity" "sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA=="
   "resolved" "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz"
@@ -2228,6 +2235,11 @@
   "version" "3.11.1"
   dependencies:
     "source-map" "^0.6.1"
+
+"@types/uuid@^10.0.0":
+  "integrity" "sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ=="
+  "resolved" "https://registry.npmjs.org/@types/uuid/-/uuid-10.0.0.tgz"
+  "version" "10.0.0"
 
 "@types/webfontloader@^1.6.32":
   "integrity" "sha512-l83V/2iHvBTIlKUM1+UlabS/Jd65HVfKmqS+zPhwDlgldPtd5ujPDt0Y1es19xLWcN8NC3wwSTd71Qxbst+Kpw=="
@@ -4637,6 +4649,31 @@
   "integrity" "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw=="
   "resolved" "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz"
   "version" "3.1.3"
+
+"csv-generate@^4.4.2":
+  "integrity" "sha512-W6nVsf+rz0J3yo9FOjeer7tmzBJKaTTxf7K0uw6GZgRocZYPVpuSWWa5/aoWWrjQZj4/oNIKTYapOM7hiNjVMA=="
+  "resolved" "https://registry.npmjs.org/csv-generate/-/csv-generate-4.4.2.tgz"
+  "version" "4.4.2"
+
+"csv-parse@^5.6.0":
+  "integrity" "sha512-l3nz3euub2QMg5ouu5U09Ew9Wf6/wQ8I++ch1loQ0ljmzhmfZYrH9fflS22i/PQEvsPvxCwxgz5q7UB8K1JO4Q=="
+  "resolved" "https://registry.npmjs.org/csv-parse/-/csv-parse-5.6.0.tgz"
+  "version" "5.6.0"
+
+"csv-stringify@^6.5.2":
+  "integrity" "sha512-RFPahj0sXcmUyjrObAK+DOWtMvMIFV328n4qZJhgX3x2RqkQgOTU2mCUmiFR0CzM6AzChlRSUErjiJeEt8BaQA=="
+  "resolved" "https://registry.npmjs.org/csv-stringify/-/csv-stringify-6.5.2.tgz"
+  "version" "6.5.2"
+
+"csv@^6.3.11":
+  "integrity" "sha512-a8bhT76Q546jOElHcTrkzWY7Py925mfLO/jqquseH61ThOebYwOjLbWHBqdRB4K1VpU36sTyIei6Jwj7QdEZ7g=="
+  "resolved" "https://registry.npmjs.org/csv/-/csv-6.3.11.tgz"
+  "version" "6.3.11"
+  dependencies:
+    "csv-generate" "^4.4.2"
+    "csv-parse" "^5.6.0"
+    "csv-stringify" "^6.5.2"
+    "stream-transform" "^3.3.3"
 
 "currently-unhandled@^0.4.1":
   "integrity" "sha1-mI3zP+qxke95mmE2nddsF635V+o="
@@ -9336,6 +9373,11 @@
   "resolved" "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
   "version" "1.0.11"
 
+"papaparse@^5.5.2":
+  "integrity" "sha512-PZXg8UuAc4PcVwLosEEDYjPyfWnTEhOrUfdv+3Bx+NuAb+5NhDmXzg5fHWmdCh1mP5p7JAZfFr3IMQfcntNAdA=="
+  "resolved" "https://registry.npmjs.org/papaparse/-/papaparse-5.5.2.tgz"
+  "version" "5.5.2"
+
 "parallel-transform@^1.1.0":
   "integrity" "sha512-P2vSmIu38uIlvdcU7fDkyrxj33gTUy/ABO5ZUbGowxNCopBq/OoD42bP4UmMrJoPyk4Uqf0mu3mtWBhHCZD8yg=="
   "resolved" "https://registry.npmjs.org/parallel-transform/-/parallel-transform-1.2.0.tgz"
@@ -12460,6 +12502,11 @@
   "integrity" "sha512-AiisoFqQ0vbGcZgQPY1cdP2I76glaVA/RauYR4G4thNFgkTqr90yXTo4LYX60Jl+sIlPNHHdGSwo01AvbKUSVQ=="
   "resolved" "https://registry.npmjs.org/stream-shift/-/stream-shift-1.0.1.tgz"
   "version" "1.0.1"
+
+"stream-transform@^3.3.3":
+  "integrity" "sha512-dALXrXe+uq4aO5oStdHKlfCM/b3NBdouigvxVPxCdrMRAU6oHh3KNss20VbTPQNQmjAHzZGKGe66vgwegFEIog=="
+  "resolved" "https://registry.npmjs.org/stream-transform/-/stream-transform-3.3.3.tgz"
+  "version" "3.3.3"
 
 "strict-uri-encode@^1.0.0":
   "integrity" "sha1-J5siXfHVgrH1TmWt3UNS4Y+qBxM="
