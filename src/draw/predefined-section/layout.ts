@@ -1,5 +1,5 @@
 import {
-    arrowPositionList,
+    ArrowPositionList,
     BackgroundType,
     CanvasConst,
     CardOpacity,
@@ -259,7 +259,7 @@ export const getLayoutDrawFunction = ({
         drawLinkArrowMap: async (linkMap: string[]) => {
             await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
                 .map(async entry => {
-                    const { left, top, height, width } = arrowPositionList[entry - 1];
+                    const { left, top, height, width } = ArrowPositionList[entry - 1];
                     const isActive = linkMap.includes(`${entry}`);
                     const baseLink = `link/link-inactive-${entry}`;
                     const activeLink = `link/link-active-${entry}`;

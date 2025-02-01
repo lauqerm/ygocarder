@@ -276,6 +276,7 @@
         "setting.option.soft-mode.label": "Reduce Color and Motion",
 
         "manager.title": "Card Manager",
-        "manager.icon.title": "Manager"
+        "manager.icon.title": "Manager",
+        "prompt.leave.warning.label": "Leaving right now may make you lose unsaved progress, proceed?"
     }
 }

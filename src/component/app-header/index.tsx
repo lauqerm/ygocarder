@@ -1,10 +1,13 @@
-import { GithubFilled, BugOutlined } from '@ant-design/icons';
+import { GithubFilled, BugOutlined, DatabaseFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
-import { useI18N, useLanguage } from 'src/service';
+import { useCardList, useI18N, useLanguage } from 'src/service';
 import { Radio } from 'antd';
 import './app-header.scss';
+import { StyledHeaderButtonContainer } from '../icon-button';
+import { useShallow } from 'zustand/react/shallow';
+import { mergeClass } from 'src/util';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -43,6 +46,16 @@ export const AppHeader = () => {
         languageMetadataMap,
         changeLanguage,
     }));
+    const {
+        visible,
+        toggleVisible,
+    } = useCardList(useShallow(({
+        visible,
+        toggleVisible,
+    }) => ({
+        visible,
+        toggleVisible,
+    })));
 
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
@@ -122,6 +135,17 @@ export const AppHeader = () => {
         </div>
         <StyledAppHeaderButtonContainer className="app-setting">
             <SettingButton />
+        </StyledAppHeaderButtonContainer>
+        <StyledAppHeaderButtonContainer className="card-manager">
+            <StyledHeaderButtonContainer
+                className={mergeClass('manager-button-label', visible ? 'manager-active' : '')}
+                onClick={() => toggleVisible()}
+            >
+                <div className="button-label">
+                    <DatabaseFilled />
+                    <label>{language['manager.icon.title']}</label>
+                </div>
+            </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>
     </div>;
 };

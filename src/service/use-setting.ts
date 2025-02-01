@@ -21,7 +21,7 @@ export const useSetting = create<SettingStore>((set) => {
         showExtraDecorativeOption,
     } = ((): Record<string, any> => {
         try {
-            const cachedStore = JSON.parse(window.localStorage.getItem('setting') ?? '{}');
+            const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
 
             if (cachedStore && typeof cachedStore === 'object' && !Array.isArray(cachedStore)) return cachedStore;
             return {};
@@ -47,7 +47,7 @@ export const useSetting = create<SettingStore>((set) => {
                     ? transformerOrPayload(currentStore.setting)
                     : { ...currentStore.setting, ...transformerOrPayload };
 
-                window.localStorage.setItem('setting', JSON.stringify(newSetting));
+                localStorage.setItem('setting', JSON.stringify(newSetting));
 
                 return {
                     setting: newSetting,

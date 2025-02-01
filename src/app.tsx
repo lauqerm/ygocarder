@@ -30,6 +30,7 @@ import {
     getLanguage,
     retrieveSavedCard,
     useCard,
+    useCardList,
     useI18N,
     useOCGFont,
     useSetting,
@@ -197,6 +198,7 @@ function App() {
                 const retrievedCard = retrieveSavedCard();
 
                 setCard(retrievedCard);
+                useCardList.getState().setCardList([retrievedCard], retrievedCard.name);
                 setInitializing(false);
             },
             fontinactive(familyName, fvd) {

@@ -139,6 +139,9 @@ export const EffectFontData: Record<string, FontData> = {
     'tcg-stat': {
         ...DefaultTCGEffectFontData,
         fontList: [
+            { bulletSymbolWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletSymbolOffset: 2 },
+            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
         ]
     },
@@ -177,6 +180,9 @@ export const EffectFontData: Record<string, FontData> = {
     'ocg-stat': {
         ...DefaultOCGEffectFontData,
         fontList: [
+            { bulletSymbolWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletSymbolOffset: 3, headTextFontRatio: 0.25 },
+            { bulletSymbolWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletSymbolOffset: 2, headTextFontRatio: 0.25 },
+            { bulletSymbolWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletSymbolOffset: 1, headTextFontRatio: 0.3 },
             { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
         ]
     },

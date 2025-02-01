@@ -4,6 +4,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { useLanguage } from 'src/service';
 import styled from 'styled-components';
 import { mergeClass } from 'src/util';
+import { LinkRotateList } from 'src/model';
 
 const StyledLinkMarkChooser = styled.div`
     --link-arrow-icon-size: 16px;
@@ -36,6 +37,9 @@ const StyledLinkMarkChooser = styled.div`
         border-radius: var(--br-lg);
         margin: auto;
         .link-marker-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 0;
             height: 0;
             border-style: solid;
@@ -43,6 +47,9 @@ const StyledLinkMarkChooser = styled.div`
             margin: var(--link-arrow-margin-block) var(--link-arrow-margin-inline);
             border-width: 0 var(--link-arrow-border-size) var(--link-arrow-border-size) var(--link-arrow-border-size);
             border-color: transparent transparent #484848 transparent;
+            .anticon {
+                font-size: var(--link-arrow-icon-size);
+            }
         }
         .link-marker-button.marker-checked .link-marker-icon {
             border-color: transparent transparent var(--sub-active) transparent;
@@ -52,16 +59,6 @@ const StyledLinkMarkChooser = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-    .link-marker-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        .anticon {
-            font-size: var(--link-arrow-icon-size);
-        }
     }
     .marker-checked {
         color: var(--sub-active);
@@ -106,7 +103,6 @@ export const LinkMarkChooser = ({
     onStatusChange,
 }: LinkMarkChooser) => {
     const [choosenArrow, setChoosenArrow] = useState(defaultValue);
-    const rotateMap = [-45, 0, 45, -90, 0, 90, -135, 180, 135];
     const language = useLanguage();
 
     const literalChoosenArrow = JSON.stringify(choosenArrow);
@@ -152,7 +148,7 @@ export const LinkMarkChooser = ({
                 >
                     <div
                         className={`link-marker-icon link-marker-icon-${index + 1}`}
-                        style={{ transform: `rotate(${rotateMap[index]}deg) translateY(-1px)` }}
+                        style={{ transform: `rotate(${LinkRotateList[index]}deg) translateY(-1px)` }}
                     />
                 </div>;
             })}

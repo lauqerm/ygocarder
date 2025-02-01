@@ -9,7 +9,7 @@ export type CanvasTextStyle = {
 };
 
 export const prepareStyle = ({
-    lightFooter,
+    // lightFooter,
     lightHeader,
     requireShadow,
     effectTextStyle,

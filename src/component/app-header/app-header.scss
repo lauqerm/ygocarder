@@ -1,6 +1,6 @@
 .app-header {
     display: inline-grid;
-    grid-template-columns: max-content 1fr max-content;
+    grid-template-columns: max-content 1fr max-content max-content;
     margin-bottom: var(--spacing-sm);
     background-color: var(--main-level-3);
     padding: 3px; // Alignment
@@ -11,8 +11,8 @@
         margin: 3px 0; // Alignment
     }
     .header-language {
-        display: inline-grid;
-        grid-template-columns: max-content 1fr max-content;
+        display: inline-flex;
+        flex-wrap: wrap;
         column-gap: var(--spacing);
         row-gap: var(--spacing-sm);
         margin-bottom: var(--spacing-xxs);
@@ -77,6 +77,12 @@
             }
         }
     }
+    .manager-active {
+        color: var(--main-online);
+        .anticon {
+            color: var(--main-online);
+        }
+    }
 }
 
 .affiliation {
@@ -88,8 +94,7 @@
     padding: var(--spacing-xs);
     border-left: var(--bw) solid var(--main-level-1);
     border-bottom: var(--bw) solid var(--main-level-1);
-    display: grid;
-    grid-template-columns: max-content 1fr;
+    display: inline-flex;
     align-items: baseline;
     gap: var(--spacing-xs);
     line-height: 1;

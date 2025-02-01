@@ -121,8 +121,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         if (isDownloading) return;
         if (isTainted) {
             notification.error({
-                message: 'Your card is tainted, you must save manually',
-                description: 'Right click the card → Choose "Save image as..."',
+                message: language['prompt.download.tainted.message'],
             });
             return;
         }

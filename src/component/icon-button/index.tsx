@@ -61,3 +61,26 @@ export const IconButton = ({
         </StyledIconButtonContainer>
     </Tooltip>;
 };
+
+export const StyledHeaderButtonContainer = styled.div<{ $softMode?: boolean }>`
+    cursor: pointer;
+    .button-label {
+        display: grid;
+        label {
+            cursor: pointer;
+            line-height: 1;
+            font-size: var(--fs-xs);
+            margin-top: var(--spacing-xs);
+        }
+    }
+    .anticon {
+        font-size: var(--fs-xl);
+        justify-self: center;
+    }
+    &:hover {
+        color: var(--main-active);
+        .anticon {
+            color: var(--sub-active);
+        }
+    }
+`;

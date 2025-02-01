@@ -1,4 +1,4 @@
-export const arrowPositionList = [
+export const ArrowPositionList = [
     { top: 175, left: 55, width: 100, height: 100 },
     { top: 165, left: 323, width: 170, height: 80 },
     { top: 175, left: 655, width: 100, height: 100 },
@@ -9,3 +9,25 @@ export const arrowPositionList = [
     { top: 810, left: 323, width: 170, height: 80 },
     { top: 775, left: 655, width: 100, height: 100 },
 ];
+export const LinkRotateList = [-45, 0, 45, -90, 0, 90, -135, 180, 135];
+export const LinkIndentList = [-35, -27, -35, -27, 0, -27, -35, -27, -35];
+export const LinkRotateMap: Record<string, number> = {
+    '1': LinkRotateList[0],
+    '2': LinkRotateList[1],
+    '3': LinkRotateList[2],
+    '4': LinkRotateList[3],
+    '6': LinkRotateList[5],
+    '7': LinkRotateList[6],
+    '8': LinkRotateList[7],
+    '9': LinkRotateList[8],
+};
+export const LinkIconMap: Record<string, string> = {
+    '1': '🡔',
+    '2': '🡑',
+    '3': '🡕',
+    '4': '🡐',
+    '6': '🡒',
+    '7': '🡗',
+    '8': '🡓',
+    '9': '🡖',
+};

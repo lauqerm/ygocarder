@@ -41,12 +41,17 @@ html {
     --main-blue-scale: #096dd9;
     --sub-blue-scale: #3b9dff;
 
+    --main-link-marker: #f93e3e;
+    --sub-link-marker: #ff4f4f;
     --main-danger: #e95e5e;
     --sub-danger: #ff6f6f;
     --main-info: #3a9eff;
     --sub-info: #3b9dff;
     --main-disabled: #8aaeaf;
     --sub-disabled: #6b727e;
+
+    --main-online: #3ec93e;
+    --sub-online: #4fcf4f;
 
     // Margin / Padding
     --spacing-px: 1px;
@@ -125,6 +130,11 @@ html {
     .center {
         text-align: center;
     }
+    .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 hr {
     margin: 0;
@@ -140,7 +150,7 @@ hr {
 }
 .manager-visible {
     .app-container {
-        margin-right: 300px;
+        margin-right: 280px;
     }
 }
 .app-container {

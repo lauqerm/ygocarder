@@ -101,8 +101,8 @@ export const decodeCard = (
  */
 export const retrieveSavedCard = (): Card => {
     try {
-        const localCardVersion = window.localStorage.getItem('card-version');
-        const stringifedLocalCardData = window.localStorage.getItem('card-data');
+        const localCardVersion = localStorage.getItem('card-version');
+        const stringifedLocalCardData = localStorage.getItem('card-data');
         const localCardData = stringifedLocalCardData
             ? migrateCardData(JSON.parse(stringifedLocalCardData))
             : null;

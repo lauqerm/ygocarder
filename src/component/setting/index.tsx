@@ -2,6 +2,7 @@ import { useLanguage, useSetting } from 'src/service';
 import { SettingFilled } from '@ant-design/icons';
 import styled, { css, keyframes } from 'styled-components';
 import { Checkbox, Popover, Tooltip } from 'antd';
+import { StyledHeaderButtonContainer } from '../icon-button';
 
 const rotate = keyframes`
     to {
@@ -18,28 +19,10 @@ const StyledSettingPanel = styled.div`
     border-radius: var(--br-lg);
     color: var(--color);
 `;
-const StyledSettingButtonContainer = styled.div<{ $softMode?: boolean }>`
-    cursor: pointer;
-    .setting-button-label {
-        display: grid;
-        label {
-            cursor: pointer;
-            line-height: 1;
-            font-size: var(--fs-xs);
-            margin-top: var(--spacing-xs);
-        }
-    }
+const StyledSettingButtonContainer = styled(StyledHeaderButtonContainer)`
     .anticon-setting {
-        font-size: var(--fs-xl);
-        justify-self: center;
         > svg {
             ${({ $softMode }) => $softMode ? '' : css`animation: ${rotate} 12s linear infinite;`}
-        }
-    }
-    &:hover {
-        color: var(--main-active);
-        .anticon-setting {
-            color: var(--sub-active);
         }
     }
 `;
@@ -92,7 +75,7 @@ export const SettingButton = () => {
                 </div>
             </StyledSettingPanel>}
         >
-            <div className="setting-button-label">
+            <div className="button-label">
                 <SettingFilled />
                 <label>{language['setting.button.label']}</label>
             </div>

@@ -1,6 +1,5 @@
 import { CanvasTextStyle } from 'src/service';
 import { setTextStyle } from './canvas-util';
-import { notification } from 'antd';
 
 const imageCacheMap: Record<string, {
     image: HTMLImageElement,
@@ -16,7 +15,6 @@ export const drawFrom = async (
     sy: number | ((image: HTMLImageElement) => number) = 0,
 ) => {
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
-    if (source.includes('/frame-token')) notification.info({ message: 'draw' });
     return new Promise<boolean>(resolve => {
         /**
          * Manually caching this image is not a good idea? Should have just let the browser do all the work. We are trying to reinvent the wheel here.

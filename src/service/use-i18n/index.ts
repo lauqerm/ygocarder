@@ -32,7 +32,7 @@ export const useI18N = create<I18NStore>((set, get) => {
         if (defaultLanguageFromURL) return defaultLanguageFromURL;
 
         try {
-            const cachedLanguage = window.localStorage.getItem('language');
+            const cachedLanguage = localStorage.getItem('language');
 
             if (cachedLanguage) return cachedLanguage;
             return 'eng';
@@ -121,7 +121,7 @@ export const useI18N = create<I18NStore>((set, get) => {
                 languageInfo: get().languageMetadataMap[languageName],
                 language: languageData.dictionary,
             });
-            window.localStorage.setItem('language', languageName);
+            localStorage.setItem('language', languageName);
             set({
                 isLoading: false,
                 languageInfo: nextMeta,
