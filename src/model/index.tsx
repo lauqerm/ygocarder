@@ -3,6 +3,7 @@ import { Foil } from './foil-finish';
 import { CondenseType } from './font-data-effect';
 import { NO_ICON } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
+import { v4 as uuid } from 'uuid';
 
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
@@ -93,6 +94,13 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     /** Extra information come from different card source such as YGOPro custom card maker */
     externalInfo: {} as Record<string, any>,
 });
+/** We avoid storing unique id for card, as it does not contribute to the card's identity. Id only matter when we are managing the card inside the app. */
+export type InternalCard = ReturnType<typeof getDefaultInternalCard>;
+export const getDefaultInternalCard = () => ({
+    id: uuid(),
+    ...getDefaultCard(),
+});
+
 export const getEmptyCard = (): Card => ({
     version: 0,
     format: 'tcg',

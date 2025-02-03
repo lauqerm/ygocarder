@@ -1,4 +1,5 @@
-import { Card, getEmptyCard } from 'src/model';
+import { Card, getEmptyCard, InternalCard } from 'src/model';
+import { v4 as uuid } from 'uuid';
 
 const headerList = [
     'name',
@@ -30,7 +31,7 @@ export type CardCsv = [
     name: string,
     atk: string,
 ];
-export const csvToCardList = (csv: Papa.ParseResult<CardCsv>): Card[] => {
+export const csvToCardList = (csv: Papa.ParseResult<CardCsv>): InternalCard[] => {
     try {
         const data = csv.data;
 
@@ -47,6 +48,7 @@ export const csvToCardList = (csv: Papa.ParseResult<CardCsv>): Card[] => {
                 ] = value;
 
                 return {
+                    id: uuid(),
                     ...getEmptyCard(),
                     name,
                     atk,

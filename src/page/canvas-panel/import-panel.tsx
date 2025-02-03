@@ -38,7 +38,7 @@ export type ImportPanelRef = {
 export type ImportPanel = {
     language: LanguageDataDictionary,
     allowHotkey: boolean,
-    onImport: (data: Card) => void,
+    onImport: (data: Card, forcePurityCheck?: boolean) => void,
     onClose: () => void,
 };
 export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
@@ -130,9 +130,9 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                             description: language['prompt.import.imgur.description'],
                         });
                     }
-                    onImport(surveyedDecodedCard);
+                    onImport(surveyedDecodedCard, true);
                 } else {
-                    onImport(decodedCard);
+                    onImport(decodedCard, true);
                 }
             }
         } catch (e) {

@@ -27,11 +27,12 @@ export const StyledDataButtonPanelContainer = styled.div`
     .save-button {
         flex: 1;
         font-size: var(--fs-xl);
-        border: var(--bw) solid var(--sub-secondary);
+        border: none;
         font-weight: 500;
         box-shadow: var(--bs-button);
         height: 39px; // Alignment
         line-height: 1;
+        transform: translateY(-1px);
         &:focus, &:active {
             color: white;
         }

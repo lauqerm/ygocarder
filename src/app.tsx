@@ -5,6 +5,7 @@ import './style/index.scss';
 import './responsive.scss';
 import './reduce-color-motion.scss';
 import {
+    InternalCard,
     CanvasConst,
     Card,
     getDefaultCard,
@@ -27,7 +28,6 @@ import {
 } from './page';
 import WebFont from 'webfontloader';
 import {
-    CardOfList,
     changeCardFormat,
     getLanguage,
     retrieveSavedCard,
@@ -200,7 +200,7 @@ function App() {
                 const retrievedCard = retrieveSavedCard();
 
                 setCard(retrievedCard);
-                useCardList.getState().setCardList([retrievedCard], retrievedCard.name);
+                useCardList.getState().setCardList([retrievedCard], retrievedCard.id);
                 setInitializing(false);
             },
             fontinactive(familyName, fvd) {
@@ -310,21 +310,18 @@ function App() {
         }
     }, [language, reportTarget]);
 
-    const editCard = useCallback((decodedCard: Card) => {
+    const editCard = useCallback((decodedCard: Card, forcePurityCheck?: boolean) => {
         let willChange = true;
-        if (downloadButtonRef.current?.isPipelineRunning() === true) {
-            willChange = window.confirm(language['prompt.warning.on-change.label']);
-        }
         if (willChange) {
             const setCard = useCard.getState().setCard;
-    
-            setCard(decodedCard);
+
+            setCard(decodedCard, forcePurityCheck);
             setImageChangeCount(cnt => cnt + 1);
             cardInputRef.current?.forceCardData(decodedCard);
             /** Allow navigate input panel right away */
             forceRefocus();
         }
-    }, [language]);
+    }, []);
 
     const importData = useCallback(async (
         event?: { preventDefault: () => void },
@@ -372,7 +369,7 @@ function App() {
         }
     }, [allowHotkey, language, sourceType]);
 
-    const exportCardInList = useCallback((card: CardOfList) => {
+    const exportCardInList = useCallback((card: InternalCard) => {
         const { id, ...exportableCard } = card;
 
         exportData(undefined, false, exportableCard);
@@ -500,7 +497,7 @@ function App() {
                                                     ? defaultCard
                                                     : changeCardFormat(defaultCard, 'ocg');
 
-                                                setCard(contextualDefaultCardData);
+                                                setCard(contextualDefaultCardData, true);
                                                 setImageChangeCount(cnt => cnt + 1);
                                                 cardInputRef.current?.forceCardData(contextualDefaultCardData);
                                             }

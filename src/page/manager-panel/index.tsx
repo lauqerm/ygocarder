@@ -1,13 +1,13 @@
-import { Drawer, notification, Tooltip } from 'antd';
+import { Drawer, Dropdown, Menu, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { CardOfList, csvToCardList, LanguageDataDictionary, useCardList } from 'src/service';
+import { csvToCardList, LanguageDataDictionary, useCardList } from 'src/service';
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
-import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, UploadOutlined, CloseOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { cardListToCsv, CardCsv } from 'src/service';
 import { downloadBlob } from 'src/util';
-import { Card } from 'src/model';
+import { InternalCard } from 'src/model';
 import Papa from 'papaparse';
 
 const StyledCardManagerPanel = styled.div`
@@ -40,6 +40,9 @@ const StyledCardManagerDrawer = styled(Drawer)`
         &:hover {
             color: var(--main-active);
         }
+        &.close-button:hover {
+            color: var(--main-danger);
+        }
     }
     .manager-button-container {
         display: inline-flex;
@@ -50,8 +53,8 @@ export type CardManagerPanelRef = {};
 export type CardManagerPanel = {
     language: LanguageDataDictionary,
     onVisibleChange: (status: boolean) => void,
-    onSelect: (card: Card) => void,
-    onDownload: (card: CardOfList) => void,
+    onSelect: (card: InternalCard) => void,
+    onDownload: (card: InternalCard) => void,
 };
 export const CardManagerPanel = forwardRef(({
     language,
@@ -64,29 +67,27 @@ export const CardManagerPanel = forwardRef(({
     const {
         visible,
         toggleVisible,
-        toggleDirty,
+        changeEditStatus,
         setActiveId,
         setCardList,
     } = useCardList(useShallow(({
         visible,
         toggleVisible,
-        toggleDirty,
+        changeEditStatus,
         setActiveId,
         setCardList,
     }) => ({
         visible,
         toggleVisible,
-        toggleDirty,
+        changeEditStatus,
         setActiveId,
         setCardList,
     })));
     const [inputKey, setInputKey] = useState(0);
 
-    const activeCard = useCallback((card: CardOfList) => {
-        const { id, ...normalizedCard } = card;
-
-        onSelect(normalizedCard);
-        setActiveId(id);
+    const activeCard = useCallback((card: InternalCard) => {
+        onSelect(card);
+        setActiveId(card.id);
     }, [onSelect, setActiveId]);
 
     useEffect(() => {
@@ -102,6 +103,26 @@ export const CardManagerPanel = forwardRef(({
             title={<div>
                 <CardManagerMonitor language={language} />
                 <div className="manager-button-container">
+                    <Dropdown
+                        overlay={<Menu>
+                            {[
+                                { key: 'level', value: 'level', label: 'Level' },
+                                { key: 'name', value: 'name', label: 'Name' },
+                                { key: 'atk', value: 'atk', label: 'ATK' },
+                                { key: 'def', value: 'def', label: 'DEF' },
+                            ].map(({ key, label }) => {
+                                return <Menu.Item key={key}>
+                                    {label}
+                                </Menu.Item>;
+                            })}
+                        </Menu>}
+                    >
+                        <div
+                            className="manager-button"
+                        >
+                            <UnorderedListOutlined />
+                        </div>
+                    </Dropdown>
                     <Tooltip title={language['manager.header.button.download.tooltip']}>
                         <div
                             className="manager-button"
@@ -113,7 +134,7 @@ export const CardManagerPanel = forwardRef(({
                                     new Blob([csvdata], { type: 'text/csv' }),
                                     'text/csv',
                                 );
-                                toggleDirty(false);
+                                changeEditStatus('download');
                             }}
                         >
                             <DownloadOutlined />
@@ -136,10 +157,10 @@ export const CardManagerPanel = forwardRef(({
                                 className="import-upload-input"
                                 onChange={() => {
                                     const fileList = listUploadRef.current?.files;
-                                    const { dirty } = useCardList.getState();
+                                    const { isListDirty } = useCardList.getState();
                                     let willImport = true;
 
-                                    if (dirty) {
+                                    if (isListDirty) {
                                         willImport = window.confirm(language['prompt.warning.on-import.label']);
                                     }
                                     if (willImport && fileList && fileList[0]) {
@@ -147,7 +168,7 @@ export const CardManagerPanel = forwardRef(({
                                             complete(result) {
                                                 const nextCardList = csvToCardList(result);
                                                 if (nextCardList.length > 0) {
-                                                    setCardList(nextCardList, nextCardList[0].name);
+                                                    setCardList(nextCardList, nextCardList[0].id);
                                                     setInputKey(cnt => cnt + 1);
                                                     onSelect(nextCardList[0]);
                                                 } else {
@@ -167,6 +188,12 @@ export const CardManagerPanel = forwardRef(({
                             <UploadOutlined />
                         </div>
                     </Tooltip>
+                    <div
+                        className="manager-button close-button"
+                        onClick={() => toggleVisible(false)}
+                    >
+                        <CloseOutlined />
+                    </div>
                 </div>
             </div>}
             visible={visible}
@@ -192,13 +219,13 @@ const CardManagerMonitor = ({
     language,
 }: CardManagerMonitor) => {
     const {
-        dirty,
+        isListDirty,
         cardList,
     } = useCardList(useShallow(({
-        dirty,
+        isListDirty,
         cardList,
     }) => ({
-        dirty,
+        isListDirty,
         cardList,
     })));
 
@@ -208,14 +235,14 @@ const CardManagerMonitor = ({
             return language['prompt.warning.on-leave.label'];
         };
         /** If card list only have 1 card, its data is saved on the url and therefore can be retreived after reload. */
-        if (dirty && cardList.length > 1) {
+        if (isListDirty && cardList.length > 1) {
             window.addEventListener('beforeunload', confirmReload);
         }
 
         return () => {
             window.removeEventListener('beforeunload', confirmReload);
         };
-    }, [cardList.length, dirty, language]);
+    }, [cardList.length, isListDirty, language]);
 
     return <div></div>;
 };

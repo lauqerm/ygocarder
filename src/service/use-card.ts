@@ -1,4 +1,4 @@
-import { Card, OtherMakerCard, YgoproDeckCard, getDefaultCard, getEmptyCard } from 'src/model';
+import { Card, InternalCard, OtherMakerCard, YgoproDeckCard, getDefaultInternalCard, getEmptyCard } from 'src/model';
 import { create } from 'zustand';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
@@ -14,6 +14,8 @@ import {
 } from 'src/util';
 import { notification } from 'antd';
 import { getLanguage } from './use-i18n';
+import { useCardList } from './use-card-list';
+import { v4 as uuid } from 'uuid';
 
 /** This method decode the following data into ygocarder uncompress data:
  * * Compressed legacy ygocarder data
@@ -25,12 +27,13 @@ export const decodeCard = (
     cardData: Record<string, any> | string | null,
     baseCard?: Card,
 ): {
-    card: Card,
+    card: InternalCard,
     isPartial: boolean,
 } => {
+    const id = uuid();
     let decodedCard = getEmptyCard();
     let isPartial = false;
-    if (!cardData) return { isPartial, card: decodedCard };
+    if (!cardData) return { isPartial, card: { ...decodedCard, id } };
     try {
         const normalizedCard = typeof cardData === 'string'
             ? JSON.parse(cardData) as Record<string, any> | { data: Record<string, any>[] }
@@ -92,14 +95,14 @@ export const decodeCard = (
     }
     return {
         isPartial,
-        card: decodedCard,
+        card: { ...decodedCard, id },
     };
 };
 
 /**
  * Acquire saved card when the session is just initialized. URL source is preferred over local storage source.
  */
-export const retrieveSavedCard = (): Card => {
+export const retrieveSavedCard = (): InternalCard => {
     try {
         const localCardVersion = localStorage.getItem('card-version');
         const stringifedLocalCardData = localStorage.getItem('card-data');
@@ -131,10 +134,10 @@ export const retrieveSavedCard = (): Card => {
         } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
             return localCardData;
         }
-        return getDefaultCard();
+        return getDefaultInternalCard();
     } catch (e) {
         console.error(e);
-        return getDefaultCard();
+        return getDefaultInternalCard();
     }
 };
 
@@ -142,9 +145,18 @@ const VariantConfigMap = {
     debounce: { type: 'debounce' as const, wait: 400 },
     throttle: { type: 'throttle' as const, wait: 1000 },
 };
+export const isInternalCard = (card: Card | InternalCard): card is InternalCard => {
+    return 'id' in card && card.id !== '';
+};
 export type CardStore = {
-    card: Card,
-    setCard: (cardTransform: Card | ((currentCard: Card) => Card)) => void,
+    card: InternalCard,
+    /**
+     * Note: If you pass a whole new card object here, it will skip the purity check by default
+     */
+    setCard: (
+        cardTransform: Card | InternalCard | ((currentCard: InternalCard) => InternalCard),
+        forcePurityCheck?: boolean,
+    ) => void,
     getUpdater: (
         key: string,
         valueTransform?: (value: any) => any,
@@ -153,10 +165,28 @@ export type CardStore = {
 };
 export const useCard = create<CardStore>((set, get) => {
     return {
-        card: getDefaultCard(),
-        setCard: cardTransform => {
-            if (typeof cardTransform === 'function') set(cur => ({ card: cardTransform(cur.card) }));
-            else set({ card: cardTransform });
+        card: getDefaultInternalCard(),
+        setCard: (cardTransform, forcePurityCheck) => {
+            /** Change some fields inside a card, check list purity afterward */
+            const changeActiveCard = useCardList.getState().changeActiveCard;
+            if (typeof cardTransform === 'function') {
+                set(cur => {
+                    const nextCard = cardTransform(cur.card);
+                    changeActiveCard(nextCard, forcePurityCheck ?? true);
+
+                    return { card: nextCard };
+                });
+            }
+            /** Change the whole card */
+            else if (isInternalCard(cardTransform)) {
+                changeActiveCard(cardTransform, forcePurityCheck);
+                set({ card: cardTransform });
+            }
+            else {
+                const normalizedCard = { id: uuid(), ...cardTransform };
+                changeActiveCard(normalizedCard, forcePurityCheck);
+                set({ card: normalizedCard });
+            }
         },
         getUpdater: (
             key: string,

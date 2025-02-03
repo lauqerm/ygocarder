@@ -1,16 +1,17 @@
-import { CardOfList, LanguageDataDictionary, useCardList } from 'src/service';
+import { LanguageDataDictionary, useCardList } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { CardThumb } from './card-thumb';
 import { useEffect, useState } from 'react';
-import { getEmptyCard } from 'src/model';
+import { getEmptyCard, InternalCard } from 'src/model';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Be careful, all callbacks here must be memoized.
  */
 export type ManagerCardList = {
     language: LanguageDataDictionary,
-    onSelect: (card: CardOfList) => void,
-    onDownload: (card: CardOfList) => void,
+    onSelect: (card: InternalCard) => void,
+    onDownload: (card: InternalCard) => void,
 };
 export const ManagerCardList = ({
     language,
@@ -50,7 +51,7 @@ export const ManagerCardList = ({
                     onSelect(nextCard);
                 } else {
                     /** Empty list, create placeholder card */
-                    const emptyCard = getEmptyCard();
+                    const emptyCard = { id: uuid(), ...getEmptyCard() };
                     setCardList([emptyCard], emptyCard.name);
                 }
             }

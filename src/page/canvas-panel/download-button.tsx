@@ -29,13 +29,14 @@ const StyledDownloadDropdownOption = styled(Menu.Item)`
 const StyledDownloadButton = styled(Button)`
     padding: 0;
     .button-label {
-        padding: 4px 15px;
         height: 100%; // Alignment
         align-content: center;
         border-radius: var(--br);
         line-height: 1.5;
         .label-content {
-            transform: translateY(-1px);
+            padding: 4px 15px;
+            border: var(--bw) solid var(--sub-secondary);
+            border-radius: var(--br-lg);
         }
     }
     .button-option {
@@ -138,10 +139,10 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     if (isTainted) return null;
     return <div className="save-button-container">
         <div id="save-button-waiting" />
-        <StyledDownloadButton className="save-button" id="save-button-ready" onClick={() => download()}>
+        <StyledDownloadButton className="save-button" id="save-button-ready">
             <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
                 <div className="button-label">
-                    <div className="label-content">
+                    <div className="label-content" onClick={() => download()}>
                         {isDownloading
                             ? language['button.download.ongoing.label']
                             : language['button.download.label']}
@@ -153,7 +154,9 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
                 className="save-button-dropdown"
                 placement="bottomRight"
                 overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
-                    <StyledDownloadDropdownLabel disabled>{language['button.download.resolution.label']}</StyledDownloadDropdownLabel>
+                    <StyledDownloadDropdownLabel disabled onClick={e => e.domEvent.stopPropagation()}>
+                        {language['button.download.resolution.label']}
+                    </StyledDownloadDropdownLabel>
                     {[
                         { width: 549, height: 800 },
                         { width: 561, height: 818 },

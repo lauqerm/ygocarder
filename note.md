@@ -1,3 +1,6 @@
+### Todo
+* Remove `csv` from package list if have no use for them.
+
 ### Game Technical
 * <https://yugipedia.com/wiki/Japanese_terms_and_phrases>
 * <https://yugipedia.com/wiki/Card_layout>
@@ -14,7 +17,7 @@
 ### Improvements backlog
 
 * Dark synchro style syntax
-* TCG Normal effect style syntax (TCG Flavor text use different style)
+* Intentional TCG Normal effect style syntax (TCG Flavor text use different style)
 * Split art and effect border for pendulum
 * OCG's letter dialect ("Chef Special Recipe" OCG for example)
 * In-place zoom

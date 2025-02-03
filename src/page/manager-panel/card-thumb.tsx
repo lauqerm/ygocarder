@@ -1,9 +1,9 @@
-import { FrameInfoMap, LinkIndentList, LinkRotateList, NO_ICON } from 'src/model';
+import { FrameInfoMap, InternalCard, LinkIndentList, LinkRotateList, NO_ICON } from 'src/model';
 import { checkMonster, getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
 import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Popconfirm, Tooltip } from 'antd';
-import { CardOfList, LanguageDataDictionary } from 'src/service';
+import { LanguageDataDictionary } from 'src/service';
 import { useState } from 'react';
 
 const ThumbSize = 56;
@@ -157,12 +157,12 @@ const StyledCardThumb = styled.div`
     }
 `;
 export type CardThumb = {
-    card: CardOfList,
+    card: InternalCard,
     active: boolean,
     language: LanguageDataDictionary,
-    onDuplicate: (card: CardOfList) => void,
-    onDownload: (card: CardOfList) => void,
-    onSelect: (card: CardOfList) => void,
+    onDuplicate: (card: InternalCard) => void,
+    onDownload: (card: InternalCard) => void,
+    onSelect: (card: InternalCard) => void,
     onDelete: (id: string) => void,
 }
 export const CardThumb = ({

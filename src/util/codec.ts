@@ -1,6 +1,7 @@
-import { clone } from 'ramda';
+import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { Card, getDefaultCardOpacity, getDefaultTextStyle, getEmptyCard } from '../model';
+import { Card, getDefaultCardOpacity, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { v4 as uuid } from 'uuid';
 
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
@@ -225,8 +226,9 @@ export const legacyRebuildCardData = (
 };
 
 /** Migrate old version of card data into the new version without information loss */
-export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): Card => {
+export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): InternalCard => {
     const migratedCard = {
+        id: uuid(),
         ...baseCard,
         ...clone(card),
     };
@@ -339,4 +341,53 @@ export const ygoCarderToExportableData = (
         isPartial: false,
         result: compressCardData(normalizedCard),
     };
+};
+
+const ROUNDING_THRESHOLD = 0.75;
+const isPartialNumberEqual = (numberLeft: any, numberRight: any) => {
+    if (typeof numberLeft !== typeof numberRight) return false;
+    if (typeof numberLeft === 'number' && typeof numberRight === 'number') return Math.abs(numberLeft - numberRight) <= ROUNDING_THRESHOLD;
+    return numberLeft === numberRight;
+};
+const isCropDataEqual = (cropLeft: Partial<ReactCrop.Crop>, cropRight: Partial<ReactCrop.Crop>) => {
+    const {
+        aspect: aspectLeft,
+        height: heightLeft,
+        width: widthLeft,
+        x: xLeft,
+        y: yLeft,
+        unit: unitLeft,
+    } = cropLeft ?? {};
+    const {
+        aspect: aspectRight,
+        height: heightRight,
+        width: widthRight,
+        x: xRight,
+        y: yRight,
+        unit: unitRight,
+    } = cropRight ?? {};
+
+    return isPartialNumberEqual(aspectLeft, aspectRight)
+        && isPartialNumberEqual(heightLeft, heightRight)
+        && isPartialNumberEqual(widthLeft, widthRight)
+        && isPartialNumberEqual(xLeft, xRight)
+        && isPartialNumberEqual(yLeft, yRight)
+        && unitLeft === unitRight;
+};
+/** Cropped data is rather unpredictable, and can produce rounding error that is hard to get a hold off. So when comparing card data we ignore any difference that is smaller than a threshold */
+export const isCardDataEqual = (cardLeft: InternalCard, cardRight: InternalCard) => {
+    const {
+        artCrop: artCropLeft,
+        backgroundCrop: backgroundCropLeft,
+        ...restLCard
+    } = cardLeft;
+    const {
+        artCrop: artCropRight,
+        backgroundCrop: backgroundCropRight,
+        ...restRCard
+    } = cardRight;
+
+    return equals(restLCard, restRCard)
+        && isCropDataEqual(artCropLeft, artCropRight)
+        && isCropDataEqual(backgroundCropLeft, backgroundCropRight);
 };

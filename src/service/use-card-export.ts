@@ -5,7 +5,6 @@ import { CardOpacity } from 'src/model';
 import { useSetting } from './use-setting';
 import { notification } from 'antd';
 import { useLanguage } from './use-i18n';
-import { useCardList } from './use-card-list';
 
 export type UseCardExport = {
     isTainted: boolean,
@@ -36,7 +35,6 @@ export const useCardExport = ({
     const {
         card: currentCard,
     } = useCard();
-    const changeActiveCard = useCardList(state => state.changeActiveCard);
     const resolution = useSetting(state => state.setting.resolution);
     const {
         opacity,
@@ -182,7 +180,6 @@ export const useCardExport = ({
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
                             window.removeEventListener('beforeunload', confirmReload);
                             exportRef.current.pipelineRunning = false;
-                            changeActiveCard(currentCard);
 
                             if (pendingSave.current) {
                                 pendingSave.current = false;

@@ -12,7 +12,6 @@
     "@types/lodash.throttle": "^4.1.9",
     "antd": "4.9.4",
     "copy-to-clipboard": "^3.3.3",
-    "csv": "^6.3.11",
     "html2canvas": "^1.0.0-rc.7",
     "jszip": "^3.10.1",
     "lodash.debounce": "^4.0.8",

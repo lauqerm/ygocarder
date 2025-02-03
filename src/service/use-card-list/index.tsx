@@ -1,50 +1,64 @@
 import { clone } from 'ramda';
-import { Card } from 'src/model';
+import { Card, InternalCard } from 'src/model';
 import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
+import { isCardDataEqual } from 'src/util';
 
-export type CardOfList = Card & { id: string };
 export type CardListStore = {
-    dirty: boolean,
+    isListDirty: boolean,
     listName: string,
     visible: boolean,
     activeId: string,
-    cardList: CardOfList[],
-    changeActiveCard: (card: Card) => void,
+    cardList: InternalCard[],
+    changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
     deleteCard: (id: string) => void,
     duplicateCard: (card: Card) => void,
     setActiveId: (id: string) => void,
-    setCardList: (cardList: Card[], activeCardName: string) => void,
+    setCardList: (cardList: InternalCard[], activeId?: string) => void,
     setListName: (name: string) => void,
-    toggleDirty: (status?: boolean) => void,
+    changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
     toggleVisible: (status?: boolean) => void,
 };
 export const useCardList = create<CardListStore>((set) => {
     return {
-        dirty: false,
+        isListDirty: false,
         listName: 'card-list',
         visible: localStorage.getItem('manager-panel-visible') === 'true',
         activeId: '',
         cardList: [],
-        toggleDirty: status => set(({ dirty }) => ({ dirty: status ?? !dirty })),
+        changeEditStatus: event => {
+            if (event === 'load') set({ isListDirty: false });
+            if (event === 'download') set({ isListDirty: false });
+        },
         toggleVisible: status => set(({ visible }) => ({ visible: status ?? !visible })),
         setListName: name => set({ listName: name }),
-        changeActiveCard: activeCard => {
-            set(({ cardList, activeId }) => ({
-                dirty: true,
-                cardList: cardList.map(card => {
-                    if (card.id === activeId) return { ...activeCard, id: card.id };
+        changeActiveCard: (nextActiveCard, checkPurity = false) => {
+            set(({ cardList, isListDirty }) => {
+                let nextIsListDirty = isListDirty;
+
+                if (nextIsListDirty === false && checkPurity) {
+                    const targetCard = cardList.find(card => card.id === nextActiveCard.id);
+
+                    nextIsListDirty = targetCard
+                        ? !isCardDataEqual(nextActiveCard, targetCard)
+                        : true;
+                }
+                const nextCardList = cardList.map(card => {
+                    if (card.id === nextActiveCard.id) return { ...nextActiveCard };
                     return card;
-                })
-            }));
+                });
+                return {
+                    isListDirty: nextIsListDirty,
+                    cardList: nextCardList,
+                };
+            });
         },
         setActiveId: id => set({ activeId: id }),
-        setCardList: (cardList, activeCardName) => {
-            const normalizedCardList = cardList.map((card) => ({ ...card, id: uuid() }));
+        setCardList: (cardList, activeId) => {
             set({
-                dirty: false,
-                activeId: normalizedCardList.find(card => card.name === activeCardName)?.id ?? '',
-                cardList: normalizedCardList,
+                isListDirty: false,
+                activeId: activeId ?? cardList[0]?.id,
+                cardList: cardList,
             });
         },
         deleteCard: id => {
