@@ -274,7 +274,6 @@
         "setting.option.hotkey.label": "Allow hotkey",
         "setting.option.hotkey.tooltip": "Warning: Using hotkey may affect undo / redo feature.",
         "setting.option.soft-mode.label": "Reduce Color and Motion",
-
         "manager.title": "Card Manager",
         "manager.icon.title": "Manager",
         "manager.header.button.download.tooltip": "Download",
@@ -285,8 +284,8 @@
         "manager.button.delete.confirm.label": "Delete",
         "manager.button.delete.cancel.label": "Cancel",
         "manager.button.download.tooltip": "Export",
-        "error.csv-import.description": "Could not import CSV file",
-        "error.csv-import.message": "It is empty or malformed.",
+        "error.csv-import.description": "It is empty or malformed. Please ensure your csv has a header.",
+        "error.csv-import.message": "Could not import CSV file",
         "prompt.warning.on-import.label": "You have unsaved change, you may want to export your list before importing a new one, proceed?",
         "prompt.warning.on-leave.label": "Leaving right now may make you lose unsaved progress, proceed?"
     }

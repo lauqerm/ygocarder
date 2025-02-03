@@ -287,12 +287,19 @@ export const CardThumb = ({
                         src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
                         alt="Icon"
                     />}
-                <div className="truncate">{typeAbility.join('/')}</div>
-                {(!isLink && normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img className="card-icon"
-                        src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon}.png`}
-                        alt="Icon"
-                    />}
-                {(!isLink && normalizedCardIconType !== 'st') && <span className="star-content truncate">{star}</span>}
+                {typeAbility.length > 0 && <div className="truncate">{typeAbility.join('/')}</div>}
+                {(!isLink && normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
+                    className="card-icon"
+                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon}.png`}
+                    alt="Icon"
+                />}
+                {(!isLink && normalizedCardIconType !== 'st') && <span className="star-content truncate">
+                    {typeof star === 'number'
+                        ? star
+                        : star !== ''
+                            ? `"${star}"`
+                            : ''}
+                </span>}
             </div>
             <div className="third-row truncate">
                 {statInEffect && <div>

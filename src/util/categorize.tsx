@@ -88,7 +88,7 @@ export const resolveNameStyle = ({
         }
         : {};
 
-    const foilStyle = foil !== 'normal' ? PresetNameStyleMap[foil].value ?? {} : {};
+    const foilStyle = foil !== 'normal' ? PresetNameStyleMap[foil]?.value ?? {} : {};
     const frameStyle = frame === 'zarc' ? PresetNameStyleMap.animeGold.value : {};
 
     /** Auto name style has dynamic font, outline, color, fully affected by foil and frame */

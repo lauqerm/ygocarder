@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
 import { DownloadOutlined, UploadOutlined, CloseOutlined, UnorderedListOutlined } from '@ant-design/icons';
-import { cardListToCsv, CardCsv } from 'src/service';
+import { cardListToCsv } from 'src/service';
 import { downloadBlob } from 'src/util';
 import { InternalCard } from 'src/model';
 import Papa from 'papaparse';
@@ -164,7 +164,7 @@ export const CardManagerPanel = forwardRef(({
                                         willImport = window.confirm(language['prompt.warning.on-import.label']);
                                     }
                                     if (willImport && fileList && fileList[0]) {
-                                        Papa.parse<CardCsv>(fileList[0], {
+                                        Papa.parse<string[]>(fileList[0], {
                                             complete(result) {
                                                 const nextCardList = csvToCardList(result);
                                                 if (nextCardList.length > 0) {
