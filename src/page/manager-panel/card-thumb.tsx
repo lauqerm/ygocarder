@@ -49,6 +49,10 @@ const StyledCardThumb = styled.div`
         }
         .third-row {
             display: flex;
+            .set-id {
+                flex: 1;
+                text-align: right;
+            }
         }
     }
     .left-slot {
@@ -176,24 +180,25 @@ export const CardThumb = ({
 }: CardThumb) => {
     const [actionVisible, setActionVisible] = useState<boolean>(false);
     const {
-        name,
         art,
         artCrop,
-        artSource,
         artFit,
-        frame,
-        pendulumFrame,
-        attribute,
-        typeAbility,
-        cardIcon,
-        star,
+        artSource,
         atk,
+        attribute,
+        cardIcon,
         def,
-        linkMap,
+        format,
+        frame,
         isLink,
         isPendulum,
-        format,
+        linkMap,
+        name,
+        pendulumFrame,
+        setId,
+        star,
         subFamily,
+        typeAbility,
     } = card;
     const normalizedCardName = normalizeCardName(name);
     const normalizedBottomFrame = pendulumFrame === 'auto'
@@ -309,6 +314,7 @@ export const CardThumb = ({
                 {statInEffect && <div>
                     {isLink ? `Link ${linkMap.length}` : def}
                 </div>}
+                {setId && <div className="set-id">{setId}</div>}
             </div>
         </div>
         <div className={mergeClass('action-slot', actionVisible ? 'force-visible' : '')} onClick={e => e.stopPropagation()}>

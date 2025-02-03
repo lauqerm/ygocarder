@@ -11,6 +11,7 @@ import {
     ArtFinishMap,
     FinishMap,
     FoilDictionary,
+    NO_STICKER,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -155,7 +156,7 @@ export const IconTypeMap: Record<string, { value: string, labelKey: string, full
 export const IconTypeList = Object.values(IconTypeMap);
 
 export const StickerButtonList = StickerList.map(name => ({
-    label: name === 'no-sticker'
+    label: name === NO_STICKER
         ? <CloseCircleOutlined />
         : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
     value: name,

@@ -1,9 +1,18 @@
 import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
 import { Foil } from './foil-finish';
 import { CondenseType } from './font-data-effect';
-import { NO_ICON } from './icon';
+import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
 import { v4 as uuid } from 'uuid';
+
+export const getDefaultCrop = () => ({
+    x: 0,
+    y: 4,
+    width: 100,
+    height: 89.5,
+    unit: '%' as '%' | 'px',
+    aspect: 1,
+});
 
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
@@ -26,28 +35,14 @@ export const getDefaultCard = () => ({
     artData: '',
     artFit: false,
     artSource: 'online',
-    artCrop: {
-        x: 0,
-        y: 4,
-        width: 100,
-        height: 89.5,
-        unit: '%',
-        aspect: 1,
-    } as Partial<ReactCrop.Crop>,
+    artCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
     hasBackground: false,
     background: '',
     backgroundData: '',
     backgroundFit: false,
     backgroundSource: 'online',
     backgroundType: 'fit' as BackgroundType,
-    backgroundCrop: {
-        x: 0,
-        y: 4,
-        width: 100,
-        height: 89.5,
-        unit: '%',
-        aspect: 1,
-    } as Partial<ReactCrop.Crop>,
+    backgroundCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
     linkMap: [
         '1',
         '3',
@@ -112,7 +107,7 @@ export const getEmptyCard = (): Card => ({
     name: '',
     nameStyleType: 'auto',
     nameStyle: getDefaultNameStyle(),
-    attribute: 'LIGHT',
+    attribute: NO_ATTRIBUTE,
     subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6,
@@ -163,7 +158,7 @@ export const getEmptyCard = (): Card => ({
     atk: '0',
     def: '0',
     password: '',
-    sticker: 'no-sticker',
+    sticker: NO_STICKER,
     isFirstEdition: false,
     isSpeedCard: false,
     isLimitedEdition: false,

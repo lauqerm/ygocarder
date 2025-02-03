@@ -119,8 +119,9 @@ export const IconList = [
     },
 ];
 
+export const NO_STICKER = 'no-sticker';
 export const StickerList = [
-    'no-sticker',
+    NO_STICKER,
     'gold',
     'silver',
     'beta',

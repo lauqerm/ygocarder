@@ -1,5 +1,5 @@
 
-import { CanvasConst } from 'src/model';
+import { CanvasConst, NO_STICKER } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
@@ -93,7 +93,7 @@ export const drawSticker = async ({
 }) => {
     if (!clearCanvas(ctx)) return;
 
-    if (sticker === 'no-sticker') return Promise.resolve();
+    if (sticker === NO_STICKER) return Promise.resolve();
     return drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
 };
 

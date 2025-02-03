@@ -4,7 +4,7 @@ import { csvToCardList, LanguageDataDictionary, useCardList } from 'src/service'
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
-import { DownloadOutlined, UploadOutlined, CloseOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { DownloadOutlined, UploadOutlined, CloseOutlined, UnorderedListOutlined, LoadingOutlined } from '@ant-design/icons';
 import { cardListToCsv } from 'src/service';
 import { downloadBlob } from 'src/util';
 import { InternalCard } from 'src/model';
@@ -84,6 +84,7 @@ export const CardManagerPanel = forwardRef(({
         setCardList,
     })));
     const [inputKey, setInputKey] = useState(0);
+    const [readingFile, setReadingFile] = useState(false);
 
     const activeCard = useCallback((card: InternalCard) => {
         onSelect(card);
@@ -110,6 +111,7 @@ export const CardManagerPanel = forwardRef(({
                                 { key: 'name', value: 'name', label: 'Name' },
                                 { key: 'atk', value: 'atk', label: 'ATK' },
                                 { key: 'def', value: 'def', label: 'DEF' },
+                                { key: 'set', value: 'set', label: 'Set ID' },
                             ].map(({ key, label }) => {
                                 return <Menu.Item key={key}>
                                     {label}
@@ -145,7 +147,7 @@ export const CardManagerPanel = forwardRef(({
                             className="manager-button"
                             onClick={() => {
                                 const target = document.getElementById(listUploadId);
-                                if (target) {
+                                if (target && !readingFile) {
                                     target.click();
                                 }
                             }}
@@ -155,15 +157,24 @@ export const CardManagerPanel = forwardRef(({
                                 id={listUploadId}
                                 accept=".csv"
                                 className="import-upload-input"
-                                onChange={() => {
+                                onChange={async () => {
                                     const fileList = listUploadRef.current?.files;
                                     const { isListDirty } = useCardList.getState();
+                                    const announceError = () => {
+                                        setInputKey(cnt => cnt + 1);
+                                        setReadingFile(false);
+                                        notification.error({
+                                            message: language['error.csv-import.message'],
+                                            description: language['error.csv-import.description'],
+                                        });
+                                    };
                                     let willImport = true;
 
                                     if (isListDirty) {
                                         willImport = window.confirm(language['prompt.warning.on-import.label']);
                                     }
                                     if (willImport && fileList && fileList[0]) {
+                                        setReadingFile(true);
                                         Papa.parse<string[]>(fileList[0], {
                                             complete(result) {
                                                 const nextCardList = csvToCardList(result);
@@ -171,21 +182,20 @@ export const CardManagerPanel = forwardRef(({
                                                     setCardList(nextCardList, nextCardList[0].id);
                                                     setInputKey(cnt => cnt + 1);
                                                     onSelect(nextCardList[0]);
+                                                    setReadingFile(false);
                                                 } else {
-                                                    setInputKey(cnt => cnt + 1);
-                                                    notification.error({
-                                                        message: language['error.csv-import.message'],
-                                                        description: language['error.csv-import.description'],
-                                                    });
+                                                    announceError();
                                                 }
                                             },
+                                            error: announceError,
                                         });
                                     } else {
                                         setInputKey(cnt => cnt + 1);
+                                        setReadingFile(false);
                                     }
                                 }}
                             />
-                            <UploadOutlined />
+                            {readingFile ? <LoadingOutlined /> : <UploadOutlined />}
                         </div>
                     </Tooltip>
                     <div

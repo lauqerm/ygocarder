@@ -1,24 +1,92 @@
+import { Crop } from 'react-image-crop';
 import {
+    BackgroundType,
     Card,
     CardOpacity,
+    CondenseType,
     Foil,
     FoilNameMap,
+    getArtCanvasCoordinate,
     getDefaultCardOpacity,
+    getDefaultCrop,
     getDefaultNameStyle,
+    getDefaultTextStyle,
     getEmptyCard,
     InternalCard,
     NameStyle,
     NameStyleType,
     NO_ATTRIBUTE,
-    NO_ICON,
     PresetNameStyle,
 } from 'src/model';
 import { v4 as uuid } from 'uuid';
 
 const CsvStandardFieldList = [
+    /** Extremely common stuff for most users */
     'Format',
     'Frame',
     'Name',
+    'Attribute',
+    'Star',
+    'Spell/Trap Icon',
+    'Art Link',
+    'Type Ability',
+    'Effect',
+    'Set Id',
+    'ATK',
+    'DEF',
+    'Password',
+    'Sticker',
+    'Copyright',
+    'Is Pendulum',
+    'Pendulum Effect',
+    'Pendulum Scale Red',
+    'Pendulum Scale Blue',
+    'Is Link',
+    'Link - Top Left Arrow',
+    'Link - Top Arrow',
+    'Link - Top Right Arrow',
+    'Link - Left Arrow',
+    'Link - Right Arrow',
+    'Link - Bottom Left Arrow',
+    'Link - Bottom Arrow',
+    'Link - Bottom Right Arrow',
+    /** More detailed stuffs */
+    'Is First Edition',
+    'Is Speed Card',
+    'Is Limited Edition',
+    'Is Duel Terminal Card',
+    'Is Legacy Card',
+    'Foil',
+    'Art Finish',
+    'Card Finish',
+    'Art Crop - X (%)',
+    'Art Crop - Y (%)',
+    'Art Crop - Width (%)',
+    'Art Crop - Height (%)',
+    'Is Using Full Art',
+    /** Creative customize stuff */
+    'Star Alignment',
+    'Card Icon Type',
+    'Opacity - Body',
+    'Opacity - Pendulum',
+    'Opacity - Text',
+    'Opacity - Name',
+    'Opacity - Base Fill',
+    'Opacity - Art Border',
+    'Opacity - Name Border',
+    'Opacity - Boundless',
+    'Has Background',
+    'Background Link',
+    'Is Using Full Background',
+    'Background Type',
+    'Background Crop - X (%)',
+    'Background Crop - Y (%)',
+    'Background Crop - Width (%)',
+    'Background Crop - Height (%)',
+    'Bottom Frame',
+    'Condense Rate',
+    'Use Furigana Helper',
+    /** Extremely intricate stuff, user usually should not bother with these */
     'Name Style Type',
     'Name Style - Font',
     'Name Style - Fill Style',
@@ -38,30 +106,29 @@ const CsvStandardFieldList = [
     'Name Style - Has Gradient',
     'Name Style - Preset',
     'Name Style - Pattern',
-    'ATK',
-    'DEF',
-    'Attribute',
-    'Star',
-    'Subfamily',
-    'Card Icon',
-    'Type Ability',
-    'Effect',
-    'Set Id',
-    'Is First Edition',
-    'Is Speed Card',
-    'Is Limited Edition',
-    'Is Duel Terminal Card',
-    'Is Legacy Card',
-    'Foil',
-    'Art Finish',
-    'Opacity - Body',
-    'Opacity - Pendulum',
-    'Opacity - Text',
-    'Opacity - Name',
-    'Opacity - Base Fill',
-    'Opacity - Art Border',
-    'Opacity - Name Border',
-    'Opacity - Boundless',
+    'Stat Style - Is Custom',
+    'Stat Style - Fill Color',
+    'Stat Style - Has Shadow',
+    'Stat Style - Shadow Color',
+    'Type Style - Is Custom',
+    'Type Style - Fill Color',
+    'Type Style - Has Shadow',
+    'Type Style - Shadow Color',
+    'Effect Style - Is Custom',
+    'Effect Style - Fill Color',
+    'Effect Style - Has Shadow',
+    'Effect Style - Shadow Color',
+    'Effect Style - Upsize',
+    'Pendulum Effect Style - Is Custom',
+    'Pendulum Effect Style - Fill Color',
+    'Pendulum Effect Style - Has Shadow',
+    'Pendulum Effect Style - Shadow Color',
+    'Pendulum Effect Style - Upsize',
+    'Other Style - Is Custom',
+    'Other Style - Fill Color',
+    'Other Style - Has Shadow',
+    'Other Style - Shadow Color',
+    'External Info (JSON)',
 ] as const;
 const CsvFieldList = [
     ...CsvStandardFieldList,
@@ -120,7 +187,7 @@ export const cardListToCsv = (cardList: Card[]) => {
 const analyzeHeader = (header: string[]) => {
     return header.reduce((acc, field, index) => {
         const normalizedColumnName = normalizeFieldName(field);
-        if (CsvFieldSet.has(normalizedColumnName)) acc[normalizedColumnName as CsvField] = index;
+        if (CsvFieldSet.has(normalizedColumnName)) acc[field as CsvField] = index;
 
         return acc;
     }, {} as Record<CsvField, number | undefined>);
@@ -135,19 +202,23 @@ const getCsvFieldReader = (row: string[], headerIndexMap: Record<CsvField, numbe
             : value;
     };
 };
-const getCsvMultipleFieldReader = (row: string[], headerIndexMap: Record<CsvField, number | undefined>) => {
-    return <FieldList extends CsvField>(fieldList: FieldList[]) => {
-        return fieldList.reduce((acc, field) => {
-            const columnIndex = headerIndexMap[field] ?? -1;
-            acc[field] = (row[columnIndex] ?? '').trim();
-    
-            return acc;
-        }, {} as Record<FieldList, string>);
-    };
+const normalizeBoolean = (value: any, fallback: boolean) => {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') return value === 'true'
+        ? true
+        : value === 'false'
+            ? false
+            : fallback;
+    return fallback;
 };
 const normalizeInt = (value: any, fallback: number) => {
     if (typeof value === 'number') return isFinite(value) ? value : fallback;
     if (typeof value === 'string') return isFinite(parseInt(value)) ? parseInt(value) : fallback;
+    return fallback;
+};
+const normalizeFloat = (value: any, fallback: number) => {
+    if (typeof value === 'number') return isFinite(value) ? value : fallback;
+    if (typeof value === 'string') return isFinite(parseFloat(value)) ? parseFloat(value) : fallback;
     return fallback;
 };
 export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] => {
@@ -163,33 +234,68 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                 if (row.join('') === '') return null;
                 const emptyCard = getEmptyCard();
                 const reader = getCsvFieldReader(row, headerIndexMap);
-                const multipleReader = getCsvMultipleFieldReader(row, headerIndexMap);
+
+                const frame = (reader('Frame') ?? reader('Background_Type') ?? emptyCard.frame).toLowerCase();
 
                 const rawStar = reader('Star') ?? reader('Level/Rank') ?? '';
                 const star = parseInt(rawStar) <= 13 && reader('Star_Type') !== '2'
                     ? parseInt(rawStar)
                     : rawStar;
+
                 const rawFoil = (reader('Foil') ?? reader('Rarity') ?? 'normal').toLowerCase() as Foil;
                 const foil = FoilNameMap[rawFoil] ? rawFoil : 'normal';
 
-                const nameStyleType = (reader('Name Style Type') ?? 'auto').toLowerCase() as NameStyleType;
-                const format = (reader('Format') ?? 'tcg').toLowerCase();
-                const attribute = (reader('Attribute') ?? NO_ATTRIBUTE).toUpperCase();
-                const cardIcon = (reader('Card Icon') ?? 'auto');
-                const subFamily = (reader('Subfamily') ?? reader('spell_type/trap_type') ?? NO_ICON).toUpperCase();
-                const setId = reader('Set Id') ?? reader('Set_ID') ?? '';
-                const frame = (reader('Frame') ?? reader('Background_Type') ?? 'effect').toLowerCase();
-                const artFinish = (reader('Art Finish') ?? `type${reader('Art_Finish')}`);
+                const rawAttribute = reader('Attribute')?.toUpperCase();
+                const attribute = rawAttribute
+                    ? rawAttribute === 'NONE'
+                        ? NO_ATTRIBUTE
+                        : rawAttribute
+                    : frame === 'spell'
+                        ? 'SPELL'
+                        : frame === 'trap'
+                            ? 'TRAP'
+                            : emptyCard.attribute;
 
-                const isFirstEdition = reader('Is First Edition') === 'true'
-                    || reader('Edition')?.toLowerCase() === '1st edition';
-                const isDuelTerminalCard = reader('Is Duel Terminal Card') === 'true'
-                    || reader('Edition')?.toLowerCase() === 'duel terminal';
-                const isLimitedEdition = reader('Is Limited Edition') === 'true'
-                    || reader('Edition')?.toLowerCase() === 'limited edition';
-                const isSpeedCard = reader('Is Speed Card') === 'true'
-                    || reader('Edition')?.toLowerCase() === 'speed duel';
-                const isLegacyCard = reader('Is Legacy Card') === 'true';
+                const artFinish = (reader('Art Finish') ?? `type${reader('Art_Finish')}`);
+                const atk = reader('ATK') ?? '';
+                const cardIcon = (reader('Card Icon Type') ?? emptyCard.cardIcon);
+                const creator = reader('Copyright') ?? '';
+                const def = reader('DEF') ?? '';
+                const effect = reader('Effect') ?? '';
+                const finish = reader('Card Finish')?.split(/,| /).filter(entry => entry !== '') ?? [] as string[];
+                const format = (reader('Format') ?? emptyCard.format).toLowerCase();
+                const furiganaHelper = normalizeBoolean(reader('Use Furigana Helper'), emptyCard.furiganaHelper);
+                const name = reader('Name') ?? '';
+                const password = reader('Password') ?? '';
+                const setId = reader('Set Id') ?? reader('Set_ID') ?? '';
+                const starAlignment = (reader('Star Alignment') ?? emptyCard.starAlignment).toLowerCase();
+                const sticker = (reader('Sticker') ?? emptyCard.sticker).toLowerCase();
+                const subFamily = (reader('Spell/Trap Icon') ?? reader('spell_type/trap_type') ?? emptyCard.subFamily).toUpperCase();
+
+                const edition = reader('Edition')?.toLowerCase();
+                const isFirstEdition = normalizeBoolean(
+                    reader('Is First Edition'),
+                    edition ? edition === '1st edition' : emptyCard.isFirstEdition,
+                );
+                const isDuelTerminalCard = normalizeBoolean(
+                    reader('Is Duel Terminal Card'),
+                    edition ? edition === 'duel terminal' : emptyCard.isDuelTerminalCard,
+                );
+                const isLimitedEdition = normalizeBoolean(
+                    reader('Is Limited Edition'),
+                    edition ? edition === 'limited edition' : emptyCard.isLimitedEdition,
+                );
+                const isSpeedCard = normalizeBoolean(
+                    reader('Is Speed Card'),
+                    edition ? edition === 'speed duel' : emptyCard.isSpeedCard,
+                );
+                const isLegacyCard = normalizeBoolean(reader('Is Legacy Card'), emptyCard.isLegacyCard);
+
+                const isPendulum = normalizeBoolean(reader('Is Pendulum'), emptyCard.isPendulum);
+                const pendulumFrame = (reader('Bottom Frame') ?? emptyCard.pendulumFrame).toLowerCase();
+                const pendulumEffect = reader('Pendulum Effect') ?? '';
+                const pendulumScaleRed = reader('Pendulum Scale Red') ?? emptyCard.pendulumScaleRed;
+                const pendulumScaleBlue = reader('Pendulum Scale Blue') ?? emptyCard.pendulumScaleBlue;
 
                 const rawTypeAbility = reader('Type Ability');
                 const typeAbility = rawTypeAbility
@@ -198,27 +304,58 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                         .filter<string>(entry => typeof entry === 'string')
                         .filter(entry => entry !== '');
 
+                const condenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant).toLowerCase() as CondenseType;
+                const effectUpSize = normalizeInt(reader('Effect Style - Upsize'), emptyCard.effectStyle.upSize);
+                const pendulumEffectUpSize = normalizeInt(reader('Pendulum Effect Style - Upsize'), emptyCard.pendulumStyle.upSize);
+
                 const emptyOpacity = getDefaultCardOpacity();
                 const opacity: CardOpacity = {
-                    artBorder: `${reader('Opacity - Art Border') ?? emptyOpacity.artBorder}` === 'true',
+                    artBorder: normalizeBoolean(reader('Opacity - Art Border'), emptyOpacity.artBorder),
                     baseFill: reader('Opacity - Base Fill') ?? emptyOpacity.baseFill,
                     body: normalizeInt(reader('Opacity - Body'), emptyOpacity.body),
-                    boundless: `${reader('Opacity - Boundless') ?? emptyOpacity.boundless}` === 'true',
+                    boundless: normalizeBoolean(reader('Opacity - Boundless'), emptyOpacity.boundless),
                     name: normalizeInt(reader('Opacity - Name'), emptyOpacity.name),
-                    nameBorder: `${reader('Opacity - Name Border') ?? emptyOpacity.nameBorder}` === 'true',
+                    nameBorder: normalizeBoolean(reader('Opacity - Name Border'), emptyOpacity.nameBorder),
                     pendulum: normalizeInt(reader('Opacity - Pendulum'), emptyOpacity.pendulum),
                     text: normalizeInt(reader('Opacity - Text'), emptyOpacity.text),
                 };
 
+                const emptyArtCrop = getDefaultCrop();
+                const art = reader('Art Link') ?? emptyCard.art;
+                const artFit = normalizeBoolean(reader('Is Using Full Art'), emptyCard.artFit);
+                const artCrop: Crop = {
+                    aspect: getArtCanvasCoordinate(isPendulum, opacity).ratio,
+                    height: normalizeFloat(reader('Art Crop - Height (%)'), emptyArtCrop.height),
+                    width: normalizeFloat(reader('Art Crop - Width (%)'), emptyArtCrop.width),
+                    x: normalizeFloat(reader('Art Crop - X (%)'), emptyArtCrop.x),
+                    y: normalizeFloat(reader('Art Crop - Y (%)'), emptyArtCrop.y),
+                    unit: '%',
+                };
+
+                const emptyBackgroundCrop = getDefaultCrop();
+                const hasBackground = normalizeBoolean(reader('Has Background'), emptyCard.hasBackground);
+                const background = reader('Background Link') ?? emptyCard.background;
+                const backgroundType = (reader('Background Type') ?? emptyCard.backgroundType).toLowerCase() as BackgroundType;
+                const backgroundFit = normalizeBoolean(reader('Is Using Full Background'), emptyCard.backgroundFit);
+                const backgroundCrop: Crop = {
+                    aspect: getArtCanvasCoordinate(isPendulum, opacity, backgroundType).ratio,
+                    height: normalizeFloat(reader('Background Crop - Height (%)'), emptyBackgroundCrop.height),
+                    width: normalizeFloat(reader('Background Crop - Width (%)'), emptyBackgroundCrop.width),
+                    x: normalizeFloat(reader('Background Crop - X (%)'), emptyBackgroundCrop.x),
+                    y: normalizeFloat(reader('Background Crop - Y (%)'), emptyBackgroundCrop.y),
+                    unit: '%',
+                };
+
                 const emptyNameStyle = getDefaultNameStyle();
+                const nameStyleType = (reader('Name Style Type') ?? emptyCard.nameStyleType).toLowerCase() as NameStyleType;
                 const nameStyle: NameStyle = {
                     fillStyle: reader('Name Style - Fill Style') ?? emptyNameStyle.fillStyle,
                     font: reader('Name Style - Font') ?? emptyNameStyle.font,
                     gradientAngle: normalizeInt(reader('Name Style - Gradient Angle'), emptyNameStyle.gradientAngle),
                     gradientColor: reader('Name Style - Gradient Color') ?? emptyNameStyle.gradientColor,
-                    hasGradient: `${reader('Name Style - Has Gradient') ?? emptyNameStyle.hasGradient}` === 'true',
-                    hasOutline: `${reader('Name Style - Has Outline') ?? emptyNameStyle.hasOutline}` === 'true',
-                    hasShadow: `${reader('Name Style - Has Shadow') ?? emptyNameStyle.hasShadow}` === 'true',
+                    hasGradient: normalizeBoolean(reader('Name Style - Has Gradient'), emptyNameStyle.hasGradient),
+                    hasOutline: normalizeBoolean(reader('Name Style - Has Outline'), emptyNameStyle.hasOutline),
+                    hasShadow: normalizeBoolean(reader('Name Style - Has Shadow'), emptyNameStyle.hasShadow),
                     headTextFillStyle: reader('Name Style - Headtext Fill Style') ?? emptyNameStyle.headTextFillStyle,
                     lineColor: reader('Name Style - Line Color') ?? emptyNameStyle.lineColor,
                     lineOffsetX: normalizeInt(reader('Name Style - Line Offset X'), emptyNameStyle.lineOffsetX),
@@ -232,31 +369,124 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                     shadowOffsetY: normalizeInt(reader('Name Style - Shadow Offset Y'), emptyNameStyle.shadowOffsetY),
                 };
 
+                const isLink = normalizeBoolean(reader('Is Link'), emptyCard.isLink);
+                const linkMap = [
+                    reader('Link - Top Left Arrow') === 'true' ? '1' : '',
+                    reader('Link - Top Arrow') === 'true' ? '2' : '',
+                    reader('Link - Top Right Arrow') === 'true' ? '3' : '',
+                    reader('Link - Left Arrow') === 'true' ? '4' : '',
+                    reader('Link - Right Arrow') === 'true' ? '6' : '',
+                    reader('Link - Bottom Left Arrow') === 'true' ? '7' : '',
+                    reader('Link - Bottom Arrow') === 'true' ? '8' : '',
+                    reader('Link - Bottom Right Arrow') === 'true' ? '9' : '',
+                ].filter(entry => entry !== '') ?? [];
+
+                const emptyTextStyle = getDefaultTextStyle();
+                const statTextStyle = [
+                    normalizeBoolean(reader('Stat Style - Is Custom'), emptyTextStyle[0]),
+                    reader('Stat Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeBoolean(reader('Stat Style - Has Shadow'), emptyTextStyle[2]),
+                    reader('Stat Style - Shadow Color') ?? emptyTextStyle[3],
+                ] as [boolean, string, boolean, string];
+                const typeTextStyle = [
+                    normalizeBoolean(reader('Type Style - Is Custom'), emptyTextStyle[0]),
+                    reader('Type Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeBoolean(reader('Type Style - Has Shadow'), emptyTextStyle[2]),
+                    reader('Type Style - Shadow Color') ?? emptyTextStyle[3],
+                ] as [boolean, string, boolean, string];
+                const effectTextStyle = [
+                    normalizeBoolean(reader('Effect Style - Is Custom'), emptyTextStyle[0]),
+                    reader('Effect Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeBoolean(reader('Effect Style - Has Shadow'), emptyTextStyle[2]),
+                    reader('Effect Style - Shadow Color') ?? emptyTextStyle[3],
+                ] as [boolean, string, boolean, string];
+                const pendulumTextStyle = [
+                    normalizeBoolean(reader('Pendulum Effect Style - Is Custom'), emptyTextStyle[0]),
+                    reader('Pendulum Effect Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeBoolean(reader('Pendulum Effect Style - Has Shadow'), emptyTextStyle[2]),
+                    reader('Pendulum Effect Style - Shadow Color') ?? emptyTextStyle[3],
+                ] as [boolean, string, boolean, string];
+                const otherTextStyle = [
+                    normalizeBoolean(reader('Other Style - Is Custom'), emptyTextStyle[0]),
+                    reader('Other Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeBoolean(reader('Other Style - Has Shadow'), emptyTextStyle[2]),
+                    reader('Other Style - Shadow Color') ?? emptyTextStyle[3],
+                ] as [boolean, string, boolean, string];
+                let externalInfo = {};
+                try {
+                    externalInfo = JSON.parse(reader('External Info (JSON)') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
+
                 return {
                     id: uuid(),
                     ...emptyCard,
-                    ...multipleReader(['Name', 'ATK', 'DEF', 'Effect']),
+                    art,
+                    artCrop,
                     artFinish,
+                    artFit,
+                    artSource: 'online',
+                    atk,
                     attribute,
+                    background,
+                    backgroundCrop,
+                    backgroundFit,
+                    backgroundSource: 'online',
+                    backgroundType,
                     cardIcon,
+                    condenseTolerant,
+                    creator,
+                    def,
+                    effectStyle: {
+                        condenseTolerant,
+                        upSize: effectUpSize,
+                    },
+                    effect,
+                    effectTextStyle,
+                    externalInfo,
+                    finish,
                     foil,
                     format,
                     frame,
+                    furiganaHelper,
+                    hasBackground,
                     isDuelTerminalCard,
                     isFirstEdition,
                     isLegacyCard,
                     isLimitedEdition,
+                    isLink,
+                    isPendulum,
                     isSpeedCard,
+                    linkMap,
+                    name,
                     nameStyle,
                     nameStyleType,
                     opacity,
+                    otherTextStyle,
+                    password,
+                    pendulumEffect,
+                    pendulumFrame,
+                    pendulumScaleBlue,
+                    pendulumScaleRed,
+                    pendulumStyle: {
+                        upSize: pendulumEffectUpSize,
+                    },
+                    pendulumTextStyle,
                     setId,
                     star,
+                    starAlignment,
+                    statTextStyle,
+                    sticker,
                     subFamily,
                     typeAbility,
+                    typeTextStyle,
                 };
             })
-            .filter(entry => entry != null);
+            .filter(entry => {
+                console.log('🚀 ~ entry:', entry);
+                return entry != null;
+            });
     } catch (e) {
         console.error('csvToCardList', e);
         return [];
