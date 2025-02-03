@@ -10,15 +10,20 @@ const ThumbSize = 56;
 const StyledCardThumb = styled.div`
     display: grid;
     grid-template-columns: max-content 1fr;
-    border-bottom: var(--bw) solid var(--sub-level-3);
-    background-color: var(--main-level-1);
+    border: var(--bw) solid var(--main-level-1);
+    border-top-color: transparent;
+    background-color: #333333;
     cursor: pointer;
     position: relative;
+    z-index: 1;
     &.active {
-        background-color: var(--main-level-5);
+        background-color: #484848;
+        border-color: var(--main-active);
+        box-shadow: var(--bs-2);
+        z-index: 2;
     }
     &:hover {
-        background-color: var(--sub-level-5);
+        border-color: var(--sub-active);
     }
     .right-slot {
         display: grid;

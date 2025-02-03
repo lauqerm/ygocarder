@@ -4,6 +4,93 @@ import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
 import { isCardDataEqual } from 'src/util';
 
+export const SortFunctionMap = {
+    name: {
+        key: 'name',
+        sortFunction: (cardList: InternalCard[]) => {
+            return cardList
+                .map(card => {
+                    const { name } = card;
+                    const sortString = `${name}`;
+
+                    return {
+                        card,
+                        sortString,
+                    };
+                })
+                .sort((l, r) => l.sortString.localeCompare(r.sortString))
+                .map(entry => entry.card);
+        },
+    },
+    atk: {
+        key: 'atk',
+        sortFunction: (cardList: InternalCard[]) => {
+            return cardList
+                .map(card => {
+                    const { atk } = card;
+                    const sortString = `${atk}`;
+
+                    return {
+                        card,
+                        sortString,
+                    };
+                })
+                .sort((l, r) => l.sortString.localeCompare(r.sortString))
+                .map(entry => entry.card);
+        },
+    },
+    def: {
+        key: 'def',
+        sortFunction: (cardList: InternalCard[]) => {
+            return cardList
+                .map(card => {
+                    const { def } = card;
+                    const sortString = `${def}`;
+
+                    return {
+                        card,
+                        sortString,
+                    };
+                })
+                .sort((l, r) => l.sortString.localeCompare(r.sortString))
+                .map(entry => entry.card);
+        },
+    },
+    set: {
+        key: 'set',
+        sortFunction: (cardList: InternalCard[]) => {
+            return cardList
+                .map(card => {
+                    const { setId } = card;
+                    const sortString = `${setId}`;
+
+                    return {
+                        card,
+                        sortString,
+                    };
+                })
+                .sort((l, r) => l.sortString.localeCompare(r.sortString))
+                .map(entry => entry.card);
+        },
+    },
+    level: {
+        key: 'level',
+        sortFunction: (cardList: InternalCard[]) => {
+            return cardList
+                .map(card => {
+                    const { star } = card;
+                    const sortString = `${star}`;
+
+                    return {
+                        card,
+                        sortString,
+                    };
+                })
+                .sort((l, r) => l.sortString.localeCompare(r.sortString))
+                .map(entry => entry.card);
+        },
+    },
+} as const;
 export type CardListStore = {
     isListDirty: boolean,
     listName: string,
@@ -11,12 +98,13 @@ export type CardListStore = {
     activeId: string,
     cardList: InternalCard[],
     changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
+    changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
     deleteCard: (id: string) => void,
     duplicateCard: (card: Card) => void,
     setActiveId: (id: string) => void,
     setCardList: (cardList: InternalCard[], activeId?: string) => void,
     setListName: (name: string) => void,
-    changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
+    sortList: (type: keyof typeof SortFunctionMap) => void,
     toggleVisible: (status?: boolean) => void,
 };
 export const useCardList = create<CardListStore>((set) => {
@@ -96,6 +184,11 @@ export const useCardList = create<CardListStore>((set) => {
                     ],
                 };
             });
+        },
+        sortList: type => {
+            set(({ cardList }) => ({
+                cardList: SortFunctionMap[type].sortFunction(cardList),
+            }));
         }
     };
 });

@@ -1,10 +1,17 @@
 import { Drawer, Dropdown, Menu, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { csvToCardList, LanguageDataDictionary, useCardList } from 'src/service';
+import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList } from 'src/service';
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
-import { DownloadOutlined, UploadOutlined, CloseOutlined, UnorderedListOutlined, LoadingOutlined } from '@ant-design/icons';
+import {
+    DownloadOutlined,
+    UploadOutlined,
+    CloseOutlined,
+    UnorderedListOutlined,
+    LoadingOutlined,
+    FilterOutlined,
+} from '@ant-design/icons';
 import { cardListToCsv } from 'src/service';
 import { downloadBlob } from 'src/util';
 import { InternalCard } from 'src/model';
@@ -70,18 +77,21 @@ export const CardManagerPanel = forwardRef(({
         changeEditStatus,
         setActiveId,
         setCardList,
+        sortList,
     } = useCardList(useShallow(({
         visible,
         toggleVisible,
         changeEditStatus,
         setActiveId,
         setCardList,
+        sortList,
     }) => ({
         visible,
         toggleVisible,
         changeEditStatus,
         setActiveId,
         setCardList,
+        sortList,
     })));
     const [inputKey, setInputKey] = useState(0);
     const [readingFile, setReadingFile] = useState(false);
@@ -107,13 +117,28 @@ export const CardManagerPanel = forwardRef(({
                     <Dropdown
                         overlay={<Menu>
                             {[
-                                { key: 'level', value: 'level', label: 'Level' },
-                                { key: 'name', value: 'name', label: 'Name' },
-                                { key: 'atk', value: 'atk', label: 'ATK' },
-                                { key: 'def', value: 'def', label: 'DEF' },
-                                { key: 'set', value: 'set', label: 'Set ID' },
-                            ].map(({ key, label }) => {
-                                return <Menu.Item key={key}>
+                                {
+                                    value: SortFunctionMap.level.key,
+                                    label: language['manager.button.sort.level.label'],
+                                },
+                                {
+                                    value: SortFunctionMap.name.key,
+                                    label: language['manager.button.sort.name.label'],
+                                },
+                                {
+                                    value: SortFunctionMap.atk.key,
+                                    label: language['manager.button.sort.atk.label'],
+                                },
+                                {
+                                    value: SortFunctionMap.def.key,
+                                    label: language['manager.button.sort.def.label'],
+                                },
+                                {
+                                    value: SortFunctionMap.set.key,
+                                    label: language['manager.button.sort.set-id.label'],
+                                },
+                            ].map(({ value, label }) => {
+                                return <Menu.Item key={value} onClick={() => sortList(value)}>
                                     {label}
                                 </Menu.Item>;
                             })}
@@ -125,6 +150,13 @@ export const CardManagerPanel = forwardRef(({
                             <UnorderedListOutlined />
                         </div>
                     </Dropdown>
+                    <Tooltip title={language['manager.header.button.filter.tooltip']}>
+                        <div
+                            className="manager-button"
+                        >
+                            <FilterOutlined />
+                        </div>
+                    </Tooltip>
                     <Tooltip title={language['manager.header.button.download.tooltip']}>
                         <div
                             className="manager-button"
