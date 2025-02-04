@@ -1,93 +1,170 @@
 import { clone } from 'ramda';
-import { Card, InternalCard } from 'src/model';
+import { Card, FrameInfoMap, InternalCard } from 'src/model';
 import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
-import { isCardDataEqual } from 'src/util';
+import { checkSpeedSkill, isCardDataEqual } from 'src/util';
 
+const compareInt = (statLeft: any, statRight: any) => {
+    if (typeof statLeft !== 'string' || typeof statRight !== 'string') return 0;
+    const parsedStatLeft = parseInt(statLeft);
+    const parsedStatRight = parseInt(statRight);
+    const isLeftFinite = isFinite(parsedStatLeft);
+    const isRightFinite = isFinite(parsedStatRight);
+
+    if (isLeftFinite && !isRightFinite) return -1;
+    if (!isLeftFinite && isRightFinite) return 1;
+    if (isLeftFinite && isRightFinite) return parsedStatRight - parsedStatLeft;
+
+    const fallbackStatLeft = statLeft === '?'
+        ? 1
+        : statLeft === ''
+            ? -1
+            : 0;
+    const fallbackStatRight = statRight === '?'
+        ? 1
+        : statRight === ''
+            ? -1
+            : 0;
+
+    if (fallbackStatRight - fallbackStatLeft === 0) return statLeft.localeCompare(statRight);
+    return fallbackStatRight - fallbackStatLeft;
+};
+const compareName = (l: InternalCard, r: InternalCard) => l.name.localeCompare(r.name);
+const compareSetId = (l: InternalCard, r: InternalCard) => l.setId.localeCompare(r.setId);
+const compareAtk = (l: InternalCard, r: InternalCard) => compareInt(l.atk, r.atk);
+const compareDef = (l: InternalCard, r: InternalCard) => compareInt(l.def, r.def);
+const compareStar = (l: InternalCard, r: InternalCard) => {
+    if (l.isLink && r.isLink) return r.linkMap.length - l.linkMap.length;
+    return compareInt(l.star, r.star);
+};
+const compareFrame = (l: InternalCard, r: InternalCard) => {
+    const frameResult = FrameInfoMap[r.frame].sortWeight - FrameInfoMap[l.frame].sortWeight;
+
+    if (frameResult !== 0) return frameResult;
+
+    /** Assume we do not find frame result because it is "auto", and auto is the highest order */
+    const bottomFrameResult = (FrameInfoMap[r.pendulumFrame]?.sortWeight ?? 1000) - (FrameInfoMap[l.pendulumFrame]?.sortWeight ?? 1000);
+
+    return bottomFrameResult;
+};
+const normalizeCard = (card: InternalCard) => {
+    const normalizedCard = { ...card };
+    const { frame, isLink } = normalizedCard;
+
+    if (frame === 'spell' || frame === 'trap' || checkSpeedSkill(normalizedCard)) {
+        normalizedCard.atk = '';
+        normalizedCard.def = '';
+        normalizedCard.star = 0;
+    }
+    if (isLink) {
+        normalizedCard.def = '';
+        normalizedCard.star = 0;
+    }
+
+    return normalizedCard;
+};
+const chainCompare = (compareList: ((l: InternalCard, r: InternalCard) => number)[], lCard: InternalCard, rCard: InternalCard) => {
+    for (let cnt = 0; cnt < compareList.length; cnt++) {
+        const result = compareList[cnt](lCard, rCard);
+
+        if (result !== 0) return result;
+    }
+    return 0;
+};
 export const SortFunctionMap = {
     name: {
         key: 'name',
         sortFunction: (cardList: InternalCard[]) => {
             return cardList
-                .map(card => {
-                    const { name } = card;
-                    const sortString = `${name}`;
-
-                    return {
-                        card,
-                        sortString,
-                    };
-                })
-                .sort((l, r) => l.sortString.localeCompare(r.sortString))
-                .map(entry => entry.card);
+                .map(normalizeCard)
+                .sort((l, r) => chainCompare(
+                    [
+                        compareName,
+                        compareStar,
+                        compareFrame,
+                        compareSetId,
+                        compareAtk,
+                        compareDef,
+                    ],
+                    l,
+                    r,
+                ));
         },
     },
     atk: {
         key: 'atk',
         sortFunction: (cardList: InternalCard[]) => {
             return cardList
-                .map(card => {
-                    const { atk } = card;
-                    const sortString = `${atk}`;
-
-                    return {
-                        card,
-                        sortString,
-                    };
-                })
-                .sort((l, r) => l.sortString.localeCompare(r.sortString))
-                .map(entry => entry.card);
+                .map(normalizeCard)
+                .sort((l, r) => chainCompare(
+                    [
+                        compareAtk,
+                        compareDef,
+                        compareStar,
+                        compareFrame,
+                        compareName,
+                        compareSetId,
+                    ],
+                    l,
+                    r,
+                ));
         },
     },
     def: {
         key: 'def',
         sortFunction: (cardList: InternalCard[]) => {
             return cardList
-                .map(card => {
-                    const { def } = card;
-                    const sortString = `${def}`;
-
-                    return {
-                        card,
-                        sortString,
-                    };
-                })
-                .sort((l, r) => l.sortString.localeCompare(r.sortString))
-                .map(entry => entry.card);
+                .map(normalizeCard)
+                .sort((l, r) => chainCompare(
+                    [
+                        compareDef,
+                        compareAtk,
+                        compareStar,
+                        compareFrame,
+                        compareName,
+                        compareSetId,
+                    ],
+                    l,
+                    r,
+                ));
         },
     },
     set: {
         key: 'set',
         sortFunction: (cardList: InternalCard[]) => {
             return cardList
-                .map(card => {
-                    const { setId } = card;
-                    const sortString = `${setId}`;
-
-                    return {
-                        card,
-                        sortString,
-                    };
-                })
-                .sort((l, r) => l.sortString.localeCompare(r.sortString))
-                .map(entry => entry.card);
+                .map(normalizeCard)
+                .sort((l, r) => chainCompare(
+                    [
+                        compareSetId,
+                        compareFrame,
+                        compareStar,
+                        compareName,
+                        compareAtk,
+                        compareDef,
+                    ],
+                    l,
+                    r,
+                ));
         },
     },
     level: {
         key: 'level',
         sortFunction: (cardList: InternalCard[]) => {
             return cardList
-                .map(card => {
-                    const { star } = card;
-                    const sortString = `${star}`;
-
-                    return {
-                        card,
-                        sortString,
-                    };
-                })
-                .sort((l, r) => l.sortString.localeCompare(r.sortString))
-                .map(entry => entry.card);
+                .map(normalizeCard)
+                .sort((l, r) => chainCompare(
+                    [
+                        compareStar,
+                        compareFrame,
+                        compareName,
+                        compareSetId,
+                        compareAtk,
+                        compareDef,
+                    ],
+                    l,
+                    r,
+                ));
         },
     },
 } as const;
@@ -186,10 +263,13 @@ export const useCardList = create<CardListStore>((set) => {
             });
         },
         sortList: type => {
-            set(({ cardList }) => ({
-                cardList: SortFunctionMap[type].sortFunction(cardList),
-            }));
-        }
+            set(({ cardList }) => {
+                console.log('🚀 ~ entry:', SortFunctionMap[type].sortFunction(cardList));
+                return {
+                    cardList: SortFunctionMap[type].sortFunction(cardList),
+                };
+            });
+        },
     };
 });
 

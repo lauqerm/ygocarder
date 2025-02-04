@@ -10,7 +10,7 @@ export const ArrowPositionList = [
     { top: 775, left: 655, width: 100, height: 100 },
 ];
 export const LinkRotateList = [-45, 0, 45, -90, 0, 90, -135, 180, 135];
-export const LinkIndentList = [-35, -27, -35, -27, 0, -27, -35, -27, -35];
+export const LinkIndentList = [-38, -27, -38, -27, 0, -27, -38, -27, -38];
 export const LinkRotateMap: Record<string, number> = {
     '1': LinkRotateList[0],
     '2': LinkRotateList[1],

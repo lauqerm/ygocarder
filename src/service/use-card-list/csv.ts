@@ -256,7 +256,7 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                             ? 'TRAP'
                             : emptyCard.attribute;
 
-                const artFinish = (reader('Art Finish') ?? `type${reader('Art_Finish')}`);
+                const artFinish = (reader('Art Finish') ?? (reader('Art_Finish') ? `type${reader('Art_Finish')}` : ''));
                 const atk = reader('ATK') ?? '';
                 const cardIcon = (reader('Card Icon Type') ?? emptyCard.cardIcon);
                 const creator = reader('Copyright') ?? '';
@@ -484,7 +484,6 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                 };
             })
             .filter(entry => {
-                console.log('🚀 ~ entry:', entry);
                 return entry != null;
             });
     } catch (e) {

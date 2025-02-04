@@ -174,7 +174,7 @@ export const CardManagerPanel = forwardRef(({
                             <DownloadOutlined />
                         </div>
                     </Tooltip>
-                    <Tooltip overlay={language['manager.header.button.upload.tooltip']}>
+                    <Tooltip key={`${readingFile}`} overlay={language['manager.header.button.upload.tooltip']}>
                         <div
                             className="manager-button"
                             onClick={() => {

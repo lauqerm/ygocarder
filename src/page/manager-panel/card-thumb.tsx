@@ -50,6 +50,9 @@ const StyledCardThumb = styled.div`
             }
             .star-content {
                 width: 30px;
+                &.tuner {
+                    color: var(--main-online);
+                }
             }
         }
         .third-row {
@@ -101,8 +104,8 @@ const StyledCardThumb = styled.div`
             display: inline-block;
             width: 0;
             height: 0;
-            top: 18px;
-            left: 18px;
+            top: 19px;
+            left: 20px;
             border-style: solid;
             position: absolute;
             z-index: 3;
@@ -229,6 +232,7 @@ export const CardThumb = ({
     const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
         ? !!(atk || def || (isLink && linkMap.length))
         : isMonster;
+    const joinedTypeAbility = typeAbility.join('/');
 
     return <StyledCardThumb
         className={mergeClass('truncate', active ? 'active' : '')}
@@ -269,7 +273,7 @@ export const CardThumb = ({
                             : ThumbSize / ((width ?? 1) / 100),
                         height: artFit
                             ? ThumbSize
-                            : ThumbSize / ((height ?? 1) / 100) / (aspect ?? 1),
+                            : ThumbSize / ((height ?? 1) / 100),
                         transform: artFit
                             ? 'none'
                             : `translateX(-${x ?? 0}%) translateY(-${y ?? 0}%)`,
@@ -297,13 +301,15 @@ export const CardThumb = ({
                         src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
                         alt="Icon"
                     />}
-                {typeAbility.length > 0 && <div className="truncate">{typeAbility.join('/')}</div>}
+                {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}
                 {(!isLink && normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
                     src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon}.png`}
                     alt="Icon"
                 />}
-                {(!isLink && normalizedCardIconType !== 'st') && <span className="star-content truncate">
+                {(!isLink && normalizedCardIconType !== 'st') && <span
+                    className={mergeClass('star-content truncate', joinedTypeAbility.toLowerCase().includes('tuner') ? 'tuner' : '')}
+                >
                     {typeof star === 'number'
                         ? star
                         : star !== ''
