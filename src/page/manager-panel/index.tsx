@@ -31,6 +31,7 @@ const StyledCardManagerDrawer = styled(Drawer)`
     }
     .ant-drawer-body {
         padding: 0;
+        height: 100%;
     }
     .ant-drawer-close {
         display: none;
@@ -51,6 +52,10 @@ const StyledCardManagerDrawer = styled(Drawer)`
             color: var(--main-danger);
         }
     }
+    .manager-header {
+        display: grid;
+        grid-template-columns: 1fr max-content;
+    }
     .manager-button-container {
         display: inline-flex;
         gap: var(--spacing-sm);
@@ -62,36 +67,47 @@ export type CardManagerPanel = {
     onVisibleChange: (status: boolean) => void,
     onSelect: (card: InternalCard) => void,
     onDownload: (card: InternalCard) => void,
+    onRequestImport: () => void,
 };
 export const CardManagerPanel = forwardRef(({
     language,
     onVisibleChange,
     onSelect,
     onDownload,
+    onRequestImport,
 }: CardManagerPanel, ref: React.ForwardedRef<CardManagerPanelRef>) => {
     const listUploadId = 'list-upload-id';
     const listUploadRef = useRef<HTMLInputElement>(null);
     const {
-        visible,
-        toggleVisible,
+        cardList,
         changeEditStatus,
+        pendingActiveCard,
         setActiveId,
         setCardList,
+        setPendingActiveCard,
         sortList,
+        toggleVisible,
+        visible,
     } = useCardList(useShallow(({
-        visible,
-        toggleVisible,
+        cardList,
         changeEditStatus,
+        pendingActiveCard,
         setActiveId,
         setCardList,
+        setPendingActiveCard,
         sortList,
+        toggleVisible,
+        visible,
     }) => ({
-        visible,
-        toggleVisible,
+        cardList,
         changeEditStatus,
+        pendingActiveCard,
         setActiveId,
         setCardList,
+        setPendingActiveCard,
         sortList,
+        toggleVisible,
+        visible,
     })));
     const [inputKey, setInputKey] = useState(0);
     const [readingFile, setReadingFile] = useState(false);
@@ -100,6 +116,14 @@ export const CardManagerPanel = forwardRef(({
         onSelect(card);
         setActiveId(card.id);
     }, [onSelect, setActiveId]);
+
+    useEffect(() => {
+        if (pendingActiveCard) {
+            onSelect(pendingActiveCard);
+            setActiveId(pendingActiveCard.id);
+            setPendingActiveCard();
+        }
+    }, [onSelect, pendingActiveCard, setActiveId, setPendingActiveCard]);
 
     useEffect(() => {
         localStorage.setItem('manager-panel-visible', visible.toString());
@@ -111,8 +135,10 @@ export const CardManagerPanel = forwardRef(({
 
     return <StyledCardManagerPanel>
         <StyledCardManagerDrawer
-            title={<div>
-                <CardManagerMonitor language={language} />
+            title={<div className="manager-header truncate">
+                <CardManagerMonitor className="manager-label-container truncate" language={language}>
+                    {cardList.length}
+                </CardManagerMonitor>
                 <div className="manager-button-container">
                     <Dropdown
                         overlay={<Menu>
@@ -241,6 +267,7 @@ export const CardManagerPanel = forwardRef(({
             visible={visible}
             maskClosable={false}
             mask={false}
+            forceRender={true}
             closeIcon={() => null}
             onClose={() => toggleVisible(false)}
             width={280}
@@ -249,16 +276,27 @@ export const CardManagerPanel = forwardRef(({
                 language={language}
                 onSelect={activeCard}
                 onDownload={onDownload}
+                onRequestImport={onRequestImport}
             />
         </StyledCardManagerDrawer>
     </StyledCardManagerPanel>;
 });
 
+const StyledCardManagerMonitor = styled.div`
+    line-height: 1;
+    .header-warning {
+        margin-left: var(--spacing-xs);
+        font-size: var(--fs-sm);
+        font-weight: normal;
+    }
+`;
 type CardManagerMonitor = {
     language: LanguageDataDictionary,
-}
+} & React.HTMLAttributes<HTMLDivElement>;
 const CardManagerMonitor = ({
     language,
+    children,
+    ...rest
 }: CardManagerMonitor) => {
     const {
         isListDirty,
@@ -286,5 +324,9 @@ const CardManagerMonitor = ({
         };
     }, [cardList.length, isListDirty, language]);
 
-    return <div></div>;
+    return <StyledCardManagerMonitor {...rest}>
+        {children}{(isListDirty && cardList.length > 1) && <span className="header-warning">
+            {language['manager.header.warning.unsaved']}
+        </span>}
+    </StyledCardManagerMonitor>;
 };

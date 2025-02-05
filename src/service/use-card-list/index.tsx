@@ -4,16 +4,15 @@ import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
 import { checkSpeedSkill, isCardDataEqual } from 'src/util';
 
-const compareInt = (statLeft: any, statRight: any) => {
-    if (typeof statLeft !== 'string' || typeof statRight !== 'string') return 0;
-    const parsedStatLeft = parseInt(statLeft);
-    const parsedStatRight = parseInt(statRight);
-    const isLeftFinite = isFinite(parsedStatLeft);
-    const isRightFinite = isFinite(parsedStatRight);
+const compareInt = (statLeft: string | number | undefined, statRight: string | number | undefined) => {
+    const parsedStatLeft = typeof statLeft === 'string' ? parseInt(statLeft) : statLeft;
+    const parsedStatRight = typeof statRight === 'string' ? parseInt(statRight) : statRight;
+    const isLeftFinite = parsedStatLeft ? isFinite(parsedStatLeft) : false;
+    const isRightFinite = parsedStatRight ? isFinite(parsedStatRight) : false;
 
     if (isLeftFinite && !isRightFinite) return -1;
     if (!isLeftFinite && isRightFinite) return 1;
-    if (isLeftFinite && isRightFinite) return parsedStatRight - parsedStatLeft;
+    if (isLeftFinite && isRightFinite) return (parsedStatRight ?? 0) - (parsedStatLeft ?? 0);
 
     const fallbackStatLeft = statLeft === '?'
         ? 1
@@ -26,7 +25,11 @@ const compareInt = (statLeft: any, statRight: any) => {
             ? -1
             : 0;
 
-    if (fallbackStatRight - fallbackStatLeft === 0) return statLeft.localeCompare(statRight);
+    if (
+        fallbackStatRight - fallbackStatLeft === 0
+        && typeof statLeft === 'string'
+        && typeof statRight === 'string'
+    ) return (statLeft ?? '').localeCompare(statRight);
     return fallbackStatRight - fallbackStatLeft;
 };
 const compareName = (l: InternalCard, r: InternalCard) => l.name.localeCompare(r.name);
@@ -155,8 +158,8 @@ export const SortFunctionMap = {
                 .map(normalizeCard)
                 .sort((l, r) => chainCompare(
                     [
-                        compareStar,
                         compareFrame,
+                        compareStar,
                         compareName,
                         compareSetId,
                         compareAtk,
@@ -174,13 +177,16 @@ export type CardListStore = {
     visible: boolean,
     activeId: string,
     cardList: InternalCard[],
+    pendingActiveCard?: InternalCard,
+    addCard: (card: Card) => void,
     changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
     changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
     deleteCard: (id: string) => void,
-    duplicateCard: (card: Card) => void,
+    duplicateCard: (card: Card, ) => void,
     setActiveId: (id: string) => void,
     setCardList: (cardList: InternalCard[], activeId?: string) => void,
     setListName: (name: string) => void,
+    setPendingActiveCard: (card?: InternalCard) => void,
     sortList: (type: keyof typeof SortFunctionMap) => void,
     toggleVisible: (status?: boolean) => void,
 };
@@ -191,16 +197,28 @@ export const useCardList = create<CardListStore>((set) => {
         visible: localStorage.getItem('manager-panel-visible') === 'true',
         activeId: '',
         cardList: [],
+        pendingActiveCard: undefined,
+        addCard: card => set(({ cardList }) => {
+            const id = uuid();
+            const newCard = { id, ...card };
+
+            return {
+                activeId: newCard.id,
+                cardList: [...cardList, newCard],
+            };
+        }),
         changeEditStatus: event => {
             if (event === 'load') set({ isListDirty: false });
             if (event === 'download') set({ isListDirty: false });
         },
         toggleVisible: status => set(({ visible }) => ({ visible: status ?? !visible })),
         setListName: name => set({ listName: name }),
+        setPendingActiveCard: card => set({ pendingActiveCard: card }),
         changeActiveCard: (nextActiveCard, checkPurity = false) => {
             set(({ cardList, isListDirty }) => {
                 let nextIsListDirty = isListDirty;
 
+                /** There is multiple interactions that does not change list's purity, such as switch card inside the current list, or automatic adjustment of cropped canvas upon receiving new image. */
                 if (nextIsListDirty === false && checkPurity) {
                     const targetCard = cardList.find(card => card.id === nextActiveCard.id);
 
@@ -243,16 +261,21 @@ export const useCardList = create<CardListStore>((set) => {
         duplicateCard: card => {
             set(({ cardList }) => {
                 const targetIndex = cardList.findIndex(({ name }) => name === card.name);
+                const clonedId = uuid();
                 const clonedCard = {
                     ...clone(card),
                     name: `${card.name} - Copy`,
-                    id: uuid(),
+                    id: clonedId,
                 };
 
                 if (targetIndex < 0) return {
+                    activeId: clonedId,
+                    pendingActiveCard: clonedCard,
                     cardList: [...cardList, clonedCard],
                 };
                 return {
+                    activeId: clonedId,
+                    pendingActiveCard: clonedCard,
                     cardList: [
                         ...cardList.slice(0, targetIndex),
                         cardList[targetIndex],
@@ -264,7 +287,6 @@ export const useCardList = create<CardListStore>((set) => {
         },
         sortList: type => {
             set(({ cardList }) => {
-                console.log('🚀 ~ entry:', SortFunctionMap[type].sortFunction(cardList));
                 return {
                     cardList: SortFunctionMap[type].sortFunction(cardList),
                 };

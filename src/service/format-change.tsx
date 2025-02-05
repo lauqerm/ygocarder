@@ -1,6 +1,6 @@
-import { Card, ocgToTCGTermMap, tcgToOCGTermMap } from 'src/model';
+import { InternalCard, ocgToTCGTermMap, tcgToOCGTermMap } from 'src/model';
 
-export const changeCardFormat = (card: Card, targetFormat: string): Card => {
+export const changeCardFormat = (card: InternalCard, targetFormat: string): InternalCard => {
     const {
         creator,
         effect,

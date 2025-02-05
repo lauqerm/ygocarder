@@ -79,12 +79,15 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
             backgroundFit: status,
         };
     }), [setCard]);
-    const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => {
+    const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
-        if (cropInfo) setCard(curr => ({
-            ...curr,
-            backgroundCrop: cropInfo,
-        }));
+        if (cropInfo) setCard(
+                curr => ({
+                ...curr,
+                backgroundCrop: cropInfo,
+            }),
+            byUser,
+        );
     }, [onCropChange, setCard]);
 
     useImperativeHandle(ref, () => ({

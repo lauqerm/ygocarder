@@ -4,9 +4,10 @@ import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons
 import styled from 'styled-components';
 import { Popconfirm, Tooltip } from 'antd';
 import { LanguageDataDictionary } from 'src/service';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const ThumbSize = 56;
+const ThumbArtSize = 56;
+const ThumbSize = 68;
 const StyledCardThumb = styled.div`
     display: grid;
     grid-template-columns: max-content 1fr;
@@ -16,6 +17,11 @@ const StyledCardThumb = styled.div`
     cursor: pointer;
     position: relative;
     z-index: 1;
+    height: ${ThumbSize}px;
+    font-size: var(--fs-thumb);
+    &:nth-child(2n) {
+        background-color: #282828;
+    }
     &.active {
         background-color: #484848;
         border-color: var(--main-active);
@@ -28,7 +34,7 @@ const StyledCardThumb = styled.div`
     .right-slot {
         display: grid;
         grid-template-columns: 1fr;
-        row-gap: var(--spacing-sm);
+        row-gap: var(--spacing-xxs);
         line-height: 1;
         overflow: hidden;
         padding: var(--spacing-xs);
@@ -42,6 +48,9 @@ const StyledCardThumb = styled.div`
             display: flex;
             column-gap: var(--spacing-xs);
             align-items: center;
+            .padding {
+                flex: 1;
+            }
             .card-icon {
                 width: 1em;
             }
@@ -49,7 +58,7 @@ const StyledCardThumb = styled.div`
                 width: 1em;
             }
             .star-content {
-                width: 30px;
+                flex: 0 0 30px;
                 &.tuner {
                     color: var(--main-online);
                 }
@@ -73,9 +82,9 @@ const StyledCardThumb = styled.div`
         line-height: 0;
         position: relative;
         .card-art-container {
-            cursor: default;
+            cursor: pointer;
             display: inline-block;
-            width: ${ThumbSize}px;
+            width: ${ThumbArtSize}px;
             overflow: hidden;
             box-shadow: var(--bs-1);
             margin: var(--spacing-xs);
@@ -128,6 +137,28 @@ const StyledCardThumb = styled.div`
             }
             &.marker-checked:after {
                 border-color: transparent transparent var(--main-link-marker) transparent;
+            }
+        }
+        .pendulum-scale {
+            position: absolute;
+            bottom: 0;
+            text-align: center;
+            width: 18px;
+            line-height: 1;
+            z-index: 3;
+            font-size: var(--fs-sm);
+            background-color: #eaeaea;
+            box-shadow: var(--bs-1);
+            padding: var(--spacing-xxs) 0;
+            &.red-scale {
+                right: 0;
+                color: var(--main-red-scale);
+                border-radius: var(--br-lg) 0 0 0;
+            }
+            &.blue-scale {
+                left: 0;
+                color: var(--main-blue-scale);
+                border-radius: 0 var(--br-lg) 0 0;
             }
         }
     }
@@ -203,6 +234,8 @@ export const CardThumb = ({
         linkMap,
         name,
         pendulumFrame,
+        pendulumScaleBlue,
+        pendulumScaleRed,
         setId,
         star,
         subFamily,
@@ -219,7 +252,6 @@ export const CardThumb = ({
         : art;
     const {
         width,
-        height,
         x,
         y,
         aspect,
@@ -232,7 +264,7 @@ export const CardThumb = ({
     const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
         ? !!(atk || def || (isLink && linkMap.length))
         : isMonster;
-    const joinedTypeAbility = typeAbility.join('/');
+    const joinedTypeAbility = typeAbility.join(' / ');
 
     return <StyledCardThumb
         className={mergeClass('truncate', active ? 'active' : '')}
@@ -260,24 +292,16 @@ export const CardThumb = ({
                 rel="noreferrer"
                 onClick={e => e.preventDefault()}
                 style={{
-                    height: ThumbSize / (aspect ?? 1),
+                    height: ThumbArtSize / (aspect ?? 1),
                 }}
             >
-                <img
-                    className="card-art"
-                    src={normalizedCardArt}
-                    alt={normalizedCardName}
-                    style={{
-                        width: artFit
-                            ? ThumbSize
-                            : ThumbSize / ((width ?? 1) / 100),
-                        height: artFit
-                            ? ThumbSize
-                            : ThumbSize / ((height ?? 1) / 100),
-                        transform: artFit
-                            ? 'none'
-                            : `translateX(-${x ?? 0}%) translateY(-${y ?? 0}%)`,
-                    }}
+                <DelayedImage
+                    artLink={normalizedCardArt}
+                    name={normalizedCardName}
+                    artFit={artFit}
+                    width={width}
+                    x={x}
+                    y={y}
                 />
             </a>
             {isLink && [...Array(9)].map((_, index) => {
@@ -289,6 +313,8 @@ export const CardThumb = ({
                     style={{ transform: `rotate(${LinkRotateList[index]}deg) translateY(${LinkIndentList[index]}px)` }}
                 />;
             })}
+            {isPendulum && <div className="pendulum-scale blue-scale">{pendulumScaleBlue}</div>}
+            {isPendulum && <div className="pendulum-scale red-scale">{pendulumScaleRed}</div>}
         </div>
         <div className="right-slot truncate">
             <div className="first-row truncate">
@@ -302,6 +328,7 @@ export const CardThumb = ({
                         alt="Icon"
                     />}
                 {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}
+                <div className="padding" />
                 {(!isLink && normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
                     src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon}.png`}
@@ -351,4 +378,58 @@ export const CardThumb = ({
             </div>
         </div>
     </StyledCardThumb>;
+};
+
+/** The image should not load instantly to avoid stagnant request when user scroll through their card list. Also to prevent sudden image change when cropper reconciliate. */
+type DelayedImage = {
+    artLink: string,
+    name: string,
+    artFit: boolean,
+    width?: number,
+    x?: number,
+    y?: number,
+};
+const DelayedImage = ({
+    artLink,
+    name,
+    artFit,
+    width,
+    x,
+    y,
+}: DelayedImage) => {
+    const [internalLink, setInternalLink] = useState('https://imgur.com/pdSVzUZ.png');
+    const [cropInfo, setCropInfo] = useState({
+        width,
+        x,
+        y,
+        artFit,
+    });
+
+    useEffect(() => {
+        let relevant = true;
+        setTimeout(() => {
+            if (relevant) {
+                setInternalLink(artLink);
+                setCropInfo({ width, x, y, artFit });
+            }
+        }, 500);
+
+        return () => {
+            relevant = false;
+        };
+    }, [artFit, artLink, width, x, y]);
+
+    return <img
+        className="card-art"
+        src={internalLink}
+        alt={name}
+        style={{
+            width: cropInfo.artFit
+                ? ThumbArtSize
+                : ThumbArtSize / ((cropInfo.width ?? 1) / 100),
+            transform: artFit
+                ? 'none'
+                : `translateX(-${cropInfo.x ?? 0}%) translateY(-${cropInfo.y ?? 0}%)`,
+        }}
+    />;
 };

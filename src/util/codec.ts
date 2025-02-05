@@ -343,7 +343,7 @@ export const ygoCarderToExportableData = (
     };
 };
 
-const ROUNDING_THRESHOLD = 0.75;
+const ROUNDING_THRESHOLD = 0.1;
 const isPartialNumberEqual = (numberLeft: any, numberRight: any) => {
     if (typeof numberLeft !== typeof numberRight) return false;
     if (typeof numberLeft === 'number' && typeof numberRight === 'number') return Math.abs(numberLeft - numberRight) <= ROUNDING_THRESHOLD;

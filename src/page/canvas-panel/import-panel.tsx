@@ -33,12 +33,19 @@ const StyledImportContainer = styled.div`
 `;
 
 export type ImportPanelRef = {
-    requestImport: (mode: 'replace' | 'merge') => void,
+    requestImport: (mode: 'replace' | 'merge' | 'new') => void,
 };
 export type ImportPanel = {
     language: LanguageDataDictionary,
     allowHotkey: boolean,
-    onImport: (data: Card, forcePurityCheck?: boolean) => void,
+    onImport: (
+        data: Card,
+        option?: {
+            forcePurityCheck?: boolean,
+            writeOnCurrentCard?: boolean,
+            addToList?: boolean,
+        },
+    ) => void,
     onClose: () => void,
 };
 export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
@@ -53,7 +60,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
     const ygoCarderImportDirectInputRef = useRef<HTMLInputElement>(null);
     const ygoCarderImportInputRef = useRef<HTMLInputElement>(null);
     const [inputKey, setInputKey] = useState(0);
-    const [mode, setMode] = useState<'merge' | 'replace'>('replace');
+    const [mode, setMode] = useState<'merge' | 'replace' | 'new'>('replace');
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const focusInput = useCallback(() => {
@@ -85,7 +92,6 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
     };
     const startImport = async (
         cardData: string | Record<string, any> | null,
-        internalMode = mode,
         imageSurvey = false,
     ) => {
         try {
@@ -95,7 +101,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                     isPartial,
                 } = decodeCard(
                     cardData,
-                    internalMode === 'replace' ? undefined : useCard.getState().card,
+                    mode === 'replace' ? undefined : useCard.getState().card,
                 );
 
                 if (isPartial) {
@@ -130,9 +136,17 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                             description: language['prompt.import.imgur.description'],
                         });
                     }
-                    onImport(surveyedDecodedCard, true);
+                    onImport(surveyedDecodedCard, {
+                        forcePurityCheck: true,
+                        writeOnCurrentCard: mode === 'new' ? false : true,
+                        addToList: mode === 'new',
+                    });
                 } else {
-                    onImport(decodedCard, true);
+                    onImport(decodedCard, {
+                        forcePurityCheck: true,
+                        writeOnCurrentCard: mode === 'new' ? false : true,
+                        addToList: mode === 'new',
+                    });
                 }
             }
         } catch (e) {
@@ -155,7 +169,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
 
                     const { result } = target;
                     if (typeof result !== 'string') return;
-                    startImport(result, 'replace');
+                    startImport(result);
                 };
                 reader.readAsText(targetFile);
                 break;
@@ -211,7 +225,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                         })[0];
                 }
 
-                await startImport(cardData, undefined, true);
+                await startImport(cardData, true);
             }
         } catch (e) {
             console.error('Import error:', e);
@@ -241,7 +255,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
             onOk={startRequest}
         >
             <StyledImportContainer>
-                {mode === 'replace'
+                {mode !== 'merge'
                     ? <div className="prompt-alert">
                         {language['prompt.import.instruction.line-1']}
                         <br />
@@ -261,7 +275,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                         rows={4}
                     />
                 </div>
-                {mode === 'replace'
+                {mode !== 'merge'
                     ? <div className="import-container-upload">
                         <span>{language['prompt.import.alternative.label']}</span>
                         <StyledActionIconButton

@@ -310,17 +310,33 @@ function App() {
         }
     }, [language, reportTarget]);
 
-    const editCard = useCallback((decodedCard: Card, forcePurityCheck?: boolean) => {
-        let willChange = true;
-        if (willChange) {
-            const setCard = useCard.getState().setCard;
+    const treatNewCard = useCallback((
+        decodedCard: Card,
+        option?: {
+            forcePurityCheck?: boolean,
+            writeOnCurrentCard?: boolean,
+            addToList?: boolean,
+        },
+    ) => {
+        const {
+            addToList,
+            forcePurityCheck,
+            writeOnCurrentCard,
+        } = option ?? {};
 
-            setCard(decodedCard, forcePurityCheck);
-            setImageChangeCount(cnt => cnt + 1);
-            cardInputRef.current?.forceCardData(decodedCard);
-            /** Allow navigate input panel right away */
-            forceRefocus();
+        const { setCard, card } = useCard.getState();
+        const normalizedCard = writeOnCurrentCard
+            ? { ...decodedCard, id: card.id }
+            : decodedCard;
+
+        if (addToList) {
+            useCardList.getState().addCard(normalizedCard);
         }
+        setCard(normalizedCard, forcePurityCheck);
+        setImageChangeCount(cnt => cnt + 1);
+        cardInputRef.current?.forceCardData(normalizedCard);
+        /** Allow navigate input panel right away */
+        forceRefocus();
     }, []);
 
     const importData = useCallback(async (
@@ -462,7 +478,7 @@ function App() {
                                 />
                                 <div />
                                 <ImportPanel ref={importPanelRef}
-                                    onImport={editCard}
+                                    onImport={treatNewCard}
                                     onClose={forceRefocus}
                                     allowHotkey={allowHotkey}
                                     language={language}
@@ -492,7 +508,7 @@ function App() {
 
                                             if (consent) {
                                                 const { setCard, card } = useCard.getState();
-                                                const defaultCard = getDefaultCard();
+                                                const defaultCard = { id: card.id, ...getDefaultCard() };
                                                 const contextualDefaultCardData = card.format === 'tcg'
                                                     ? defaultCard
                                                     : changeCardFormat(defaultCard, 'ocg');
@@ -561,7 +577,10 @@ function App() {
                     language={language}
                     onVisibleChange={toggleManagerMode}
                     onDownload={exportCardInList}
-                    onSelect={editCard}
+                    onSelect={treatNewCard}
+                    onRequestImport={() => {
+                        importPanelRef.current?.requestImport('new');
+                    }}
                 />
                 {/** Pixel perfect for card image */}
                 <Modal

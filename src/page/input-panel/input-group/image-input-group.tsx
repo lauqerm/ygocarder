@@ -90,12 +90,15 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     }), [setCard]);
     const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
     const changeArtFinish = useMemo(() => getUpdater('artFinish'), [getUpdater]);
-    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => {
+    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
-        if (cropInfo) setCard(curr => ({
-            ...curr,
-            artCrop: cropInfo,
-        }));
+        if (cropInfo) setCard(
+            curr => ({
+                ...curr,
+                artCrop: cropInfo,
+            }),
+            byUser,
+        );
     }, [onCropChange, setCard]);
 
     useImperativeHandle(ref, () => ({

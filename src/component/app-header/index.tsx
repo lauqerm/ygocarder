@@ -27,6 +27,16 @@ const StyledAppHeaderButtonContainer = styled.div`
     padding-left: var(--spacing);
     margin-left: var(--spacing);
     height: 100%;
+    .button-label {
+        position: relative;
+    }
+    .manager-notice {
+        position: absolute;
+        color: var(--main-danger);
+        right: 0;
+        top: 0;
+        line-height: 1;
+    }
 `;
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
 export const AppHeader = () => {
@@ -47,14 +57,20 @@ export const AppHeader = () => {
         changeLanguage,
     }));
     const {
-        visible,
+        cardList,
+        isListDirty,
         toggleVisible,
+        visible,
     } = useCardList(useShallow(({
-        visible,
+        cardList,
+        isListDirty,
         toggleVisible,
+        visible,
     }) => ({
-        visible,
+        cardList,
+        isListDirty,
         toggleVisible,
+        visible,
     })));
 
     return <div className="app-header">
@@ -144,6 +160,7 @@ export const AppHeader = () => {
                 <div className="button-label">
                     <DatabaseFilled />
                     <label>{language['manager.icon.title']}</label>
+                    {(isListDirty && cardList.length > 1) && <div className="manager-notice">*</div>}
                 </div>
             </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>

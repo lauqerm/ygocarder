@@ -157,6 +157,12 @@ const CsvFieldList = [
 const normalizeFieldName = (field: string) => field.toLowerCase().replaceAll(' ', '').replaceAll('-', '');
 const CsvFieldSet = new Set(CsvFieldList.map(normalizeFieldName));
 type CsvField = typeof CsvFieldList[number];
+const analyzeExportHeader = CsvStandardFieldList.reduce((acc, field, index) => {
+    const normalizedColumnName = normalizeFieldName(field);
+    if (CsvFieldSet.has(normalizedColumnName)) acc[field as CsvField] = index;
+
+    return acc;
+}, {} as Record<CsvField, number | undefined>);
 
 const normalizeCsvData = (data: any) => {
     if (data == null) return '';
@@ -165,26 +171,194 @@ const normalizeCsvData = (data: any) => {
 };
 export const cardListToCsv = (cardList: Card[]) => {
     const valueList: string[] = [];
+    const rowLength = CsvStandardFieldList.length;
 
     for (let cnt = 0; cnt < cardList.length; cnt++) {
+        const write = (key: CsvField, value: boolean | string | number | undefined) => {
+            const index = analyzeExportHeader[key];
+    
+            if (typeof index === 'number') {
+                if (typeof value === 'string') rowValue[index] = value;
+                if (typeof value === 'number') rowValue[index] = `${value}`;
+                if (typeof value === 'boolean') rowValue[index] = `${value}`;
+                if (value == null) rowValue[index] = '';
+            }
+        };
         /** Again, we do not support export offline art or background here unless absolutely need to. With the current scope of about hundred of cards, the exported csv may become hundred MB in size, which is not scalable at all. */
+        const rowValue = Array(rowLength).map(() => '');
         const {
-            name,
+            art,
+            artCrop,
+            // artData,
+            artFinish,
+            artFit,
+            // artSource,
             atk,
+            attribute,
+            background,
+            backgroundCrop,
+            // backgroundData,
+            backgroundFit,
+            // backgroundSource,
+            backgroundType,
+            cardIcon,
+            creator,
+            def,
+            effect,
+            effectStyle,
+            effectTextStyle,
+            externalInfo,
+            finish,
+            foil,
+            format,
+            frame,
+            furiganaHelper,
+            hasBackground,
+            isDuelTerminalCard,
+            isFirstEdition,
+            isLegacyCard,
+            isLimitedEdition,
+            isLink,
+            isPendulum,
+            isSpeedCard,
+            linkMap,
+            name,
+            nameStyle,
+            nameStyleType,
+            opacity,
+            otherTextStyle,
+            password,
+            pendulumEffect,
+            pendulumFrame,
+            pendulumScaleBlue,
+            pendulumScaleRed,
+            pendulumStyle,
+            pendulumTextStyle,
+            setId,
+            star,
+            starAlignment,
+            statTextStyle,
+            sticker,
+            subFamily,
+            typeAbility,
+            typeTextStyle,
         } = cardList[cnt];
-        valueList.push([
-            name,
-            atk,
-        ].map(normalizeCsvData).join(','));
+        const stringifedExternalInfo = JSON.stringify(externalInfo);
+
+        write('Format', format);
+        write('Frame', frame);
+        write('Name', name);
+        write('Attribute', attribute);
+        write('Star', `${star}`);
+        write('Spell/Trap Icon', subFamily);
+        write('Art Link', art);
+        write('Type Ability', typeAbility.join('/'));
+        write('Effect', effect);
+        write('Set Id', setId);
+        write('ATK', atk);
+        write('DEF', def);
+        write('Password', password);
+        write('Sticker', sticker);
+        write('Copyright', creator);
+        write('Is Pendulum', isPendulum);
+        write('Pendulum Effect', pendulumEffect);
+        write('Pendulum Scale Red', pendulumScaleRed);
+        write('Pendulum Scale Blue', pendulumScaleBlue);
+        write('Is Link', isLink);
+        write('Link - Top Left Arrow', linkMap.includes('1'));
+        write('Link - Top Arrow', linkMap.includes('2'));
+        write('Link - Top Right Arrow', linkMap.includes('3'));
+        write('Link - Left Arrow', linkMap.includes('4'));
+        write('Link - Right Arrow', linkMap.includes('6'));
+        write('Link - Bottom Left Arrow', linkMap.includes('7'));
+        write('Link - Bottom Arrow', linkMap.includes('8'));
+        write('Link - Bottom Right Arrow', linkMap.includes('9'));
+        write('Is First Edition', isFirstEdition);
+        write('Is Speed Card', isSpeedCard);
+        write('Is Limited Edition', isLimitedEdition);
+        write('Is Duel Terminal Card', isDuelTerminalCard);
+        write('Is Legacy Card', isLegacyCard);
+        write('Foil', foil);
+        write('Art Finish', artFinish);
+        write('Card Finish', finish.join(','));
+        write('Art Crop - X (%)', artCrop.x);
+        write('Art Crop - Y (%)', artCrop.y);
+        write('Art Crop - Width (%)', artCrop.width);
+        write('Art Crop - Height (%)', artCrop.height);
+        write('Is Using Full Art', artFit);
+        write('Star Alignment', starAlignment);
+        write('Card Icon Type', cardIcon);
+        write('Opacity - Body', opacity.body);
+        write('Opacity - Pendulum', opacity.pendulum);
+        write('Opacity - Text', opacity.text);
+        write('Opacity - Name', opacity.name);
+        write('Opacity - Base Fill', opacity.baseFill);
+        write('Opacity - Art Border', opacity.artBorder);
+        write('Opacity - Name Border', opacity.nameBorder);
+        write('Opacity - Boundless', opacity.boundless);
+        write('Has Background', hasBackground);
+        write('Background Link', background);
+        write('Is Using Full Background', backgroundFit);
+        write('Background Type', backgroundType);
+        write('Background Crop - X (%)', backgroundCrop.x);
+        write('Background Crop - Y (%)', backgroundCrop.y);
+        write('Background Crop - Width (%)', backgroundCrop.width);
+        write('Background Crop - Height (%)', backgroundCrop.height);
+        write('Bottom Frame', pendulumFrame);
+        write('Condense Rate', effectStyle.condenseTolerant);
+        write('Use Furigana Helper', furiganaHelper);
+        write('Name Style Type', nameStyleType);
+        write('Name Style - Font', nameStyle.font);
+        write('Name Style - Fill Style', nameStyle.fillStyle);
+        write('Name Style - Headtext Fill Style', nameStyle.headTextFillStyle);
+        write('Name Style - Shadow Color', nameStyle.shadowColor);
+        write('Name Style - Shadow Offset Y', nameStyle.shadowOffsetY);
+        write('Name Style - Shadow Offset X', nameStyle.shadowOffsetX);
+        write('Name Style - Shadow Blur', nameStyle.shadowBlur);
+        write('Name Style - Has Shadow', nameStyle.hasShadow);
+        write('Name Style - Line Color', nameStyle.lineColor);
+        write('Name Style - Line Width', nameStyle.lineWidth);
+        write('Name Style - Line Offset Y', nameStyle.lineOffsetY);
+        write('Name Style - Line Offset X', nameStyle.lineOffsetX);
+        write('Name Style - Has Outline', nameStyle.hasOutline);
+        write('Name Style - Gradient Angle', nameStyle.gradientAngle);
+        write('Name Style - Gradient Color', nameStyle.gradientColor);
+        write('Name Style - Has Gradient', nameStyle.hasGradient);
+        write('Name Style - Preset', nameStyle.preset);
+        write('Name Style - Pattern', nameStyle.pattern);
+        write('Stat Style - Is Custom', statTextStyle[0]);
+        write('Stat Style - Fill Color', statTextStyle[1]);
+        write('Stat Style - Has Shadow', statTextStyle[2]);
+        write('Stat Style - Shadow Color', statTextStyle[3]);
+        write('Type Style - Is Custom', typeTextStyle[0]);
+        write('Type Style - Fill Color', typeTextStyle[1]);
+        write('Type Style - Has Shadow', typeTextStyle[2]);
+        write('Type Style - Shadow Color', typeTextStyle[3]);
+        write('Effect Style - Is Custom', effectTextStyle[0]);
+        write('Effect Style - Fill Color', effectTextStyle[1]);
+        write('Effect Style - Has Shadow', effectTextStyle[2]);
+        write('Effect Style - Shadow Color', effectTextStyle[3]);
+        write('Effect Style - Upsize', effectStyle.upSize);
+        write('Pendulum Effect Style - Is Custom', pendulumTextStyle[0]);
+        write('Pendulum Effect Style - Fill Color', pendulumTextStyle[1]);
+        write('Pendulum Effect Style - Has Shadow', pendulumTextStyle[2]);
+        write('Pendulum Effect Style - Shadow Color', pendulumTextStyle[3]);
+        write('Pendulum Effect Style - Upsize', pendulumStyle.upSize);
+        write('Other Style - Is Custom', otherTextStyle[0]);
+        write('Other Style - Fill Color', otherTextStyle[1]);
+        write('Other Style - Has Shadow', otherTextStyle[2]);
+        write('Other Style - Shadow Color', otherTextStyle[3]);
+        write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
+        valueList.push(rowValue.map(normalizeCsvData).join(','));
     }
 
     return [
-        CsvFieldList.join(','),
+        CsvStandardFieldList.join(','),
         valueList.join('\n'),
     ].join('\n');
 };
 
-const analyzeHeader = (header: string[]) => {
+const analyzeImportHeader = (header: string[]) => {
     return header.reduce((acc, field, index) => {
         const normalizedColumnName = normalizeFieldName(field);
         if (CsvFieldSet.has(normalizedColumnName)) acc[field as CsvField] = index;
@@ -204,11 +378,14 @@ const getCsvFieldReader = (row: string[], headerIndexMap: Record<CsvField, numbe
 };
 const normalizeBoolean = (value: any, fallback: boolean) => {
     if (typeof value === 'boolean') return value;
-    if (typeof value === 'string') return value === 'true'
-        ? true
-        : value === 'false'
-            ? false
-            : fallback;
+    if (typeof value === 'string') {
+        const normalizedValue = value.toLowerCase();
+        return normalizedValue === 'true'
+            ? true
+            : normalizedValue === 'false'
+                ? false
+                : fallback;
+    }
     return fallback;
 };
 const normalizeInt = (value: any, fallback: number) => {
@@ -224,7 +401,7 @@ const normalizeFloat = (value: any, fallback: number) => {
 export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] => {
     try {
         const data = csv.data;
-        const headerIndexMap = analyzeHeader(data[0]);
+        const headerIndexMap = analyzeImportHeader(data[0]);
 
         return data
             .map((row, index) => {
@@ -371,14 +548,14 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
 
                 const isLink = normalizeBoolean(reader('Is Link'), emptyCard.isLink);
                 const linkMap = [
-                    reader('Link - Top Left Arrow') === 'true' ? '1' : '',
-                    reader('Link - Top Arrow') === 'true' ? '2' : '',
-                    reader('Link - Top Right Arrow') === 'true' ? '3' : '',
-                    reader('Link - Left Arrow') === 'true' ? '4' : '',
-                    reader('Link - Right Arrow') === 'true' ? '6' : '',
-                    reader('Link - Bottom Left Arrow') === 'true' ? '7' : '',
-                    reader('Link - Bottom Arrow') === 'true' ? '8' : '',
-                    reader('Link - Bottom Right Arrow') === 'true' ? '9' : '',
+                    normalizeBoolean(reader('Link - Top Left Arrow'), false) ? '1' : '',
+                    normalizeBoolean(reader('Link - Top Arrow'), false) ? '2' : '',
+                    normalizeBoolean(reader('Link - Top Right Arrow'), false) ? '3' : '',
+                    normalizeBoolean(reader('Link - Left Arrow'), false) ? '4' : '',
+                    normalizeBoolean(reader('Link - Right Arrow'), false) ? '6' : '',
+                    normalizeBoolean(reader('Link - Bottom Left Arrow'), false) ? '7' : '',
+                    normalizeBoolean(reader('Link - Bottom Arrow'), false) ? '8' : '',
+                    normalizeBoolean(reader('Link - Bottom Right Arrow'), false) ? '9' : '',
                 ].filter(entry => entry !== '') ?? [];
 
                 const emptyTextStyle = getDefaultTextStyle();
@@ -438,10 +615,7 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                     condenseTolerant,
                     creator,
                     def,
-                    effectStyle: {
-                        condenseTolerant,
-                        upSize: effectUpSize,
-                    },
+                    effectStyle: { condenseTolerant, upSize: effectUpSize },
                     effect,
                     effectTextStyle,
                     externalInfo,
@@ -469,9 +643,7 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                     pendulumFrame,
                     pendulumScaleBlue,
                     pendulumScaleRed,
-                    pendulumStyle: {
-                        upSize: pendulumEffectUpSize,
-                    },
+                    pendulumStyle: { upSize: pendulumEffectUpSize },
                     pendulumTextStyle,
                     setId,
                     star,

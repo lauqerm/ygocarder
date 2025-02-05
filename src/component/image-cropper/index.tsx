@@ -103,7 +103,7 @@ export type ImageCropper = {
     ratio: number,
     onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
     onSourceLoaded?: () => void,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => void,
     onTainted: () => void,
     onMaxSizeExceeded: (size: number) => void,
     onForceFitChange?: (status: boolean) => void,
@@ -143,6 +143,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const [internalSource, setInternalSource] = useState(defaultInternalSource);
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState<any>(null);
+    const [interacted, setInteracted] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
     const [crop, setCrop] = useState({
@@ -353,7 +354,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         }
         if (sourceType === 'offline' && (internalSource ?? '').length <= 0) { }
         else if (ratio === completedCrop.aspect) {
-            onCropChange(completedCrop, sourceType);
+            onCropChange(completedCrop, sourceType, interacted);
         }
         if (fitCropData) {
             setCrop(cur => ({ ...cur, current: fitCropData }));
@@ -362,6 +363,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     }, [completedCrop, receivingCanvas, redrawSignal, forceFit]);
 
     useEffect(() => {
+        setInteracted(false);
         setCrop(cur => {
             if (imgRef.current != null && cur.current) {
                 const newValue = normalizeCrop(cur.current, imgRef.current, ratio);
@@ -381,6 +383,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'online'),
         forceSource: (type: 'online' | 'offline', source, cropInfo) => {
             const currentSource = sourceType === 'offline' ? internalSource : externalSource;
+            setInteracted(false);
             if (currentSource !== source) {
                 setLoading(true);
                 setSourceType(type);
@@ -477,7 +480,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 </div>
             </div>
             {beforeCropper}
-            <div className="card-cropper">
+            <div className="card-cropper" onKeyDown={() => {
+                /** Nudge selection also count as user interaction */
+                setInteracted(true);
+            }}>
                 {isLoading && <Loading.FullView />}
                 {(hasImage && !error) && <div className="card-image-option">
                     <div
@@ -552,7 +558,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             const ctx = receivingCanvas.getContext('2d');
 
                             ctx?.clearRect(0, 0, width, height);
-                            if (completedCrop) onCropChange(completedCrop, sourceType);
+                            if (completedCrop) onCropChange(completedCrop, sourceType, interacted);
                             onSourceLoaded();
                         } else {
                             onTainted();
@@ -560,6 +566,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         // setCrossOrigin(undefined);
                     }}
                     crop={currentCrop}
+                    onDragStart={() => {
+                        setInteracted(true);
+                    }}
                     onChange={(pixelCropData, percentCropData) => {
                         const image = imgRef.current;
                         if (pendingCrop.current.crop) return;
