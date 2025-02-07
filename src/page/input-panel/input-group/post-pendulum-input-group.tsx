@@ -4,8 +4,8 @@ import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { CondenseType } from 'src/model';
-import { CondenseThresholdButtonList, IconTypeMap } from '../const';
+import { CondenseType, IconTypeMap } from 'src/model';
+import { CondenseThresholdButtonList } from '../const';
 import styled from 'styled-components';
 import { checkMonster } from 'src/util';
 

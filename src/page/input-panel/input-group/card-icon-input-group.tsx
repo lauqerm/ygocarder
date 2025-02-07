@@ -4,9 +4,10 @@ import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { CaretDownOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { IconTypeList, IconTypeMap, StarButtonList, getSTIconButtonList } from '../const';
+import { StarButtonList, getSTIconButtonList } from '../const';
 import { checkDarkSynchro, checkXyz } from 'src/util';
 import styled from 'styled-components';
+import { IconTypeList, IconTypeMap } from 'src/model';
 
 const StyledIconDropdown = styled(StyledDropdown.Container)`
     img.icon-image {

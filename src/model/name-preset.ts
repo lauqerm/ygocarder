@@ -271,58 +271,69 @@ export const PatternMap: Record<string, {
     patternImage: string,
     blendMode: GlobalCompositeOperation,
     overrideFill?: boolean,
+    isOption: boolean,
 }> = {
     none: {
         key: 'none',
         patternImage: '',
         blendMode: 'source-atop',
+        isOption: false,
     },
     type1: {
         key: 'type1',
         patternImage: 'finish-name-type1',
         blendMode: 'source-atop',
+        isOption: true,
     },
     type2: {
         key: 'type2',
         patternImage: 'finish-name-type2',
         blendMode: 'source-atop',
+        isOption: true,
     },
     type3: {
         key: 'type3',
         patternImage: 'finish-name-type3',
         blendMode: 'source-atop',
+        isOption: true,
     },
     type4: {
         key: 'type4',
         patternImage: 'finish-name-type4',
         blendMode: 'source-atop',
+        isOption: true,
     },
     type5: {
         key: 'type5',
         patternImage: 'finish-name-type5',
         blendMode: 'multiply',
         overrideFill: true,
+        isOption: true,
     },
     type6: {
         key: 'type6',
         patternImage: 'finish-name-type6',
         blendMode: 'source-atop',
+        isOption: true,
     },
     type7: {
         key: 'type7',
         patternImage: 'finish-name-type7',
         blendMode: 'lighter',
         overrideFill: true,
+        isOption: true,
     },
     type8: {
         key: 'type8',
         patternImage: 'finish-name-type8',
         blendMode: 'source-atop',
+        isOption: true,
     },
     type9: {
         key: 'type9',
         patternImage: 'finish-name-type9',
         blendMode: 'source-atop',
+        isOption: true,
     },
 };
 export const PatternList = Object.values(PatternMap);

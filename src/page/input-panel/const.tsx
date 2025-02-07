@@ -105,61 +105,12 @@ export const getSTIconButtonList = (dictionary: Record<string, string>) => IconL
 }));
 
 export const StarButtonList = [...Array(14)].map((_, index) => ({ label: index, value: index }));
-export const IconTypeMap: Record<string, { value: string, labelKey: string, fullLabelKey: string, icon: React.ReactNode }> = {
-    'auto': {
-        value: 'auto',
-        labelKey: 'input.icon-type.auto.label',
-        fullLabelKey: 'input.icon-type.auto.label',
-        icon: null,
-    },
-    'st': {
-        value: 'st',
-        labelKey: 'input.icon-type.icon.label',
-        fullLabelKey: 'input.icon-type.icon.label',
-        icon: <img
-            className="icon-image"
-            alt="s/t-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`}
-        />,
-    },
-    'level': {
-        value: 'level',
-        labelKey: 'input.icon-type.level.label',
-        fullLabelKey: 'input.icon-type.level.label',
-        icon: <img
-            className="icon-image"
-            alt="level-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level.png`}
-        />,
-    },
-    'negative-level': {
-        value: 'negative-level',
-        labelKey: 'input.icon-type.negative-level.label',
-        fullLabelKey: 'input.icon-type.negative-level.label',
-        icon: <img
-            className="icon-image"
-            alt="negative-level-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-negative-level.png`}
-        />,
-    },
-    'rank': {
-        value: 'rank',
-        labelKey: 'input.icon-type.rank.label',
-        fullLabelKey: 'input.icon-type.rank.label',
-        icon: <img
-            className="icon-image"
-            alt="rank-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-rank.png`}
-        />,
-    },
-};
-export const IconTypeList = Object.values(IconTypeMap);
 
-export const StickerButtonList = StickerList.map(name => ({
-    label: name === NO_STICKER
+export const StickerButtonList = StickerList.map(({ value }) => ({
+    label: value === NO_STICKER
         ? <CloseCircleOutlined />
-        : <img alt={name} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${name.toLowerCase()}.png`} />,
-    value: name,
+        : <img alt={value} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${value.toLowerCase()}.png`} />,
+    value,
 }));
 
 export const CondenseThresholdButtonList = Object

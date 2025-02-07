@@ -2,16 +2,10 @@ import { Button, Drawer } from 'antd';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { BulbFilled, SettingFilled } from '@ant-design/icons';
-import './formatting-guide.scss';
 import { useLanguage } from 'src/service';
+import { StyledCode } from '../atom';
+import './formatting-guide.scss';
 
-const StyledCode = styled.span`
-    background: var(--main-level-1);
-    padding: var(--spacing-px) var(--spacing-xxs);
-    border: var(--bw) solid #4e84a4;
-    border-radius: var(--br);
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-`;
 const StyledContainer = styled.div`
     white-space: pre-line;
 `;

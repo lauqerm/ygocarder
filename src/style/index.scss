@@ -270,10 +270,15 @@ button.ant-btn {
     color: var(--color-heavy);
     background: var(--main-level-4);
     border-color: var(--sub-level-4);
-    &:hover {
+    &:hover,
+    &:focus,
+    &:active {
         color: var(--color-heavy);
         background: var(--sub-level-4);
         border-color: var(--sub-level-4);
+    }
+    &:focus {
+        border-color: var(--color);
     }
     &.ant-btn-primary {
         background: var(--main-primary);
@@ -342,5 +347,14 @@ button.ant-btn {
     .ant-modal-footer {
         border-color: var(--sub-level-1);
         padding: var(--spacing-lg);
+    }
+}
+
+.ant-collapse {
+    > .ant-collapse-item > .ant-collapse-header {
+        color: var(--color);
+    }
+    .ant-collapse-content {
+        color: var(--color);
     }
 }
