@@ -1,4 +1,4 @@
-import { Drawer, Dropdown, Menu, notification, Tooltip } from 'antd';
+import { Drawer, Dropdown, Input, Menu, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList } from 'src/service';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ const StyledCardManagerPanel = styled.div`
 `;
 const StyledCardManagerDrawer = styled(Drawer)`
     .ant-drawer-header {
-        padding: var(--spacing-sm);
+        padding: 0;
     }
     .ant-drawer-content {
         box-shadow: 0 0 3px 2px #202020;
@@ -53,9 +53,22 @@ const StyledCardManagerDrawer = styled(Drawer)`
             color: var(--main-danger);
         }
     }
-    .manager-header {
+    .manager-label-container {
+        padding: var(--spacing-sm) 0 0 var(--spacing-sm);
+    }
+    .manager-button-container {
+        padding: var(--spacing-sm) var(--spacing-sm) 0 var(--spacing-sm);
+    }
+    .card-manager-header {
         display: grid;
         grid-template-columns: 1fr max-content;
+        .card-manager-filter {
+            grid-column: span 2;
+            padding: var(--spacing-xs);
+            .card-manager-search {
+                width: 100%;
+            }
+        }
     }
     .manager-button-container {
         display: inline-flex;
@@ -136,7 +149,7 @@ export const CardManagerPanel = forwardRef(({
 
     return <StyledCardManagerPanel>
         <StyledCardManagerDrawer
-            title={<div className="manager-header truncate">
+            title={<div className="card-manager-header truncate">
                 <CardManagerMonitor className="manager-label-container truncate" language={language}>
                     {cardList.length}
                 </CardManagerMonitor>
@@ -268,6 +281,9 @@ export const CardManagerPanel = forwardRef(({
                     >
                         <CloseOutlined />
                     </div>
+                </div>
+                <div className="card-manager-filter">
+                    <Input className="card-manager-search" placeholder={language['manager.button.search.text.placeholder']} />
                 </div>
             </div>}
             visible={visible}

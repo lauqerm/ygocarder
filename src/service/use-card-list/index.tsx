@@ -171,13 +171,16 @@ export const SortFunctionMap = {
         },
     },
 } as const;
+const defaultFilterFunction = (card: InternalCard) => card;
 export type CardListStore = {
     isListDirty: boolean,
     listName: string,
     visible: boolean,
     activeId: string,
     cardList: InternalCard[],
+    cardDisplayList: InternalCard[],
     pendingActiveCard?: InternalCard,
+    filterFunction: (cardList: InternalCard) => InternalCard,
     addCard: (card: Card) => void,
     changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
     changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
@@ -186,6 +189,7 @@ export type CardListStore = {
     setActiveId: (id: string) => void,
     setCardList: (cardList: InternalCard[], activeId?: string) => void,
     setListName: (name: string) => void,
+    setFilterFunction: (func: (card: InternalCard) => InternalCard) => void,
     setPendingActiveCard: (card?: InternalCard) => void,
     sortList: (type: keyof typeof SortFunctionMap) => void,
     toggleVisible: (status?: boolean) => void,
@@ -197,7 +201,15 @@ export const useCardList = create<CardListStore>((set) => {
         visible: localStorage.getItem('manager-panel-visible') === 'true',
         activeId: '',
         cardList: [],
+        cardDisplayList: [],
         pendingActiveCard: undefined,
+        filterFunction: defaultFilterFunction,
+        setFilterFunction: nextFilterFunction => set(({
+            cardList,
+        }) => ({
+            filterFunction: nextFilterFunction,
+            cardDisplayList: cardList.filter(nextFilterFunction),
+        })),
         addCard: card => set(({ cardList }) => {
             const id = uuid();
             const newCard = { id, ...card };
@@ -205,6 +217,8 @@ export const useCardList = create<CardListStore>((set) => {
             return {
                 activeId: newCard.id,
                 cardList: [...cardList, newCard],
+                /** It maybe better to always display the new card regardless of current search, so user does not confuse about missing the card */
+                cardDisplayList: [...cardList, newCard],
             };
         }),
         changeEditStatus: event => {
@@ -233,34 +247,40 @@ export const useCardList = create<CardListStore>((set) => {
                 return {
                     isListDirty: nextIsListDirty,
                     cardList: nextCardList,
+                    cardDisplayList: [...nextCardList],
                 };
             });
         },
         setActiveId: id => set({ activeId: id }),
         setCardList: (cardList, activeId) => {
+            /** Reset all filter each time a new list is coming */
             set({
+                filterFunction: defaultFilterFunction,
                 isListDirty: false,
                 activeId: activeId ?? cardList[0]?.id,
                 cardList: cardList,
+                cardDisplayList: [...cardList],
             });
         },
         deleteCard: id => {
-            set(({ cardList, activeId }) => {
+            set(({ cardList, activeId, cardDisplayList }) => {
                 const normalizedCardList = cardList.filter(card => card.id !== id);
-                const currentActiveId = cardList.findIndex(card => card.id === activeId);
+                const normalizedCardDisplayList = cardDisplayList.filter(card => card.id !== id);
+                const currentActiveId = normalizedCardDisplayList.findIndex(card => card.id === activeId);
                 const nextActiveId = activeId === id
-                    ? normalizedCardList[currentActiveId - 1]?.id ?? normalizedCardList[0]?.id ?? ''
+                    ? normalizedCardDisplayList[currentActiveId - 1]?.id ?? normalizedCardDisplayList[0]?.id ?? ''
                     : activeId;
 
                 return {
                     activeId: nextActiveId,
                     cardList: normalizedCardList,
+                    cardDisplayList: normalizedCardDisplayList,
                 };
             });
         },
         duplicateCard: card => {
-            set(({ cardList }) => {
-                const targetIndex = cardList.findIndex(({ name }) => name === card.name);
+            set(({ cardList, cardDisplayList }) => {
+                const targetIndex = cardDisplayList.findIndex(({ name }) => name === card.name);
                 const clonedId = uuid();
                 const clonedCard = {
                     ...clone(card),
@@ -272,6 +292,7 @@ export const useCardList = create<CardListStore>((set) => {
                     activeId: clonedId,
                     pendingActiveCard: clonedCard,
                     cardList: [...cardList, clonedCard],
+                    cardDisplayList: [...cardDisplayList, clonedCard],
                 };
                 return {
                     activeId: clonedId,
@@ -282,13 +303,21 @@ export const useCardList = create<CardListStore>((set) => {
                         clonedCard,
                         ...cardList.slice(targetIndex + 1, cardList.length),
                     ],
+                    cardDisplayList: [
+                        ...cardDisplayList.slice(0, targetIndex),
+                        cardDisplayList[targetIndex],
+                        clonedCard,
+                        ...cardDisplayList.slice(targetIndex + 1, cardDisplayList.length),
+                    ],
                 };
             });
         },
         sortList: type => {
-            set(({ cardList }) => {
+            set(({ cardDisplayList }) => {
+                const sortedList = SortFunctionMap[type].sortFunction(cardDisplayList);
+
                 return {
-                    cardList: SortFunctionMap[type].sortFunction(cardList),
+                    cardDisplayList: sortedList,
                 };
             });
         },

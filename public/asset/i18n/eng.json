@@ -291,6 +291,7 @@
         "manager.button.sort.def.label": "DEF",
         "manager.button.sort.set-id.label": "Set ID",
         "manager.button.sort.level.label": "Level",
+        "manager.button.search.text.placeholder": "Card name or text",
         "manager.button.add.label": "New Card",
         "manager.header.button.filter.tooltip": "Filter",
         "manager.template.download.label": "Download Template File",
