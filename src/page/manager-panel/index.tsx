@@ -16,6 +16,7 @@ import { cardListToCsv } from 'src/service';
 import { downloadBlob } from 'src/util';
 import { InternalCard } from 'src/model';
 import Papa from 'papaparse';
+import { ManagerSample } from './manager-sample';
 
 const StyledCardManagerPanel = styled.div`
     position: absolute;
@@ -140,6 +141,13 @@ export const CardManagerPanel = forwardRef(({
                     {cardList.length}
                 </CardManagerMonitor>
                 <div className="manager-button-container">
+                    <Tooltip title={language['manager.header.button.sample.tooltip']}>
+                        <div
+                            className="manager-button"
+                        >
+                            <ManagerSample language={language} />
+                        </div>
+                    </Tooltip>
                     <Dropdown
                         overlay={<Menu>
                             {[

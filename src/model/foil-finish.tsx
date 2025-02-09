@@ -145,21 +145,24 @@ export const FoilNameMap = {
     gold: 'gold' as const,
     platinum: 'platinum' as const,
 };
-export const getFoilList = (dictionary: FoilDictionary) => [
+export const getFoilList = (dictionary?: FoilDictionary) => [
     {
         name: FoilNameMap['normal' as const],
-        label: dictionary.normal,
+        label: dictionary?.normal,
         color: '#747b95',
+        isOption: false,
     },
     {
         name: FoilNameMap['gold' as const],
-        label: dictionary.gold,
+        label: dictionary?.gold,
         color: '#cfa65f',
+        isOption: true,
     },
     {
         name: FoilNameMap['platinum' as const],
-        label: dictionary.platinum,
+        label: dictionary?.platinum,
         color: '#b1b1b1',
+        isOption: true,
     },
 ];
 export type Foil = ReturnType<typeof getFoilList>[0]['name'];

@@ -1,14 +1,14 @@
-export const getBackgroundTypeList = (dictionary: {
+export const getBackgroundTypeList = (dictionary?: {
     fit: string,
     full: string,
 }) => [
     {
         value: 'fit' as const,
-        label: dictionary.fit,
+        label: dictionary?.fit,
     },
     {
         value: 'full' as const,
-        label: dictionary.full,
+        label: dictionary?.full,
     },
 ];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];

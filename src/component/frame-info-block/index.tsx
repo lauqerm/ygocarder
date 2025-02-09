@@ -20,7 +20,7 @@ export const FrameInfoBlock = ({
     labelBackgroundColor,
     labelBackgroundColorList,
     className,
-}: Omit<FrameInfo, 'name' | 'edition' | 'labelColor'> & { className?: string }) => {
+}: Omit<FrameInfo, 'name' | 'edition' | 'labelColor' | 'sortWeight'> & { className?: string }) => {
     const language = useLanguage();
 
     return <StyledFrameContainer

@@ -398,6 +398,13 @@ const normalizeFloat = (value: any, fallback: number) => {
     if (typeof value === 'string') return isFinite(parseFloat(value)) ? parseFloat(value) : fallback;
     return fallback;
 };
+const normalizeColor = (value: any, fallback: string) => {
+    if (typeof value === 'string') {
+        if (value.startsWith('#')) return value;
+        return `#${value}`;
+    }
+    return fallback;
+};
 export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] => {
     try {
         const data = csv.data;
@@ -526,22 +533,22 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                 const emptyNameStyle = getDefaultNameStyle();
                 const nameStyleType = (reader('Name Style Type') ?? emptyCard.nameStyleType).toLowerCase() as NameStyleType;
                 const nameStyle: NameStyle = {
-                    fillStyle: reader('Name Style - Fill Style') ?? emptyNameStyle.fillStyle,
+                    fillStyle: normalizeColor(reader('Name Style - Fill Style'), emptyNameStyle.fillStyle),
                     font: reader('Name Style - Font') ?? emptyNameStyle.font,
                     gradientAngle: normalizeInt(reader('Name Style - Gradient Angle'), emptyNameStyle.gradientAngle),
-                    gradientColor: reader('Name Style - Gradient Color') ?? emptyNameStyle.gradientColor,
+                    gradientColor: normalizeColor(reader('Name Style - Gradient Color'), emptyNameStyle.gradientColor),
                     hasGradient: normalizeBoolean(reader('Name Style - Has Gradient'), emptyNameStyle.hasGradient),
                     hasOutline: normalizeBoolean(reader('Name Style - Has Outline'), emptyNameStyle.hasOutline),
                     hasShadow: normalizeBoolean(reader('Name Style - Has Shadow'), emptyNameStyle.hasShadow),
-                    headTextFillStyle: reader('Name Style - Headtext Fill Style') ?? emptyNameStyle.headTextFillStyle,
-                    lineColor: reader('Name Style - Line Color') ?? emptyNameStyle.lineColor,
+                    headTextFillStyle: normalizeColor(reader('Name Style - Headtext Fill Style'), emptyNameStyle.headTextFillStyle),
+                    lineColor: normalizeColor(reader('Name Style - Line Color'), emptyNameStyle.lineColor),
                     lineOffsetX: normalizeInt(reader('Name Style - Line Offset X'), emptyNameStyle.lineOffsetX),
                     lineOffsetY: normalizeInt(reader('Name Style - Line Offset Y'), emptyNameStyle.lineOffsetY),
                     lineWidth: normalizeInt(reader('Name Style - Line Width'), emptyNameStyle.lineWidth),
                     pattern: reader('Name Style - Pattern') ?? emptyNameStyle.pattern,
                     preset: (reader('Name Style - Preset') ?? emptyNameStyle.preset) as PresetNameStyle,
                     shadowBlur: normalizeInt(reader('Name Style - Shadow Blur'), emptyNameStyle.shadowBlur),
-                    shadowColor: reader('Name Style - Shadow Color') ?? emptyNameStyle.shadowColor,
+                    shadowColor: normalizeColor(reader('Name Style - Shadow Color'), emptyNameStyle.shadowColor),
                     shadowOffsetX: normalizeInt(reader('Name Style - Shadow Offset X'), emptyNameStyle.shadowOffsetX),
                     shadowOffsetY: normalizeInt(reader('Name Style - Shadow Offset Y'), emptyNameStyle.shadowOffsetY),
                 };
@@ -561,33 +568,33 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                 const emptyTextStyle = getDefaultTextStyle();
                 const statTextStyle = [
                     normalizeBoolean(reader('Stat Style - Is Custom'), emptyTextStyle[0]),
-                    reader('Stat Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeColor(reader('Stat Style - Fill Color'), emptyTextStyle[1]),
                     normalizeBoolean(reader('Stat Style - Has Shadow'), emptyTextStyle[2]),
-                    reader('Stat Style - Shadow Color') ?? emptyTextStyle[3],
+                    normalizeColor(reader('Stat Style - Shadow Color'), emptyTextStyle[3]),
                 ] as [boolean, string, boolean, string];
                 const typeTextStyle = [
                     normalizeBoolean(reader('Type Style - Is Custom'), emptyTextStyle[0]),
-                    reader('Type Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeColor(reader('Type Style - Fill Color'), emptyTextStyle[1]),
                     normalizeBoolean(reader('Type Style - Has Shadow'), emptyTextStyle[2]),
-                    reader('Type Style - Shadow Color') ?? emptyTextStyle[3],
+                    normalizeColor(reader('Type Style - Shadow Color'), emptyTextStyle[3]),
                 ] as [boolean, string, boolean, string];
                 const effectTextStyle = [
                     normalizeBoolean(reader('Effect Style - Is Custom'), emptyTextStyle[0]),
-                    reader('Effect Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeColor(reader('Effect Style - Fill Color'), emptyTextStyle[1]),
                     normalizeBoolean(reader('Effect Style - Has Shadow'), emptyTextStyle[2]),
-                    reader('Effect Style - Shadow Color') ?? emptyTextStyle[3],
+                    normalizeColor(reader('Effect Style - Shadow Color'), emptyTextStyle[3]),
                 ] as [boolean, string, boolean, string];
                 const pendulumTextStyle = [
                     normalizeBoolean(reader('Pendulum Effect Style - Is Custom'), emptyTextStyle[0]),
-                    reader('Pendulum Effect Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeColor(reader('Pendulum Effect Style - Fill Color'), emptyTextStyle[1]),
                     normalizeBoolean(reader('Pendulum Effect Style - Has Shadow'), emptyTextStyle[2]),
-                    reader('Pendulum Effect Style - Shadow Color') ?? emptyTextStyle[3],
+                    normalizeColor(reader('Pendulum Effect Style - Shadow Color'), emptyTextStyle[3]),
                 ] as [boolean, string, boolean, string];
                 const otherTextStyle = [
                     normalizeBoolean(reader('Other Style - Is Custom'), emptyTextStyle[0]),
-                    reader('Other Style - Fill Color') ?? emptyTextStyle[1],
+                    normalizeColor(reader('Other Style - Fill Color'), emptyTextStyle[1]),
                     normalizeBoolean(reader('Other Style - Has Shadow'), emptyTextStyle[2]),
-                    reader('Other Style - Shadow Color') ?? emptyTextStyle[3],
+                    normalizeColor(reader('Other Style - Shadow Color'), emptyTextStyle[3]),
                 ] as [boolean, string, boolean, string];
                 let externalInfo = {};
                 try {
