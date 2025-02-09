@@ -1,6 +1,6 @@
 import { Button, Collapse, Modal } from 'antd';
 import { useState } from 'react';
-import { CheckOutlined, SnippetsOutlined } from '@ant-design/icons';
+import { CheckOutlined } from '@ant-design/icons';
 import { LanguageDataDictionary } from 'src/service';
 import styled from 'styled-components';
 import { StyledCode } from 'src/component/atom';
@@ -21,6 +21,11 @@ import {
 import copy from 'copy-to-clipboard';
 
 const { Panel } = Collapse;
+const StyledToggleButton = styled.div`
+    font-weight: normal;
+    font-variant: small-caps;
+    letter-spacing: -0.75px;
+`;
 const StyledMono = styled(StyledCode)`
     display: inline-block;
     font-size: var(--fs-sm);
@@ -57,12 +62,19 @@ const StyledManagerSample = styled(Modal)`
             left: 0;
         }
     }
-    .ant-collapse-content-box {
-        padding: var(--spacing-sm) 0;
+    .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+        padding: var(--spacing-sm) 0 0 0;
     }
     .download-button {
         text-align: center;
         margin: var(--spacing-sm) 0;
+        .ant-btn {
+            background: var(--main-primary);
+            border-color: var(--main-active);
+            &:hover {
+                background: var(--sub-primary);
+            }
+        }
     }
     .option-container {
         width: 100%;
@@ -116,12 +128,12 @@ export type ManagerSample = {
 export const ManagerSample = ({
     language,
 }: ManagerSample) => {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(false);
 
     return <>
-        <div onClick={() => setVisible(true)}>
-            <SnippetsOutlined />
-        </div>
+        <StyledToggleButton className="manager-toggle-button" onClick={() => setVisible(true)}>
+            {language['manager.header.button.template.label']}
+        </StyledToggleButton>
         <StyledManagerSample
             visible={visible}
             onCancel={() => setVisible(false)}
@@ -130,13 +142,13 @@ export const ManagerSample = ({
                     display: 'none',
                 },
             }}
-            cancelText={language['manager.sample.button.cancel.label']}
+            cancelText={language['manager.template.button.cancel.label']}
         >
             <div className="sample-modal-container">
                 <div>
-                    {language['manager.sample.description.line-1']}
+                    {language['manager.template.description.line-1']}
                     <br />
-                    {language['manager.sample.description.line-2']}
+                    {language['manager.template.description.line-2']}
                 </div>
                 <div
                     className="download-button"
@@ -147,14 +159,14 @@ export const ManagerSample = ({
                         rel="noreferrer"
                         download
                     >
-                        <Button>{language['manager.sample.download.label']}</Button>
+                        <Button>{language['manager.template.download.label']}</Button>
                     </a>
                 </div>
-                <Collapse ghost defaultActiveKey={['sample-option']}>
+                <Collapse ghost>
                     <Panel
                         key="sample-option"
                         header={<div>
-                            {language['manager.sample.description.line-3']}
+                            {language['manager.template.description.line-3']}
                         </div>}
                     >
                         <table className="option-container">
@@ -219,7 +231,7 @@ export const ManagerSample = ({
                                     value: <div>
                                         {Object.values(FinishMap)
                                             .map(({ value }) => <CopiableCode key={value} data={value}>{value}</CopiableCode>)}
-                                        <div>{language['manager.sample.description.joinable']}</div>
+                                        <div>{language['manager.template.description.joinable']}</div>
                                     </div>
                                 },
                                 {

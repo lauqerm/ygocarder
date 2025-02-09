@@ -141,13 +141,11 @@ export const CardManagerPanel = forwardRef(({
                     {cardList.length}
                 </CardManagerMonitor>
                 <div className="manager-button-container">
-                    <Tooltip title={language['manager.header.button.sample.tooltip']}>
-                        <div
-                            className="manager-button"
-                        >
-                            <ManagerSample language={language} />
-                        </div>
-                    </Tooltip>
+                    <div
+                        className="manager-button"
+                    >
+                        <ManagerSample language={language} />
+                    </div>
                     <Dropdown
                         overlay={<Menu>
                             {[
