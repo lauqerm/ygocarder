@@ -458,7 +458,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
             await drawAttribute();
             await drawAttributeFinish();
-            if (!isLink) await drawStar({ style: levelStyle, starAlignment });
+            if (!isLink && !isSpeedSkill) await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
             await drawPredefinedMark({

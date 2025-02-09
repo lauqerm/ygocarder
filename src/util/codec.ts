@@ -279,7 +279,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
         migratedCard.hasBackground = true;
     }
 
-    if (card.isLink == null && card.frame === 'link') {
+    if (migratedCard.isLink == null && migratedCard.frame === 'link') {
         migratedCard.isLink = true;
     }
 

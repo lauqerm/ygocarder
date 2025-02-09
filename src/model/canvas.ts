@@ -45,8 +45,10 @@ export const CanvasConst = {
     width: 813,
     height: 1185,
     topToPendulumStructure: 210,
+    topToArtFrame: 213,
     pendulumStructureHeight: 912,
     leftToPendulumStructure: 52,
+    cardBorder: 28,
 };
 
 export const DEFAULT_BASE_FILL_COLOR = '#404040';
@@ -61,6 +63,7 @@ export const getDefaultCardOpacity = () => ({
     boundless: false,
 });
 export type CardOpacity = ReturnType<typeof getDefaultCardOpacity>;
+export type CardArtCanvasCoordinate = typeof CardArtCanvasCoordinateMap[keyof typeof CardArtCanvasCoordinateMap];
 export const CardArtCanvasCoordinateMap = {
     normal: {
         artFinishX: 100,
@@ -69,6 +72,11 @@ export const CardArtCanvasCoordinateMap = {
         artX: 100,
         artY: 219,
         ratio: 1,
+        /** Actual size of the art frame on the card, does not affected by creative art position such as boundless art. */
+        artFrameWidth: 614,
+        artFrameHeight: 614,
+        artFrameY: 219,
+        artRatio: 1,
         type: 'normal' as const,
     },
     pendulum: {
@@ -78,6 +86,10 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 1.325,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artRatio: 1.325,
         type: 'pendulum' as const,
     },
     /** Normal distribution, with artwork extends under effect's box. */
@@ -88,6 +100,10 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 0.775,
+        artFrameWidth: 614,
+        artFrameHeight: 614,
+        artFrameY: 219,
+        artRatio: 1,
         type: 'extendedCard' as const,
     },
     /** Pendulum distribution, with artwork extends under pendulum effect's box and effect's box. */
@@ -98,6 +114,10 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 0.775,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artRatio: 1.325,
         type: 'extendedPendulum' as const,
     },
     /** Pendulum distribution, with artwork extends under pendulum effect's box. It is actually the "default" mode of pendulum cards in practices. But most of the time the artwork only cut the visible image part because it is very hard to find the full image of a card unless an official source provide it. */
@@ -108,6 +128,10 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 1.057,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artRatio: 1.325,
         type: 'truePendulum' as const,
     },
     /** Normal distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
@@ -118,6 +142,10 @@ export const CardArtCanvasCoordinateMap = {
         artX: 28,
         artY: 28,
         ratio: 0.670,
+        artFrameWidth: 614,
+        artFrameHeight: 614,
+        artFrameY: 219,
+        artRatio: 1,
         type: 'fullCard' as const,
     },
     /** Pendulum distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
@@ -128,6 +156,10 @@ export const CardArtCanvasCoordinateMap = {
         artX: 28,
         artY: 28,
         ratio: 0.670,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artRatio: 1.325,
         type: 'fullPendulum' as const,
     },
 };

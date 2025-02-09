@@ -82,7 +82,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
     const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(
-                curr => ({
+            curr => ({
                 ...curr,
                 backgroundCrop: cropInfo,
             }),

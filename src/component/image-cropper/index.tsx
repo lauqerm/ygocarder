@@ -68,16 +68,33 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
     /** Avoid recalculate if current ratio is in acceptable limit, so we don't cascade calculation error */
     const acceptableError = (naturalHeight > naturalWidth ? naturalHeight : naturalWidth) * 0.05;
     const isRatioAcceptable = Math.abs(height * naturalHeight * ratio - width * naturalWidth) <= acceptableError;
+    const nextHeight = isRatioAcceptable
+        ? height
+        : width * image.naturalWidth /** Restore original size */
+            / ratio /** Get height with corresponding aspect ratio */
+            / image.naturalHeight /** Convert back to percent */;
+
+    /** If next height exceed the current image, we resize and center everything so it fit the current image */
+    const oversizeRatio = nextHeight / 100;
+    const normalizedHeight = oversizeRatio > 1
+        ? 100
+        : nextHeight;
+    const normalizedWidth = oversizeRatio > 1
+        ? width / oversizeRatio
+        : width;
+    const normalizedX = oversizeRatio > 1
+        ? (100 - normalizedWidth) / 2
+        : (x < 0 ? 0 : x);
+    const normalizedY = oversizeRatio > 1
+        ? 0
+        : (y < 0 ? 0 : y);
 
     return {
         ...crop,
-        x: x < 0 ? 0 : x,
-        y: y < 0 ? 0 : y,
-        height: isRatioAcceptable
-            ? height
-            : width * image.naturalWidth /** Restore original size */
-            / ratio /** Get height with corresponding aspect ratio */
-            / image.naturalHeight /** Convert back to percent */,
+        x: normalizedX,
+        y: normalizedY,
+        height: normalizedHeight,
+        width: normalizedWidth,
         aspect: ratio,
     };
 };
@@ -488,11 +505,15 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 {(hasImage && !error) && <div className="card-image-option">
                     <div
                         className={mergeClass('image-option force-fit-option', forceFit ? 'option-active' : '')}
-                        onClick={() => onForceFitChange(!forceFit)}
+                        onClick={() => {
+                            setInteracted(true);
+                            onForceFitChange(!forceFit);
+                        }}
                     >
                         <FullscreenOutlined />
                     </div>
                     {!forceFit && <div className="image-option alignment-center-option" onClick={() => {
+                        setInteracted(true);
                         setCrop(cur => {
                             const { width, x } = cur.completed ?? {};
 
@@ -511,6 +532,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         <VerticalAlignMiddleOutlined />
                     </div>}
                     {!forceFit && <div className="image-option alignment-middle-option" onClick={() => {
+                        setInteracted(true);
                         setCrop(cur => {
                             const { height, y } = cur.completed ?? {};
 
