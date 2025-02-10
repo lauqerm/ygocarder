@@ -10,7 +10,7 @@ import {
     CloseOutlined,
     UnorderedListOutlined,
     LoadingOutlined,
-    FilterOutlined,
+    // FilterOutlined,
 } from '@ant-design/icons';
 import { cardListToCsv } from 'src/service';
 import { downloadBlob } from 'src/util';
@@ -42,23 +42,28 @@ const StyledCardManagerDrawer = styled(Drawer)`
         background-color: #484848;
     }
 
-    .manager-button {
-        cursor: pointer;
-        input {
-            display: none;
-        }
-        &:hover {
-            color: var(--main-active);
-        }
-        &.close-button:hover {
-            color: var(--main-danger);
-        }
-    }
     .manager-label-container {
         padding: var(--spacing-sm) 0 0 var(--spacing-sm);
     }
     .manager-button-container {
         padding: var(--spacing-sm) var(--spacing-sm) 0 var(--spacing-sm);
+        .manager-button {
+            cursor: pointer;
+            input {
+                display: none;
+            }
+            &:hover {
+                color: var(--main-active);
+                .anticon {
+                    color: var(--main-active);
+                }
+            }
+            &.close-button:hover {
+                .anticon {
+                    color: var(--main-danger);
+                }
+            }
+        }
     }
     .card-manager-header {
         display: grid;
@@ -217,13 +222,13 @@ export const CardManagerPanel = forwardRef(({
                             <UnorderedListOutlined />
                         </div>
                     </Dropdown>
-                    <Tooltip title={language['manager.header.button.filter.tooltip']}>
+                    {/* <Tooltip title={language['manager.header.button.filter.tooltip']}>
                         <div
                             className="manager-button"
                         >
                             <FilterOutlined />
                         </div>
-                    </Tooltip>
+                    </Tooltip> */}
                     <Tooltip title={language['manager.header.button.download.tooltip']}>
                         <div
                             className="manager-button"
