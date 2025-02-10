@@ -1,11 +1,13 @@
 import { LanguageDataDictionary, useCardList } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { CardThumb } from './card-thumb';
+import { CardThumb, THUMB_SIZE } from './card-thumb';
 import { useEffect, useState } from 'react';
 import { getEmptyCard, InternalCard } from 'src/model';
 import { v4 as uuid } from 'uuid';
 import styled from 'styled-components';
 import { Button } from 'antd';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { ListChildComponentProps, FixedSizeList as List } from 'react-window';
 
 const StyledManagerCardList = styled.div`
     display: flex;
@@ -14,6 +16,17 @@ const StyledManagerCardList = styled.div`
     .list-container {
         flex: 1;
         overflow: auto;
+    }
+    .no-card {
+        padding: var(--spacing);
+        text-align: center;
+        .reset-filter {
+            cursor: pointer;
+            color: var(--main-active);
+            &:hover {
+                color: var(--sub-active);
+            }
+        }
     }
     .add-card {
         flex: 0;
@@ -26,6 +39,41 @@ const StyledManagerCardList = styled.div`
         }
     }
 `;
+type CardThumbRowData = {
+    list: InternalCard[],
+    activeId: string,
+    language: LanguageDataDictionary,
+    onDuplicate: (card: InternalCard) => void,
+    onDownload: (card: InternalCard) => void,
+    onSelect: (card: InternalCard) => void,
+    onDelete: (id: string) => void,
+}
+const CardThumbRow = ({
+    data,
+    index,
+    style,
+}: ListChildComponentProps<CardThumbRowData>) => {
+    const {
+        activeId,
+        language,
+        list,
+        onDelete,
+        onDownload,
+        onDuplicate,
+        onSelect,
+    } = data;
+
+    return <CardThumb
+        card={list[index]}
+        active={list[index].id === activeId}
+        language={language}
+        onDuplicate={onDuplicate}
+        onSelect={onSelect}
+        onDownload={onDownload}
+        onDelete={onDelete}
+        style={style}
+    />;
+};
 
 /**
  * Be careful, all callbacks for card thumb here must be memoized.
@@ -44,19 +92,22 @@ export const ManagerCardList = ({
 }: ManagerCardList) => {
     const {
         activeId,
-        cardList,
+        cardDisplayList,
         deleteCard,
         duplicateCard,
+        resetFilter,
     } = useCardList(useShallow(({
         activeId,
-        cardList,
+        cardDisplayList,
         deleteCard,
         duplicateCard,
+        resetFilter,
     }) => ({
         activeId,
-        cardList,
+        cardDisplayList,
         deleteCard,
         duplicateCard,
+        resetFilter,
     })));
     const [reselectCnt, setReselectCnt] = useState(0);
 
@@ -92,7 +143,30 @@ export const ManagerCardList = ({
         }}
     >
         <div className="list-container">
-            {cardList.map(card => <CardThumb
+            <AutoSizer>
+                {({ height, width }) => (
+                    <List<CardThumbRowData>
+                        className="List"
+                        height={height}
+                        itemCount={cardDisplayList.length}
+                        itemSize={THUMB_SIZE}
+                        itemData={{
+                            list: cardDisplayList,
+                            language,
+                            activeId,
+                            onDuplicate: duplicateCard,
+                            onSelect: onSelect,
+                            onDownload: onDownload,
+                            onDelete: deleteAndReselect,
+                        }}
+                        overscanCount={5}
+                        width={width}
+                    >
+                        {CardThumbRow}
+                    </List>
+                )}
+            </AutoSizer>
+            {/* {cardDisplayList.map(card => <CardThumb
                 key={card.id}
                 card={card}
                 active={card.id === activeId}
@@ -101,8 +175,14 @@ export const ManagerCardList = ({
                 onSelect={onSelect}
                 onDownload={onDownload}
                 onDelete={deleteAndReselect}
-            />)}
+            />)} */}
         </div>
+        {cardDisplayList.length === 0 && <div className="no-card">
+            <div>{language['manager.button.search.no-card.message']}</div>
+            <div className="reset-filter" onClick={resetFilter}>
+                {language['manager.button.search.button.reset.label']}
+            </div>
+        </div>}
         <Button
             className="add-card"
             onClick={onRequestImport}

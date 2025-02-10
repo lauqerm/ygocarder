@@ -1,8 +1,9 @@
 import { clone } from 'ramda';
 import { Card, FrameInfoMap, InternalCard } from 'src/model';
 import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { v4 as uuid } from 'uuid';
-import { checkSpeedSkill, isCardDataEqual } from 'src/util';
+import { checkSpeedSkill, isCardDataEqual, normalizeCardEffect, normalizeCardName } from 'src/util';
 
 const compareInt = (statLeft: string | number | undefined, statRight: string | number | undefined) => {
     const parsedStatLeft = typeof statLeft === 'string' ? parseInt(statLeft) : statLeft;
@@ -171,45 +172,92 @@ export const SortFunctionMap = {
         },
     },
 } as const;
-const defaultFilterFunction = (card: InternalCard) => card;
+const applyFilter = (
+    cardList: InternalCard[],
+    filterMap: Partial<Record<CardFilterType, (cardList: InternalCard[]) => InternalCard[]>>,
+) => {
+    const filterList = Object
+        .values(filterMap)
+        .filter((entry): entry is (cardList: InternalCard[]) => InternalCard[] => entry != null);
+
+    if (filterList.length === 0) return cardList;
+    return filterList.reduce((filteredList, currentFilter) => {
+        return currentFilter(filteredList);
+    }, cardList);
+};
+type CardFilter = {
+    type: 'text',
+    value: string,
+};
+type CardFilterType = CardFilter['type'];
 export type CardListStore = {
+    activeId: string,
+    cardDisplayList: InternalCard[],
+    cardList: InternalCard[],
+    filterFunctionMap: Partial<Record<CardFilterType, (cardList: InternalCard[]) => InternalCard[]>>,
+    filterResetSignal: number,
     isListDirty: boolean,
     listName: string,
-    visible: boolean,
-    activeId: string,
-    cardList: InternalCard[],
-    cardDisplayList: InternalCard[],
     pendingActiveCard?: InternalCard,
-    filterFunction: (cardList: InternalCard) => InternalCard,
+    visible: boolean,
     addCard: (card: Card) => void,
     changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
     changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
     deleteCard: (id: string) => void,
     duplicateCard: (card: Card, ) => void,
+    resetFilter: () => void,
     setActiveId: (id: string) => void,
     setCardList: (cardList: InternalCard[], activeId?: string) => void,
+    setFilterFunction: (type: CardFilter) => void,
     setListName: (name: string) => void,
-    setFilterFunction: (func: (card: InternalCard) => InternalCard) => void,
     setPendingActiveCard: (card?: InternalCard) => void,
     sortList: (type: keyof typeof SortFunctionMap) => void,
     toggleVisible: (status?: boolean) => void,
 };
-export const useCardList = create<CardListStore>((set) => {
+export const useCardList = create<
+    CardListStore,
+    [['zustand/subscribeWithSelector', never]]
+>(subscribeWithSelector((set) => {
     return {
+        activeId: '',
+        cardDisplayList: [],
+        cardList: [],
+        filterFunctionMap: {},
+        filterResetSignal: 0,
         isListDirty: false,
         listName: 'card-list',
-        visible: localStorage.getItem('manager-panel-visible') === 'true',
-        activeId: '',
-        cardList: [],
-        cardDisplayList: [],
         pendingActiveCard: undefined,
-        filterFunction: defaultFilterFunction,
-        setFilterFunction: nextFilterFunction => set(({
+        visible: localStorage.getItem('manager-panel-visible') === 'true',
+        setFilterFunction: ({ type, value }) => set(({
             cardList,
-        }) => ({
-            filterFunction: nextFilterFunction,
-            cardDisplayList: cardList.filter(nextFilterFunction),
-        })),
+            filterFunctionMap,
+        }) => {
+            const nextFilterFunctionMap = { ...filterFunctionMap };
+            if (type === 'text') {
+                const normalizedValue = value.toLowerCase();
+                nextFilterFunctionMap[type] = cardList => {
+                    return cardList.filter(({ name, effect, pendulumEffect }) => {
+                        return (normalizeCardName(name).toLowerCase()
+                            + normalizeCardEffect(effect).toLowerCase()
+                            + normalizeCardEffect(pendulumEffect).toLowerCase()).includes(normalizedValue);
+                    });
+                };
+            }
+
+            return {
+                filterFunctionMap: nextFilterFunctionMap,
+                cardDisplayList: applyFilter(cardList, nextFilterFunctionMap),
+            };
+        }),
+        resetFilter: () => {
+            set(({ filterResetSignal, cardList }) => {
+                return {
+                    filterFunctionMap: {},
+                    filterResetSignal: filterResetSignal + 1,
+                    cardDisplayList: [...cardList],
+                };
+            });
+        },
         addCard: card => set(({ cardList }) => {
             const id = uuid();
             const newCard = { id, ...card };
@@ -229,7 +277,7 @@ export const useCardList = create<CardListStore>((set) => {
         setListName: name => set({ listName: name }),
         setPendingActiveCard: card => set({ pendingActiveCard: card }),
         changeActiveCard: (nextActiveCard, checkPurity = false) => {
-            set(({ cardList, isListDirty }) => {
+            set(({ cardList, cardDisplayList, isListDirty }) => {
                 let nextIsListDirty = isListDirty;
 
                 /** There is multiple interactions that does not change list's purity, such as switch card inside the current list, or automatic adjustment of cropped canvas upon receiving new image. */
@@ -244,10 +292,14 @@ export const useCardList = create<CardListStore>((set) => {
                     if (card.id === nextActiveCard.id) return { ...nextActiveCard };
                     return card;
                 });
+                const nextCardDisplayList = cardDisplayList.map(card => {
+                    if (card.id === nextActiveCard.id) return { ...nextActiveCard };
+                    return card;
+                });
                 return {
                     isListDirty: nextIsListDirty,
                     cardList: nextCardList,
-                    cardDisplayList: [...nextCardList],
+                    cardDisplayList: nextCardDisplayList,
                 };
             });
         },
@@ -255,7 +307,7 @@ export const useCardList = create<CardListStore>((set) => {
         setCardList: (cardList, activeId) => {
             /** Reset all filter each time a new list is coming */
             set({
-                filterFunction: defaultFilterFunction,
+                filterFunctionMap: {},
                 isListDirty: false,
                 activeId: activeId ?? cardList[0]?.id,
                 cardList: cardList,
@@ -279,36 +331,28 @@ export const useCardList = create<CardListStore>((set) => {
             });
         },
         duplicateCard: card => {
-            set(({ cardList, cardDisplayList }) => {
-                const targetIndex = cardDisplayList.findIndex(({ name }) => name === card.name);
+            set(({ cardList, filterFunctionMap }) => {
+                const targetIndex = cardList.findIndex(({ name }) => name === card.name);
                 const clonedId = uuid();
                 const clonedCard = {
                     ...clone(card),
                     name: `${card.name} - Copy`,
                     id: clonedId,
                 };
-
-                if (targetIndex < 0) return {
-                    activeId: clonedId,
-                    pendingActiveCard: clonedCard,
-                    cardList: [...cardList, clonedCard],
-                    cardDisplayList: [...cardDisplayList, clonedCard],
-                };
-                return {
-                    activeId: clonedId,
-                    pendingActiveCard: clonedCard,
-                    cardList: [
+                const nextCardList = targetIndex < 0
+                    ? [...cardList, clonedCard]
+                    : [
                         ...cardList.slice(0, targetIndex),
                         cardList[targetIndex],
                         clonedCard,
                         ...cardList.slice(targetIndex + 1, cardList.length),
-                    ],
-                    cardDisplayList: [
-                        ...cardDisplayList.slice(0, targetIndex),
-                        cardDisplayList[targetIndex],
-                        clonedCard,
-                        ...cardDisplayList.slice(targetIndex + 1, cardDisplayList.length),
-                    ],
+                    ];
+
+                return {
+                    activeId: clonedId,
+                    pendingActiveCard: clonedCard,
+                    cardList: nextCardList,
+                    cardDisplayList: applyFilter(nextCardList, filterFunctionMap),
                 };
             });
         },
@@ -322,6 +366,6 @@ export const useCardList = create<CardListStore>((set) => {
             });
         },
     };
-});
+}));
 
 export * from './csv';

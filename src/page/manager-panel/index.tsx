@@ -17,6 +17,7 @@ import { downloadBlob } from 'src/util';
 import { InternalCard } from 'src/model';
 import Papa from 'papaparse';
 import { ManagerSample } from './manager-sample';
+import debounce from 'lodash.debounce';
 
 const StyledCardManagerPanel = styled.div`
     position: absolute;
@@ -98,6 +99,7 @@ export const CardManagerPanel = forwardRef(({
         pendingActiveCard,
         setActiveId,
         setCardList,
+        setFilterFunction,
         setPendingActiveCard,
         sortList,
         toggleVisible,
@@ -108,6 +110,7 @@ export const CardManagerPanel = forwardRef(({
         pendingActiveCard,
         setActiveId,
         setCardList,
+        setFilterFunction,
         setPendingActiveCard,
         sortList,
         toggleVisible,
@@ -118,6 +121,7 @@ export const CardManagerPanel = forwardRef(({
         pendingActiveCard,
         setActiveId,
         setCardList,
+        setFilterFunction,
         setPendingActiveCard,
         sortList,
         toggleVisible,
@@ -125,6 +129,9 @@ export const CardManagerPanel = forwardRef(({
     })));
     const [inputKey, setInputKey] = useState(0);
     const [readingFile, setReadingFile] = useState(false);
+    const debounceSearch = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterFunction({ type: 'text', value: e.target.value });
+    }, 250);
 
     const activeCard = useCallback((card: InternalCard) => {
         onSelect(card);
@@ -143,6 +150,21 @@ export const CardManagerPanel = forwardRef(({
         localStorage.setItem('manager-panel-visible', visible.toString());
         onVisibleChange(visible);
     }, [onVisibleChange, visible]);
+
+    useEffect(() => {
+        const unsub = useCardList.subscribe(
+            state => state.filterResetSignal,
+            nextSignal => {
+                if (nextSignal) {
+                    setInputKey(cnt => cnt + 1);
+                }
+            }
+        );
+
+        return () => {
+            unsub();
+        };
+    }, []);
 
     /** Currently no need for direct control */
     useImperativeHandle(ref, () => ({}), []);
@@ -283,7 +305,12 @@ export const CardManagerPanel = forwardRef(({
                     </div>
                 </div>
                 <div className="card-manager-filter">
-                    <Input className="card-manager-search" placeholder={language['manager.button.search.text.placeholder']} />
+                    <Input key={`search-${inputKey}`}
+                        className="card-manager-search"
+                        placeholder={language['manager.button.search.text.placeholder']}
+                        onChange={debounceSearch}
+                        allowClear
+                    />
                 </div>
             </div>}
             visible={visible}
@@ -305,11 +332,8 @@ export const CardManagerPanel = forwardRef(({
 });
 
 const StyledCardManagerMonitor = styled.div`
-    line-height: 1;
     .header-warning {
-        margin-left: var(--spacing-xs);
-        font-size: var(--fs-sm);
-        font-weight: normal;
+        color: var(--main-danger);
     }
 `;
 type CardManagerMonitor = {
@@ -347,8 +371,6 @@ const CardManagerMonitor = ({
     }, [cardList.length, isListDirty, language]);
 
     return <StyledCardManagerMonitor {...rest}>
-        {children}{(isListDirty && cardList.length > 1) && <span className="header-warning">
-            {language['manager.header.warning.unsaved']}
-        </span>}
+        {children}{(isListDirty && cardList.length > 1) && <span className="header-warning">&nbsp;*</span>}
     </StyledCardManagerMonitor>;
 };

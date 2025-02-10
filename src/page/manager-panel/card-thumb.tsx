@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import ReactCrop from 'react-image-crop';
 
 const THUMB_ART_SIZE = 56;
-const THUMB_SIZE = 68;
+export const THUMB_SIZE = 68;
 const {
     height: cardHeight,
     width: cardWidth,
@@ -224,6 +224,7 @@ export type CardThumb = {
     onDownload: (card: InternalCard) => void,
     onSelect: (card: InternalCard) => void,
     onDelete: (id: string) => void,
+    style?: React.CSSProperties,
 }
 export const CardThumb = ({
     card,
@@ -233,6 +234,7 @@ export const CardThumb = ({
     onSelect,
     onDelete,
     onDownload,
+    style,
 }: CardThumb) => {
     const [actionVisible, setActionVisible] = useState<boolean>(false);
     const {
@@ -292,6 +294,7 @@ export const CardThumb = ({
     return <StyledCardThumb
         className={mergeClass('truncate', active ? 'active' : '')}
         onClick={() => onSelect(card)}
+        style={style}
     >
         <div
             className="left-slot"
