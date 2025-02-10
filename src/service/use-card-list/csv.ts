@@ -536,7 +536,7 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                     fillStyle: normalizeColor(reader('Name Style - Fill Style'), emptyNameStyle.fillStyle),
                     font: reader('Name Style - Font') ?? emptyNameStyle.font,
                     gradientAngle: normalizeInt(reader('Name Style - Gradient Angle'), emptyNameStyle.gradientAngle),
-                    gradientColor: normalizeColor(reader('Name Style - Gradient Color'), emptyNameStyle.gradientColor),
+                    gradientColor: reader('Name Style - Gradient Color') ?? emptyNameStyle.gradientColor,
                     hasGradient: normalizeBoolean(reader('Name Style - Has Gradient'), emptyNameStyle.hasGradient),
                     hasOutline: normalizeBoolean(reader('Name Style - Has Outline'), emptyNameStyle.hasOutline),
                     hasShadow: normalizeBoolean(reader('Name Style - Has Shadow'), emptyNameStyle.hasShadow),
@@ -662,6 +662,7 @@ export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] =
                     typeTextStyle,
                 };
             })
+            // .map(migrateCardData)
             .filter(entry => {
                 return entry != null;
             });

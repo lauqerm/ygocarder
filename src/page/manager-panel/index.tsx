@@ -282,6 +282,7 @@ export const CardManagerPanel = forwardRef(({
                                         Papa.parse<string[]>(fileList[0], {
                                             complete(result) {
                                                 const nextCardList = csvToCardList(result);
+
                                                 if (nextCardList.length > 0) {
                                                     setCardList(nextCardList, nextCardList[0].id);
                                                     setInputKey(cnt => cnt + 1);

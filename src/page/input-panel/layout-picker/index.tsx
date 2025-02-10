@@ -221,7 +221,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     })));
     const [backgroundInputVisible, setBackgroundInputVisible] = useState(true);
     const [backgroundInputHidden, setBackgroundInputHidden] = useState(true);
-    const [opacity, setOpacity] = useState({ ...getDefaultCardOpacity(), ...defaultValue });
+    const [opacity, setOpacity] = useState(() => ({ ...getDefaultCardOpacity(), ...defaultValue }));
     const backgroundInputRef = useRef<BackgroundInputGroupRef>(null);
 
     const changeBackgroundType = useMemo(() => getUpdater('backgroundType'), [getUpdater]);
@@ -263,7 +263,9 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             }
             for (const key in newValue) {
                 if (newValue[key as keyof CardOpacity] !== opacity[key as keyof CardOpacity]) {
-                    setOpacity(cur => ({ ...cur, ...newValue }));
+                    setOpacity(cur => {
+                        return { ...cur, ...newValue };
+                    });
                 }
             }
         }

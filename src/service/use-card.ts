@@ -120,7 +120,8 @@ export const retrieveSavedCard = (): InternalCard => {
              *   * If they re-open the tab, the latest tab already save before being closed, so re-open it restore the exact image.
              *   * If they close multiple tab, and want to re-open the one that is not the latest tab, we have no luck here.
              */
-            const { card } = decodeCard(urlCardData);
+            const { card: decodedCard } = decodeCard(urlCardData);
+            const card = migrateCardData(decodedCard);
             const { artSource, backgroundSource } = card;
             if (artSource === 'online' && backgroundSource === 'online') {
                 return decodeCard(urlCardData).card;

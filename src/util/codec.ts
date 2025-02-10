@@ -268,6 +268,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
         delete (migratedCard.opacity as any).artFrame;
     }
     migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
+    delete (migratedCard.opacity as any).artFrame;
 
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
     if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';

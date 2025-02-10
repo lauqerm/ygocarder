@@ -154,7 +154,7 @@ export const ManagerSample = ({
                     className="download-button"
                 >
                     <a
-                        href="https://www.w3schools.com/TAgs/att_a_download.asp"
+                        href={process.env.REACT_APP_TEMPLATE_FILE}
                         target="_blank"
                         rel="noreferrer"
                         download
