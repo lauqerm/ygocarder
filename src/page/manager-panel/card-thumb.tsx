@@ -51,7 +51,7 @@ const StyledCardThumb = styled.div`
         display: grid;
         grid-template-columns: 1fr;
         row-gap: var(--spacing-xxs);
-        line-height: 1;
+        line-height: 1.25;
         overflow: hidden;
         padding: var(--spacing-xs);
         border-left: var(--bw) solid var(--main-level-3);
