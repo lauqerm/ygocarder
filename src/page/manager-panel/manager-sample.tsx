@@ -23,8 +23,8 @@ import copy from 'copy-to-clipboard';
 const { Panel } = Collapse;
 const StyledToggleButton = styled.div`
     font-weight: normal;
-    font-variant: small-caps;
     letter-spacing: -0.75px;
+    font-size: var(--fs-lg);
 `;
 const StyledMono = styled(StyledCode)`
     display: inline-block;
@@ -171,8 +171,8 @@ export const ManagerSample = ({
                     >
                         <table className="option-container">
                             <tr>
-                                <th><b>Field Name</b></th>
-                                <th><b>Available Values</b></th>
+                                <th><b>{language['manager.template.header.field.label']}</b></th>
+                                <th><b>{language['manager.template.header.value.label']}</b></th>
                             </tr>
                             {[
                                 {

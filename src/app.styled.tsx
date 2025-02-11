@@ -32,7 +32,6 @@ export const StyledDataButtonPanelContainer = styled.div`
         box-shadow: var(--bs-button);
         height: 39px; // Alignment
         line-height: 1;
-        transform: translateY(-1px);
         &:focus, &:active {
             color: white;
         }

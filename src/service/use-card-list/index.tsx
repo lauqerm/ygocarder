@@ -357,11 +357,14 @@ export const useCardList = create<
             });
         },
         sortList: type => {
-            set(({ cardDisplayList }) => {
-                const sortedList = SortFunctionMap[type].sortFunction(cardDisplayList);
+            set(({ cardDisplayList, cardList }) => {
+                const sortedDisplayList = SortFunctionMap[type].sortFunction(cardDisplayList);
+                const sortedList = SortFunctionMap[type].sortFunction(cardList);
 
                 return {
-                    cardDisplayList: sortedList,
+                    cardDisplayList: sortedDisplayList,
+                    /** We must also sort the main list here, because user can export the file right after sort, which should be reflect the current sort they see on the screen */
+                    cardList: sortedList,
                 };
             });
         },

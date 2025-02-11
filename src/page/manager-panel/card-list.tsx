@@ -64,6 +64,7 @@ const CardThumbRow = ({
     } = data;
 
     return <CardThumb
+        index={index}
         card={list[index]}
         active={list[index].id === activeId}
         language={language}

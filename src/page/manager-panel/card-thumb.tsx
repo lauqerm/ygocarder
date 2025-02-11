@@ -35,7 +35,7 @@ const StyledCardThumb = styled.div`
     z-index: 1;
     height: ${THUMB_SIZE}px;
     font-size: var(--fs-thumb);
-    &:nth-child(2n) {
+    &.alternative-color {
         background-color: #282828;
     }
     &.active {
@@ -217,6 +217,7 @@ const StyledCardThumb = styled.div`
     }
 `;
 export type CardThumb = {
+    index: number,
     card: InternalCard,
     active: boolean,
     language: LanguageDataDictionary,
@@ -227,6 +228,7 @@ export type CardThumb = {
     style?: React.CSSProperties,
 }
 export const CardThumb = ({
+    index,
     card,
     active,
     language,
@@ -292,7 +294,11 @@ export const CardThumb = ({
     } = canvasCoordinate;
 
     return <StyledCardThumb
-        className={mergeClass('truncate', active ? 'active' : '')}
+        className={mergeClass(
+            'truncate',
+            active ? 'active' : '',
+            index % 2 === 0 ? 'alternative-color' : '',
+        )}
         onClick={() => onSelect(card)}
         style={style}
     >

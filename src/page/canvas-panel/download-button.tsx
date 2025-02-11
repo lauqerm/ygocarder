@@ -31,12 +31,13 @@ const StyledDownloadButton = styled(Button)`
     .button-label {
         height: 100%; // Alignment
         align-content: center;
-        border-radius: var(--br);
+        border-radius: var(--br-lg);
         line-height: 1.5;
         .label-content {
             padding: 4px 15px;
-            border: var(--bw) solid var(--sub-secondary);
+            border: var(--bw) solid transparent;
             border-radius: var(--br-lg);
+            line-height: 29px; // Alignment
         }
     }
     .button-option {

@@ -264,8 +264,11 @@
 			}
 			.button-label {
 				/** Alginment with resolution dropdown) */
-				--resolution-dropdown-width: 45px;
-				padding: 0 calc(var(--resolution-dropdown-width) + var(--spacing-sm)) 0 var(--spacing-sm);
+				--resolution-dropdown-width: 44px;
+				padding: 0 var(--resolution-dropdown-width) 0 0;
+				.label-content {
+					border-radius: var(--br-lg) 0 0 var(--br-lg);
+				}
 			}
 			.imexport {
 				flex: 0 0 185px;

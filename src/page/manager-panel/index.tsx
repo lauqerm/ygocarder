@@ -13,12 +13,13 @@ import {
     // FilterOutlined,
 } from '@ant-design/icons';
 import { cardListToCsv } from 'src/service';
-import { downloadBlob } from 'src/util';
+import { downloadBlob, getNaivePseudoRandomizer } from 'src/util';
 import { InternalCard } from 'src/model';
 import Papa from 'papaparse';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
 
+const chanceToRemindBackup = getNaivePseudoRandomizer();
 const StyledCardManagerPanel = styled.div`
     position: absolute;
     right: 0;
@@ -233,14 +234,21 @@ export const CardManagerPanel = forwardRef(({
                         <div
                             className="manager-button"
                             onClick={async () => {
-                                const csvdata = cardListToCsv(useCardList.getState().cardList);
+                                let wouldDownload = true;
+                                if (chanceToRemindBackup.check()) {
+                                    wouldDownload = window.confirm(language['prompt.remind.backup.label']);
+                                }
 
-                                downloadBlob(
-                                    useCardList.getState().listName,
-                                    new Blob([csvdata], { type: 'text/csv' }),
-                                    'text/csv',
-                                );
-                                changeEditStatus('download');
+                                if (wouldDownload) {
+                                    const csvdata = cardListToCsv(useCardList.getState().cardList);
+    
+                                    downloadBlob(
+                                        useCardList.getState().listName,
+                                        new Blob([csvdata], { type: 'text/csv' }),
+                                        'text/csv',
+                                    );
+                                    changeEditStatus('download');
+                                }
                             }}
                         >
                             <DownloadOutlined />
@@ -322,6 +330,7 @@ export const CardManagerPanel = forwardRef(({
             visible={visible}
             maskClosable={false}
             mask={false}
+            destroyOnClose={false}
             forceRender={true}
             closeIcon={() => null}
             onClose={() => toggleVisible(false)}
