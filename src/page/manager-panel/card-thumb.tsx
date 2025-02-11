@@ -377,7 +377,7 @@ export const CardThumb = ({
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
                 {(!isLink && normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
-                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon}.png`}
+                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon.toLowerCase()}.png`}
                     alt="Icon"
                 />}
                 {(!isLink && !isSpeedSkill && normalizedCardIconType !== 'st') && <span
