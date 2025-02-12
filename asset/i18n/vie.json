@@ -28,6 +28,7 @@
         "button.import.label": "Mở",
         "button.import.merge.label": "Kết hợp",
         "button.import.tooltip": "Tải lên",
+        "button.empty.label": "Tạo thẻ trắng",
         "button.randomize.label": "Sinh ngẫu nhiên",
         "button.reset.tooltip": "Xóa thẻ",
         "contributor.bug-report.cancel.label": "Hủy",
