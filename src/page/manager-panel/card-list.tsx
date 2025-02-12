@@ -167,16 +167,6 @@ export const ManagerCardList = ({
                     </List>
                 )}
             </AutoSizer>
-            {/* {cardDisplayList.map(card => <CardThumb
-                key={card.id}
-                card={card}
-                active={card.id === activeId}
-                language={language}
-                onDuplicate={duplicateCard}
-                onSelect={onSelect}
-                onDownload={onDownload}
-                onDelete={deleteAndReselect}
-            />)} */}
         </div>
         {cardDisplayList.length === 0 && <div className="no-card">
             <div>{language['manager.button.search.no-card.message']}</div>

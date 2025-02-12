@@ -15,9 +15,9 @@ import {
 import { cardListToCsv } from 'src/service';
 import { downloadBlob, getNaivePseudoRandomizer } from 'src/util';
 import { InternalCard } from 'src/model';
-import Papa from 'papaparse';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
+import XLSX from 'xlsx';
 
 const chanceToRemindBackup = getNaivePseudoRandomizer();
 const StyledCardManagerPanel = styled.div`
@@ -267,9 +267,13 @@ export const CardManagerPanel = forwardRef(({
                             <input key={`upload-${inputKey}`} ref={listUploadRef}
                                 type="file"
                                 id={listUploadId}
-                                accept=".csv"
+                                accept={[
+                                    '.csv',
+                                    'application/vnd.ms-excel',
+                                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                ].join(',')}
                                 className="import-upload-input"
-                                onChange={async () => {
+                                onChange={async (e) => {
                                     const fileList = listUploadRef.current?.files;
                                     const { isListDirty } = useCardList.getState();
                                     const announceError = () => {
@@ -287,21 +291,29 @@ export const CardManagerPanel = forwardRef(({
                                     }
                                     if (willImport && fileList && fileList[0]) {
                                         setReadingFile(true);
-                                        Papa.parse<string[]>(fileList[0], {
-                                            complete(result) {
-                                                const nextCardList = csvToCardList(result);
+                                        try {
+                                            const file = await fileList[0].arrayBuffer();
 
-                                                if (nextCardList.length > 0) {
-                                                    setCardList(nextCardList, nextCardList[0].id);
-                                                    setInputKey(cnt => cnt + 1);
-                                                    onSelect(nextCardList[0]);
-                                                    setReadingFile(false);
-                                                } else {
-                                                    announceError();
-                                                }
-                                            },
-                                            error: announceError,
-                                        });
+                                            /** Assume data from only the very first sheet */
+                                            const workbook = XLSX.read(file);
+                                            const csvBook = XLSX.utils.sheet_to_json<string[]>(
+                                                workbook.Sheets[workbook.SheetNames[0]],
+                                                { header: 1, raw: false },
+                                            );
+                                            const nextCardList = csvToCardList(csvBook);
+
+                                            if (nextCardList.length > 0) {
+                                                setCardList(nextCardList, nextCardList[0].id);
+                                                setInputKey(cnt => cnt + 1);
+                                                onSelect(nextCardList[0]);
+                                                setReadingFile(false);
+                                            } else {
+                                                announceError();
+                                            }
+                                        } catch (e) {
+                                            console.error(e);
+                                            announceError();
+                                        }
                                     } else {
                                         setInputKey(cnt => cnt + 1);
                                         setReadingFile(false);

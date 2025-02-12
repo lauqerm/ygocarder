@@ -154,7 +154,7 @@ const CsvFieldList = [
     'Art_Finish',
     'Image_Frame_Type', // Unclear
 ] as const;
-const normalizeFieldName = (field: string) => field.toLowerCase().replaceAll(' ', '').replaceAll('-', '');
+const normalizeFieldName = (field?: string) => (field ?? '').toLowerCase().replaceAll(' ', '').replaceAll('-', '');
 const CsvFieldSet = new Set(CsvFieldList.map(normalizeFieldName));
 type CsvField = typeof CsvFieldList[number];
 const analyzeExportHeader = CsvStandardFieldList.reduce((acc, field, index) => {
@@ -358,7 +358,7 @@ export const cardListToCsv = (cardList: Card[]) => {
     ].join('\n');
 };
 
-const analyzeImportHeader = (header: string[]) => {
+const analyzeImportHeader = (header: (string | undefined)[]) => {
     return header.reduce((acc, field, index) => {
         const normalizedColumnName = normalizeFieldName(field);
         if (CsvFieldSet.has(normalizedColumnName)) acc[field as CsvField] = index;
@@ -366,7 +366,7 @@ const analyzeImportHeader = (header: string[]) => {
         return acc;
     }, {} as Record<CsvField, number | undefined>);
 };
-const getCsvFieldReader = (row: string[], headerIndexMap: Record<CsvField, number | undefined>) => {
+const getCsvFieldReader = (row: (string | undefined)[], headerIndexMap: Record<CsvField, number | undefined>) => {
     return (field: CsvField) => {
         const columnIndex = headerIndexMap[field] ?? -1;
         const value = (row[columnIndex] ?? '').trim();
@@ -405,9 +405,8 @@ const normalizeColor = (value: any, fallback: string) => {
     }
     return fallback;
 };
-export const csvToCardList = (csv: Papa.ParseResult<string[]>): InternalCard[] => {
+export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] => {
     try {
-        const data = csv.data;
         const headerIndexMap = analyzeImportHeader(data[0]);
 
         return data

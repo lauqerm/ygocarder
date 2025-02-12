@@ -16,7 +16,6 @@
     "jszip": "^3.10.1",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.0.8",
-    "papaparse": "^5.5.2",
     "ramda": "^0.27.1",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
@@ -35,11 +34,13 @@
     "uuid": "^9.0.0",
     "web-vitals": "^0.2.4",
     "webfontloader": "^1.6.28",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^4.5.2"
   },
   "resolutions": {
     "@babel/core": "7.25.2",
     "@types/react": "17.0.80",
+    "postcss": "7.0.35",
     "react-error-overlay": "6.0.9"
   },
   "scripts": {
@@ -77,7 +78,6 @@
     "@types/jest": "^26.0.19",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^14.14.16",
-    "@types/papaparse": "^5.3.15",
     "@types/ramda": "^0.27.34",
     "@types/react": "^17.0.0",
     "@types/react-color": "^3.0.4",

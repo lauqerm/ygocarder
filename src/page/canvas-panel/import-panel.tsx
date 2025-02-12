@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { UploadOutlined } from '@ant-design/icons';
 import { decodeCard, LanguageDataDictionary, useCard } from 'src/service';
 import { StyledActionIconButton } from './styled';
-import { Card, YgoproDeckCard } from 'src/model';
+import { Card, getEmptyCard, YgoproDeckCard } from 'src/model';
 import { isYgoprodeckImage, uploadToImgur } from 'src/util';
 import { JSONUncrush } from 'src/3rd';
 
@@ -18,9 +18,16 @@ const StyledImportContainer = styled.div`
     .import-container-upload {
         margin-top: var(--spacing-sm);
         text-align: center;
-        .import-custom {
+        .import-custom,
+        .import-empty {
             font-size: var(--fs);
-            margin-left: var(--spacing);
+        }
+        .import-custom {
+            margin-right: var(--spacing);
+        }
+        .option-separator {
+            display: inline-block;
+            margin-right: var(--spacing);
         }
         ${StyledActionIconButton} {
             background-color: var(--main-level-4);
@@ -101,7 +108,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                     isPartial,
                 } = decodeCard(
                     cardData,
-                    mode === 'replace' ? undefined : useCard.getState().card,
+                    (mode === 'replace' || mode === 'new') ? undefined : useCard.getState().card,
                 );
 
                 if (isPartial) {
@@ -277,7 +284,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                 </div>
                 {mode !== 'merge'
                     ? <div className="import-container-upload">
-                        <span>{language['prompt.import.alternative.label']}</span>
+                        <span className="option-separator">{language['prompt.import.alternative.label']}</span>
                         <StyledActionIconButton
                             className="import-custom"
                             onClick={() => {
@@ -301,6 +308,18 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                             />
                             {language['button.import.tooltip']}
                         </StyledActionIconButton>
+                        {mode === 'new' && <>
+                            <span className="option-separator">{language['prompt.import.alternative.label']}</span>
+                            <StyledActionIconButton
+                                className="import-empty"
+                                onClick={() => {
+                                    startImport(getEmptyCard());
+                                    cleanup();
+                                }}
+                            >
+                                {language['button.empty.label']}
+                            </StyledActionIconButton>
+                        </>}
                     </div>
                     : null}
             </StyledImportContainer>

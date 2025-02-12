@@ -460,8 +460,8 @@ const calculateThumbArtStyle = (
     const croppedWidth = imageWidth * ((width ?? 0) / 100);
     const croppedHeight = imageHeight * ((height ?? 0) / 100);
 
-    const thumbToCroppedWidthRatio = thumbArtWidth / croppedWidth;
-    const thumbToCroppedHeightRatio = thumbArtHeight / croppedHeight;
+    const thumbToCroppedWidthRatio = thumbArtWidth / (croppedWidth <= 0 ? 1 : croppedWidth);
+    const thumbToCroppedHeightRatio = thumbArtHeight / (croppedHeight <= 0 ? 1 : croppedHeight);
 
     const thumbImageWidth = imageWidth * thumbToCroppedWidthRatio;
     const thumbImageHeight = imageHeight * thumbToCroppedHeightRatio;

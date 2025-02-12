@@ -285,7 +285,7 @@
         "setting.option.hotkey.label": "ホットキーを許可する",
         "setting.option.hotkey.tooltip": "警告: ホットキーを使用すると、元に戻す/やり直す機能に影響を与える可能性があります。",
         "setting.option.soft-mode.label": "色と動き減少",
-
+        "button.empty.label": "Create an Empty Card",
         "converter.header.label": "Card Data Converter",
         "error.card-max-size.description": "Maximum card size exceeded, please try a smaller image.",
         "error.card-max-size.message": "Card size exceeded",
