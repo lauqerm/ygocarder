@@ -46,23 +46,23 @@ export const useCardExport = ({
     const download = useCallback((size: [number, number] = resolution) => {
         const drawCanvas = exportCanvasRef.current;
         /** Clone node so we can resize it as will */
-        const cloneCanvas = drawCanvas?.cloneNode() as HTMLCanvasElement | null;
+        const clonedCanvas = drawCanvas?.cloneNode() as HTMLCanvasElement | null;
         const drawCanvasContext = drawCanvas?.getContext('2d');
-        const cloneCanvasContext = cloneCanvas?.getContext('2d');
+        const clonedCanvasContext = clonedCanvas?.getContext('2d');
         if (drawCanvas && drawCanvasContext
-            && cloneCanvas && cloneCanvasContext
+            && clonedCanvas && clonedCanvasContext
             && !isTainted
         ) {
             try {
                 if (size) {
-                    cloneCanvas.width = size[0];
-                    cloneCanvas.height = size[1];
+                    clonedCanvas.width = size[0];
+                    clonedCanvas.height = size[1];
                 }
                 /** Resize here */
-                cloneCanvasContext.drawImage(
+                clonedCanvasContext.drawImage(
                     drawCanvas,
                     0, 0, drawCanvas.width, drawCanvas.height,
-                    0, 0, cloneCanvas.width, cloneCanvas.height,
+                    0, 0, clonedCanvas.width, clonedCanvas.height,
                 );
 
                 const normalizedName = normalizeCardName(name);
@@ -70,7 +70,7 @@ export const useCardExport = ({
                 link.download = normalizedName
                     ? `${normalizedName}.png`
                     : 'card.png';
-                link.href = cloneCanvas.toDataURL('image/png');
+                link.href = clonedCanvas.toDataURL('image/png');
                 link.click();
             } catch (e) {
                 onDownloadError();
