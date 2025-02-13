@@ -116,6 +116,7 @@
         "input.background-image.label": "Ảnh nền",
         "input.background-type.fit.label": "Khớp khung ảnh",
         "input.background-type.full.label": "Phủ hết thẻ",
+        "input.background-type.frame.label": "Thay thế nền thẻ",
         "input.background-type.label": "Kích thước nền tranh",
         "input.background.description": "Nền tranh chỉ lộ ra khi bạn dùng ảnh trong suốt.",
         "input.background.toggle-label": "Tùy biến nền?",
