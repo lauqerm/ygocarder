@@ -242,6 +242,17 @@ export const ManagerSample = ({
                                     </div>
                                 },
                                 {
+                                    field: 'Star Type',
+                                    value: <div>
+                                        {[
+                                            'number',
+                                            'text',
+                                        ].map(value => {
+                                            return <CopiableCode key={value} data={value}>{value}</CopiableCode>;
+                                        })}
+                                    </div>
+                                },
+                                {
                                     field: 'Star Alignment',
                                     value: <div>
                                         {[

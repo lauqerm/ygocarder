@@ -95,6 +95,10 @@ const StyledLayoutPickerContainer = styled.div`
         &:hover {
             box-shadow: 0 0 2px 0 #222222;
         }
+        .background-preview-callback-passer {
+            width: 100%;
+            height: 100%;
+        }
         .background-image-preview {
             max-width: 15px;
             max-height: 15px;
@@ -204,28 +208,34 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
 }, ref) => {
     const language = useLanguage();
     const {
-        hasBackground,
-        backgroundType,
-        isPendulum,
         background,
-        setCard,
+        backgroundData,
+        backgroundSource,
+        backgroundType,
         getUpdater,
+        hasBackground,
+        isPendulum,
+        setCard,
     } = useCard(useShallow(({
         card: {
-            isPendulum,
-            hasBackground,
-            backgroundType,
             background,
+            backgroundData,
+            backgroundSource,
+            backgroundType,
+            hasBackground,
+            isPendulum,
         },
         setCard,
         getUpdater,
     }) => ({
-        hasBackground,
-        backgroundType,
-        isPendulum,
         background,
-        setCard,
+        backgroundData,
+        backgroundSource,
+        backgroundType,
         getUpdater,
+        hasBackground,
+        isPendulum,
+        setCard,
     })));
     const [backgroundInputVisible, setBackgroundInputVisible] = useState(true);
     const [backgroundInputHidden, setBackgroundInputHidden] = useState(true);
@@ -379,11 +389,19 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                             style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}
                         >
                             <Tooltip overlay={language['input.background.toolip']}>
-                                {hasBackground
-                                    ? background
-                                        ? <img className="background-image-preview" src={background} alt="Background" />
-                                        : null
-                                    : <BorderOuterOutlined className="no-background-icon" />}
+                                <div className="background-preview-callback-passer">
+                                    {hasBackground
+                                        ? background
+                                            ? <img
+                                                className="background-image-preview"
+                                                src={backgroundSource === 'online'
+                                                    ? background
+                                                    : backgroundData}
+                                                alt="Background"
+                                            />
+                                            : null
+                                        : <BorderOuterOutlined className="no-background-icon" />}
+                                </div>
                             </Tooltip>
                         </div>
                     </Popover>}

@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { Card, getDefaultCardOpacity, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { Card, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
 
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
@@ -279,6 +279,10 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     ) {
         migratedCard.hasBackground = true;
     }
+    migratedCard.backgroundCrop = {
+        ...getDefaultCrop(),
+        ...migratedCard.backgroundCrop,
+    };
 
     if (migratedCard.isLink == null && migratedCard.frame === 'link') {
         migratedCard.isLink = true;

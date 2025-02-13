@@ -65,6 +65,7 @@ const CsvStandardFieldList = [
     'Art Crop - Height (%)',
     'Is Using Full Art',
     /** Creative customize stuff */
+    'Star Type',
     'Star Alignment',
     'Card Icon Type',
     'Opacity - Body',
@@ -286,6 +287,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Art Crop - Width (%)', artCrop.width);
         write('Art Crop - Height (%)', artCrop.height);
         write('Is Using Full Art', artFit);
+        write('Star Type', typeof star === 'number' && star >= 0 && star <= 13 ? 'number' : 'text');
         write('Star Alignment', starAlignment);
         write('Card Icon Type', cardIcon);
         write('Opacity - Body', opacity.body);
@@ -421,9 +423,11 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const frame = (reader('Frame') ?? reader('Background_Type') ?? emptyCard.frame).toLowerCase();
 
                 const rawStar = reader('Star') ?? reader('Level/Rank') ?? '';
-                const star = parseInt(rawStar) <= 13 && reader('Star_Type') !== '2'
-                    ? parseInt(rawStar)
-                    : rawStar;
+                const star = reader('Star Type') === 'text'
+                    ? rawStar
+                    : parseInt(rawStar) <= 13 && parseInt(rawStar) >= 0 && reader('Star_Type') !== '2'
+                        ? parseInt(rawStar)
+                        : rawStar;
 
                 const rawFoil = (reader('Foil') ?? reader('Rarity') ?? 'normal').toLowerCase() as Foil;
                 const foil = FoilNameMap[rawFoil] ? rawFoil : 'normal';
