@@ -117,6 +117,7 @@
         "input.background-image.label": "Image",
         "input.background-type.fit.label": "Fit to art border",
         "input.background-type.full.label": "Span all the card",
+        "input.background-type.frame.label": "Replace frame",
         "input.background-type.label": "Cover Type",
         "input.background.description": "Define the color and background of the card if you use transparent artwork.",
         "input.background.toggle-label": "Has Background?",
