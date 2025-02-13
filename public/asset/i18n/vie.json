@@ -120,6 +120,7 @@
         "input.background-type.label": "Kích thước nền tranh",
         "input.background.description": "Nền tranh chỉ lộ ra khi bạn dùng ảnh trong suốt.",
         "input.background.toggle-label": "Tùy biến nền?",
+        "input.background.toolip": "Nền thẻ",
         "input.bottom-frame.label": "Nền thẻ dưới",
         "input.card-art.label": "Ảnh",
         "input.char-picker.guide.header": "Các sử dụng:",

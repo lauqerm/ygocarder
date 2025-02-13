@@ -378,11 +378,13 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                             className="background-preview"
                             style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}
                         >
-                            {hasBackground
-                                ? background
-                                    ? <img className="background-image-preview" src={background} alt="Background" />
-                                    : null
-                                : <BorderOuterOutlined className="no-background-icon" />}
+                            <Tooltip overlay={language['input.background.toolip']}>
+                                {hasBackground
+                                    ? background
+                                        ? <img className="background-image-preview" src={background} alt="Background" />
+                                        : null
+                                    : <BorderOuterOutlined className="no-background-icon" />}
+                            </Tooltip>
                         </div>
                     </Popover>}
                     {activable && <Tooltip
