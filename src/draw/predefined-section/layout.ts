@@ -2,6 +2,7 @@ import {
     ArrowPositionList,
     BackgroundType,
     CanvasConst,
+    CardArtCanvasCoordinateMap,
     CardOpacity,
     Foil,
     getArtCanvasCoordinate,
@@ -13,9 +14,15 @@ import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 
 const {
+    width: cardWidth,
+    height: cardHeight,
     topToPendulumStructure,
     pendulumStructureHeight,
     leftToPendulumStructure,
+    effectBoxHeight,
+    effectBoxWidth,
+    leftToEffectBox,
+    topToEffectBox,
 } = CanvasConst;
 /** Various function used to draw the layout of a card is abstracted to this factory. */
 export const getLayoutDrawFunction = ({
@@ -154,6 +161,43 @@ export const getLayoutDrawFunction = ({
             ctx.globalAlpha = opacityBody / 100;
             await drawAsset(ctx, `frame/frame-${frame}.png`, 0, 0);
             await drawAsset(ctx, `frame-pendulum/frame-pendulum-${bottomFrame}.png`, 0, 0);
+            if (hasBackground && backgroundCanvas && backgroundType === 'frame') {
+                const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
+                const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
+
+                const clonedCanvasContext = clonedCanvas?.getContext('2d');
+                if (clonedCanvas && clonedCanvasContext) {
+                    /** Clone background to create a new frame */
+                    clonedCanvas.width = cardWidth;
+                    clonedCanvas.height = cardHeight;
+                    clonedCanvasContext.drawImage(
+                        backgroundCanvas,
+                        0, 0, backgroundWidth, backgroundHeight,
+                        0, 0, cardWidth, cardHeight,
+                    );
+                    /** Clear slot for card art */
+                    clonedCanvasContext.clearRect(
+                        CardArtCanvasCoordinateMap.normal.artX,
+                        CardArtCanvasCoordinateMap.normal.artY,
+                        CardArtCanvasCoordinateMap.normal.artWidth,
+                        CardArtCanvasCoordinateMap.normal.artWidth / CardArtCanvasCoordinateMap.normal.artRatio,
+                    );
+                    /** Clear slot for effect box */
+                    clonedCanvasContext.clearRect(
+                        leftToEffectBox,
+                        topToEffectBox,
+                        effectBoxWidth,
+                        effectBoxHeight,
+                    );
+                    ctx.drawImage(
+                        clonedCanvas,
+                        0, 0,
+                        cardWidth, cardHeight,
+                        0, 0,
+                        cardWidth, cardHeight,
+                    );
+                }
+            }
             ctx.globalAlpha = 1;
         },
         /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas. */
@@ -177,7 +221,7 @@ export const getLayoutDrawFunction = ({
             const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
 
             if (backgroundHeight <= 0) return;
-            if (boundary === 'pendulum') {
+            if (boundary === 'pendulum' && backgroundType !== 'frame') {
                 let redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(backgroundCanvas);
 
                 if (backgroundType === 'full') {
@@ -192,7 +236,7 @@ export const getLayoutDrawFunction = ({
                         backgroundCanvas,
                         opacity,
                         undefined,
-                        'fit'
+                        'fit',
                     );
                 }
 

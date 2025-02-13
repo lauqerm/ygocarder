@@ -1,6 +1,7 @@
 export const getBackgroundTypeList = (dictionary?: {
     fit: string,
     full: string,
+    frame: string,
 }) => [
     {
         value: 'fit' as const,
@@ -9,6 +10,10 @@ export const getBackgroundTypeList = (dictionary?: {
     {
         value: 'full' as const,
         label: dictionary?.full,
+    },
+    {
+        value: 'frame' as const,
+        label: dictionary?.frame,
     },
 ];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];
@@ -49,6 +54,10 @@ export const CanvasConst = {
     pendulumStructureHeight: 912,
     leftToPendulumStructure: 52,
     cardBorder: 28,
+    topToEffectBox: 885,
+    leftToEffectBox: 54,
+    effectBoxWidth: 705,
+    effectBoxHeight: 231,
 };
 
 export const DEFAULT_BASE_FILL_COLOR = '#404040';
@@ -72,6 +81,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 100,
         artY: 219,
         ratio: 1,
+        backgroundRatio: 1,
         /** Actual size of the art frame on the card, does not affected by creative art position such as boundless art. */
         artFrameWidth: 614,
         artFrameHeight: 614,
@@ -86,6 +96,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 1.325,
+        backgroundRatio: 1.325,
         artFrameWidth: 702,
         artFrameHeight: 530,
         artFrameY: 213,
@@ -100,6 +111,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 0.775,
+        backgroundRatio: 0.775,
         artFrameWidth: 614,
         artFrameHeight: 614,
         artFrameY: 219,
@@ -114,6 +126,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 0.775,
+        backgroundRatio: 0.775,
         artFrameWidth: 702,
         artFrameHeight: 530,
         artFrameY: 213,
@@ -128,6 +141,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 56,
         artY: 213,
         ratio: 1.057,
+        backgroundRatio: 1.057,
         artFrameWidth: 702,
         artFrameHeight: 530,
         artFrameY: 213,
@@ -142,6 +156,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 28,
         artY: 28,
         ratio: 0.670,
+        backgroundRatio: 0.670,
         artFrameWidth: 614,
         artFrameHeight: 614,
         artFrameY: 219,
@@ -156,6 +171,7 @@ export const CardArtCanvasCoordinateMap = {
         artX: 28,
         artY: 28,
         ratio: 0.670,
+        backgroundRatio: 0.670,
         artFrameWidth: 702,
         artFrameHeight: 530,
         artFrameY: 213,
@@ -193,5 +209,11 @@ export const getArtCanvasCoordinate = (
                 ? 'extendedCard'
                 : 'normal';
 
-    return CardArtCanvasCoordinateMap[artSource];
+    const result = CardArtCanvasCoordinateMap[artSource];
+    return {
+        ...result,
+        backgroundRatio: backgroundType === 'frame'
+            ? CardArtCanvasCoordinateMap.fullCard.ratio
+            : result.backgroundRatio,
+    };
 };

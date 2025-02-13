@@ -131,7 +131,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
                 message: language['error.max-size.message'],
             });
         }}
-        ratio={getArtCanvasCoordinate(isPendulum, opacity, backgroundType).ratio}
+        ratio={getArtCanvasCoordinate(isPendulum, opacity, backgroundType).backgroundRatio}
         beforeCropper={null}
     >
         {children}

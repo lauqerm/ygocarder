@@ -155,6 +155,14 @@ const StyledBaseFillPickerContainer = styled.div`
         .type-section h2 {
             margin-top: var(--spacing-xs);
         }
+        .background-type-picker {
+            .radio-train-input-group {
+                display: grid;
+            }
+            .ant-radio-button-wrapper {
+                border-left: var(--bw) solid var(--sub-level-1);
+            }
+        }
         .color-section h2 {
             padding-top: 0;
             padding-left: 0;
@@ -349,10 +357,12 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                             {!noBackground && <div className="layout-picker-subpanel type-section">
                                                 <h2>{language['input.background-type.label']}</h2>
                                                 <RadioTrain
+                                                    className="background-type-picker"
                                                     onChange={changeBackgroundType}
                                                     optionList={getBackgroundTypeList({
                                                         fit: language['input.background-type.fit.label'],
                                                         full: language['input.background-type.full.label'],
+                                                        frame: language['input.background-type.frame.label'],
                                                     })}
                                                     value={backgroundType}
                                                 />
