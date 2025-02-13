@@ -7,6 +7,7 @@ import {
     getDefaultYgoproDeckCard,
     copyrightMap,
 } from 'src/model';
+import { checkExtraDeckMonster } from './categorize';
 
 export const checkYgoproDeckCard = (object: Record<string, any>): object is YgoproDeckCard => {
     try {
@@ -161,12 +162,18 @@ export const ygoproDeckToYgoCarderData = (card: YgoproDeckCard): { result: Card,
     const [normalizedFrame, subFrame] = reverseFrameMap[frameType].split('_');
 
     /** Normal description is wrapped inside a double single quotes, we have no use for it here. */
-    const normalizedEffect = desc
-        ? desc.replaceAll(/^''|''$/g, '')
-        : '';
-    const normalizedMonsterEffect = monster_desc
-        ? monster_desc.replaceAll(/^''|''$/g, '')
-        : undefined;
+    const normalizedMonsterEffect = (monster_desc ? monster_desc.replaceAll(/^''|''$/g, '') : undefined)
+        ?? (desc ? desc.replaceAll(/^''|''$/g, '') : '');
+    /** Try to being clever */
+    const splittedMonsterEffect = normalizedMonsterEffect.split('\n');
+    const formattedMonsterEffect = (checkExtraDeckMonster({
+        frame: normalizedFrame ?? 'normal'
+    }) && splittedMonsterEffect.length > 1)
+        ? [
+            `[${splittedMonsterEffect[0].replaceAll('\r', '')}]`,
+            ...splittedMonsterEffect.slice(1),
+        ].join('\n')
+        : normalizedMonsterEffect;
     const normalizedPendulumEffect = pend_desc
         ? pend_desc.replaceAll(/^''|''$/g, '')
         : '';
@@ -181,7 +188,7 @@ export const ygoproDeckToYgoCarderData = (card: YgoproDeckCard): { result: Card,
             ? (def < 0 || def == null) ? '?' : `${def}`
             : '0',
         attribute: normalizedAttribute ?? NO_ATTRIBUTE,
-        effect: normalizedMonsterEffect ?? normalizedEffect,
+        effect: formattedMonsterEffect,
         subFamily: normalizedIcon ?? NO_ICON,
         setId: card_sets[card_sets.length - 1]?.set_code ?? '',
         frame: normalizedFrame ?? 'normal',

@@ -40,7 +40,6 @@
   "resolutions": {
     "@babel/core": "7.25.2",
     "@types/react": "17.0.80",
-    "postcss": "7.0.35",
     "react-error-overlay": "6.0.9"
   },
   "scripts": {

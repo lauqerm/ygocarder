@@ -18,6 +18,16 @@ export const checkSpeedSkill = (card: Pick<Card, 'frame'>) => {
 export const checkMonster = (card: Pick<Card, 'frame'>) => {
     return card.frame !== 'spell' && card.frame !== 'trap' && card.frame !== 'speed-skill';
 };
+export const checkExtraDeckMonster = (card: Pick<Card, 'frame'>) => {
+    return [
+        'fusion',
+        'synchro',
+        'xyz',
+        'link',
+        'dark-synchro',
+        'zarc',
+    ].includes(card.frame);
+};
 
 export const getCardFrame = (frame: string) => {
     return frameList.find(entry => entry.name === frame.toLowerCase())?.name ?? 'effect';
