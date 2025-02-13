@@ -121,6 +121,7 @@
         "input.background-type.label": "Cover Type",
         "input.background.description": "Define the color and background of the card if you use transparent artwork.",
         "input.background.toggle-label": "Has Background?",
+        "input.background.toolip": "Background",
         "input.bottom-frame.label": "Bottom Frame",
         "input.card-art.label": "Card Art",
         "input.char-picker.guide.header": "How to use:",
