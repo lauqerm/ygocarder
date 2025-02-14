@@ -164,7 +164,7 @@ export const decompressCardData = (
     condensedCard: Record<string, any>,
     shortenMap: Record<string, any> = cardFieldShortenMap,
 ) => {
-    const fullCard: Record<string, any> = {};
+    const decompressedCard: Record<string, any> = {};
     Object.keys(shortenMap).forEach(fullKey => {
         const shortenKey = shortenMap[fullKey];
 
@@ -172,15 +172,15 @@ export const decompressCardData = (
             const shortendKey = shortenKey?._newKey;
 
             if (shortendKey && condensedCard[shortendKey]) {
-                fullCard[fullKey] = decompressCardData(condensedCard[shortendKey], shortenMap[fullKey]);
+                decompressedCard[fullKey] = decompressCardData(condensedCard[shortendKey], shortenMap[fullKey]);
             }
         } else {
             if (condensedCard[shortenKey] != null) {
-                fullCard[fullKey] = condensedCard[shortenKey];
+                decompressedCard[fullKey] = condensedCard[shortenKey];
             }
         }
     });
-    return fullCard;
+    return decompressedCard;
 };
 export const legacyReverseCardDataShortener = (
     condensedCard: Record<string, any> | string,
@@ -190,7 +190,7 @@ export const legacyReverseCardDataShortener = (
         ? JSON.parse(JSONUncrush(decodeURIComponent(condensedCard)))
         : condensedCard;
 
-    const fullCard: Record<string, any> = {};
+    const unshortenedCard: Record<string, any> = {};
     Object.keys(shortenMap).forEach(fullKey => {
         const shortenKey = shortenMap[fullKey];
 
@@ -198,31 +198,31 @@ export const legacyReverseCardDataShortener = (
             const shortendKey = shortenKey?._newKey;
 
             if (shortendKey && normalizedCondensedCard[shortendKey]) {
-                fullCard[fullKey] = legacyReverseCardDataShortener(normalizedCondensedCard[shortendKey], shortenMap[fullKey]);
+                unshortenedCard[fullKey] = legacyReverseCardDataShortener(normalizedCondensedCard[shortendKey], shortenMap[fullKey]);
             }
         } else {
             if (normalizedCondensedCard[shortenKey] != null) {
-                fullCard[fullKey] = normalizedCondensedCard[shortenKey];
+                unshortenedCard[fullKey] = normalizedCondensedCard[shortenKey];
             }
         }
     });
-    return fullCard;
+    return unshortenedCard;
 };
 
 export const legacyRebuildCardData = (
     card: Record<string, any> | string,
     isCondensed = false,
 ) => {
-    let fullCard: Record<string, any>;
+    let rebuiltCard: Record<string, any>;
     if (isCondensed) {
-        fullCard = legacyReverseCardDataShortener(card);
+        rebuiltCard = legacyReverseCardDataShortener(card);
     } else {
-        fullCard = typeof card === 'string'
+        rebuiltCard = typeof card === 'string'
             ? JSON.parse(card)
             : card;
     }
 
-    return migrateCardData(fullCard);
+    return migrateCardData(rebuiltCard);
 };
 
 /** Migrate old version of card data into the new version without information loss */
