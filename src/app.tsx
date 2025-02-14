@@ -182,12 +182,12 @@ function App() {
         if (isLanguageInitiating === false) WebFont.load({
             custom: {
                 families: [
-                    'LucidaFax-Italic',
                     'Matrix-Bold',
                     'MatrixBoldSmallCaps',
                     'MatrixBook',
                     'MatrixRegularSmallCaps',
                     'RoGSanSrfStd-Bd',
+                    'StoneSerif-Italic',
                     'YuGiOhITCStoneSerifBSc',
                     'matrix',
                     'palatino-linotype-bold',

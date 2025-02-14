@@ -16,8 +16,8 @@
 }
 /** Normal **/
 @font-face {
-    font-family: 'LucidaFax-Italic';
-    src: url('./font/LucidaFax-Italic.ttf');
+    font-family: 'StoneSerif-Italic';
+    src: url('./font/StoneSerif-Italic.otf');
     font-style: normal;
     font-display: swap;
 }

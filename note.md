@@ -1,7 +1,4 @@
-### Todo
-* Remove `csv` from package list if have no use for them.
-
-### Game Technical
+#### Game Technical
 * <https://yugipedia.com/wiki/Japanese_terms_and_phrases>
 * <https://yugipedia.com/wiki/Card_layout>
 * <https://snkrdunk.com/articles/15138/>

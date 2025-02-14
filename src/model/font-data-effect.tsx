@@ -110,7 +110,7 @@ const DefaultTCGEffectFontData: FontData = {
 };
 export const DefaultTCGNormalFontData: FontData = {
     ...DefaultEffectFontData,
-    font: '"LucidaFax-Italic"',
+    font: '"StoneSerif-Italic"',
     headTextHeightRatio: 0.750,
     fontStyle: 'tcg',
     fontList: [],
@@ -210,10 +210,10 @@ export const TCGVanillaTypeStatFontList: FontSizeData[] = [
     { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3 },
     { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
     { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
-    { bulletSymbolWidth: 23, fontSize: 21.8, lineHeight: 24.9, lineCount: 6 },
-    { bulletSymbolWidth: 23, fontSize: 17.28, lineHeight: 21.5, lineCount: 7, wordLetterSpacing: -0.06 },
-    { bulletSymbolWidth: 23, fontSize: 16.28, lineHeight: 18.8, lineCount: 8 },
-    { bulletSymbolWidth: 19, fontSize: 14.46, lineHeight: 16.7, lineCount: 9 },
+    { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 6 },
+    { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 7 },
+    { bulletSymbolWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
+    { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9 },
     { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10 },
 ];
 
