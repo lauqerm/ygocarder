@@ -213,7 +213,7 @@ export const getArtCanvasCoordinate = (
     return {
         ...result,
         backgroundRatio: backgroundType === 'frame'
-            ? CardArtCanvasCoordinateMap.fullCard.ratio
+            ? 0.686
             : result.backgroundRatio,
     };
 };
