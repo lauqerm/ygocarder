@@ -76,6 +76,14 @@
                 min-width: 0;
             }
         }
+        .app-log {
+            font-size: var(--fs-lg);
+            align-self: center;
+            cursor: pointer;
+            &:hover {
+                color: var(--main-active);
+            }
+        }
     }
     .manager-active {
         color: var(--main-online);

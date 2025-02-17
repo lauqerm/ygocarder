@@ -1,13 +1,14 @@
-import { GithubFilled, BugOutlined, DatabaseFilled } from '@ant-design/icons';
+import { GithubFilled, BugOutlined, DatabaseFilled, TagsFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import { useCardList, useI18N, useLanguage } from 'src/service';
-import { Radio } from 'antd';
-import './app-header.scss';
+import { Popover, Radio } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
+import './app-header.scss';
+import { VersionLog } from './version-log';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -19,6 +20,17 @@ export const Affiliation = () => {
         </div>
     </div>;
 };
+
+const StyledVersionLog = styled.div`
+    background-color: var(--main-level-3);
+    padding: var(--spacing-sm);
+    border: var(--bw) solid var(--sub-level-1);
+    border-radius: var(--br-lg);
+    color: var(--color);
+    overflow: auto;
+    width: 400px;
+    max-height: 300px;
+`;
 
 const StyledAppHeaderButtonContainer = styled.div`
     align-content: center;
@@ -95,6 +107,14 @@ export const AppHeader = () => {
                         {language['contributor.bug-report.tooltip']} <BugOutlined />
                     </div>
                 </span>
+                <Popover
+                    placement="bottom"
+                    content={<StyledVersionLog>
+                        {VersionLog}
+                    </StyledVersionLog>}
+                >
+                    <TagsFilled className="app-log" />
+                </Popover>
             </div>
             <div className="app-contribution">
                 <span className="app-creator">

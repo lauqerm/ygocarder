@@ -4,7 +4,7 @@
     cursor: pointer;
     display: inline-block;
 }
-.explanation-overlay {
+.ant-popover.explanation-overlay:not(.ant-popconfirm) {
     .ant-popover-inner {
         background-color: transparent;
     }
