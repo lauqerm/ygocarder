@@ -119,7 +119,7 @@ export type ImageCropper = {
     defaultCropInfo: Partial<ReactCrop.Crop>,
     ratio: number,
     onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
-    onSourceLoaded?: () => void,
+    onSourceLoaded?: (crossorigin?: string) => void,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => void,
     onTainted: () => void,
     onMaxSizeExceeded: (size: number) => void,
@@ -152,7 +152,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const fileInputRef = useRef<Input>(null);
     const [
         crossorigin,
-        // setCrossOrigin,
+        setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [redrawSignal, setRedrawSignal] = useState(0);
     const [sourceType, setSourceType] = useState<'offline' | 'online'>(normalizedDefaultSource);
@@ -184,6 +184,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 const reader = new FileReader();
                 reader.addEventListener('load', () => {
                     if (typeof reader.result === 'string') {
+                        setCrossOrigin('anonymous');
                         setInternalSource(reader.result);
                         setSourceType('offline');
                         setInputMode('offline');
@@ -205,7 +206,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const onLoad = useCallback((img: HTMLImageElement) => {
         setLoading(false);
         setError(null);
-        onSourceLoaded();
+        onSourceLoaded(crossorigin);
         imgRef.current = img;
         /** @todo Check if we really need timeout delay here */
         if (img.src === pendingCrop.current.source && pendingCrop.current.crop) {
@@ -236,11 +237,12 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 setMigrated(true);
             }, 250);
         }
-    }, [onSourceLoaded, ratio]);
+    }, [crossorigin, onSourceLoaded, ratio]);
 
     const applyOnlineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
 
+        setCrossOrigin('anonymous');
         setLoading(true);
         setSourceType('online');
         setInputMode('online');
@@ -410,6 +412,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                     setInternalSource(source);
                 } else setExternalSource(source);
             }
+            setCrossOrigin('anonymous');
             setMigrated(cropInfo.unit === '%');
             pendingId.current += 1;
             pendingCrop.current = {
@@ -551,7 +554,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         <VerticalAlignMiddleOutlined />
                     </div>}
                 </div>}
-                {(!hasImage || error) && <Empty description={language['image-cropper.not-found-warning']} image={null} />}
+                {(!hasImage || (error && crossorigin === undefined)) && <Empty
+                    description={language['image-cropper.not-found-warning']}
+                    image={null}
+                />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
                     src={sourceType === 'offline' ? internalSource : externalSource}
                     disabled={forceFit}
@@ -569,9 +575,11 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             source: '',
                             crop: null,
                         };
-                        setError('Image error');
-                        setLoading(false);
-                        if (!receivingCanvas) onTainted();
+                        if (!receivingCanvas) {
+                            setLoading(false);
+                            setError('No receiving canvas');
+                            onTainted();
+                        }
                         else if (
                             (sourceType === 'online' && (externalSource ?? '') === '')
                             || (sourceType === 'offline' && (internalSource ?? '') === '')
@@ -581,11 +589,17 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
                             ctx?.clearRect(0, 0, width, height);
                             if (completedCrop) onCropChange(completedCrop, sourceType, interacted);
-                            onSourceLoaded();
+                            onSourceLoaded(crossorigin);
+                            setLoading(false);
+                            setError('Image not found');
                         } else {
+                            setCrossOrigin(undefined);
                             onTainted();
                         }
-                        // setCrossOrigin(undefined);
+                        if (crossorigin === undefined) {
+                            setLoading(false);
+                            setError('Tainted canvas');
+                        }
                     }}
                     crop={currentCrop}
                     onDragStart={() => {

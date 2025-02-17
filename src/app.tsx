@@ -413,10 +413,13 @@ function App() {
         alert(language['prompt.download.tainted.message']);
     }, [language]);
 
-    const rerenderAllImage = useCallback(() => {
-        setCanvasKey(cnt => cnt + 1);
+    const rerenderAllImage = useCallback((crossorigin?: string) => {
+        console.log('🚀 ~ rerenderAllImage ~ crossorigin:', crossorigin);
+        if (crossorigin === 'anonymous') {
+            setTainted(false);
+            setCanvasKey(cnt => cnt + 1);
+        }
         setImageChangeCount(cnt => cnt + 1);
-        setTainted(false);
     }, []);
 
     const rerenderCardImage: NonNullable<CardInputPanel['onCropChange']> = useCallback((_, sourceType) => {

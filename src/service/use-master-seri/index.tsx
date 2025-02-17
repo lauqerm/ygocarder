@@ -894,6 +894,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                                 }
                             });
                         } catch (e) {
+                            /** Draw directly into export canvas, which will tainted the export canvas afterward. */
+                            exportCtx.drawImage(canvasLayer.current, 0, 0);
                             console.error(e);
                             resolve(false);
                         }
