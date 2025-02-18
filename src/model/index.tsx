@@ -215,10 +215,42 @@ export const DefaultColorList = [
     '#007F00', '#004000', '#007F7F', '#00007F', '#400040', '#7F007F',
 ];
 
+export const ResolutionMap = {
+    '549x800': {
+        label: '549 × 800',
+        width: 549,
+        height: 800,
+        settingValue: [549, 800] as [number, number],
+    },
+    '561x818': {
+        label: '561 × 818',
+        width: 561,
+        height: 818,
+        settingValue: [561, 818] as [number, number],
+    },
+    '813x1185': {
+        label: '813 × 1185',
+        width: 813,
+        height: 1185,
+        settingValue: [813, 1185] as [number, number],
+    },
+};
 export const ResolutionList = [
-    { width: 549, height: 800 },
-    { width: 561, height: 818 },
-    { width: 813, height: 1185 },
+    ResolutionMap['549x800'],
+    ResolutionMap['561x818'],
+    ResolutionMap['813x1185'],
+];
+
+export type ExportFormat = typeof ExportFormatList[0]['value'];
+export const ExportFormatList = [
+    {
+        value: 'csv' as const,
+        label: '.csv',
+    },
+    {
+        value: 'xlsx' as const,
+        label: '.xlsx',
+    },
 ];
 
 export * from './canvas';

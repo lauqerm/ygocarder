@@ -61,7 +61,7 @@ export * from './formatting-guide';
 export * from './frame-info-block';
 export * from './icon-button';
 export * from './input-train';
-export * from './resolution';
+export * from './setting-panel';
 export * from './setting';
 export type { ImageCropperRef } from './image-cropper';
 export { ImageCropper } from './image-cropper';

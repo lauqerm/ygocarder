@@ -1,7 +1,8 @@
-import { CanvasConst } from 'src/model';
+import { CanvasConst, ExportFormat } from 'src/model';
 import { create } from 'zustand';
 
 export type Setting = {
+    exportFormat: ExportFormat,
     resolution: [number, number],
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
@@ -14,9 +15,10 @@ export type SettingStore = {
 };
 export const useSetting = create<SettingStore>((set) => {
     const {
-        resolution,
         allowHotkey,
+        exportFormat,
         reduceMotionColor,
+        resolution,
         showCreativeOption,
         showExtraDecorativeOption,
     } = ((): Record<string, any> => {
@@ -33,6 +35,7 @@ export const useSetting = create<SettingStore>((set) => {
 
     return {
         setting: {
+            exportFormat: typeof exportFormat === 'string' ? exportFormat as ExportFormat : 'csv',
             resolution: Array.isArray(resolution) && typeof resolution[0] === 'number' && typeof resolution[1] === 'number'
                 ? resolution as [number, number]
                 : [CanvasConst.width, CanvasConst.height],

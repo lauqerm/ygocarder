@@ -3,6 +3,8 @@ import { SettingFilled } from '@ant-design/icons';
 import styled, { css, keyframes } from 'styled-components';
 import { Checkbox, Popover, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
+import { RadioTrain } from '../input-train';
+import { ExportFormatList, ResolutionList, ResolutionMap } from 'src/model';
 
 const rotate = keyframes`
     to {
@@ -18,6 +20,9 @@ const StyledSettingPanel = styled.div`
     border: var(--bw) solid var(--sub-level-1);
     border-radius: var(--br-lg);
     color: var(--color);
+    .list-option {
+        margin-bottom: var(--spacing-xs);
+    }
 `;
 const StyledSettingButtonContainer = styled(StyledHeaderButtonContainer)`
     .anticon-setting {
@@ -33,6 +38,8 @@ export const SettingButton = () => {
         updateSetting,
     } = useSetting(({ setting, updateSetting }) => ({ setting, updateSetting }));
     const {
+        exportFormat,
+        resolution,
         allowHotkey,
         reduceMotionColor,
         showCreativeOption,
@@ -69,6 +76,31 @@ export const SettingButton = () => {
                             onChange={e => updateSetting({ allowHotkey: e.target.checked })}
                         >{language['setting.option.hotkey.label']}</Checkbox>
                     </Tooltip>
+                </div>
+                <div>
+                    <div className="list-option">{language['setting.option.resolution.label']}</div>
+                    <RadioTrain
+                        value={`${resolution[0]}x${resolution[1]}`}
+                        optionList={ResolutionList.map(({ height, width, label }) => ({
+                            value: `${width}x${height}`,
+                            label: label,
+                        }))}
+                        onChange={value => {
+                            if (ResolutionMap[value as keyof typeof ResolutionMap]) {
+                                updateSetting({ resolution: ResolutionMap[value as keyof typeof ResolutionMap].settingValue });
+                            }
+                        }}
+                    />
+                </div>
+                <div>
+                    <div className="list-option">{language['setting.option.export-format.label']}</div>
+                    <RadioTrain
+                        value={exportFormat}
+                        optionList={ExportFormatList}
+                        onChange={value => {
+                            updateSetting({ exportFormat: value });
+                        }}
+                    />
                 </div>
                 <div>
                     <small>{language['setting.alert']}</small>

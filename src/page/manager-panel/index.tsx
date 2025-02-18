@@ -1,6 +1,6 @@
 import { Drawer, Dropdown, Input, Menu, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList } from 'src/service';
+import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
@@ -106,6 +106,7 @@ export const CardManagerPanel = forwardRef(({
         setActiveId,
         setCardList,
         setFilterFunction,
+        setListName,
         setPendingActiveCard,
         sortList,
         toggleVisible,
@@ -117,6 +118,7 @@ export const CardManagerPanel = forwardRef(({
         setActiveId,
         setCardList,
         setFilterFunction,
+        setListName,
         setPendingActiveCard,
         sortList,
         toggleVisible,
@@ -128,13 +130,16 @@ export const CardManagerPanel = forwardRef(({
         setActiveId,
         setCardList,
         setFilterFunction,
+        setListName,
         setPendingActiveCard,
         sortList,
         toggleVisible,
         visible,
     })));
+    const exportFormat = useSetting(state => state.setting.exportFormat);
     const [inputKey, setInputKey] = useState(0);
     const [readingFile, setReadingFile] = useState(false);
+    const [savingFile, setSavingFile] = useState(false);
     const debounceSearch = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
         setFilterFunction({ type: 'text', value: e.target.value });
     }, 250);
@@ -235,23 +240,57 @@ export const CardManagerPanel = forwardRef(({
                             className="manager-button"
                             onClick={async () => {
                                 let wouldDownload = true;
+                                setSavingFile(true);
                                 if (chanceToRemindBackup.check()) {
                                     wouldDownload = window.confirm(language['prompt.remind.backup.label']);
                                 }
 
                                 if (wouldDownload) {
-                                    const csvdata = cardListToCsv(useCardList.getState().cardList);
-    
-                                    downloadBlob(
-                                        useCardList.getState().listName,
-                                        new Blob([csvdata], { type: 'text/csv' }),
-                                        'text/csv',
-                                    );
-                                    changeEditStatus('download');
+                                    try {
+                                        const {
+                                            error,
+                                            value: csvdata,
+                                        } = cardListToCsv(useCardList.getState().cardList);
+
+                                        if (error) {
+                                            let errorMessage = '';
+                                            let errorDescription = '';
+                                            switch (error) {
+                                                case 'offline-data': {
+                                                    errorMessage = language['error.export.offline-data.message'];
+                                                    errorDescription = language['error.export.offline-data.description'];
+                                                    break;
+                                                }
+                                            }
+
+                                            if (errorMessage || errorDescription) {
+                                                notification.error({
+                                                    message: errorMessage,
+                                                    description: errorDescription,
+                                                });
+                                            }
+                                        }
+                                        switch (exportFormat) {
+                                            case 'xlsx': {
+                                                const exportWorkbook = XLSX.read(csvdata, { type: 'string' });
+                                                XLSX.writeFile(exportWorkbook, `${useCardList.getState().listName}.xlsx`);
+                                                break;
+                                            }
+                                            default: {
+                                                downloadBlob(
+                                                    useCardList.getState().listName,
+                                                    new Blob([csvdata], { type: 'text/csv' }),
+                                                    'text/csv',
+                                                );
+                                            }
+                                        }
+                                        changeEditStatus('download');
+                                    } catch (e) {}
                                 }
+                                setSavingFile(false);
                             }}
                         >
-                            <DownloadOutlined />
+                            {savingFile ? <LoadingOutlined /> : <DownloadOutlined />}
                         </div>
                     </Tooltip>
                     <Tooltip key={`${readingFile}`} overlay={language['manager.header.button.upload.tooltip']}>
@@ -293,9 +332,11 @@ export const CardManagerPanel = forwardRef(({
                                         setReadingFile(true);
                                         try {
                                             const file = await fileList[0].arrayBuffer();
+                                            const fileName = fileList[0].name.replace(/\.[^/.]+$/, '');
 
                                             /** Assume data from only the very first sheet */
-                                            const workbook = XLSX.read(file);
+                                            /** 65001 codepage allow display unicode characters such as japanese */
+                                            const workbook = XLSX.read(file, { codepage: 65001 });
                                             const csvBook = XLSX.utils.sheet_to_json<string[]>(
                                                 workbook.Sheets[workbook.SheetNames[0]],
                                                 { header: 1, raw: false },
@@ -304,6 +345,7 @@ export const CardManagerPanel = forwardRef(({
 
                                             if (nextCardList.length > 0) {
                                                 setCardList(nextCardList, nextCardList[0].id);
+                                                setListName(fileName);
                                                 setInputKey(cnt => cnt + 1);
                                                 onSelect(nextCardList[0]);
                                                 setReadingFile(false);

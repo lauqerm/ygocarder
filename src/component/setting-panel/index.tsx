@@ -1,5 +1,5 @@
 import { Menu } from 'antd';
-import { ResolutionList } from 'src/model';
+import { ExportFormat, ExportFormatList, ResolutionList } from 'src/model';
 import { useLanguage, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -19,7 +19,7 @@ const StyledDownloadDropdownOption = styled(Menu.Item)`
     &li.ant-dropdown-menu-item:hover {
         background-color: var(--sub-active);
     }
-    &.active-resolution {
+    &.active-setting {
         background-color: var(--main-active);
     }
 `;
@@ -45,11 +45,11 @@ export const ResolutionPicker = ({
 
     return <Menu onClick={e => e.domEvent.stopPropagation()} {...rest}>
         <StyledDownloadDropdownLabel disabled onClick={e => e.domEvent.stopPropagation()}>
-            {language['button.download.resolution.label']}
+            {language['setting.option.resolution.label']}
         </StyledDownloadDropdownLabel>
-        {ResolutionList.map(({ width, height }) => {
+        {ResolutionList.map(({ width, height, label }) => {
             return <StyledDownloadDropdownOption key={`${width}-${height}`}
-                className={resolution[0] === width && resolution[1] === height ? 'active-resolution' : ''}
+                className={resolution[0] === width && resolution[1] === height ? 'active-setting' : ''}
                 onClick={() => {
                     updateSetting({
                         resolution: [width, height],
@@ -57,7 +57,47 @@ export const ResolutionPicker = ({
                     onChange?.([width, height]);
                 }}
             >
-                {width} × {height}
+                {label}
+            </StyledDownloadDropdownOption>;
+        })}
+    </Menu>;
+};
+
+export type ExportFormatPicker = {
+    onChange?: (nextFormat: ExportFormat) => void,
+} & React.ComponentProps<typeof Menu>;
+export const ExportFormatPicker = ({
+    onChange,
+    ...rest
+}: ExportFormatPicker) => {
+    const language = useLanguage();
+    const {
+        exportFormat,
+        updateSetting,
+    } = useSetting(useShallow(({
+        setting: { allowHotkey, exportFormat },
+        updateSetting,
+    }) => ({
+        allowHotkey,
+        exportFormat,
+        updateSetting,
+    })));
+
+    return <Menu onClick={e => e.domEvent.stopPropagation()} {...rest}>
+        <StyledDownloadDropdownLabel disabled onClick={e => e.domEvent.stopPropagation()}>
+            {language['setting.option.export-format.label']}
+        </StyledDownloadDropdownLabel>
+        {ExportFormatList.map(({ value, label }) => {
+            return <StyledDownloadDropdownOption key={label}
+                className={value === exportFormat ? 'active-setting' : ''}
+                onClick={() => {
+                    updateSetting({
+                        exportFormat: value,
+                    });
+                    onChange?.(value);
+                }}
+            >
+                {label}
             </StyledDownloadDropdownOption>;
         })}
     </Menu>;

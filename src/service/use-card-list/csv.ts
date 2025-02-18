@@ -173,6 +173,7 @@ const normalizeCsvData = (data: any) => {
 export const cardListToCsv = (cardList: Card[]) => {
     const valueList: string[] = [];
     const rowLength = CsvStandardFieldList.length;
+    let error = '';
 
     for (let cnt = 0; cnt < cardList.length; cnt++) {
         const write = (key: CsvField, value: boolean | string | number | undefined) => {
@@ -190,17 +191,15 @@ export const cardListToCsv = (cardList: Card[]) => {
         const {
             art,
             artCrop,
-            // artData,
             artFinish,
             artFit,
-            // artSource,
+            artSource,
             atk,
             attribute,
             background,
             backgroundCrop,
-            // backgroundData,
             backgroundFit,
-            // backgroundSource,
+            backgroundSource,
             backgroundType,
             cardIcon,
             creator,
@@ -351,13 +350,21 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Style - Has Shadow', otherTextStyle[2]);
         write('Other Style - Shadow Color', otherTextStyle[3]);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
+
+        if (artSource === 'offline' || (hasBackground && backgroundSource === 'offline')) {
+            error = 'offline-data';
+        }
+
         valueList.push(rowValue.map(normalizeCsvData).join(','));
     }
 
-    return [
-        CsvStandardFieldList.join(','),
-        valueList.join('\n'),
-    ].join('\n');
+    return {
+        value: [
+            CsvStandardFieldList.join(','),
+            valueList.join('\n'),
+        ].join('\n'),
+        error,
+    };
 };
 
 const analyzeImportHeader = (header: (string | undefined)[]) => {
