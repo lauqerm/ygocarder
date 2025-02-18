@@ -1,6 +1,7 @@
 import {
     CanvasConst,
     CardArtCanvasCoordinate,
+    DEFAULT_BASE_FILL_COLOR,
     FrameInfoMap,
     getArtCanvasCoordinate,
     InternalCard,
@@ -242,25 +243,28 @@ export const CardThumb = ({
     const {
         art,
         artCrop,
+        artData,
         artFit,
         artSource,
         atk,
         attribute,
         background,
         backgroundCrop,
+        backgroundData,
         backgroundFit,
+        backgroundSource,
+        backgroundType,
         cardIcon,
         def,
         format,
         frame,
-        backgroundType,
         hasBackground,
         isLink,
         isPendulum,
         linkMap,
         name,
-        pendulumFrame,
         opacity,
+        pendulumFrame,
         pendulumScaleBlue,
         pendulumScaleRed,
         setId,
@@ -274,9 +278,16 @@ export const CardThumb = ({
             ? 'spell'
             : frame
         : pendulumFrame;
-    const normalizedCardArt = (artSource === 'offline' || !art)
-        ? 'https://i.imgur.com/jjtCuG5.png'
+    const normalizedCardArt = artSource === 'offline'
+        ? !art
+            ? 'https://i.imgur.com/jjtCuG5.png' // Placeholder
+            : artData
         : art;
+    const normalizedBackgroundArt = backgroundSource === 'offline'
+        ? !background
+            ? 'https://imgur.com/pdSVzUZ.png' // Empty background
+            : backgroundData
+        : background;
     const normalizedCardIconType = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
     const normalizedCardIcon = normalizedCardIconType === 'st'
         ? subFamily
@@ -328,11 +339,12 @@ export const CardThumb = ({
                     height: artFrameHeight * THUMB_TO_CARD_RATIO,
                     top: (cardHeight - cardWidth) / 2 / 2 * THUMB_TO_CARD_RATIO,
                     left: (cardWidth - artFrameWidth) / 2 * THUMB_TO_CARD_RATIO,
+                    backgroundColor: DEFAULT_BASE_FILL_COLOR,
                 }}
             >
                 {hasBackground && <DelayedImage
                     className="background-art"
-                    artLink={background ?? 'https://imgur.com/pdSVzUZ.png'}
+                    artLink={normalizedBackgroundArt}
                     name={normalizedCardName + ' - background'}
                     fit={backgroundFit}
                     crop={backgroundCrop}
