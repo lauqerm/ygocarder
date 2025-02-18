@@ -1,4 +1,4 @@
-import { Button, Dropdown, Menu, notification, Tooltip } from 'antd';
+import { Button, Dropdown, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { MasterSeriesCanvas } from 'src/model';
 import { useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
@@ -6,26 +6,8 @@ import { MenuOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { forceRefocus } from 'src/util';
+import { ResolutionPicker } from 'src/component';
 
-const StyledDownloadDropdownLabel = styled(Menu.Item)`
-    color: var(--color);
-    padding: 1px 12px 5px 12px; // Alignment
-    font-size: var(--fs-sm);
-    border-bottom: var(--bw) solid var(--sub-level-4);
-    cursor: default;
-    &.ant-dropdown-menu-item.ant-dropdown-menu-item-disabled:hover {
-        cursor: default;
-        background: var(--main-level-3);
-    }
-`;
-const StyledDownloadDropdownOption = styled(Menu.Item)`
-    &li.ant-dropdown-menu-item:hover {
-        background-color: var(--sub-active);
-    }
-    &.active-resolution {
-        background-color: var(--main-active);
-    }
-`;
 const StyledDownloadButton = styled(Button)`
     padding: 0;
     .button-label {
@@ -80,15 +62,10 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     const language = useLanguage();
     const {
         allowHotkey,
-        resolution,
-        updateSetting,
     } = useSetting(useShallow(({
-        setting: { allowHotkey, resolution },
-        updateSetting,
+        setting: { allowHotkey },
     }) => ({
         allowHotkey,
-        resolution,
-        updateSetting,
     })));
     const { onExport } = useMasterSeriDrawer(
         true,
@@ -154,28 +131,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
                 disabled={isDownloading}
                 className="save-button-dropdown"
                 placement="bottomRight"
-                overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
-                    <StyledDownloadDropdownLabel disabled onClick={e => e.domEvent.stopPropagation()}>
-                        {language['button.download.resolution.label']}
-                    </StyledDownloadDropdownLabel>
-                    {[
-                        { width: 549, height: 800 },
-                        { width: 561, height: 818 },
-                        { width: 813, height: 1185 },
-                    ].map(({ width, height }) => {
-                        return <StyledDownloadDropdownOption key={`${width}-${height}`}
-                            className={resolution[0] === width && resolution[1] === height ? 'active-resolution' : ''}
-                            onClick={() => {
-                                updateSetting({
-                                    resolution: [width, height],
-                                });
-                                forceRefocus();
-                            }}
-                        >
-                            {width} × {height}
-                        </StyledDownloadDropdownOption>;
-                    })}
-                </Menu>}
+                overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
             >
                 <div className="button-option" onClick={e => e.stopPropagation()}>
                     <MenuOutlined />

@@ -215,6 +215,12 @@ export const DefaultColorList = [
     '#007F00', '#004000', '#007F7F', '#00007F', '#400040', '#7F007F',
 ];
 
+export const ResolutionList = [
+    { width: 549, height: 800 },
+    { width: 561, height: 818 },
+    { width: 813, height: 1185 },
+];
+
 export * from './canvas';
 export * from './compatible-card';
 export * from './coordinate-data';

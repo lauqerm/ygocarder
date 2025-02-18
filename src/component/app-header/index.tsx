@@ -7,8 +7,9 @@ import { Popover, Radio } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
-import './app-header.scss';
 import { VersionLog } from './version-log';
+import { StyledPopMarkdown } from '../atom';
+import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -125,7 +126,7 @@ export const AppHeader = () => {
                     >
                         <b>Lauqerm</b>
                     </a>&nbsp;<Explanation
-                        content={<div className="disclaimer">
+                        content={<StyledPopMarkdown className="disclaimer">
                             <h2>{language['contributor.disclaimer.label']}</h2>
                             <ul>
                                 <li>{language['contributor.disclaimer.line-1'](<a key="app-author" href="https://lauqerm.github.io/ygocarder">lauqerm.github.io/ygocarder</a>)}</li>
@@ -144,7 +145,7 @@ export const AppHeader = () => {
                                 )}</li>
                                 <li>{language['contributor.disclaimer.line-6']}</li>
                             </ul>
-                        </div>}
+                        </StyledPopMarkdown>}
                     />
                 </span>
                 <span className="template-creator">
@@ -187,18 +188,22 @@ export const AppHeader = () => {
     </div>;
 };
 
-export const TaintedCanvasWarning = () => {
+export const TaintedCanvasPanel = () => {
     const language = useLanguage();
 
+    return <StyledPopMarkdown className="disclaimer">
+        <h2>{language['alert.explaination.tainted.first-question']}</h2>
+        <p>{language['alert.explaination.tainted.first-answer']}</p>
+        <h2>{language['alert.explaination.tainted.second-question']}</h2>
+        <p>{language['alert.explaination.tainted.second-answer']}</p>
+        <h2>{language['alert.explaination.tainted.third-question']}</h2>
+        <p>{language['alert.explaination.tainted.third-answer']}</p>
+    </StyledPopMarkdown>;
+};
+
+export const TaintedCanvasWarning = () => {
     return <Explanation
         overlayClassName="disclaimer-overlay"
-        content={<div className="disclaimer">
-            <h2>{language['alert.explaination.tainted.first-question']}</h2>
-            <p>{language['alert.explaination.tainted.first-answer']}</p>
-            <h2>{language['alert.explaination.tainted.second-question']}</h2>
-            <p>{language['alert.explaination.tainted.second-answer']}</p>
-            <h2>{language['alert.explaination.tainted.third-question']}</h2>
-            <p>{language['alert.explaination.tainted.third-answer']}</p>
-        </div>}
+        content={<TaintedCanvasPanel />}
     />;
 };

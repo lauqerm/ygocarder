@@ -7,10 +7,18 @@ export const StyledActionIconButton = styled.button`
     border-radius: var(--br-lg);
     background-color: var(--main-primary);
     border: var(--bw) solid var(--main-primary);
-    border-left: var(--bw) solid var(--sub-level-3);
     cursor: pointer;
-    &:hover {
+    &:not(:disabled):hover {
         background-color: var(--sub-primary);
+    }
+    &:disabled {
+        color: var(--color-dim);
+        cursor: not-allowed;
+        background-color: var(--color-contrast);
+        border: var(--bw) solid var(--color-contrast);
+        .anticon {
+            color: inherit;
+        }
     }
     input {
         display: none;

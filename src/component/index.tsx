@@ -54,12 +54,14 @@ export const StyledDropdown = {
 };
 
 export * from './app-header';
+export * from './atom';
 export * from './error-boundary';
 export * from './explanation';
 export * from './formatting-guide';
 export * from './frame-info-block';
 export * from './icon-button';
 export * from './input-train';
+export * from './resolution';
 export * from './setting';
 export type { ImageCropperRef } from './image-cropper';
 export { ImageCropper } from './image-cropper';

@@ -76,6 +76,7 @@ export const StyledDataButtonPanelContainer = styled.div`
         }
         ${StyledActionIconButton} {
             border-radius: 0 var(--br-lg) var(--br-lg) 0;
+            border-left: var(--bw) solid var(--sub-level-3);
         }
     }
 `;

@@ -414,7 +414,6 @@ function App() {
     }, [language]);
 
     const rerenderAllImage = useCallback((crossorigin?: string) => {
-        console.log('🚀 ~ rerenderAllImage ~ crossorigin:', crossorigin);
         if (crossorigin === 'anonymous') {
             setTainted(false);
             setCanvasKey(cnt => cnt + 1);
@@ -473,8 +472,8 @@ function App() {
                         <StyledDataButtonPanelContainer className="data-button-panel">
                             <div className="imexport">
                                 <ExportPanel ref={exportPanelRef}
+                                    tainted={isTainted}
                                     artworkCanvas={artworkCanvasRef.current}
-                                    allowHotkey={allowHotkey}
                                     onRequireExportData={exportData}
                                     onRequireDownload={() => downloadButtonRef.current?.download()}
                                     onClose={forceRefocus}

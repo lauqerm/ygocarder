@@ -1,18 +1,29 @@
 import { Dropdown, Input, Menu, Modal, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react';
-import { RadioTrain } from 'src/component';
-import { LanguageDataDictionary, useCard, useLanguage } from 'src/service';
+import { InternalPopover, RadioTrain, ResolutionPicker, StyledPopMarkdown, TaintedCanvasPanel } from 'src/component';
+import { LanguageDataDictionary, useCard, useLanguage, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
 import copy from 'copy-to-clipboard';
-import { downloadBlob, normalizeCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
-import { DownloadOutlined, CheckOutlined } from '@ant-design/icons';
+import { downloadBlob, mergeClass, normalizeCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
+import { DownloadOutlined, CheckOutlined, CopyOutlined, FileImageOutlined } from '@ant-design/icons';
 import { Card } from 'src/model';
+import { useShallow } from 'zustand/react/shallow';
 
 const StyledExportContainer = styled.div`
     ${StyledActionIconButton} {
         font-size: var(--fs);
-        border-left: var(--bw) solid var(--main-primary);
+        padding-bottom: var(--spacing-sm);
+        .icon {
+            font-size: var(--fs-4xl);
+        }
+        &.export-download-image {
+            border-radius: var(--br-lg) var(--br-lg) 0 0;
+            border-bottom: var(--bw) solid var(--sub-secondary);
+            &:disabled {
+                border-bottom: var(--bw) solid var(--main-level-1);
+            }
+        }
     }
     .radio-train-input-group {
         flex-wrap: wrap;
@@ -20,9 +31,22 @@ const StyledExportContainer = styled.div`
     .export-container-result {
         margin-top: var(--spacing-lg);
         display: grid;
-        grid-template-columns: 115px auto;
         gap: var(--spacing-lg);
         align-items: center;
+        grid-template-columns: 1fr 1fr 1fr;
+        &.mode-other {
+            grid-template-columns: 1fr 1fr;
+        }
+        button {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        > div {
+            height: 100%;
+        }
     }
     .partial-alert {
         margin-top: var(--spacing-lg);
@@ -32,13 +56,17 @@ const StyledExportContainer = styled.div`
             margin-top: var(--spacing-sm);
         }
     }
-    .inline-alert {
-        grid-row: span 2;
-        line-height: 1.25;
+    .resolution-picker {
+        background-color: var(--main-level-4);
+        border-radius: 0 0 var(--br-lg) var(--br-lg);
+        padding: var(--spacing-xs);
+        line-height: 1;
+        text-align: center;
+        border: var(--bw) solid var(--main-level-2);
+        cursor: pointer;
     }
     .export-input-raw {
-        grid-row: span 3;
-        height: 100%;
+        grid-column: 1 / -1;
     }
 `;
 
@@ -64,10 +92,12 @@ const StyledCardDataCopyButton = styled(StyledActionIconButton)`
 type CardDataCopyButton = {
     data: string,
     children?: React.ReactNode,
+    disabled: boolean,
 }
 const CardDataCopyButton = ({
     data,
     children,
+    disabled,
 }: CardDataCopyButton) => {
     const [showFlashOverlay, setFlashOverlay] = useState(false);
     const callFlashNotification = (copyingContent: string) => {
@@ -79,6 +109,7 @@ const CardDataCopyButton = ({
     };
 
     return <StyledCardDataCopyButton
+        disabled={disabled}
         onClick={e => {
             e.stopPropagation();
             callFlashNotification(data);
@@ -110,17 +141,17 @@ export type ExportPanelRef = {
     setCardData: (card: Card, openModal?: boolean) => void,
 };
 export type ExportPanel = {
+    tainted: boolean,
     artworkCanvas: HTMLCanvasElement | null,
     onRequireExportData: () => void,
     onRequireDownload: () => void,
-    allowHotkey: boolean,
     onClose: () => void,
 };
 export const ExportPanel = forwardRef(({
+    tainted,
     artworkCanvas,
     onRequireExportData,
     onRequireDownload,
-    allowHotkey,
     onClose,
 }: ExportPanel, ref: React.ForwardedRef<ExportPanelRef>) => {
     const [visible, setVisible] = useState(false);
@@ -129,6 +160,15 @@ export const ExportPanel = forwardRef(({
         other: { name: '', data: '', isPartial: false },
         ygocarder: { name: '', data: '', isPartial: false },
     });
+    const {
+        allowHotkey,
+        resolution,
+    } = useSetting(useShallow(({
+        setting: { allowHotkey, resolution },
+    }) => ({
+        allowHotkey,
+        resolution,
+    })));
     const language = useLanguage();
     const inputId = 'export-input-raw';
     const focusInput = useCallback(() => {
@@ -166,10 +206,6 @@ export const ExportPanel = forwardRef(({
                         };
                     } catch (e) {
                         console.error(e);
-                        notification.error({
-                            message: language['error.export.message'],
-                            description: language['error.export.description'],
-                        });
 
                         return {
                             value,
@@ -225,37 +261,74 @@ export const ExportPanel = forwardRef(({
                     <br />
                     {language['service.decode.partial.description']}
                 </div>}
-                <div className="export-container-result">
-                    <StyledActionIconButton
-                        onClick={() => {
-                            const blob = new Blob([data], { type: 'application/json' });
-                            downloadBlob(
-                                normalizeCardName(name),
-                                blob,
-                                'application/json',
-                            );
-                        }}
+                <div className={mergeClass('export-container-result', `mode-${mode}`)}>
+                    <InternalPopover content={(tainted && mode === 'other') ? <TaintedCanvasPanel /> : undefined}>
+                        <div>
+                            <StyledActionIconButton
+                                disabled={tainted && mode === 'other'}
+                                onClick={() => {
+                                    const blob = new Blob([data], { type: 'application/json' });
+                                    downloadBlob(
+                                        normalizeCardName(name),
+                                        blob,
+                                        'application/json',
+                                    );
+                                }}
+                            >
+                                <div className="icon"><DownloadOutlined /></div>
+                                <div className="label">
+                                    {language['button.export-modal.download-button.label']}
+                                </div>
+                            </StyledActionIconButton>
+                        </div>
+                    </InternalPopover>
+                    {mode === 'ygocarder' && <InternalPopover
+                        content={isPartial
+                            ? <StyledPopMarkdown>
+                                {language['prompt.export.offline-warning.message']}
+                            </StyledPopMarkdown>
+                            : undefined}
                     >
-                        {language['button.export-modal.download-button.label']}
-                    </StyledActionIconButton>
+                        <div>
+                            <CardDataCopyButton
+                                disabled={isPartial}
+                                data={internalCardData.ygocarder.data}
+                            >
+                                <div className="icon"><CopyOutlined /></div>
+                                <div className="label">
+                                    {language['button.export-modal.copy-button.label']}
+                                </div>
+                            </CardDataCopyButton>
+                        </div>
+                    </InternalPopover>}
+                    <div>
+                        <InternalPopover content={tainted ? <TaintedCanvasPanel /> : undefined}>
+                            <div>
+                                <StyledActionIconButton
+                                    disabled={tainted}
+                                    className="export-download-image"
+                                    onClick={onRequireDownload}
+                                >
+                                    <div className="icon"><FileImageOutlined /></div>
+                                    <div className="label">
+                                        {language['button.export-modal.save-button.label']}
+                                    </div>
+                                </StyledActionIconButton>
+                            </div>
+                        </InternalPopover>
+                        <Dropdown overlay={<ResolutionPicker />}>
+                            <div className="resolution-picker">
+                                {resolution[0]} × {resolution[1]}
+                            </div>
+                        </Dropdown>
+                    </div>
                     {(mode === 'ygocarder' && !isPartial) && <Input.TextArea
                         id={inputId}
                         className="export-input-raw"
                         size="small"
                         value={internalCardData.ygocarder.data}
+                        rows={5}
                     />}
-                    {(mode === 'ygocarder' && !isPartial) && <CardDataCopyButton
-                        data={internalCardData.ygocarder.data}
-                    >
-                        {language['button.export-modal.copy-button.label']}
-                    </CardDataCopyButton>}
-                    {((mode === 'other')
-                    || (mode === 'ygocarder' && isPartial)) && <div className="inline-alert">
-                        {language['prompt.export.offline-warning.message']}
-                    </div>}
-                    <StyledActionIconButton onClick={onRequireDownload}>
-                        {language['button.export-modal.save-button.label']}
-                    </StyledActionIconButton>
                 </div>
             </StyledExportContainer>
         </Modal>

@@ -455,10 +455,12 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                 ) {
                                     setSourceType(value);
                                     if (value === 'offline') {
+                                        setCrossOrigin('anonymous');
                                         onSourceChange('offline', internalSource);
                                     } else {
                                         onSourceChange('online', externalSource);
                                     }
+                                    setLoading(true);
                                 }
                             }}
                             value={inputMode}
