@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.1.10",
+        "logList": [
+            {
+                "content": "Adjust setting modal."
+            },
+            {
+                "content": "Support xlsx file format when export card list."
+            },
+            {
+                "content": "Fix: Unable to read special letters from imported card list."
+            }
+        ]
+    },
+    {
         "version": "v2.1.9",
         "logList": [
             {

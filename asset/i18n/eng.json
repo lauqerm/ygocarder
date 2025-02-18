@@ -13,7 +13,6 @@
         "alert.explaination.tainted.third-question": "How do I fix it?",
         "button.download.label": "Download",
         "button.download.ongoing.label": "Saving…",
-        "button.download.resolution.label": "Resolution (px)",
         "button.export-modal.copy-button.label": "Copy",
         "button.export-modal.download-button.label": "Download as JSON",
         "button.export-modal.label": "Export",
@@ -68,6 +67,8 @@
         "error.export.description": "Card data may have errors or incomplete.",
         "error.export.image-loading.message": "Image is still loading, you should not export your card yet.",
         "error.export.message": "Fail to export",
+        "error.export.offline-data.description": "Card data with offline image / background WILL NOT be exported, please recheck your list.",
+        "error.export.offline-data.message": "Export incomplete data",
         "error.import.error.description": "Card data may have errors, incomplete or fail to request.",
         "error.import.error.message": "Fail to import",
         "error.load.font.all-ocg": "Data for OCG cards could not be loaded",
@@ -308,9 +309,11 @@
         "setting.alert": "Settings are saved locally",
         "setting.button.label": "Setting",
         "setting.option.creative.label": "Show Creative Options",
+        "setting.option.export-format.label": "Card list format",
         "setting.option.extra-decorative.label": "Show Extra Decorative Options",
         "setting.option.hotkey.label": "Allow hotkey",
         "setting.option.hotkey.tooltip": "Warning: Using hotkey may affect undo / redo feature.",
+        "setting.option.resolution.label": "Resolution (px)",
         "setting.option.soft-mode.label": "Reduce Color and Motion"
     }
 }
