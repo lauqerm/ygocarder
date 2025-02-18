@@ -1,0 +1,35 @@
+[
+    {
+        "version": "v2.1.9",
+        "logList": [
+            {
+                "content": "Adjust export modal."
+            },
+            {
+                "content": "Changelog viewer."
+            },
+            {
+                "content": "Fix: Issue when export individual card in Manager."
+            },
+            {
+                "content": "Fix: Allow to use cross-site image for artwork and background again."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.8",
+        "logList": [
+            {
+                "content": "Fix: Font for card lore."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.7",
+        "logList": [
+            {
+                "content": "Adjust ratio for frame-replacement background."
+            }
+        ]
+    }
+]
