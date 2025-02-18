@@ -10,7 +10,7 @@ import {
     NO_ICON,
 } from 'src/model';
 import { checkMonster, checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
-import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
+import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Popconfirm, Tooltip } from 'antd';
 import { LanguageDataDictionary } from 'src/service';
@@ -236,7 +236,7 @@ export const CardThumb = ({
     onDuplicate,
     onSelect,
     onDelete,
-    onDownload,
+    // onDownload,
     style,
 }: CardThumb) => {
     const [actionVisible, setActionVisible] = useState<boolean>(false);
@@ -418,9 +418,9 @@ export const CardThumb = ({
                 <Tooltip placement="left" title={language['manager.button.duplicate.tooltip']}>
                     <CopyOutlined className="action-button action-duplicate" onClick={() => onDuplicate(card)} />
                 </Tooltip>
-                <Tooltip placement="left" title={language['manager.button.download.tooltip']}>
+                {/* <Tooltip placement="left" title={language['manager.button.download.tooltip']}>
                     <DownloadOutlined className="action-button action-download" onClick={() => onDownload(card)} />
-                </Tooltip>
+                </Tooltip> */}
                 <Popconfirm
                     placement="left"
                     title={language['manager.button.delete.label']}
