@@ -22,14 +22,8 @@ export const Affiliation = () => {
     </div>;
 };
 
-const StyledVersionLog = styled.div`
-    background-color: var(--main-level-3);
-    padding: var(--spacing-sm);
-    border: var(--bw) solid var(--sub-level-1);
-    border-radius: var(--br-lg);
-    color: var(--color);
+const StyledVersionLog = styled(StyledPopMarkdown)`
     overflow: auto;
-    width: 400px;
     max-height: 300px;
 `;
 
@@ -111,7 +105,7 @@ export const AppHeader = () => {
                 <Popover
                     placement="bottom"
                     content={<StyledVersionLog>
-                        {VersionLog}
+                        <VersionLog />
                     </StyledVersionLog>}
                 >
                     <TagsFilled className="app-log" />

@@ -1,30 +1,59 @@
-export const VersionLog = <ul>
-    <li>
-        v1<br />
-        <ul>
-            <li>v1.1</li>
-            <li>v1.2</li>
-        </ul>
-    </li>
-    <li>
-        v1<br />
-        <ul>
-            <li>v1.1</li>
-            <li>v1.2</li>
-        </ul>
-    </li>
-    <li>
-        v1<br />
-        <ul>
-            <li>v1.1</li>
-            <li>v1.2</li>
-        </ul>
-    </li>
-    <li>
-        v1<br />
-        <ul>
-            <li>v1.1</li>
-            <li>v1.2</li>
-        </ul>
-    </li>
-</ul>;
+import { useEffect, useState } from 'react';
+
+type VersionLog = { version: string, logList: { content: string }[] }[];
+const VersionLogStore = (() => {
+    let isReady = false;
+    let versionLog: VersionLog = [];
+
+    return {
+        getLog: async () => {
+            if (isReady) return versionLog;
+            const response = await fetch(
+                `${process.env.PUBLIC_URL}/log/version.json`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }
+            );
+            try {
+                const responseLog = await response.json();
+                versionLog = responseLog;
+                isReady = true;
+
+                return versionLog;
+            } catch (e) {
+                console.error(e);
+            }
+            return [];
+        }
+    };
+})();
+export const VersionLog = () => {
+    const [log, setLog] = useState<VersionLog>([]);
+    useEffect(() => {
+        (async () => {
+            const log = await VersionLogStore.getLog();
+
+            setLog(log);
+        })();
+    }, []);
+
+    if (log.length === 0) return <div>No changelogs</div>;
+    return <div>
+        {log.map(({ logList, version }, index) => {
+            return <div key={`${version}-${index}`}>
+                <b>{version}</b><br />
+                <ul>
+                    {/* Using index as key here is safe as the component is stateless */}
+                    {logList.map(({ content }, index) => {
+                        return <li key={index}>
+                            {content}
+                        </li>;
+                    })}
+                </ul>
+            </div>;
+        })}
+    </div>;
+};
