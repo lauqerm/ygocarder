@@ -9,7 +9,7 @@
                 "content": "Changelog viewer."
             },
             {
-                "content": "Fix: Issue when export individual card in Manager."
+                "content": "Fix: Remove individual card export in Manager for compatibility reasons."
             },
             {
                 "content": "Fix: Allow to use cross-site image for artwork and background again."

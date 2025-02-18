@@ -32,15 +32,20 @@ const VersionLogStore = (() => {
 })();
 export const VersionLog = () => {
     const [log, setLog] = useState<VersionLog>([]);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         (async () => {
+            setLoading(true);
             const log = await VersionLogStore.getLog();
 
+            setLoading(false);
             setLog(log);
         })();
     }, []);
 
-    if (log.length === 0) return <div>No changelogs</div>;
+    if (log.length === 0 && !loading) return <div>No changelogs</div>;
+    if (loading) return <div>Loading changelog...</div>;
     return <div>
         {log.map(({ logList, version }, index) => {
             return <div key={`${version}-${index}`}>
