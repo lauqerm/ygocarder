@@ -1,7 +1,7 @@
 // import { useCallback, useEffect, useState } from 'react';
 // import Moveable from 'react-moveable';
 // import { EllipsisOutlined } from '@ant-design/icons';
-import { Explanation } from 'src/component';
+import { Explanation, StyledPopMarkdown } from 'src/component';
 import { useLanguage } from 'src/service';
 import styled from 'styled-components';
 
@@ -158,13 +158,13 @@ export const CharPicker = ({
         </div>}
         <div className="char-picker-guideline">
             <Explanation
-                content={<>
+                content={<StyledPopMarkdown>
                     {language['input.char-picker.guide.header']}
                     <ul>
                         <li>{language['input.char-picker.guide.instruction-1']}</li>
                         <li>{language['input.char-picker.guide.instruction-2']}</li>
                     </ul>
-                </>}
+                </StyledPopMarkdown>}
             />
         </div>
         {/* <Moveable

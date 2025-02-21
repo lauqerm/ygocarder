@@ -1,5 +1,5 @@
 import { Checkbox, Tooltip } from 'antd';
-import { Explanation, FormattingHelpDrawer, RadioTrain } from 'src/component';
+import { Explanation, FormattingHelpDrawer, RadioTrain, StyledPopMarkdown } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
@@ -148,7 +148,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         >
             <span>
                 {language['input.condense.label']} <Explanation
-                    content={language['input.condense.tooltip']}
+                    content={<StyledPopMarkdown>{language['input.condense.tooltip']}</StyledPopMarkdown>}
                 />
             </span>
         </RadioTrain>

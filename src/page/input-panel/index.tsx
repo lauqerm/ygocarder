@@ -11,6 +11,7 @@ import {
     AppHeader,
     RadioTrain,
     StandaloneLabel,
+    StyledPopMarkdown,
 } from '../../component';
 import {
     checkMonster,
@@ -224,7 +225,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         {showCreativeOption && <div className="card-layout-input">
             <label className="standalone-addon ant-input-group-addon">
                 {language['input.layout.label']} <Explanation
-                    content={language['input.layout.tooltip']}
+                    content={<StyledPopMarkdown>{language['input.layout.tooltip']}</StyledPopMarkdown>}
                 />
             </label>
             <LayoutPicker ref={layoutPickerRef}
