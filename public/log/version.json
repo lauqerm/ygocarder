@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.1.11",
+        "logList": [
+            {
+                "content": "Minor UI updates."
+            },
+            {
+                "content": "Fix: UI issues for tooltips."
+            },
+            {
+                "content": "Fix: The border between stats and card effects should also support shadow."
+            }
+        ]
+    },
+    {
         "version": "v2.1.10",
         "logList": [
             {
