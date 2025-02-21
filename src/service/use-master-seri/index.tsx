@@ -445,7 +445,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawFrameFinish();
             }
 
-            if (statInEffect) await drawStatBorder(resolvedStatTextStyle.color ?? '#000000');
+            if (statInEffect) await drawStatBorder({
+                color: '#000000',
+                ...resolvedStatTextStyle,
+            });
 
             /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
             if (!isPendulum && isLink) {

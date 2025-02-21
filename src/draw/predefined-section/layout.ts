@@ -318,13 +318,13 @@ export const getLayoutDrawFunction = ({
                 })
             );
         },
-        drawStatBorder: async (color: string) => {
+        drawStatBorder: async (style: CanvasTextStyle) => {
             await drawWithStyle(
                 canvas,
                 'frame/frame-stat-border.png',
                 0, 1070,
                 813, 20,
-                { color },
+                style,
             );
         },
 

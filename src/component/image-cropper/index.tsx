@@ -468,9 +468,12 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             <Radio.Button value={'online'} checked={inputMode === 'online'}>
                                 {language['image-cropper.source.online.tooltip']}
                             </Radio.Button>
-                            <Tooltip title={<div className="image-warning">
-                                {language['image-cropper.offline-warning']}
-                            </div>}>
+                            <Tooltip
+                                placement="topLeft"
+                                title={<div className="image-warning">
+                                    {language['image-cropper.offline-warning']}
+                                </div>}
+                            >
                                 <Radio.Button value={'offline'} checked={inputMode === 'offline'}>
                                     {language['image-cropper.source.offline.tooltip']}
                                 </Radio.Button>
@@ -508,53 +511,64 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             }}>
                 {isLoading && <Loading.FullView />}
                 {(hasImage && !error) && <div className="card-image-option">
-                    <div
-                        className={mergeClass('image-option force-fit-option', forceFit ? 'option-active' : '')}
-                        onClick={() => {
-                            setInteracted(true);
-                            onForceFitChange(!forceFit);
-                        }}
+                    <Tooltip
+                        placement="left"
+                        overlay={forceFit
+                            ? language['image-cropper.button.use-crop.tooltip']
+                            : language['image-cropper.button.force-fit.tooltip']}
                     >
-                        <FullscreenOutlined />
-                    </div>
-                    {!forceFit && <div className="image-option alignment-center-option" onClick={() => {
-                        setInteracted(true);
-                        setCrop(cur => {
-                            const { width, x } = cur.completed ?? {};
+                        <div
+                            className={mergeClass('image-option force-fit-option', forceFit ? 'option-active' : '')}
+                            onClick={() => {
+                                setInteracted(true);
+                                onForceFitChange(!forceFit);
+                            }}
+                        >
+                            <FullscreenOutlined />
+                        </div>
+                    </Tooltip>
+                    {!forceFit && <Tooltip placement="left" overlay={language['image-cropper.button.center-vertical.tooltip']}>
+                        <div className="image-option alignment-center-option" onClick={() => {
+                            setInteracted(true);
+                            setCrop(cur => {
+                                const { width, x } = cur.completed ?? {};
 
-                            if (typeof width !== 'number' || typeof x !== 'number') return cur;
-                            const newCrop: ReactCrop.Crop = {
-                                ...cur.completed,
-                                x: (100 - width) / 2,
-                            };
+                                if (typeof width !== 'number' || typeof x !== 'number') return cur;
+                                const newCrop: ReactCrop.Crop = {
+                                    ...cur.completed,
+                                    x: (100 - width) / 2,
+                                };
 
-                            return {
-                                current: newCrop,
-                                completed: newCrop,
-                            };
-                        });
-                    }}>
-                        <VerticalAlignMiddleOutlined />
-                    </div>}
-                    {!forceFit && <div className="image-option alignment-middle-option" onClick={() => {
-                        setInteracted(true);
-                        setCrop(cur => {
-                            const { height, y } = cur.completed ?? {};
+                                return {
+                                    current: newCrop,
+                                    completed: newCrop,
+                                };
+                            });
+                        }}>
+                            <VerticalAlignMiddleOutlined />
+                        </div>
+                    </Tooltip>}
+                    {!forceFit && <Tooltip placement="left" overlay={language['image-cropper.button.center-horizontal.tooltip']}>
+                        <div className="image-option alignment-middle-option" onClick={() => {
+                            setInteracted(true);
+                            setCrop(cur => {
+                                const { height, y } = cur.completed ?? {};
 
-                            if (typeof height !== 'number' || typeof y !== 'number') return cur;
-                            const newCrop: ReactCrop.Crop = {
-                                ...cur.completed,
-                                y: (100 - height) / 2,
-                            };
+                                if (typeof height !== 'number' || typeof y !== 'number') return cur;
+                                const newCrop: ReactCrop.Crop = {
+                                    ...cur.completed,
+                                    y: (100 - height) / 2,
+                                };
 
-                            return {
-                                current: newCrop,
-                                completed: newCrop,
-                            };
-                        });
-                    }}>
-                        <VerticalAlignMiddleOutlined />
-                    </div>}
+                                return {
+                                    current: newCrop,
+                                    completed: newCrop,
+                                };
+                            });
+                        }}>
+                            <VerticalAlignMiddleOutlined />
+                        </div>
+                    </Tooltip>}
                 </div>}
                 {(!hasImage || (error && crossorigin === undefined)) && <Empty
                     description={language['image-cropper.not-found-warning']}
