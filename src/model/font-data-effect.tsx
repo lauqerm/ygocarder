@@ -49,13 +49,13 @@ export const DefaultFontSizeData = {
  * 
  * So for now we can only hardcode a list of problematic letters with their correpsonding treatment. This is just baffling.
  */
-export const DefaultFontDeviation: Required<FontDeviation> = {
-    yOffset: 0,
-    yRatio: 1,
-};
 export type FontDeviation = {
     yRatio?: number,
     yOffset?: number,
+};
+export const DefaultFontDeviation: Required<FontDeviation> = {
+    yOffset: 0,
+    yRatio: 1,
 };
 
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';

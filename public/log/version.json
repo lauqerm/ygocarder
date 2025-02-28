@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.1.12",
+        "logList": [
+            {
+                "content": "Fix: Capital letter E does not display correctly on card's name."
+            }
+        ]
+    },
+    {
         "version": "v2.1.11",
         "logList": [
             {
