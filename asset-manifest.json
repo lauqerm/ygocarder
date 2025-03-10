@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/ygocarder/static/css/main.cf5f3ab8.chunk.css",
-    "main.js": "/ygocarder/static/js/main.a6886034.chunk.js",
-    "main.js.map": "/ygocarder/static/js/main.a6886034.chunk.js.map",
+    "main.js": "/ygocarder/static/js/main.3790c89f.chunk.js",
+    "main.js.map": "/ygocarder/static/js/main.3790c89f.chunk.js.map",
     "runtime-main.js": "/ygocarder/static/js/runtime-main.20ead755.js",
     "runtime-main.js.map": "/ygocarder/static/js/runtime-main.20ead755.js.map",
     "static/css/2.d730ab20.chunk.css": "/ygocarder/static/css/2.d730ab20.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.d730ab20.chunk.css",
     "static/js/2.a75ceb43.chunk.js",
     "static/css/main.cf5f3ab8.chunk.css",
-    "static/js/main.a6886034.chunk.js"
+    "static/js/main.3790c89f.chunk.js"
   ]
 }
