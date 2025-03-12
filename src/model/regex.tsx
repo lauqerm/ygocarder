@@ -32,6 +32,9 @@ export const NormalizeTextRegex = new RegExp(`[${[
     NB_UNCOMPRESSED_END,
 ].join('')}]|(\\|[^}]+})`, 'g');
 
+export const CONTEXTUAL_DOUBLE_QUOTE_SOURCE = `(^|[-\\u2014/[(\\u2018${NB_WORD_OPEN}${NB_LINE_OPEN}${NB_UNCOMPRESSED_START}\\s])"`;
+export const contextualDoubleQuoteRegex = new RegExp(CONTEXTUAL_DOUBLE_QUOTE_SOURCE, 'g');
+
 export const NON_BREAKABLE_SYMBOL_SOURCE = `${NB_WORD_OPEN}|${NB_WORD_CLOSE}`;
 export const nonBreakableSymbolRegex = new RegExp(NON_BREAKABLE_SYMBOL_SOURCE);
 
@@ -40,7 +43,7 @@ export const FLAVOR_CONDITION_SOURCE = `(\\n^[\\r\\t\\f\\v \\u00a0\\u1680\\u2000
 
 /** Small reminder: `g` flag turn regex into stateful, and cannot be reused without reset it first. */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]\\\\';
-export const TCG_SYMBOL_JOINLIST = '#★@∞';
+export const TCG_SYMBOL_JOINLIST = '#★☆@∞';
 export const TCGSymbolLetterRegex = new RegExp(`[${TCG_SYMBOL_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');

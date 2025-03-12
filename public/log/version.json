@@ -1,5 +1,20 @@
 [
     {
+        "version": "v2.1.13",
+        "logList": [
+            
+            {
+                "content": "Attempt to support display for letter \"∅\" (\"K9 - ØØ Lupus\") for OCG cards."
+            },
+            {
+                "content": "Fix: Incorrect display for letter \"☆\" (Live☆Twin) in card's name. It is now consistent with letter \"★\"."
+            },
+            {
+                "content": "Fix: Attempt to fix behavior for contextual double quotes in card's text."
+            }
+        ]
+    },
+    {
         "version": "v2.1.12",
         "logList": [
             {

@@ -17,7 +17,8 @@ import {
     NB_WORD_CLOSE,
     FLAVOR_CONDITION_SOURCE,
     NB_UNCOMPRESSED_START,
-    NB_UNCOMPRESSED_END
+    NB_UNCOMPRESSED_END,
+    contextualDoubleQuoteRegex
 } from 'src/model';
 
 export const splitEffect = (effect: string, isNormal = false) => {
@@ -87,7 +88,7 @@ export const normalizeCardText = (
     const textAfterSwapLetter = textAfterSplitBlockRow
         .replace(/(^|[-\u2014\s(["])'/g, '$1\u2018')        /** Turn straight single quote ' into contextual curly quote ‘ */
         .replace(/'/g, '\u2019')                            /** Close open curly quote ’ */
-        .replace(/(^|[-\u2014/[(\u2018\s])"/g, '$1\u201c')  /** Turn straight double quote " into contextual curly double quote “ */
+        .replace(contextualDoubleQuoteRegex, '$1\u201c')  /** Turn straight double quote " into contextual curly double quote “ */
         .replace(/"/g, '\u201d')                            /** Close open curly double quote ” */
         .replace(/--/g, '\u2014')                           /** Turn double dash "--" into em-dash "—" */
         .replace(/● /g, '●')                                /** Remove direct whitespace after bullet, bullet have their own fixed space that we will draw later */
