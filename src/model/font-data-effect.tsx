@@ -225,6 +225,9 @@ export const PendulumEffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 34, fontSize: 35.3, lineHeight: 38.85, lineCount: 3, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 27, fontSize: 26.3, lineHeight: 29.35, lineCount: 4, bulletSymbolOffset: 3 },
             { bulletSymbolWidth: 23, fontSize: 24.3, lineHeight: 24.35, lineCount: 5 },
+            { bulletSymbolWidth: 18, fontSize: 19.5, lineHeight: 20.23, lineCount: 6 },
+            { bulletSymbolWidth: 17, fontSize: 17.0, lineHeight: 17.40, lineCount: 7 },
+            { bulletSymbolWidth: 14, fontSize: 14.7, lineHeight: 15.32, lineCount: 8 },
         ],
     },
     ocg: {
