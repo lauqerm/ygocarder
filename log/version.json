@@ -1,8 +1,15 @@
 [
     {
+        "version": "v2.1.14",
+        "logList": [
+            {
+                "content": "Pendulum effects now support up to 8 line of effects (was 5 before)."
+            }
+        ]
+    },
+    {
         "version": "v2.1.13",
         "logList": [
-            
             {
                 "content": "Attempt to support display for letter \"∅\" (\"K9 - ØØ Lupus\") for OCG cards."
             },

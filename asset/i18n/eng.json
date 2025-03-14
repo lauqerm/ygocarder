@@ -68,7 +68,7 @@
         "error.export.image-loading.message": "Image is still loading, you should not export your card yet.",
         "error.export.message": "Fail to export",
         "error.export.offline-data.description": "Card data with offline image / background WILL NOT be exported, please recheck your list.",
-        "error.export.offline-data.message": "Export incomplete data",
+        "error.export.offline-data.message": "Incomplete data exported",
         "error.import.error.description": "Card data may have errors, incomplete or fail to request.",
         "error.import.error.message": "Fail to import",
         "error.load.font.all-ocg": "Data for OCG cards could not be loaded",
