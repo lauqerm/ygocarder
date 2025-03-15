@@ -377,6 +377,7 @@ export const CardManagerPanel = forwardRef(({
                         className="card-manager-search"
                         placeholder={language['manager.button.search.text.placeholder']}
                         onChange={debounceSearch}
+                        onPressEnter={e => setFilterFunction({ type: 'text', value: e.currentTarget.value })}
                         allowClear
                     />
                 </div>

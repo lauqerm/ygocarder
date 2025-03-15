@@ -13,6 +13,7 @@ const StyledManagerCardList = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
     .list-container {
         flex: 1;
         overflow: auto;
@@ -20,6 +21,8 @@ const StyledManagerCardList = styled.div`
     .no-card {
         padding: var(--spacing);
         text-align: center;
+        position: absolute;
+        width: 100%;
         .reset-filter {
             cursor: pointer;
             color: var(--main-active);
