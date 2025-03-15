@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.1.15",
+        "logList": [
+            {
+                "content": "Fix: Minor font issues."
+            }
+        ]
+    },
+    {
         "version": "v2.1.14",
         "logList": [
             {
