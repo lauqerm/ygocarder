@@ -236,7 +236,7 @@ export const drawName = async (
         /** Second iteration, draw pattern, we follow these steps:
          *  * We create a second, temporary canvas node.
          *  * We fill the node with pattern. The pattern is not skewed, but maybe scaled to fit exactly the bounding box of the card name (we reuse the same information when calculate gradient).
-         *  * We place the temporary node above the card name's canvas, using suitable blend mode, this way we essential "coating" the pattern on top of the text, without damaging it's surrounding.
+         *  * We place the temporary node above the card name's canvas, using suitable blend mode, this way we essentially "coating" the pattern on top of the text, without damaging its surrounding.
          */
         if (patternImage && cloneNode) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
