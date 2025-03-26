@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { tcgToOCGTermMap } from 'src/model';
+import { NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap } from 'src/model';
 import { TrainGridStyle } from './input-train.styled';
 import { RadioTrain } from 'src/component';
 
@@ -13,9 +13,11 @@ const StyledFrameTrain = styled(RadioTrain)`
 
 export type FrameTrain = {
     onSTFrameChange: (value: string[]) => void,
+    onPasswordChange: (value: string) => void,
 };
 export const FrameTrain = ({
     onSTFrameChange,
+    onPasswordChange,
 }: FrameTrain) => {
     const {
         setting,
@@ -45,6 +47,8 @@ export const FrameTrain = ({
                 isPendulum,
                 attribute,
                 format,
+                password,
+                star,
             } = currentCard;
             const nextFrame = `${frameValue}`;
             const isST = nextFrame === 'spell' || nextFrame === 'trap';
@@ -54,23 +58,34 @@ export const FrameTrain = ({
                     'Trap Card': 'Trap Card',
                 }
                 : tcgToOCGTermMap;
-            const newTypeAbility = nextFrame === 'spell'
+            const nextTypeAbility = nextFrame === 'spell'
                 ? [termMap['Spell Card']]
                 : nextFrame === 'trap' ? [termMap['Trap Card']] : typeAbility;
-            if (isST) onSTFrameChange(newTypeAbility);
+            const nextPassword = nextFrame === 'token'
+                ? passwordSentenceMap[format]
+                : password;
+
+            onPasswordChange(nextPassword);
+            if (isST) onSTFrameChange(nextTypeAbility);
 
             return {
                 ...currentCard,
                 frame: nextFrame,
                 isPendulum: nextFrame === 'link' ? false : isPendulum,
                 isLink: nextFrame === 'link' ? true : false,
-                attribute: isST
-                    ? `${nextFrame}`.toUpperCase()
-                    : attribute,
-                typeAbility: newTypeAbility,
+                attribute: nextFrame === 'token'
+                    ? NO_ATTRIBUTE
+                    : isST
+                        ? `${nextFrame}`.toUpperCase()
+                        : attribute,
+                star: nextFrame === 'token'
+                    ? 0
+                    : star,
+                typeAbility: nextTypeAbility,
+                password: nextPassword,
             };
         });
-    }, [setCard, onSTFrameChange]);
+    }, [setCard, onPasswordChange, onSTFrameChange]);
 
     return <StyledFrameTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />;
 };

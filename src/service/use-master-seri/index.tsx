@@ -610,7 +610,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const ctx = passwordCanvasRef.current?.getContext('2d');
         if (!clearCanvas(ctx)) return;
 
-        const endOfPassword = drawPasswordText({
+        const {
+            rightEdge,
+            isNumberPassword,
+        } = drawPasswordText({
             ctx,
             value: password,
             lightFooter,
@@ -620,13 +623,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             textStyle: resolvedOtherEffectTextStyle,
         });
         if (isFirstEdition) {
-            const left = isLegacyCard && !isPendulum
+            const left = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? isLink ? 151 : 89
-                : Math.max(endOfPassword + 14.813, 142.2) - (format === 'ocg' ? 10 : 0);
-            const bottom = isLegacyCard && !isPendulum
+                : Math.max(rightEdge + 14.813, 142.2) - (format === 'ocg' ? 7 : 0);
+            const bottom = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? 871
                 : 1150.93;
-            const bottomOffset = isLegacyCard && !isPendulum
+            const bottomOffset = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? 0
                 : isSpeedSkill ? -2 : -1;
 

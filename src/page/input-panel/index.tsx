@@ -238,7 +238,10 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             />
         </div>}
 
-        <FrameTrain onSTFrameChange={typeAbility => postPendulumInputGroupRef.current?.setValue({ typeAbility })} />
+        <FrameTrain
+            onSTFrameChange={typeAbility => postPendulumInputGroupRef.current?.setValue({ typeAbility })}
+            onPasswordChange={password => footerInputGroupRef.current?.setValue({ password })}
+        />
 
         <StyledNameSetIdInputContainer className="name-style-id-input">
             <NameSetInputGroup ref={nameSetIdInputGroupRef}

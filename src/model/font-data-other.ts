@@ -74,8 +74,8 @@ export const tcgPasswordFontData: FontData = {
         },
         {
             bulletSymbolWidth: 20.05,
-            fontSize: 21,
-            lineHeight: 21,
+            fontSize: 22.219,
+            lineHeight: 22.219,
             lineCount: 1,
             letterSpacing: 0,
             headTextFontRatio: 0.4,

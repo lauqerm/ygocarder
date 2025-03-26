@@ -254,6 +254,11 @@ export const copyrightMap = {
     ],
 };
 
+export const passwordSentenceMap: Record<string, string> = {
+    ocg: '※デッキ構築には使用できません。',
+    tcg: 'This card cannot be in a Deck.',
+};
+
 /** Automatically convert popular OCG terms into their TCG counterpart. Never introduce machine translation here :'( */
 export const ocgToTCGTermMap: Record<string, string> = {
     /** monster type */
@@ -327,6 +332,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     '※公式のデュエルでは使用できません。': 'This card cannot be used in a Duel.',
     // eslint-disable-next-line quotes
     '①：１ターンに１度、８００ＬＰを払って発動できる。このカードのＰスケールを1つ上げる。': "Once per turn: You can pay 800 LP, increase this card's Pendulum Scale by 1.",
+    [passwordSentenceMap.ocg]: passwordSentenceMap.tcg,
 };
 export const tcgToOCGTermMap = Object.entries(ocgToTCGTermMap).reduce((acc, cur) => {
     const [ocgTerm, tcgTerm] = cur;

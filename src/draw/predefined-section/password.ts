@@ -26,7 +26,11 @@ export const drawPasswordText = ({
     hasShadow?: boolean,
     textStyle?: CanvasTextStyle,
 }) => {
-    if (!clearCanvas(ctx)) return 0;
+    const isNumberPassword = /^[0-9]*$/.test(value);
+    if (!clearCanvas(ctx)) return {
+        rightEdge: 0,
+        isNumberPassword,
+    };
 
     const resetTextStyle = setTextStyle({
         ctx,
@@ -42,7 +46,6 @@ export const drawPasswordText = ({
     });
 
     const { trueEdge, trueBaseline, trueWidth: width } = PasswordCoordinateMap[format] ?? PasswordCoordinateMap['tcg'];
-    const isNumberPassword = /^[0-9]*$/.test(value);
     const fontData = PasswordFontData[format];
     const { font } = fontData;
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
@@ -111,5 +114,8 @@ export const drawPasswordText = ({
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     resetTextStyle();
 
-    return result.tokenEdge;
+    return {
+        rightEdge: result.tokenEdge,
+        isNumberPassword,
+    };
 };
