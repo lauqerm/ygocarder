@@ -249,7 +249,6 @@
         "input.text-style.custom.label": "Custom",
         "input.text-style.extra-size.label": "Extra Size",
         "input.text-style.font-style.label": "Style",
-        "input.text-style.font-style.auto.label": "Auto",
         "input.text-style.font-style.normal.label": "Normal",
         "input.text-style.font-style.italic.label": "Italic",
         "input.text-style.section.effect.label": "Effect Style",
