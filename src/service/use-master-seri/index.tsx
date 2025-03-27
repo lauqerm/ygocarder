@@ -36,6 +36,7 @@ import {
     DEFAULT_BASE_FILL_COLOR,
     DEFAULT_EFFECT_NORMAL_SIZE,
     DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
+    PendulumNormalFontData,
 } from 'src/model';
 import {
     checkLightHeader,
@@ -623,6 +624,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             textStyle: resolvedOtherEffectTextStyle,
         });
         if (isFirstEdition) {
+            const willDraw = isPendulum
+                ? isNumberPassword ? true : false
+                : true;
             const left = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? isLink ? 151 : 89
                 : Math.max(rightEdge + 14.813, 142.2) - (format === 'ocg' ? 7 : 0);
@@ -633,7 +637,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ? 0
                 : isSpeedSkill ? -2 : -1;
 
-            draw1stEdition(
+            if (willDraw) draw1stEdition(
                 ctx,
                 left,
                 bottom,
@@ -746,12 +750,17 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.typeAbility.instructor = async () => {
             if (!clearCanvas(ctx) || !clearCanvas(typeCtx)) return;
 
-            const { condenseTolerant, upSize } = effectStyle ?? {};
-            const normalizedUpSize = effectTextStyle[0] ? upSize : 0;
+            const { condenseTolerant, upSize, fontStyle } = effectStyle ?? {};
+            const customizeEffectStyle = effectTextStyle[0];
+            const normalizedUpSize = customizeEffectStyle ? upSize : 0;
+            const useItalic = customizeEffectStyle
+                ? (isNormal && fontStyle === 'auto') || fontStyle === 'italic'
+                : isNormal;
             const effectIndexSize = drawEffect({
                 ctx,
                 content: effect,
                 isNormal,
+                useItalic,
                 condenseTolerant,
                 format,
                 furiganaHelper,
@@ -759,7 +768,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     format,
                     statInEffect,
                     typeInEffect,
-                    isNormal,
+                    useItalic,
                 }),
                 textStyle: resolvedEffectTextStyle,
                 option: {
@@ -808,13 +817,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
-            const { upSize } = pendulumStyle ?? {};
-            const normalizedUpSize = pendulumTextStyle[0] ? upSize : 0;
+            const { upSize, fontStyle } = pendulumStyle ?? {};
+            const customPendulumStyle = pendulumTextStyle[0];
+            const normalizedUpSize = customPendulumStyle ? upSize : 0;
+            const useItalic = customPendulumStyle ? fontStyle === 'italic' : false;
             drawEffect({
                 ctx,
                 content: pendulumEffect,
                 isNormal: false,
-                fontData: PendulumEffectFontData[format],
+                useItalic: useItalic,
+                fontData: (useItalic
+                    ? PendulumNormalFontData
+                    : PendulumEffectFontData)[format],
                 textStyle: resolvedPendulumEffectTextStyle,
                 sizeList: PendulumEffectCoordinate,
                 condenseTolerant,

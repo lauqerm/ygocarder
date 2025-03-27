@@ -343,14 +343,14 @@ export const TextStylePicker = () => {
                             >{language['input.text-style.custom.label']}</Checkbox>
                         </h3>
                         {custom && <div className="style-picker-section">
-                            {/* {typeof fontStyle === 'string' && <>
+                            {typeof fontStyle === 'string' && <>
                                 <h2 className="font-style-picker">
                                     <span className="label">{language['input.text-style.font-style.label']}</span>
                                     <RadioTrain
                                         className="inline-radio-train"
                                         value={fontStyle}
                                         optionList={[
-                                            { label: language['input.text-style.font-style.auto.label'], value: 'auto' },
+                                            { label: <CloseCircleOutlined />, value: 'auto' },
                                             { label: language['input.text-style.font-style.normal.label'], value: 'normal' },
                                             { label: language['input.text-style.font-style.italic.label'], value: 'italic' },
                                         ]}
@@ -368,7 +368,7 @@ export const TextStylePicker = () => {
                                         }}
                                     />
                                 </h2>
-                            </>} */}
+                            </>}
                             {typeof upSize === 'number' && <>
                                 <h2 className="size-picker">
                                     <span className="label">{language['input.text-style.extra-size.label']}</span>
@@ -447,13 +447,14 @@ export const TextStylePicker = () => {
                 {styleList.map(({ info, value, extraValue }) => {
                     const { keyName } = info;
                     const [custom, fillStyle, hasShadow, shadow] = value;
-                    const { upSize } = extraValue ?? {};
+                    const { upSize, fontStyle } = extraValue ?? {};
 
                     return <div key={keyName}
                         className="text-style-preview-section"
                         style={{
                             color: (fillStyle ?? '').length === 0 || !custom ? '#000000' : fillStyle,
-                            textShadow: (custom && hasShadow) ? `0 0 2px ${shadow}` : 'none'
+                            textShadow: (custom && hasShadow) ? `0 0 2px ${shadow}` : 'none',
+                            fontStyle: (custom && fontStyle === 'italic') ? 'italic' : 'normal',
                         }}
                     >
                         {(upSize && custom) ? <div>+{upSize}</div> : 'Auto'}
