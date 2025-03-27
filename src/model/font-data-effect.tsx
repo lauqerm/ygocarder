@@ -268,6 +268,8 @@ export const PendulumEffectFontData: Record<string, FontData> = {
     },
 };
 
+export type FontStyle = '' | 'italic' | 'small-caps';
+
 export type CondenseType = 'veryStrict' | 'veryLoose' | 'strict' | 'loose' | 'relaxed';
 export const CondenseTolerantMap: Record<CondenseType, Record<string, number>> = {
     veryStrict: {

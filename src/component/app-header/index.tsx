@@ -25,6 +25,7 @@ export const Affiliation = () => {
 const StyledVersionLog = styled(StyledPopMarkdown)`
     overflow: auto;
     max-height: 300px;
+    width: 550px;
 `;
 
 const StyledAppHeaderButtonContainer = styled.div`
