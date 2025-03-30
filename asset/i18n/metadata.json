@@ -26,7 +26,7 @@
         "initialMessage": "Đang tải phông chữ…",
         "order": 3,
         "style": {
-            "--width-label": "110px"
+            "--width-label": "130px"
         },
         "active": true
     },

@@ -1,13 +1,5 @@
 [
     {
-        "version": "v2.1.17",
-        "logList": [
-            {
-                "content": "Allow customize font style for card's effects in \"Text Style\" menu."
-            }
-        ]
-    },
-    {
         "version": "v2.1.16",
         "logList": [
             {
