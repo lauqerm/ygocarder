@@ -177,6 +177,7 @@ export const drawWithStyle = async (
     source: string,
     dx: number, dy: number,
     sw: number, sh: number,
+    globalScale: number,
     style?: CanvasTextStyle,
 ) => {
     const ctx = canvas.getContext('2d');
@@ -204,7 +205,7 @@ export const drawWithStyle = async (
     clonedCtx.globalCompositeOperation = 'source-over';
 
     /** After that, we draw the cloned canvas back into the main one, and apply corresponding shadow if needed. */
-    const resetMainCanvasStyle = setTextStyle({ ctx, ...style });
+    const resetMainCanvasStyle = setTextStyle({ ctx, ...style, globalScale });
     ctx.drawImage(clonedCanvas, dx, dy);
     resetMainCanvasStyle();
 };

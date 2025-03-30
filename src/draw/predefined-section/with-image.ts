@@ -3,6 +3,7 @@ import { CanvasConst, NO_STICKER } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
+import { scaleDrawCoordinate } from 'src/util';
 
 const {
     width: CanvasWidth,
@@ -10,6 +11,7 @@ const {
 
 export const drawStarContent = async ({
     ctx,
+    globalScale,
     cardIcon,
     text,
     star,
@@ -18,6 +20,7 @@ export const drawStarContent = async ({
     onStarDraw,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
+    globalScale: number,
     cardIcon: string,
     text: string | null,
     star: string | number,
@@ -56,7 +59,7 @@ export const drawStarContent = async ({
 
     if (ctx && text && cardIcon !== 'st') {
         const fontSize = 50;
-        const resetShadow = setTextStyle({ ctx, ...style });
+        const resetShadow = setTextStyle({ ctx, ...style, globalScale });
         ctx.textAlign = alignment === 'left' || alignment === 'right'
             ? alignment
             : 'left';
@@ -100,6 +103,7 @@ export const drawSticker = async ({
 /** Duel terminal mark and Speed card mark. */
 export const drawPredefinedMark = async ({
     canvas,
+    globalScale,
     type,
     isPendulum,
     isLink,
@@ -109,6 +113,7 @@ export const drawPredefinedMark = async ({
     textStyle,
 }: {
     canvas: HTMLCanvasElement,
+    globalScale: number,
     type: string,
     isPendulum: boolean,
     isLink: boolean,
@@ -131,7 +136,8 @@ export const drawPredefinedMark = async ({
         await drawWithStyle(
             canvas,
             `text/text-duel-terminal-${type}${bordered ? '-bordered' : ''}.png`,
-            ...coordinate,
+            ...scaleDrawCoordinate(coordinate, globalScale),
+            globalScale,
             textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
         );
     }
@@ -145,7 +151,8 @@ export const drawPredefinedMark = async ({
         await drawWithStyle(
             canvas,
             `text/text-speed-duel-${type}${bordered ? '-bordered' : ''}.png`,
-            ...coordinate,
+            ...scaleDrawCoordinate(coordinate, globalScale),
+            globalScale,
             textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
         );
     }
@@ -154,6 +161,7 @@ export const drawPredefinedMark = async ({
 export const drawLimitedEditionMark = async ({
     canvas,
     type,
+    globalScale,
     isPendulum,
     isLink,
     isLegacyCard,
@@ -163,6 +171,7 @@ export const drawLimitedEditionMark = async ({
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     canvas: HTMLCanvasElement,
+    globalScale: number,
     type: string,
     isPendulum: boolean,
     isLink: boolean,
@@ -181,7 +190,8 @@ export const drawLimitedEditionMark = async ({
     await drawWithStyle(
         canvas,
         `text/text-limited-edition-${type}${bordered ? '-bordered' : ''}.png`,
-        ...coordinate,
+        ...scaleDrawCoordinate(coordinate, globalScale),
+        globalScale,
         textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
     );
 };
@@ -190,6 +200,7 @@ export const drawLinkRatingText = async (
     canvas: HTMLCanvasElement,
     linkMap: string[],
     style: CanvasTextStyle,
+    globalScale: number,
 ) => {
     const ctx = canvas.getContext('2d');
 
@@ -198,15 +209,15 @@ export const drawLinkRatingText = async (
     await drawWithStyle(
         canvas,
         'link/link-text.png',
-        600, 1080,
-        120, 30,
+        ...scaleDrawCoordinate([600, 1080, 120, 30], globalScale),
+        globalScale,
         style,
     );
-    const resetStyle = setTextStyle({ ctx, ...style });
+    const resetStyle = setTextStyle({ ctx, ...style, globalScale });
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
-    ctx.font = 'bold 26.55px RoGSanSrfStd-Bd';
-    ctx.fillText(`${linkMap.length}`, 622.75, 1105);
+    ctx.font = `bold ${26.55 * globalScale}px RoGSanSrfStd-Bd`;
+    ctx.fillText(`${linkMap.length}`, 622.75 * globalScale, 1105 * globalScale);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';
     resetStyle();

@@ -49,6 +49,7 @@ export type DownloadButton = {
     isTainted: boolean,
     isInitializing: boolean,
     imageChangeCount: number,
+    globalScale: number,
     canvasMap: MasterSeriesCanvas,
     onDownloadError: () => void,
 };
@@ -56,6 +57,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     isTainted,
     isInitializing,
     imageChangeCount,
+    globalScale,
     canvasMap,
     onDownloadError,
 }, ref) => {
@@ -74,6 +76,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
             imageChangeCount,
             isInitializing,
             language,
+            globalScale,
         },
     );
     const {

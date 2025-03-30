@@ -13,7 +13,7 @@ export const EffectCoordinateData: Record<string, CoordinateData[]> = {
         { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
     ],
     'tcg-type-stat': [
-        { trueWidth: 684, trueBaseline: 919.8, trueEdge: 64.5 },
+        { trueWidth: 684, trueBaseline: 920.8, trueEdge: 64.5 },
     ],
     'tcg-type': [
         { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },

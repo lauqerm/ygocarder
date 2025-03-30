@@ -94,6 +94,7 @@ export const drawTypeAbilityText = ({
 
 export const drawTypeAbility = async ({
     ctx,
+    globalScale,
     typeAbility,
     subFamily,
     format,
@@ -104,6 +105,7 @@ export const drawTypeAbility = async ({
     furiganaHelper,
 }: {
     ctx?: CanvasRenderingContext2D | null,
+    globalScale: number,
     typeAbility: string,
     subFamily: string,
     format: string,
@@ -133,7 +135,7 @@ export const drawTypeAbility = async ({
         ? '#ffffff'
         : '#000000';
     const normalizedStyle = { color: defaultFillStyle, ...textStyle };
-    const resetStyle = setTextStyle({ ctx, ...normalizedStyle });
+    const resetStyle = setTextStyle({ ctx, ...normalizedStyle, globalScale });
     const { iconPositionList, xRatio } = drawTypeAbilityText({
         ctx,
         format,

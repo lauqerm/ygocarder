@@ -6,6 +6,8 @@ export type CanvasTextStyle = {
     blur?: number,
     color?: string,
     shadowColor?: string,
+    lineWidth?: number,
+    lineColor?: string,
 };
 
 export const prepareStyle = ({

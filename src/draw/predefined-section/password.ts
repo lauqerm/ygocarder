@@ -9,6 +9,7 @@ import { CanvasTextStyle } from 'src/service';
 
 export const drawPasswordText = ({
     ctx,
+    globalScale,
     value,
     format,
     alignment,
@@ -18,6 +19,7 @@ export const drawPasswordText = ({
     textStyle,
 }: {
     ctx?: CanvasRenderingContext2D | null,
+    globalScale: number,
     value: string,
     format: string,
     alignment: 'left' | 'right',
@@ -41,6 +43,7 @@ export const drawPasswordText = ({
         x: 0,
         y: 0,
         blur: hasShadow ? 3 : 0,
+        globalScale,
         ...textStyle,
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });

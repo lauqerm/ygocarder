@@ -29,6 +29,7 @@ export const getLayoutDrawFunction = ({
     canvas,
     artworkCanvas,
     backgroundCanvas,
+    globalScale,
     format,
     hasBackground,
     frame, bottomFrame,
@@ -47,6 +48,7 @@ export const getLayoutDrawFunction = ({
     canvas: HTMLCanvasElement,
     artworkCanvas: HTMLCanvasElement | null,
     backgroundCanvas: HTMLCanvasElement | null,
+    globalScale: number,
     format: string,
     frame: string, bottomFrame: string,
     hasBackground: boolean,
@@ -159,6 +161,7 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
 
             ctx.globalAlpha = opacityBody / 100;
+            ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/frame-${frame}.png`, 0, 0);
             await drawAsset(ctx, `frame-pendulum/frame-pendulum-${bottomFrame}.png`, 0, 0);
             if (hasBackground && backgroundCanvas && backgroundType === 'frame') {
@@ -199,6 +202,7 @@ export const getLayoutDrawFunction = ({
                 }
             }
             ctx.globalAlpha = 1;
+            ctx.resetTransform();
         },
         /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas. */
         drawCardArt: () => {
@@ -274,10 +278,20 @@ export const getLayoutDrawFunction = ({
             );
         },
         drawAttribute: async () => {
-            await drawAsset(ctx, `attribute/attr-${format}-${attribute.toLowerCase()}.png`, 678, 55);
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
+            await drawAsset(
+                ctx,
+                `attribute/attr-${format}-${attribute.toLowerCase()}.png`,
+                678, 55,
+            );
+            ctx.resetTransform();
         },
         drawStar: async ({ style, starAlignment }: { style?: CanvasTextStyle, starAlignment: string }) => {
             const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
+
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawStarContent({
                 ctx,
                 cardIcon: normalizedCardIcon,
@@ -285,6 +299,7 @@ export const getLayoutDrawFunction = ({
                 star,
                 starAlignment,
                 style,
+                globalScale,
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'
                         ? Promise.resolve()
@@ -295,12 +310,18 @@ export const getLayoutDrawFunction = ({
                         );
                 },
             });
+            ctx.resetTransform();
         },
         drawPendulumScaleIcon: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 750);
+            ctx.resetTransform();
         },
         /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
         drawLinkArrowMap: async (linkMap: string[]) => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
                 .map(async entry => {
                     const { left, top, height, width } = ArrowPositionList[entry - 1];
@@ -317,15 +338,20 @@ export const getLayoutDrawFunction = ({
                     } else return;
                 })
             );
+            ctx.resetTransform();
         },
         drawStatBorder: async (style: CanvasTextStyle) => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawWithStyle(
                 canvas,
                 'frame/frame-stat-border.png',
                 0, 1070,
                 813, 20,
+                globalScale,
                 style,
             );
+            ctx.resetTransform();
         },
 
         /** @summary BACKGROUND section */
@@ -333,14 +359,17 @@ export const getLayoutDrawFunction = ({
         drawNameBackground: async () => {
             if (!ctx) return;
 
+            ctx.scale(globalScale, globalScale);
             ctx.globalAlpha = opacityName / 100;
             await drawAsset(ctx, `background/background-name-${frame}.png`, 0, 0);
             ctx.globalAlpha = 1;
+            ctx.resetTransform();
         },
         /** Background is based on bottom frame. This function draws both background for pendulum part and normal effect part. */
         drawEffectBackground: async (withPendulum = false) => {
             if (!ctx) return;
 
+            ctx.scale(globalScale, globalScale);
             ctx.globalAlpha = opacityText / 100;
             await drawAsset(
                 ctx,
@@ -352,17 +381,28 @@ export const getLayoutDrawFunction = ({
                 await drawAsset(ctx, `background/background-pendulum-${bottomFrame}.png`, 55, 738);
             }
             ctx.globalAlpha = 1;
+            ctx.resetTransform();
         },
 
         /** @summary BORDER section */
 
         drawFrameBorder: async () => {
-            return drawAsset(ctx, `frame/frame-border-${frameBorderType}.png`, 0, 0);
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
+            await drawAsset(ctx, `frame/frame-border-${frameBorderType}.png`, 0, 0);
+            ctx.resetTransform();
+            return;
         },
         drawNameBorder: async () => {
-            return nameBorder
-                ? drawAsset(ctx, `frame/name-border-${nameBorderType}.png`, 0, 0)
-                : Promise.resolve();
+            if (!ctx) return;
+            if (nameBorder) {
+                ctx.scale(globalScale, globalScale);
+                await drawAsset(ctx, `frame/name-border-${nameBorderType}.png`, 0, 0);
+                ctx.resetTransform();
+            } else {
+                Promise.resolve();
+            }
+            return;
         },
         drawArtBorder: async () => {
             if (artBorder) {
@@ -374,10 +414,15 @@ export const getLayoutDrawFunction = ({
                 } else {
                     artFrameSource = 'frame/art-border.png';
                 }
+                if (!ctx) return;
+                ctx.scale(globalScale, globalScale);
                 await drawAsset(ctx, artFrameSource, artBoxX, artBoxY);
+                ctx.resetTransform();
             }
         },
         drawPendulumBorder: async (artBorder: boolean, foilType: Foil) => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawAsset(
                 ctx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
@@ -386,31 +431,47 @@ export const getLayoutDrawFunction = ({
                 + '.png',
                 30, 185,
             );
+            ctx.resetTransform();
         },
         /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied.
          * 
          * In fact the effect border of speed skill is kinda buggy and not align really well, but we can't really do anything about it. Speed skill is also just a non-standard frame. */
         drawEffectBorder: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             if (!hasFoil && bottomFrame === 'speed-skill') {
                 await drawAsset(ctx, 'frame/effect-border-speed-skill.png', effectBoxX, effectBoxY);
             } else {
                 await drawAsset(ctx, 'frame/effect-border.png', effectBoxX, effectBoxY);
             }
+            ctx.resetTransform();
         },
         drawCardBorder: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/card-border${hasFoil ? `-${foil}` : ''}.png`, 0, 0);
+            ctx.resetTransform();
         },
 
         /** @summary FOIL section */
 
         drawArtBorderFoil: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             if (artBorder) await drawAsset(ctx, `frame/art-border-${foil}.png`, artBoxX, artBoxY);
+            ctx.resetTransform();
         },
         drawEffectBorderFoil: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
+            ctx.resetTransform();
         },
         drawLinkMapFoil: async (withBorder = artBorder) => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `link/link-overlay-arrow-${foil}${withBorder ? '' : '-artless'}.png`, 0, 175);
+            ctx.resetTransform();
         },
 
         /** @summary FINISH section */
@@ -448,6 +509,8 @@ export const getLayoutDrawFunction = ({
          * * OverlayFinish type `unart`: Apply only when art border is not present.
          */
         drawArtOverlayFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(
                 ctx,
                 'art-overlay',
@@ -464,8 +527,11 @@ export const getLayoutDrawFunction = ({
                     );
                 },
             );
+            ctx.resetTransform();
         },
         drawArtBorderFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             if (artBorder) {
                 await loopFinish(
                     ctx,
@@ -473,22 +539,31 @@ export const getLayoutDrawFunction = ({
                     async finishType => drawAsset(ctx, `finish/finish-${finishType}-art-border.png`, 0, 0),
                 );
             }
+            ctx.resetTransform();
         },
         drawPendulumArtBorderFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             if (artBorder) await loopFinish(
                 ctx,
                 'art-border-pendulum',
                 finishType => drawAsset(ctx, `finish/finish-${finishType}-art-border-pendulum-${pendulumSize}.png`, 0, 0)
             );
+            ctx.resetTransform();
         },
         drawBorderPendulumFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(
                 ctx,
                 'border-pendulum',
                 async finishType => drawAsset(ctx, `finish/finish-${finishType}-border-pendulum-${pendulumSize}.png`, 0, 0)
             );
+            ctx.resetTransform();
         },
         drawFrameFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(
                 ctx,
                 'frame',
@@ -496,8 +571,11 @@ export const getLayoutDrawFunction = ({
                     return drawAsset(ctx, `finish/finish-${type}-frame${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`, 0, 0);
                 },
             );
+            ctx.resetTransform();
         },
         drawFrameBackgroundFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(
                 ctx,
                 'frame-background',
@@ -505,13 +583,20 @@ export const getLayoutDrawFunction = ({
                     return drawAsset(ctx, `finish/finish-${type}-frame-background${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`, 0, 0);
                 },
             );
+            ctx.resetTransform();
         },
         /** Unlike total overlay, this finish layer lies below card text (name, effect, etc...) */
         drawOverlayFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(ctx, 'overlay', async overlayType => drawAsset(ctx, `finish/finish-${overlayType}-overlay.png`, 0, 0));
+            ctx.resetTransform();
         },
         drawCardBorderFinish: async () => {
+            if (!ctx) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(ctx, 'card-border', async type => drawAsset(ctx, `finish/finish-${type}-card-border.png`, 0, 0));
+            ctx.resetTransform();
         },
     };
 

@@ -85,7 +85,9 @@ export const StyledCardCanvasGroupContainer = styled.div`
     width: var(--card-width);
     height: var(--card-height);
     margin-bottom: var(--spacing);
-    transform: translateX(var(--translate-ratio)) translateY(var(--translate-ratio)) scale(var(--resize-ratio))
+    transform: translateX(calc(var(--resize-percentage) / 2 / var(--global-scale) - 50%))
+        translateY(calc(var(--resize-percentage) / 2 / var(--global-scale) - 50%))
+        scale(calc(var(--resize-ratio) / var(--global-scale)))
         translateZ(0);
     position: absolute;
     top: 0;
@@ -97,10 +99,6 @@ export const StyledCardCanvasGroupContainer = styled.div`
         pointer-events: none;
     }
     &:hover {
-        .reset-button,
-        .lightbox-button {
-            display: block;
-        }
         #export-canvas.js-export-available {
             display: inline-block !important;   // Override js-controlled inline style
             cursor: default;
@@ -194,22 +192,22 @@ export const ErrorAlert = styled.span`
 `;
 
 export const OverlayButton = styled.div`
-    --overlay-size: 51px;
+    --overlay-size: 36px;
     position: absolute;
     z-index: 101;
     background: var(--main-primary);
     border-color: var(--main-active);
     color: var(--color-heavy);
-    padding: var(--spacing);
+    padding: var(--spacing-sm);
     line-height: 1;
-    font-size: var(--fs-3xl);
+    font-size: var(--fs-xl);
     text-align: center;
     width: var(--overlay-size);
     height: var(--overlay-size);
     border-radius: var(--br-lg);
     cursor: pointer;
     box-shadow: var(--bs-1);
-    display: none;
+    /* display: none; */
     &:hover {
         background: var(--sub-primary);
     }

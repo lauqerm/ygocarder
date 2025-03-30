@@ -1,4 +1,4 @@
-import { FontGetter } from 'src/model';
+import { FontGetter, FontData, FontDeviation } from 'src/model';
 
 export const createFontGetter = (props?: {
     defaultWeight?: '' | 'bold',
@@ -45,5 +45,50 @@ export const createFontGetter = (props?: {
             family = nextFamily;
             return this;
         },
+    };
+};
+
+export const scaleFontData = (fontData: FontData, scale: number): FontData => {
+    const scaledLetterDeviationMap = fontData.letterDeviationMap
+        ? Object.entries(fontData.letterDeviationMap).reduce((acc, [letter, { yOffset, yRatio }]) => {
+            return {
+                ...acc,
+                [letter]: {
+                    yOffset: typeof yOffset === 'number' ? yOffset * scale : yOffset,
+                    yRatio,
+                }
+            };
+        }, {} as Record<string, FontDeviation>)
+        : undefined;
+
+    return {
+        ...fontData,
+        fontList: fontData.fontList.map(entry => {
+            const {
+                bulletSymbolWidth,
+                fontSize,
+                lineHeight,
+                offsetY,
+                bulletSymbolOffset,
+                headTextSpacing,
+                iconSymbolWidth,
+                ordinalFontOffsetY,
+                wordLetterSpacing,
+            } = entry;
+
+            return {
+                ...entry,
+                bulletSymbolOffset: typeof bulletSymbolOffset === 'number' ? bulletSymbolOffset * scale : undefined,
+                bulletSymbolWidth: bulletSymbolWidth * scale,
+                fontSize: fontSize * scale,
+                headTextSpacing: typeof headTextSpacing === 'number' ? headTextSpacing * scale : undefined,
+                iconSymbolWidth: typeof iconSymbolWidth === 'number' ? iconSymbolWidth * scale : undefined,
+                lineHeight: lineHeight * scale,
+                offsetY: typeof offsetY === 'number' ? offsetY * scale : undefined,
+                ordinalFontOffsetY: typeof ordinalFontOffsetY === 'number' ? ordinalFontOffsetY * scale : undefined,
+                wordLetterSpacing: typeof wordLetterSpacing === 'number' ? wordLetterSpacing * scale : undefined,
+            };
+        }),
+        letterDeviationMap: scaledLetterDeviationMap,
     };
 };

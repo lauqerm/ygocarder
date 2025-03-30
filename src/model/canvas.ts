@@ -49,6 +49,7 @@ export type MasterSeriesCanvas = {
 export const CanvasConst = {
     width: 813,
     height: 1185,
+    maximumScale: 2,
     topToPendulumStructure: 210,
     topToArtFrame: 213,
     pendulumStructureHeight: 912,

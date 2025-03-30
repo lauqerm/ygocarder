@@ -7,12 +7,13 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
+import { setTextStyle } from '../canvas-util';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -87,9 +88,9 @@ const getNameGradient = (
 export const drawName = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
-    edge: number,
-    trueBaseline: number,
-    width: number,
+    _edge: number,
+    _trueBaseline: number,
+    _width: number,
     style: Partial<NameStyle>,
     option: {
         frame: string,
@@ -97,9 +98,13 @@ export const drawName = async (
         format: string,
         isSpeedSkill?: boolean,
         furiganaHelper: boolean,
+        globalScale: number,
     },
 ) => {
-    const { isSpeedSkill, format, cloneNode, frame, furiganaHelper } = option;
+    const { isSpeedSkill, format, cloneNode, frame, furiganaHelper, globalScale } = option;
+    const edge = _edge * globalScale;
+    const trueBaseline = _trueBaseline * globalScale;
+    const width = _width * globalScale;
     const cloneCtx = cloneNode?.getContext('2d');
     if (ctx && cloneCtx && value) {
         const {
@@ -125,20 +130,32 @@ export const drawName = async (
         const hasOutline = hasDefaultOutline;
 
         ctx.textAlign = 'left';
+        let resetShadow = () => {};
         if (hasShadow) {
-            ctx.shadowColor = shadowColor;
-            ctx.shadowOffsetY = shadowOffsetY;
-            ctx.shadowOffsetX = shadowOffsetX;
-            ctx.shadowBlur = shadowBlur;
+            resetShadow = setTextStyle({
+                ctx,
+                x: shadowOffsetX,
+                y: shadowOffsetY,
+                shadowColor: shadowColor,
+                blur: shadowBlur,
+                globalScale,
+                useDefault: false,
+            });
         }
+        let resetStroke = () => {};
         if (hasDefaultOutline) {
-            ctx.lineWidth = lineWidth;
-            ctx.strokeStyle = lineColor;
+            resetStroke = setTextStyle({
+                ctx,
+                lineWidth,
+                lineColor,
+                globalScale,
+                useDefault: false,
+            });
         }
-        const fontData = {
+        const fontData = scaleFontData({
             ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,
             headTextFillStyle,
-        };
+        }, globalScale);
         const fontGetter = createFontGetter({
             defaultFamily: fontData.font,
             defaultSize: fontData.fontList[0].fontSize,
@@ -295,12 +312,8 @@ export const drawName = async (
 
         const defaultTextStyle = getDefaultNameStyle();
         ctx.fillStyle = defaultTextStyle.fillStyle;
-        ctx.shadowColor = defaultTextStyle.shadowColor;
-        ctx.shadowOffsetY = defaultTextStyle.shadowOffsetY;
-        ctx.shadowOffsetX = defaultTextStyle.shadowOffsetX;
-        ctx.shadowBlur = defaultTextStyle.shadowBlur;
-        ctx.lineWidth = defaultTextStyle.lineWidth;
-        ctx.strokeStyle = defaultTextStyle.lineColor;
+        resetShadow();
+        resetStroke();
         ctx.lineJoin = 'miter';
         ctx.globalCompositeOperation = 'source-over';
     }

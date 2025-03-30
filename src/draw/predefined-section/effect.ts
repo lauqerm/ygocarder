@@ -1,6 +1,5 @@
 import { CanvasTextStyle } from 'src/service';
 import {
-    CanvasConst,
     CondenseType,
     EffectFontData,
     CoordinateData,
@@ -10,8 +9,8 @@ import {
     TCGVanillaTypeStatFontList,
     DefaultTCGNormalFontData,
 } from '../../model';
-import { condense, createFontGetter } from '../../util';
-import { setTextStyle } from '../canvas-util';
+import { condense, createFontGetter, scaleCoordinateData, scaleFontData } from '../../util';
+import { clearCanvas, setTextStyle } from '../canvas-util';
 import { createLineList } from '../line';
 import { drawLine } from '../text';
 import { analyzeLine } from '../text-analyze';
@@ -48,9 +47,6 @@ export const getEffectFontAndCoordinate = ({
     };
 };
 
-const {
-    width: CanvasWidth,
-} = CanvasConst;
 export const drawEffect = ({
     ctx,
     content,
@@ -76,11 +72,13 @@ export const drawEffect = ({
         /** When the text is up-sized, we don't want to apply the current condense tolerant, because large text looks much worse when compressing at high degree. So when the text is up-sized, condense tolerant automatically set to "relaxed". */
         forceRelaxCondenseLimit?: number,
         defaultSizeLevel?: number,
+        globalScale: number,
     },
 }) => {
     const {
         defaultSizeLevel,
         forceRelaxCondenseLimit,
+        globalScale = 1,
     } = option ?? {};
     let effectSizeLevel = defaultSizeLevel ?? 0;
     if (!ctx || !content) return effectSizeLevel;
@@ -95,7 +93,7 @@ export const drawEffect = ({
     const additionalLineCount = (fullLineList.length ?? 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
     const paragraphList = effectText ? effectText.split('\n') : [];
 
-    const { font, fontList } = fontData;
+    const { font, fontList } = scaleFontData(fontData, globalScale);
     const yRatio = 1;
     /** We basically go through each font size, then iterating the content multiple time with different condense ratio until the text is both fit inside the max amount of lines AND the ratio is larger than the current limit threshold. */
     while (effectSizeLevel < fontList.length && effectSizeLevel >= 0) {
@@ -118,7 +116,7 @@ export const drawEffect = ({
             trueEdge,
             trueWidth: trueWidthStart,
             trueBaseline: trueBaselineStart,
-        } = sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1];
+        } = scaleCoordinateData(sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1], globalScale);
         const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 : trueWidthStart;
 
         const currentFont = createFontGetter();
@@ -130,7 +128,7 @@ export const drawEffect = ({
             .getFont();
         ctx.textAlign = 'left';
         const textData = {
-            fontData,
+            fontData: scaleFontData(fontData, globalScale),
             fontLevel: effectSizeLevel,
             currentFont,
         };
@@ -158,7 +156,7 @@ export const drawEffect = ({
 
         // [START DRAWING]
         /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
-        const resetStyle = setTextStyle({ ctx, ...textStyle });
+        const resetStyle = setTextStyle({ ctx, ...textStyle, globalScale });
         const tolerantValue = tolerancePerSentence[`${paragraphList.length}`] ?? tolerancePerSentence['3'];
         if (
             (effectiveMedian < tolerantValue)
@@ -166,7 +164,7 @@ export const drawEffect = ({
         ) {
             effectSizeLevel += 1;
         } else {
-            ctx.clearRect(0, 0, CanvasWidth, 1111);
+            clearCanvas(ctx);
 
             let trueBaseline = trueBaselineStart + lineHeight;
             /** Naturally, non-brekable lines have their own condense ratio. */
@@ -219,7 +217,7 @@ export const drawEffect = ({
 
             /** Condition clause of flavor text in TCG cards do not use italic font style ("Summoned Skull" TCG). */
             if (effectFlavorCondition.length > 0) {
-                const flavorFontData = EffectFontData.tcg;
+                const flavorFontData = scaleFontData(EffectFontData.tcg, globalScale);
                 const flavorFontSizeData = flavorFontData.fontList[effectSizeLevel];
                 const {
                     fontSize,

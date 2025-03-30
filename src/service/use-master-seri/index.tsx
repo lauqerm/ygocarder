@@ -60,6 +60,7 @@ type DrawerProp = {
     pendulumSize?: 'medium',
     isInitializing: boolean,
     language: LanguageDataDictionary,
+    globalScale: number,
 };
 type DrawingPipeline = {
     name: string,
@@ -219,6 +220,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         imageChangeCount,
         pendulumSize = 'medium',
         language,
+        globalScale,
     } = props;
     const readyToDraw = active && isInitializing === false;
 
@@ -304,6 +306,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             } = getLayoutDrawFunction({
                 canvas: frameCanvasRef.current,
                 artworkCanvas, backgroundCanvas,
+                globalScale,
                 format,
                 frame, bottomFrame,
                 hasBackground,
@@ -454,8 +457,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!isPendulum && isLink) {
                 await drawLinkArrowMap(linkMap);
                 await drawLinkMapFoil(false);
-                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle });
-                if (statInEffect) await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle);
+                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
+                if (statInEffect) await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
                 resetStyle();
             }
 
@@ -466,6 +469,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawFrameBorder();
             await drawPredefinedMark({
                 canvas: frameCanvasRef.current,
+                globalScale,
                 type: (lightFooter && !isPendulum) ? 'white' : 'black',
                 bordered: (opacityBody < 50 || boundless) && !isPendulum,
                 isDuelTerminalCard, isSpeedCard,
@@ -476,6 +480,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         };
     }, [
         readyToDraw,
+        globalScale,
         artworkCanvasRef,
         backgroundCanvasRef,
         frameCanvasRef,
@@ -538,11 +543,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),
                 resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
-                { isSpeedSkill, format, cloneNode, frame, furiganaHelper },
+                { isSpeedSkill, format, cloneNode, frame, furiganaHelper, globalScale },
             );
         };
     }, [
         readyToDraw,
+        globalScale,
         attribute,
         foil,
         format,
@@ -562,7 +568,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx) || !statInEffect) return;
 
-        const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle });
+        const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
         drawStatText(ctx, 'ATK', 432.10, 1106.494);
         drawStat(ctx, atk, 508.824, 1106.494);
         if (!isLink) {
@@ -570,7 +576,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             drawStat(ctx, def, 673.865, 1106.494);
         }
         resetStyle();
-    }, [readyToDraw, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);
+    }, [readyToDraw, globalScale, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);
 
     /** DRAW SET ID */
     useEffect(() => {
@@ -583,6 +589,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             ctx,
             setId,
             {
+                globalScale,
                 isLink, isPendulum,
                 withShadow: requireShadow && !isPendulum,
                 format,
@@ -592,6 +599,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         );
     }, [
         readyToDraw,
+        globalScale,
         format,
         isLink,
         isPendulum,
@@ -615,6 +623,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             isNumberPassword,
         } = drawPasswordText({
             ctx,
+            globalScale,
             value: password,
             lightFooter,
             alignment: 'left',
@@ -639,6 +648,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 bottom,
                 bottomOffset,
                 {
+                    globalScale,
                     textStyle: {
                         color: lightFooter ? '#ffffff' : '#000000',
                         ...resolvedOtherEffectTextStyle,
@@ -648,6 +658,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         }
     }, [
         readyToDraw,
+        globalScale,
         isFirstEdition,
         password,
         passwordCanvasRef,
@@ -694,6 +705,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawLimitedEditionMark({
                     canvas: creatorCanvasRef.current,
                     ctx,
+                    globalScale,
                     type: (lightFooter && !isPendulum) ? 'white' : 'black',
                     bordered: (opacityBody < 50 || boundless) && !isPendulum,
                     isLink, isPendulum,
@@ -707,6 +719,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         };
     }, [
         readyToDraw,
+        globalScale,
         creator,
         creatorCanvasRef,
         effectCanvasRef,
@@ -765,10 +778,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 option: {
                     forceRelaxCondenseLimit: DEFAULT_EFFECT_NORMAL_SIZE,
                     defaultSizeLevel: DEFAULT_EFFECT_NORMAL_SIZE - normalizedUpSize,
+                    globalScale,
                 },
             });
             await drawTypeAbility({
                 ctx: typeCtx,
+                globalScale,
                 format,
                 frame,
                 furiganaHelper,
@@ -783,6 +798,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         };
     }, [
         readyToDraw,
+        globalScale,
         typeInEffect,
         statInEffect,
         effectStyle,
@@ -823,11 +839,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 option: {
                     forceRelaxCondenseLimit: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
                     defaultSizeLevel: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE - normalizedUpSize,
+                    globalScale,
                 }
             });
         }
     }, [
         readyToDraw,
+        globalScale,
         condenseTolerant,
         format,
         isPendulum,
@@ -911,7 +929,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         };
 
         if (exportCanvas && exportCtx) {
-            exportCtx.clearRect(0, 0, CanvasConst.width, CanvasConst.height);
+            clearCanvas(exportCtx);
             await Promise.all(Object
                 .values(drawingPipeline.current)
                 .sort((l, r) => l.order - r.order)

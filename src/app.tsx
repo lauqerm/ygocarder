@@ -66,8 +66,9 @@ const AppGlobalHotkeyMap = {
     DOWNLOAD: ['ctrl+s', 'command+s'],
 };
 
-const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const { height: CanvasHeight, width: CanvasWidth, maximumScale } = CanvasConst;
 function App() {
+    const globalScale = maximumScale;
     const {
         allowHotkey,
         softMode,
@@ -448,8 +449,9 @@ function App() {
                     }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: isMobileDevice() ? '-webkit-fill-available' : '100vh',
                     ...({
-                        '--card-height': `${CanvasConst.height}px`,
-                        '--card-width': `${CanvasConst.width}px`,
+                        '--card-height': `${CanvasHeight * globalScale}px`,
+                        '--card-width': `${CanvasWidth * globalScale}px`,
+                        '--global-scale': `${globalScale}`,
                     }),
                 }}
             >
@@ -492,6 +494,7 @@ function App() {
                                 imageChangeCount={imageChangeCount}
                                 isTainted={isTainted}
                                 isInitializing={isInitializing}
+                                globalScale={globalScale}
                                 onDownloadError={alertDownloadError}
                             />
                             {isTainted && <div id="save-button-tainted" className="save-button-container">
@@ -501,43 +504,43 @@ function App() {
                             </div>}
                         </StyledDataButtonPanelContainer>
                         <div className="card-canvas-container">
+                            <Tooltip title={language['button.reset.tooltip']}>
+                                <ResetButton
+                                    className="reset-button"
+                                    onClick={() => {
+                                        const consent = window.confirm(language['prompt.reset.message']);
+
+                                        if (consent) {
+                                            const { setCard, card } = useCard.getState();
+                                            const defaultCard = { id: card.id, ...getDefaultCard() };
+                                            const contextualDefaultCardData = card.format === 'tcg'
+                                                ? defaultCard
+                                                : changeCardFormat(defaultCard, 'ocg');
+
+                                            setCard(contextualDefaultCardData, true);
+                                            setImageChangeCount(cnt => cnt + 1);
+                                            cardInputRef.current?.forceCardData(contextualDefaultCardData);
+                                        }
+                                    }}
+                                >
+                                    <ClearOutlined />
+                                </ResetButton>
+                            </Tooltip>
+                            <Tooltip title={<div className="center">
+                                {language['button.full-size.label']}
+                                {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
+                            </div>}>
+                                <LightboxButton className="lightbox-button" onClick={() => displayLightbox()}>
+                                    <ZoomInOutlined />
+                                </LightboxButton>
+                            </Tooltip>
                             <StyledCardCanvasGroupContainer className="card-canvas-group">
-                                <Tooltip title={language['button.reset.tooltip']}>
-                                    <ResetButton
-                                        className="reset-button"
-                                        onClick={() => {
-                                            const consent = window.confirm(language['prompt.reset.message']);
-
-                                            if (consent) {
-                                                const { setCard, card } = useCard.getState();
-                                                const defaultCard = { id: card.id, ...getDefaultCard() };
-                                                const contextualDefaultCardData = card.format === 'tcg'
-                                                    ? defaultCard
-                                                    : changeCardFormat(defaultCard, 'ocg');
-
-                                                setCard(contextualDefaultCardData, true);
-                                                setImageChangeCount(cnt => cnt + 1);
-                                                cardInputRef.current?.forceCardData(contextualDefaultCardData);
-                                            }
-                                        }}
-                                    >
-                                        <ClearOutlined />
-                                    </ResetButton>
-                                </Tooltip>
-                                <Tooltip title={<div className="center">
-                                    {language['button.full-size.label']}
-                                    {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
-                                </div>}>
-                                    <LightboxButton className="lightbox-button" onClick={() => displayLightbox()}>
-                                        <ZoomInOutlined />
-                                    </LightboxButton>
-                                </Tooltip>
                                 <canvas
                                     key={canvasKey + 0.1}
                                     id="export-canvas"
                                     ref={exportCanvasRef}
-                                    width={CanvasWidth}
-                                    height={CanvasHeight}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
                                 />
                                 {/** Overlay guarding seems very janky, cursor should suffix for now */}
                                 <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
@@ -546,23 +549,75 @@ function App() {
                                 <canvas id="frameCanvas"
                                     key={canvasKey}
                                     ref={frameCanvasRef}
-                                    width={CanvasWidth}
-                                    height={CanvasHeight}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
                                 />
-                                <canvas id="nameCanvas" ref={nameCanvasRef} width={CanvasWidth} height={148} />
-                                <canvas id="cardIconCanvas" ref={cardIconCanvasRef} width={CanvasWidth} height={222} />
-                                <canvas id="pendulumScaleCanvas" ref={pendulumScaleCanvasRef} width={CanvasWidth} height={889} />
-                                <canvas id="pendulumEffectCanvas" ref={pendulumEffectCanvasRef} width={CanvasWidth} height={889} />
-                                <canvas id="typeCanvas" ref={typeCanvasRef} width={CanvasWidth} height={1037} />
-                                <canvas id="effectCanvas" ref={effectCanvasRef} width={CanvasWidth} height={1111} />
-                                <canvas id="statCanvas" ref={statCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                                <canvas id="setIdCanvas" ref={setIdCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                                <canvas id="passwordCanvas" ref={passwordCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                                <canvas id="creatorCanvas" ref={creatorCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                                <canvas id="stickerCanvas" ref={stickerCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                                <canvas id="finishCanvas" ref={finishCanvasRef} width={CanvasWidth} height={CanvasHeight} />
-                                <canvas className="crop-canvas" ref={artworkCanvasRef} />
-                                <canvas className="crop-canvas" ref={backgroundCanvasRef} />
+                                <canvas id="nameCanvas"
+                                    ref={nameCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={148 * globalScale}
+                                />
+                                <canvas id="cardIconCanvas"
+                                    ref={cardIconCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={222 * globalScale}
+                                />
+                                <canvas id="pendulumScaleCanvas"
+                                    ref={pendulumScaleCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={889 * globalScale}
+                                />
+                                <canvas id="pendulumEffectCanvas"
+                                    ref={pendulumEffectCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={889 * globalScale}
+                                />
+                                <canvas id="typeCanvas"
+                                    ref={typeCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={1037 * globalScale}
+                                />
+                                <canvas id="effectCanvas"
+                                    ref={effectCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={1111 * globalScale}
+                                />
+                                <canvas id="statCanvas"
+                                    ref={statCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
+                                />
+                                <canvas id="setIdCanvas"
+                                    ref={setIdCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
+                                />
+                                <canvas id="passwordCanvas"
+                                    ref={passwordCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
+                                />
+                                <canvas id="creatorCanvas"
+                                    ref={creatorCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
+                                />
+                                <canvas id="stickerCanvas"
+                                    ref={stickerCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
+                                />
+                                <canvas id="finishCanvas"
+                                    ref={finishCanvasRef}
+                                    width={CanvasWidth * globalScale}
+                                    height={CanvasHeight * globalScale}
+                                />
+                                <canvas className="crop-canvas"
+                                    ref={artworkCanvasRef}
+                                />
+                                <canvas className="crop-canvas"
+                                    ref={backgroundCanvasRef}
+                                />
                             </StyledCardCanvasGroupContainer>
                         </div>
                     </div>
@@ -586,19 +641,32 @@ function App() {
                 />
                 {/** Pixel perfect for card image */}
                 <Modal
-                    width={`${CanvasConst.width + 15 * 2}px`}
+                    width={`${CanvasWidth + 15 * 2}px`}
                     wrapClassName="card-lightbox-overlay"
                     visible={lightboxVisible}
                     forceRender={true}
                     onCancel={() => setLightboxVisible(false)}
                     footer={null}
                 >
-                    <canvas key={canvasKey + 0.1}
-                        id="lightbox-canvas"
-                        ref={lightboxCanvasRef}
-                        width={CanvasWidth}
-                        height={CanvasHeight}
-                    />
+                    <div
+                        style={{
+                            width: `${CanvasWidth}px`,
+                            height: `${CanvasHeight}px`,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <canvas key={canvasKey + 0.1}
+                            id="lightbox-canvas"
+                            ref={lightboxCanvasRef}
+                            width={CanvasWidth * globalScale}
+                            height={CanvasHeight * globalScale}
+                            style={{
+                                transform: `translateX(-${(100 - 100 / globalScale) / 2}%)
+                                    translateY(-${(100 - 100 / globalScale) / 2}%)
+                                    scale(${1 / globalScale})`,
+                            }}
+                        />
+                    </div>
                 </Modal>
                 <StyledByMe className="by-me">
                     Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />

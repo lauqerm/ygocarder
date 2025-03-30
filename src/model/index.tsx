@@ -234,11 +234,18 @@ export const ResolutionMap = {
         height: 1185,
         settingValue: [813, 1185] as [number, number],
     },
+    '1388x2026': {
+        label: '1388 × 2026',
+        width: 1388,
+        height: 2026,
+        settingValue: [1388, 2026] as [number, number],
+    },
 };
 export const ResolutionList = [
     ResolutionMap['549x800'],
     ResolutionMap['561x818'],
     ResolutionMap['813x1185'],
+    ResolutionMap['1388x2026'],
 ];
 
 export type ExportFormat = typeof ExportFormatList[0]['value'];

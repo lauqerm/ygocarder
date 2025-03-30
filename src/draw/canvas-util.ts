@@ -1,7 +1,7 @@
 import { CanvasConst, FinishInformation, FinishMap } from 'src/model';
 import { CanvasTextStyle } from 'src/service';
 
-const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const { height: CanvasHeight, width: CanvasWidth, maximumScale } = CanvasConst;
 
 export const randomDarkColor = () => '#000000'.replace(/0/g, () => (~~(Math.random() * 12 + 2)).toString(16));
 
@@ -90,8 +90,8 @@ export const fillTextRightWithSpacing = (
 /** Clear current canvas, it also ensure canvas existed so we do not need to check for afterward. */
 export const clearCanvas = (
     ctx: CanvasRenderingContext2D | null | undefined,
-    width = CanvasWidth,
-    height = CanvasHeight,
+    width = CanvasWidth * maximumScale,
+    height = CanvasHeight * maximumScale,
 ): ctx is CanvasRenderingContext2D => {
     if (ctx) {
         ctx.clearRect(0, 0, width, height);
@@ -137,33 +137,45 @@ export const getFinishIterator = (
     };
 };
 
-const DEFAULT_SHADOW_OFFSET_X = 0;
-const DEFAULT_SHADOW_OFFSET_Y = 0;
+const DEFAULT_LINE_COLOR = '#000000';
+const DEFAULT_LINE_WIDTH = 0;
 const DEFAULT_SHADOW_BLUR = 0;
 const DEFAULT_SHADOW_COLOR = '#000000';
+const DEFAULT_SHADOW_OFFSET_X = 0;
+const DEFAULT_SHADOW_OFFSET_Y = 0;
 const DEFAULT_TEXT_COLOR = '#000000';
 
 export const setTextStyle = ({
     ctx,
-    x = DEFAULT_SHADOW_OFFSET_X,
-    y = DEFAULT_SHADOW_OFFSET_Y,
-    blur = DEFAULT_SHADOW_BLUR,
-    color = DEFAULT_TEXT_COLOR,
-    shadowColor = DEFAULT_SHADOW_COLOR,
+    x,
+    y,
+    blur,
+    color,
+    shadowColor,
+    lineColor,
+    lineWidth,
+    globalScale = 1,
+    useDefault = true,
 }: {
     ctx: CanvasRenderingContext2D,
+    globalScale: number,
+    useDefault?: boolean,
 } & CanvasTextStyle) => {
-    ctx.shadowOffsetX = x;
-    ctx.shadowOffsetY = y;
-    ctx.shadowBlur = blur;
-    ctx.shadowColor = shadowColor;
-    ctx.fillStyle = color;
+    if (useDefault || typeof x === 'number') ctx.shadowOffsetX = (x ?? DEFAULT_SHADOW_OFFSET_X) * globalScale;
+    if (useDefault || typeof y === 'number') ctx.shadowOffsetY = (y ?? DEFAULT_SHADOW_OFFSET_Y) * globalScale;
+    if (useDefault || typeof blur === 'number') ctx.shadowBlur = (blur ?? DEFAULT_SHADOW_BLUR) * globalScale;
+    if (useDefault || typeof shadowColor === 'string') ctx.shadowColor = shadowColor ?? DEFAULT_SHADOW_COLOR;
+    if (useDefault || typeof color === 'string') ctx.fillStyle = color ?? DEFAULT_TEXT_COLOR;
+    if (useDefault || typeof lineColor === 'string') ctx.strokeStyle = lineColor ?? DEFAULT_LINE_COLOR;
+    if (useDefault || typeof lineWidth === 'number') ctx.lineWidth = (lineWidth ?? DEFAULT_LINE_WIDTH) * globalScale;
 
     return () => {
-        ctx.shadowOffsetX = DEFAULT_SHADOW_OFFSET_X;
-        ctx.shadowOffsetY = DEFAULT_SHADOW_OFFSET_Y;
-        ctx.shadowBlur = DEFAULT_SHADOW_BLUR;
-        ctx.shadowColor = DEFAULT_SHADOW_COLOR;
-        ctx.fillStyle = DEFAULT_TEXT_COLOR;
+        if (useDefault || typeof x === 'number') ctx.shadowOffsetX = DEFAULT_SHADOW_OFFSET_X;
+        if (useDefault || typeof y === 'number') ctx.shadowOffsetY = DEFAULT_SHADOW_OFFSET_Y;
+        if (useDefault || typeof blur === 'number') ctx.shadowBlur = DEFAULT_SHADOW_BLUR;
+        if (useDefault || typeof shadowColor === 'string') ctx.shadowColor = DEFAULT_SHADOW_COLOR;
+        if (useDefault || typeof color === 'string') ctx.fillStyle = DEFAULT_TEXT_COLOR;
+        if (useDefault || typeof lineColor === 'string') ctx.strokeStyle = DEFAULT_LINE_COLOR;
+        if (useDefault || typeof lineWidth === 'number') ctx.lineWidth = DEFAULT_LINE_WIDTH;
     };
 };

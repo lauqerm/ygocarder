@@ -71,7 +71,7 @@
 	}
 	.app-container {
 		--resize-ratio: 0.6;
-		--translate-ratio: -20%;
+		--resize-percentage: 60%;
 		.card-preview-panel {
 			flex: 0 0 500px;
 		}
@@ -251,7 +251,7 @@
 	}
 	.app-container {
 		--resize-ratio: 0.5;
-		--translate-ratio: -25%;
+		--resize-percentage: 50%;
 		.app-description {
 			.app-contribution {
 				margin-top: var(--spacing-sm);
@@ -314,7 +314,7 @@
 	}
 	.app-container {
 		--resize-ratio: 0.6;
-		--translate-ratio: -20%;
+		--resize-percentage: 60%;
 		flex-wrap: wrap;
 		.card-preview-panel {
 			margin-bottom: var(--spacing-2xl);

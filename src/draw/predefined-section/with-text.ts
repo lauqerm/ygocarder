@@ -36,15 +36,18 @@ export const draw1stEdition = (
     option: {
         stroke?: boolean,
         textStyle?: CanvasTextStyle,
+        globalScale: number,
     } = {
+        globalScale: 1,
         stroke: false,
     },
 ) => {
     if (!ctx) return;
 
-    const { stroke = false, textStyle } = option ?? {};
+    const { stroke = false, textStyle, globalScale } = option ?? {};
     const resetStyle = setTextStyle({
         ctx,
+        globalScale,
         ...textStyle,
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
@@ -148,6 +151,7 @@ export const drawSetId = (
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
     option: {
+        globalScale: number,
         isPendulum: boolean,
         isLink: boolean,
         withShadow: boolean,
@@ -158,7 +162,7 @@ export const drawSetId = (
 ) => {
     if (!ctx) return;
 
-    const { isPendulum, isLink, withShadow, format, lightFooter, textStyle } = option;
+    const { globalScale, isPendulum, isLink, withShadow, format, lightFooter, textStyle } = option;
     let spacing = 0.125;
     let offsetY = 0;
     let xOffset = 0;
@@ -177,6 +181,7 @@ export const drawSetId = (
         y: 0,
         x: 0,
         blur: withShadow && !isPendulum ? 3 : 0,
+        globalScale,
         ...textStyle,
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });

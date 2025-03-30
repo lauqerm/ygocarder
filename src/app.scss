@@ -3,8 +3,9 @@ html {
     min-width: 600px;
     --card-width: 813px;
     --card-height: 1185px;
+    --global-scale: 1;
     --resize-ratio: 0.7;
-    --translate-ratio: -15%;
+    --resize-percentage: 70%;
 
     --color-contrast: #3b3b3b;
     --color-dim: #9b9b9b;
@@ -191,10 +192,16 @@ hr {
         .card-canvas-container {
             position: relative;
             display: block;
-            width: calc(var(--card-width) * var(--resize-ratio));
-            height: calc(var(--card-height) * var(--resize-ratio));
+            width: calc(var(--card-width) * var(--resize-ratio) * 1 / var(--global-scale));
+            height: calc(var(--card-height) * var(--resize-ratio) * 1 / var(--global-scale));
             margin: var(--spacing);
             margin-top: 0;
+            &:hover {
+                .reset-button,
+                .lightbox-button {
+                    display: block;
+                }
+            }
         }
         &.export-tainted {
             .data-button-panel {
