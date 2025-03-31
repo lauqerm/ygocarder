@@ -66,15 +66,16 @@ const AppGlobalHotkeyMap = {
     DOWNLOAD: ['ctrl+s', 'command+s'],
 };
 
-const { height: CanvasHeight, width: CanvasWidth, maximumScale } = CanvasConst;
+const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 function App() {
-    const globalScale = maximumScale;
     const {
         allowHotkey,
         softMode,
-    } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor } }) => ({
+        globalScale,
+    } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor, globalScale } }) => ({
         softMode: reduceMotionColor,
         allowHotkey,
+        globalScale,
     })));
     const {
         isInitiating: isLanguageInitiating,

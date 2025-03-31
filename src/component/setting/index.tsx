@@ -5,6 +5,7 @@ import { Checkbox, Popover, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { RadioTrain } from '../input-train';
 import { ExportFormatList, ResolutionList, ResolutionMap } from 'src/model';
+import { StyledPopMarkdown } from '../atom';
 
 const rotate = keyframes`
     to {
@@ -22,6 +23,26 @@ const StyledSettingPanel = styled.div`
     color: var(--color);
     .list-option {
         margin-bottom: var(--spacing-xs);
+    }
+    .resolution-list {
+        &.radio-train {
+            .ant-radio-button-wrapper:first-child {
+                border-radius: var(--br) var(--br) 0 0;
+            }
+            .ant-radio-button-wrapper:last-child {
+                border-radius: 0 0 var(--br) var(--br);
+            }
+        }
+        .radio-train-input-group {
+            display: inline-grid;
+            flex: 0 1 auto;
+            .ant-radio-button-wrapper {
+                border-left-width: 1.02px;
+                &:before {
+                    content: none;
+                }
+            }
+        }
     }
 `;
 const StyledSettingButtonContainer = styled(StyledHeaderButtonContainer)`
@@ -80,14 +101,30 @@ export const SettingButton = () => {
                 <div>
                     <div className="list-option">{language['setting.option.resolution.label']}</div>
                     <RadioTrain
+                        className="resolution-list"
                         value={`${resolution[0]}x${resolution[1]}`}
-                        optionList={ResolutionList.map(({ height, width, label }) => ({
+                        optionList={ResolutionList.map(({ height, width, label, scale }) => ({
                             value: `${width}x${height}`,
-                            label: label,
+                            label: scale > 1
+                                ? <Popover
+                                    overlayClassName="explanation-overlay"
+                                    placement="left"
+                                    content={<StyledPopMarkdown>
+                                        {language['setting.option.resolution.warning']}
+                                    </StyledPopMarkdown>}
+                                >
+                                    {label}
+                                </Popover>
+                                : label,
                         }))}
                         onChange={value => {
-                            if (ResolutionMap[value as keyof typeof ResolutionMap]) {
-                                updateSetting({ resolution: ResolutionMap[value as keyof typeof ResolutionMap].settingValue });
+                            const resolutionValue = ResolutionMap[value as keyof typeof ResolutionMap];
+
+                            if (resolutionValue) {
+                                updateSetting({
+                                    resolution: resolutionValue.settingValue,
+                                    globalScale: resolutionValue.scale,
+                                });
                             }
                         }}
                     />

@@ -1,8 +1,9 @@
-import { Menu } from 'antd';
+import { Menu, Popover } from 'antd';
 import { ExportFormat, ExportFormatList, ResolutionList } from 'src/model';
 import { useLanguage, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
+import { StyledPopMarkdown } from '../atom';
 
 const StyledDownloadDropdownLabel = styled(Menu.Item)`
     color: var(--color);
@@ -24,7 +25,7 @@ const StyledDownloadDropdownOption = styled(Menu.Item)`
     }
 `;
 export type ResolutionPicker = {
-    onChange?: (nextResolution: [number, number]) => void,
+    onChange?: (nextResolution: [number, number], nextScale: number) => void,
 } & React.ComponentProps<typeof Menu>;
 export const ResolutionPicker = ({
     onChange,
@@ -47,17 +48,28 @@ export const ResolutionPicker = ({
         <StyledDownloadDropdownLabel disabled onClick={e => e.domEvent.stopPropagation()}>
             {language['setting.option.resolution.label']}
         </StyledDownloadDropdownLabel>
-        {ResolutionList.map(({ width, height, label }) => {
+        {ResolutionList.map(({ width, height, label, scale }) => {
             return <StyledDownloadDropdownOption key={`${width}-${height}`}
                 className={resolution[0] === width && resolution[1] === height ? 'active-setting' : ''}
                 onClick={() => {
                     updateSetting({
                         resolution: [width, height],
+                        globalScale: scale,
                     });
-                    onChange?.([width, height]);
+                    onChange?.([width, height], scale);
                 }}
             >
-                {label}
+                {scale > 1
+                    ? <Popover
+                        overlayClassName="explanation-overlay"
+                        placement="left"
+                        content={<StyledPopMarkdown>
+                            {language['setting.option.resolution.warning']}
+                        </StyledPopMarkdown>}
+                    >
+                        {label}
+                    </Popover>
+                    : label}
             </StyledDownloadDropdownOption>;
         })}
     </Menu>;

@@ -264,7 +264,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
 
             /** Base colored background so the card is not see-through even with transparent artwork */
-            await fillBaseColor(0, 0, CanvasWidth, CanvasHeight);
+            await fillBaseColor(0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
 
             const {
                 drawAttribute,
@@ -357,8 +357,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
                     await fillBaseColor(
-                        destinationX, destinationY,
-                        destinationWidth, destinationHeight,
+                        globalScale * destinationX, globalScale * destinationY,
+                        globalScale * destinationWidth, globalScale * destinationHeight,
                     );
 
                     drawBackground('pendulum');
@@ -366,8 +366,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         artworkCanvas,
                         sourceOffsetX, sourceOffsetY,
                         artWidth - sourceOffsetX * 2, artHeight - offsetHeight,
-                        destinationX, destinationY,
-                        destinationWidth, destinationHeight,
+                        globalScale * destinationX, globalScale * destinationY,
+                        globalScale * destinationWidth, globalScale * destinationHeight,
                     );
                 }
 
@@ -416,8 +416,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         );
     
                         await fillBaseColor(
-                            destinationX, destinationY,
-                            destinationWidth, destinationHeight,
+                            globalScale * destinationX, globalScale * destinationY,
+                            globalScale * destinationWidth, globalScale * destinationHeight,
                         );
                         drawBackground('pendulum');
                     }
@@ -520,10 +520,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
-            drawScale(ctx, pendulumScaleBlue ?? 0, 84.4, 790);
-            drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790);
+            drawScale(ctx, pendulumScaleBlue ?? 0, 84.4, 790, globalScale);
+            drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790, globalScale);
         }
-    }, [readyToDraw, isPendulum, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
+    }, [readyToDraw, globalScale, isPendulum, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -569,11 +569,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx) || !statInEffect) return;
 
         const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-        drawStatText(ctx, 'ATK', 432.10, 1106.494);
-        drawStat(ctx, atk, 508.824, 1106.494);
+        drawStatText(ctx, 'ATK', 432.10, 1106.494, globalScale);
+        drawStat(ctx, atk, 508.824, 1106.494, globalScale);
         if (!isLink) {
-            drawStatText(ctx, 'DEF', 600.85, 1106.494);
-            drawStat(ctx, def, 673.865, 1106.494);
+            drawStatText(ctx, 'DEF', 600.85, 1106.494, globalScale);
+            drawStat(ctx, def, 673.865, 1106.494, globalScale);
         }
         resetStyle();
     }, [readyToDraw, globalScale, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);
@@ -697,9 +697,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 hasShadow: requireShadow,
                 lightFooter,
                 textStyle: resolvedOtherEffectTextStyle,
+                globalScale,
             });
-            const compactThreshold = format === 'tcg' ? 390 : 350;
-            const compactOffset = format === 'tcg' ? 30 : 40;
+            const compactThreshold = (format === 'tcg' ? 390 : 350) * globalScale;
+            const compactOffset = (format === 'tcg' ? 30 : 40) * globalScale;
 
             if (isLimitedEdition && creatorCanvasRef.current) {
                 await drawLimitedEditionMark({
@@ -744,9 +745,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             return await drawSticker({
                 ctx: stickerCanvasRef.current?.getContext('2d'),
                 sticker,
+                globalScale,
             });
         };
-    }, [readyToDraw, sticker, stickerCanvasRef]);
+    }, [readyToDraw, globalScale, sticker, stickerCanvasRef]);
 
     /** DRAW CARD EFFECT + TYPE ABILITY */
     useEffect(() => {

@@ -1,5 +1,5 @@
 import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/model';
-import { condense, createFontGetter } from 'src/util';
+import { condense, createFontGetter, scaleCoordinateData, scaleFontData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -16,6 +16,7 @@ export const drawCreatorText = ({
     lightFooter,
     hasShadow,
     textStyle,
+    globalScale,
 }: {
     ctx?: CanvasRenderingContext2D | null,
     value: string,
@@ -25,6 +26,7 @@ export const drawCreatorText = ({
     lightFooter: boolean,
     hasShadow?: boolean,
     textStyle?: CanvasTextStyle,
+    globalScale: number,
 }) => {
     if (!clearCanvas(ctx)) return;
 
@@ -37,12 +39,16 @@ export const drawCreatorText = ({
         y: 0,
         x: 0,
         blur: hasShadow ? 3 : 0,
+        globalScale,
         ...textStyle,
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
 
-    const { trueEdge, trueBaseline, trueWidth: width } = CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'];
-    const fontData = CreatorFontData[format];
+    const { trueEdge, trueBaseline, trueWidth: width } = scaleCoordinateData(
+        CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'],
+        globalScale,
+    );
+    const fontData = scaleFontData(CreatorFontData[format], globalScale);
     const { font } = fontData;
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
 
@@ -100,7 +106,7 @@ export const drawCreatorText = ({
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
         trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
-        trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY) + baselineOffset,
+        trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY) + baselineOffset * globalScale,
         textData,
         format,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {

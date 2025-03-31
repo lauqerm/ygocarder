@@ -1,5 +1,5 @@
 import { clearCanvas, setTextStyle } from '../canvas-util';
-import { condense, createFontGetter , checkLightFrame, checkSpeedSkill } from 'src/util';
+import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData } from 'src/util';
 import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON } from 'src/model';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
@@ -21,6 +21,7 @@ export const drawTypeAbilityText = ({
     metricMethod,
     size,
     furiganaHelper,
+    globalScale,
 }: {
     ctx: CanvasRenderingContext2D,
     value: string,
@@ -28,14 +29,18 @@ export const drawTypeAbilityText = ({
     metricMethod?: FontData['metricMethod'],
     size: 'small' | 'medium' | 'large',
     furiganaHelper: boolean,
+    globalScale: number,
 }) => {
     const {
         edgeAlignment = 'left',
         trueEdge,
         trueBaseline,
         trueWidth: width,
-    } = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
-    const fontData = getTypeAbilityFontData()[format];
+    } = scaleCoordinateData(
+        TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'],
+        globalScale,
+    );
+    const fontData = scaleFontData(getTypeAbilityFontData()[format], globalScale);
     if (metricMethod) fontData.metricMethod = metricMethod;
     const { font } = fontData;
     const fontLevel = sizeMap[size];
@@ -143,6 +148,7 @@ export const drawTypeAbility = async ({
         value: normalizedTypeAbilityText,
         metricMethod: !isMonster ? 'compact' : undefined,
         furiganaHelper,
+        globalScale,
     });
     resetStyle();
 
@@ -151,6 +157,7 @@ export const drawTypeAbility = async ({
 
     if (willDrawIcon) {
         const { edge, baseline } = iconPositionList[0];
+        ctx.scale(globalScale, globalScale);
         await drawAssetWithSize(
             ctx,
             `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
@@ -159,6 +166,7 @@ export const drawTypeAbility = async ({
             image => image.naturalWidth,
             image => image.naturalWidth,
         );
+        ctx.resetTransform();
     } else {
         /** Currently, draw icon in place of monster type is undesirable, as the icon seems out of place and user may not know how to turn them off properly if they want to. */
         // await Promise.all(iconPositionList.map(({ edge, baseline, size }) => {

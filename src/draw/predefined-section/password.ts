@@ -1,5 +1,5 @@
 import { PasswordFontData, PasswordCoordinateMap, DefaultFontSizeData } from 'src/model';
-import { condense, createFontGetter } from 'src/util';
+import { condense, createFontGetter, scaleCoordinateData, scaleFontData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -48,8 +48,11 @@ export const drawPasswordText = ({
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
 
-    const { trueEdge, trueBaseline, trueWidth: width } = PasswordCoordinateMap[format] ?? PasswordCoordinateMap['tcg'];
-    const fontData = PasswordFontData[format];
+    const { trueEdge, trueBaseline, trueWidth: width } = scaleCoordinateData(
+        PasswordCoordinateMap[format] ?? PasswordCoordinateMap['tcg'],
+        globalScale,
+    );
+    const fontData = scaleFontData(PasswordFontData[format], globalScale);
     const { font } = fontData;
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
 

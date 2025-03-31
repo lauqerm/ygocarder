@@ -2,6 +2,7 @@ import { CanvasConst, ExportFormat } from 'src/model';
 import { create } from 'zustand';
 
 export type Setting = {
+    globalScale: number,
     exportFormat: ExportFormat,
     resolution: [number, number],
     showCreativeOption: boolean,
@@ -19,6 +20,7 @@ export const useSetting = create<SettingStore>((set) => {
         exportFormat,
         reduceMotionColor,
         resolution,
+        globalScale,
         showCreativeOption,
         showExtraDecorativeOption,
     } = ((): Record<string, any> => {
@@ -35,6 +37,9 @@ export const useSetting = create<SettingStore>((set) => {
 
     return {
         setting: {
+            globalScale: typeof globalScale === 'number' && globalScale <= CanvasConst.maximumScale
+                ? globalScale
+                : 1,
             exportFormat: typeof exportFormat === 'string' ? exportFormat as ExportFormat : 'csv',
             resolution: Array.isArray(resolution) && typeof resolution[0] === 'number' && typeof resolution[1] === 'number'
                 ? resolution as [number, number]

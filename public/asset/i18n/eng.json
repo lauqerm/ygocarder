@@ -322,6 +322,7 @@
         "setting.option.hotkey.label": "Allow hotkey",
         "setting.option.hotkey.tooltip": "Warning: Using hotkey may affect undo / redo feature.",
         "setting.option.resolution.label": "Resolution (px)",
+        "setting.option.resolution.warning": "May affect performance",
         "setting.option.soft-mode.label": "Reduce Color and Motion"
     }
 }

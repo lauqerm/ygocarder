@@ -323,6 +323,7 @@
         "setting.option.hotkey.label": "Cho phép dùng phím tắt",
         "setting.option.hotkey.tooltip": "Cảnh báo: Sử dụng phím tắt có thể khiến bạn không hoàn tác lại văn bản trước đó.",
         "setting.option.resolution.label": "Độ phân giải (px)",
+        "setting.option.resolution.warning": "Ảnh hưởng tới hiệu suất",
         "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }

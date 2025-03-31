@@ -49,6 +49,8 @@ html {
     --sub-link-marker: #ff4f4f;
     --main-danger: #e95e5e;
     --sub-danger: #ff6f6f;
+    --main-warning: #ffb300;
+    --sub-warning: #ffd300;
     --main-info: #3a9eff;
     --sub-info: #3b9dff;
     --main-disabled: #8aaeaf;
@@ -196,6 +198,10 @@ hr {
             height: calc(var(--card-height) * var(--resize-ratio) * 1 / var(--global-scale));
             margin: var(--spacing);
             margin-top: 0;
+            .reset-button,
+            .lightbox-button {
+                display: none;
+            }
             &:hover {
                 .reset-button,
                 .lightbox-button {

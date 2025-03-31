@@ -125,8 +125,9 @@ span.ant-input-affix-wrapper {
     }
 }
 .ant-popover.ant-popover-placement-left {
+    padding-right: var(--spacing-lg);
     .ant-popover-content .ant-popover-arrow {
-        right: 5px; // Alignment
+        right: 12px; // Alignment
         border-top-color: var(--sub-level-1);
         border-right-color: var(--sub-level-1);
     }

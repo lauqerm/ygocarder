@@ -164,6 +164,7 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/frame-${frame}.png`, 0, 0);
             await drawAsset(ctx, `frame-pendulum/frame-pendulum-${bottomFrame}.png`, 0, 0);
+            ctx.resetTransform();
             if (hasBackground && backgroundCanvas && backgroundType === 'frame') {
                 const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
                 const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
@@ -171,38 +172,37 @@ export const getLayoutDrawFunction = ({
                 const clonedCanvasContext = clonedCanvas?.getContext('2d');
                 if (clonedCanvas && clonedCanvasContext) {
                     /** Clone background to create a new frame */
-                    clonedCanvas.width = cardWidth;
-                    clonedCanvas.height = cardHeight;
+                    clonedCanvas.width = cardWidth * globalScale;
+                    clonedCanvas.height = cardHeight * globalScale;
                     clonedCanvasContext.drawImage(
                         backgroundCanvas,
                         0, 0, backgroundWidth, backgroundHeight,
-                        0, 0, cardWidth, cardHeight,
+                        0, 0, cardWidth * globalScale, cardHeight * globalScale,
                     );
                     /** Clear slot for card art */
                     clonedCanvasContext.clearRect(
-                        CardArtCanvasCoordinateMap.normal.artX,
-                        CardArtCanvasCoordinateMap.normal.artY,
-                        CardArtCanvasCoordinateMap.normal.artWidth,
-                        CardArtCanvasCoordinateMap.normal.artWidth / CardArtCanvasCoordinateMap.normal.artRatio,
+                        globalScale * CardArtCanvasCoordinateMap.normal.artX,
+                        globalScale * CardArtCanvasCoordinateMap.normal.artY,
+                        globalScale * CardArtCanvasCoordinateMap.normal.artWidth,
+                        globalScale * CardArtCanvasCoordinateMap.normal.artWidth / CardArtCanvasCoordinateMap.normal.artRatio,
                     );
                     /** Clear slot for effect box */
                     clonedCanvasContext.clearRect(
-                        leftToEffectBox,
-                        topToEffectBox,
-                        effectBoxWidth,
-                        effectBoxHeight,
+                        globalScale * leftToEffectBox,
+                        globalScale * topToEffectBox,
+                        globalScale * effectBoxWidth,
+                        globalScale * effectBoxHeight,
                     );
                     ctx.drawImage(
                         clonedCanvas,
                         0, 0,
-                        cardWidth, cardHeight,
+                        globalScale * cardWidth, globalScale * cardHeight,
                         0, 0,
-                        cardWidth, cardHeight,
+                        globalScale * cardWidth, globalScale * cardHeight,
                     );
                 }
             }
             ctx.globalAlpha = 1;
-            ctx.resetTransform();
         },
         /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas. */
         drawCardArt: () => {
@@ -214,8 +214,8 @@ export const getLayoutDrawFunction = ({
                 artworkCanvas,
                 0, 0,
                 imageWidth, imageHeight,
-                artX, artY,
-                artWidth, artWidth / (imageWidth / imageHeight),
+                globalScale * artX, globalScale * artY,
+                globalScale * artWidth, globalScale * artWidth / (imageWidth / imageHeight),
             );
         },
         drawBackground: (
@@ -254,8 +254,8 @@ export const getLayoutDrawFunction = ({
                     backgroundCanvas,
                     backgroundSourceOffsetX, backgroundSourceOffsetY,
                     backgroundWidth - backgroundSourceOffsetX * 2, backgroundHeight - backgroundOffsetHeight,
-                    backgroundDestinationX, backgroundDestinationY,
-                    backgroundDestinationWidth, backgroundDestinationHeight,
+                    globalScale * backgroundDestinationX, globalScale * backgroundDestinationY,
+                    globalScale * backgroundDestinationWidth, globalScale * backgroundDestinationHeight,
                 );
                 return;
             }
@@ -273,8 +273,8 @@ export const getLayoutDrawFunction = ({
                 backgroundCanvas,
                 0, 0,
                 backgroundWidth, backgroundHeight,
-                artX, artY,
-                artWidth, artWidth / (backgroundWidth / backgroundHeight)
+                globalScale * artX, globalScale * artY,
+                globalScale * artWidth, globalScale * artWidth / (backgroundWidth / backgroundHeight)
             );
         },
         drawAttribute: async () => {
@@ -394,8 +394,7 @@ export const getLayoutDrawFunction = ({
             return;
         },
         drawNameBorder: async () => {
-            if (!ctx) return;
-            if (nameBorder) {
+            if (nameBorder && ctx) {
                 ctx.scale(globalScale, globalScale);
                 await drawAsset(ctx, `frame/name-border-${nameBorderType}.png`, 0, 0);
                 ctx.resetTransform();
@@ -405,7 +404,7 @@ export const getLayoutDrawFunction = ({
             return;
         },
         drawArtBorder: async () => {
-            if (artBorder) {
+            if (artBorder && ctx) {
                 let artFrameSource = '';
                 if (isXyz || isSpeedSkill) {
                     artFrameSource = `frame/art-border-${frame}.png`;
@@ -414,7 +413,6 @@ export const getLayoutDrawFunction = ({
                 } else {
                     artFrameSource = 'frame/art-border.png';
                 }
-                if (!ctx) return;
                 ctx.scale(globalScale, globalScale);
                 await drawAsset(ctx, artFrameSource, artBoxX, artBoxY);
                 ctx.resetTransform();
@@ -477,29 +475,39 @@ export const getLayoutDrawFunction = ({
         /** @summary FINISH section */
 
         drawNameFinish: async () => {
-            if (artBorder || nameBorder) await loopFinish(
-                ctx,
-                'name',
-                async type => {
-                    return drawAsset(ctx, `finish/finish-${type}-name.png`, 0, 0);
-                },
-            );
+            if ((artBorder || nameBorder) && ctx) {
+                ctx.scale(globalScale, globalScale);
+                await loopFinish(
+                    ctx,
+                    'name',
+                    async type => {
+                        return drawAsset(ctx, `finish/finish-${type}-name.png`, 0, 0);
+                    },
+                );
+                ctx.resetTransform();
+            }
         },
         drawAttributeFinish: async () => {
-            if (attribute !== NO_ATTRIBUTE) {
+            if (attribute !== NO_ATTRIBUTE && ctx) {
+                ctx.scale(globalScale, globalScale);
                 await loopFinish(ctx, 'attribute', async type => drawAsset(ctx, `finish/finish-${type}-attribute.png`, 678, 55));
+                ctx.resetTransform();
             }
         },
         drawArtFinish: async () => {
-            if (applyArtFinish) await loopArtFinish(
-                ctx,
-                'art',
-                async finishType => await drawAsset(
+            if (applyArtFinish && ctx) {
+                ctx.scale(globalScale, globalScale);
+                await loopArtFinish(
                     ctx,
-                    `finish/art-finish-${finishType}${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`,
-                    artFinishX, artFinishY,
-                ),
-            );
+                    'art',
+                    async finishType => await drawAsset(
+                        ctx,
+                        `finish/art-finish-${finishType}${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`,
+                        artFinishX, artFinishY,
+                    ),
+                );
+                ctx.resetTransform();
+            }
         },
         /**
          * * ArtFinish: Controlled by `artFinish` attribute.
@@ -530,16 +538,15 @@ export const getLayoutDrawFunction = ({
             ctx.resetTransform();
         },
         drawArtBorderFinish: async () => {
-            if (!ctx) return;
-            ctx.scale(globalScale, globalScale);
-            if (artBorder) {
+            if (artBorder && ctx) {
+                ctx.scale(globalScale, globalScale);
                 await loopFinish(
                     ctx,
                     'art-border',
                     async finishType => drawAsset(ctx, `finish/finish-${finishType}-art-border.png`, 0, 0),
                 );
+                ctx.resetTransform();
             }
-            ctx.resetTransform();
         },
         drawPendulumArtBorderFinish: async () => {
             if (!ctx) return;

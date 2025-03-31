@@ -90,14 +90,19 @@ export const drawStarContent = async ({
 export const drawSticker = async ({
     ctx,
     sticker,
+    globalScale,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     sticker: string,
+    globalScale: number,
 }) => {
     if (!clearCanvas(ctx)) return;
 
     if (sticker === NO_STICKER) return Promise.resolve();
-    return drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
+    ctx.scale(globalScale, globalScale);
+    await drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
+    ctx.resetTransform();
+    return;
 };
 
 /** Duel terminal mark and Speed card mark. */
@@ -182,7 +187,7 @@ export const drawLimitedEditionMark = async ({
     textStyle?: CanvasTextStyle,
 }) => {
     const coordinate: [number, number, number, number] = !isLegacyCard || isPendulum
-        ? [145, 1122, 240 - widthOffset, 37]
+        ? [145, 1123, 240 - widthOffset / globalScale, 37]
         : isLink
             ? [151, 846, 216, 36]
             : [80, 843, 240, 40];
