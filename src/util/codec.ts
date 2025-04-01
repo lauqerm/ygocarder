@@ -56,10 +56,12 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     effectStyle: {
         _newKey: 'es',
         condenseTolerant: 'cdtl',
+        fontStyle: 'efs',
         upSize: 'eus',
     },
     pendulumStyle: {
         _newKey: 'ps',
+        fontStyle: 'pfs',
         upSize: 'pus',
     },
     nameStyle: {
@@ -241,6 +243,11 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.pendulumStyle == null) {
         migratedCard.pendulumStyle = {
             ...getEmptyCard().pendulumStyle,
+        };
+    } else {
+        migratedCard.pendulumStyle = {
+            ...getEmptyCard().pendulumStyle,
+            ...migratedCard.pendulumStyle,
         };
     }
 
