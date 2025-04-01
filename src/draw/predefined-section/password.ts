@@ -88,6 +88,7 @@ export const drawPasswordText = ({
                     paragraphList: [normalizedText],
                     format, textData: internalTextData,
                     width,
+                    globalScale,
                 });
         
                 if (currentLineCount > 1) return false;
@@ -113,6 +114,7 @@ export const drawPasswordText = ({
         trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY) + baselineOffset,
         textData,
         format,
+        globalScale,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline);
         },

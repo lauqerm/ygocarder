@@ -24,6 +24,7 @@ export const fillHeadText = ({
     headTextHeightRatio,
     headTextBold,
     headTextGapRatio,
+    globalScale,
     xRatio,
     fontStyle,
     textWorker,
@@ -40,6 +41,7 @@ export const fillHeadText = ({
     headTextHeightRatio: number,
     headTextBold: boolean,
     headTextGapRatio: number,
+    globalScale: number,
     xRatio: number,
     fontStyle: string,
     textWorker: ReturnType<typeof getTextWorker>,
@@ -108,7 +110,7 @@ export const fillHeadText = ({
     for (const letter of headText) {
         /** `getLetterWidth` does not run properly in the case of bold font, so we must turn it off when calculating text width, before turn in on again and draw the actual text. */
         applyFuriganaFont();
-        const { width, boundWidth } = getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1 });
+        const { width, boundWidth } = getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1, globalScale });
         const boundingOffset = (width - boundWidth) / 2;
         stopApplyFuriganaFont();
 

@@ -83,6 +83,7 @@ export const drawCreatorText = ({
                     median,
                     paragraphList: [normalizedText],
                     format, textData: internalTextData,
+                    globalScale,
                     width,
                 });
         
@@ -109,6 +110,7 @@ export const drawCreatorText = ({
         trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY) + baselineOffset * globalScale,
         textData,
         format,
+        globalScale,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline);
         },

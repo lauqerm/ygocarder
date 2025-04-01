@@ -867,13 +867,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.rerun += 1;
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
+            ctx.scale(globalScale, globalScale);
             await loopFinish(
                 ctx,
                 'total-overlay',
                 overlayType => drawAsset(ctx, `finish/finish-${overlayType}-total-overlay.png`, 0, 0),
             );
+            ctx.resetTransform();
         };
-    }, [readyToDraw, finishCanvasRef, loopFinish, name]);
+    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, name]);
 
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useCallback(async (exportProps: {

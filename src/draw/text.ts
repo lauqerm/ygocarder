@@ -58,6 +58,7 @@ export const drawLine = ({
     format,
     textDrawer,
     debug = false,
+    globalScale,
 }: {
     ctx: CanvasRenderingContext2D,
     format: string,
@@ -69,6 +70,7 @@ export const drawLine = ({
     spaceWidth?: number,
     textData: TextData,
     textDrawer?: TextDrawer,
+    globalScale: number,
     debug?: boolean,
 }) => {
     const {
@@ -144,6 +146,7 @@ export const drawLine = ({
             letterSpacing,
             format,
             textData,
+            globalScale,
         };
         const drawLetterParameter = {
             ctx,
@@ -165,8 +168,8 @@ export const drawLine = ({
 
         /** Again, first token indentation. */
         const indent = tokenCnt === 0
-            ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT, leftGap * xRatio) * -1 : 0)
-                + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET : 0)
+            ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)
+                + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0)
             : 0;
         let fragmentEdge = tokenEdge + indent;
         let currentRightGap = previousTokenGap;
@@ -189,7 +192,7 @@ export const drawLine = ({
             /** Bullet symbol ● is not condenseable, and has specialized draw worker. */
             else if (fragment === BULLET_LETTER) {
                 resetScale();
-                drawBullet(ctx, fragmentEdge, trueBaseline + bulletSymbolOffset, bulletSymbolWidth, getBulletSpacing(format));
+                drawBullet(ctx, fragmentEdge, trueBaseline + bulletSymbolOffset, bulletSymbolWidth, getBulletSpacing(format) * globalScale);
                 fragmentEdge += bulletSymbolWidth * letterSpacingRatio;
                 applyAsymmetricScale(xRatio, yRatio);
 
@@ -246,7 +249,7 @@ export const drawLine = ({
                 applyFuriganaFont();
                 const headTextLetterWidth = headText
                     .split('')
-                    .map(letter => getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
+                    .map(letter => getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1, globalScale }).boundWidth)
                     .reduce((acc, cur) => acc + cur, 0);
                 stopApplyFuriganaFont();
 
@@ -315,6 +318,7 @@ export const drawLine = ({
                     yRatio,
                     spaceWidth: 0,
                     textDrawer,
+                    globalScale,
                     debug: false,
                 });
 
@@ -351,6 +355,7 @@ export const drawLine = ({
                     textWorker,
                     fitFootText,
                     headTextOverflow,
+                    globalScale,
                 });
                 /** Restore foot text's original style */
                 ctx.fillStyle = currentFillStyle;
@@ -467,6 +472,7 @@ export const drawLine = ({
                     metricMethod,
                     isLastOfLine: nextFragment === undefined,
                     xRatio,
+                    globalScale,
                 });
                 const letterWidth = letterMetric.boundWidth * letterSpacingRatio * xRatio;
                 const leftGap = Math.max(defaultGap, letterWidth * gapRatio);

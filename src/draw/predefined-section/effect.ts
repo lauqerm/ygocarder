@@ -145,6 +145,7 @@ export const drawEffect = ({
                     additionalLineCount,
                     format, textData,
                     width,
+                    globalScale,
                 });
                 lineListWithRatio = currentLineList;
 
@@ -180,6 +181,7 @@ export const drawEffect = ({
                                 paragraphList: [line],
                                 format, textData,
                                 width,
+                                globalScale,
                             });
     
                             if (currentLineCount > 1) return false;
@@ -199,7 +201,7 @@ export const drawEffect = ({
                 effectiveMedian,
             }) => {
                 const xRatio = effectiveMedian / 1000;
-                const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width });
+                const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width, globalScale });
 
                 ctx.scale(xRatio, yRatio);
                 drawLine({
@@ -210,6 +212,7 @@ export const drawEffect = ({
                     spaceWidth,
                     textData,
                     format,
+                    globalScale,
                 });
                 trueBaseline += lineHeight;
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -241,6 +244,7 @@ export const drawEffect = ({
                             paragraphList: [effectFlavorCondition],
                             format, textData: flavorTextData,
                             width,
+                            globalScale,
                         });
 
                         if (currentLineCount > 1) return false;
@@ -264,6 +268,7 @@ export const drawEffect = ({
                     trueEdge, trueBaseline,
                     textData: flavorTextData,
                     format,
+                    globalScale,
                 });
                 trueBaseline += lineHeight;
                 ctx.setTransform(1, 0, 0, 1, 0, 0);

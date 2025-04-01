@@ -7,7 +7,7 @@ import {
     ReactZoomPanPinchContentRef,
 } from 'react-zoom-pan-pinch';
 import styled from 'styled-components';
-import { ZoomInOutlined, ZoomOutOutlined, FullscreenExitOutlined, PicCenterOutlined } from '@ant-design/icons';
+import { ZoomInOutlined, ZoomOutOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { CardActionButton } from '../atom';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
@@ -45,7 +45,7 @@ const Controls = ({
     zoomIn,
     zoomOut,
     resetTransform,
-    centerView,
+    setTransform,
     scale,
     globalScale,
     width,
@@ -74,13 +74,19 @@ const Controls = ({
                 <FullscreenExitOutlined />
             </CardActionButton>
             <CardActionButton onClick={() => {
-                centerView();
+                setTransform(
+                    -Math.max(0, width - CanvasWidth) / 2,
+                    -Math.max(0, height - CanvasHeight) / 2,
+                    1,
+                );
             }}>
-                <PicCenterOutlined />
+                <FullscreenOutlined />
             </CardActionButton>
         </div>
         <div className="control-info">
-            {scale && <>1:{Math.round(1 / scale * 100) / 100}</>}&nbsp;-&nbsp;{width} × {height}
+            {scale && <>×{
+                scale < 1 ? `1/${Math.round(1 / scale * 10) / 10}` : (Math.round(scale * 10) / 10)
+            }</>}&nbsp;({width} × {height})
         </div>
     </div>;
 };

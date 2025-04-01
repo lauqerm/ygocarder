@@ -45,6 +45,7 @@ export const analyzeToken = ({
     previousTokenGap = 0,
     letterSpacing = DefaultFontSizeData.letterSpacing,
     format,
+    globalScale,
     textData,
     // debug = false,
 }: {
@@ -55,6 +56,7 @@ export const analyzeToken = ({
     previousTokenGap?: number,
     letterSpacing?: number,
     format: string,
+    globalScale: number,
     // debug?: boolean,
     textData: {
         fontData: FontData,
@@ -175,13 +177,13 @@ export const analyzeToken = ({
             /** Calculate foot text's width */
             const {
                 totalWidth: footTextWidth,
-            } = analyzeToken({ ctx, token: footText, nextToken, xRatio, letterSpacing, previousTokenGap: 0, format, textData });
+            } = analyzeToken({ ctx, token: footText, nextToken, xRatio, letterSpacing, previousTokenGap: 0, format, textData, globalScale });
 
             /** Calculate head text's width */
             applyFuriganaFont();
             const headTextLetterWidth = headText
                 .split('')
-                .map(letter => getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1 }).boundWidth)
+                .map(letter => getLetterWidth({ ctx, letter, fontStyle, metricMethod: 'furigana', xRatio: 1, globalScale }).boundWidth)
                 .reduce((acc, cur) => acc + cur, 0);
             stopApplyFuriganaFont();
 
@@ -299,7 +301,7 @@ export const analyzeToken = ({
             }
         }
         else {
-            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, isLastOfLine, fontStyle, metricMethod, xRatio });
+            const { boundWidth } = getLetterWidth({ ctx, letter: fragment, isLastOfLine, fontStyle, metricMethod, xRatio, globalScale });
             const fragmentWidth = boundWidth * letterSpacingRatio;
             const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);
             const rightGap = leftGap;
@@ -349,6 +351,7 @@ export const analyzeLine = ({
     format,
     isLast,
     textData,
+    globalScale,
 }: {
     ctx: CanvasRenderingContext2D,
     line: string,
@@ -357,6 +360,7 @@ export const analyzeLine = ({
     format: string,
     isLast: boolean,
     textData: TextData,
+    globalScale: number,
 }) => {
     const tokenList = tokenizeText(line);
     let totalContentWidth = 0;
@@ -382,12 +386,12 @@ export const analyzeLine = ({
             leftGap,
             rightGap,
             leftMostLetter,
-        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData, format });
+        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData, format, globalScale });
         /** Check `createLineList` function about first token indentation. */
         const indent = (
-            (cnt === 0 && leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT, leftGap * xRatio) * -1 : 0)
+            (cnt === 0 && leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)
             +
-            (cnt === 0 && OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * xRatio : 0)
+            (cnt === 0 && OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale * xRatio : 0)
         );
 
         currentGap = rightGap * xRatio;
@@ -397,8 +401,8 @@ export const analyzeLine = ({
     const expectedSpaceWidth = lineSpaceCount > 0 ? (width - totalContentWidth) / lineSpaceCount : 0;
     const spaceWidth = isLast
         ? format === 'tcg'
-            ? expectedSpaceWidth > 1.500 ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 3.650 ? 0 : expectedSpaceWidth
+            ? expectedSpaceWidth > 1.500 * globalScale ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > 3.650 * globalScale ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {

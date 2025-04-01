@@ -43,6 +43,7 @@ export const getLetterWidth = ({
     fontStyle,
     xRatio,
     metricMethod = 'standard',
+    globalScale,
 }: {
     ctx: CanvasRenderingContext2D,
     letter: string,
@@ -51,6 +52,7 @@ export const getLetterWidth = ({
     xRatio: number,
     metricMethod?: MetricMethod,
     debug?: string,
+    globalScale: number,
 }) => {
     if (nonBreakableSymbolRegex.test(letter)) return {
         width: 0,
@@ -115,7 +117,7 @@ export const getLetterWidth = ({
     }
     else if (ChoonpuRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.75);
-        letterBoxSpacing = 2;
+        letterBoxSpacing = 2 * globalScale;
     }
     else if (ChiisaiRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana' ? actualBoundWidth : Math.max(actualBoundWidth, width * 0.7);

@@ -208,6 +208,7 @@ export const drawName = async (
                     paragraphList: [quoteConvertedValue],
                     format, textData,
                     width,
+                    globalScale,
                 });
 
                 if (currentLineCount > 1) return false;
@@ -245,6 +246,7 @@ export const drawName = async (
             trueEdge: edge, trueBaseline,
             textData,
             format,
+            globalScale,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             },
@@ -258,9 +260,11 @@ export const drawName = async (
         if (patternImage && cloneNode) {
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             /** Some patterns are partially transparent, so we need to draw the current frame under it first. */
+            cloneCtx.scale(globalScale, globalScale);
             await drawAsset(cloneCtx, `frame/frame-${frame}.png`, 0, 0);
             await drawAsset(cloneCtx, `background/background-name-${frame}.png`, 0, 0);
             cloneCtx.globalCompositeOperation = patternBlendMode;
+            cloneCtx.resetTransform();
             await drawAssetWithSize(
                 cloneCtx, `finish-name/${patternImage}.png`,
                 edge, trueBaseline - maxAscent,
@@ -283,6 +287,7 @@ export const drawName = async (
                 trueEdge: edge, trueBaseline,
                 textData,
                 format,
+                globalScale,
                 textDrawer: () => {},
             });
         }
@@ -297,6 +302,7 @@ export const drawName = async (
                 trueEdge: edge, trueBaseline,
                 textData,
                 format,
+                globalScale,
                 textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                     ctx.lineJoin = 'round';
                     ctx.strokeText(

@@ -67,6 +67,7 @@ export const drawTypeAbilityText = ({
                 paragraphList: [normalizedText],
                 format, textData,
                 width,
+                globalScale,
             });
     
             if (currentLineCount > 1) return false;
@@ -85,6 +86,7 @@ export const drawTypeAbilityText = ({
         trueBaseline,
         textData,
         format,
+        globalScale,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline);
         },
@@ -157,16 +159,14 @@ export const drawTypeAbility = async ({
 
     if (willDrawIcon) {
         const { edge, baseline } = iconPositionList[0];
-        ctx.scale(globalScale, globalScale);
         await drawAssetWithSize(
             ctx,
             `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
-            image => edge + image.naturalWidth * 0.175 * xRatio + offsetX,
-            image => baseline - image.naturalWidth * 0.8 + offsetY,
-            image => image.naturalWidth,
-            image => image.naturalWidth,
+            image => edge + (image.naturalWidth * 0.175 * xRatio + offsetX) * globalScale,
+            image => baseline - image.naturalWidth * 0.8 * globalScale + offsetY * globalScale,
+            image => globalScale * image.naturalWidth,
+            image => globalScale * image.naturalWidth,
         );
-        ctx.resetTransform();
     } else {
         /** Currently, draw icon in place of monster type is undesirable, as the icon seems out of place and user may not know how to turn them off properly if they want to. */
         // await Promise.all(iconPositionList.map(({ edge, baseline, size }) => {
