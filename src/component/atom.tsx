@@ -46,3 +46,31 @@ export const InternalPopover = ({
     }
     return <>{children}</>;
 };
+
+export const CardActionButton = styled.button`
+    --overlay-size: 36px;
+    background: var(--main-primary);
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--main-active);
+    color: var(--color-heavy);
+    padding: var(--spacing-sm);
+    line-height: 1;
+    font-size: var(--fs-xl);
+    text-align: center;
+    width: var(--overlay-size);
+    height: var(--overlay-size);
+    border-radius: var(--br-lg);
+    box-shadow: var(--bs-1);
+    /* display: none; */
+    &:not(:disabled) {
+        cursor: pointer;
+        &:hover {
+            background: var(--sub-primary);
+        }
+    }
+    &:disabled {
+        cursor: not-allowed;
+        filter: opacity(0.5);
+    }
+`;

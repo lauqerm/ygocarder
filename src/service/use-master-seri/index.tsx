@@ -92,7 +92,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         cardIconCanvasRef,
         typeCanvasRef,
         finishCanvasRef,
-        lightboxCanvasRef,
+        lightboxRef,
     } = canvasMap;
     const {
         format,
@@ -634,7 +634,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (isFirstEdition) {
             const left = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? isLink ? 151 : 89
-                : Math.max(rightEdge + 14.813, 142.2) - (format === 'ocg' ? 7 : 0);
+                : Math.max(rightEdge / globalScale + 14.813, 142.2) - (format === 'ocg' ? 7 : 0);
             const bottom = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? 871
                 : 1150.93;
@@ -987,7 +987,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await generateLayer(stickerCanvasRef, exportCtx, 0);
             await generateLayer(finishCanvasRef, exportCtx, 0);
 
-            lightboxCanvasRef.current?.getContext('2d')?.drawImage(exportCanvas, 0, 0);
+            lightboxRef.current?.draw(exportCanvas);
         }
     }, [
         language,
@@ -997,7 +997,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         exportCanvasRef, 
         effectCanvasRef, 
         finishCanvasRef, 
-        lightboxCanvasRef, 
+        lightboxRef, 
         nameCanvasRef, 
         passwordCanvasRef, 
         pendulumEffectCanvasRef, 

@@ -24,6 +24,7 @@ export const Affiliation = () => {
 
 const StyledVersionLog = styled(StyledPopMarkdown)`
     overflow: auto;
+    width: 550px;
     max-height: 300px;
 `;
 

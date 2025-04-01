@@ -37,8 +37,8 @@ import {
     useOCGFont,
     useSetting,
 } from './service';
-import { Modal, notification, Tooltip } from 'antd';
-import { TaintedCanvasWarning } from './component';
+import { notification, Tooltip } from 'antd';
+import { Lightbox, LightboxRef, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
 import {
@@ -105,8 +105,6 @@ function App() {
     const [isInitializing, setInitializing] = useState(true);
     const [error, setError] = useState('');
     const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
-    const [canvasKey, setCanvasKey] = useState(0);
-    const [lightboxVisible, setLightboxVisible] = useState(false);
     const [managerVisible, setManagerVisible] = useState(false);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
@@ -126,7 +124,7 @@ function App() {
     const creatorCanvasRef = useRef<HTMLCanvasElement>(null);
     const stickerCanvasRef = useRef<HTMLCanvasElement>(null);
     const finishCanvasRef = useRef<HTMLCanvasElement>(null);
-    const lightboxCanvasRef = useRef<HTMLCanvasElement>(null);
+    const lightboxRef = useRef<LightboxRef>(null);
     const [canvasMap] = useState({
         artworkCanvasRef,
         backgroundCanvasRef,
@@ -144,7 +142,7 @@ function App() {
         creatorCanvasRef,
         stickerCanvasRef,
         finishCanvasRef,
-        lightboxCanvasRef,
+        lightboxRef,
     });
 
     const downloadButtonRef = useRef<DownloadButtonRef>(null);
@@ -258,7 +256,7 @@ function App() {
     const displayLightbox = useCallback((status?: boolean, fromHotkey = false) => {
         if (fromHotkey && !allowHotkey) return;
 
-        setLightboxVisible(cur => typeof status === 'boolean' ? status : !cur);
+        lightboxRef.current?.setVisible(cur => typeof status === 'boolean' ? status : !cur);
     }, [allowHotkey]);
 
     const sentryInitialized = useRef(false);
@@ -418,7 +416,7 @@ function App() {
     const rerenderAllImage = useCallback((crossorigin?: string) => {
         if (crossorigin === 'anonymous') {
             setTainted(false);
-            setCanvasKey(cnt => cnt + 1);
+            lightboxRef.current?.refresh();
         }
         setImageChangeCount(cnt => cnt + 1);
     }, []);
@@ -537,7 +535,7 @@ function App() {
                             </Tooltip>
                             <StyledCardCanvasGroupContainer className="card-canvas-group">
                                 <canvas
-                                    key={canvasKey + 0.1}
+                                    key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.1}
                                     id="export-canvas"
                                     ref={exportCanvasRef}
                                     width={CanvasWidth * globalScale}
@@ -548,7 +546,7 @@ function App() {
                                     {/* <div className="canvas-guard-alert">Generating...</div> */}
                                 </div>
                                 <canvas id="frameCanvas"
-                                    key={canvasKey}
+                                    key={(lightboxRef.current?.getCanvasKey() ?? 0)}
                                     ref={frameCanvasRef}
                                     width={CanvasWidth * globalScale}
                                     height={CanvasHeight * globalScale}
@@ -641,34 +639,10 @@ function App() {
                     }}
                 />
                 {/** Pixel perfect for card image */}
-                <Modal
-                    width={`${CanvasWidth + 15 * 2}px`}
-                    wrapClassName="card-lightbox-overlay"
-                    visible={lightboxVisible}
-                    forceRender={true}
-                    onCancel={() => setLightboxVisible(false)}
-                    footer={null}
-                >
-                    <div
-                        style={{
-                            width: `${CanvasWidth}px`,
-                            height: `${CanvasHeight}px`,
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <canvas key={canvasKey + 0.1}
-                            id="lightbox-canvas"
-                            ref={lightboxCanvasRef}
-                            width={CanvasWidth * globalScale}
-                            height={CanvasHeight * globalScale}
-                            style={{
-                                transform: `translateX(-${(100 - 100 / globalScale) / 2}%)
-                                    translateY(-${(100 - 100 / globalScale) / 2}%)
-                                    scale(${1 / globalScale})`,
-                            }}
-                        />
-                    </div>
-                </Modal>
+                <Lightbox
+                    ref={lightboxRef}
+                    globalScale={globalScale}
+                />
                 <StyledByMe className="by-me">
                     Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                 </StyledByMe>

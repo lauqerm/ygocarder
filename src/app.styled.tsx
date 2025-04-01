@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { StyledActionIconButton } from './page';
+import { CardActionButton } from './component';
 
 export const StyledDataButtonPanelContainer = styled.div`
     display: flex;
@@ -191,26 +192,9 @@ export const ErrorAlert = styled.span`
     color: var(--main-danger);
 `;
 
-export const OverlayButton = styled.div`
-    --overlay-size: 36px;
+export const OverlayButton = styled(CardActionButton)`
     position: absolute;
     z-index: 101;
-    background: var(--main-primary);
-    border-color: var(--main-active);
-    color: var(--color-heavy);
-    padding: var(--spacing-sm);
-    line-height: 1;
-    font-size: var(--fs-xl);
-    text-align: center;
-    width: var(--overlay-size);
-    height: var(--overlay-size);
-    border-radius: var(--br-lg);
-    cursor: pointer;
-    box-shadow: var(--bs-1);
-    /* display: none; */
-    &:hover {
-        background: var(--sub-primary);
-    }
 `;
 
 export const LightboxButton = styled(OverlayButton)`

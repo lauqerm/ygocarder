@@ -244,12 +244,12 @@ export const ResolutionMap = {
         scale: 2,
         settingValue: [1388, 2026] as [number, number],
     },
-    '1626x2270': {
-        label: <div style={{ color: 'var(--main-warning)' }}>1626 × 2270</div>,
+    '1626x2370': {
+        label: <div style={{ color: 'var(--main-warning)' }}>1626 × 2370</div>,
         width: 1626,
-        height: 2270,
+        height: 2370,
         scale: 2,
-        settingValue: [1626, 2270] as [number, number],
+        settingValue: [1626, 2370] as [number, number],
     },
 };
 export const ResolutionList = [
@@ -257,7 +257,7 @@ export const ResolutionList = [
     ResolutionMap['561x818'],
     ResolutionMap['813x1185'],
     ResolutionMap['1388x2026'],
-    ResolutionMap['1626x2270'],
+    ResolutionMap['1626x2370'],
 ];
 
 export type ExportFormat = typeof ExportFormatList[0]['value'];

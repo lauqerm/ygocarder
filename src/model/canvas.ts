@@ -42,7 +42,9 @@ export type MasterSeriesCanvas = {
     creatorCanvasRef: React.RefObject<HTMLCanvasElement>,
     stickerCanvasRef: React.RefObject<HTMLCanvasElement>,
     finishCanvasRef: React.RefObject<HTMLCanvasElement>,
-    lightboxCanvasRef: React.RefObject<HTMLCanvasElement>,
+    lightboxRef: React.RefObject<{
+        draw: (exportCanvas: HTMLCanvasElement) => void,
+    }>,
 };
 
 /** Some coordination data must be rounded into nearest integer so it does not create those janky ghost pixels. */
