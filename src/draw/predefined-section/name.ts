@@ -131,6 +131,7 @@ export const drawName = async (
 
         ctx.textAlign = 'left';
         // ctx.textBaseline = 'bottom';
+        // ctx.fontVariantCaps = 'small-caps';
         let resetShadow = () => {};
         if (hasShadow) {
             resetShadow = setTextStyle({
@@ -249,7 +250,8 @@ export const drawName = async (
             format,
             globalScale,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+                console.log(letter, xRatio, yRatio, ctx.getTransform(), scaledBaseline - (isSpeedSkill ? offsetY : 0), ctx.measureText(letter), ctx.measureText(letter).width * xRatio);
+                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0) + 0.01);
             },
         });
 
@@ -323,5 +325,6 @@ export const drawName = async (
         resetStroke();
         ctx.lineJoin = 'miter';
         ctx.globalCompositeOperation = 'source-over';
+        ctx.textRendering = 'auto';
     }
 };
