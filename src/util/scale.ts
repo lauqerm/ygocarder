@@ -1,4 +1,4 @@
-import { CoordinateData, FontData, FontDeviation, FontSizeData } from 'src/model';
+import { CoordinateData, FontData, FontSizeData } from 'src/model';
 
 export const scaleCoordinateData = (coordinateData: CoordinateData, scale: number): CoordinateData => {
     return {
@@ -44,23 +44,10 @@ export const scaleFontSizeData = <FontData extends FontSizeData = FontSizeData>(
 };
 
 export const scaleFontData = (fontData: FontData, scale: number): FontData => {
-    const scaledLetterDeviationMap = fontData.letterDeviationMap
-        ? Object.entries(fontData.letterDeviationMap).reduce((acc, [letter, { yOffset, yRatio }]) => {
-            return {
-                ...acc,
-                [letter]: {
-                    yOffset: typeof yOffset === 'number' ? yOffset * scale : yOffset,
-                    yRatio,
-                }
-            };
-        }, {} as Record<string, FontDeviation>)
-        : undefined;
-
     return {
         ...fontData,
         fontList: fontData.fontList.map(entry => {
             return scaleFontSizeData(entry, scale);
         }),
-        letterDeviationMap: scaledLetterDeviationMap,
     };
 };

@@ -42,12 +42,13 @@ import { Lightbox, LightboxRef, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
 import {
+    CardPreviewContainer,
     ErrorAlert,
     LightboxButton,
     ResetButton,
     StyledAppLoading,
     StyledByMe,
-    StyledCardCanvasGroupContainer,
+    CardCanvasGroupContainer,
     StyledDataButtonPanelContainer,
 } from './app.styled';
 import { configure, HotKeys } from 'react-hotkeys';
@@ -111,6 +112,7 @@ function App() {
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
     const exportCanvasRef = useRef<HTMLCanvasElement>(null);
+    const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
     const cardIconCanvasRef = useRef<HTMLCanvasElement>(null);
     const pendulumScaleCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -143,6 +145,7 @@ function App() {
         stickerCanvasRef,
         finishCanvasRef,
         lightboxRef,
+        previewCanvasRef,
     });
 
     const downloadButtonRef = useRef<DownloadButtonRef>(null);
@@ -502,7 +505,7 @@ function App() {
                                     {language['alert.download.tainted-second-line']} <TaintedCanvasWarning /></span>
                             </div>}
                         </StyledDataButtonPanelContainer>
-                        <div className="card-canvas-container">
+                        <CardPreviewContainer className="card-preview-container">
                             <Tooltip title={language['button.reset.tooltip']}>
                                 <ResetButton
                                     className="reset-button"
@@ -533,7 +536,17 @@ function App() {
                                     <ZoomInOutlined />
                                 </LightboxButton>
                             </Tooltip>
-                            <StyledCardCanvasGroupContainer className="card-canvas-group">
+                            {/** Preview canvas is used to display a presentable card for user, in contrast of the actual rendered card below.
+                             * The reason is because when the card become bigger, we must resize it down to display it fully, which lead to a blurry or too sharp image. Canvas resizing is better than css resizing, so we use a separate smaller canvas to preview, but forward all user-action through it so user can still copy the card as full-size.
+                             */}
+                            <canvas
+                                key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.2}
+                                id="preview-canvas"
+                                ref={previewCanvasRef}
+                                width={CanvasWidth}
+                                height={CanvasHeight}
+                            />
+                            <CardCanvasGroupContainer className="card-canvas-group">
                                 <canvas
                                     key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.1}
                                     id="export-canvas"
@@ -617,8 +630,8 @@ function App() {
                                 <canvas className="crop-canvas"
                                     ref={backgroundCanvasRef}
                                 />
-                            </StyledCardCanvasGroupContainer>
-                        </div>
+                            </CardCanvasGroupContainer>
+                        </CardPreviewContainer>
                     </div>
                     {isLoading === false && <CardInputPanel
                         ref={cardInputRef}

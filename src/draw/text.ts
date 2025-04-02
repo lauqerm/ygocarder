@@ -397,7 +397,7 @@ export const drawLine = ({
                     let actualLetterWidth = 0;
                     const drawLetterofWordParameter = {
                         ...drawLetterParameter,
-                        deviation: letterDeviationMap[currentLetter],
+                        deviation: letterDeviationMap[`${globalScale}`],
                         letter: currentLetter,
                         edge: currentPosition,
                     };
@@ -486,7 +486,7 @@ export const drawLine = ({
                     ...drawLetterParameter,
                     letter,
                     edge: fragmentEdge,
-                    deviation: letterDeviationMap[letter],
+                    deviation: letterDeviationMap?.[`${globalScale}`],
                     letterMetric,
                 });
                 fragmentEdge += letterWidth;

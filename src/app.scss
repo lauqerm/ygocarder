@@ -191,24 +191,6 @@ hr {
         flex: 0 0 580px;
         position: relative;
         overflow: hidden;
-        .card-canvas-container {
-            position: relative;
-            display: block;
-            width: calc(var(--card-width) * var(--resize-ratio) * 1 / var(--global-scale));
-            height: calc(var(--card-height) * var(--resize-ratio) * 1 / var(--global-scale));
-            margin: var(--spacing);
-            margin-top: 0;
-            .reset-button,
-            .lightbox-button {
-                display: none;
-            }
-            &:hover {
-                .reset-button,
-                .lightbox-button {
-                    display: block;
-                }
-            }
-        }
         &.export-tainted {
             .data-button-panel {
                 color: var(--main-danger);

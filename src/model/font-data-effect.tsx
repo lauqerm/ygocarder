@@ -54,20 +54,19 @@ export const DefaultFontSizeData = {
  * So for now we can only hardcode a list of problematic letters with their correpsonding treatment. This is just baffling.
  */
 export type FontDeviation = {
-    yRatio?: number,
-    yOffset?: number,
+    uniformBoxDescent?: number,
 };
-export const DefaultFontDeviation: Required<FontDeviation> = {
-    yOffset: 0,
-    yRatio: 1,
-};
+export type FontDeviationMap = {
+    threshold: number,
+    letterMap: Record<string, FontDeviation>,
+}
 
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
 export type FontData = {
     alphabetFont: string,
     font: string,
     fontList: FontSizeData[],
-    letterDeviationMap?: Record<string, FontDeviation>,
+    letterDeviationMap?: Record<string, FontDeviationMap>,
     fontStyle: string,
     furiganaFont: string,
     headTextBold?: boolean,
@@ -131,41 +130,41 @@ export const NormalFontData: Record<string, FontData> = {
     'tcg': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5 },
+            { bulletSymbolWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
+            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
         ],
     },
     'tcg-stat': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4 },
+            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
+            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
         ]
     },
     'tcg-type-stat': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3 },
+            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
             { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
-            { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9 },
-            { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10 },
+            { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10, bulletSymbolOffset: 2 },
         ],
     },
     'tcg-type': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4 },
+            { bulletSymbolWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 7 },
@@ -184,7 +183,7 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
+            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
         ],
     },
     'tcg-stat': {
@@ -194,6 +193,8 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
         ]
     },
     'tcg-type-stat': {

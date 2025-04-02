@@ -42,6 +42,7 @@ export type MasterSeriesCanvas = {
     creatorCanvasRef: React.RefObject<HTMLCanvasElement>,
     stickerCanvasRef: React.RefObject<HTMLCanvasElement>,
     finishCanvasRef: React.RefObject<HTMLCanvasElement>,
+    previewCanvasRef: React.RefObject<HTMLCanvasElement>,
     lightboxRef: React.RefObject<{
         draw: (exportCanvas: HTMLCanvasElement) => void,
     }>,

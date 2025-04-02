@@ -153,6 +153,7 @@ export const useCardExport = ({
                 if (canvasRef) {
                     window.addEventListener('beforeunload', confirmReload);
                     document.getElementById('export-canvas')?.classList.remove('js-export-available');
+                    document.getElementById('preview-canvas')?.classList.remove('js-export-available');
                     document.getElementById('export-canvas-guard')?.setAttribute('style', '');
                     document.getElementById('save-button-waiting')?.setAttribute('style', 'display: block');
 
@@ -176,6 +177,7 @@ export const useCardExport = ({
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
                             document.getElementById('export-canvas')?.classList.add('js-export-available');
+                            document.getElementById('preview-canvas')?.classList.add('js-export-available');
                             document.getElementById('export-canvas-guard')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
                             window.removeEventListener('beforeunload', confirmReload);

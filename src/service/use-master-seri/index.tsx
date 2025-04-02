@@ -94,6 +94,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         typeCanvasRef,
         finishCanvasRef,
         lightboxRef,
+        previewCanvasRef,
     } = canvasMap;
     const {
         format,
@@ -1004,6 +1005,17 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await generateLayer(finishCanvasRef, exportCtx, 0);
 
             lightboxRef.current?.draw(exportCanvas);
+            previewCanvasRef.current?.getContext('2d')?.drawImage(
+                exportCanvas,
+                0,
+                0,
+                exportCanvas.width,
+                exportCanvas.height,
+                0,
+                0,
+                CanvasWidth,
+                CanvasHeight,
+            );
         }
     }, [
         language,
@@ -1023,6 +1035,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         statCanvasRef, 
         stickerCanvasRef, 
         typeCanvasRef,
+        previewCanvasRef,
     ]);
 
     return {

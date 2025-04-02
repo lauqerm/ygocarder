@@ -1,8 +1,7 @@
 import {
     ChiisaiRegex,
     ChoonpuRegex,
-    DefaultFontDeviation,
-    FontDeviation,
+    FontDeviationMap,
     HiraganaRegex,
     KatakanaRegex,
     MetricMethod,
@@ -176,7 +175,7 @@ export const drawLetter = ({
     edge,
     letter,
     xRatio,
-    deviation = {},
+    deviation,
     letterMetric,
     textDrawer,
 }: {
@@ -186,7 +185,7 @@ export const drawLetter = ({
     edge: number,
     baseline: number,
     xRatio: number,
-    deviation?: FontDeviation,
+    deviation?: FontDeviationMap,
     textDrawer?: TextDrawer,
 }) => {
     const {
@@ -195,10 +194,12 @@ export const drawLetter = ({
         offsetRatio = 0,
     } = letterMetric ?? {};
     const {
-        yOffset: deviationYOffset = DefaultFontDeviation.yOffset,
-        yRatio = DefaultFontDeviation.yRatio,
-    // } = {};
-    } = xRatio < 0.94 ? {} : deviation;
+        letterMap = {},
+        threshold = 10,
+    } = deviation ?? {};
+    const {
+        uniformBoxDescent,
+    } = letterMap[letter] ?? {};
 
     const letterWidth = metric.width * xRatio;
     const scaledBoundingWidth = boundWidth ? boundWidth * xRatio : letterWidth;
@@ -213,12 +214,23 @@ export const drawLetter = ({
 
     const boundingOffset = (letterWidth - scaledBoundingWidth) / 2;
     const externalOffset = scaledBoundingWidth * offsetRatio;
-    ctx.scale(1, yRatio);
+    let uniformYScale = 1;
+    let boxDescentCompensate = 0;
+    if (uniformBoxDescent && xRatio >= threshold) {
+        const { actualBoundingBoxDescent, actualBoundingBoxAscent } = ctx.measureText(letter);
+
+        /** Need to carefully survey if we over-compensate in edge case. */
+        boxDescentCompensate = uniformBoxDescent - actualBoundingBoxDescent;
+
+        const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
+        uniformYScale = (actualLetterHeight + boxDescentCompensate * 2) / actualLetterHeight;
+    }
+    ctx.scale(1, uniformYScale);
     worker({
         ctx,
         letter,
         scaledEdge: edge / xRatio - boundingOffset - externalOffset,
-        scaledBaseline: (baseline + deviationYOffset) / yRatio,
+        scaledBaseline: (baseline + boxDescentCompensate) / uniformYScale,
     });
-    ctx.scale(1, 1 / yRatio);
+    ctx.scale(1, 1 / uniformYScale);
 };

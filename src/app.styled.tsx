@@ -82,7 +82,41 @@ export const StyledDataButtonPanelContainer = styled.div`
     }
 `;
 
-export const StyledCardCanvasGroupContainer = styled.div`
+export const CardPreviewContainer = styled.div`
+    position: relative;
+    display: block;
+    width: calc(var(--card-width) * var(--resize-ratio) * 1 / var(--global-scale));
+    height: calc(var(--card-height) * var(--resize-ratio) * 1 / var(--global-scale));
+    margin: var(--spacing);
+    margin-top: 0;
+    .reset-button,
+    .lightbox-button {
+        display: none;
+    }
+    #preview-canvas {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+        transform: translateX(calc(var(--resize-percentage) / 2 - 50%))
+            translateY(calc(var(--resize-percentage) / 2 - 50%))
+            scale(var(--resize-ratio))
+            translateZ(0);
+        &.js-export-available {
+            display: inline-block !important;   // Override js-controlled inline style
+            cursor: default;
+        }
+    }
+    &:hover {
+        .reset-button,
+        .lightbox-button {
+            display: block;
+        }
+    }
+`;
+export const CardCanvasGroupContainer = styled.div`
     width: var(--card-width);
     height: var(--card-height);
     margin-bottom: var(--spacing);

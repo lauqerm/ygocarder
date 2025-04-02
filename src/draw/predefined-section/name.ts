@@ -250,8 +250,7 @@ export const drawName = async (
             format,
             globalScale,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                console.log(letter, xRatio, yRatio, ctx.getTransform(), scaledBaseline - (isSpeedSkill ? offsetY : 0), ctx.measureText(letter), ctx.measureText(letter).width * xRatio);
-                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0) + 0.01);
+                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             },
         });
 
