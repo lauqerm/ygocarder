@@ -32,6 +32,10 @@ export type FontSizeData = {
     wordLetterSpacing?: number,
 };
 export const DefaultFontSizeData = {
+    bulletSymbolWidth: 23,
+    fontSize: 24.5,
+    lineHeight: 24.9,
+    lineCount: 6,
     bulletSymbolOffset: 0,
     capitalLetterRatio: 1,
     headTextFontRatio: 0.355,
@@ -123,6 +127,53 @@ const DefaultOCGEffectFontData: FontData = {
     fontList: [],
 };
 
+export const NormalFontData: Record<string, FontData> = {
+    'tcg': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletSymbolWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5 },
+            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
+            { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
+        ],
+    },
+    'tcg-stat': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4 },
+            { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
+            { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.5, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10 },
+        ]
+    },
+    'tcg-type-stat': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3 },
+            { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
+            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
+            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
+            { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9 },
+            { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10 },
+        ],
+    },
+    'tcg-type': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletSymbolWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4 },
+            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 8 },
+        ]
+    },
+};
+
 export const DEFAULT_EFFECT_NORMAL_SIZE = 3;
 export const DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE = 3;
 export const EffectFontData: Record<string, FontData> = {
@@ -165,6 +216,7 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 8 },
         ]
     },
     'ocg': {
@@ -206,17 +258,21 @@ export const EffectFontData: Record<string, FontData> = {
     },
 };
 
-export const TCGVanillaTypeStatFontList: FontSizeData[] = [
-    { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3 },
-    { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
-    { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
-    { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 6 },
-    { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 7 },
-    { bulletSymbolWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
-    { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9 },
-    { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10 },
-];
 
+export const PendulumNormalFontData: Record<string, FontData> = {
+    tcg: {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletSymbolWidth: 41, fontSize: 50.3, lineHeight: 56.35, lineCount: 2 },
+            { bulletSymbolWidth: 34, fontSize: 35.3, lineHeight: 38.85, lineCount: 3, bulletSymbolOffset: 2 },
+            { bulletSymbolWidth: 27, fontSize: 26.3, lineHeight: 29.35, lineCount: 4, bulletSymbolOffset: 3 },
+            { bulletSymbolWidth: 23, fontSize: 24.3, lineHeight: 24.35, lineCount: 5 },
+            { bulletSymbolWidth: 18, fontSize: 19.5, lineHeight: 20.23, lineCount: 6 },
+            { bulletSymbolWidth: 17, fontSize: 17.0, lineHeight: 17.40, lineCount: 7 },
+            { bulletSymbolWidth: 14, fontSize: 14.7, lineHeight: 15.32, lineCount: 8 },
+        ],
+    },
+};
 export const PendulumEffectFontData: Record<string, FontData> = {
     tcg: {
         ...DefaultTCGEffectFontData,
@@ -267,6 +323,8 @@ export const PendulumEffectFontData: Record<string, FontData> = {
         ],
     },
 };
+
+export type FontStyle = '' | 'italic' | 'small-caps';
 
 export type CondenseType = 'veryStrict' | 'veryLoose' | 'strict' | 'loose' | 'relaxed';
 export const CondenseTolerantMap: Record<CondenseType, Record<string, number>> = {

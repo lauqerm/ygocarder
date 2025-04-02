@@ -62,9 +62,11 @@ export const getDefaultCard = () => ({
     ] as string[],
     effectStyle: {
         condenseTolerant: 'strict' as CondenseType,
+        fontStyle: 'auto',
         upSize: 0,
     },
     pendulumStyle: {
+        fontStyle: 'auto',
         upSize: 0,
     },
     effect: `[2+ Effect Monsters on your field]
@@ -148,9 +150,11 @@ export const getEmptyCard = (): Card => ({
     typeAbility: [],
     effectStyle: {
         condenseTolerant: 'strict',
+        fontStyle: 'auto',
         upSize: 0,
     },
     pendulumStyle: {
+        fontStyle: 'auto',
         upSize: 0,
     },
     effect: '',

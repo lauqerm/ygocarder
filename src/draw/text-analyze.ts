@@ -26,7 +26,7 @@ import {
     NonCompressableRegex,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
-import { createFontGetter } from 'src/util';
+import { createFontGetter, scaleFontSizeData } from 'src/util';
 import { getLetterWidth } from './letter';
 
 /** 
@@ -84,13 +84,14 @@ export const analyzeToken = ({
         fontStyle,
     } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
+    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const {
         bulletSymbolWidth,
         capitalLetterRatio,
         fontSize,
         iconSymbolWidth = bulletSymbolWidth,
-        largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
-        headTextSpacing = DefaultFontSizeData.headTextSpacing,
+        largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
+        headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
         squareBracketRatio,
         wordLetterSpacing,
     } = fontSizeData;

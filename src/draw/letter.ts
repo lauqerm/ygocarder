@@ -197,6 +197,7 @@ export const drawLetter = ({
     const {
         yOffset: deviationYOffset = DefaultFontDeviation.yOffset,
         yRatio = DefaultFontDeviation.yRatio,
+    // } = {};
     } = xRatio < 0.94 ? {} : deviation;
 
     const letterWidth = metric.width * xRatio;

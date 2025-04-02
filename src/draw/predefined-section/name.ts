@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -130,6 +130,7 @@ export const drawName = async (
         const hasOutline = hasDefaultOutline;
 
         ctx.textAlign = 'left';
+        // ctx.textBaseline = 'bottom';
         let resetShadow = () => {};
         if (hasShadow) {
             resetShadow = setTextStyle({
@@ -220,9 +221,9 @@ export const drawName = async (
         const yRatio = 1;
 
         ctx.scale(xRatio, yRatio);
-
         /** Calculate gradient and offset based on card's frame. */
-        const offsetY = fontData.fontList[0].offsetY ?? DefaultFontSizeData.offsetY;
+        const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
+        const offsetY = fontData.fontList[0].offsetY ?? scaledDefaultFontSizeData.offsetY;
         const tokenList = tokenizeText(quoteConvertedValue);
         const gradient = actualLineWidth > 0 && hasGradient
             ? getNameGradient(

@@ -13,7 +13,7 @@
     .header-language {
         display: inline-flex;
         flex-wrap: wrap;
-        column-gap: var(--spacing);
+        column-gap: var(--spacing-sm);
         row-gap: var(--spacing-sm);
         margin-bottom: var(--spacing-xxs);
         .ant-radio-button-wrapper {
@@ -77,11 +77,15 @@
             }
         }
         .app-log {
-            font-size: var(--fs-lg);
-            align-self: center;
+            text-align: center;
+            border: var(--bw) solid var(--main-level-3);
+            background-color: var(--main-level-1);
+            border-radius: var(--br-lg);
+            padding: 0 var(--spacing-xs);
             cursor: pointer;
+            box-shadow: 0 0 2px 1px #222222 inset;
             &:hover {
-                color: var(--main-active);
+                background-color: var(--main-level-2);
             }
         }
     }

@@ -38,6 +38,9 @@ const StyledLightboxContainer = styled.div`
             box-shadow: var(--bs-1);
         }
     }
+    .card-lightbox-content {
+        cursor: grab;
+    }
 `;
 
 const MAX_ZOOM = 4;
@@ -161,6 +164,7 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
                             />
                         </div>
                         <TransformComponent
+                            wrapperClass="card-lightbox-content"
                             wrapperStyle={{ maxWidth: CanvasWidth, maxHeight: CanvasHeight, lineHeight: 0 }}
                         >
                             <canvas key={canvasKey + 0.1}

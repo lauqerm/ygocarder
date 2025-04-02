@@ -34,6 +34,7 @@ import { analyzeToken } from './text-analyze';
 import { TextDrawer, drawLetter, getLetterWidth } from './letter';
 import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
+import { scaleFontSizeData } from 'src/util';
 
 /**
  * This is the heart and soul of drawer, please test this thoroughly for each change.
@@ -89,17 +90,18 @@ export const drawLine = ({
         fontStyle,
         letterDeviationMap = {},
     } = fontData;
+    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const {
-        bulletSymbolOffset = DefaultFontSizeData.bulletSymbolOffset,
+        bulletSymbolOffset = scaledDefaultFontSizeData.bulletSymbolOffset,
         bulletSymbolWidth,
-        capitalLetterRatio = DefaultFontSizeData.capitalLetterRatio,
+        capitalLetterRatio = scaledDefaultFontSizeData.capitalLetterRatio,
         fontSize,
-        headTextSpacing = DefaultFontSizeData.headTextSpacing,
+        headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
         iconSymbolWidth = bulletSymbolWidth,
-        largeSymbolRatio = DefaultFontSizeData.largeSymbolRatio,
-        letterSpacing = DefaultFontSizeData.letterSpacing,
-        ordinalFontOffsetY = DefaultFontSizeData.ordinalFontOffsetY,
-        squareBracketRatio = DefaultFontSizeData.squareBracketRatio,
+        largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
+        letterSpacing = scaledDefaultFontSizeData.letterSpacing,
+        ordinalFontOffsetY = scaledDefaultFontSizeData.ordinalFontOffsetY,
+        squareBracketRatio = scaledDefaultFontSizeData.squareBracketRatio,
         wordLetterSpacing,
     } = fontSizeData;
     const textWorker = getTextWorker(ctx, fontData, fontSizeData, currentFont);

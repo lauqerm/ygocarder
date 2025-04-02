@@ -6,8 +6,7 @@ import {
     EffectCoordinateData,
     CondenseTolerantMap,
     FontData,
-    TCGVanillaTypeStatFontList,
-    DefaultTCGNormalFontData,
+    NormalFontData,
 } from '../../model';
 import { condense, createFontGetter, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
@@ -20,14 +19,14 @@ import { tokenizeText } from '../text-util';
 /** Sections inside effect box (stats and type) will affect the amount of line and applicable font size use for the text. */
 export const getEffectFontAndCoordinate = ({
     format,
-    isNormal,
+    useItalic,
     statInEffect,
     typeInEffect,
 }: {
     format: string,
     statInEffect: boolean,
     typeInEffect: boolean,
-    isNormal: boolean,
+    useItalic: boolean,
 }) => {
     const coordinateKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
         .filter(entry => entry !== '').join('-');
@@ -35,9 +34,8 @@ export const getEffectFontAndCoordinate = ({
         .filter(entry => entry !== '').join('-');
 
     let fontData = EffectFontData[fontDataKey];
-    if (statInEffect && typeInEffect && isNormal && format === 'tcg') {
-        fontData = DefaultTCGNormalFontData;
-        fontData.fontList = TCGVanillaTypeStatFontList;
+    if (useItalic && format === 'tcg' && NormalFontData[fontDataKey]) {
+        fontData = NormalFontData[fontDataKey];
     }
 
     return {
@@ -51,6 +49,7 @@ export const drawEffect = ({
     ctx,
     content,
     isNormal = false,
+    useItalic = false,
     fontData = EffectFontData.tcg,
     textStyle,
     sizeList = EffectCoordinateData['tcg-type'],
@@ -62,6 +61,7 @@ export const drawEffect = ({
     ctx: CanvasRenderingContext2D | null | undefined,
     content: string,
     isNormal?: boolean,
+    useItalic?: boolean,
     fontData?: FontData,
     textStyle?: CanvasTextStyle,
     sizeList?: CoordinateData[],
@@ -117,11 +117,10 @@ export const drawEffect = ({
             trueWidth: trueWidthStart,
             trueBaseline: trueBaselineStart,
         } = scaleCoordinateData(sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1], globalScale);
-        const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 : trueWidthStart;
+        const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 * globalScale : trueWidthStart;
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
-            .setStyle(isNormal && format === 'tcg' ? '' : '')
             .setWeight(format === 'tcg' ? '' : '')
             .setSize(fontSize)
             .setFamily(font)

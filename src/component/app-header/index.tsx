@@ -1,4 +1,4 @@
-import { GithubFilled, BugOutlined, DatabaseFilled, TagsFilled } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -13,7 +13,6 @@ import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">
-        <span className="version">v{process.env.REACT_APP_VERSION ?? 'unknown'}</span>
         <div className="affiliation-link">
             <a href="https://github.com/lauqerm/ygocarder" target="_blank" rel="noreferrer">
                 <GithubFilled />
@@ -26,6 +25,7 @@ const StyledVersionLog = styled(StyledPopMarkdown)`
     overflow: auto;
     width: 550px;
     max-height: 300px;
+    width: 550px;
 `;
 
 const StyledAppHeaderButtonContainer = styled.div`
@@ -100,7 +100,7 @@ export const AppHeader = () => {
                 </Radio.Group>
                 <span className="bug-report">
                     <div id="sentry-bug-report">
-                        {language['contributor.bug-report.tooltip']} <BugOutlined />
+                        {language['contributor.bug-report.tooltip']}
                     </div>
                 </span>
                 <Popover
@@ -109,7 +109,9 @@ export const AppHeader = () => {
                         <VersionLog />
                     </StyledVersionLog>}
                 >
-                    <TagsFilled className="app-log" />
+                    <div className="app-log">
+                        v{process.env.REACT_APP_VERSION ?? 'unknown'}
+                    </div>
                 </Popover>
             </div>
             <div className="app-contribution">

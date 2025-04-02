@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
 import copy from 'copy-to-clipboard';
 import { downloadBlob, mergeClass, normalizeCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
-import { DownloadOutlined, CheckOutlined, CopyOutlined, FileImageOutlined } from '@ant-design/icons';
+import { DownloadOutlined, CheckOutlined, CopyOutlined, FileImageOutlined, LinkOutlined } from '@ant-design/icons';
 import { Card } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -33,8 +33,8 @@ const StyledExportContainer = styled.div`
         display: grid;
         gap: var(--spacing-lg);
         align-items: center;
-        grid-template-columns: 1fr 1fr 1fr;
-        &.mode-other {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        &.mode_other {
             grid-template-columns: 1fr 1fr;
         }
         button {
@@ -92,12 +92,14 @@ const StyledCardDataCopyButton = styled(StyledActionIconButton)`
 type CardDataCopyButton = {
     data: string,
     children?: React.ReactNode,
+    withText?: boolean,
     disabled: boolean,
 }
 const CardDataCopyButton = ({
     data,
     children,
     disabled,
+    withText,
 }: CardDataCopyButton) => {
     const [showFlashOverlay, setFlashOverlay] = useState(false);
     const callFlashNotification = (copyingContent: string) => {
@@ -115,7 +117,13 @@ const CardDataCopyButton = ({
             callFlashNotification(data);
         }}
     >
-        {showFlashOverlay ? <div className="copiable-overlay"><CheckOutlined /></div> : null}
+        {showFlashOverlay
+            ? <div className="copiable-overlay">
+                {withText
+                    ? <>Copied&nbsp;<CheckOutlined /></>
+                    : <CheckOutlined />}
+                </div>
+            : null}
         {children}
     </StyledCardDataCopyButton>;
 };
@@ -248,6 +256,7 @@ export const ExportPanel = forwardRef(({
             okButtonProps={{
                 style: { display: 'none' },
             }}
+            width={600}
             destroyOnClose={false}
         >
             <StyledExportContainer>
@@ -261,7 +270,7 @@ export const ExportPanel = forwardRef(({
                     <br />
                     {language['service.decode.partial.description']}
                 </div>}
-                <div className={mergeClass('export-container-result', `mode-${mode}`)}>
+                <div className={mergeClass('export-container-result', `mode_${mode}`)}>
                     <InternalPopover content={(tainted && mode === 'other') ? <TaintedCanvasPanel /> : undefined}>
                         <div>
                             <StyledActionIconButton
@@ -293,6 +302,7 @@ export const ExportPanel = forwardRef(({
                             <CardDataCopyButton
                                 disabled={isPartial}
                                 data={internalCardData.ygocarder.data}
+                                withText
                             >
                                 <div className="icon"><CopyOutlined /></div>
                                 <div className="label">
@@ -301,6 +311,18 @@ export const ExportPanel = forwardRef(({
                             </CardDataCopyButton>
                         </div>
                     </InternalPopover>}
+                    {mode === 'ygocarder' && <div>
+                        <CardDataCopyButton
+                            disabled={isPartial}
+                            data={window.location.href}
+                            withText
+                        >
+                            <div className="icon"><LinkOutlined /></div>
+                            <div className="label">
+                                {language['button.export-modal.share-button.label']}
+                            </div>
+                        </CardDataCopyButton>
+                    </div>}
                     <div>
                         <InternalPopover content={tainted ? <TaintedCanvasPanel /> : undefined}>
                             <div>

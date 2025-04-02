@@ -1,5 +1,5 @@
 import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/model';
-import { condense, createFontGetter, scaleCoordinateData, scaleFontData } from 'src/util';
+import { condense, createFontGetter, scaleCoordinateData, scaleFontData, scaleFontSizeData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -102,12 +102,13 @@ export const drawCreatorText = ({
     const xRatio = internalEffectiveMedian / 1000;
     const yRatio = 1;
     ctx.scale(xRatio, yRatio);
+    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const result = drawLine({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
         trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
-        trueBaseline: trueBaseline + (fontSizeData.offsetY ?? DefaultFontSizeData.offsetY) + baselineOffset * globalScale,
+        trueBaseline: trueBaseline + (fontSizeData.offsetY ?? scaledDefaultFontSizeData.offsetY) + baselineOffset * globalScale,
         textData,
         format,
         globalScale,
