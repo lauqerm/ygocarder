@@ -103,7 +103,7 @@ export const getLetterWidth = ({
             ? 0
             : Math.min(
                 width * 0.075,
-                Math.max(0.450, width * spacingRatio) * kerningScaleRatio,
+                Math.max(0.450 * globalScale, width * spacingRatio) * kerningScaleRatio,
             ));
     let letterRatio = 1;
     let endLineRatio = 1;

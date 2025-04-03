@@ -136,7 +136,7 @@ export const getTextWorker = (
 export const drawBullet = (ctx: CanvasRenderingContext2D, edge: number, baseline: number, width: number, spaceAfter: number) => {
     const bulletRadius = (width - spaceAfter) / 2;
     ctx.beginPath();
-    ctx.arc(edge + bulletRadius, baseline - bulletRadius - 1, bulletRadius, 0, 2 * Math.PI, false);
+    ctx.arc(edge + bulletRadius, baseline - bulletRadius, bulletRadius, 0, 2 * Math.PI, false);
     ctx.fill();
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#003300';
@@ -217,7 +217,7 @@ export const analyzeHeadText = ({
     const alignCenterHeadTextWidth = headTextLetterWidth * ((xRatio && !fitFootText)
         ? xRatio
             : (!internalXRatio || fitFootText) ? 1 : internalXRatio)
-            + alignCenterLetterSpacing * (headText.length - 1);
+                + alignCenterLetterSpacing * (headText.length - 1);
     const alignEvenlyLetterSpacing = noHeadText ? 0 : (footTextWidth - headTextLetterWidth) / headText.length;
     const alignEvenlyHeadTextWidth = footTextWidth;
 

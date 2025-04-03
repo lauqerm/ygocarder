@@ -195,7 +195,13 @@ export const drawLine = ({
             /** Bullet symbol ● is not condenseable, and has specialized draw worker. */
             else if (fragment === BULLET_LETTER) {
                 resetScale();
-                drawBullet(ctx, fragmentEdge, trueBaseline + bulletSymbolOffset, bulletSymbolWidth, getBulletSpacing(format) * globalScale);
+                drawBullet(
+                    ctx,
+                    fragmentEdge,
+                    trueBaseline + bulletSymbolOffset - 1 * globalScale,
+                    bulletSymbolWidth,
+                    getBulletSpacing(format) * globalScale,
+                );
                 fragmentEdge += bulletSymbolWidth * letterSpacingRatio;
                 applyAsymmetricScale(xRatio, yRatio);
 
@@ -299,7 +305,7 @@ export const drawLine = ({
                 let nextTokenRebalanceOffset = 0;
 
                 /** Rebalance tactic here. In essential, we try to calculate the empty space of a fragment. These spaces are because the head text is too long compare to the foot text underneath. Then we divide those spaces in such a way that the foot text has roughly equal space each side so they looks more pleasant. */
-                if (totalVacantSpace > 0 && nextLeftGap >= -2 && isNextTokenOffsetable) {
+                if (totalVacantSpace > 0 && nextLeftGap >= (-2 * globalScale) && isNextTokenOffsetable) {
                     rebalancedSpace = (totalVacantSpace + Math.max(nextLeftGap, 0) * 2) / 3;
                     nextTokenRebalanceOffset = Math.max(nextLeftGap, 0) - rebalancedSpace;
                 } else {

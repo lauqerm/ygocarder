@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.1.18",
+        "logList": [
+            {
+                "content": "Fix: Incorrectly recover card's data for Link monster."
+            },
+            {
+                "content": "Fix: Export / import card list in manager does not process font style correctly."
+            },
+            {
+                "content": "Fix: Wrong text spacing of monster's type in some rare cases for OCG cards."
+            }
+        ]
+    },
+    {
         "version": "v2.1.17 (2025/03/28)",
         "logList": [
             {
