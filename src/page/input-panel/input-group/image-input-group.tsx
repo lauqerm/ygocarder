@@ -154,7 +154,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         }
     >
         <LinkMarkChooser key={`link-${JSON.stringify(linkMap)}`}
-            active={isLink}
+            active={isLink === true}
             defaultValue={linkMap}
             onChange={changeLinkMap}
             onStatusChange={changeLinkStatus}

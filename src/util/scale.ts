@@ -18,19 +18,21 @@ export const scaleFontSizeData = <FontData extends FontSizeData = FontSizeData>(
     scale: number,
 ): FontData => {
     const {
+        allRightSymbolOffset,
+        bulletSymbolOffset,
         bulletSymbolWidth,
         fontSize,
-        lineHeight,
-        offsetY,
-        bulletSymbolOffset,
         headTextSpacing,
         iconSymbolWidth,
+        lineHeight,
+        offsetY,
         ordinalFontOffsetY,
         wordLetterSpacing,
     } = fontSizeData;
 
     return {
         ...fontSizeData,
+        allRightSymbolOffset: typeof allRightSymbolOffset === 'number' ? allRightSymbolOffset * scale : undefined,
         bulletSymbolOffset: typeof bulletSymbolOffset === 'number' ? bulletSymbolOffset * scale : undefined,
         bulletSymbolWidth: bulletSymbolWidth * scale,
         fontSize: fontSize * scale,

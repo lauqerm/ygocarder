@@ -79,8 +79,8 @@ export const getLetterWidth = ({
         kerningScaleRatio = 1 + (1 - xRatio) * 8;
     }
     const spacingRatio = metricMethod === 'name' || metricMethod === 'compact' || metricMethod === 'furigana'
-            ? 0.046875
-            : 0;
+        ? 0.046875
+        : 0;
     let boundWidth = actualBoundWidth;
     let offsetRatio = (isLastOfLine
         ? lastOfLineOffsetMap[letter]
@@ -216,7 +216,7 @@ export const drawLetter = ({
     const externalOffset = scaledBoundingWidth * offsetRatio;
     let uniformYScale = 1;
     let boxDescentCompensate = 0;
-    if (uniformBoxDescent && xRatio >= threshold) {
+    if (typeof uniformBoxDescent === 'number' && xRatio >= threshold) {
         const { actualBoundingBoxDescent, actualBoundingBoxAscent } = ctx.measureText(letter);
 
         /** Need to carefully survey if we over-compensate in edge case. */

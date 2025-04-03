@@ -6,7 +6,7 @@ import {
     NB_WORD_CLOSE,
     NB_WORD_OPEN,
 } from 'src/model';
-import { createFontGetter } from 'src/util';
+import { createFontGetter, scaleFontSizeData } from 'src/util';
 
 export const tokenizeText = (text: string, keepControlCharacter = false) => {
     const regex = keepControlCharacter
@@ -23,11 +23,13 @@ export const getTextWorker = (
     fontData: FontData,
     fontSizeData: FontSizeData,
     fontController: ReturnType<typeof createFontGetter>,
+    globalScale: number,
 ) => {
+    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const {
         fontSize,
-        ordinalFontRatio = DefaultFontSizeData.ordinalFontRatio,
-        headTextFontRatio = DefaultFontSizeData.headTextFontRatio,
+        ordinalFontRatio = scaledDefaultFontSizeData.ordinalFontRatio,
+        headTextFontRatio = scaledDefaultFontSizeData.headTextFontRatio,
     } = fontSizeData;
     const {
         font,

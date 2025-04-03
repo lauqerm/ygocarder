@@ -103,8 +103,9 @@ export const drawLine = ({
         ordinalFontOffsetY = scaledDefaultFontSizeData.ordinalFontOffsetY,
         squareBracketRatio = scaledDefaultFontSizeData.squareBracketRatio,
         wordLetterSpacing,
+        allRightSymbolOffset = scaledDefaultFontSizeData.allRightSymbolOffset,
     } = fontSizeData;
-    const textWorker = getTextWorker(ctx, fontData, fontSizeData, currentFont);
+    const textWorker = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
     const {
         stopApplyFuriganaFont, applyFuriganaFont,
         stopApplyLargerText, applyLargerText,
@@ -209,7 +210,9 @@ export const drawLine = ({
                     ...drawLetterParameter,
                     letter: fragment,
                     edge: fragmentEdge * xRatio,
-                    baseline: trueBaseline + (format === 'tcg' ? 1 : 2), /** 1 look a bit better than 2 */
+                    baseline: trueBaseline + (format === 'tcg'
+                        ? allRightSymbolOffset
+                        : allRightSymbolOffset * 2), /** 1 look a bit better than 2 */
                 });
                 fragmentEdge += ctx.measureText(fragment).width * letterSpacingRatio;
                 stopApplyLargerText();

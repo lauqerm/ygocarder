@@ -120,11 +120,13 @@ const CsvStandardFieldList = [
     'Effect Style - Has Shadow',
     'Effect Style - Shadow Color',
     'Effect Style - Upsize',
+    'Effect Style - Font Style',
     'Pendulum Effect Style - Is Custom',
     'Pendulum Effect Style - Fill Color',
     'Pendulum Effect Style - Has Shadow',
     'Pendulum Effect Style - Shadow Color',
     'Pendulum Effect Style - Upsize',
+    'Pendulum Effect Style - Font Style',
     'Other Style - Is Custom',
     'Other Style - Fill Color',
     'Other Style - Has Shadow',
@@ -264,7 +266,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Pendulum Effect', pendulumEffect);
         write('Pendulum Scale Red', pendulumScaleRed);
         write('Pendulum Scale Blue', pendulumScaleBlue);
-        write('Is Link', isLink);
+        write('Is Link', isLink ?? undefined);
         write('Link - Top Left Arrow', linkMap.includes('1'));
         write('Link - Top Arrow', linkMap.includes('2'));
         write('Link - Top Right Arrow', linkMap.includes('3'));
@@ -340,11 +342,13 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Effect Style - Has Shadow', effectTextStyle[2]);
         write('Effect Style - Shadow Color', effectTextStyle[3]);
         write('Effect Style - Upsize', effectStyle.upSize);
+        write('Effect Style - Font Style', effectStyle.fontStyle);
         write('Pendulum Effect Style - Is Custom', pendulumTextStyle[0]);
         write('Pendulum Effect Style - Fill Color', pendulumTextStyle[1]);
         write('Pendulum Effect Style - Has Shadow', pendulumTextStyle[2]);
         write('Pendulum Effect Style - Shadow Color', pendulumTextStyle[3]);
         write('Pendulum Effect Style - Upsize', pendulumStyle.upSize);
+        write('Pendulum Effect Style - Font Style', pendulumStyle.fontStyle);
         write('Other Style - Is Custom', otherTextStyle[0]);
         write('Other Style - Fill Color', otherTextStyle[1]);
         write('Other Style - Has Shadow', otherTextStyle[2]);
@@ -501,6 +505,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const condenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant).toLowerCase() as CondenseType;
                 const effectUpSize = normalizeInt(reader('Effect Style - Upsize'), emptyCard.effectStyle.upSize);
                 const pendulumEffectUpSize = normalizeInt(reader('Pendulum Effect Style - Upsize'), emptyCard.pendulumStyle.upSize);
+                const effectFontStyle = (reader('Effect Style - Font Style') ?? emptyCard.effectStyle.fontStyle).toLowerCase();
+                const pendulumEffectFontStyle = (reader('Pendulum Effect Style - Font Style') ?? emptyCard.pendulumStyle.fontStyle).toLowerCase();
 
                 const emptyOpacity = getDefaultCardOpacity();
                 const opacity: CardOpacity = {
@@ -563,7 +569,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     shadowOffsetY: normalizeInt(reader('Name Style - Shadow Offset Y'), emptyNameStyle.shadowOffsetY),
                 };
 
-                const isLink = normalizeBoolean(reader('Is Link'), emptyCard.isLink);
+                const isLink = normalizeBoolean(reader('Is Link'), emptyCard.isLink ?? (frame === 'link'));
                 const linkMap = [
                     normalizeBoolean(reader('Link - Top Left Arrow'), false) ? '1' : '',
                     normalizeBoolean(reader('Link - Top Arrow'), false) ? '2' : '',
@@ -632,7 +638,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     condenseTolerant,
                     creator,
                     def,
-                    effectStyle: { condenseTolerant, upSize: effectUpSize },
+                    effectStyle: { condenseTolerant, upSize: effectUpSize, fontStyle: effectFontStyle },
                     effect,
                     effectTextStyle,
                     externalInfo,
@@ -660,7 +666,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumFrame,
                     pendulumScaleBlue,
                     pendulumScaleRed,
-                    pendulumStyle: { upSize: pendulumEffectUpSize },
+                    pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle },
                     pendulumTextStyle,
                     setId,
                     star,

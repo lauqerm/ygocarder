@@ -43,7 +43,7 @@ export const analyzeToken = ({
     token: rawToken, nextToken,
     xRatio,
     previousTokenGap = 0,
-    letterSpacing = DefaultFontSizeData.letterSpacing,
+    letterSpacing: _letterSpacing,
     format,
     globalScale,
     textData,
@@ -72,6 +72,8 @@ export const analyzeToken = ({
         rightGap: 0,
         leftGap: 0,
     };
+    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
+    const letterSpacing = _letterSpacing ?? scaledDefaultFontSizeData.letterSpacing;
     const {
         currentFont,
         fontData,
@@ -84,7 +86,6 @@ export const analyzeToken = ({
         fontStyle,
     } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
-    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const {
         bulletSymbolWidth,
         capitalLetterRatio,
@@ -103,7 +104,7 @@ export const analyzeToken = ({
         applyOrdinalFont, stopApplyOrdinalFont,
         applySymbolFont, stopApplySymbolFont,
         applyNumberFont, stopApplyNumberFont,
-    } = getTextWorker(ctx, fontData, fontSizeData, currentFont);
+    } = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
     const token = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
     const letterSpacingRatio = 1 + letterSpacing / 2;
     let leftMostLetter = '';

@@ -14,6 +14,7 @@ export type FontGetter = {
 };
 
 export type FontSizeData = {
+    allRightSymbolOffset?: number,
     bulletSymbolOffset?: number,
     bulletSymbolWidth: number,
     capitalLetterRatio?: number,
@@ -32,9 +33,10 @@ export type FontSizeData = {
     wordLetterSpacing?: number,
 };
 export const DefaultFontSizeData = {
+    allRightSymbolOffset: 1,
     bulletSymbolWidth: 23,
     fontSize: 24.5,
-    lineHeight: 24.9,
+    lineHeight: 24.7,
     lineCount: 6,
     bulletSymbolOffset: 0,
     capitalLetterRatio: 1,
@@ -143,7 +145,7 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
             { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
         ]
@@ -154,8 +156,8 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
-            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.3, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
             { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10, bulletSymbolOffset: 2 },
@@ -167,8 +169,8 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.9, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.5, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.3, lineCount: 8 },
         ]
     },
 };
@@ -192,7 +194,7 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
             { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
         ]
@@ -203,8 +205,8 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 40, fontSize: 45.2, lineHeight: 48.1, lineCount: 3, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 6 },
+            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8 },
             { bulletSymbolWidth: 19, fontSize: 16.7, lineHeight: 16.7, lineCount: 9, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 19, fontSize: 15.0, lineHeight: 15.0, lineCount: 10, bulletSymbolOffset: 2 },
@@ -216,8 +218,8 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletSymbolOffset: 2 },
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.9, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.5, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
+            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
         ]
     },
     'ocg': {

@@ -10,7 +10,7 @@ export const checkDarkSynchro = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'dark-synchro';
 };
 export const checkLink = (card: Pick<Card, 'isLink'>) => {
-    return card.isLink;
+    return card.isLink === true;
 };
 export const checkSpeedSkill = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'speed-skill' && !checkMonster(card);

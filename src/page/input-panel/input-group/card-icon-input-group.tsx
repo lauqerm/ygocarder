@@ -29,7 +29,7 @@ const StyledCheckboxStarTrain = styled(RadioTrain)`
 
 export type CardIconInputGroupRef = {}
 export type CardIconInputGroup = {
-    isLink: boolean,
+    isLink: boolean | null,
     isMonster: boolean,
     showCreativeOption: boolean,
 };
