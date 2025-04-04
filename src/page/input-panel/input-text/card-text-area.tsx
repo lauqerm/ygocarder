@@ -65,7 +65,7 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
         onFocus={() => id && onTakePicker?.({ id, setValue: externalSetValue })}
         allowClear
         spellCheck={false}
-        className={`${id}-input ${className}`}
+        className={`card-textarea ${id}-input ${className}`}
         value={value}
         onKeyDown={ev => {
             onKeyDown?.(ev);

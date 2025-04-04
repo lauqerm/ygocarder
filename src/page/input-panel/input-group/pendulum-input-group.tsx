@@ -324,7 +324,9 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     defaultValue={useCard.getState().card.pendulumEffect}
                     onChange={changePendulumEffect}
                     onTakePicker={onTakePicker}
-                    rows={5}
+                    autoSize={{
+                        minRows: 5,
+                    }}
                 />
             </div>
         </>}

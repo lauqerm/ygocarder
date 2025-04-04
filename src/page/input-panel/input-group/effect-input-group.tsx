@@ -34,6 +34,8 @@ export const EffectInputGroup = forwardRef<EffectInputGroupRef, EffectInputGroup
         defaultValue={useCard.getState().card.effect}
         onChange={changeEffect}
         onTakePicker={onTakePicker}
-        rows={9}
+        autoSize={{
+            minRows: 9,
+        }}
     />;
 });
