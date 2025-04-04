@@ -1,6 +1,26 @@
 [
     {
-        "version": "v2.1.17",
+        "version": "v2.1.18 (2025/04/04)",
+        "logList": [
+            {
+                "content": "Upsize support for 1388 × 2026 and 1626 × 2370 resolutions. Card textures are scaled naively but card text and card image will be redrawn at higher size."
+            },
+            {
+                "content": "Improve lightbox mode with zoom and pan features."
+            },
+            {
+                "content": "Fix: Incorrectly recover card's data for Link monster."
+            },
+            {
+                "content": "Fix: Export / import card list in manager does not process font style correctly."
+            },
+            {
+                "content": "Fix: Wrong text spacing of monster's type in some rare cases for OCG cards."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.17 (2025/03/28)",
         "logList": [
             {
                 "content": "Allow customize font style for card's effects in \"Text Style\" menu."
@@ -8,7 +28,7 @@
         ]
     },
     {
-        "version": "v2.1.16",
+        "version": "v2.1.16 (2025/03/27)",
         "logList": [
             {
                 "content": "Add more fine-tune behavior when apply Token frame."
@@ -16,7 +36,7 @@
         ]
     },
     {
-        "version": "v2.1.15",
+        "version": "v2.1.15 (2025/03/15)",
         "logList": [
             {
                 "content": "Fix: Minor font issues."
@@ -24,7 +44,7 @@
         ]
     },
     {
-        "version": "v2.1.14",
+        "version": "v2.1.14 (2025/03/14)",
         "logList": [
             {
                 "content": "Pendulum effects now support up to 8 line of effects (was 5 before)."
@@ -32,7 +52,7 @@
         ]
     },
     {
-        "version": "v2.1.13",
+        "version": "v2.1.13 (2025/03/12)",
         "logList": [
             {
                 "content": "Attempt to support display for letter \"∅\" (\"K9 - ØØ Lupus\") for OCG cards."
@@ -46,7 +66,7 @@
         ]
     },
     {
-        "version": "v2.1.12",
+        "version": "v2.1.12 (2025/02/28)",
         "logList": [
             {
                 "content": "Fix: Capital letter E does not display correctly on card's name."
@@ -54,7 +74,7 @@
         ]
     },
     {
-        "version": "v2.1.11",
+        "version": "v2.1.11 (2025/02/21)",
         "logList": [
             {
                 "content": "Minor UI updates."
@@ -68,7 +88,7 @@
         ]
     },
     {
-        "version": "v2.1.10",
+        "version": "v2.1.10 (2025/02/18)",
         "logList": [
             {
                 "content": "Adjust setting modal."

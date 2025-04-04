@@ -15,6 +15,7 @@
         "button.download.ongoing.label": "Đang tải…",
         "button.empty.label": "Tạo thẻ trắng",
         "button.export-modal.copy-button.label": "Sao chép",
+        "button.export-modal.share-button.label": "Chia sẻ đường dẫn",
         "button.export-modal.download-button.label": "Tải về (JSON)",
         "button.export-modal.label": "Xuất dữ liệu",
         "button.export-modal.save-button.label": "Lưu ảnh",
@@ -322,6 +323,7 @@
         "setting.option.hotkey.label": "Cho phép dùng phím tắt",
         "setting.option.hotkey.tooltip": "Cảnh báo: Sử dụng phím tắt có thể khiến bạn không hoàn tác lại văn bản trước đó.",
         "setting.option.resolution.label": "Độ phân giải (px)",
+        "setting.option.resolution.warning": "Ảnh hưởng tới hiệu suất",
         "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }
