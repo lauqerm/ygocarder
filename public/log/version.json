@@ -1,6 +1,6 @@
 [
     {
-        "version": "v2.1.18",
+        "version": "v2.1.18 (2025/04/04)",
         "logList": [
             {
                 "content": "Upsize support for 1388 × 2026 and 1626 × 2370 resolutions. Card textures are scaled naively but card text and card image will be redrawn at higher size."
