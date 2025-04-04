@@ -40,8 +40,11 @@ export const drawTypeAbilityText = ({
         TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'],
         globalScale,
     );
-    const fontData = scaleFontData(getTypeAbilityFontData()[format], globalScale);
-    if (metricMethod) fontData.metricMethod = metricMethod;
+    const scaledBaseFontData = scaleFontData(getTypeAbilityFontData()[format], globalScale);
+    const fontData = {
+        ...scaledBaseFontData,
+        metricMethod: metricMethod ?? scaledBaseFontData.metricMethod,
+    };
     const { font } = fontData;
     const fontLevel = sizeMap[size];
     const fontSizeData = fontData.fontList[fontLevel];

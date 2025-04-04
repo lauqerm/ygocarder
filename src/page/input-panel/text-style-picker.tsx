@@ -257,6 +257,7 @@ const TextStyleInfoMap = {
 export const TextStylePicker = () => {
     const language = useLanguage();
     const {
+        format,
         effectStyle,
         effectTextStyle,
         otherTextStyle,
@@ -267,6 +268,7 @@ export const TextStylePicker = () => {
         typeTextStyle,
     } = useCard(useShallow(({
         card: {
+            format,
             effectStyle,
             effectTextStyle,
             otherTextStyle,
@@ -277,6 +279,7 @@ export const TextStylePicker = () => {
         },
         setCard,
     }) => ({
+        format,
         effectStyle,
         effectTextStyle,
         otherTextStyle,
@@ -343,7 +346,7 @@ export const TextStylePicker = () => {
                             >{language['input.text-style.custom.label']}</Checkbox>
                         </h3>
                         {custom && <div className="style-picker-section">
-                            {typeof fontStyle === 'string' && <>
+                            {(typeof fontStyle === 'string' && format === 'tcg') && <>
                                 <h2 className="font-style-picker">
                                     <span className="label">{language['input.text-style.font-style.label']}</span>
                                     <RadioTrain

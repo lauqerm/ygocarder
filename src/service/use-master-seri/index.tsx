@@ -770,7 +770,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const customizeEffectStyle = effectTextStyle[0];
             const normalizedUpSize = customizeEffectStyle ? upSize : 0;
             const useItalic = customizeEffectStyle
-                ? (isNormal && fontStyle === 'auto') || fontStyle === 'italic'
+                ? (isNormal && fontStyle === 'auto') || (format === 'tcg' && fontStyle === 'italic')
                 : isNormal;
             const effectIndexSize = drawEffect({
                 ctx,
@@ -839,7 +839,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const { upSize, fontStyle } = pendulumStyle ?? {};
             const customPendulumStyle = pendulumTextStyle[0];
             const normalizedUpSize = customPendulumStyle ? upSize : 0;
-            const useItalic = customPendulumStyle ? fontStyle === 'italic' : false;
+            const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
             drawEffect({
                 ctx,
                 content: pendulumEffect,
