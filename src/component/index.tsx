@@ -53,6 +53,7 @@ export const StyledDropdown = {
     Option: StyledDropdownOption,
 };
 
+export * from './angle-picker';
 export * from './app-header';
 export * from './atom';
 export * from './error-boundary';

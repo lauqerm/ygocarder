@@ -1,10 +1,11 @@
 import { Button, InputNumber } from 'antd';
 import { ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ChromePicker } from 'react-color';
-import { AnglePicker, ColorPoint, GradientPicker } from 'react-linear-gradient-picker';
-import { getDefaultGradientPalette, parsePalette, stringifyPalette } from 'src/util';
+import { ColorPoint, GradientPicker } from 'react-linear-gradient-picker';
+import { getDefaultGradientPalette, mergeClass, parsePalette, stringifyPalette } from 'src/util';
 import debounce from 'lodash.debounce';
 import { useLanguage } from 'src/service';
+import { ANGLE_PICKER_CLASSNAME, CircularAnglePicker } from 'src/component';
 import 'react-linear-gradient-picker/dist/index.css';
 import './gradient-picker.scss';
 
@@ -181,7 +182,7 @@ export const TextGradientPicker = ({
         };
     }, [palette, angle, memoizedOnChange]);
 
-    return <div className="controls-wrapper gradient-picker-container">
+    return <div className={mergeClass(ANGLE_PICKER_CLASSNAME, 'gradient-picker-container')}>
         <div className="gradient-angle-control">
             <h2>
                 {language['input.name-style.gradient.color-point.label']}
@@ -204,10 +205,9 @@ export const TextGradientPicker = ({
                     });
                 }}
             >{language['input.name-style.gradient.add-point.label']} ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
-            <div className="angle-picker-container">
+            <CircularAnglePicker angle={angle} size={120} setAngle={setAngle}>
                 <h2>{language['input.name-style.gradient.gradient-direction.label']}</h2>
-                <AnglePicker angle={angle} size={120} setAngle={setAngle} />
-            </div>
+            </CircularAnglePicker>
         </div>
         <div className="stop-color-picker-container">
             <GradientPicker {...{

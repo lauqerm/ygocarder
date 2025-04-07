@@ -21,13 +21,20 @@ declare module 'react-linear-gradient-picker' {
         onPaletteChange: (colorList: ColorPoint[]) => void;
         onColorStopSelect?: (stopColor: InternalColorPoint) => void;
     };
-    export const GradientPicker = (props: GradientPicker) => JSX.Element;
+    export function GradientPicker(props: GradientPicker): JSX.Element;
 
     export type AnglePicker = {
-        angle: any;
-        setAngle: any;
+        angle: number;
+        setAngle: (nextAngle: number) => void;
         size?: number;
         snap?: number;
     };
-    export const AnglePicker = (props: AnglePicker) => JSX.Element;
+    export function AnglePicker(props: AnglePicker): JSX.Element;
+}
+
+declare module 'distance-transform' {
+    import { NdArray } from 'ndarray';
+
+    function appylDistanceTransform(inputArray: NdArray, distanceType?: 1 | 2 | Infinity): NdArray;
+    export default appylDistanceTransform;
 }

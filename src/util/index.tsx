@@ -85,6 +85,7 @@ export function mergeClass(...args: (boolean | string | undefined | null)[]) {
     return args.filter(Boolean).join(' ');
 }
 
+export * from './canvas';
 export * from './categorize';
 export * from './codec';
 export * from './codec-other-vendor';

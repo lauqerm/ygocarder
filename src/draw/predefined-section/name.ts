@@ -324,6 +324,5 @@ export const drawName = async (
         resetStroke();
         ctx.lineJoin = 'miter';
         ctx.globalCompositeOperation = 'source-over';
-        ctx.textRendering = 'auto';
     }
 };
