@@ -105,6 +105,9 @@ const CsvStandardFieldList = [
     'Name Style - Gradient Angle',
     'Name Style - Gradient Color',
     'Name Style - Has Gradient',
+    'Name Style - Emboss Pitch',
+    'Name Style - Emboss Yaw',
+    'Name Style - Has Emboss',
     'Name Style - Preset',
     'Name Style - Pattern',
     'Stat Style - Is Custom',
@@ -327,6 +330,9 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Name Style - Gradient Angle', nameStyle.gradientAngle);
         write('Name Style - Gradient Color', nameStyle.gradientColor);
         write('Name Style - Has Gradient', nameStyle.hasGradient);
+        write('Name Style - Emboss Pitch', nameStyle.embossPitch);
+        write('Name Style - Emboss Yaw', nameStyle.embossYaw);
+        write('Name Style - Has Emboss', nameStyle.hasEmboss);
         write('Name Style - Preset', nameStyle.preset);
         write('Name Style - Pattern', nameStyle.pattern);
         write('Stat Style - Is Custom', statTextStyle[0]);
@@ -499,8 +505,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const typeAbility = rawTypeAbility
                     ? rawTypeAbility.split('/')
                     : [reader('Type_1'), reader('Type_2'), reader('Type_3'), reader('Type_4')]
-                        .filter<string>(entry => typeof entry === 'string')
-                        .filter(entry => entry !== '');
+                        .filter(entry => typeof entry === 'string' && entry !== '');
 
                 const condenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant).toLowerCase() as CondenseType;
                 const effectUpSize = normalizeInt(reader('Effect Style - Upsize'), emptyCard.effectStyle.upSize);
@@ -549,10 +554,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const emptyNameStyle = getDefaultNameStyle();
                 const nameStyleType = (reader('Name Style Type') ?? emptyCard.nameStyleType).toLowerCase() as NameStyleType;
                 const nameStyle: NameStyle = {
+                    embossPitch: normalizeInt(reader('Name Style - Emboss Pitch'), emptyNameStyle.embossPitch),
+                    embossYaw: normalizeInt(reader('Name Style - Emboss Yaw'), emptyNameStyle.embossYaw),
                     fillStyle: normalizeColor(reader('Name Style - Fill Style'), emptyNameStyle.fillStyle),
                     font: reader('Name Style - Font') ?? emptyNameStyle.font,
                     gradientAngle: normalizeInt(reader('Name Style - Gradient Angle'), emptyNameStyle.gradientAngle),
                     gradientColor: reader('Name Style - Gradient Color') ?? emptyNameStyle.gradientColor,
+                    hasEmboss: normalizeBoolean(reader('Name Style - Has Emboss'), emptyNameStyle.hasEmboss),
                     hasGradient: normalizeBoolean(reader('Name Style - Has Gradient'), emptyNameStyle.hasGradient),
                     hasOutline: normalizeBoolean(reader('Name Style - Has Outline'), emptyNameStyle.hasOutline),
                     hasShadow: normalizeBoolean(reader('Name Style - Has Shadow'), emptyNameStyle.hasShadow),

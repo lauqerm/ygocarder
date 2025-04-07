@@ -74,3 +74,56 @@ export const CardActionButton = styled.button`
         filter: opacity(0.5);
     }
 `;
+
+export const CombinedSliderContainer = styled.div`
+    display: grid;
+    grid-template-columns: max-content 60px 45px 12px;
+    &.inactive {
+        .slider-label,
+        .ant-slider,
+        .slider-padding {
+            background-color: var(--main-level-3);
+        }
+    }
+    .slider-label,
+    .ant-slider,
+    .slider-padding {
+        border: var(--bw) solid var(--sub-level-1);
+        background-color: var(--main-level-4);
+    }
+    .slider-label {
+        display: inline-flex;
+        column-gap: var(--spacing-xs);
+        border-right: none;
+        padding: var(--spacing-xxs) var(--spacing-xs);
+        border-radius: var(--br) 0 0 var(--br);
+        box-shadow: var(--bs-input);
+        .ant-checkbox-wrapper {
+            transform: translateY(-1px); // Alignment
+        }
+    }
+    .ant-slider {
+        margin: 0;
+        border-left: none;
+        border-right: none;
+        height: 28px; // Alignment
+        padding-top: 11px; // Alignment
+    }
+    .slider-padding {
+        border-left: none;
+        border-radius: 0 var(--br) var(--br) 0;
+    }
+    .ant-slider-rail,
+    .ant-slider-track {
+        border-radius: 0 var(--br) var(--br) 0;
+    }
+    .ant-input-number.ant-input-number-sm {
+        height: 28px; // Alignment
+        width: unset;
+        border-radius: 0;
+        box-shadow: var(--bs-input);
+        .ant-input-number-input {
+            height: 26px; // Alignment
+        }
+    }
+`;

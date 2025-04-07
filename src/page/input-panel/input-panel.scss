@@ -166,7 +166,7 @@
         position: relative;
         border: var(--bw) solid var(--sub-level-1);
         border-radius: var(--br);
-        min-width: 247px;
+        min-width: 247px; /** To avoid text overflow in different language */
         h2,
         h3 {
             text-align: left;

@@ -17,6 +17,9 @@ export const getDefaultNameStyle = () => ({
     gradientAngle: 0,
     gradientColor: '0.000|#eef10b,0.5|#d78025,1.000|#7e20cf',
     hasGradient: false,
+    embossPitch: 90,
+    embossYaw: 90,
+    hasEmboss: false,
     preset: 'commonB' as PresetNameStyle,
     pattern: 'none',
 });

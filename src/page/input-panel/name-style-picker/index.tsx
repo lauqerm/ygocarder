@@ -24,6 +24,7 @@ import { useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import './style-picker.scss';
+import { EmbossController } from './emboss-controller';
 
 export type NameStylePickerRef = {
     setValue: (value: Partial<NameStyle>) => void,
@@ -93,6 +94,7 @@ export const NameStylePicker = forwardRef(({
         hasOutline,
         hasShadow,
         hasGradient, gradientColor, gradientAngle,
+        hasEmboss,
         pattern,
         font,
     } = value;
@@ -471,6 +473,35 @@ export const NameStylePicker = forwardRef(({
                     >
                         <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
                             {language['input.name-style.font.label']}
+                        </StyledPickerButton>
+                    </Popover>
+                    <Popover key="emboss-picker"
+                        trigger={['click']}
+                        overlayClassName="global-input-overlay global-style-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <div className="custom-style-picker">
+                                <h3 className="custom-style-expand">
+                                    <Checkbox value={'has-gradient'} checked={hasEmboss} onChange={() => {
+                                        setType('custom');
+                                        setValue(cur => ({ ...cur, hasEmboss: !cur.hasEmboss }));
+                                        customStyleSignal();
+                                    }}>
+                                        {language['input.name-style.emboss.toggle.label']}
+                                    </Checkbox>
+                                </h3>
+                                {hasEmboss && <EmbossController
+                                    onChange={(_, __, [yaw, pitch]) => {
+                                        setValue(cur => ({ ...cur, embossPitch: pitch, embossYaw: yaw }));
+                                    }}
+                                >
+                                    <div className="alert">{language['input.name-style.emboss.alert']}</div>
+                                </EmbossController>}
+                            </div>
+                        </div>}
+                        placement="bottomLeft"
+                    >
+                        <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown emboss-picker-dropdown">
+                            {language['input.name-style.emboss.label']}
                         </StyledPickerButton>
                     </Popover>
                 </div>

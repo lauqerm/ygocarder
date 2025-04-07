@@ -12,7 +12,7 @@ import {
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
-import { GuardedSlider, ImageCropper, RadioTrain } from 'src/component';
+import { CombinedSliderContainer, GuardedSlider, ImageCropper, RadioTrain } from 'src/component';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
@@ -29,58 +29,8 @@ const StyledLayoutPickerContainer = styled.div`
     row-gap: var(--spacing-sm);
     padding: 2px 0;
     align-items: center;
-    .slider-label,
-    .ant-slider,
-    .slider-padding {
-        border: var(--bw) solid var(--sub-level-1);
-        background-color: var(--main-level-4);
-    }
-    .slider-label {
-        display: inline-flex;
-        column-gap: var(--spacing-xs);
-        border-right: none;
-        padding: var(--spacing-xxs) var(--spacing-xs);
-        border-radius: var(--br) 0 0 var(--br);
-        box-shadow: var(--bs-input);
-        .ant-checkbox-wrapper {
-            transform: translateY(-1px); // Alignment
-        }
-    }
-    .ant-slider {
-        margin: 0;
-        border-left: none;
-        border-right: none;
-        height: 28px; // Alignment
-        padding-top: 11px; // Alignment
-    }
-    .slider-padding {
-        border-left: none;
-        border-radius: 0 var(--br) var(--br) 0;
-    }
-    .ant-slider-rail,
-    .ant-slider-track {
-        border-radius: 0 var(--br) var(--br) 0;
-    }
     .card-opacity-slider {
         flex: 0 1 auto;
-        display: grid;
-        grid-template-columns: max-content 60px 45px 12px;
-        &.inactive {
-            .slider-label,
-            .ant-slider,
-            .slider-padding {
-                background-color: var(--main-level-3);
-            }
-        }
-    }
-    .ant-input-number.ant-input-number-sm {
-        height: 28px; // Alignment
-        width: unset;
-        border-radius: 0;
-        box-shadow: var(--bs-input);
-        .ant-input-number-input {
-            height: 26px; // Alignment
-        }
     }
     .background-preview {
         display: inline-block;
@@ -310,7 +260,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             if (type === 'pendulum' && !isPendulum) return null;
             const activable = !!subType;
             const isActive = subType && opacity[subType];
-            return <div key={type}
+            return <CombinedSliderContainer key={type}
                 className={[
                     'card-opacity-slider',
                     isActive ? '' : 'inactive',
@@ -433,7 +383,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                     value={opacity[type] ?? 100}
                 />
                 <div className="slider-padding" />
-            </div>;
+            </CombinedSliderContainer>;
         })}
     </StyledLayoutPickerContainer>;
 });

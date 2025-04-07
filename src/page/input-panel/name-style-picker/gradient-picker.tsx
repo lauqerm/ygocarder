@@ -20,7 +20,7 @@ type WrappedColorPicker = {
 type WrappedColorPickerRef = {
     setColor: (stopColor: ColorPoint) => void,
     setCurrentOffset: (id: number, offset: string) => void,
-}
+};
 const WrappedColorPicker = forwardRef(({
     disabled,
     color,
