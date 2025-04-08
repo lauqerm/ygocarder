@@ -215,7 +215,7 @@
         "input.name-style.label": "名スタイル",
         "input.name-style.outline.label": "ストローク",
         "input.name-style.outline.toggle.label": "ストロークがありますか？",
-        "input.name-style.pattern.alert": "パターンを使用すると、シャドウとグラデーションが無効になります",
+        "input.name-style.pattern.alert": "パターンを使用すると、グラデーションが無効になります",
         "input.name-style.pattern.label": "パターン",
         "input.name-style.pattern.no-pattern.label": "パターンなし",
         "input.name-style.shadow.label": "シャドウ",

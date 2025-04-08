@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -86,6 +86,7 @@ const getNameGradient = (
  * Draw card name, while the foot text is affected by every custom method, head text ONLY affected by its own color.
  */
 export const drawName = async (
+    canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D | null | undefined,
     value: string,
     _edge: number,
@@ -108,42 +109,31 @@ export const drawName = async (
     const cloneCtx = cloneNode?.getContext('2d');
     if (ctx && cloneCtx && value) {
         const {
-            font,
+            embossPitch,
+            embossYaw,
             fillStyle,
-            headTextFillStyle,
-            shadowBlur,
+            font,
+            gradientAngle,
+            gradientColor,
+            hasEmboss,
+            hasGradient,
+            hasOutline: hasDefaultOutline,
             hasShadow,
+            headTextFillStyle,
+            lineColor,
+            lineOffsetX,
+            lineOffsetY,
+            lineWidth,
+            shadowBlur,
             shadowColor,
             shadowOffsetX,
             shadowOffsetY,
-            hasOutline: hasDefaultOutline,
-            lineColor,
-            lineWidth,
-            lineOffsetX,
-            lineOffsetY,
-            hasGradient,
-            gradientAngle,
-            gradientColor,
             pattern,
         } = { ...getDefaultNameStyle(), ...style };
         const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
         const hasOutline = hasDefaultOutline;
 
         ctx.textAlign = 'left';
-        // ctx.textBaseline = 'bottom';
-        // ctx.fontVariantCaps = 'small-caps';
-        let resetShadow = () => {};
-        if (hasShadow) {
-            resetShadow = setTextStyle({
-                ctx,
-                x: shadowOffsetX,
-                y: shadowOffsetY,
-                shadowColor: shadowColor,
-                blur: shadowBlur,
-                globalScale,
-                useDefault: false,
-            });
-        }
         let resetStroke = () => {};
         if (hasDefaultOutline) {
             resetStroke = setTextStyle({
@@ -239,7 +229,7 @@ export const drawName = async (
             : undefined;
 
 
-        /** First iteration: Draw the card name with color, shadow and gradient */
+        /** First iteration: Draw the card name with color and gradient */
         ctx.fillStyle = gradient ?? fillStyle;
         drawLine({
             ctx,
@@ -254,7 +244,8 @@ export const drawName = async (
             },
         });
 
-        /** Second iteration, draw pattern, we follow these steps:
+        /** 
+         * Second iteration, draw pattern, we follow these steps:
          *  * We create a second, temporary canvas node.
          *  * We fill the node with pattern. The pattern is not skewed, but maybe scaled to fit exactly the bounding box of the card name (we reuse the same information when calculate gradient).
          *  * We place the temporary node above the card name's canvas, using suitable blend mode, this way we essentially "coating" the pattern on top of the text, without damaging its surrounding.
@@ -294,7 +285,49 @@ export const drawName = async (
             });
         }
 
-        /** Third iteration, we apply "outline" to card name. We use stroke method to simulate outline behavior. This is not ideal (like at all), but current canvas has no way to do it properly. */
+        /** Apply emboss effect if any */
+        if (hasEmboss) {
+            const embossedImageData = applyEmboss({
+                inputCanvas: canvas,
+                lightPitch: embossPitch,
+                lightYaw: embossYaw,
+                minIntensity: -0.9,
+                maxIntensity: 0.9,
+            });
+            ctx.putImageData(embossedImageData, 0, 0);
+        }
+
+        /**
+         * Third iteration: We apply shadow here. As shadow is drawn around the text, not in it, we can use destination-over composition to apply it on top of the embossed text.
+         */
+        let resetShadow = () => {};
+        if (hasShadow) {
+            resetShadow = setTextStyle({
+                ctx,
+                x: shadowOffsetX,
+                y: shadowOffsetY,
+                shadowColor: shadowColor,
+                blur: shadowBlur,
+                globalScale,
+                useDefault: false,
+            });
+            ctx.globalCompositeOperation = 'destination-over';
+            drawLine({
+                ctx,
+                tokenList,
+                xRatio, yRatio,
+                trueEdge: edge, trueBaseline,
+                textData,
+                format,
+                globalScale,
+                textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
+                    ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+                },
+            });
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        /** Fourth iteration, we apply "outline" to card name. We use stroke method to simulate outline behavior. This is not ideal (like at all), but current canvas has no way to do it properly. */
         if (hasOutline) {
             ctx.globalCompositeOperation = 'destination-over';
             drawLine({

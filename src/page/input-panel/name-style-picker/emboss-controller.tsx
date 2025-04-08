@@ -2,7 +2,7 @@ import { InputNumber } from 'antd';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ChromePicker } from 'react-color';
 import { ANGLE_PICKER_CLASSNAME, GuardedSlider, CircularAnglePicker, CombinedSliderContainer } from 'src/component';
-import { mergeClass } from 'src/util';
+import { angleToVector, mergeClass, useRefresh } from 'src/util';
 import styled from 'styled-components';
 import { SyncOutlined } from '@ant-design/icons';
 
@@ -60,10 +60,12 @@ function hexToRgb(hex: string) {
         : [0, 0, 0]) as [number, number, number];
   }
 
-type EmbossControllerRef = {
-    setValue: (color?: string, pitch?: number, yaw?: number) => void,
+export type EmbossControllerRef = {
+    setValue: (value: { color?: string, pitch?: number, yaw?: number }) => void,
 };
 export type EmbossController = {
+    defaultPitch?: number,
+    defaultYaw?: number,
     children?: React.ReactNode,
     onChange: (
         lightColorVec: [number, number, number],
@@ -72,12 +74,15 @@ export type EmbossController = {
     ) => void,
 };
 export const EmbossController = forwardRef<EmbossControllerRef, EmbossController>(({
+    defaultPitch = DEFAULT_PITCH,
+    defaultYaw = DEFAULT_YAW,
     children,
     onChange,
 }, ref) => {
+    const [requestUpdate, internalId] = useRefresh();
     const [color, setColor] = useState('#ffffff');
-    const [angle, setAngle] = useState(DEFAULT_YAW);
-    const [verticalAngle, setVerticalAngle] = useState(DEFAULT_PITCH);
+    const [angle, setAngle] = useState(defaultYaw);
+    const [verticalAngle, setVerticalAngle] = useState(defaultPitch);
     const colorVec = useRef<[number, number, number]>([255, 255, 255]);
     const angleVec = useRef<[number, number, number]>([0, 1, 0]);
     /** Currently we only allow pure white light to avoid confusion for user. */
@@ -85,19 +90,13 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
 
     useEffect(() => {
         let relevant = true;
-        setTimeout(() => {
+        if (internalId) setTimeout(() => {
             if (relevant) {
-                /** We use the north pole as 0 deg for easier reference, but during calculation the east pole is 0 deg */
-                const angleRadian = (angle + 90) * Math.PI / 180;
-                const verticalAngleRadian = (verticalAngle + 90) * Math.PI / 180;
-                const x = Math.cos(angleRadian) * Math.cos(verticalAngleRadian);
-                const y = Math.sin(angleRadian) * Math.cos(verticalAngleRadian);
-                const z = Math.sin(verticalAngleRadian);
-                const nextAngle: [number, number, number] = [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100];
+                const nextAngle = angleToVector(angle, verticalAngle);
                 const nextColor = hexToRgb(color);
 
                 colorVec.current = nextColor;
-                angleVec.current = [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100];
+                angleVec.current = nextAngle;
                 if (
                     nextColor[0] !== colorVec[0]
                     || nextColor[1] !== colorVec[1]
@@ -114,10 +113,10 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
         return () => {
             relevant = false;
         };
-    }, [color, angle, verticalAngle]);
+    }, [internalId, color, angle, verticalAngle]);
 
     useImperativeHandle(ref, () => ({
-        setValue: (color, pitch, yaw) => {
+        setValue: ({ color, pitch, yaw }) => {
             if (color) setColor(color);
             if (pitch) setVerticalAngle(pitch);
             if (yaw) setAngle(yaw);
@@ -129,31 +128,50 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             {children}
         </div>
         <div className="emboss-control-left">
-            <h2>Pitch&nbsp;&nbsp;<SyncOutlined className="reset-button" onClick={() => setVerticalAngle(DEFAULT_PITCH)} /></h2>
+            <h2>Pitch&nbsp;&nbsp;<SyncOutlined
+                className="reset-button"
+                onClick={() => {
+                    setVerticalAngle(DEFAULT_PITCH);
+                    requestUpdate();
+                }}
+            /></h2>
             <CombinedSliderContainer className="vertical-angle-control">
                 <div className="slider-label" />
                 <InputNumber
                     size="small"
                     min={-90}
                     max={90}
-                    onChange={value => setVerticalAngle(typeof value === 'string' ? parseInt(value) : value ?? 0)}
+                    onChange={value => {
+                        setVerticalAngle(typeof value === 'string' ? parseInt(value) : value ?? 0);
+                        requestUpdate();
+                    }}
                     value={verticalAngle}
                 />
                 <GuardedSlider
                     min={-90}
                     max={90}
                     value={verticalAngle}
-                    onChange={value => setVerticalAngle(value)}
+                    onChange={value => {
+                        setVerticalAngle(value);
+                        requestUpdate();
+                    }}
                 />
                 <div className="slider-padding" />
             </CombinedSliderContainer>
-            <h2>Yaw&nbsp;&nbsp;<SyncOutlined className="reset-button" onClick={() => setAngle(DEFAULT_YAW)} /></h2>
+            <h2>Yaw&nbsp;&nbsp;<SyncOutlined
+                className="reset-button"
+                onClick={() => {
+                    setAngle(DEFAULT_YAW);
+                    requestUpdate();
+                }}
+            /></h2>
             <div className="horizontal-angle-contorl">
                 <CircularAnglePicker
                     angle={angle}
                     size={120}
                     setAngle={angle => {
                         setAngle(angle);
+                        requestUpdate();
                     }}
                 />
             </div>
@@ -175,9 +193,13 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                 }}
                 disableAlpha={true}
                 color={color}
-                onChange={color => setColor(color.hex)}
+                onChange={color => {
+                    setColor(color.hex);
+                    requestUpdate();
+                }}
                 onChangeComplete={color => {
                     setColor(color.hex);
+                    requestUpdate();
                 }}
             />
         </div>}

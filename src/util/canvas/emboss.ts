@@ -3,19 +3,34 @@ import ndarray from 'ndarray';
 import { getDefaultHeightToNormalMapOption, HeightToNormalMap, SHADER_FILTER_TYPE } from './shader';
 import { bilateralFilter } from './bilateral-filter';
 
+export const angleToVector = (lightYaw: number, lightPitch: number) => {
+    const angleRadian = (lightYaw + 90) * Math.PI / 180;
+    const verticalAngleRadian = (lightPitch + 90) * Math.PI / 180;
+    const x = Math.cos(angleRadian) * Math.cos(verticalAngleRadian);
+    const y = Math.sin(angleRadian) * Math.cos(verticalAngleRadian);
+    const z = Math.sin(verticalAngleRadian);
+
+    return [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100] as [number, number, number];
+};
 export const applyEmboss = ({
     inputCanvas,
     maxHeight = 8,
     lightColorVec = [255, 255, 255],
     /** Shine parallel with the surface, from rightside. */
-    lightAngleVec = [1, 0, 0],
-    minIntensity = 0,
+    lightAngleVec,
+    lightPitch,
+    lightYaw,
+    minIntensity = -1,
+    maxIntensity = 1,
 }: {
     inputCanvas: HTMLCanvasElement,
     maxHeight?: number,
     lightColorVec?: [number, number, number],
     lightAngleVec?: [number, number, number],
+    lightPitch?: number,
+    lightYaw?: number,
     minIntensity?: number,
+    maxIntensity?: number,
 }) => {
     const ctx = inputCanvas.getContext('2d');
 
@@ -25,11 +40,16 @@ export const applyEmboss = ({
     const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
 
-    const angleVecMagnitude = Math.sqrt(lightAngleVec[0] ** 2 + lightAngleVec[1] ** 2 + lightAngleVec[2] ** 2);
+    const computedLightAngleVec: [number, number, number] = lightAngleVec
+        ? lightAngleVec
+        : (typeof lightPitch === 'number' && typeof lightYaw === 'number')
+            ? angleToVector(lightPitch, lightYaw)
+            : [1, 0, 0];
+    const angleVecMagnitude = Math.sqrt(computedLightAngleVec[0] ** 2 + computedLightAngleVec[1] ** 2 + computedLightAngleVec[2] ** 2);
     const normalizedLightAngleVec = [
-        lightAngleVec[0] / angleVecMagnitude,
-        lightAngleVec[1] / angleVecMagnitude,
-        lightAngleVec[2] / angleVecMagnitude
+        computedLightAngleVec[0] / angleVecMagnitude,
+        computedLightAngleVec[1] / angleVecMagnitude,
+        computedLightAngleVec[2] / angleVecMagnitude
     ];
 
     if (!data) return;
@@ -127,8 +147,8 @@ export const applyEmboss = ({
             const baseIntensity = nx * normalizedLightAngleVec[0]
                 + ny * normalizedLightAngleVec[1]
                 + nz * normalizedLightAngleVec[2];
-            const enhancedIntensity = baseIntensity * (1 - minIntensity) + minIntensity;
-            const intensity = Math.max(-1, Math.min(enhancedIntensity, 1));
+            const enhancedIntensity = baseIntensity / 2 * (Math.abs(minIntensity) + Math.abs(maxIntensity));
+            const intensity = Math.max(minIntensity, Math.min(enhancedIntensity, maxIntensity));
 
             /** Step 3b: We apply the original alpha channel into the result pixel to soften it, removing rough edges. */
             resultData[pixelCnt] = Math.round(data[pixelCnt] + lightColorVec[0] * intensity);

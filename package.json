@@ -23,7 +23,7 @@
     "react-hotkeys": "^2.0.0",
     "react-image-crop": "^8.6.6",
     "react-input-slider": "^6.0.0",
-    "react-linear-gradient-picker": "^3.0.1",
+    "react-linear-gradient-picker": "3.0.1",
     "react-moveable": "^0.27.4",
     "react-scripts": "4.0.1",
     "react-virtualized-auto-sizer": "^1.0.25",

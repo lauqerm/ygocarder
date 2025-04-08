@@ -11,6 +11,7 @@ export const changeCardFormat = (card: InternalCard, targetFormat: string): Inte
         pendulumEffect,
         setId,
         typeAbility,
+        nameStyle,
     } = card;
 
     if (format === targetFormat) return card;
@@ -21,6 +22,14 @@ export const changeCardFormat = (card: InternalCard, targetFormat: string): Inte
         : targetFormat === 'tcg' && /-JP/.test(setId)
             ? setId.replace('-JP', '-EN')
             : setId;
+    const nextNameStyle: typeof nameStyle = {
+        ...nameStyle,
+        font: targetFormat === 'ocg' && nameStyle.font === 'Default'
+            ? 'OCG'
+            : targetFormat === 'tcg' && nameStyle.font === 'OCG'
+                ? 'Default'
+                : nameStyle.font,
+    };
 
     return {
         ...card,
@@ -33,5 +42,6 @@ export const changeCardFormat = (card: InternalCard, targetFormat: string): Inte
         password: termMap[password] ?? password,
         setId: newSetId,
         isFirstEdition: targetFormat === 'ocg' ? false : isFirstEdition,
+        nameStyle: nextNameStyle,
     };
 };

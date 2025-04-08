@@ -522,8 +522,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
-            drawScale(ctx, pendulumScaleBlue ?? 0, 84.4, 790, globalScale);
-            drawScale(ctx, pendulumScaleRed ?? 0, 728.0, 790, globalScale);
+            drawScale(ctx, pendulumScaleBlue ?? '0', 84.4, 790, globalScale);
+            drawScale(ctx, pendulumScaleRed ?? '0', 728.0, 790, globalScale);
         }
     }, [readyToDraw, globalScale, isPendulum, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
 
@@ -538,6 +538,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!clearCanvas(ctx) || !cloneNode) return;
 
             await drawName(
+                nameCanvasRef.current,
                 ctx,
                 name,
                 format === 'tcg' ? 60 : 68, 116,

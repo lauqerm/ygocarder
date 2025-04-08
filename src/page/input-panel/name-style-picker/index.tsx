@@ -23,8 +23,8 @@ import {
 import { useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
+import { EmbossController, EmbossControllerRef } from './emboss-controller';
 import './style-picker.scss';
-import { EmbossController } from './emboss-controller';
 
 export type NameStylePickerRef = {
     setValue: (value: Partial<NameStyle>) => void,
@@ -49,12 +49,12 @@ export const NameStylePicker = forwardRef(({
     const [predefinedDropdownVisible, setPredefinedDropdownVisible] = useState(false);
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
-    const [customStyleSignal, sendCustomStyleSignal] = useRefresh();
+    const [requestUpdateCustomStyle, sendCustomStyleSignal] = useRefresh();
     const onChange = useRef(debounce(undebouncedOnChange, 250)).current;
     const memoizedOnGradientChange = useCallback((palette, gradientAngle) => {
         setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
-        customStyleSignal();
-    }, [customStyleSignal]);
+        requestUpdateCustomStyle();
+    }, [requestUpdateCustomStyle]);
     const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
 
     const fontList = useMemo(() => getNameFontOptionList(language), [language]);
@@ -69,6 +69,7 @@ export const NameStylePicker = forwardRef(({
 
     const shadowPickeRef = useRef<GridSliderInputRef>(null);
     const outlinePickeRef = useRef<GridSliderInputRef>(null);
+    const embossControllerRef = useRef<EmbossControllerRef>(null);
 
     useImperativeHandle(ref, () => ({
         setValue: nextValue => {
@@ -77,6 +78,7 @@ export const NameStylePicker = forwardRef(({
             const {
                 lineColor, lineWidth, lineOffsetX, lineOffsetY,
                 shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY,
+                embossPitch, embossYaw,
             } = nextValue;
             shadowPickeRef.current?.setValue({
                 x: shadowOffsetX, y: shadowOffsetY,
@@ -86,6 +88,10 @@ export const NameStylePicker = forwardRef(({
                 x: lineOffsetX, y: lineOffsetY,
                 width: lineWidth, color: lineColor,
             });
+            embossControllerRef.current?.setValue({
+                pitch: embossPitch,
+                yaw: embossYaw,
+            });
         },
     }));
     const {
@@ -94,7 +100,7 @@ export const NameStylePicker = forwardRef(({
         hasOutline,
         hasShadow,
         hasGradient, gradientColor, gradientAngle,
-        hasEmboss,
+        hasEmboss, embossPitch, embossYaw,
         pattern,
         font,
     } = value;
@@ -249,7 +255,7 @@ export const NameStylePicker = forwardRef(({
                                         onChangeComplete={color => {
                                             setType('custom');
                                             setValue(cur => ({ ...cur, fillStyle: color.hex }));
-                                            customStyleSignal();
+                                            requestUpdateCustomStyle();
                                         }}
                                     />
                                 </div>
@@ -264,7 +270,7 @@ export const NameStylePicker = forwardRef(({
                                         onChangeComplete={color => {
                                             setType('custom');
                                             setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
-                                            customStyleSignal();
+                                            requestUpdateCustomStyle();
                                         }}
                                     />
                                 </div>
@@ -285,7 +291,7 @@ export const NameStylePicker = forwardRef(({
                                     <Checkbox value={'has-shadow'} checked={hasShadow} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasShadow: !cur.hasShadow }));
-                                        customStyleSignal();
+                                        requestUpdateCustomStyle();
                                     }}>
                                         {language['input.name-style.shadow.toggle.label']}
                                     </Checkbox>
@@ -310,7 +316,7 @@ export const NameStylePicker = forwardRef(({
                                             shadowOffsetX: x,
                                             shadowOffsetY: y,
                                         }));
-                                        customStyleSignal();
+                                        requestUpdateCustomStyle();
                                     }}
                                 />}
                             </div>
@@ -334,7 +340,7 @@ export const NameStylePicker = forwardRef(({
                                     <Checkbox value={'has-line'} checked={hasOutline} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasOutline: !cur.hasOutline }));
-                                        customStyleSignal();
+                                        requestUpdateCustomStyle();
                                     }}>
                                         {language['input.name-style.outline.toggle.label']}
                                     </Checkbox>
@@ -359,7 +365,7 @@ export const NameStylePicker = forwardRef(({
                                             lineOffsetX: x,
                                             lineOffsetY: y,
                                         }));
-                                        customStyleSignal();
+                                        requestUpdateCustomStyle();
                                     }}
                                 />}
                             </div>
@@ -383,7 +389,7 @@ export const NameStylePicker = forwardRef(({
                                     <Checkbox value={'has-gradient'} checked={hasGradient} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasGradient: !cur.hasGradient }));
-                                        customStyleSignal();
+                                        requestUpdateCustomStyle();
                                     }}>
                                         {language['input.name-style.gradient.toggle.label']}
                                     </Checkbox>
@@ -424,7 +430,7 @@ export const NameStylePicker = forwardRef(({
                                         ].join(' ')}
                                         onClick={() => {
                                             setValue(cur => ({ ...cur, pattern: key }));
-                                            customStyleSignal();
+                                            requestUpdateCustomStyle();
                                         }}
                                     >
                                         {patternImage
@@ -461,7 +467,7 @@ export const NameStylePicker = forwardRef(({
                                         className={font === fontValue ? 'menu-active' : ''}
                                         onClick={() => {
                                             setValue(cur => ({ ...cur, font: fontValue }));
-                                            customStyleSignal();
+                                            requestUpdateCustomStyle();
                                         }}
                                     >
                                         {label}
@@ -484,14 +490,17 @@ export const NameStylePicker = forwardRef(({
                                     <Checkbox value={'has-gradient'} checked={hasEmboss} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasEmboss: !cur.hasEmboss }));
-                                        customStyleSignal();
+                                        requestUpdateCustomStyle();
                                     }}>
                                         {language['input.name-style.emboss.toggle.label']}
                                     </Checkbox>
                                 </h3>
-                                {hasEmboss && <EmbossController
+                                {hasEmboss && <EmbossController ref={embossControllerRef}
+                                    defaultPitch={embossPitch}
+                                    defaultYaw={embossYaw}
                                     onChange={(_, __, [yaw, pitch]) => {
                                         setValue(cur => ({ ...cur, embossPitch: pitch, embossYaw: yaw }));
+                                        requestUpdateCustomStyle();
                                     }}
                                 >
                                     <div className="alert">{language['input.name-style.emboss.alert']}</div>

@@ -85,7 +85,7 @@ export const Test = () => {
 
         if (ctx) {
             ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#0000ff';
+            ctx.fillStyle = '#ff00ff';
             ctx.font = 'small-caps 90px MatrixBook';
             ctx.fillText('Example', 1, 87);
             const result = applyEmboss({
