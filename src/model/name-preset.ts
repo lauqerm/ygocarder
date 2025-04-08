@@ -49,7 +49,8 @@ export type PresetNameStyle = 'commonB' | 'commonW'
 | 'skillDefault' | 'skillArial'
 | 'rare' | 'secretGradient' | 'secret' | 'platinum2' | 'ultra' | 'ultra2' | 'platinum' | 'gold'
 | 'animeRed' | 'animeSilver' | 'animeGold'
-| 'promo';
+| 'promo'
+| 'embossGold' | 'embossPlatinum';
 export const PresetNameStyleMap: Record<PresetNameStyle, {
     key: PresetNameStyle,
     label: string,
@@ -264,6 +265,30 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
             lineOffsetX: 0,
             hasOutline: true,
             lineOffsetY: 0
+        }),
+    },
+    embossGold: {
+        key: 'embossGold',
+        label: 'Embossed Gold',
+        image: 'asset/image/other/name-emboss-gold.png',
+        value: createPresetNameStyle({
+            preset: 'embossGold',
+            fillStyle: '#d09b0e',
+            hasEmboss: true,
+            embossPitch: 90,
+            embossYaw: 90,
+        }),
+    },
+    embossPlatinum: {
+        key: 'embossPlatinum',
+        label: 'Embossed Platinum',
+        image: 'asset/image/other/name-emboss-platinum.png',
+        value: createPresetNameStyle({
+            preset: 'embossPlatinum',
+            fillStyle: '#c0c0c0',
+            hasEmboss: true,
+            embossPitch: 90,
+            embossYaw: 90,
         }),
     },
 };

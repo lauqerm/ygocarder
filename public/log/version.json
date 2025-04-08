@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.1.19 (2025/04/08)",
+        "logList": [
+            {
+                "content": "Support emboss effect for card name."
+            },
+            {
+                "content": "Pattern and text shadow in card name are no longer mutually exclusive."
+            },
+            {
+                "content": "Minor UI updates."
+            }
+        ]
+    },
+    {
         "version": "v2.1.18 (2025/04/04)",
         "logList": [
             {
