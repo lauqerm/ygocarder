@@ -343,7 +343,7 @@ export const ygoCarderToExportableData = (
     card: Card,
     _artRef?: HTMLCanvasElement | null,
 ) => {
-    if (card.artSource === 'offline' || card.backgroundSource === 'offline') {
+    if (card.artSource === 'offline' || (card.hasBackground && card.backgroundSource === 'offline')) {
         return {
             isPartial: true,
             result: compressCardData(card),

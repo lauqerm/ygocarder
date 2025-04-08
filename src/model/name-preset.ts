@@ -277,6 +277,11 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
             hasEmboss: true,
             embossPitch: 90,
             embossYaw: 90,
+            hasShadow: true,
+            shadowBlur: 2,
+            shadowColor: '#333333',
+            shadowOffsetX: -1,
+            shadowOffsetY: 1,
         }),
     },
     embossPlatinum: {
@@ -289,6 +294,11 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
             hasEmboss: true,
             embossPitch: 90,
             embossYaw: 90,
+            hasShadow: true,
+            shadowBlur: 2,
+            shadowColor: '#4d4d4d',
+            shadowOffsetX: -1,
+            shadowOffsetY: 1,
         }),
     },
 };

@@ -481,7 +481,7 @@ export const NameStylePicker = forwardRef(({
                             {language['input.name-style.font.label']}
                         </StyledPickerButton>
                     </Popover>
-                    <Popover key="emboss-picker"
+                    {showExtraDecorativeOption && <Popover key="emboss-picker"
                         trigger={['click']}
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
@@ -509,10 +509,14 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottomLeft"
                     >
-                        <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown emboss-picker-dropdown">
+                        <StyledPickerButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom && hasEmboss}
+                            className="picker-dropdown emboss-picker-dropdown"
+                        >
                             {language['input.name-style.emboss.label']}
                         </StyledPickerButton>
-                    </Popover>
+                    </Popover>}
                 </div>
             </span>
         </span>
