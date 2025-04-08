@@ -62,7 +62,7 @@ const StyledExportContainer = styled.div`
         padding: var(--spacing-xs);
         line-height: 1;
         text-align: center;
-        border: var(--bw) solid var(--main-level-2);
+        border: var(--bw) solid transparent;
         cursor: pointer;
     }
     .export-input-raw {

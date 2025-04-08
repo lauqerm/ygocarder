@@ -49,7 +49,7 @@ export const drawEffect = ({
     ctx,
     content,
     isNormal = false,
-    useItalic = false,
+    // useItalic = false,
     fontData = EffectFontData.tcg,
     textStyle,
     sizeList = EffectCoordinateData['tcg-type'],

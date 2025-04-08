@@ -278,7 +278,11 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottom"
                     >
-                        <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown color-picker-dropdown">
+                        <StyledPickerButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom}
+                            className="picker-dropdown color-picker-dropdown"
+                        >
                             {language['input.name-style.color.label']} <CaretDownOutlined />
                         </StyledPickerButton>
                     </Popover>
@@ -487,7 +491,7 @@ export const NameStylePicker = forwardRef(({
                         content={<div className="overlay-event-absorber">
                             <div className="custom-style-picker">
                                 <h3 className="custom-style-expand">
-                                    <Checkbox value={'has-gradient'} checked={hasEmboss} onChange={() => {
+                                    <Checkbox value={'has-emboss'} checked={hasEmboss} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasEmboss: !cur.hasEmboss }));
                                         requestUpdateCustomStyle();

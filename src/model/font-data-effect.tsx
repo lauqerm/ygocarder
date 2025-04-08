@@ -137,6 +137,9 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
             { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 21, fontSize: 18.5, lineHeight: 19.2, lineCount: 11, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 19, fontSize: 17.0, lineHeight: 17.6, lineCount: 12, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 17, fontSize: 15.6, lineHeight: 16.3, lineCount: 13, bulletSymbolOffset: 1 },
         ],
     },
     'tcg-stat': {
@@ -146,8 +149,9 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 20, fontSize: 17.5, lineHeight: 18.2, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 17, fontSize: 15.7, lineHeight: 16.5, lineCount: 11, bulletSymbolOffset: 1 },
         ]
     },
     'tcg-type-stat': {
@@ -170,7 +174,11 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.3, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 9 },
+            { bulletSymbolWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletSymbolOffset: 1 },
         ]
     },
 };
@@ -186,6 +194,9 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
             { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 21, fontSize: 18.5, lineHeight: 19.2, lineCount: 11, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 19, fontSize: 17.0, lineHeight: 17.6, lineCount: 12, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 17, fontSize: 15.6, lineHeight: 16.3, lineCount: 13, bulletSymbolOffset: 1 },
         ],
     },
     'tcg-stat': {
@@ -195,8 +206,9 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 20, fontSize: 17.5, lineHeight: 18.2, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 17, fontSize: 15.7, lineHeight: 16.5, lineCount: 11, bulletSymbolOffset: 1 },
         ]
     },
     'tcg-type-stat': {
@@ -220,6 +232,10 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
             { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 9 },
+            { bulletSymbolWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletSymbolOffset: 1 },
         ]
     },
     'ocg': {

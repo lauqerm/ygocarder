@@ -163,7 +163,6 @@ const StyledTextStyleContainer = styled.div`
         line-height: 1.5;
     }
     .text-style-preview-section {
-        background-color: #eaeaea;
         border-radius: var(--br-sm);
         box-shadow: 0 0 1px 1px var(--main-level-1) inset;
     }
@@ -455,6 +454,7 @@ export const TextStylePicker = () => {
                     return <div key={keyName}
                         className="text-style-preview-section"
                         style={{
+                            background: custom ? '#eaeaea' : 'var(--sub-level-4)',
                             color: (fillStyle ?? '').length === 0 || !custom ? '#000000' : fillStyle,
                             textShadow: (custom && hasShadow) ? `0 0 2px ${shadow}` : 'none',
                             fontStyle: (custom && fontStyle === 'italic') ? 'italic' : 'normal',
