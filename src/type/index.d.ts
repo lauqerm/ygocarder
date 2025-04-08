@@ -31,10 +31,3 @@ declare module 'react-linear-gradient-picker' {
     };
     export function AnglePicker(props: AnglePicker): JSX.Element;
 }
-
-declare module 'distance-transform' {
-    import { NdArray } from 'ndarray';
-
-    function appylDistanceTransform(inputArray: NdArray, distanceType?: 1 | 2 | Infinity): NdArray;
-    export default appylDistanceTransform;
-}
