@@ -1,7 +1,8 @@
-import distanceTransform from 'distance-transform';
+// import distanceTransform from 'distance-transform';
 import ndarray from 'ndarray';
 import { getDefaultHeightToNormalMapOption, HeightToNormalMap, SHADER_FILTER_TYPE } from './shader';
 import { bilateralFilter } from './bilateral-filter';
+import { distanceTransform } from './distance-transform';
 
 export const angleToVector = (lightYaw: number, lightPitch: number) => {
     const angleRadian = (lightYaw + 90) * Math.PI / 180;
@@ -37,7 +38,8 @@ export const applyEmboss = ({
     if (!ctx) return;
 
     const { width, height } = inputCanvas;
-    const imageData = ctx.getImageData(0, 0, width, height);
+    /** @todo Typescript current does not recognize `willReadFrequently` option yet */
+    const imageData = ctx.getImageData(0, 0, width, height, { willReadFrequently: true } as any);
     const data = imageData.data;
 
     const computedLightAngleVec: [number, number, number] = lightAngleVec
@@ -84,6 +86,8 @@ export const applyEmboss = ({
                 nextDtBitmap[currentIndex + 3] = heightValue === 0 ? 0 : 255;
             }
         }
+
+        // if (Math.random() >= 0) return new ImageData(nextDtBitmap, width, height);
         const heightmapCanvas = document.createElement('canvas');
         heightmapCanvas.width = width;
         heightmapCanvas.height = height;
