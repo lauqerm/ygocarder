@@ -1,10 +1,8 @@
-import distanceTransform from 'distance-transform';
-import ndarray from 'ndarray';
-import React, { useEffect, useRef, useState } from 'react';
-import { bilateralFilter, getDefaultHeightToNormalMapOption, HeightToNormalMap, mergeClass, SHADER_FILTER_TYPE, useRefresh } from './util';
+import { useEffect, useRef, useState } from 'react';
+import { mergeClass, useRefresh } from './util';
 import styled from 'styled-components';
 import { ChromePicker } from 'react-color';
-import { InputNumber, Slider } from 'antd';
+import { InputNumber } from 'antd';
 import { ANGLE_PICKER_CLASSNAME, CircularAnglePicker, GuardedSlider } from './component';
 import { applyEmboss } from './util/canvas';
 
@@ -29,12 +27,6 @@ const EmbossControlContainer = styled.div`
     }
 `;
 
-const cellSize = 10;
-const Cell = styled.div`
-    font-size: 8px;
-    line-height: ${cellSize}px;
-    text-align: center;
-`;
 export const Test = () => {
     const [refresh, refreshCnt] = useRefresh();
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,7 +39,6 @@ export const Test = () => {
     const [color, setColor] = useState('#000000');
 
     const [color2, setColor2] = useState<[number, number, number]>([0, 0, 0]);
-    console.log('🚀 ~ Test ~ color2:', color2);
     useEffect(() => {
         function hexToRgb(hex: string) {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -67,7 +58,6 @@ export const Test = () => {
                 const x = Math.cos(angleRadian) * Math.cos(verticalAngleRadian);
                 const y = Math.sin(angleRadian) * Math.cos(verticalAngleRadian);
                 const z = Math.sin(verticalAngleRadian);
-                console.log('🚀 ~ setTimeout ~ verticalAngle:', verticalAngle, z);
                 setAngleVector([Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100]);
             }
         }, 500);
@@ -78,9 +68,6 @@ export const Test = () => {
     }, [color, angle, verticalAngle]);
 
     useEffect(() => {
-
-        
-
         const ctx = canvasRef.current.getContext('2d');
 
         if (ctx) {
