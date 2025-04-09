@@ -107,6 +107,7 @@ const CsvStandardFieldList = [
     'Name Style - Has Gradient',
     'Name Style - Emboss Pitch',
     'Name Style - Emboss Yaw',
+    'Name Style - Emboss Thickness',
     'Name Style - Has Emboss',
     'Name Style - Preset',
     'Name Style - Pattern',
@@ -332,6 +333,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Name Style - Has Gradient', nameStyle.hasGradient);
         write('Name Style - Emboss Pitch', nameStyle.embossPitch);
         write('Name Style - Emboss Yaw', nameStyle.embossYaw);
+        write('Name Style - Emboss Thickness', nameStyle.embossThickness);
         write('Name Style - Has Emboss', nameStyle.hasEmboss);
         write('Name Style - Preset', nameStyle.preset);
         write('Name Style - Pattern', nameStyle.pattern);
@@ -556,6 +558,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const nameStyle: NameStyle = {
                     embossPitch: normalizeInt(reader('Name Style - Emboss Pitch'), emptyNameStyle.embossPitch),
                     embossYaw: normalizeInt(reader('Name Style - Emboss Yaw'), emptyNameStyle.embossYaw),
+                    embossThickness: normalizeInt(reader('Name Style - Emboss Thickness'), emptyNameStyle.embossThickness),
                     fillStyle: normalizeColor(reader('Name Style - Fill Style'), emptyNameStyle.fillStyle),
                     font: reader('Name Style - Font') ?? emptyNameStyle.font,
                     gradientAngle: normalizeInt(reader('Name Style - Gradient Angle'), emptyNameStyle.gradientAngle),

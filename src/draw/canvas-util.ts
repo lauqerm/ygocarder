@@ -151,8 +151,10 @@ export const setTextStyle = ({
     y,
     blur,
     color,
+    colorGradient,
     shadowColor,
     lineColor,
+    lineColorGradient,
     lineWidth,
     globalScale = 1,
     useDefault = true,
@@ -160,13 +162,15 @@ export const setTextStyle = ({
     ctx: CanvasRenderingContext2D,
     globalScale: number,
     useDefault?: boolean,
+    colorGradient?: CanvasGradient,
+    lineColorGradient?: CanvasGradient,
 } & CanvasTextStyle) => {
     if (useDefault || typeof x === 'number') ctx.shadowOffsetX = (x ?? DEFAULT_SHADOW_OFFSET_X) * globalScale;
     if (useDefault || typeof y === 'number') ctx.shadowOffsetY = (y ?? DEFAULT_SHADOW_OFFSET_Y) * globalScale;
     if (useDefault || typeof blur === 'number') ctx.shadowBlur = (blur ?? DEFAULT_SHADOW_BLUR) * globalScale;
     if (useDefault || typeof shadowColor === 'string') ctx.shadowColor = shadowColor ?? DEFAULT_SHADOW_COLOR;
-    if (useDefault || typeof color === 'string') ctx.fillStyle = color ?? DEFAULT_TEXT_COLOR;
-    if (useDefault || typeof lineColor === 'string') ctx.strokeStyle = lineColor ?? DEFAULT_LINE_COLOR;
+    if (useDefault || typeof color === 'string') ctx.fillStyle = colorGradient ?? color ?? DEFAULT_TEXT_COLOR;
+    if (useDefault || typeof lineColor === 'string') ctx.strokeStyle = lineColorGradient ?? lineColor ?? DEFAULT_LINE_COLOR;
     if (useDefault || typeof lineWidth === 'number') ctx.lineWidth = (lineWidth ?? DEFAULT_LINE_WIDTH) * globalScale;
 
     return () => {

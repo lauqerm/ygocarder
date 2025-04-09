@@ -214,7 +214,7 @@
             column-gap: var(--spacing-sm);
             row-gap: var(--spacing-sm);
             font-size: var(--fs-sm);
-            padding: 0 var(--spacing);
+            padding: 0 var(--spacing-sm);
             padding-bottom: var(--spacing-xs);
             > :first-child {
                 &::before {

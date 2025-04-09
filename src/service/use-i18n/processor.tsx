@@ -143,6 +143,14 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
                 { openTag, closeTag, hotkey, hotkeyAlternative },
             );
         },
+        'input.name-style.emboss.color.alert': (
+            colorTab: React.ReactNode,
+        ) => {
+            return applyTemplateNode(
+                getDictionaryEntry('input.name-style.emboss.color.alert'),
+                { colorTab },
+            );
+        },
         'input.scale.label': (
             scaleType: React.ReactNode,
         ) => {

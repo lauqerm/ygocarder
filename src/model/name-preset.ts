@@ -19,6 +19,7 @@ export const getDefaultNameStyle = () => ({
     hasGradient: false,
     embossPitch: 90,
     embossYaw: 90,
+    embossThickness: 0,
     hasEmboss: false,
     preset: 'commonB' as PresetNameStyle,
     pattern: 'none',

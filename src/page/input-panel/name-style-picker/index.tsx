@@ -78,7 +78,7 @@ export const NameStylePicker = forwardRef(({
             const {
                 lineColor, lineWidth, lineOffsetX, lineOffsetY,
                 shadowBlur, shadowColor, shadowOffsetX, shadowOffsetY,
-                embossPitch, embossYaw,
+                embossPitch, embossYaw, embossThickness,
             } = nextValue;
             shadowPickeRef.current?.setValue({
                 x: shadowOffsetX, y: shadowOffsetY,
@@ -91,6 +91,7 @@ export const NameStylePicker = forwardRef(({
             embossControllerRef.current?.setValue({
                 pitch: embossPitch,
                 yaw: embossYaw,
+                thickness: embossThickness,
             });
         },
     }));
@@ -100,7 +101,7 @@ export const NameStylePicker = forwardRef(({
         hasOutline,
         hasShadow,
         hasGradient, gradientColor, gradientAngle,
-        hasEmboss, embossPitch, embossYaw,
+        hasEmboss, embossPitch, embossYaw, embossThickness,
         pattern,
         font,
     } = value;
@@ -128,6 +129,8 @@ export const NameStylePicker = forwardRef(({
         setType('custom');
         if (type !== 'custom') onChange('custom', value);
     };
+
+    const colorPickerButtonId = 'color-picker';
     return <div className="ant-input-group-wrapper text-style-input">
         <span className="ant-input-wrapper ant-input-group">
             <span className="ant-input-group-addon">{language['input.name-style.label']}</span>
@@ -279,6 +282,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottom"
                     >
                         <StyledPickerButton
+                            id={colorPickerButtonId}
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom}
                             className="picker-dropdown color-picker-dropdown"
@@ -500,10 +504,20 @@ export const NameStylePicker = forwardRef(({
                                     </Checkbox>
                                 </h3>
                                 {hasEmboss && <EmbossController ref={embossControllerRef}
+                                    language={language}
                                     defaultPitch={embossPitch}
                                     defaultYaw={embossYaw}
-                                    onChange={(_, __, [yaw, pitch]) => {
-                                        setValue(cur => ({ ...cur, embossPitch: pitch, embossYaw: yaw }));
+                                    defaultThickness={embossThickness}
+                                    materialColor={fillStyle}
+                                    onColorTabNavigate={() => {
+                                        document.getElementById(colorPickerButtonId)?.click();
+                                    }}
+                                    onChange={({ thickness, yaw, pitch }) => {
+                                        setValue(cur => ({ ...cur,
+                                            embossPitch: pitch,
+                                            embossYaw: yaw,
+                                            embossThickness: thickness,
+                                        }));
                                         requestUpdateCustomStyle();
                                     }}
                                 >

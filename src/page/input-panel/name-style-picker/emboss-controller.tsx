@@ -5,7 +5,17 @@ import { ANGLE_PICKER_CLASSNAME, GuardedSlider, CircularAnglePicker, CombinedSli
 import { angleToVector, mergeClass, useRefresh } from 'src/util';
 import styled from 'styled-components';
 import { SyncOutlined } from '@ant-design/icons';
+import { LanguageDataDictionary } from 'src/service';
+import { getDefaultNameStyle } from 'src/model';
 
+const MaterialColor = styled.div<{ $color: string }>`
+    border: var(--bw) solid var(--sub-level-2);
+    display: inline-block;
+    width: 2rem;
+    height: 1em;
+    border-radius: var(--br-sm);
+    ${({ $color }) => `background-color: ${$color};`}
+`;
 const EmbossControlContainer = styled.div`
     display: inline-grid;
     grid-template-columns: max-content max-content;
@@ -43,6 +53,24 @@ const EmbossControlContainer = styled.div`
             color: var(--color-heavy);
         }
     }
+    .navigate-button {
+        cursor: pointer;
+        color: var(--main-link);
+        &:hover {
+            color: var(--sub-link);
+        }
+    }
+    .thickness-row {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        column-gap: var(--spacing-sm);
+        align-items: center;
+        .ant-slider {
+            height: unset;
+            margin-top: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+        }
+    }
 `;
 
 const VECTOR_VALUE_EPSILON = 0.01;
@@ -61,30 +89,48 @@ function hexToRgb(hex: string) {
   }
 
 export type EmbossControllerRef = {
-    setValue: (value: { color?: string, pitch?: number, yaw?: number }) => void,
+    setValue: (value: {
+        color?: string,
+        pitch?: number,
+        yaw?: number,
+        thickness?: number,
+    }) => void,
 };
 export type EmbossController = {
     defaultPitch?: number,
     defaultYaw?: number,
+    defaultThickness?: number,
+    materialColor?: string,
     children?: React.ReactNode,
-    onChange: (
+    language: LanguageDataDictionary,
+    onColorTabNavigate: () => void,
+    onChange: (value: {
         lightColorVec: [number, number, number],
         lightAngleVec: [number, number, number],
-        lightAngle: [yaw: number, pitch: number],
-    ) => void,
+        yaw: number,
+        pitch: number,
+        thickness: number,
+    }) => void,
 };
+const defaultValue = getDefaultNameStyle();
 export const EmbossController = forwardRef<EmbossControllerRef, EmbossController>(({
-    defaultPitch = DEFAULT_PITCH,
-    defaultYaw = DEFAULT_YAW,
+    defaultPitch = defaultValue.embossPitch,
+    defaultYaw = defaultValue.embossYaw,
+    defaultThickness = defaultValue.embossThickness,
+    materialColor,
     children,
+    language,
+    onColorTabNavigate,
     onChange,
 }, ref) => {
     const [requestUpdate, internalId] = useRefresh();
     const [color, setColor] = useState('#ffffff');
+    const [thickness, setThickness] = useState(defaultThickness);
     const [angle, setAngle] = useState(defaultYaw);
     const [verticalAngle, setVerticalAngle] = useState(defaultPitch);
-    const colorVec = useRef<[number, number, number]>([255, 255, 255]);
-    const angleVec = useRef<[number, number, number]>([0, 1, 0]);
+    const currentColorVec = useRef<[number, number, number]>([255, 255, 255]);
+    const currentAngleVec = useRef<[number, number, number]>([0, 1, 0]);
+    const currentThickness = useRef(defaultThickness);
     /** Currently we only allow pure white light to avoid confusion for user. */
     const [allowPickColor] = useState(false);
 
@@ -95,31 +141,34 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                 const nextAngle = angleToVector(angle, verticalAngle);
                 const nextColor = hexToRgb(color);
 
-                colorVec.current = nextColor;
-                angleVec.current = nextAngle;
                 if (
-                    nextColor[0] !== colorVec[0]
-                    || nextColor[1] !== colorVec[1]
-                    || nextColor[2] !== colorVec[2]
-                    || (Math.abs(nextAngle[0] - angleVec[0]) > VECTOR_VALUE_EPSILON)
-                    || (Math.abs(nextAngle[1] - angleVec[1]) > VECTOR_VALUE_EPSILON)
-                    || (Math.abs(nextAngle[2] - angleVec[2]) > VECTOR_VALUE_EPSILON)
+                    nextColor[0] !== currentColorVec.current[0]
+                    || nextColor[1] !== currentColorVec.current[1]
+                    || nextColor[2] !== currentColorVec.current[2]
+                    || (Math.abs(nextAngle[0] - currentAngleVec.current[0]) > VECTOR_VALUE_EPSILON)
+                    || (Math.abs(nextAngle[1] - currentAngleVec.current[1]) > VECTOR_VALUE_EPSILON)
+                    || (Math.abs(nextAngle[2] - currentAngleVec.current[2]) > VECTOR_VALUE_EPSILON)
+                    || thickness !== currentThickness.current
                 ) {
-                    onChange(nextColor, nextAngle, [angle, verticalAngle]);
+                    onChange({ lightColorVec: nextColor, lightAngleVec: nextAngle, yaw: angle, pitch: verticalAngle, thickness });
                 }
+                currentColorVec.current = nextColor;
+                currentAngleVec.current = nextAngle;
+                currentThickness.current = thickness;
             }
-        }, 50);
+        }, 150);
 
         return () => {
             relevant = false;
         };
-    }, [internalId, color, angle, verticalAngle]);
+    }, [internalId, color, angle, verticalAngle, thickness]);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ color, pitch, yaw }) => {
+        setValue: ({ color, pitch, yaw, thickness }) => {
             if (color) setColor(color);
             if (pitch) setVerticalAngle(pitch);
             if (yaw) setAngle(yaw);
+            if (thickness) setAngle(thickness);
         }
     }));
 
@@ -128,13 +177,34 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             {children}
         </div>
         <div className="emboss-control-left">
-            <h2>Pitch&nbsp;&nbsp;<SyncOutlined
-                className="reset-button"
-                onClick={() => {
-                    setVerticalAngle(DEFAULT_PITCH);
-                    requestUpdate();
-                }}
-            /></h2>
+            <h2>
+                {language['input.name-style.emboss.color.label']}&nbsp;&nbsp;<MaterialColor $color={materialColor} className="material-color" />
+            </h2>
+            {language['input.name-style.emboss.color.alert'](<span className="navigate-button" onClick={onColorTabNavigate}>
+                {language['input.name-style.color.label']}
+            </span>)}
+            <h2 className="thickness-row">
+                <span>{language['input.name-style.emboss.thickness.label']}</span>
+                <GuardedSlider
+                    value={thickness}
+                    min={0}
+                    max={4}
+                    onChange={value => {
+                        if (typeof value === 'number') {
+                            setThickness(value);
+                        }
+                    }}
+                />
+            </h2>
+            <h2>
+                {language['input.name-style.emboss.pitch.label']}&nbsp;&nbsp;<SyncOutlined
+                    className="reset-button"
+                    onClick={() => {
+                        setVerticalAngle(DEFAULT_PITCH);
+                        requestUpdate();
+                    }}
+                />
+            </h2>
             <CombinedSliderContainer className="vertical-angle-control">
                 <div className="slider-label" />
                 <InputNumber
@@ -158,7 +228,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                 />
                 <div className="slider-padding" />
             </CombinedSliderContainer>
-            <h2>Yaw&nbsp;&nbsp;<SyncOutlined
+            <h2>{language['input.name-style.emboss.yaw.label']}&nbsp;&nbsp;<SyncOutlined
                 className="reset-button"
                 onClick={() => {
                     setAngle(DEFAULT_YAW);

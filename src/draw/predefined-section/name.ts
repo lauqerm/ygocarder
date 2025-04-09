@@ -111,6 +111,7 @@ export const drawName = async (
         const {
             embossPitch,
             embossYaw,
+            embossThickness,
             fillStyle,
             font,
             gradientAngle,
@@ -229,7 +230,23 @@ export const drawName = async (
             : undefined;
 
 
-        /** First iteration: Draw the card name with color and gradient */
+        /**
+         * First iteration: Draw the card name with color and gradient
+         * 
+         * If we use emboss, additional thickness will be added to the text to increase embossed area. We use stroke text so it can inherit color, gradient and pattern style.
+         * */
+        let thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
+        let resetEmbossStroke = () => {};
+        if (thickenEmboss) {
+            resetEmbossStroke = setTextStyle({
+                ctx,
+                lineWidth: embossThickness,
+                lineColor: fillStyle,
+                lineColorGradient: gradient,
+                globalScale,
+                useDefault: false,
+            });
+        }
         ctx.fillStyle = gradient ?? fillStyle;
         drawLine({
             ctx,
@@ -241,8 +258,10 @@ export const drawName = async (
             globalScale,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+                if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             },
         });
+        resetEmbossStroke();
 
         /** 
          * Second iteration, draw pattern, we follow these steps:

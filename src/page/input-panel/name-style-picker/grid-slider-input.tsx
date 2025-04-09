@@ -131,7 +131,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                 />
             </div>
             <div className="single-slider">
-                {widthLabel}: <GuardedSlider
+                {widthLabel}:&nbsp;<GuardedSlider
                     value={width}
                     min={1}
                     max={10}
