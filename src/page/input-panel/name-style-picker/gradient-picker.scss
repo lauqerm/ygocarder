@@ -9,14 +9,6 @@
     .stop-color-picker-container {
         padding: var(--spacing);
     }
-    .chrome-picker {
-        input {
-            background: var(--main-level-1);
-        }
-        svg {
-            filter: invert(1);
-        }
-    }
     .gradient-angle-control {
         position: absolute;
         top: 61px; // Alignment with gradient color input

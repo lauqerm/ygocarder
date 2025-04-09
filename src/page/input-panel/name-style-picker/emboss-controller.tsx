@@ -168,7 +168,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             if (color) setColor(color);
             if (pitch) setVerticalAngle(pitch);
             if (yaw) setAngle(yaw);
-            if (thickness) setAngle(thickness);
+            if (typeof thickness === 'number') setAngle(thickness);
         }
     }));
 
@@ -180,7 +180,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             <h2>
                 {language['input.name-style.emboss.color.label']}&nbsp;&nbsp;<MaterialColor $color={materialColor} className="material-color" />
             </h2>
-            {language['input.name-style.emboss.color.alert'](<span className="navigate-button" onClick={onColorTabNavigate}>
+            {language['input.name-style.emboss.color.alert'](<span key="color-navigate" className="navigate-button" onClick={onColorTabNavigate}>
                 {language['input.name-style.color.label']}
             </span>)}
             <h2 className="thickness-row">
@@ -192,6 +192,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                     onChange={value => {
                         if (typeof value === 'number') {
                             setThickness(value);
+                            requestUpdate();
                         }
                     }}
                 />

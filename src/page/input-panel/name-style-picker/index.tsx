@@ -24,6 +24,7 @@ import { useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import { EmbossController, EmbossControllerRef } from './emboss-controller';
+import { TextColorPicker } from './text-color-picker';
 import './style-picker.scss';
 
 export type NameStylePickerRef = {
@@ -252,12 +253,11 @@ export const NameStylePicker = forwardRef(({
                                     <h3>
                                         {language['input.name-style.color.text.label']}
                                     </h3>
-                                    <CompactPicker
-                                        colors={DefaultColorList}
+                                    <TextColorPicker
                                         color={fillStyle}
-                                        onChangeComplete={color => {
+                                        onChange={hexColor => {
                                             setType('custom');
-                                            setValue(cur => ({ ...cur, fillStyle: color.hex }));
+                                            setValue(cur => ({ ...cur, fillStyle: hexColor }));
                                             requestUpdateCustomStyle();
                                         }}
                                     />

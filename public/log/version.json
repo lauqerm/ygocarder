@@ -1,5 +1,16 @@
 [
     {
+        "version": "vTBD",
+        "logList": [
+            {
+                "content": "Support thickness level for emboss effect."
+            },
+            {
+                "content": "Detailed color picker for card name's color."
+            }
+        ]
+    },
+    {
         "version": "v2.1.19 (2025/04/08)",
         "logList": [
             {

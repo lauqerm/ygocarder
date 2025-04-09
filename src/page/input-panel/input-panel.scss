@@ -190,21 +190,13 @@
         .compact-picker {
             color: var(--color-heavy);
             background-color: var(--main-level-3);
+            .flexbox-fix {
+                input {
+                    color: var(--color-heavy) !important; // Override inline style
+                }
+            }
             > div > span > div {
                 outline: var(--bw) solid var(--sub-level-4) !important; // Override inline style
-            }
-        }
-        .flexbox-fix {
-            column-gap: var(--spacing-xs);
-            input {
-                color: var(--color-heavy) !important; // Override inline style
-                padding: 0 0 0 var(--spacing-xl) !important; // Override inline style
-                width: 100% !important; // Override inline style
-                transform: translateY(-1px);
-                vertical-align: middle;
-            }
-            label {
-                line-height: var(--spacing-xl);
             }
         }
         .shadow-position,
@@ -256,7 +248,27 @@
             }
         }
     }
-    .custom-style-picker .chrome-picker .flexbox-fix input {
-        padding: 0 !important; // Override inline style
+}
+
+div.chrome-picker {
+    input {
+        background: var(--main-level-1);
+    }
+    svg {
+        filter: invert(1);
+    }
+    .flexbox-fix {
+        column-gap: var(--spacing-xs);
+        input {
+            color: var(--color-heavy) !important; // Override inline style
+            padding: 0 !important; // Override inline style
+            width: 100% !important; // Override inline style
+            transform: translateY(-1px);
+            vertical-align: middle;
+        }
+        label {
+            line-height: var(--spacing-xl);
+            margin-top: var(--spacing-xs) !important; // Override inline style
+        }
     }
 }

@@ -15,6 +15,8 @@ export const angleToVector = (lightYaw: number, lightPitch: number) => {
 };
 export const applyEmboss = ({
     inputCanvas,
+    affectedHeight,
+    affectedWidth,
     maxHeight = 8,
     lightColorVec = [255, 255, 255],
     /** Shine parallel with the surface, from rightside. */
@@ -25,6 +27,8 @@ export const applyEmboss = ({
     maxIntensity = 1,
 }: {
     inputCanvas: HTMLCanvasElement,
+    affectedWidth?: number,
+    affectedHeight?: number,
     maxHeight?: number,
     lightColorVec?: [number, number, number],
     lightAngleVec?: [number, number, number],
@@ -37,7 +41,9 @@ export const applyEmboss = ({
 
     if (!ctx) return;
 
-    const { width, height } = inputCanvas;
+    /** Support partial transform to increase transform speed and reduce stuttering */
+    const height = affectedHeight ?? inputCanvas.height;
+    const width = affectedWidth ?? inputCanvas.width;
     /** @todo Typescript current does not recognize `willReadFrequently` option yet */
     const imageData = ctx.getImageData(0, 0, width, height, { willReadFrequently: true } as any);
     const data = imageData.data;

@@ -118,7 +118,7 @@ export const drawName = async (
             gradientColor,
             hasEmboss,
             hasGradient,
-            hasOutline: hasDefaultOutline,
+            hasOutline,
             hasShadow,
             headTextFillStyle,
             lineColor,
@@ -132,19 +132,8 @@ export const drawName = async (
             pattern,
         } = { ...getDefaultNameStyle(), ...style };
         const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
-        const hasOutline = hasDefaultOutline;
 
         ctx.textAlign = 'left';
-        let resetStroke = () => {};
-        if (hasDefaultOutline) {
-            resetStroke = setTextStyle({
-                ctx,
-                lineWidth,
-                lineColor,
-                globalScale,
-                useDefault: false,
-            });
-        }
         const fontData = scaleFontData({
             ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,
             headTextFillStyle,
@@ -248,7 +237,7 @@ export const drawName = async (
             });
         }
         ctx.fillStyle = gradient ?? fillStyle;
-        drawLine({
+        const { tokenEdge } = drawLine({
             ctx,
             tokenList,
             xRatio, yRatio,
@@ -306,12 +295,14 @@ export const drawName = async (
 
         /** Apply emboss effect if any */
         if (hasEmboss) {
+            const affectedWidthExtraPadding = 10;
             const embossedImageData = applyEmboss({
                 inputCanvas: canvas,
                 lightPitch: embossPitch,
                 lightYaw: embossYaw,
                 minIntensity: -0.9,
                 maxIntensity: 0.9,
+                affectedWidth: Math.ceil(tokenEdge + affectedWidthExtraPadding),
             });
             ctx.putImageData(embossedImageData, 0, 0);
         }
@@ -347,7 +338,15 @@ export const drawName = async (
         }
 
         /** Fourth iteration, we apply "outline" to card name. We use stroke method to simulate outline behavior. This is not ideal (like at all), but current canvas has no way to do it properly. */
+        let resetStroke = () => {};
         if (hasOutline) {
+            resetStroke = setTextStyle({
+                ctx,
+                lineWidth,
+                lineColor,
+                globalScale,
+                useDefault: false,
+            });
             ctx.globalCompositeOperation = 'destination-over';
             drawLine({
                 ctx,
