@@ -18,25 +18,41 @@ import {
     FLAVOR_CONDITION_SOURCE,
     NB_UNCOMPRESSED_START,
     NB_UNCOMPRESSED_END,
-    contextualDoubleQuoteRegex
+    contextualDoubleQuoteRegex,
+    NB_FULL_LINE_OPEN,
+    NB_FULL_LINE_CLOSE
 } from 'src/model';
 
 export const splitEffect = (effect: string, isNormal = false) => {
     let effectText = effect;
 
     let fullLineList = [];
-    const wholeLineRegex = new RegExp(`^(${NB_LINE_OPEN}([^${NB_LINE_CLOSE}]*)${NB_LINE_CLOSE}\\s*)`);
-    let materialReplacement;
-    let material;
+    const lineRegexSource = `^(${NB_LINE_OPEN}([^${NB_LINE_CLOSE}]*)${NB_LINE_CLOSE}\\s*)`;
+    const fullLineRegexSource = `^(${NB_FULL_LINE_OPEN}([^${NB_FULL_LINE_CLOSE}]*)${NB_FULL_LINE_CLOSE}\\s*)`;
+    const wholeLineRegex = new RegExp([lineRegexSource, fullLineRegexSource].join('|'));
+    let lineReplacement: string | undefined;
+    let lineContent: string | undefined;
+    let fullLineReplacement: string | undefined;
+    let fullLineContent: string | undefined;
+    let willContinue = false;
     do {
-        materialReplacement = wholeLineRegex.exec(effectText)?.[1];
-        material = wholeLineRegex.exec(effectText)?.[2];
+        const result = wholeLineRegex.exec(effectText);
+        lineReplacement = result?.[1];
+        lineContent = result?.[2];
+        fullLineReplacement = result?.[3];
+        fullLineContent = result?.[4];
 
-        if (material && materialReplacement) {
-            fullLineList.push(material);
-            effectText = effectText.replace(materialReplacement, '');
+        willContinue = false;
+        if (lineContent && lineReplacement) {
+            fullLineList.push(lineContent);
+            effectText = effectText.replace(lineReplacement, '');
+            willContinue = true;
+        } else if (fullLineContent && fullLineReplacement) {
+            fullLineList.push(fullLineContent);
+            effectText = effectText.replace(fullLineReplacement, '');
+            willContinue = true;
         }
-    } while (materialReplacement && material);
+    } while (willContinue);
 
     let effectFlavorCondition = '';
     const flavorConditionRegex = new RegExp(FLAVOR_CONDITION_SOURCE, 'm');
@@ -74,13 +90,14 @@ export const normalizeCardText = (
         normalizedText += letterSwapMap[letter] ?? letter;
     }
 
-    /** OCG text sometimes enter new line follow letter "、" or "。", we will automatically join them. It is debatable whether this feature is need or not. */
+    /** OCG text sometimes enter new line follow letter "、" or "。", we will automatically join them. It is debatable whether this feature is needed or not. */
     // const textAfterJoinRow = normalizedText.replace(/(､|｡|。|、)\n(?!●)/g, '$1');
     const textAfterJoinRow = normalizedText;
 
     /** Translate non-wrappable line syntax into internal control characters, beware that "Qliphort Scout" does use square brackets in its flavor text, so the regex must exclude that case. */
     const textAfterSplitBlockRow = multiline
         ? textAfterJoinRow
+            .replace(/^\[\[([\w\W]*?)\]\](?=(\n|$))/gm, `${NB_FULL_LINE_OPEN}$1${NB_FULL_LINE_CLOSE}`)
             .replace(/^\[([\w\W]*?)\](?=(\n|$))/gm, `${NB_LINE_OPEN}$1${NB_LINE_CLOSE}`)
         : textAfterJoinRow;
 
@@ -146,11 +163,14 @@ export const normalizeCardText = (
     }
     /** Non-wrappable line syntax has higher priority than non-wrappable word syntax, so we re-arrange control characters to fit such case. */
     const finalizedText = textAfterNormalizeBlockWord.join('')
+        .replaceAll(`${NB_FULL_LINE_CLOSE}${NB_WORD_CLOSE}`, `${NB_WORD_CLOSE}${NB_FULL_LINE_CLOSE}`)
         .replaceAll(`${NB_LINE_CLOSE}${NB_WORD_CLOSE}`, `${NB_WORD_CLOSE}${NB_LINE_CLOSE}`)
+        .replaceAll(`${NB_WORD_OPEN}${NB_FULL_LINE_OPEN}`, `${NB_FULL_LINE_OPEN}${NB_WORD_OPEN}`)
         .replaceAll(`${NB_WORD_OPEN}${NB_LINE_OPEN}`, `${NB_LINE_OPEN}${NB_WORD_OPEN}`)
         .replaceAll(`${NB_UNCOMPRESSED_START}${NB_WORD_CLOSE}`, `${NB_WORD_CLOSE}${NB_UNCOMPRESSED_START}`)
         .replaceAll(`${NB_WORD_OPEN}${NB_UNCOMPRESSED_END}`, `${NB_UNCOMPRESSED_END}${NB_WORD_OPEN}`)
         .replaceAll(`${NB_LINE_OPEN}${NB_LINE_CLOSE}`, '')
+        .replaceAll(`${NB_FULL_LINE_OPEN}${NB_FULL_LINE_CLOSE}`, '')
         .replaceAll(`${NB_WORD_OPEN}${NB_WORD_CLOSE}`, '');
 
     return finalizedText;
