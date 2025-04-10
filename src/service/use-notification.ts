@@ -2,8 +2,10 @@ import { useCallback } from 'react';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
+const notificationLocalStorageKey = 'ygocarder-notification';
 export type NotificationMemory = {
     condenseReminder: boolean,
+    versionReminder: string,
 };
 export type NotificationStore = {
     memory: NotificationMemory,
@@ -17,9 +19,10 @@ export type NotificationStore = {
 export const useNotificationMemory = create<NotificationStore>((set) => {
     const {
         condenseReminder,
+        versionReminder,
     } = ((): Record<string, any> => {
         try {
-            const cachedStore = JSON.parse(localStorage.getItem('notification') ?? '{}');
+            const cachedStore = JSON.parse(localStorage.getItem(notificationLocalStorageKey) ?? '{}');
 
             if (cachedStore && typeof cachedStore === 'object' && !Array.isArray(cachedStore)) return cachedStore;
             return {};
@@ -32,12 +35,13 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
     return {
         memory: {
             condenseReminder: typeof condenseReminder === 'boolean' ? condenseReminder : false,
+            versionReminder: typeof versionReminder === 'string' ? versionReminder : '1.99.99',
         },
         updateNotification: (key, value) => {
             set(currentStore => {
                 const newNotificationMemory = { ...currentStore.memory, [key]: value };
 
-                localStorage.setItem('notification', JSON.stringify(newNotificationMemory));
+                localStorage.setItem(notificationLocalStorageKey, JSON.stringify(newNotificationMemory));
 
                 return {
                     memory: newNotificationMemory,
@@ -50,7 +54,7 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
                     ? transformerOrPayload(currentStore.memory)
                     : { ...currentStore.memory, ...transformerOrPayload };
 
-                localStorage.setItem('notification', JSON.stringify(newNotificationMemory));
+                localStorage.setItem(notificationLocalStorageKey, JSON.stringify(newNotificationMemory));
 
                 return {
                     memory: newNotificationMemory,
@@ -60,7 +64,7 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
     };
 });
 
-export const useNotification = <Key extends keyof NotificationMemory>(key: keyof NotificationMemory) => {
+export const useNotification = <Key extends keyof NotificationMemory>(key: Key) => {
     const {
         targetMemory,
         updateNotification,
@@ -77,5 +81,5 @@ export const useNotification = <Key extends keyof NotificationMemory>(key: keyof
         [key, updateNotification],
     );
 
-    return [targetMemory, updateTargetNotification];
+    return [targetMemory, updateTargetNotification] as const;
 };

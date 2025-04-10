@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import { useCardList, useI18N, useLanguage } from 'src/service';
-import { Popover, Radio } from 'antd';
+import { Radio } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
-import { VersionLog } from './version-log';
+import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
 import './app-header.scss';
 
@@ -21,12 +21,6 @@ export const Affiliation = () => {
     </div>;
 };
 
-const StyledVersionLog = styled(StyledPopMarkdown)`
-    overflow: auto;
-    width: 550px;
-    max-height: 300px;
-    width: 550px;
-`;
 
 const StyledAppHeaderButtonContainer = styled.div`
     align-content: center;
@@ -103,16 +97,7 @@ export const AppHeader = () => {
                         {language['contributor.bug-report.tooltip']}
                     </div>
                 </span>
-                <Popover
-                    placement="bottom"
-                    content={<StyledVersionLog>
-                        <VersionLog />
-                    </StyledVersionLog>}
-                >
-                    <div className="app-log">
-                        v{process.env.REACT_APP_VERSION ?? 'unknown'}
-                    </div>
-                </Popover>
+                <VersionLogButton />
             </div>
             <div className="app-contribution">
                 <span className="app-creator">
