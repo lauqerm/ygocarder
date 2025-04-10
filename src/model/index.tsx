@@ -241,6 +241,13 @@ export const ResolutionMap = {
         scale: 1,
         settingValue: [813, 1185] as [number, number],
     },
+    '1122x1636': {
+        label: <div style={{ color: 'var(--main-warning)' }}>1122 × 1636</div>,
+        width: 1122,
+        height: 1636,
+        scale: 2,
+        settingValue: [1122, 1636] as [number, number],
+    },
     '1388x2026': {
         label: <div style={{ color: 'var(--main-warning)' }}>1388 × 2026</div>,
         width: 1388,
@@ -260,6 +267,7 @@ export const ResolutionList = [
     ResolutionMap['549x800'],
     ResolutionMap['561x818'],
     ResolutionMap['813x1185'],
+    ResolutionMap['1122x1636'],
     ResolutionMap['1388x2026'],
     ResolutionMap['1626x2370'],
 ];

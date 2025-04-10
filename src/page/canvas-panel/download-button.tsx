@@ -2,7 +2,7 @@ import { Button, Dropdown, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { MasterSeriesCanvas } from 'src/model';
 import { useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
-import { MenuOutlined } from '@ant-design/icons';
+import { PictureOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { forceRefocus } from 'src/util';
@@ -36,8 +36,16 @@ const StyledDownloadButton = styled(Button)`
             font-size: var(--fs-2xl);
             margin-left: 0;
         }
-        &:hover {
-            background: #399af9;
+        .resolution-overlay {
+            position: absolute;
+            left: 50%;
+            bottom: 1px; // Alignment
+            font-size: var(--fs-xs);
+            text-align: center;
+            transform: translateX(-50%);
+        }
+        .resolution-icon {
+            transform: translateY(-5px); // Alignment
         }
     }
 `;
@@ -64,10 +72,11 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     const language = useLanguage();
     const {
         allowHotkey,
+        resolution,
     } = useSetting(useShallow(({
-        setting: { allowHotkey },
+        setting: { allowHotkey, resolution },
     }) => ({
-        allowHotkey,
+        allowHotkey, resolution,
     })));
     const { onExport } = useMasterSeriDrawer(
         true,
@@ -137,7 +146,8 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
                 overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
             >
                 <div className="button-option" onClick={e => e.stopPropagation()}>
-                    <MenuOutlined />
+                    <PictureOutlined className="resolution-icon" />
+                    <span className="resolution-overlay">{resolution[1]}</span>
                 </div>
             </Dropdown>
         </StyledDownloadButton>

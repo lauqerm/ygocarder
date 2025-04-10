@@ -14,6 +14,7 @@ const MaterialColor = styled.div<{ $color: string }>`
     width: 2rem;
     height: 1em;
     border-radius: var(--br-sm);
+    cursor: pointer;
     ${({ $color }) => `background-color: ${$color};`}
 `;
 const EmbossControlContainer = styled.div`
@@ -178,7 +179,11 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
         </div>
         <div className="emboss-control-left">
             <h2>
-                {language['input.name-style.emboss.color.label']}&nbsp;&nbsp;<MaterialColor $color={materialColor} className="material-color" />
+                {language['input.name-style.emboss.color.label']}&nbsp;&nbsp;<MaterialColor
+                    className="material-color"
+                    onClick={onColorTabNavigate}
+                    $color={materialColor}
+                />
             </h2>
             {language['input.name-style.emboss.color.alert'](<span key="color-navigate" className="navigate-button" onClick={onColorTabNavigate}>
                 {language['input.name-style.color.label']}
