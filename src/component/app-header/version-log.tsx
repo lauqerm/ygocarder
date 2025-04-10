@@ -1,4 +1,17 @@
-import { useEffect, useState } from 'react';
+import { Popover } from 'antd';
+import { memo, useEffect, useState } from 'react';
+import styled, { css, keyframes } from 'styled-components';
+import { StyledPopMarkdown } from '../atom';
+import { useNotification } from 'src/service';
+
+const titlShaking = keyframes`
+    0% { transform: rotate(0deg); }
+    3% { transform: rotate(5deg); }
+    6% { transform: rotate(0eg); }
+    9% { transform: rotate(-5deg); }
+    12% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+`;
 
 type VersionLog = { version: string, logList: { content: string }[] }[];
 const VersionLogStore = (() => {
@@ -62,3 +75,80 @@ export const VersionLog = () => {
         })}
     </div>;
 };
+
+const compareSemver = (a: string, b: string): boolean => {
+    const [majorA, minorA, patchA] = String(a).split('.').map(Number);
+    const [majorB, minorB, patchB] = String(b).split('.').map(Number);
+    
+    if (majorA !== majorB) {
+      return majorA > majorB;
+    }
+    
+    if (minorA !== minorB) {
+      return minorA > minorB;
+    }
+    
+    return patchA > patchB;
+};
+
+const VersionLogButtonLabel = styled.div<{ $animating: boolean }>`
+    text-align: center;
+    border: var(--bw) solid var(--main-level-3);
+    background-color: var(--main-level-1);
+    border-radius: var(--br-lg);
+    padding: 0 var(--spacing-xs);
+    cursor: pointer;
+    box-shadow: 0 0 2px 1px #222222 inset;
+    transition: background-color 250ms linear;
+    ${({ $animating }) => $animating ? css`animation: 2s linear 350ms 4 ${titlShaking};` : ''}
+    ${({ $animating }) => $animating
+        ? `
+            background: var(--main-warning);
+            color: var(--color-contrast);
+            text-shadow: none;
+            box-shadow: 0 0 2px 0 #333333;
+        `
+        : ''}
+    &:hover {
+        background-color: var(--main-level-3);
+    }
+`;
+const StyledVersionLog = styled(StyledPopMarkdown)`
+    overflow: auto;
+    width: 550px;
+    max-height: 300px;
+    width: 550px;
+`;
+export const VersionLogButton = memo(() => {
+    const [animating, setAnimating] = useState(false);
+    const [
+        version,
+        setMemoizedVersion,
+    ] = useNotification('versionReminder');
+
+    useEffect(() => {
+        if (version) {
+            const currentSemver = process.env.REACT_APP_VERSION ?? '0.0.0';
+            const memoizedSemver = version;
+            if (process.env.REACT_APP_VERSION) setMemoizedVersion(process.env.REACT_APP_VERSION);
+
+            if (compareSemver(currentSemver, memoizedSemver)) {
+                setAnimating(true);
+                setTimeout(() => {
+                    setAnimating(false);
+                }, 8000);
+            }
+        }
+    }, [setMemoizedVersion, version]);
+
+    return <Popover
+        placement="bottom"
+        content={<StyledVersionLog>
+            <VersionLog />
+        </StyledVersionLog>}
+    >
+        <VersionLogButtonLabel $animating={animating} className="app-log" onMouseOver={() => setAnimating(false)}>
+            v{process.env.REACT_APP_VERSION ?? 'unknown'}
+        </VersionLogButtonLabel>
+    </Popover>;
+});

@@ -76,18 +76,6 @@
                 min-width: 0;
             }
         }
-        .app-log {
-            text-align: center;
-            border: var(--bw) solid var(--main-level-3);
-            background-color: var(--main-level-1);
-            border-radius: var(--br-lg);
-            padding: 0 var(--spacing-xs);
-            cursor: pointer;
-            box-shadow: 0 0 2px 1px #222222 inset;
-            &:hover {
-                background-color: var(--main-level-3);
-            }
-        }
     }
     .manager-active {
         color: var(--main-online);

@@ -74,7 +74,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
         isPendulum,
-        isLink,
         attribute,
         getUpdater,
         setCard,
@@ -241,6 +240,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         <FrameTrain
             onSTFrameChange={typeAbility => postPendulumInputGroupRef.current?.setValue({ typeAbility })}
             onPasswordChange={password => footerInputGroupRef.current?.setValue({ password })}
+            onStatChange={(atk, def) => footerInputGroupRef.current?.setValue({ atk, def })}
         />
 
         <StyledNameSetIdInputContainer className="name-style-id-input">
@@ -255,8 +255,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 onChange={changeNameStyle}
             />
             <CardIconInputGroup
-                isLink={isLink}
-                isMonster={isMonster}
                 showCreativeOption={showCreativeOption}
             />
         </StyledNameSetIdInputContainer>

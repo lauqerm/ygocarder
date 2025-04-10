@@ -1,12 +1,27 @@
 [
     {
-        "version": "vTBD",
+        "version": "v2.1.20 (2025/04/10)",
         "logList": [
+            {
+                "content": "Upsize support for 1122 × 1636 resolution, also display current export resolution."
+            },
             {
                 "content": "Support thickness level for emboss effect."
             },
             {
+                "content": "Link markers and pendulum frame are no longer mutually exclusive."
+            },
+            {
                 "content": "Detailed color picker for card name's color."
+            },
+            {
+                "content": "Allow displaying ATK, DEF and card type on Spell/Trap card frame, and conversely hiding them on monster card frame."
+            },
+            {
+                "content": "Allow displaying level/rank/etc... for all frames including Link and Speed Skill."
+            },
+            {
+                "content": "Minor UI updates."
             }
         ]
     },
@@ -20,10 +35,10 @@
                 "content": "Pattern and text shadow in card name are no longer mutually exclusive."
             },
             {
-                "content": "Minor UI updates."
+                "content": "Increase maximum lines of effect."
             },
             {
-                "content": "Increase maximum lines of effect."
+                "content": "Minor UI updates."
             }
         ]
     },
@@ -40,7 +55,7 @@
                 "content": "Fix: Incorrectly recover card's data for Link monster."
             },
             {
-                "content": "Fix: Export / import card list in manager does not process font style correctly."
+                "content": "Fix: Export/import card list in manager does not process font style correctly."
             },
             {
                 "content": "Fix: Wrong text spacing of monster's type in some rare cases for OCG cards."

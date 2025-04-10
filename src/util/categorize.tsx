@@ -36,7 +36,7 @@ export const getCardIconFromFrame = (frame: string) => {
     if (frame === 'spell' || frame === 'trap') return 'st';
     if (frame === 'xyz') return 'rank';
     if (frame === 'dark-synchro') return 'negative-level';
-    if (frame === 'speed-skill') return 'none';
+    if (frame === 'speed-skill' || frame === 'link' || frame === 'lg-dragon') return 'none';
     return 'level';
 };
 

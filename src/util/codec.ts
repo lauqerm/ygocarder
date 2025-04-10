@@ -2,6 +2,7 @@ import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
 import { Card, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
+import { checkMonster } from './categorize';
 
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
@@ -233,6 +234,8 @@ export const legacyRebuildCardData = (
 
 /** Migrate old version of card data into the new version without information loss */
 export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): InternalCard => {
+    /** Ensure that we detech the actual version from incoming cards. */
+    delete baseCard.version;
     const migratedCard = {
         id: uuid(),
         ...baseCard,
@@ -314,6 +317,27 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (typeof migratedCard.isLimitedEdition === 'undefined') migratedCard.isLimitedEdition = false;
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
+
+        console.log('🚀 ~ migrateCardData ~ migratedCard.version:', migratedCard.version);
+    if (migratedCard.version === 0 || migratedCard.version === 1) {
+        migratedCard.version = 2;
+
+        const { pendulumFrame, isPendulum, atk, def, isLink, linkMap, frame } = migratedCard;
+        /**
+         * For older card, we have a detailed check to decide whether to display stats or not.
+         * 
+         * In newer card, we simplify the test, if stat is a valid value, it will be shown. When user change to spell frame for example, the stat field is cleared. This is much less a headache, even though we always want to preserve data whenever possible.
+         */
+        const isMonster = checkMonster({ frame });
+        const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
+            ? !!(atk || def || (isLink && linkMap.length))
+            : isMonster;
+
+        if (!statInEffect) {
+            migratedCard.atk = '';
+            migratedCard.def = '';
+        }
+    }
 
     return migratedCard;
 };

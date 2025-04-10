@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { CaretDownOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { StarButtonList, getSTIconButtonList } from '../const';
-import { checkDarkSynchro, checkXyz } from 'src/util';
+import { getCardIconFromFrame } from 'src/util';
 import styled from 'styled-components';
 import { IconTypeList, IconTypeMap } from 'src/model';
 
@@ -16,7 +16,7 @@ const StyledIconDropdown = styled(StyledDropdown.Container)`
 `;
 const StyledCheckboxStarTrain = styled(RadioTrain)`
     .custom-star-input {
-        width: 6.5rem;
+        width: 7rem;
     }
     .checkbox-star-suffix {
         display: flex;
@@ -29,13 +29,9 @@ const StyledCheckboxStarTrain = styled(RadioTrain)`
 
 export type CardIconInputGroupRef = {}
 export type CardIconInputGroup = {
-    isLink: boolean | null,
-    isMonster: boolean,
     showCreativeOption: boolean,
 };
 export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInputGroup>(({
-    isLink,
-    isMonster,
     showCreativeOption,
 }, ref) => {
     const language = useLanguage();
@@ -63,8 +59,6 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         starAlignment,
         getUpdater,
     })));
-    const isDarkSynchro = checkDarkSynchro({ frame });
-    const isXyz = checkXyz({ frame });
 
     const changeCardIcon = useMemo(() => getUpdater('cardIcon'), [getUpdater]);
     const changeSubFamily = useMemo(() => getUpdater('subFamily'), [getUpdater]);
@@ -73,11 +67,9 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
 
     useImperativeHandle(ref, () => ({}));
 
+    const autoIconType = getCardIconFromFrame(frame);
     const iconTypeData = cardIcon === 'auto'
-        ? IconTypeMap[isMonster
-            ? isXyz ? 'rank' : isDarkSynchro ? 'negative-level' : 'level'
-            : 'st'
-        ]
+        ? IconTypeMap[autoIconType === 'none' ? 'auto' : autoIconType]
         : IconTypeMap[cardIcon];
     const iconDropdownText = language[iconTypeData.labelKey];
     const IconDropdownLabel = showCreativeOption
@@ -109,8 +101,26 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
     const DropdownChildren = showCreativeOption
         ? IconDropdown
         : IconDropdownLabel;
-    return !isLink
-        ? iconTypeData.value === 'st'
+    return cardIcon === 'auto' && autoIconType === 'none'
+        ? showCreativeOption
+            ? <RadioTrain
+                className="fill-input-train"
+                value={cardIcon}
+                onChange={changeCardIcon}
+                optionList={IconTypeList.map(({ icon, value, fullLabelKey }) => {
+                    return {
+                        label: icon ?? <CloseCircleOutlined />,
+                        value,
+                        tooltipProps: {
+                            title: language[fullLabelKey],
+                        },
+                    };
+                })}
+            >
+                {DropdownChildren}
+            </RadioTrain>
+            : null
+        : iconTypeData.value === 'st'
             ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={getSTIconButtonList(language)}>
                 {DropdownChildren}
             </RadioTrain>
@@ -157,6 +167,5 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                 </div>}
             >
                 {DropdownChildren}
-            </StyledCheckboxStarTrain>
-        : null;
+            </StyledCheckboxStarTrain>;
 });

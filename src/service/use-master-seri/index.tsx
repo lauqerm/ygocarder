@@ -45,6 +45,7 @@ import {
     checkNormal,
     checkSpeedSkill,
     checkXyz,
+    generateLayer,
     resolveNameStyle,
 } from 'src/util';
 import { useCard } from '../use-card';
@@ -210,12 +211,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
-    const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
-        ? !!(atk || def || (isLink && linkMap.length))
-        : isMonster;
-    const typeInEffect = cardIcon === 'auto'
-        ? isMonster || isSpeedSkill
-        : cardIcon !== 'st' || isLink;
+    const statInEffect = !!(atk || def) || !!(isPendulum && setId);
+    const typeInEffect = normalizedTypeAbility.length > 0
+        ? cardIcon === 'auto'
+            ? (isMonster || isSpeedSkill)
+            : cardIcon !== 'st'
+        : false;
 
     const {
         isInitializing,
@@ -346,7 +347,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             }
 
             /** @summary Draw PENDULUM-LIKE card layout. Does not apply to Link frame since it contains link arrows. */
-            if (isPendulum && !isLink && !boundless) {
+            if (isPendulum && !boundless) {
                 /** Since pendulum art boundary is wider, we cannot relies on the artwork under frame, instead we must draw the artwork again, this time with different size. */
                 if (artworkCanvas && ctx && artworkCanvas.height > 0) {
                     const { width: artWidth, height: artHeight } = artworkCanvas;
@@ -382,7 +383,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawArtOverlayFinish();
 
             /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
-            if (isPendulum && !isLink && !boundless) {
+            if (isPendulum && !boundless) {
                 await drawPendulumScaleIcon();
                 /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
                 await drawPendulumBorder(hasArtBorder, 'normal');
@@ -436,7 +437,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawArtOverlayFinish();
 
                 /** Redraw various part here because the extended artwork may overlap with those */
-                if (isPendulum && !isLink) {
+                if (isPendulum) {
                     await drawEffectBackground(true);
                     await drawPendulumScaleIcon();
                     await drawPendulumBorder(false, 'normal');
@@ -455,20 +456,21 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ...resolvedStatTextStyle,
             });
 
-            /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
-            if (!isPendulum && isLink) {
-                await drawLinkArrowMap(linkMap);
-                await drawLinkMapFoil(false);
-                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-                if (statInEffect) await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
-                resetStyle();
-            }
-
             await drawAttribute();
             await drawAttributeFinish();
-            if (!isLink && !isSpeedSkill) await drawStar({ style: levelStyle, starAlignment });
+            await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
+            /** If we combine both link map and pendulum frame, link markers will be pushed outward and overlay on top of the card frame, that's why we leave link marker for last */
+            if (isLink) {
+                await drawLinkArrowMap(linkMap, isPendulum ? 'pendulum' : 'normal');
+                await drawLinkMapFoil(false, isPendulum ? 'pendulum' : 'normal');
+                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
+                if (statInEffect) {
+                    await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
+                }
+                resetStyle();
+            }
             await drawPredefinedMark({
                 canvas: frameCanvasRef.current,
                 globalScale,
@@ -573,10 +575,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
         drawStatText(ctx, 'ATK', 432.10, 1106.494, globalScale);
-        drawStat(ctx, atk, 508.824, 1106.494, globalScale);
+        drawStat(ctx, atk.trim(), 508.824, 1106.494, globalScale);
         if (!isLink) {
             drawStatText(ctx, 'DEF', 600.85, 1106.494, globalScale);
-            drawStat(ctx, def, 673.865, 1106.494, globalScale);
+            drawStat(ctx, def.trim(), 673.865, 1106.494, globalScale);
         }
         resetStyle();
     }, [readyToDraw, globalScale, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);
@@ -906,47 +908,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         } = exportProps;
         const exportCanvas = exportCanvasRef.current;
         const exportCtx = exportCanvas?.getContext('2d');
-        /** Delay queue and relevant checker is used for potential performance improvement, but currently performance is not making a hard impact to the app. */
-        const generateLayer = (
-            canvasLayer: React.RefObject<HTMLCanvasElement>,
-            exportCtx: CanvasRenderingContext2D | null | undefined,
-            delayQueue: number = 0,
-        ) => {
-            return new Promise<boolean>(resolve => {
-                setTimeout(() => {
-                    if (!canvasLayer.current || !exportCtx) resolve(false);
-                    else {
-                        try {
-                            canvasLayer.current.toBlob(blob => {
-                                if (!blob) resolve(false);
-                                else {
-                                    const url = URL.createObjectURL(blob);
-                                    if (!url) resolve(false);
-                                    else {
-                                        const layer = new Image();
-                                        layer.src = url;
-                                        layer.onload = () => {
-                                            exportCtx.drawImage(layer, 0, 0);
-                                            URL.revokeObjectURL(url);
-                                            resolve(true);
-                                        };
-                                        layer.onerror = () => {
-                                            URL.revokeObjectURL(url);
-                                            resolve(false);
-                                        };
-                                    }
-                                }
-                            });
-                        } catch (e) {
-                            /** Draw directly into export canvas, which will tainted the export canvas afterward. */
-                            exportCtx.drawImage(canvasLayer.current, 0, 0);
-                            console.error(e);
-                            resolve(false);
-                        }
-                    }
-                }, delayQueue * 25);
-            });
-        };
 
         if (exportCanvas && exportCtx) {
             clearCanvas(exportCtx);

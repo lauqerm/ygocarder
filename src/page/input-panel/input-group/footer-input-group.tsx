@@ -66,8 +66,8 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         ? copyrightMap[format as keyof typeof copyrightMap]
         : copyrightMap.tcg;
 
-    const changeATK = useMemo(() => getUpdater('atk', value => typeof value === 'string' ? value.trim() : value), [getUpdater]);
-    const changeDEF = useMemo(() => getUpdater('def', value => typeof value === 'string' ? value.trim() : value), [getUpdater]);
+    const changeATK = useMemo(() => getUpdater('atk', value => typeof value === 'string' ? value : value), [getUpdater]);
+    const changeDEF = useMemo(() => getUpdater('def', value => typeof value === 'string' ? value : value), [getUpdater]);
     const changePassword = useMemo(() => getUpdater('password', undefined, 'debounce'), [getUpdater]);
     const onStickerChange = useMemo(() => getUpdater('sticker'), [getUpdater]);
     const changeCreator = useMemo(() => getUpdater('creator', undefined, 'debounce'), [getUpdater]);
