@@ -9,6 +9,9 @@
                 "content": "Detailed color picker for card name's color."
             },
             {
+                "content": "Loosen card constraints. Allow displaying ATK, DEF and card type on Spell / Trap card frame, and conversely hiding them on monster card frame."
+            },
+            {
                 "content": "Minor UI updates."
             }
         ]

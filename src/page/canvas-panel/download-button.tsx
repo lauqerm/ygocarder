@@ -2,7 +2,7 @@ import { Button, Dropdown, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { MasterSeriesCanvas } from 'src/model';
 import { useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
-import { PictureOutlined } from '@ant-design/icons';
+import { GatewayOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { forceRefocus } from 'src/util';
@@ -39,7 +39,7 @@ const StyledDownloadButton = styled(Button)`
         .resolution-overlay {
             position: absolute;
             left: 50%;
-            bottom: 1px; // Alignment
+            bottom: 3px; // Alignment
             font-size: var(--fs-xs);
             text-align: center;
             transform: translateX(-50%);
@@ -146,7 +146,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
                 overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
             >
                 <div className="button-option" onClick={e => e.stopPropagation()}>
-                    <PictureOutlined className="resolution-icon" />
+                    <GatewayOutlined className="resolution-icon" />
                     <span className="resolution-overlay">{resolution[1]}</span>
                 </div>
             </Dropdown>

@@ -195,14 +195,14 @@ export const IconTypeMap: Record<string, {
     'auto': {
         value: 'auto',
         labelKey: 'input.icon-type.auto.label',
-        fullLabelKey: 'input.icon-type.auto.label',
+        fullLabelKey: 'input.icon-type.auto.full.label',
         icon: null,
         isOption: false,
     },
     'st': {
         value: 'st',
         labelKey: 'input.icon-type.icon.label',
-        fullLabelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon-type.icon.full.label',
         icon: <img
             className="icon-image"
             alt="s/t-icon"
@@ -213,7 +213,7 @@ export const IconTypeMap: Record<string, {
     'level': {
         value: 'level',
         labelKey: 'input.icon-type.level.label',
-        fullLabelKey: 'input.icon-type.level.label',
+        fullLabelKey: 'input.icon-type.level.full.label',
         icon: <img
             className="icon-image"
             alt="level-icon"
@@ -224,7 +224,7 @@ export const IconTypeMap: Record<string, {
     'negative-level': {
         value: 'negative-level',
         labelKey: 'input.icon-type.negative-level.label',
-        fullLabelKey: 'input.icon-type.negative-level.label',
+        fullLabelKey: 'input.icon-type.negative-level.full.label',
         icon: <img
             className="icon-image"
             alt="negative-level-icon"
@@ -235,7 +235,7 @@ export const IconTypeMap: Record<string, {
     'rank': {
         value: 'rank',
         labelKey: 'input.icon-type.rank.label',
-        fullLabelKey: 'input.icon-type.rank.label',
+        fullLabelKey: 'input.icon-type.rank.full.label',
         icon: <img
             className="icon-image"
             alt="rank-icon"

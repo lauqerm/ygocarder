@@ -14,10 +14,12 @@ const StyledFrameTrain = styled(RadioTrain)`
 export type FrameTrain = {
     onSTFrameChange: (value: string[]) => void,
     onPasswordChange: (value: string) => void,
+    onStatChange: (atk: string, def: string) => void,
 };
 export const FrameTrain = ({
     onSTFrameChange,
     onPasswordChange,
+    onStatChange,
 }: FrameTrain) => {
     const {
         setting,
@@ -49,9 +51,12 @@ export const FrameTrain = ({
                 format,
                 password,
                 star,
+                atk,
+                def,
             } = currentCard;
             const nextFrame = `${frameValue}`;
-            const isST = nextFrame === 'spell' || nextFrame === 'trap';
+            const willBecomeST = nextFrame === 'spell' || nextFrame === 'trap';
+            const willRemoveStat = willBecomeST || nextFrame === 'speed-skill';
             const termMap = format === 'tcg'
                 ? {
                     'Spell Card': 'Spell Card',
@@ -64,9 +69,19 @@ export const FrameTrain = ({
             const nextPassword = nextFrame === 'token'
                 ? passwordSentenceMap[format]
                 : password;
+            const nextAtk = willRemoveStat ? '' : atk;
+            const nextDef = willRemoveStat ? '' : def;
+            const nextStar = nextFrame === 'token'
+                ? 0
+                : star;
 
             onPasswordChange(nextPassword);
-            if (isST) onSTFrameChange(nextTypeAbility);
+            if (willBecomeST) {
+                onSTFrameChange(nextTypeAbility);
+            }
+            if (willRemoveStat) {
+                onStatChange(nextAtk, nextDef);
+            }
 
             return {
                 ...currentCard,
@@ -75,17 +90,17 @@ export const FrameTrain = ({
                 isLink: nextFrame === 'link' ? true : false,
                 attribute: nextFrame === 'token'
                     ? NO_ATTRIBUTE
-                    : isST
+                    : willBecomeST
                         ? `${nextFrame}`.toUpperCase()
                         : attribute,
-                star: nextFrame === 'token'
-                    ? 0
-                    : star,
+                star: nextStar,
                 typeAbility: nextTypeAbility,
                 password: nextPassword,
+                atk: nextAtk,
+                def: nextDef,
             };
         });
-    }, [setCard, onPasswordChange, onSTFrameChange]);
+    }, [setCard, onPasswordChange, onSTFrameChange, onStatChange]);
 
     return <StyledFrameTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />;
 };

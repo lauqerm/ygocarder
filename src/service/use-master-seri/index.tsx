@@ -210,12 +210,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
-    const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
-        ? !!(atk || def || (isLink && linkMap.length))
-        : isMonster;
-    const typeInEffect = cardIcon === 'auto'
-        ? isMonster || isSpeedSkill
-        : cardIcon !== 'st' || isLink;
+    const statInEffect = !!(atk || def);
+    const typeInEffect = normalizedTypeAbility.length > 0
+        ? cardIcon === 'auto'
+            ? (isMonster || isSpeedSkill)
+            : cardIcon !== 'st'
+        : false;
 
     const {
         isInitializing,
@@ -466,7 +466,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
             await drawAttribute();
             await drawAttributeFinish();
-            if (!isLink && !isSpeedSkill) await drawStar({ style: levelStyle, starAlignment });
+            await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
             await drawPredefinedMark({

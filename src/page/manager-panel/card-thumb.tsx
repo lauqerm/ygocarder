@@ -9,7 +9,7 @@ import {
     LinkRotateList,
     NO_ICON,
 } from 'src/model';
-import { checkMonster, checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
+import { checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
 import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Popconfirm, Tooltip } from 'antd';
@@ -292,11 +292,8 @@ export const CardThumb = ({
     const normalizedCardIcon = normalizedCardIconType === 'st'
         ? subFamily
         : normalizedCardIconType;
-    const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
-    const statInEffect = (pendulumFrame !== 'auto' || isPendulum)
-        ? !!(atk || def || (isLink && linkMap.length))
-        : isMonster;
+    const statInEffect = !!(atk || def || (isLink && linkMap.length));
     const joinedTypeAbility = typeAbility.join(' / ');
     const canvasCoordinate = getArtCanvasCoordinate(isPendulum, opacity);
     const {

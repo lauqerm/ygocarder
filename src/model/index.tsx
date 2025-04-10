@@ -16,7 +16,7 @@ export const getDefaultCrop = () => ({
 
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
-    version: 0,
+    version: 2,
     format: 'tcg',
     frame: 'fusion',
     foil: 'normal' as Foil,
@@ -99,7 +99,7 @@ export const getDefaultInternalCard = () => ({
 });
 
 export const getEmptyCard = (): Card => ({
-    version: 0,
+    version: 2,
     format: 'tcg',
     frame: 'effect',
     foil: 'normal',
