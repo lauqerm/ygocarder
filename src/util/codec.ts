@@ -234,6 +234,8 @@ export const legacyRebuildCardData = (
 
 /** Migrate old version of card data into the new version without information loss */
 export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): InternalCard => {
+    /** Ensure that we detech the actual version from incoming cards. */
+    delete baseCard.version;
     const migratedCard = {
         id: uuid(),
         ...baseCard,
@@ -316,6 +318,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
 
+        console.log('🚀 ~ migrateCardData ~ migratedCard.version:', migratedCard.version);
     if (migratedCard.version === 0 || migratedCard.version === 1) {
         migratedCard.version = 2;
 

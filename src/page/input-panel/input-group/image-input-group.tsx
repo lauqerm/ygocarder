@@ -77,7 +77,6 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         return {
             ...currentCard,
             isLink: willBecomeLink,
-            isPendulum: willBecomeLink ? false : currentCard.isPendulum,
         };
     }), [setCard]);
     const changeArt = useMemo(() => getUpdater('art'), [getUpdater]);

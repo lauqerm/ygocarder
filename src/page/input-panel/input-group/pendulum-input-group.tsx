@@ -199,7 +199,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             ...currentCard,
             // opacity: nextOpacity,
             isPendulum: willBecomePendulum,
-            isLink: willBecomePendulum ? false : currentCard.isLink,
         };
     });
     const changeBottomFrame = (value: string | number) => {

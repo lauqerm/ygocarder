@@ -46,7 +46,6 @@ export const FrameTrain = ({
         setCard(currentCard => {
             const {
                 typeAbility,
-                isPendulum,
                 attribute,
                 format,
                 password,
@@ -86,7 +85,6 @@ export const FrameTrain = ({
             return {
                 ...currentCard,
                 frame: nextFrame,
-                isPendulum: nextFrame === 'link' ? false : isPendulum,
                 isLink: nextFrame === 'link' ? true : false,
                 attribute: nextFrame === 'token'
                     ? NO_ATTRIBUTE
