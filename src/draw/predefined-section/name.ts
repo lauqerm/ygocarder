@@ -107,137 +107,222 @@ export const drawName = async (
     const trueBaseline = _trueBaseline * globalScale;
     const width = _width * globalScale;
     const cloneCtx = cloneNode?.getContext('2d');
-    if (ctx && cloneCtx && value) {
-        const {
-            embossPitch,
-            embossYaw,
-            embossThickness,
-            fillStyle,
-            font,
-            gradientAngle,
-            gradientColor,
-            hasEmboss,
-            hasGradient,
-            hasOutline,
-            hasShadow,
-            headTextFillStyle,
-            lineColor,
-            lineOffsetX,
-            lineOffsetY,
-            lineWidth,
-            shadowBlur,
-            shadowColor,
-            shadowOffsetX,
-            shadowOffsetY,
-            pattern,
-        } = { ...getDefaultNameStyle(), ...style };
-        const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
+    if (!(ctx && cloneCtx && value)) return;
+    const {
+        embossPitch,
+        embossYaw,
+        embossThickness,
+        fillStyle,
+        font,
+        gradientAngle,
+        gradientColor,
+        hasEmboss,
+        hasGradient,
+        hasOutline,
+        hasShadow,
+        headTextFillStyle,
+        lineColor,
+        lineOffsetX,
+        lineOffsetY,
+        lineWidth,
+        shadowBlur,
+        shadowColor,
+        shadowOffsetX,
+        shadowOffsetY,
+        pattern,
+    } = { ...getDefaultNameStyle(), ...style };
+    const { patternImage, blendMode: patternBlendMode } = PatternMap[pattern ?? ''] ?? {};
 
-        ctx.textAlign = 'left';
-        const fontData = scaleFontData({
-            ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,
-            headTextFillStyle,
-        }, globalScale);
-        const fontGetter = createFontGetter({
-            defaultFamily: fontData.font,
-            defaultSize: fontData.fontList[0].fontSize,
-            defaultWeight: fontData.weight,
-        });
-        const textData = {
-            fontLevel: 0,
-            fontData,
-            currentFont: fontGetter,
-        };
-        const quoteConvertedValue = normalizeCardText(
-            value,
-            format,
-            { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName' },
-        );
+    ctx.textAlign = 'left';
+    const fontData = scaleFontData({
+        ...(NameFontDataMap[font as keyof typeof NameFontDataMap] ?? NameFontDataMap.Default).fontData,
+        headTextFillStyle,
+    }, globalScale);
+    const fontGetter = createFontGetter({
+        defaultFamily: fontData.font,
+        defaultSize: fontData.fontList[0].fontSize,
+        defaultWeight: fontData.weight,
+    });
+    const textData = {
+        fontLevel: 0,
+        fontData,
+        currentFont: fontGetter,
+    };
+    const quoteConvertedValue = normalizeCardText(
+        value,
+        format,
+        { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName' },
+    );
 
-        /** Calculate the bounding box that contains all card name's graphic, and passing it to gradient calculator. Beware - gradient does not apply to head text. */
-        const crudeTokenList = format === 'ocg'
-            ? [quoteConvertedValue]
-            : quoteConvertedValue.split(new RegExp(`([^${TCG_LETTER_JOINLIST}])`, 'g'));
-        const fontGetterForWidthCalculating = createFontGetter({
-            defaultFamily: fontData.font,
-            defaultSize: fontData.fontList[0].fontSize,
-            defaultWeight: fontData.weight,
-        });
-        const normalStyle = fontGetterForWidthCalculating.getFont();
-        const symbolStyle = fontGetterForWidthCalculating
-            .setSize(cur => cur * fontData.symbolFontRatio)
-            .setStyle('small-caps')
-            .setFamily(fontData.symbolFont)
-            .getFont();
-        let maxAscent = 0;
-        let maxDescent = 0;
-        crudeTokenList.forEach((cur, index) => {
-            ctx.font = index % 2 === 0 ? normalStyle : symbolStyle;
+    /** Calculate the bounding box that contains all card name's graphic, and passing it to gradient calculator. Beware - gradient does not apply to head text. */
+    const crudeTokenList = format === 'ocg'
+        ? [quoteConvertedValue]
+        : quoteConvertedValue.split(new RegExp(`([^${TCG_LETTER_JOINLIST}])`, 'g'));
+    const fontGetterForWidthCalculating = createFontGetter({
+        defaultFamily: fontData.font,
+        defaultSize: fontData.fontList[0].fontSize,
+        defaultWeight: fontData.weight,
+    });
+    const normalStyle = fontGetterForWidthCalculating.getFont();
+    const symbolStyle = fontGetterForWidthCalculating
+        .setSize(cur => cur * fontData.symbolFontRatio)
+        .setStyle('small-caps')
+        .setFamily(fontData.symbolFont)
+        .getFont();
+    let maxAscent = 0;
+    let maxDescent = 0;
+    crudeTokenList.forEach((cur, index) => {
+        ctx.font = index % 2 === 0 ? normalStyle : symbolStyle;
 
-            const textMetric = ctx.measureText(cur.replaceAll(NormalizeTextRegex, ''));
-            maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
-            maxDescent = Math.max(maxDescent, textMetric.actualBoundingBoxDescent);
-        }, 0);
+        const textMetric = ctx.measureText(cur.replaceAll(NormalizeTextRegex, ''));
+        maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
+        maxDescent = Math.max(maxDescent, textMetric.actualBoundingBoxDescent);
+    }, 0);
 
-        ctx.font = normalStyle;
-        /** Calculate fitting ratio like normal */
-        let actualLineWidth = 0;
-        const internalEffectiveMedian = condense(
-            median => {
-                const { currentLineCount, currentLineList } = createLineList({
-                    ctx,
-                    median,
-                    paragraphList: [quoteConvertedValue],
-                    format, textData,
-                    width,
-                    globalScale,
-                });
-
-                if (currentLineCount > 1) return false;
-                actualLineWidth = currentLineList[0].actualLineWidth;
-                return true;
-            },
-        );
-        const xRatio = internalEffectiveMedian / 1000;
-        const yRatio = 1;
-
-        ctx.scale(xRatio, yRatio);
-        /** Calculate gradient and offset based on card's frame. */
-        const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
-        const offsetY = fontData.fontList[0].offsetY ?? scaledDefaultFontSizeData.offsetY;
-        const tokenList = tokenizeText(quoteConvertedValue);
-        const gradient = actualLineWidth > 0 && hasGradient
-            ? getNameGradient(
+    ctx.font = normalStyle;
+    /** Calculate fitting ratio like normal */
+    let actualLineWidth = 0;
+    const internalEffectiveMedian = condense(
+        median => {
+            const { currentLineCount, currentLineList } = createLineList({
                 ctx,
-                gradientAngle,
-                parsePalette(gradientColor),
-                edge,
-                actualLineWidth,
-                trueBaseline,
-                maxAscent, maxDescent,
-            )
-            : undefined;
-
-
-        /**
-         * First iteration: Draw the card name with color and gradient
-         * 
-         * If we use emboss, additional thickness will be added to the text to increase embossed area. We use stroke text so it can inherit color, gradient and pattern style.
-         * */
-        let thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
-        let resetEmbossStroke = () => {};
-        if (thickenEmboss) {
-            resetEmbossStroke = setTextStyle({
-                ctx,
-                lineWidth: embossThickness,
-                lineColor: fillStyle,
-                lineColorGradient: gradient,
+                median,
+                paragraphList: [quoteConvertedValue],
+                format, textData,
+                width,
                 globalScale,
-                useDefault: false,
             });
-        }
-        ctx.fillStyle = gradient ?? fillStyle;
-        const { tokenEdge } = drawLine({
+
+            if (currentLineCount > 1) return false;
+            actualLineWidth = currentLineList[0].actualLineWidth;
+            return true;
+        },
+    );
+    const xRatio = internalEffectiveMedian / 1000;
+    const yRatio = 1;
+
+    ctx.scale(xRatio, yRatio);
+    /** Calculate gradient and offset based on card's frame. */
+    const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
+    const offsetY = fontData.fontList[0].offsetY ?? scaledDefaultFontSizeData.offsetY;
+    const tokenList = tokenizeText(quoteConvertedValue);
+    const gradient = actualLineWidth > 0 && hasGradient
+        ? getNameGradient(
+            ctx,
+            gradientAngle,
+            parsePalette(gradientColor),
+            edge,
+            actualLineWidth,
+            trueBaseline,
+            maxAscent, maxDescent,
+        )
+        : undefined;
+
+
+    /**
+     * First iteration: Draw the card name with color and gradient
+     * 
+     * If we use emboss, additional thickness will be added to the text to increase embossed area. We use stroke text so it can inherit color, gradient and pattern style.
+     * */
+    let thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
+    let resetEmbossStroke = () => {};
+    if (thickenEmboss) {
+        resetEmbossStroke = setTextStyle({
+            ctx,
+            lineWidth: embossThickness,
+            lineColor: fillStyle,
+            lineColorGradient: gradient,
+            globalScale,
+            useDefault: false,
+        });
+    }
+    ctx.fillStyle = gradient ?? fillStyle;
+    const { tokenEdge } = drawLine({
+        ctx,
+        tokenList,
+        xRatio, yRatio,
+        trueEdge: edge, trueBaseline,
+        textData,
+        format,
+        globalScale,
+        textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
+            ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+            if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+        },
+    });
+    resetEmbossStroke();
+
+    /** 
+     * Second iteration, draw pattern, we follow these steps:
+     *  * We create a second, temporary canvas node.
+     *  * We fill the node with pattern. The pattern is not skewed, but maybe scaled to fit exactly the bounding box of the card name (we reuse the same information when calculate gradient).
+     *  * We place the temporary node above the card name's canvas, using suitable blend mode, this way we essentially "coating" the pattern on top of the text, without damaging its surrounding.
+     */
+    if (patternImage && cloneNode) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        /** Some patterns are partially transparent, so we need to draw the current frame under it first. */
+        cloneCtx.scale(globalScale, globalScale);
+        await drawAsset(cloneCtx, `frame/frame-${frame}.png`, 0, 0);
+        await drawAsset(cloneCtx, `background/background-name-${frame}.png`, 0, 0);
+        cloneCtx.globalCompositeOperation = patternBlendMode;
+        cloneCtx.resetTransform();
+        await drawAssetWithSize(
+            cloneCtx, `finish-name/${patternImage}.png`,
+            edge, trueBaseline - maxAscent,
+            width,
+            maxAscent + maxDescent,
+        );
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.drawImage(cloneNode, 0, 0);
+        ctx.scale(xRatio, yRatio);
+        ctx.globalCompositeOperation = 'source-over';
+
+        /** Again, foot text is not affected by pattern, so we draw the whole name again but without the foot text part.
+         * 
+         * Because head text is not affected by shadow and outline, and their color is always solid. When placed on top of the head text with pattern, they will cover the pattern perfectly.
+         */
+        drawLine({
+            ctx,
+            tokenList,
+            xRatio, yRatio,
+            trueEdge: edge, trueBaseline,
+            textData,
+            format,
+            globalScale,
+            textDrawer: () => {},
+        });
+    }
+
+    /** Apply emboss effect if any */
+    if (hasEmboss) {
+        const affectedWidthExtraPadding = 10;
+        const embossedImageData = applyEmboss({
+            inputCanvas: canvas,
+            lightPitch: embossPitch,
+            lightYaw: embossYaw,
+            minIntensity: -0.9,
+            maxIntensity: 0.9,
+            affectedWidth: Math.ceil(tokenEdge + affectedWidthExtraPadding),
+        });
+        ctx.putImageData(embossedImageData, 0, 0);
+    }
+
+    /**
+     * Third iteration: We apply shadow here. As shadow is drawn around the text, not in it, we can use destination-over composition to apply it on top of the embossed text.
+     */
+    let resetShadow = () => {};
+    if (hasShadow) {
+        resetShadow = setTextStyle({
+            ctx,
+            x: shadowOffsetX,
+            y: shadowOffsetY,
+            shadowColor: shadowColor,
+            blur: shadowBlur,
+            globalScale,
+            useDefault: false,
+        });
+        ctx.globalCompositeOperation = 'destination-over';
+        drawLine({
             ctx,
             tokenList,
             xRatio, yRatio,
@@ -247,133 +332,47 @@ export const drawName = async (
             globalScale,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
-                if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             },
         });
-        resetEmbossStroke();
-
-        /** 
-         * Second iteration, draw pattern, we follow these steps:
-         *  * We create a second, temporary canvas node.
-         *  * We fill the node with pattern. The pattern is not skewed, but maybe scaled to fit exactly the bounding box of the card name (we reuse the same information when calculate gradient).
-         *  * We place the temporary node above the card name's canvas, using suitable blend mode, this way we essentially "coating" the pattern on top of the text, without damaging its surrounding.
-         */
-        if (patternImage && cloneNode) {
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            /** Some patterns are partially transparent, so we need to draw the current frame under it first. */
-            cloneCtx.scale(globalScale, globalScale);
-            await drawAsset(cloneCtx, `frame/frame-${frame}.png`, 0, 0);
-            await drawAsset(cloneCtx, `background/background-name-${frame}.png`, 0, 0);
-            cloneCtx.globalCompositeOperation = patternBlendMode;
-            cloneCtx.resetTransform();
-            await drawAssetWithSize(
-                cloneCtx, `finish-name/${patternImage}.png`,
-                edge, trueBaseline - maxAscent,
-                width,
-                maxAscent + maxDescent,
-            );
-            ctx.globalCompositeOperation = 'source-in';
-            ctx.drawImage(cloneNode, 0, 0);
-            ctx.scale(xRatio, yRatio);
-            ctx.globalCompositeOperation = 'source-over';
-
-            /** Again, foot text is not affected by pattern, so we draw the whole name again but without the foot text part.
-             * 
-             * Because head text is not affected by shadow and outline, and their color is always solid. When placed on top of the head text with pattern, they will cover the pattern perfectly.
-             */
-            drawLine({
-                ctx,
-                tokenList,
-                xRatio, yRatio,
-                trueEdge: edge, trueBaseline,
-                textData,
-                format,
-                globalScale,
-                textDrawer: () => {},
-            });
-        }
-
-        /** Apply emboss effect if any */
-        if (hasEmboss) {
-            const affectedWidthExtraPadding = 10;
-            const embossedImageData = applyEmboss({
-                inputCanvas: canvas,
-                lightPitch: embossPitch,
-                lightYaw: embossYaw,
-                minIntensity: -0.9,
-                maxIntensity: 0.9,
-                affectedWidth: Math.ceil(tokenEdge + affectedWidthExtraPadding),
-            });
-            ctx.putImageData(embossedImageData, 0, 0);
-        }
-
-        /**
-         * Third iteration: We apply shadow here. As shadow is drawn around the text, not in it, we can use destination-over composition to apply it on top of the embossed text.
-         */
-        let resetShadow = () => {};
-        if (hasShadow) {
-            resetShadow = setTextStyle({
-                ctx,
-                x: shadowOffsetX,
-                y: shadowOffsetY,
-                shadowColor: shadowColor,
-                blur: shadowBlur,
-                globalScale,
-                useDefault: false,
-            });
-            ctx.globalCompositeOperation = 'destination-over';
-            drawLine({
-                ctx,
-                tokenList,
-                xRatio, yRatio,
-                trueEdge: edge, trueBaseline,
-                textData,
-                format,
-                globalScale,
-                textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                    ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
-                },
-            });
-            ctx.globalCompositeOperation = 'source-over';
-        }
-
-        /** Fourth iteration, we apply "outline" to card name. We use stroke method to simulate outline behavior. This is not ideal (like at all), but current canvas has no way to do it properly. */
-        let resetStroke = () => {};
-        if (hasOutline) {
-            resetStroke = setTextStyle({
-                ctx,
-                lineWidth,
-                lineColor,
-                globalScale,
-                useDefault: false,
-            });
-            ctx.globalCompositeOperation = 'destination-over';
-            drawLine({
-                ctx,
-                tokenList,
-                xRatio, yRatio,
-                trueEdge: edge, trueBaseline,
-                textData,
-                format,
-                globalScale,
-                textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                    ctx.lineJoin = 'round';
-                    ctx.strokeText(
-                        letter,
-                        scaledEdge + lineOffsetX,
-                        scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
-                    );
-                },
-            });
-        }
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-        const defaultTextStyle = getDefaultNameStyle();
-        ctx.fillStyle = defaultTextStyle.fillStyle;
-        resetShadow();
-        resetStroke();
-        ctx.lineJoin = 'miter';
         ctx.globalCompositeOperation = 'source-over';
     }
+
+    /** Fourth iteration, we apply "outline" to card name. We use stroke method to simulate outline behavior. This is not ideal (like at all), but current canvas has no way to do it properly. */
+    let resetStroke = () => {};
+    if (hasOutline) {
+        resetStroke = setTextStyle({
+            ctx,
+            lineWidth,
+            lineColor,
+            globalScale,
+            useDefault: false,
+        });
+        ctx.globalCompositeOperation = 'destination-over';
+        drawLine({
+            ctx,
+            tokenList,
+            xRatio, yRatio,
+            trueEdge: edge, trueBaseline,
+            textData,
+            format,
+            globalScale,
+            textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
+                ctx.lineJoin = 'round';
+                ctx.strokeText(
+                    letter,
+                    scaledEdge + lineOffsetX,
+                    scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
+                );
+            },
+        });
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    const defaultTextStyle = getDefaultNameStyle();
+    ctx.fillStyle = defaultTextStyle.fillStyle;
+    resetShadow();
+    resetStroke();
+    ctx.lineJoin = 'miter';
+    ctx.globalCompositeOperation = 'source-over';
 };
