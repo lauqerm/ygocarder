@@ -59,6 +59,7 @@ export const drawLine = ({
     format,
     textDrawer,
     debug = false,
+    option,
     globalScale,
 }: {
     ctx: CanvasRenderingContext2D,
@@ -72,8 +73,12 @@ export const drawLine = ({
     textData: TextData,
     textDrawer?: TextDrawer,
     globalScale: number,
+    option?: {
+        drawHeadText?: boolean,
+    },
     debug?: boolean,
 }) => {
+    const { drawHeadText = true } = option ?? {};
     const {
         currentFont,
         fontData,
@@ -350,7 +355,7 @@ export const drawLine = ({
                 }
                 /** Draw head text here, remember head text and foot text most of the time do not align at all. */
                 const headTextFragmentEdge = fragmentEdge - lostLeftWidth;
-                fillHeadText({
+                if (drawHeadText) fillHeadText({
                     ctx,
                     fontSize,
                     edge: headTextFragmentEdge, baseline,
