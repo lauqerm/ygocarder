@@ -367,16 +367,16 @@ export class HeightToNormalMap {
         }
     }
 
-    setBlurSharp(value, width, height) {
+    setBlurSharp(value: number, width: number, height: number) {
         this.gaussianShaderY.uniforms.v.value = value / width / 5;
         this.gaussianShaderX.uniforms.h.value = value / height / 5;
     }
 
-    setStrengthAndLevel(strength, level) {
+    setStrengthAndLevel(strength: number, level: number) {
         this.normalMapUniform.dz.value = 1.0 / strength * (1.0 + Math.pow(2.0, level)); //  eslint-disable-line
     }
 
-    setType(type) {
+    setType(type: typeof SHADER_FILTER_TYPE[keyof typeof SHADER_FILTER_TYPE]) {
         this.normalMapUniform.type.value = type === 'sobel' ? 0 : 1;
     }
 }

@@ -8,6 +8,9 @@ import './formatting-guide.scss';
 
 const StyledContainer = styled.div`
     white-space: pre-line;
+    h2 {
+        margin-top: var(--spacing);
+    }
 `;
 const StyledImageSection = styled.div`
     display: grid;
@@ -101,6 +104,27 @@ export const FormattingHelpDrawer = () => {
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-1-preview.jpg`}
+                        caption={language['guide.format.caption.output']}
+                    />
+                </StyledImageSection>
+                <h2>{language['guide.format.section-6.label']}</h2>
+                {language['guide.format.section-6.content'](
+                    <StyledCode key="open-tag">{'[['}</StyledCode>,
+                    <StyledCode key="close-tag">{']]'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-Shift-1'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-Shift-1'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-raw' }}
+                        alt={'justified non-breakable line raw'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-6-raw.jpg`}
+                        caption={language['guide.format.caption.input']}
+                    />
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-preview' }}
+                        alt={'justified non-breakable line preview'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-6-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>

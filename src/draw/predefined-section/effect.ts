@@ -88,6 +88,7 @@ export const drawEffect = ({
         effectText,
         effectFlavorCondition,
         fullLineList,
+        fullLineListOption,
     } = splitEffect(normalizedContent, isNormal);
 
     const additionalLineCount = (fullLineList.length ?? 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
@@ -168,10 +169,10 @@ export const drawEffect = ({
 
             let trueBaseline = trueBaselineStart + lineHeight;
             /** Naturally, non-brekable lines have their own condense ratio. */
-            const fullLineListWithRatio = fullLineList.map(line => {
+            const fullLineListWithRatio = fullLineList.map((line, index) => {
                 return {
                     line,
-                    isLast: true,
+                    isLast: fullLineListOption[index].alignment === 'justify' ? false : true,
                     effectiveMedian: condense(
                         median => {
                             const { currentLineCount } = createLineList({

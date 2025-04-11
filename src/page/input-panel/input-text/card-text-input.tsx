@@ -73,6 +73,7 @@ export const CardTextInput = forwardRef<CardTextInputRef, CardTextInput>(({
                     ev.currentTarget.value, key,
                     selectionStart, selectionEnd,
                     false,
+                    ev.shiftKey,
                     (joinedText, placement) => {
                         internalOnChange(joinedText);
                         setCursorData({ id, placement });

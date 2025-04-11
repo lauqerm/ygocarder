@@ -5,6 +5,7 @@ export const resolveHotkey = (
     selectionStart: number,
     selectionEnd: number,
     allowNewLine: boolean,
+    holdingShift: boolean,
     onResult: (joinedText: string, newCursorPlacement: number) => void,
 ) => {
     const selectedText = value.substring(selectionStart, selectionEnd);
@@ -13,9 +14,16 @@ export const resolveHotkey = (
     let wrappedText = selectedText;
     let cursorOffset = 2;
     switch (key) {
-        case '1': wrappedText = `[${selectedText}]${keepInline ? '' : '\n'}`;
-            cursorOffset = keepInline ? 2 : 3;
+        case '1': {
+            if (holdingShift) {
+                wrappedText = `[[${selectedText}]]${keepInline ? '' : '\n'}`;
+                cursorOffset = keepInline ? 4 : 5;
+            } else {
+                wrappedText = `[${selectedText}]${keepInline ? '' : '\n'}`;
+                cursorOffset = keepInline ? 2 : 3;
+            }
             break;
+        }
         case '2': wrappedText = `{${selectedText}}`; break;
         case '3': wrappedText = `{${selectedText}|}`; break;
         case '4': wrappedText = `{${selectedText}||}`; cursorOffset = 3; break;

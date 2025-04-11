@@ -12,8 +12,18 @@ const titlShaking = keyframes`
     12% { transform: rotate(0deg); }
     100% { transform: rotate(0deg); }
 `;
+const LogSentence = styled.li`
+    img {
+        display: block;
+        max-width: 400px;
+        max-height: 200px;
+        margin: auto;
+        box-shadow: var(--bs-1);
+        margin-top: var(--spacing-xs);
+    }
+`;
 
-type VersionLog = { version: string, logList: { content: string }[] }[];
+type VersionLog = { version: string, logList: { content: string, image?: string }[] }[];
 const VersionLogStore = (() => {
     let isReady = false;
     let versionLog: VersionLog = [];
@@ -61,14 +71,15 @@ export const VersionLog = () => {
     if (loading) return <div>Loading changelog...</div>;
     return <div>
         {log.map(({ logList, version }, index) => {
-            return <div key={`${version}-${index}`}>
+            return <div key={`${version}-${index}`} className="log-section">
                 <b>{version}</b><br />
                 <ul>
                     {/* Using index as key here is safe as the component is stateless */}
-                    {logList.map(({ content }, index) => {
-                        return <li key={index}>
+                    {logList.map(({ content, image }, index) => {
+                        return <LogSentence key={index}>
                             {content}
-                        </li>;
+                            {image && <img src={image} alt={`version-${version}-illust`} />}
+                        </LogSentence>;
                     })}
                 </ul>
             </div>;
@@ -118,6 +129,9 @@ const StyledVersionLog = styled(StyledPopMarkdown)`
     width: 550px;
     max-height: 300px;
     width: 550px;
+    .log-section + .log-section {
+        margin-top: var(--spacing);
+    }
 `;
 export const VersionLogButton = memo(() => {
     const [animating, setAnimating] = useState(false);

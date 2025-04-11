@@ -23,10 +23,14 @@ import {
     NB_FULL_LINE_CLOSE
 } from 'src/model';
 
+export type LineOption = {
+    alignment: 'left' | 'justify',
+};
 export const splitEffect = (effect: string, isNormal = false) => {
     let effectText = effect;
 
-    let fullLineList = [];
+    const fullLineList = [];
+    const fullLineListOption: LineOption[] = [];
     const lineRegexSource = `^(${NB_LINE_OPEN}([^${NB_LINE_CLOSE}]*)${NB_LINE_CLOSE}\\s*)`;
     const fullLineRegexSource = `^(${NB_FULL_LINE_OPEN}([^${NB_FULL_LINE_CLOSE}]*)${NB_FULL_LINE_CLOSE}\\s*)`;
     const wholeLineRegex = new RegExp([lineRegexSource, fullLineRegexSource].join('|'));
@@ -46,10 +50,12 @@ export const splitEffect = (effect: string, isNormal = false) => {
         if (lineContent && lineReplacement) {
             fullLineList.push(lineContent);
             effectText = effectText.replace(lineReplacement, '');
+            fullLineListOption.push({ alignment: 'left' });
             willContinue = true;
         } else if (fullLineContent && fullLineReplacement) {
             fullLineList.push(fullLineContent);
             effectText = effectText.replace(fullLineReplacement, '');
+            fullLineListOption.push({ alignment: 'justify' });
             willContinue = true;
         }
     } while (willContinue);
@@ -64,6 +70,7 @@ export const splitEffect = (effect: string, isNormal = false) => {
 
     return {
         fullLineList,
+        fullLineListOption,
         effectText,
         effectFlavorCondition,
     };
