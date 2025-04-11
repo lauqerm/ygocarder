@@ -329,6 +329,8 @@
         "manager.template.header.value.label": "Available Values",
         "prompt.remind.backup.label": "Remember to backup your data regularly. You have no way to recover your data once it has lost.",
         "prompt.warning.on-import.label": "You have unsaved change, you may want to export your list before importing a new one, proceed?",
+        "guide.format.section-6.content": "Wrap a line of text in {openTag} and {closeTag} to prevent the text from breaking down into multiple lines. The line is justified, which mean it will expand to fill as much space as possible.\nIf hotkeys are allowed, you can select the desired text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-6.label": "Non-breakable line (justified)",
         "prompt.warning.on-leave.label": "Leaving right now may make you lose unsaved progress, proceed?",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "setting.option.resolution.warning": "May affect performance",
