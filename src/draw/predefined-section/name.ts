@@ -107,6 +107,7 @@ export const drawName = async (
     const trueBaseline = _trueBaseline * globalScale;
     const width = _width * globalScale;
     const cloneCtx = cloneNode?.getContext('2d');
+
     if (!(ctx && cloneCtx && value)) return;
     const {
         embossPitch,
@@ -218,12 +219,11 @@ export const drawName = async (
         )
         : undefined;
 
-
     /**
-     * First iteration: Draw the card name with color and gradient
+     * First iteration: Draw the name with color and gradient. We explicitly draw on base canvas here to avoid data loss from putImageData / drawImage method.
      * 
      * If we use emboss, additional thickness will be added to the text to increase embossed area. We use stroke text so it can inherit color, gradient and pattern style.
-     * */
+     */
     let thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
     let resetEmbossStroke = () => {};
     if (thickenEmboss) {
@@ -245,6 +245,7 @@ export const drawName = async (
         textData,
         format,
         globalScale,
+        option: { drawHeadText: false },
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
@@ -253,47 +254,34 @@ export const drawName = async (
     resetEmbossStroke();
 
     /** 
-     * Second iteration, draw pattern, we follow these steps:
+     * Second iteration: Draw pattern, we follow these steps.
      *  * We create a second, temporary canvas node.
      *  * We fill the node with pattern. The pattern is not skewed, but maybe scaled to fit exactly the bounding box of the card name (we reuse the same information when calculate gradient).
      *  * We place the temporary node above the card name's canvas, using suitable blend mode, this way we essentially "coating" the pattern on top of the text, without damaging its surrounding.
      */
-    if (patternImage && cloneNode) {
+    if (patternImage) {
+        const patternCanvas = canvas.cloneNode() as HTMLCanvasElement;
+        const patternContext = patternCanvas.getContext('2d');
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         /** Some patterns are partially transparent, so we need to draw the current frame under it first. */
-        cloneCtx.scale(globalScale, globalScale);
-        await drawAsset(cloneCtx, `frame/frame-${frame}.png`, 0, 0);
-        await drawAsset(cloneCtx, `background/background-name-${frame}.png`, 0, 0);
-        cloneCtx.globalCompositeOperation = patternBlendMode;
-        cloneCtx.resetTransform();
+        patternContext.scale(globalScale, globalScale);
+        await drawAsset(patternContext, `frame/frame-${frame}.png`, 0, 0);
+        await drawAsset(patternContext, `background/background-name-${frame}.png`, 0, 0);
+        patternContext.globalCompositeOperation = patternBlendMode;
+        patternContext.resetTransform();
         await drawAssetWithSize(
-            cloneCtx, `finish-name/${patternImage}.png`,
+            patternContext, `finish-name/${patternImage}.png`,
             edge, trueBaseline - maxAscent,
             width,
             maxAscent + maxDescent,
         );
         ctx.globalCompositeOperation = 'source-in';
-        ctx.drawImage(cloneNode, 0, 0);
-        ctx.scale(xRatio, yRatio);
+        ctx.drawImage(patternCanvas, 0, 0);
         ctx.globalCompositeOperation = 'source-over';
-
-        /** Again, foot text is not affected by pattern, so we draw the whole name again but without the foot text part.
-         * 
-         * Because head text is not affected by shadow and outline, and their color is always solid. When placed on top of the head text with pattern, they will cover the pattern perfectly.
-         */
-        drawLine({
-            ctx,
-            tokenList,
-            xRatio, yRatio,
-            trueEdge: edge, trueBaseline,
-            textData,
-            format,
-            globalScale,
-            textDrawer: () => {},
-        });
+        ctx.scale(xRatio, yRatio);
     }
 
-    /** Apply emboss effect if any */
+    /** Third iteration: Apply emboss effect */
     if (hasEmboss) {
         const affectedWidthExtraPadding = 10;
         const embossedImageData = applyEmboss({
@@ -308,41 +296,14 @@ export const drawName = async (
     }
 
     /**
-     * Third iteration: We apply shadow here. As shadow is drawn around the text, not in it, we can use destination-over composition to apply it on top of the embossed text.
-     */
-    let resetShadow = () => {};
-    if (hasShadow) {
-        resetShadow = setTextStyle({
-            ctx,
-            x: shadowOffsetX,
-            y: shadowOffsetY,
-            shadowColor: shadowColor,
-            blur: shadowBlur,
-            globalScale,
-            useDefault: false,
-        });
-        ctx.globalCompositeOperation = 'destination-over';
-        drawLine({
-            ctx,
-            tokenList,
-            xRatio, yRatio,
-            trueEdge: edge, trueBaseline,
-            textData,
-            format,
-            globalScale,
-            textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
-            },
-        });
-        ctx.globalCompositeOperation = 'source-over';
-    }
-
-    /** Fourth iteration, we apply "outline" to card name. We use stroke method to simulate outline behavior. This is not ideal (like at all), but current canvas has no way to do it properly. */
-    let resetStroke = () => {};
+     * Fourth iteration: Apply "outline" to card name. We use stroke method to simulate outline behavior.
+     * 
+     * We stroke the text behind the canvas to avoid polluting current effects. Because we already drawn a layer of outline if emboss thickness is applied, we will also increase outline thickness to compensate.
+     * */
     if (hasOutline) {
-        resetStroke = setTextStyle({
+        const resetStroke = setTextStyle({
             ctx,
-            lineWidth,
+            lineWidth: lineWidth + embossThickness,
             lineColor,
             globalScale,
             useDefault: false,
@@ -356,6 +317,7 @@ export const drawName = async (
             textData,
             format,
             globalScale,
+            option: { drawHeadText: false },
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.lineJoin = 'round';
                 ctx.strokeText(
@@ -365,14 +327,48 @@ export const drawName = async (
                 );
             },
         });
+        ctx.lineJoin = 'miter';
+        ctx.globalCompositeOperation = 'source-over';
+        resetStroke();
     }
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    /**
+     * Fifth iteration: We apply shadow here. As shadow is drawn around the text, not in it, we can use destination-over composition to apply it below the canvas text, accommodate for both outline and emboss thickness.
+     */
+    if (hasShadow) {
+        const shadowCanvas = canvas.cloneNode() as HTMLCanvasElement;
+        const shadowContext = shadowCanvas.getContext('2d');
+        const resetShadow = setTextStyle({
+            ctx: shadowContext,
+            x: shadowOffsetX,
+            y: shadowOffsetY,
+            shadowColor: shadowColor,
+            blur: shadowBlur,
+            globalScale,
+            useDefault: false,
+        });
+        shadowContext.drawImage(canvas, 0, 0);
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.drawImage(shadowCanvas, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+        resetShadow();
+    }
+
+    /** Sixth iteration: Draw furigana, which is not affected by all other text style except furigana color. Again we draw it on base canvas for the same data loss reason. */
+    drawLine({
+        ctx,
+        tokenList,
+        xRatio, yRatio,
+        trueEdge: edge, trueBaseline,
+        textData,
+        format,
+        globalScale,
+        textDrawer: () => {},
+    });
 
     const defaultTextStyle = getDefaultNameStyle();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = defaultTextStyle.fillStyle;
-    resetShadow();
-    resetStroke();
     ctx.lineJoin = 'miter';
     ctx.globalCompositeOperation = 'source-over';
 };

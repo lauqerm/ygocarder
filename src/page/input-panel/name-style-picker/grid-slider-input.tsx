@@ -111,8 +111,8 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                         zIndex: 10,
                     },
                 }}
-                xmax={5} xmin={-5}
-                ymax={5} ymin={-5}
+                xmax={8} xmin={-8}
+                ymax={8} ymin={-8}
                 x={x ?? 0}
                 y={y ?? 0}
                 onChange={({ x, y }) => setValue(cur => ({ ...cur, x, y }))} />

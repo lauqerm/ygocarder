@@ -43,6 +43,7 @@ const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameSty
     hasGradient: false,
     hasOutline: false,
     hasShadow: false,
+    hasEmboss: false,
     pattern: 'none',
     ...presetValue
 });

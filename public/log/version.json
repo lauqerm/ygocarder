@@ -5,6 +5,9 @@
             {
                 "content": "Support justified line syntax. Wrap your sentences in \"[[\" and \"]]\" so they stay on the same line and fill as much space as they can. For more information click Formatting Help button.",
                 "image": "https://i.imgur.com/wdsNbUt.jpeg"
+            },
+            {
+                "content": "Fix: Incorrect behavior when applying some combination of outline, shadow and emboss effect in card name. Emboss effect no longer affect furigana texts."
             }
         ]
     },
