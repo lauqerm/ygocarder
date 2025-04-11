@@ -20,19 +20,23 @@ export const NB_WORD_OPEN = '⦉';
 export const NB_WORD_CLOSE = '⦊';
 export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
+export const NB_FULL_LINE_OPEN = '᚛';
+export const NB_FULL_LINE_CLOSE = '᚜';
 export const NB_UNCOMPRESSED_START = '⟬';
 export const NB_UNCOMPRESSED_END = '⟭';
 /** Remove all control characters */
 export const NormalizeTextRegex = new RegExp(`[${[
-    NB_WORD_OPEN,
-    NB_WORD_CLOSE,
-    NB_LINE_OPEN,
+    NB_FULL_LINE_CLOSE,
+    NB_FULL_LINE_OPEN,
     NB_LINE_CLOSE,
-    NB_UNCOMPRESSED_START,
+    NB_LINE_OPEN,
     NB_UNCOMPRESSED_END,
+    NB_UNCOMPRESSED_START,
+    NB_WORD_CLOSE,
+    NB_WORD_OPEN,
 ].join('')}]|(\\|[^}]+})`, 'g');
 
-export const CONTEXTUAL_DOUBLE_QUOTE_SOURCE = `(^|[-\\u2014/[(\\u2018${NB_WORD_OPEN}${NB_LINE_OPEN}${NB_UNCOMPRESSED_START}\\s])"`;
+export const CONTEXTUAL_DOUBLE_QUOTE_SOURCE = `(^|[-\\u2014/[(\\u2018${NB_WORD_OPEN}${NB_LINE_OPEN}${NB_FULL_LINE_OPEN}${NB_UNCOMPRESSED_START}\\s])"`;
 export const contextualDoubleQuoteRegex = new RegExp(CONTEXTUAL_DOUBLE_QUOTE_SOURCE, 'g');
 
 export const NON_BREAKABLE_SYMBOL_SOURCE = `${NB_WORD_OPEN}|${NB_WORD_CLOSE}`;

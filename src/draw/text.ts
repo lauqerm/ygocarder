@@ -47,7 +47,7 @@ import { scaleFontSizeData } from 'src/util';
  *   * Paragraph: Consecutive sentences without new line characters ("\n").
  *   * Block: Whole text in a section.
  * 
- * Line: Line is a special unit, when a sentence hit the end of current text box, it wrap to new line without using the actual new line character. In this case the sentence is broke down into multiple lines. Line can be manully created with line control characters (`NB_LINE_OPEN` and `NB_LINE_CLOSE`), or created from text split function.
+ * Line: Line is a special unit, when a sentence hit the end of current text box, it wrap to new line without using the actual new line character. In this case the sentence is broke down into multiple lines. Line can be manully created with line control characters (`NB_LINE_OPEN`/`NB_FULL_LINE_OPEN` and `NB_LINE_CLOSE`/`NB_FULL_LINE_CLOSE`), or created from text split function.
  * **/
 export const drawLine = ({
     ctx,
