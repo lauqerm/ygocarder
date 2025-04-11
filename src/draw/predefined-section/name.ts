@@ -347,6 +347,7 @@ export const drawName = async (
             globalScale,
             useDefault: false,
         });
+        ctx.scale(1 / xRatio, 1 / yRatio);
         shadowContext.drawImage(canvas, 0, 0);
         ctx.globalCompositeOperation = 'destination-over';
         ctx.drawImage(shadowCanvas, 0, 0);

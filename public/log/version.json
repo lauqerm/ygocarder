@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.1.22 (2025/04/11)",
+        "logList": [
+            {
+                "content": "Fix: Attempt to fix the incorrect behavior when apply shadow effect for long card name."
+            }
+        ]
+    },
+    {
         "version": "v2.1.21 (2025/04/11)",
         "logList": [
             {
