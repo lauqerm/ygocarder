@@ -152,11 +152,13 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             : null
         }
     >
-        <LinkMarkChooser key={`link-${JSON.stringify(linkMap)}`}
-            active={isLink === true}
-            defaultValue={linkMap}
-            onChange={changeLinkMap}
-            onStatusChange={changeLinkStatus}
-        />
+        <div>
+            <LinkMarkChooser key={`link-${JSON.stringify(linkMap)}`}
+                active={isLink === true}
+                defaultValue={linkMap}
+                onChange={changeLinkMap}
+                onStatusChange={changeLinkStatus}
+            />
+        </div>
     </ImageCropper>;
 });

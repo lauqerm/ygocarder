@@ -20,6 +20,7 @@ const StyledLinkMarkChooser = styled.div`
     background-color: var(--main-level-4);
     box-shadow: var(--bs-block);
     border-radius: var(--br-lg);
+    display: inline-block;
     .title {
         line-height: 0;
         margin-bottom: var(--spacing-sm);

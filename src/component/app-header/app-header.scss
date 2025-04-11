@@ -54,27 +54,27 @@
                 font-size: var(--fs-xl);
             }
         }
-        .app-contribution {
-            display: grid;
-            grid-template-columns: max-content 1fr;
-            column-gap: var(--spacing-sm);
+    }
+    .app-contribution {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        column-gap: var(--spacing-sm);
+        font-size: var(--fs-sm);
+        line-height: 1.25;
+        b {
             font-size: var(--fs-sm);
-            line-height: 1.25;
-            b {
-                font-size: var(--fs-sm);
+        }
+        a {
+            color: var(--main-link);
+            &:hover {
+                color: var(--sub-link);
             }
-            a {
-                color: var(--main-link);
-                &:hover {
-                    color: var(--sub-link);
-                }
-            }
-            > * {
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                min-width: 0;
-            }
+        }
+        > * {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            min-width: 0;
         }
     }
     .manager-active {

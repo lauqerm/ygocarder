@@ -170,8 +170,9 @@
 
 @media only screen and (max-width: 1200px) {
 	.app-header {
-		.app-contribution {
+		.app-description .app-contribution {
 			margin-top: var(--spacing-sm);
+			grid-template-columns: 1fr;
 		}
 	}
 	.app-container {
@@ -399,6 +400,22 @@
 				flex-wrap: wrap;
 				.ant-radio-button-wrapper {
 					flex: 1 0 150px;
+				}
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 640px) {
+	.app-container {
+		.card-info-panel {
+			.main-info {
+				.card-image-cropper {
+					.card-image-source-input {
+						grid-area: source;
+						grid-template-columns: 1fr;
+						gap: var(--spacing-sm);
+					}
 				}
 			}
 		}
