@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.1.23 (2025/04/12)",
+        "logList": [
+            {
+                "content": "Now link markers on pendulum frame are drawn on top of password and other texts at footer."
+            },
+            {
+                "content": "Fix: Minor UI issues."
+            }
+        ]
+    },
+    {
         "version": "v2.1.22 (2025/04/11)",
         "logList": [
             {
