@@ -122,7 +122,8 @@ export const getLayoutDrawFunction = ({
                 artX,
                 artY,
                 artWidth,
-                ratio,
+                artFrameWidth,
+                artFrameHeight,
             } = getArtCanvasCoordinate(isPendulum, normalizedOpacity, customBackgroundType);
             const { width: imageWidth, height: imageHeight } = imageCanvas;
             const imageScaledRatio = artWidth / imageWidth;
@@ -155,8 +156,8 @@ export const getLayoutDrawFunction = ({
                 destinationWidth,
                 destinationHeight,
                 /** Background fill is not depend on art size */
-                fillWidth: artWidth,
-                fillHeight: artWidth * ratio,
+                fillWidth: artFrameWidth,
+                fillHeight: artFrameHeight,
             };
         },
 

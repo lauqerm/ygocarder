@@ -360,6 +360,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         destinationWidth, destinationHeight,
                         fillWidth, fillHeight,
                     } = calculateCardArtRedrawCoordination(artworkCanvas);
+                    console.log('🚀 ~ drawingPipeline.current.frame.instructor= ~ fillWidth:', fillWidth, fillHeight);
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
                     await fillBaseColor(
