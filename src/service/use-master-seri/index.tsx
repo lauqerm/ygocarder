@@ -20,6 +20,8 @@ import {
     setTextStyle,
     drawPasswordText,
     drawLimitedEditionMark,
+    baseDrawLinkArrowMap,
+    baseDrawLinkMapFoil,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -360,7 +362,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         destinationWidth, destinationHeight,
                         fillWidth, fillHeight,
                     } = calculateCardArtRedrawCoordination(artworkCanvas);
-                    console.log('🚀 ~ drawingPipeline.current.frame.instructor= ~ fillWidth:', fillWidth, fillHeight);
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
                     await fillBaseColor(
@@ -465,8 +466,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
-            /** If we combine both link map and pendulum frame, link markers will be pushed outward and overlay on top of the card frame, that's why we leave link marker for last */
-            if (isLink) {
+            /** If we combine both link map and pendulum frame, link markers will be pushed outward and overlay on top of the card frame */
+            if (isLink && !isPendulum) {
                 await drawLinkArrowMap(linkMap, isPendulum ? 'pendulum' : 'normal');
                 await drawLinkMapFoil(false, isPendulum ? 'pendulum' : 'normal');
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
@@ -627,18 +628,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const ctx = passwordCanvasRef.current?.getContext('2d');
         if (!clearCanvas(ctx)) return;
 
+        const isNumberPassword = /^[0-9]*$/.test(password);
+        const mayOffset = isNumberPassword && isPendulum && isLink;
+        const willOffset = mayOffset;
         const {
             rightEdge,
-            isNumberPassword,
         } = drawPasswordText({
             ctx,
             globalScale,
             value: password,
             lightFooter,
             alignment: 'left',
+            edgeOffset: (willOffset ? 80 : 0) * globalScale,
             format,
             hasShadow: bottomFrame === 'zarc' || requireShadow,
             textStyle: resolvedOtherEffectTextStyle,
+            fontLevel: !isNumberPassword ? 1 : 0
         });
         if (isFirstEdition) {
             const willDraw = isPendulum
@@ -889,6 +894,17 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.rerun += 1;
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
+
+            if (isLink && isPendulum) {
+                await baseDrawLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless);
+                await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal');
+                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
+                if (statInEffect) {
+                    await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
+                }
+                resetStyle();
+            }
+
             ctx.scale(globalScale, globalScale);
             await loopFinish(
                 ctx,
@@ -897,7 +913,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             );
             ctx.resetTransform();
         };
-    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, name]);
+    }, [
+        readyToDraw,
+        globalScale,
+        finishCanvasRef,
+        loopFinish,
+        name,
+        isLink,
+        isPendulum,
+        linkMap,
+        boundless,
+        foil,
+        resolvedStatTextStyle,
+        statInEffect,
+        frameCanvasRef,
+    ]);
+
 
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useCallback(async (exportProps: {

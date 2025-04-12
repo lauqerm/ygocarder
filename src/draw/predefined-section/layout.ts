@@ -13,6 +13,59 @@ import { getCardIconFromFrame } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 
+export const baseDrawLinkArrowMap = async (
+    ctx: CanvasRenderingContext2D,
+    globalScale: number,
+    linkMap: string[],
+    positionType: keyof typeof ArrowPositionMap,
+    boundless: boolean,
+) => {
+    if (!ctx) return;
+    ctx.scale(globalScale, globalScale);
+    await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
+        .map(async entry => {
+            const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
+            const isActive = linkMap.includes(`${entry}`);
+            const baseLink = `link/link-inactive-${entry}`;
+            const activeLink = `link/link-active-${entry}`;
+            const coordinate = [left, top, width, height] as const;
+
+            await drawAssetWithSize(ctx, `${baseLink}-base${boundless ? '-full' : ''}.png`, ...coordinate);
+            await drawAssetWithSize(ctx, `${baseLink}-core.png`, ...coordinate);
+            if (isActive) {
+                await drawAssetWithSize(ctx, `${activeLink}-base.png`, ...coordinate);
+                return drawAssetWithSize(ctx, `${activeLink}-core.png`, ...coordinate);
+            } else return;
+        })
+    );
+    ctx.resetTransform();
+};
+export const baseDrawLinkMapFoil = async (
+    ctx: CanvasRenderingContext2D,
+    globalScale: number,
+    foil: string,
+    withBorder: boolean,
+    positionType: keyof typeof ArrowPositionMap,
+) => {
+    if (!ctx) return;
+    if (foil === 'normal') return;
+
+    ctx.scale(globalScale, globalScale);
+    if (withBorder) {
+        await drawAsset(ctx, `link/link-overlay-arrow-${foil}.png`, 0, 175);
+    } else {
+        await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
+            .map(async entry => {
+                const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
+                const coordinate = [left, top, width, height] as const;
+
+                await drawAssetWithSize(ctx, `link/link-overlay-${entry}-${foil}.png`, ...coordinate);
+            })
+        );
+    }
+    ctx.resetTransform();
+};
+
 const {
     width: cardWidth,
     height: cardHeight,
@@ -325,25 +378,7 @@ export const getLayoutDrawFunction = ({
         },
         /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
         drawLinkArrowMap: async (linkMap: string[], positionType: keyof typeof ArrowPositionMap) => {
-            if (!ctx) return;
-            ctx.scale(globalScale, globalScale);
-            await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
-                .map(async entry => {
-                    const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
-                    const isActive = linkMap.includes(`${entry}`);
-                    const baseLink = `link/link-inactive-${entry}`;
-                    const activeLink = `link/link-active-${entry}`;
-                    const coordinate = [left, top, width, height] as const;
-
-                    await drawAssetWithSize(ctx, `${baseLink}-base${boundless ? '-full' : ''}.png`, ...coordinate);
-                    await drawAssetWithSize(ctx, `${baseLink}-core.png`, ...coordinate);
-                    if (isActive) {
-                        await drawAssetWithSize(ctx, `${activeLink}-base.png`, ...coordinate);
-                        return drawAssetWithSize(ctx, `${activeLink}-core.png`, ...coordinate);
-                    } else return;
-                })
-            );
-            ctx.resetTransform();
+            return baseDrawLinkArrowMap(ctx, globalScale, linkMap, positionType, boundless);
         },
         drawStatBorder: async (style: CanvasTextStyle) => {
             if (!ctx) return;
@@ -471,23 +506,7 @@ export const getLayoutDrawFunction = ({
             ctx.resetTransform();
         },
         drawLinkMapFoil: async (withBorder = artBorder, positionType: keyof typeof ArrowPositionMap) => {
-            if (!ctx) return;
-            if (foil === 'normal') return;
-
-            ctx.scale(globalScale, globalScale);
-            if (withBorder) {
-                await drawAsset(ctx, `link/link-overlay-arrow-${foil}.png`, 0, 175);
-            } else {
-                await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
-                    .map(async entry => {
-                        const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
-                        const coordinate = [left, top, width, height] as const;
-    
-                        await drawAssetWithSize(ctx, `link/link-overlay-${entry}-${foil}.png`, ...coordinate);
-                    })
-                );
-            }
-            ctx.resetTransform();
+            return baseDrawLinkMapFoil(ctx, globalScale, foil, withBorder, positionType);
         },
 
         /** @summary FINISH section */

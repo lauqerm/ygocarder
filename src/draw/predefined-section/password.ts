@@ -14,9 +14,11 @@ export const drawPasswordText = ({
     format,
     alignment,
     baselineOffset = 0,
+    edgeOffset = 0,
     lightFooter,
     hasShadow,
     textStyle,
+    fontLevel,
 }: {
     ctx?: CanvasRenderingContext2D | null,
     globalScale: number,
@@ -24,14 +26,14 @@ export const drawPasswordText = ({
     format: string,
     alignment: 'left' | 'right',
     baselineOffset?: number,
+    edgeOffset?: number,
     lightFooter: boolean,
     hasShadow?: boolean,
     textStyle?: CanvasTextStyle,
+    fontLevel: number,
 }) => {
-    const isNumberPassword = /^[0-9]*$/.test(value);
     if (!clearCanvas(ctx)) return {
         rightEdge: 0,
-        isNumberPassword,
     };
 
     const resetTextStyle = setTextStyle({
@@ -58,7 +60,7 @@ export const drawPasswordText = ({
 
     /** Calculation */
     let textData = {
-        fontLevel: !isNumberPassword ? 1 : 0,
+        fontLevel,
         fontData,
         currentFont: createFontGetter(),
     };
@@ -111,7 +113,9 @@ export const drawPasswordText = ({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
-        trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
+        trueEdge: alignment === 'left'
+            ? trueEdge + edgeOffset
+            : (trueEdge - edgeOffset - actualLineWidth * xRatio),
         trueBaseline: trueBaseline + (fontSizeData.offsetY ?? scaledDefaultFontSizeData.offsetY) + baselineOffset,
         textData,
         format,
@@ -125,6 +129,5 @@ export const drawPasswordText = ({
 
     return {
         rightEdge: result.tokenEdge,
-        isNumberPassword,
     };
 };
