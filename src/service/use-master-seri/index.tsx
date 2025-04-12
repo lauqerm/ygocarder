@@ -255,10 +255,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
              * 
              * Because the issue happens on mobile with limited debug capability, we can't quite figure out what is the root cause, but put the fillRect call inside a promise is the only consistent way to resolve this issue.
              */
-            const fillBaseColor = (x: number, y: number, w: number, h: number) => {
+            const fillBaseColor = (x: number, y: number, w: number, h: number, customFill?: string) => {
                 return new Promise(resolve => {
                     setTimeout(() => {
-                        ctx.fillStyle = hasBackground ? baseFill : DEFAULT_BASE_FILL_COLOR;
+                        ctx.fillStyle = hasBackground
+                            ? (customFill ?? baseFill)
+                            : DEFAULT_BASE_FILL_COLOR;
                         ctx.fillRect(x, y, w, h);
                         resolve(true);
                     }, 0);
@@ -356,12 +358,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         offsetHeight,
                         destinationX, destinationY,
                         destinationWidth, destinationHeight,
+                        fillWidth, fillHeight,
                     } = calculateCardArtRedrawCoordination(artworkCanvas);
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
                     await fillBaseColor(
                         globalScale * destinationX, globalScale * destinationY,
-                        globalScale * destinationWidth, globalScale * destinationHeight,
+                        globalScale * fillWidth, globalScale * fillHeight,
                     );
 
                     drawBackground('pendulum');
