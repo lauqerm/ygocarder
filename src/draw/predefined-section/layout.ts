@@ -151,7 +151,9 @@ export const getLayoutDrawFunction = ({
     const frameBorderType = isXyz || isSpeedSkill
         ? frame
         : 'normal';
-    const nameBorderType = frameBorderType;
+    const nameBorderTypeList = frame === 'synchro'
+        ? ['normal', 'xyz'] /** This produce more accurate effect */
+        : [frameBorderType];
     const applyArtFinish = !boundless && artBorder;
 
     const resultAPI = {
@@ -436,7 +438,9 @@ export const getLayoutDrawFunction = ({
         drawNameBorder: async () => {
             if (nameBorder && ctx) {
                 ctx.scale(globalScale, globalScale);
-                await drawAsset(ctx, `frame/name-border-${nameBorderType}.png`, 0, 0);
+                for (let index = 0; index < nameBorderTypeList.length; index++) {
+                    await drawAsset(ctx, `frame/name-border-${nameBorderTypeList[index]}.png`, 0, 0);
+                }
                 ctx.resetTransform();
             } else {
                 Promise.resolve();
