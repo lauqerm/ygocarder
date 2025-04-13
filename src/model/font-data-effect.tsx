@@ -218,8 +218,8 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
             { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
             { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8 },
+            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 7, bulletSymbolOffset: 1 },
+            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 19, fontSize: 16.7, lineHeight: 16.7, lineCount: 9, bulletSymbolOffset: 1 },
             { bulletSymbolWidth: 19, fontSize: 15.0, lineHeight: 15.0, lineCount: 10, bulletSymbolOffset: 2 },
         ]
