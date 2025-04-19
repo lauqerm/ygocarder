@@ -11,8 +11,8 @@ const imageCacheMap: Record<string, {
 export const drawFrom = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
-    sx: number | ((image: HTMLImageElement) => number) = 0,
-    sy: number | ((image: HTMLImageElement) => number) = 0,
+    dx: number | ((image: HTMLImageElement) => number) = 0,
+    dy: number | ((image: HTMLImageElement) => number) = 0,
 ) => {
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
@@ -23,10 +23,10 @@ export const drawFrom = async (
         */
         if (imageCacheMap[source]?.ready === true) {
             const image = imageCacheMap[source].image;
-            const normalizedX = typeof sx === 'number' ? sx : sx(image);
-            const normalizedY = typeof sy === 'number' ? sy : sy(image);
+            const actualDX = typeof dx === 'number' ? dx : dx(image);
+            const actualDY = typeof dy === 'number' ? dy : dy(image);
 
-            ctx.drawImage(image, normalizedX, normalizedY);
+            ctx.drawImage(image, actualDX, actualDY);
             /** Same treatment for chrome mobile bug */
             setTimeout(() => resolve(true), 0);
             return;
@@ -45,10 +45,10 @@ export const drawFrom = async (
         image.addEventListener(
             'load',
             () => {
-                const normalizedX = typeof sx === 'number' ? sx : sx(image);
-                const normalizedY = typeof sy === 'number' ? sy : sy(image);
+                const actualDX = typeof dx === 'number' ? dx : dx(image);
+                const actualDY = typeof dy === 'number' ? dy : dy(image);
 
-                ctx.drawImage(image, normalizedX, normalizedY);
+                ctx.drawImage(image, actualDX, actualDY);
                 if (imageCacheMap[source]) {
                     imageCacheMap[source].ready = true;
                     imageCacheMap[source].error = false;
@@ -79,35 +79,52 @@ export const drawFrom = async (
 export const drawAsset = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
-    sx: number | ((image: HTMLImageElement) => number) = 0,
-    sy: number | ((image: HTMLImageElement) => number) = 0,
+    dx: number | ((image: HTMLImageElement) => number) = 0,
+    dy: number | ((image: HTMLImageElement) => number) = 0,
 ) => {
     return await drawFrom(
         ctx,
         '/asset/image/' + source,
-        sx, sy,
+        dx, dy,
     );
 };
 
 export const drawFromWithSize = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
-    sx: number | ((image: HTMLImageElement) => number),
-    sy: number | ((image: HTMLImageElement) => number),
+    dx: number | ((image: HTMLImageElement) => number),
+    dy: number | ((image: HTMLImageElement) => number),
     dw: number | ((image: HTMLImageElement) => number),
     dh: number | ((image: HTMLImageElement) => number),
+    sx?: undefined | number | ((image: HTMLImageElement) => number),
+    sy?: undefined | number | ((image: HTMLImageElement) => number),
+    sw?: undefined | number | ((image: HTMLImageElement) => number),
+    sh?: undefined | number | ((image: HTMLImageElement) => number),
 ) => {
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
         /** Check `drawFrom` comment for disable reasons */
         if (imageCacheMap[source]?.ready === true) {
             const image = imageCacheMap[source].image;
-            const normalizedX = typeof sx === 'number' ? sx : sx(image);
-            const normalizedY = typeof sy === 'number' ? sy : sy(image);
-            const normalizedW = typeof dw === 'number' ? dw : dw(image);
-            const normalizedH = typeof dh === 'number' ? dh : dh(image);
+            const actualDX = typeof dx === 'number' ? dx : dx(image);
+            const actualDY = typeof dy === 'number' ? dy : dy(image);
+            const actualDW = typeof dw === 'number' ? dw : dw(image);
+            const actualDH = typeof dh === 'number' ? dh : dh(image);
+            const actualSX = typeof sx === 'number' ? sx : sx?.(image);
+            const actualSY = typeof sy === 'number' ? sy : sy?.(image);
+            const actualSW = typeof sw === 'number' ? sw : sw?.(image);
+            const actualSH = typeof sh === 'number' ? sh : sh?.(image);
 
-            ctx.drawImage(image, normalizedX, normalizedY, normalizedW, normalizedH);
+            if (
+                typeof actualSX === 'number'
+                && typeof actualSY === 'number'
+                && typeof actualSW === 'number'
+                && typeof actualSH === 'number'
+            ) {
+                ctx.drawImage(image, actualSX, actualSY, actualSW, actualSH, actualDX, actualDY, actualDW, actualDH);
+            } else {
+                ctx.drawImage(image, actualDX, actualDY, actualDW, actualDH);
+            }
             setTimeout(() => resolve(true), 0);
             return;
         }
@@ -125,12 +142,25 @@ export const drawFromWithSize = async (
         image.addEventListener(
             'load',
             () => {
-                const normalizedX = typeof sx === 'number' ? sx : sx(image);
-                const normalizedY = typeof sy === 'number' ? sy : sy(image);
-                const normalizedW = typeof dw === 'number' ? dw : dw(image);
-                const normalizedH = typeof dh === 'number' ? dh : dh(image);
+                const actualDX = typeof dx === 'number' ? dx : dx(image);
+                const actualDY = typeof dy === 'number' ? dy : dy(image);
+                const actualDW = typeof dw === 'number' ? dw : dw(image);
+                const actualDH = typeof dh === 'number' ? dh : dh(image);
+                const actualSX = typeof sx === 'number' ? sx : sx?.(image);
+                const actualSY = typeof sy === 'number' ? sy : sy?.(image);
+                const actualSW = typeof sw === 'number' ? sw : sw?.(image);
+                const actualSH = typeof sh === 'number' ? sh : sh?.(image);
     
-                ctx.drawImage(image, normalizedX, normalizedY, normalizedW, normalizedH);
+                if (
+                    typeof actualSX === 'number'
+                    && typeof actualSY === 'number'
+                    && typeof actualSW === 'number'
+                    && typeof actualSH === 'number'
+                ) {
+                    ctx.drawImage(image, actualSX, actualSY, actualSW, actualSH, actualDX, actualDY, actualDW, actualDH);
+                } else {
+                    ctx.drawImage(image, actualDX, actualDY, actualDW, actualDH);
+                }
                 if (imageCacheMap[source]) {
                     imageCacheMap[source].ready = true;
                     imageCacheMap[source].error = false;
@@ -161,14 +191,18 @@ export const drawFromWithSize = async (
 export const drawAssetWithSize: typeof drawFromWithSize = async (
     ctx,
     source,
-    sx, sy,
+    dx, dy,
     dw, dh,
+    sx, sy,
+    sw, sh,
 ) => {
     return await drawFromWithSize(
         ctx,
         '/asset/image/' + source,
-        sx, sy,
+        dx, dy,
         dw, dh,
+        sx, sy,
+        sw, sh,
     );
 };
 

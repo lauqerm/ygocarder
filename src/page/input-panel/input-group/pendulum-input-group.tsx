@@ -5,7 +5,7 @@ import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { DEFAULT_PENDULUM_SIZE, FrameInfoMap } from 'src/model';
+import { DEFAULT_PENDULUM_SIZE, FrameInfoMap, PendulumSizeMap } from 'src/model';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
@@ -325,7 +325,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         $softMode={softMode}
                         $active={pendulumSize !== DEFAULT_PENDULUM_SIZE}
                     >
-                        {language['input.pendulum-size.label']}
+                        {language[PendulumSizeMap[pendulumSize].labelKey]}
                     </PopoverButton>
                 </Popover>
             </div>}

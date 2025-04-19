@@ -7,6 +7,9 @@ import {
     Foil,
     getArtCanvasCoordinate,
     NO_ATTRIBUTE,
+    PendulumSize,
+    PendulumSizeMap,
+    PendulumSizeMapException,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
 import { getCardIconFromFrame } from 'src/util';
@@ -110,7 +113,7 @@ export const getLayoutDrawFunction = ({
     attribute: string,
     star: number | string,
     foil: Foil,
-    pendulumSize: string,
+    pendulumSize: PendulumSize,
     opacity: CardOpacity,
     isXyz: boolean, isSpeedSkill: boolean, isLink: boolean,
     isPendulum: boolean,
@@ -420,7 +423,23 @@ export const getLayoutDrawFunction = ({
             );
             if (withPendulum) {
                 ctx.globalAlpha = opacityPendulum / 100;
-                await drawAsset(ctx, `background/background-pendulum-${bottomFrame}.png`, 55, 738);
+                const {
+                    frameType,
+                    pendulumBoxX, pendulumBoxY, pendulumBoxWidth, pendulumBoxHeight,
+                    pendulumBoxOffsetY,
+                } = PendulumSizeMap[pendulumSize];
+                const {
+                    exceptionFrameType = frameType,
+                    exceptionPendulumBoxOffsetHeight = 0,
+                } = PendulumSizeMapException[pendulumSize][bottomFrame] ?? {};
+                await drawAssetWithSize(
+                    ctx,
+                    `background/background-${exceptionFrameType}-${bottomFrame}.png`,
+                    pendulumBoxX, pendulumBoxY + pendulumBoxOffsetY,
+                    pendulumBoxWidth, pendulumBoxHeight,
+                    0, pendulumBoxOffsetY + exceptionPendulumBoxOffsetHeight,
+                    pendulumBoxWidth, pendulumBoxHeight + exceptionPendulumBoxOffsetHeight,
+                );
             }
             ctx.globalAlpha = 1;
             ctx.resetTransform();
