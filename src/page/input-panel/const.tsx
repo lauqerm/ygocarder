@@ -12,6 +12,7 @@ import {
     FinishMap,
     FoilDictionary,
     NO_STICKER,
+    PendulumSizeMap,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -123,3 +124,8 @@ export const CondenseThresholdButtonList = Object
         };
     })
     .sort((l, r) => l.order - r.order);
+
+export const getPendulumSizeList = (dictionary: Record<string, string>) => Object.values(PendulumSizeMap).map(({ key, labelKey }) => ({
+    label: dictionary[labelKey],
+    value: key,
+}));

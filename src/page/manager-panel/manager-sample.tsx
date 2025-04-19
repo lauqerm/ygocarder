@@ -15,9 +15,11 @@ import {
     IconList,
     IconTypeList,
     PatternList,
+    PendulumSizeList,
     PresetNameStyleMap,
     StickerList,
 } from 'src/model';
+import { FileTextOutlined } from '@ant-design/icons';
 import copy from 'copy-to-clipboard';
 
 const { Panel } = Collapse;
@@ -132,7 +134,7 @@ export const ManagerSample = ({
 
     return <>
         <StyledToggleButton className="manager-toggle-button" onClick={() => setVisible(true)}>
-            {language['manager.header.button.template.label']}
+            {language['manager.header.button.template.label']}&nbsp;<FileTextOutlined />
         </StyledToggleButton>
         <StyledManagerSample
             visible={visible}
@@ -315,6 +317,13 @@ export const ManagerSample = ({
                                     value: <div>
                                         {PatternList
                                             .filter(({ isOption }) => isOption)
+                                            .map(({ key }) => <CopiableCode key={key} data={key}>{key}</CopiableCode>)}
+                                    </div>
+                                },
+                                {
+                                    field: 'Pendulum Size',
+                                    value: <div>
+                                        {PendulumSizeList
                                             .map(({ key }) => <CopiableCode key={key} data={key}>{key}</CopiableCode>)}
                                     </div>
                                 },

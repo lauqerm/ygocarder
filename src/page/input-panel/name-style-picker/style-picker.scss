@@ -1,5 +1,6 @@
 .style-picker {
     display: inline-flex;
+    flex-wrap: wrap;
     column-gap: var(--spacing-sm);
     line-height: 1.15;
     margin: var(--spacing-xs) 0;

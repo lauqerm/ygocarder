@@ -6,6 +6,9 @@ import {
     getArtCanvasCoordinate,
     InternalCard,
     LinkIndentList,
+    LinkOffsetList,
+    LinkPendulumIndentList,
+    LinkPendulumOffsetList,
     LinkRotateList,
     NO_ICON,
 } from 'src/model';
@@ -131,8 +134,7 @@ const StyledCardThumb = styled.div`
             display: inline-block;
             width: 0;
             height: 0;
-            top: 19px;
-            left: 20px;
+            left: 21px;
             border-style: solid;
             position: absolute;
             z-index: 3;
@@ -361,11 +363,18 @@ export const CardThumb = ({
             </a>
             {isLink && [...Array(9)].map((_, index) => {
                 if (index === 4) return null;
+                const indentList = isPendulum ? LinkPendulumIndentList : LinkIndentList;
+                const offsetList = isPendulum ? LinkPendulumOffsetList : LinkOffsetList;
+
                 return <div key={`link-${index}`}
                     className={mergeClass(
                         `thumb-link-marker-icon thumb-link-marker-icon-${index + 1}`,
-                        linkMap.includes(`${index + 1}`) ? 'marker-checked' : '')}
-                    style={{ transform: `rotate(${LinkRotateList[index]}deg) translateY(${LinkIndentList[index]}px)` }}
+                        linkMap.includes(`${index + 1}`) ? 'marker-checked' : '',
+                    )}
+                    style={{
+                        top: isPendulum ? 16 : 19,
+                        transform: `rotate(${LinkRotateList[index]}deg) translateY(${indentList[index]}px) translateX(${offsetList[index]}px)`,
+                    }}
                 />;
             })}
             {isPendulum && <div className="pendulum-scale blue-scale">{pendulumScaleBlue}</div>}

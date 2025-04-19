@@ -14,11 +14,10 @@ import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import { getNameFontOptionList } from '../const';
-import { StyledDropdown } from 'src/component';
+import { StyledDropdown, PopoverButton } from 'src/component';
 import {
     StyledPatternContainer,
     StyledPatternOption,
-    StyledPickerButton,
 } from './style-picker.styled';
 import { useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
@@ -281,14 +280,14 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottom"
                     >
-                        <StyledPickerButton
+                        <PopoverButton
                             id={colorPickerButtonId}
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom}
                             className="picker-dropdown color-picker-dropdown"
                         >
                             {language['input.name-style.color.label']} <CaretDownOutlined />
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="shadow-picker"
                         trigger={['click']}
@@ -331,13 +330,13 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottom"
                     >
-                        <StyledPickerButton
+                        <PopoverButton
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom && hasShadow}
                             className="picker-dropdown shadow-picker-dropdown"
                         >
                             {language['input.name-style.shadow.label']} <CaretDownOutlined />
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>}
                     <Popover key="outline-picker"
                         trigger={['click']}
@@ -380,13 +379,13 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottom"
                     >
-                        <StyledPickerButton
+                        <PopoverButton
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom && hasOutline}
                             className="picker-dropdown outline-picker-dropdown"
                         >
                             {language['input.name-style.outline.label']} <CaretDownOutlined />
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="gradient-picker"
                         trigger={['click']}
@@ -413,13 +412,13 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottom"
                     >
-                        <StyledPickerButton
+                        <PopoverButton
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom && hasGradient}
                             className="picker-dropdown gradient-picker-dropdown"
                         >
                             {language['input.name-style.gradient.label']} <CaretDownOutlined />
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>}
                     {showExtraDecorativeOption && <Popover key="pattern-picker"
                         trigger={['click']}
@@ -457,13 +456,13 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottomLeft"
                     >
-                        <StyledPickerButton
+                        <PopoverButton
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom && typeof pattern === 'string' && pattern !== 'none'}
                             className="picker-dropdown pattern-picker-dropdown"
                         >
                             {language['input.name-style.pattern.label']}
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>}
                     <Popover key="font-picker"
                         trigger={['click']}
@@ -485,9 +484,9 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottomLeft"
                     >
-                        <StyledPickerButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
+                        <PopoverButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
                             {language['input.name-style.font.label']}
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="emboss-picker"
                         trigger={['click']}
@@ -527,13 +526,13 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottomLeft"
                     >
-                        <StyledPickerButton
+                        <PopoverButton
                             $softMode={reduceColorMotion}
                             $active={isStyleCustom && hasEmboss}
                             className="picker-dropdown emboss-picker-dropdown"
                         >
                             {language['input.name-style.emboss.label']}
-                        </StyledPickerButton>
+                        </PopoverButton>
                     </Popover>}
                 </div>
             </span>

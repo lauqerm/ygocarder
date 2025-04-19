@@ -22,7 +22,7 @@ export const StyledIconButtonContainer = styled.span`
 `;
 
 export type IconButton = {
-    Icon: typeof SyncOutlined,
+    Icon?: typeof SyncOutlined,
     children?: React.ReactNode,
     onClick?: () => void,
     iconProps?: ExtractProps<typeof SyncOutlined>,
@@ -56,7 +56,7 @@ export const IconButton = ({
             className={['icon-button', className ?? ''].join(' ')}
         >
             <>
-                <Icon {...iconProps} />{children}
+                {Icon && <Icon {...iconProps} />}{children}
             </>
         </StyledIconButtonContainer>
     </Tooltip>;

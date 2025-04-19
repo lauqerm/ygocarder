@@ -1,13 +1,13 @@
 import { Checkbox, Input, Popover } from 'antd';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
-import { FrameInfoBlock, RadioTrain } from 'src/component';
+import { FrameInfoBlock, PopoverButton, RadioTrain, StyledDropdown } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { FrameInfoMap } from 'src/model';
+import { DEFAULT_PENDULUM_SIZE, FrameInfoMap } from 'src/model';
 import { CaretDownOutlined } from '@ant-design/icons';
-import { getFrameButtonList } from '../const';
+import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { getNavigationProps } from 'src/util';
 
@@ -109,8 +109,20 @@ const StyledPendulumInputContainer = styled.div`
     .blue-scale {
         color: var(--sub-blue-scale);
     }
+    .pendulum-option {
+        display: flex;
+        align-items: center;
+        .pendulum-frame-input,
+        .pendulum-checkbox {
+            flex: 0 0 auto;
+        }
+        .mirror-scale {
+            display: inline-flex;
+            align-items: center;
+        }
+    }
     .joined-row {
-        position: 'relative';
+        position: relative;
         grid-column: span 2;
         .standalone-label {
             min-width: 0;
@@ -136,7 +148,12 @@ const StyledPendulumInputContainer = styled.div`
             width: var(--width-label);
         }
         .pendulum-frame-input {
-            margin-right: var(--spacing-lg);
+            margin-right: var(--spacing);
+        }
+        .pendulum-size {
+            display: inline-block;
+            line-height: 1.15; // Alignment
+            margin-right: var(--spacing);
         }
         .ant-checkbox-wrapper + .ant-checkbox-wrapper {
             margin-left: 0;
@@ -148,10 +165,12 @@ export type PendulumInputGroupRef = {
     setValue: (value: { pendulumEffect?: string }) => void,
 }
 export type PendulumInputGroup = {
+    softMode: boolean,
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
 } & Pick<CardTextInput, 'onTakePicker'>;
 export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInputGroup>(({
+    softMode,
     showCreativeOption,
     showExtraDecorativeOption,
     onTakePicker,
@@ -162,6 +181,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumFrame,
         pendulumScaleBlue,
         pendulumScaleRed,
+        pendulumSize,
         setCard,
         getUpdater,
     } = useCard(useShallow(({
@@ -170,6 +190,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             pendulumFrame,
             pendulumScaleBlue,
             pendulumScaleRed,
+            pendulumSize,
         },
         setCard,
         getUpdater,
@@ -178,6 +199,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumFrame,
         pendulumScaleBlue,
         pendulumScaleRed,
+        pendulumSize,
         setCard,
         getUpdater,
     })));
@@ -211,8 +233,10 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     };
     const onRedScaleChange = useMemo(() => getUpdater('pendulumScaleRed'), [getUpdater]);
     const onBlueScaleChange = useMemo(() => getUpdater('pendulumScaleBlue'), [getUpdater]);
+    const onPendulumSizeChange = useMemo(() => getUpdater('pendulumSize'), [getUpdater]);
     const changePendulumEffect = useMemo(() => getUpdater('pendulumEffect', undefined, 'debounce'), [getUpdater]);
 
+    const pendulumSizeList = useMemo(() => getPendulumSizeList(language), [language]);
     const frameList = useMemo(() => getFrameButtonList()
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
@@ -277,7 +301,45 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 </StyledPendulumFrameInputContainer>
             </Popover>}
             {(isPendulum && showCreativeOption)
-                && <Checkbox onChange={e => setMirrorScale(e.target.checked)} checked={isMirrorScale}>
+                && <div className="pendulum-size">
+                <Popover key="color-picker"
+                    trigger={['click']}
+                    overlayClassName="global-input-overlay font-picker-overlay"
+                    content={<div className="overlay-event-absorber">
+                        <StyledDropdown.Container>
+                            {pendulumSizeList.map(({ value, label }) => {
+                                return <StyledDropdown.Option key={value}
+                                    className={pendulumSize === value ? 'menu-active' : ''}
+                                    onClick={() => {
+                                        onPendulumSizeChange(value);
+                                    }}
+                                >
+                                    {label}
+                                </StyledDropdown.Option>;
+                            })}
+                        </StyledDropdown.Container>
+                    </div>}
+                    placement="bottomLeft"
+                >
+                    <PopoverButton
+                        $softMode={softMode}
+                        $active={pendulumSize !== DEFAULT_PENDULUM_SIZE}
+                    >
+                        {language['input.pendulum-size.label']}
+                    </PopoverButton>
+                </Popover>
+            </div>}
+            {(isPendulum && showCreativeOption)
+                && <Checkbox
+                    className="mirror-scale"
+                    onChange={e => {
+                        const willMirror = e.target.checked;
+
+                        setMirrorScale(willMirror);
+                        if (willMirror) onRedScaleChange(pendulumScaleBlue);
+                    }}
+                    checked={isMirrorScale}
+                >
                     {language['input.mirror-scale.label']}
                 </Checkbox>}
         </div>

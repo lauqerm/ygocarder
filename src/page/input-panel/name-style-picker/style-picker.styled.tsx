@@ -1,28 +1,6 @@
 import { StyledDropdown } from 'src/component';
 import styled from 'styled-components';
 
-export const StyledPickerButton = styled.div<{ $active?: boolean, $softMode: boolean }>`
-    background-color: var(--main-level-4);
-    ${({ $active }) => $active ? 'border: var(--bw) solid var(--main-active);' : 'border: var(--bw) solid var(--sub-level-1);'}
-    padding: var(--spacing-xxs) var(--spacing-xs);
-    margin: calc(-1 * var(--spacing-xxs)) 0;
-    border-radius: var(--br-lg);
-    box-shadow: var(--bs-button);
-    color: var(--color-heavy);
-    cursor: pointer;
-    ${({ $softMode, $active }) => {
-        return $softMode
-            ? `
-                border: var(--bw) solid var(--main-level-4);
-                ${$active ? 'outline: var(--bw) solid var(--main-active);' : ''}
-            `
-            : '';
-    }}
-    &:hover {
-        background-color: var(--sub-level-4);
-    }
-`;
-
 export const StyledPatternContainer = styled(StyledDropdown.Container)`
     display: grid;
     grid-template-columns: repeat(2, 200px);

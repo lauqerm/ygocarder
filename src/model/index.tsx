@@ -4,6 +4,7 @@ import { CondenseType } from './font-data-effect';
 import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
 import { v4 as uuid } from 'uuid';
+import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 
 export const getDefaultCrop = () => ({
     x: 0,
@@ -14,6 +15,15 @@ export const getDefaultCrop = () => ({
     aspect: 1,
 });
 
+/**
+ * Check following things when adding new attributes:
+ * * Default card and empty card|
+ * * Convert codec
+ * * Shorten codec|
+ * * Card thumb|
+ * * Legacy version|
+ * * Import / export|
+ */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
     version: 2,
@@ -55,6 +65,7 @@ export const getDefaultCard = () => ({
     pendulumEffect: 'Once per turn: You can pay 800 LP, increase this card\'s Pendulum Scale by 1.',
     pendulumScaleRed: '4',
     pendulumScaleBlue: '4',
+    pendulumSize: DEFAULT_PENDULUM_SIZE,
     typeAbility: [
         'Fairy',
         'Fusion',
@@ -147,6 +158,7 @@ export const getEmptyCard = (): Card => ({
     pendulumEffect: '',
     pendulumScaleRed: '4',
     pendulumScaleBlue: '4',
+    pendulumSize: DEFAULT_PENDULUM_SIZE,
     typeAbility: [],
     effectStyle: {
         condenseTolerant: 'strict',
@@ -297,4 +309,5 @@ export * from './frame';
 export * from './icon';
 export * from './link';
 export * from './name-preset';
+export * from './pendulum';
 export * from './regex';

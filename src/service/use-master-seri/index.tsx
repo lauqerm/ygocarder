@@ -61,7 +61,6 @@ const {
 } = CanvasConst;
 type DrawerProp = {
     imageChangeCount: number,
-    pendulumSize?: 'medium',
     isInitializing: boolean,
     language: LanguageDataDictionary,
     globalScale: number,
@@ -108,7 +107,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle,
+        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle, pendulumSize,
         atk, def, linkMap,
         attribute,
         cardIcon, subFamily, star, starAlignment,
@@ -223,7 +222,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const {
         isInitializing,
         imageChangeCount,
-        pendulumSize = 'medium',
         language,
         globalScale,
     } = props;

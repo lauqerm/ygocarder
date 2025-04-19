@@ -16,6 +16,7 @@ import {
     NameStyle,
     NameStyleType,
     NO_ATTRIBUTE,
+    PendulumSize,
     PresetNameStyle,
 } from 'src/model';
 import { v4 as uuid } from 'uuid';
@@ -125,6 +126,7 @@ const CsvStandardFieldList = [
     'Effect Style - Shadow Color',
     'Effect Style - Upsize',
     'Effect Style - Font Style',
+    'Pendulum Size',
     'Pendulum Effect Style - Is Custom',
     'Pendulum Effect Style - Fill Color',
     'Pendulum Effect Style - Has Shadow',
@@ -239,6 +241,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             pendulumScaleBlue,
             pendulumScaleRed,
             pendulumStyle,
+            pendulumSize,
             pendulumTextStyle,
             setId,
             star,
@@ -351,6 +354,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Effect Style - Shadow Color', effectTextStyle[3]);
         write('Effect Style - Upsize', effectStyle.upSize);
         write('Effect Style - Font Style', effectStyle.fontStyle);
+        write('Pendulum Size', pendulumSize);
         write('Pendulum Effect Style - Is Custom', pendulumTextStyle[0]);
         write('Pendulum Effect Style - Fill Color', pendulumTextStyle[1]);
         write('Pendulum Effect Style - Has Shadow', pendulumTextStyle[2]);
@@ -502,6 +506,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const pendulumEffect = reader('Pendulum Effect') ?? '';
                 const pendulumScaleRed = reader('Pendulum Scale Red') ?? emptyCard.pendulumScaleRed;
                 const pendulumScaleBlue = reader('Pendulum Scale Blue') ?? emptyCard.pendulumScaleBlue;
+                const pendulumSize = (reader('Pendulum Size') ?? 'medium') as PendulumSize;
 
                 const rawTypeAbility = reader('Type Ability');
                 const typeAbility = rawTypeAbility
@@ -679,6 +684,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumScaleRed,
                     pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle },
                     pendulumTextStyle,
+                    pendulumSize,
                     setId,
                     star,
                     starAlignment,

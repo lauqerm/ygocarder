@@ -99,7 +99,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         setCard,
     })));
     const { setting } = useSetting();
-    const { showCreativeOption, showExtraDecorativeOption } = setting;
+    const { showCreativeOption, showExtraDecorativeOption, reduceMotionColor } = setting;
 
     const stylePickerRef = useRef<NameStylePickerRef>(null);
 
@@ -273,6 +273,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                     && <PendulumInputGroup ref={pendulumInputGroupRef}
                         showCreativeOption={showCreativeOption}
                         showExtraDecorativeOption={showExtraDecorativeOption}
+                        softMode={reduceMotionColor}
                         onTakePicker={setPickerTarget}
                     />}
 

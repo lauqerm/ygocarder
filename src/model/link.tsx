@@ -23,7 +23,10 @@ export const ArrowPositionMap = {
     ],
 };
 export const LinkRotateList = [-45, 0, 45, -90, 0, 90, -135, 180, 135];
-export const LinkIndentList = [-38, -27, -38, -27, 0, -27, -38, -27, -38];
+export const LinkIndentList = [-38, -28, -38, -28, 0, -28, -38, -28, -38];
+export const LinkPendulumIndentList = [-30, -23, -30, -28, 0, -28, -30, -23, -30];
+export const LinkOffsetList = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+export const LinkPendulumOffsetList = [-5, 0, 5, 0, 0, 0, 5, 0, -5];
 export const LinkRotateMap: Record<string, number> = {
     '1': LinkRotateList[0],
     '2': LinkRotateList[1],

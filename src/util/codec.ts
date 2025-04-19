@@ -102,6 +102,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     pendulumEffect: 'pe',
     pendulumScaleRed: 'rs',
     pendulumScaleBlue: 'bs',
+    pendulumSize: 'psi',
     typeAbility: 'ta',
     effect: 'ef',
     setId: 'si',
@@ -261,6 +262,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.version == null) migratedCard.version = 1;
     if (migratedCard.format == null) migratedCard.format = 'tcg';
     if (migratedCard.pendulumFrame == null) migratedCard.pendulumFrame = 'auto';
+    if (migratedCard.pendulumSize == null) migratedCard.pendulumSize = 'medium';
     if (migratedCard.finish == null) migratedCard.finish = [];
 
     if (migratedCard.artFinish == null) migratedCard.artFinish = 'normal';
