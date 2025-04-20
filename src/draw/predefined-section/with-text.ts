@@ -6,31 +6,32 @@ export const drawScale = (
     value: string,
     _edge: number,
     _baseline: number,
+    _fontSize: number,
     globalScale: number,
 ) => {
     const edge = _edge * globalScale;
     const baseline = _baseline * globalScale;
     if (ctx && value) {
-        const fontSize = 60.5 * globalScale;
+        const fontSize = _fontSize * globalScale;
         ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
         ctx.textAlign = 'left';
 
-        const digitScaleRatio = 0.65;
+        const exceptionDigitWidthRatio = 0.8;
         const digitList = `${value}`.split('');
         let totalWidth = 0;
 
         digitList.forEach(digit => {
-            totalWidth += ctx.measureText(digit).width * (digit === '1' ? digitScaleRatio : 1);
+            totalWidth += ctx.measureText(digit).width * (digit === '1' ? exceptionDigitWidthRatio : 1);
         });
         let accLeft = edge - totalWidth / 2;
 
         digitList.forEach(digit => {
             ctx.fillText(
                 digit,
-                digit === '1' ? accLeft - 3 * globalScale : accLeft,
+                digit === '1' ? accLeft + 1 * globalScale : accLeft,
                 baseline + fontSize,
             );
-            accLeft += ctx.measureText(digit).width * (digit === '1' ? digitScaleRatio : 1);
+            accLeft += ctx.measureText(digit).width * (digit === '1' ? exceptionDigitWidthRatio : 1);
         });
     }
 };

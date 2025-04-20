@@ -1,21 +1,23 @@
+import { PendulumSize } from './pendulum';
+
 export const getBackgroundTypeList = (dictionary?: {
     fit: string,
     full: string,
     frame: string,
 }) => [
-    {
-        value: 'fit' as const,
-        label: dictionary?.fit,
-    },
-    {
-        value: 'full' as const,
-        label: dictionary?.full,
-    },
-    {
-        value: 'frame' as const,
-        label: dictionary?.frame,
-    },
-];
+        {
+            value: 'fit' as const,
+            label: dictionary?.fit,
+        },
+        {
+            value: 'full' as const,
+            label: dictionary?.full,
+        },
+        {
+            value: 'frame' as const,
+            label: dictionary?.frame,
+        },
+    ];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];
 
 /**
@@ -107,6 +109,24 @@ export const CardArtCanvasCoordinateMap = {
         artRatio: 1.325,
         type: 'pendulum' as const,
     },
+    /**
+     * Pendulum distribution, but the pendulum box size is smaller. This results a taller visible image.
+     * It is only used for series 9 Pendulum cards, which is deprecated.
+     * */
+    pendulumSmall: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 702,
+        artX: 56,
+        artY: 213,
+        ratio: 1.236,
+        backgroundRatio: 1.236,
+        artFrameWidth: 702,
+        artFrameHeight: 568,
+        artFrameY: 213,
+        artRatio: 1.236,
+        type: 'pendulumSmall' as const,
+    },
     /** Normal distribution, with artwork extends under effect's box. */
     extendedCard: {
         artFinishX: 100,
@@ -122,7 +142,7 @@ export const CardArtCanvasCoordinateMap = {
         artRatio: 1,
         type: 'extendedCard' as const,
     },
-    /** Pendulum distribution, with artwork extends under pendulum effect's box and effect's box. */
+    /** Pendulum distribution, with artwork extends under pendulum effect's box and effect's box. Pendulum size is irrelevant here. */
     extendedPendulum: {
         artFinishX: 56,
         artFinishY: 213,
@@ -144,13 +164,51 @@ export const CardArtCanvasCoordinateMap = {
         artWidth: 702,
         artX: 56,
         artY: 213,
-        ratio: 1.057,
-        backgroundRatio: 1.057,
+        ratio: 1.055,
+        backgroundRatio: 1.055,
         artFrameWidth: 702,
         artFrameHeight: 530,
         artFrameY: 213,
         artRatio: 1.325,
         type: 'truePendulum' as const,
+    },
+    /**
+     * Pendulum distribution, with artwork extends under pendulum effect's box, but the pendulum box size is smaller.
+     * This results a taller visible image, but shorter image behind the box.
+     * It is only used for series 9 Pendulum cards, which is deprecated.
+     * */
+    truePendulumSmall: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 702,
+        artX: 56,
+        artY: 213,
+        ratio: 1.055,
+        backgroundRatio: 1.055,
+        artFrameWidth: 702,
+        artFrameHeight: 568,
+        artFrameY: 213,
+        artRatio: 1.325,
+        type: 'truePendulumSmall' as const,
+    },
+    /**
+     * Pendulum distribution, with artwork extends under pendulum effect's box, but the pendulum box size is larger.
+     * This results the same visible image as `truePendulum` distribution type, but taller image behind the box.
+     * It is only used for series 9 Pendulum cards, which is deprecated.
+     * */
+    truePendulumLarge: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 702,
+        artX: 56,
+        artY: 213,
+        ratio: 1,
+        backgroundRatio: 1,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artRatio: 1.325,
+        type: 'truePendulumLarge' as const,
     },
     /** Normal distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
     fullCard: {
@@ -167,7 +225,7 @@ export const CardArtCanvasCoordinateMap = {
         artRatio: 1,
         type: 'fullCard' as const,
     },
-    /** Pendulum distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
+    /** Pendulum distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. Pendulum size is irrelevant here */
     fullPendulum: {
         artFinishX: 56,
         artFinishY: 213,
@@ -187,6 +245,7 @@ export const getArtCanvasCoordinate = (
     isPendulum: boolean,
     opacity?: Partial<CardOpacity>,
     backgroundType?: BackgroundType,
+    pendulumSize?: PendulumSize,
 ) => {
     const {
         boundless,
@@ -199,21 +258,36 @@ export const getArtCanvasCoordinate = (
         : boundless;
 
     if (backgroundType === 'full') return CardArtCanvasCoordinateMap.fullCard;
-    const artSource = normalizedBoundless || body < 100
-        ? isPendulum
+    let distributionMode = 'normal';
+
+    /** The only different between boundless mode and transparent body is card art in boundless mode will be put higher than art frame */
+    if (normalizedBoundless || body < 100) {
+        distributionMode = isPendulum
             ? 'fullPendulum'
-            : 'fullCard'
-        : isPendulum
-            ? text < 100
-                ? 'extendedPendulum'
-                : pendulum < 100
-                    ? 'truePendulum'
-                    : 'pendulum'
-            : text < 100
+            : 'fullCard';
+    } else {
+        if (isPendulum) {
+            if (text < 100) {
+                distributionMode = 'extendedPendulum';
+            } else {
+                if (pendulum < 100) {
+                    if (pendulumSize === 'large') distributionMode = 'truePendulumLarge';
+                    if (pendulumSize === 'small') distributionMode = 'truePendulumSmall';
+                    if (pendulumSize === 'medium') distributionMode = 'truePendulum';
+                } else {
+                    distributionMode = pendulumSize === 'small'
+                        ? 'pendulumSmall'
+                        : 'pendulum';
+                }
+            }
+        } else {
+            distributionMode = text < 100
                 ? 'extendedCard'
                 : 'normal';
+        }
+    }
 
-    const result = CardArtCanvasCoordinateMap[artSource];
+    const result = CardArtCanvasCoordinateMap[distributionMode];
     return {
         ...result,
         backgroundRatio: backgroundType === 'frame'

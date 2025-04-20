@@ -536,7 +536,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const art = reader('Art Link') ?? emptyCard.art;
                 const artFit = normalizeBoolean(reader('Is Using Full Art'), emptyCard.artFit);
                 const artCrop: Crop = {
-                    aspect: getArtCanvasCoordinate(isPendulum, opacity).ratio,
+                    aspect: getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize).ratio,
                     height: normalizeFloat(reader('Art Crop - Height (%)'), emptyArtCrop.height),
                     width: normalizeFloat(reader('Art Crop - Width (%)'), emptyArtCrop.width),
                     x: normalizeFloat(reader('Art Crop - X (%)'), emptyArtCrop.x),
@@ -550,7 +550,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const backgroundType = (reader('Background Type') ?? emptyCard.backgroundType).toLowerCase() as BackgroundType;
                 const backgroundFit = normalizeBoolean(reader('Is Using Full Background'), emptyCard.backgroundFit);
                 const backgroundCrop: Crop = {
-                    aspect: getArtCanvasCoordinate(isPendulum, opacity, backgroundType).ratio,
+                    aspect: getArtCanvasCoordinate(isPendulum, opacity, backgroundType, pendulumSize).ratio,
                     height: normalizeFloat(reader('Background Crop - Height (%)'), emptyBackgroundCrop.height),
                     width: normalizeFloat(reader('Background Crop - Width (%)'), emptyBackgroundCrop.width),
                     x: normalizeFloat(reader('Background Crop - X (%)'), emptyBackgroundCrop.x),

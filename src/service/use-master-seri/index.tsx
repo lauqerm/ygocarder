@@ -39,6 +39,8 @@ import {
     DEFAULT_EFFECT_NORMAL_SIZE,
     DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
     PendulumNormalFontData,
+    PendulumSizeMap,
+    PendulumSize,
 } from 'src/model';
 import {
     checkLightHeader,
@@ -527,10 +529,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
-            drawScale(ctx, pendulumScaleBlue ?? '0', 84.4, 790, globalScale);
-            drawScale(ctx, pendulumScaleRed ?? '0', 728.0, 790, globalScale);
+            const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
+            drawScale(ctx, pendulumScaleBlue ?? '0', numberBlueX, numberY, fontSize, globalScale);
+            drawScale(ctx, pendulumScaleRed ?? '0', numberRedX, numberY, fontSize, globalScale);
         }
-    }, [readyToDraw, globalScale, isPendulum, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
+    }, [readyToDraw, globalScale, isPendulum, pendulumSize, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -932,10 +935,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const onExport = useCallback(async (exportProps: {
         isPendulum: boolean,
         opacity: Partial<CardOpacity>,
+        pendulumSize: PendulumSize,
         // isRelevant: () => boolean,
     }) => {
         const {
             // isRelevant,
+            pendulumSize,
             isPendulum = false,
             opacity,
         } = exportProps;
@@ -971,7 +976,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             // await generateLayer(frameCanvas, exportCtx);
             const artworkCanvas = artworkCanvasRef.current;
             if (artworkCanvas && exportCtx) {
-                const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity);
+                const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
                 const { width: imageWidth, height: imageHeight } = artworkCanvas;
 
                 if (imageHeight > 0) {

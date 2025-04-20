@@ -44,7 +44,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         opacity,
         artFinish,
         linkMap,
-        isPendulum,
+        isPendulum, pendulumSize,
         isLink,
         art, artCrop, artData, artSource, artFit,
         getUpdater,
@@ -54,7 +54,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             opacity,
             artFinish,
             linkMap,
-            isPendulum,
+            isPendulum, pendulumSize,
             isLink,
             art, artCrop, artData, artSource, artFit,
         },
@@ -64,7 +64,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         opacity,
         artFinish,
         linkMap,
-        isPendulum,
+        isPendulum, pendulumSize,
         isLink,
         art, artCrop, artData, artSource, artFit,
         getUpdater,
@@ -139,7 +139,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
                 message: language['error.max-size.message'],
             });
         }}
-        ratio={getArtCanvasCoordinate(isPendulum, opacity).ratio}
+        ratio={getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize).ratio}
         beforeCropper={showExtraDecorativeOption
             ? <StyledImageRadioTrain
                 className="art-finish-checkbox fill-input-train"

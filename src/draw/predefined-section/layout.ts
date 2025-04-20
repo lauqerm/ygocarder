@@ -144,11 +144,12 @@ export const getLayoutDrawFunction = ({
         artFinishX,
         artFinishY,
         artWidth,
-    } = getArtCanvasCoordinate(isPendulum, opacity);
+    } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
     const artBorder = opacityBody > 0 ? true : keepArtBorder;
     const artBoxY = 170, artBoxX = 60;
     const effectBoxY = 860, effectBoxX = 35;
     const backgroundEffectBoxY = effectBoxY + 24, backgroundEffectBoxX = effectBoxX + 19;
+    const backgroundEffectBoxWidth = 705, backgroundEffectBoxHeight = 231;
 
     const hasFoil = foil !== 'normal';
     const frameBorderType = isXyz || isSpeedSkill
@@ -182,7 +183,7 @@ export const getLayoutDrawFunction = ({
                 artWidth,
                 artFrameWidth,
                 artFrameHeight,
-            } = getArtCanvasCoordinate(isPendulum, normalizedOpacity, customBackgroundType);
+            } = getArtCanvasCoordinate(isPendulum, normalizedOpacity, customBackgroundType, pendulumSize);
             const { width: imageWidth, height: imageHeight } = imageCanvas;
             const imageScaledRatio = artWidth / imageWidth;
             const sourceOffsetX = bodyOpacity < 100
@@ -331,6 +332,7 @@ export const getLayoutDrawFunction = ({
                 isPendulum,
                 { ...opacity, boundless: true },
                 backgroundType,
+                pendulumSize,
             );
             ctx.drawImage(
                 backgroundCanvas,
@@ -416,18 +418,23 @@ export const getLayoutDrawFunction = ({
 
             ctx.scale(globalScale, globalScale);
             ctx.globalAlpha = opacityText / 100;
-            await drawAsset(
+            const {
+                frameType,
+                effectBoxOffsetY,
+                pendulumBoxX, pendulumBoxY, pendulumBoxWidth, pendulumBoxHeight,
+                pendulumBoxOffsetY,
+            } = PendulumSizeMap[pendulumSize];
+
+            await drawAssetWithSize(
                 ctx,
                 `background/background-text-${bottomFrame}.png`,
-                backgroundEffectBoxX, backgroundEffectBoxY,
+                backgroundEffectBoxX, backgroundEffectBoxY + effectBoxOffsetY,
+                backgroundEffectBoxWidth, backgroundEffectBoxHeight,
+                0, 0 + effectBoxOffsetY,
+                backgroundEffectBoxWidth, backgroundEffectBoxHeight,
             );
             if (withPendulum) {
                 ctx.globalAlpha = opacityPendulum / 100;
-                const {
-                    frameType,
-                    pendulumBoxX, pendulumBoxY, pendulumBoxWidth, pendulumBoxHeight,
-                    pendulumBoxOffsetY,
-                } = PendulumSizeMap[pendulumSize];
                 const {
                     exceptionFrameType = frameType,
                     exceptionPendulumBoxOffsetHeight = 0,

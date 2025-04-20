@@ -49,21 +49,21 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
     const language = useLanguage();
     const {
         background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
-        isPendulum,
+        isPendulum, pendulumSize,
         opacity,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
         card: {
             background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
-            isPendulum,
+            isPendulum, pendulumSize,
             opacity,
         },
         getUpdater,
         setCard,
     }) => ({
         background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
-        isPendulum,
+        isPendulum, pendulumSize,
         opacity,
         getUpdater,
         setCard,
@@ -131,7 +131,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
                 message: language['error.max-size.message'],
             });
         }}
-        ratio={getArtCanvasCoordinate(isPendulum, opacity, backgroundType).backgroundRatio}
+        ratio={getArtCanvasCoordinate(isPendulum, opacity, backgroundType, pendulumSize).backgroundRatio}
         beforeCropper={null}
     >
         {children}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { compressCardData, insertUrlParam, normalizeCardName } from 'src/util';
 import { useCard } from './use-card';
-import { CardOpacity } from 'src/model';
+import { CardOpacity, PendulumSize } from 'src/model';
 import { useSetting } from './use-setting';
 import { notification } from 'antd';
 import { useLanguage } from './use-i18n';
@@ -17,6 +17,7 @@ export type UseCardExport = {
     onExport: (exportProps: {
         isPendulum: boolean,
         opacity: Partial<CardOpacity>,
+        pendulumSize: PendulumSize,
         isRelevant: () => boolean,
     }) => Promise<void>,
     onDownloadError: () => void,
@@ -40,6 +41,7 @@ export const useCardExport = ({
         opacity,
         name,
         isPendulum,
+        pendulumSize,
     } = currentCard;
     const pendingSave = useRef(false);
 
@@ -166,6 +168,7 @@ export const useCardExport = ({
                         exportRef.current.currentPipeline = onExport({
                             isPendulum,
                             opacity,
+                            pendulumSize,
                             isRelevant: () => relevant,
                         });
 

@@ -577,22 +577,22 @@ function App() {
                                 <canvas id="pendulumScaleCanvas"
                                     ref={pendulumScaleCanvasRef}
                                     width={CanvasWidth * globalScale}
-                                    height={889 * globalScale}
+                                    height={920 * globalScale}
                                 />
                                 <canvas id="pendulumEffectCanvas"
                                     ref={pendulumEffectCanvasRef}
                                     width={CanvasWidth * globalScale}
-                                    height={889 * globalScale}
+                                    height={920 * globalScale}
                                 />
                                 <canvas id="typeCanvas"
                                     ref={typeCanvasRef}
                                     width={CanvasWidth * globalScale}
-                                    height={1037 * globalScale}
+                                    height={CanvasHeight * globalScale}
                                 />
                                 <canvas id="effectCanvas"
                                     ref={effectCanvasRef}
                                     width={CanvasWidth * globalScale}
-                                    height={1111 * globalScale}
+                                    height={CanvasHeight * globalScale}
                                 />
                                 <canvas id="statCanvas"
                                     ref={statCanvasRef}
