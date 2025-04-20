@@ -508,7 +508,9 @@ export const getLayoutDrawFunction = ({
                 pendulumBorderContext,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
                     + `-${foilType}`
-                    + '-artless.png',
+                    + '-artless'
+                    + (isScaleless ? '-scaleless' : '')
+                    + '.png',
                 30, topToPendulumStructureFrame,
             );
             if (artBorder) {
