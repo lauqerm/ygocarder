@@ -142,7 +142,7 @@ export const CardArtCanvasCoordinateMap = {
         artRatio: 1,
         type: 'extendedCard' as const,
     },
-    /** Pendulum distribution, with artwork extends under pendulum effect's box and effect's box. Pendulum size is irrelevant here. */
+    /** Pendulum distribution, with artwork extends under pendulum effect's box and effect's box. */
     extendedPendulum: {
         artFinishX: 56,
         artFinishY: 213,
@@ -156,6 +156,25 @@ export const CardArtCanvasCoordinateMap = {
         artFrameY: 213,
         artRatio: 1.325,
         type: 'extendedPendulum' as const,
+    },
+    /**
+     * Pendulum distribution, with artwork extends under pendulum effect's box and effect's box, but the pendulum box size is smaller.
+     * Even though the image size does not change, the image frame does become larger.
+     * It is only used for series 9 Pendulum cards, which is deprecated.
+     *  */
+    extendedPendulumSmall: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 702,
+        artX: 56,
+        artY: 213,
+        ratio: 0.775,
+        backgroundRatio: 0.775,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artRatio: 1.236,
+        type: 'extendedPendulumSmall' as const,
     },
     /** Pendulum distribution, with artwork extends under pendulum effect's box. It is actually the "default" mode of pendulum cards in practices. But most of the time the artwork only cut the visible image part because it is very hard to find the full image of a card unless an official source provide it. */
     truePendulum: {
@@ -268,7 +287,9 @@ export const getArtCanvasCoordinate = (
     } else {
         if (isPendulum) {
             if (text < 100) {
-                distributionMode = 'extendedPendulum';
+                distributionMode = pendulumSize === 'small'
+                    ? 'extendedPendulumSmall'
+                    : 'extendedPendulum';
             } else {
                 if (pendulum < 100) {
                     if (pendulumSize === 'large') distributionMode = 'truePendulumLarge';

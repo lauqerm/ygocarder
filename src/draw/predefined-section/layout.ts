@@ -564,12 +564,14 @@ export const getLayoutDrawFunction = ({
                 await loopArtFinish(
                     ctx,
                     'art',
-                    async (finishType, pendulumSuffix) => await drawAssetWithSize(
-                        ctx,
-                        `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,
-                        artFinishX, artFinishY,
-                        artWidth, artWidth / artRatio,
-                    ),
+                    async (finishType, pendulumSuffix) => {
+                        return await drawAssetWithSize(
+                            ctx,
+                            `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,
+                            artFinishX, artFinishY,
+                            artWidth, artWidth / artRatio,
+                        );
+                    },
                     pendulumSize,
                 );
                 ctx.resetTransform();
