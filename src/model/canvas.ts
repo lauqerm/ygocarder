@@ -56,6 +56,8 @@ export const CanvasConst = {
     height: 1185,
     maximumScale: 2,
     topToPendulumStructure: 210,
+    /** Pure structure is visible frame on the card, the frame of that structure has a bit padding for shadow around it. */
+    topToPendulumStructureFrame: 185,
     topToArtFrame: 213,
     pendulumStructureHeight: 912,
     leftToPendulumStructure: 52,

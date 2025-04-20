@@ -74,6 +74,7 @@ const {
     width: cardWidth,
     height: cardHeight,
     topToPendulumStructure,
+    topToPendulumStructureFrame,
     pendulumStructureHeight,
     leftToPendulumStructure,
     effectBoxHeight,
@@ -99,6 +100,7 @@ export const getLayoutDrawFunction = ({
     opacity,
     isLink, isSpeedSkill, isXyz,
     isPendulum,
+    isScaleless,
     loopFinish,
     loopArtFinish,
 }: {
@@ -118,6 +120,7 @@ export const getLayoutDrawFunction = ({
     opacity: CardOpacity,
     isXyz: boolean, isSpeedSkill: boolean, isLink: boolean,
     isPendulum: boolean,
+    isScaleless: boolean,
     loopFinish: (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
@@ -143,10 +146,17 @@ export const getLayoutDrawFunction = ({
         artWidth,
         artRatio,
     } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
+    const {
+        frameType,
+        effectBoxOffsetY,
+        pendulumBoxX, pendulumBoxY, pendulumBoxWidth, pendulumBoxHeight,
+        pendulumBoxOffsetY,
+        artlessFrameY,
+    } = PendulumSizeMap[pendulumSize];
     const artBorder = opacityBody > 0 ? true : keepArtBorder;
     const artBoxY = 170, artBoxX = 60;
     const effectBoxY = 860, effectBoxX = 35;
-    const backgroundEffectBoxY = effectBoxY + 24, backgroundEffectBoxX = effectBoxX + 19;
+    const backgroundEffectBoxY = effectBoxY + 25, backgroundEffectBoxX = effectBoxX + 19;
     const backgroundEffectBoxWidth = 705, backgroundEffectBoxHeight = 231;
 
     const hasFoil = foil !== 'normal';
@@ -377,7 +387,7 @@ export const getLayoutDrawFunction = ({
         drawPendulumScaleIcon: async () => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
-            await drawAsset(ctx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 750);
+            if (!isScaleless) await drawAsset(ctx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 750);
             ctx.resetTransform();
         },
         /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
@@ -415,21 +425,23 @@ export const getLayoutDrawFunction = ({
 
             ctx.scale(globalScale, globalScale);
             ctx.globalAlpha = opacityText / 100;
-            const {
-                frameType,
-                effectBoxOffsetY,
-                pendulumBoxX, pendulumBoxY, pendulumBoxWidth, pendulumBoxHeight,
-                pendulumBoxOffsetY,
-            } = PendulumSizeMap[pendulumSize];
 
-            await drawAssetWithSize(
-                ctx,
-                `background/background-text-${bottomFrame}.png`,
-                backgroundEffectBoxX, backgroundEffectBoxY + effectBoxOffsetY,
-                backgroundEffectBoxWidth, backgroundEffectBoxHeight,
-                0, 0 + effectBoxOffsetY,
-                backgroundEffectBoxWidth, backgroundEffectBoxHeight,
-            );
+            if (withPendulum) {
+                await drawAssetWithSize(
+                    ctx,
+                    `background/background-text-${bottomFrame}.png`,
+                    backgroundEffectBoxX, backgroundEffectBoxY + effectBoxOffsetY,
+                    backgroundEffectBoxWidth, backgroundEffectBoxHeight,
+                    0, 0 + effectBoxOffsetY,
+                    backgroundEffectBoxWidth, backgroundEffectBoxHeight,
+                );
+            } else {
+                await drawAsset(
+                    ctx,
+                    `background/background-text-${bottomFrame}.png`,
+                    backgroundEffectBoxX, backgroundEffectBoxY,
+                );
+            }
             if (withPendulum) {
                 ctx.globalAlpha = opacityPendulum / 100;
                 const {
@@ -487,15 +499,34 @@ export const getLayoutDrawFunction = ({
         },
         drawPendulumBorder: async (artBorder: boolean, foilType: Foil) => {
             if (!ctx) return;
-            ctx.scale(globalScale, globalScale);
+            /** We create a new canvas for easier manipulation. */
+            const pendulumBorderCanvas = document.createElement('canvas');
+            pendulumBorderCanvas.width = cardWidth;
+            pendulumBorderCanvas.height = cardHeight;
+            const pendulumBorderContext = pendulumBorderCanvas.getContext('2d');
             await drawAsset(
-                ctx,
+                pendulumBorderContext,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
                     + `-${foilType}`
-                    + (artBorder ? '' : '-artless')
-                    + '.png',
-                30, 185,
+                    + '-artless.png',
+                30, topToPendulumStructureFrame,
             );
+            if (artBorder) {
+                /**
+                 * In artless border, the top of the pendulum effect box has shadow. But there is no shadow in normal border, so if art border is present, we cut the top of the artless border to remove the shadow, before seemlessly join it with the art border part.
+                 */
+                pendulumBorderContext.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
+                await drawAsset(
+                    pendulumBorderContext,
+                    `frame-pendulum/border-pendulum-${pendulumSize}`
+                        + `-${foilType}`
+                        + '.png',
+                    30, topToPendulumStructureFrame,
+                );
+            }
+
+            ctx.scale(globalScale, globalScale);
+            ctx.drawImage(pendulumBorderCanvas, 0, 0);
             ctx.resetTransform();
         },
         /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied.
@@ -622,7 +653,11 @@ export const getLayoutDrawFunction = ({
             if (artBorder) await loopFinish(
                 ctx,
                 'art-border-pendulum',
-                finishType => drawAsset(ctx, `finish/finish-${finishType}-art-border-pendulum-${pendulumSize}.png`, 0, 0)
+                finishType => drawAsset(
+                    ctx,
+                    `finish/finish-${finishType}-art-border-pendulum-${pendulumSize}.png`,
+                    0, 0,
+                ),
             );
             ctx.resetTransform();
         },
@@ -632,7 +667,11 @@ export const getLayoutDrawFunction = ({
             await loopFinish(
                 ctx,
                 'border-pendulum',
-                async finishType => drawAsset(ctx, `finish/finish-${finishType}-border-pendulum-${pendulumSize}.png`, 0, 0)
+                async finishType => drawAsset(
+                    ctx,
+                    `finish/finish-${finishType}-border-pendulum-${pendulumSize}${isScaleless ? '-scaleless' : ''}.png`,
+                    0, 0,
+                )
             );
             ctx.resetTransform();
         },
@@ -655,7 +694,7 @@ export const getLayoutDrawFunction = ({
                 ctx,
                 'frame-background',
                 async type => {
-                    return drawAsset(ctx, `finish/finish-${type}-frame-background${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`, 0, 0);
+                    return drawAsset(ctx, `finish/finish-${type}-frame-background${isPendulum ? '-pendulum' : ''}.png`, 0, 0);
                 },
             );
             ctx.resetTransform();

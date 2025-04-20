@@ -13,6 +13,7 @@ export const PendulumSizeMap = {
         numberBlueX: 84.4,
         numberRedX: 728.0,
         numberY: 816,
+        artlessFrameY: 594,
         fontSize: 56.5,
     },
     medium: {
@@ -28,6 +29,7 @@ export const PendulumSizeMap = {
         numberBlueX: 84.4,
         numberRedX: 728.0,
         numberY: 790,
+        artlessFrameY: 553,
         fontSize: 60.5,
     },
     large: {
@@ -43,6 +45,7 @@ export const PendulumSizeMap = {
         numberBlueX: 84.4,
         numberRedX: 728.0,
         numberY: 806,
+        artlessFrameY: 553,
         fontSize: 60.5,
     },
 };

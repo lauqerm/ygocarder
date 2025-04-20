@@ -30,6 +30,7 @@ export const FinishMap: Record<string, FinishInformation> = {
         value: 'type3',
         label: '3',
         partInstructionMap: {
+            'card-border': type3CommonInstruction,
             'art-overlay': type3CommonInstruction,
             'art-border': type3CommonInstruction,
             'art-border-pendulum': type3CommonInstruction,
@@ -69,6 +70,7 @@ export const FinishMap: Record<string, FinishInformation> = {
         value: 'type8',
         label: '8',
         partInstructionMap: {
+            'card-border': type8CommonInstruction,
             'art-border': type8CommonInstruction,
             'art-border-pendulum': type8CommonInstruction,
             'border-pendulum': type8CommonInstruction,

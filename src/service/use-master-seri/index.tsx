@@ -220,7 +220,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             ? (isMonster || isSpeedSkill)
             : cardIcon !== 'st'
         : false;
-
+    const isScaleless = (pendulumScaleBlue ?? '') === '' && (pendulumScaleRed ?? '') === '';
     const {
         isInitializing,
         imageChangeCount,
@@ -325,6 +325,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 opacity: normalizedOpacity,
                 isLink, isSpeedSkill, isXyz,
                 isPendulum,
+                isScaleless,
                 loopFinish,
                 loopArtFinish,
             });
@@ -506,6 +507,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isDuelTerminalCard,
         isLink,
         isPendulum,
+        isScaleless,
         isSpeedCard,
         isSpeedSkill,
         isXyz,
@@ -522,7 +524,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         imageChangeCount, // Special dependency, do not remove even though it is not used in the effect itself
     ]);
 
-    /** DRAW SCALE */
+    /** DRAW PENDULUM SCALE */
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
@@ -530,8 +532,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
             const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
-            drawScale(ctx, pendulumScaleBlue ?? '0', numberBlueX, numberY, fontSize, globalScale);
-            drawScale(ctx, pendulumScaleRed ?? '0', numberRedX, numberY, fontSize, globalScale);
+            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale);
+            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale);
         }
     }, [readyToDraw, globalScale, isPendulum, pendulumSize, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
 
