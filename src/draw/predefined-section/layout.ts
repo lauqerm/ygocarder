@@ -15,6 +15,7 @@ import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
 import { getCardIconFromFrame } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
+import { getFinishIterator } from '../canvas-util';
 
 export const baseDrawLinkArrowMap = async (
     ctx: CanvasRenderingContext2D,
@@ -122,11 +123,7 @@ export const getLayoutDrawFunction = ({
         name?: string,
         caller?: (finishType: string) => Promise<any>,
     ) => Promise<void>,
-    loopArtFinish: (
-        ctx?: CanvasRenderingContext2D | null,
-        name?: string,
-        caller?: (finishType: string) => Promise<any>,
-    ) => Promise<void>,
+    loopArtFinish: ReturnType<typeof getFinishIterator>,
 }) => {
     const ctx = canvas.getContext('2d');
     const {
@@ -144,6 +141,7 @@ export const getLayoutDrawFunction = ({
         artFinishX,
         artFinishY,
         artWidth,
+        artRatio,
     } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
     const artBorder = opacityBody > 0 ? true : keepArtBorder;
     const artBoxY = 170, artBoxX = 60;
@@ -182,7 +180,6 @@ export const getLayoutDrawFunction = ({
                 artY,
                 artWidth,
                 artFrameWidth,
-                artFrameHeight,
             } = getArtCanvasCoordinate(isPendulum, normalizedOpacity, customBackgroundType, pendulumSize);
             const { width: imageWidth, height: imageHeight } = imageCanvas;
             const imageScaledRatio = artWidth / imageWidth;
@@ -216,7 +213,7 @@ export const getLayoutDrawFunction = ({
                 destinationHeight,
                 /** Background fill is not depend on art size */
                 fillWidth: artFrameWidth,
-                fillHeight: artFrameHeight,
+                fillHeight: pendulumStructureHeight,
             };
         },
 
@@ -567,11 +564,13 @@ export const getLayoutDrawFunction = ({
                 await loopArtFinish(
                     ctx,
                     'art',
-                    async finishType => await drawAsset(
+                    async (finishType, pendulumSuffix) => await drawAssetWithSize(
                         ctx,
-                        `finish/art-finish-${finishType}${isPendulum ? `-pendulum-${pendulumSize}` : ''}.png`,
+                        `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,
                         artFinishX, artFinishY,
+                        artWidth, artWidth / artRatio,
                     ),
+                    pendulumSize,
                 );
                 ctx.resetTransform();
             }

@@ -1,4 +1,4 @@
-import { CanvasConst, FinishInformation, FinishMap } from 'src/model';
+import { CanvasConst, DEFAULT_PENDULUM_SIZE, FinishInformation, FinishMap, PendulumSize } from 'src/model';
 import { CanvasTextStyle } from 'src/service';
 
 const { height: CanvasHeight, width: CanvasWidth, maximumScale } = CanvasConst;
@@ -109,24 +109,28 @@ export const getFinishIterator = (
     return async (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
-        caller?: (finishType: string) => Promise<any>,
+        caller?: (finishType: string, pendulumSuffix: string) => Promise<any>,
+        pendulumSize?: PendulumSize,
     ) => {
         if (!ctx || !Array.isArray(finish) || finish.length <= 0) return Promise.resolve();
         for (const finishType of finish) {
             const finishInformation = finishMap[finishType];
             if (caller && finishMap[finishType]) {
-                const { partInstructionMap } = finishInformation;
+                const { partInstructionMap, pendulumSubstituteMap } = finishInformation;
                 const instructionList = name ? partInstructionMap[name] ?? [] : [];
+                const pendulumSuffix = pendulumSize
+                    ? pendulumSubstituteMap[pendulumSize] ?? pendulumSize
+                    : DEFAULT_PENDULUM_SIZE;
 
                 if (instructionList.length) {
                     for (const { blendMode = 'source-over', opacity = 1 } of instructionList) {
                         ctx.globalCompositeOperation = blendMode;
                         ctx.globalAlpha = opacity;
 
-                        await caller(finishType);
+                        await caller(finishType, pendulumSuffix);
                     }
                 } else {
-                    await caller(finishType);
+                    await caller(finishType, pendulumSuffix);
                 }
                 ctx.globalAlpha = 1;
                 ctx.globalCompositeOperation = 'source-over';

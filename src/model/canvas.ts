@@ -258,7 +258,7 @@ export const getArtCanvasCoordinate = (
         : boundless;
 
     if (backgroundType === 'full') return CardArtCanvasCoordinateMap.fullCard;
-    let distributionMode = 'normal';
+    let distributionMode: keyof typeof CardArtCanvasCoordinateMap = 'normal';
 
     /** The only different between boundless mode and transparent body is card art in boundless mode will be put higher than art frame */
     if (normalizedBoundless || body < 100) {

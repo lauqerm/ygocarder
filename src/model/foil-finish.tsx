@@ -11,17 +11,20 @@ export type FinishInformation = {
     value: string,
     label: React.ReactNode,
     partInstructionMap: Record<string, FinishInstruction[]>,
+    pendulumSubstituteMap: Record<string, string>,
 };
 export const FinishMap: Record<string, FinishInformation> = {
     type1: {
         value: 'type1',
         label: '1',
         partInstructionMap: {},
+        pendulumSubstituteMap: {},
     },
     type2: {
         value: 'type2',
         label: '2',
         partInstructionMap: {},
+        pendulumSubstituteMap: {},
     },
     type3: {
         value: 'type3',
@@ -34,21 +37,25 @@ export const FinishMap: Record<string, FinishInformation> = {
             'attribute': type3CommonInstruction,
             'frame': type3CommonInstruction,
         },
+        pendulumSubstituteMap: {},
     },
     type4: {
         value: 'type4',
         label: '4',
         partInstructionMap: {},
+        pendulumSubstituteMap: {},
     },
     type5: {
         value: 'type5',
         label: '5',
         partInstructionMap: {},
+        pendulumSubstituteMap: {},
     },
     type6: {
         value: 'type6',
         label: '6',
         partInstructionMap: {},
+        pendulumSubstituteMap: {},
     },
     type7: {
         value: 'type7',
@@ -56,6 +63,7 @@ export const FinishMap: Record<string, FinishInformation> = {
         partInstructionMap: {
             'total-overlay': [{ blendMode: 'screen', opacity: 0.175 }, { blendMode: 'color-dodge', opacity: 0.125 }],
         },
+        pendulumSubstituteMap: {},
     },
     type8: {
         value: 'type8',
@@ -69,6 +77,7 @@ export const FinishMap: Record<string, FinishInformation> = {
             'name': type8CommonInstruction,
             'star': type8CommonInstruction,
         },
+        pendulumSubstituteMap: {},
     },
     type9: {
         value: 'type9',
@@ -76,6 +85,7 @@ export const FinishMap: Record<string, FinishInformation> = {
         partInstructionMap: {
             'total-overlay': [{ blendMode: 'screen', opacity: 0.45 }],
         },
+        pendulumSubstituteMap: {},
     },
 };
 
@@ -85,6 +95,11 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
         label: '1',
         partInstructionMap: {
             art: [{}],
+        },
+        pendulumSubstituteMap: {
+            small: '-pendulum-small',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
         },
     },
     type2: {
@@ -97,12 +112,22 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
                 { opacity: 0.48, blendMode: 'multiply' },
             ],
         },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
+        },
     },
     type3: {
         value: 'type3',
         label: '3',
         partInstructionMap: {
             art: [{ opacity: 0.66, blendMode: 'color-dodge' }, { opacity: 0.64, blendMode: 'multiply' }],
+        },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
         },
     },
     type4: {
@@ -111,12 +136,22 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
         partInstructionMap: {
             art: [{ opacity: 0.31, blendMode: 'color-dodge' }, { opacity: 0.6, blendMode: 'multiply' }]
         },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
+        },
     },
     type5: {
         value: 'type5',
         label: '5',
         partInstructionMap: {
             art: [{ opacity: 0.19, blendMode: 'color-dodge' }, { opacity: 0.6, blendMode: 'multiply' }]
+        },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
         },
     },
     type6: {
@@ -125,12 +160,22 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
         partInstructionMap: {
             art: [{ opacity: 0.25, blendMode: 'color-dodge' }, { opacity: 0.6, blendMode: 'multiply' }]
         },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
+        },
     },
     type7: {
         value: 'type7',
         label: '7',
         partInstructionMap: {
             art: [{}],
+        },
+        pendulumSubstituteMap: {
+            small: '-pendulum-small',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
         },
     },
 };
