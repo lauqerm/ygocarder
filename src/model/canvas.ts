@@ -188,7 +188,7 @@ export const CardArtCanvasCoordinateMap = {
         artFrameWidth: 702,
         artFrameHeight: 568,
         artFrameY: 213,
-        artRatio: 1.325,
+        artRatio: 1.236,
         type: 'truePendulumSmall' as const,
     },
     /**
