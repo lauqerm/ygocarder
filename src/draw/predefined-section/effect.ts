@@ -37,7 +37,7 @@ export const getEffectFontAndCoordinate = ({
     ].filter(entry => entry !== '').join('-');
     const fontDataKey = [
         format,
-        frameType ? 'pendulumLarge' : '',
+        ...(frameType === 'scaleless' ? ['pendulumLarge'] : []),
         typeInEffect ? 'type' : '',
         statInEffect ? 'stat' : ''
     ].filter(entry => entry !== '').join('-');
