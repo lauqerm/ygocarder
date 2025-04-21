@@ -800,6 +800,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     statInEffect,
                     typeInEffect,
                     useItalic,
+                    frameType: (isPendulum && pendulumSize === 'large') ? 'scaleless' : 'normal',
                 }),
                 textStyle: resolvedEffectTextStyle,
                 option: {
@@ -818,7 +819,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 textStyle: resolvedTypeTextStyle,
                 size: !typeInEffect
                     ? 'large'
-                    : effectIndexSize <= DEFAULT_EFFECT_NORMAL_SIZE ? 'medium' : 'small',
+                    : (isPendulum && pendulumSize === 'large')
+                        ? (effectIndexSize <= DEFAULT_EFFECT_NORMAL_SIZE ? 'highPendulumNormal' : 'highPendulumSmaller')
+                        : (effectIndexSize <= DEFAULT_EFFECT_NORMAL_SIZE ? 'normal' : 'smaller'),
                 subFamily: normalizedSubFamily,
                 typeAbility: normalizedTypeAbility,
             });
@@ -834,6 +837,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         effectCanvasRef,
         format,
         frame,
+        isPendulum,
+        pendulumSize,
         furiganaHelper,
         isMonster,
         isNormal,
@@ -855,6 +860,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const customPendulumStyle = pendulumTextStyle[0];
             const normalizedUpSize = customPendulumStyle ? upSize : 0;
             const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
+            const fontDataKey = `${format}-${pendulumSize}`;
             drawEffect({
                 ctx,
                 content: pendulumEffect,
@@ -862,7 +868,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 useItalic: useItalic,
                 fontData: (useItalic
                     ? PendulumNormalFontData
-                    : PendulumEffectFontData)[pendulumSize][format],
+                    : PendulumEffectFontData)[fontDataKey],
+                fontDataKey,
                 textStyle: resolvedPendulumEffectTextStyle,
                 sizeList: PendulumEffectCoordinateMap[isScaleless ? 'scaleless' : 'normal'][pendulumSize],
                 condenseTolerant,

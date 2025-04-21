@@ -128,6 +128,9 @@ export const DefaultOCGEffectFontData: FontData = {
     fontList: [],
 };
 
+/**
+ * Keep in sync with EffectFontData, for example if tcg-type of EffectFontData fontList has 9 entries, tcg-type of NormalFontData must also has 9 entries.
+ * */
 export const NormalFontData: Record<string, FontData> = {
     'tcg': {
         ...DefaultTCGNormalFontData,
@@ -171,7 +174,7 @@ export const NormalFontData: Record<string, FontData> = {
         ...DefaultTCGNormalFontData,
         fontList: [
             { bulletWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4, bulletOffset: 2 },
-            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletWidth: 32, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
             { bulletWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
@@ -179,6 +182,58 @@ export const NormalFontData: Record<string, FontData> = {
             { bulletWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletOffset: 1 },
             { bulletWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletOffset: 1 },
             { bulletWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletOffset: 1 },
+        ]
+    },
+    'tcg-pendulumLarge': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletWidth: 38, fontSize: 36.8, lineHeight: 43.3, lineCount: 4, bulletOffset: 1 },
+            { bulletWidth: 32, fontSize: 31.5, lineHeight: 35.6, lineCount: 5, bulletOffset: 1 },
+            { bulletWidth: 26, fontSize: 28.1, lineHeight: 30.1, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 23.7, lineHeight: 25.8, lineCount: 7 },
+            { bulletWidth: 22, fontSize: 19.54, lineHeight: 22.7, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 20, fontSize: 17.14, lineHeight: 18.55, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 18, fontSize: 15.6, lineHeight: 16.4, lineCount: 11, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 14.4, lineHeight: 15.0, lineCount: 12, bulletOffset: 1 },
+        ],
+    },
+    'tcg-pendulumLarge-stat': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletWidth: 41, fontSize: 39.5, lineHeight: 47.9, lineCount: 3, bulletOffset: 2 },
+            { bulletWidth: 34, fontSize: 32.6, lineHeight: 36.0, lineCount: 4 },
+            { bulletWidth: 26, fontSize: 26.7, lineHeight: 29.5, lineCount: 5 },
+            { bulletWidth: 23, fontSize: 24.8, lineHeight: 24.7, lineCount: 6 },
+            { bulletWidth: 20, fontSize: 17.0, lineHeight: 18.65, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.3, lineHeight: 16.7, lineCount: 9, bulletOffset: 1 },
+            { bulletWidth: 16, fontSize: 14.4, lineHeight: 15.0, lineCount: 10, bulletOffset: 1 },
+        ]
+    },
+    'tcg-pendulumLarge-type-stat': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletWidth: 40, fontSize: 44.4, lineHeight: 54.1, lineCount: 2, bulletOffset: 1 },
+            { bulletWidth: 30, fontSize: 33.5, lineHeight: 37.5, lineCount: 3 },
+            { bulletWidth: 26, fontSize: 26.6, lineHeight: 28.5, lineCount: 4 },
+            { bulletWidth: 23, fontSize: 24.7, lineHeight: 23.3, lineCount: 5 },
+            { bulletWidth: 22, fontSize: 19.4, lineHeight: 19.5, lineCount: 6, bulletOffset: 1 },
+            { bulletWidth: 20, fontSize: 18.2, lineHeight: 16.9, lineCount: 7, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.9, lineHeight: 14.8, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 16, fontSize: 13.7, lineHeight: 13.2, lineCount: 9, bulletOffset: 1 },
+        ]
+    },
+    'tcg-pendulumLarge-type': {
+        ...DefaultTCGNormalFontData,
+        fontList: [
+            { bulletWidth: 40, fontSize: 38.9, lineHeight: 45.5, lineCount: 3, bulletOffset: 1 },
+            { bulletWidth: 36, fontSize: 32.4, lineHeight: 36.9, lineCount: 4, bulletOffset: 1 },
+            { bulletWidth: 28, fontSize: 26.5, lineHeight: 28.8, lineCount: 5 },
+            { bulletWidth: 25, fontSize: 22.2, lineHeight: 24.5, lineCount: 6 },
+            { bulletWidth: 22, fontSize: 19.5, lineHeight: 21.2, lineCount: 7 },
+            { bulletWidth: 20, fontSize: 17.6, lineHeight: 18.5, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 15.7, lineHeight: 16.6, lineCount: 9 },
+            { bulletWidth: 18, fontSize: 14.1, lineHeight: 15.0, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 16, fontSize: 12.4, lineHeight: 13.4, lineCount: 11, bulletOffset: 1 },
         ]
     },
 };
@@ -203,7 +258,7 @@ export const EffectFontData: Record<string, FontData> = {
         ...DefaultTCGEffectFontData,
         fontList: [
             { bulletWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletOffset: 2 },
-            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletWidth: 32, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
             { bulletWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletOffset: 1 },
@@ -228,7 +283,7 @@ export const EffectFontData: Record<string, FontData> = {
         ...DefaultTCGEffectFontData,
         fontList: [
             { bulletWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletOffset: 2 },
-            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletWidth: 32, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
             { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
             { bulletWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
             { bulletWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
@@ -236,6 +291,58 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletOffset: 1 },
             { bulletWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletOffset: 1 },
             { bulletWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletOffset: 1 },
+        ]
+    },
+    'tcg-pendulumLarge': {
+        ...DefaultTCGEffectFontData,
+        fontList: [
+            { bulletWidth: 38, fontSize: 37.6, lineHeight: 43.3, lineCount: 4, bulletOffset: 1 },
+            { bulletWidth: 32, fontSize: 32.2, lineHeight: 35.6, lineCount: 5, bulletOffset: 1 },
+            { bulletWidth: 26, fontSize: 28.7, lineHeight: 30.1, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 24.2, lineHeight: 25.8, lineCount: 7 },
+            { bulletWidth: 22, fontSize: 19.94, lineHeight: 22.7, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 20, fontSize: 17.44, lineHeight: 18.55, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 18, fontSize: 15.8, lineHeight: 16.4, lineCount: 11, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 14.5, lineHeight: 15.0, lineCount: 12, bulletOffset: 1 },
+        ],
+    },
+    'tcg-pendulumLarge-stat': {
+        ...DefaultTCGEffectFontData,
+        fontList: [
+            { bulletWidth: 41, fontSize: 40.2, lineHeight: 47.9, lineCount: 3, bulletOffset: 2 },
+            { bulletWidth: 34, fontSize: 33.2, lineHeight: 36.0, lineCount: 4 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
+            { bulletWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 6 },
+            { bulletWidth: 20, fontSize: 17.31, lineHeight: 18.65, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.5, lineHeight: 16.7, lineCount: 9, bulletOffset: 1 },
+            { bulletWidth: 16, fontSize: 14.5, lineHeight: 15.0, lineCount: 10, bulletOffset: 1 },
+        ]
+    },
+    'tcg-pendulumLarge-type-stat': {
+        ...DefaultTCGEffectFontData,
+        fontList: [
+            { bulletWidth: 40, fontSize: 45.2, lineHeight: 54.1, lineCount: 2, bulletOffset: 1 },
+            { bulletWidth: 30, fontSize: 34.2, lineHeight: 37.5, lineCount: 3 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 28.5, lineCount: 4 },
+            { bulletWidth: 23, fontSize: 25.2, lineHeight: 23.3, lineCount: 5 },
+            { bulletWidth: 22, fontSize: 19.85, lineHeight: 19.5, lineCount: 6, bulletOffset: 1 },
+            { bulletWidth: 20, fontSize: 18.5, lineHeight: 16.9, lineCount: 7, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 16.1, lineHeight: 14.8, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 16, fontSize: 13.8, lineHeight: 13.2, lineCount: 9, bulletOffset: 1 },
+        ]
+    },
+    'tcg-pendulumLarge-type': {
+        ...DefaultTCGEffectFontData,
+        fontList: [
+            { bulletWidth: 40, fontSize: 39.8, lineHeight: 45.5, lineCount: 3, bulletOffset: 1 },
+            { bulletWidth: 36, fontSize: 33.2, lineHeight: 36.9, lineCount: 4, bulletOffset: 1 },
+            { bulletWidth: 28, fontSize: 27.2, lineHeight: 28.8, lineCount: 5 },
+            { bulletWidth: 25, fontSize: 22.8, lineHeight: 24.5, lineCount: 6 },
+            { bulletWidth: 22, fontSize: 19.95, lineHeight: 21.2, lineCount: 7 },
+            { bulletWidth: 20, fontSize: 17.95, lineHeight: 18.5, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 16.0, lineHeight: 16.6, lineCount: 9 },
+            { bulletWidth: 18, fontSize: 14.3, lineHeight: 15.0, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 16, fontSize: 12.5, lineHeight: 13.4, lineCount: 11, bulletOffset: 1 },
         ]
     },
     'ocg': {
@@ -278,54 +385,3 @@ export const EffectFontData: Record<string, FontData> = {
 };
 
 export type FontStyle = '' | 'italic' | 'small-caps';
-
-export type CondenseType = 'veryStrict' | 'veryLoose' | 'strict' | 'loose' | 'relaxed';
-export const CondenseTolerantMap: Record<CondenseType, Record<string, number>> = {
-    veryStrict: {
-        '1': 600,
-        '2': 620,
-        '3': 640,
-    },
-    strict: {
-        '1': 645,
-        '2': 665,
-        '3': 685,
-    },
-    loose: {
-        '1': 700,
-        '2': 710,
-        '3': 720,
-    },
-    veryLoose: {
-        '1': 740,
-        '2': 770,
-        '3': 800,
-    },
-    relaxed: {
-        '1': 850,
-        '2': 900,
-        '3': 950,
-    },
-};
-export const CondenseTolerantLabelMap: Record<CondenseType, { label: string, order: number }> = {
-    veryStrict: {
-        label: '5',
-        order: 1,
-    },
-    strict: {
-        label: '4',
-        order: 2,
-    },
-    loose: {
-        label: '3',
-        order: 3,
-    },
-    veryLoose: {
-        label: '2',
-        order: 4,
-    },
-    relaxed: {
-        label: '1',
-        order: 5,
-    },
-};

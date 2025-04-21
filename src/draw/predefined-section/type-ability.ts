@@ -1,6 +1,6 @@
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData } from 'src/util';
-import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON } from 'src/model';
+import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType } from 'src/model';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -9,10 +9,12 @@ import { drawAssetWithSize } from '../image';
 import { CanvasTextStyle } from 'src/service';
 
 /** Small and medium size are used for type / ability text in effect box. Large type is used for "Spell/Trap type" under card's name. */
-const sizeMap: Record<string, number> = {
-    small: 0,
-    medium: 1,
+const sizeMap: Record<TypeAbilityCoordinateType, number> = {
+    smaller: 0,
+    normal: 1,
     large: 2,
+    highPendulumNormal: 1,
+    highPendulumSmaller: 0,
 };
 export const drawTypeAbilityText = ({
     ctx,
@@ -27,7 +29,7 @@ export const drawTypeAbilityText = ({
     value: string,
     format: string,
     metricMethod?: FontData['metricMethod'],
-    size: 'small' | 'medium' | 'large',
+    size: TypeAbilityCoordinateType,
     furiganaHelper: boolean,
     globalScale: number,
 }) => {
@@ -120,7 +122,7 @@ export const drawTypeAbility = async ({
     subFamily: string,
     format: string,
     frame: string,
-    size: 'small' | 'medium' | 'large',
+    size: TypeAbilityCoordinateType,
     isMonster: boolean,
     textStyle: CanvasTextStyle,
     furiganaHelper: boolean,

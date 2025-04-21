@@ -5,31 +5,59 @@ export type CoordinateData = {
     trueEdge: number,
 };
 
-export const EffectCoordinateData: Record<string, CoordinateData[]> = {
-    'tcg': [
-        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
-    ],
-    'tcg-stat': [
-        { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
-    ],
-    'tcg-type-stat': [
-        { trueWidth: 684, trueBaseline: 920.8, trueEdge: 64.5 },
-    ],
-    'tcg-type': [
-        { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
-    ],
-    'ocg': [
-        { trueWidth: 684, trueBaseline: 895.23, trueEdge: 64.8 },
-    ],
-    'ocg-stat': [
-        { trueWidth: 684, trueBaseline: 891.23, trueEdge: 64.8 },
-    ],
-    'ocg-type-stat': [
-        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
-    ],
-    'ocg-type': [
-        { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
-    ],
+export const EffectCoordinateData: Record<'normal' | 'scaleless', Record<string, CoordinateData[]>> = {
+    normal: {
+        'tcg': [
+            { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+        ],
+        'tcg-stat': [
+            { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
+        ],
+        'tcg-type-stat': [
+            { trueWidth: 684, trueBaseline: 920.8, trueEdge: 64.5 },
+        ],
+        'tcg-type': [
+            { trueWidth: 684, trueBaseline: 921.8, trueEdge: 64.5 },
+        ],
+        'ocg': [
+            { trueWidth: 684, trueBaseline: 895.23, trueEdge: 64.8 },
+        ],
+        'ocg-stat': [
+            { trueWidth: 684, trueBaseline: 891.23, trueEdge: 64.8 },
+        ],
+        'ocg-type-stat': [
+            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+        ],
+        'ocg-type': [
+            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+        ],
+    },
+    scaleless: {
+        'tcg': [
+            { trueWidth: 684, trueBaseline: 920.73, trueEdge: 64.8 },
+        ],
+        'tcg-stat': [
+            { trueWidth: 684, trueBaseline: 920.73, trueEdge: 64.8 },
+        ],
+        'tcg-type-stat': [
+            { trueWidth: 684, trueBaseline: 953.5, trueEdge: 64.5 },
+        ],
+        'tcg-type': [
+            { trueWidth: 684, trueBaseline: 954.5, trueEdge: 64.5 },
+        ],
+        'ocg': [
+            { trueWidth: 684, trueBaseline: 895.23, trueEdge: 64.8 },
+        ],
+        'ocg-stat': [
+            { trueWidth: 684, trueBaseline: 891.23, trueEdge: 64.8 },
+        ],
+        'ocg-type-stat': [
+            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+        ],
+        'ocg-type': [
+            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+        ],
+    },
 };
 
 export const PendulumEffectCoordinateMap: Record<'normal' | 'scaleless', Record<string, CoordinateData[]>> = {
@@ -57,14 +85,15 @@ export const PendulumEffectCoordinateMap: Record<'normal' | 'scaleless', Record<
     },
 };
 
-export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateData>> = {
+export type TypeAbilityCoordinateType = 'smaller' | 'normal' | 'large' | 'highPendulumNormal' | 'highPendulumSmaller';
+export const TypeAbilityCoordinateMap: Record<string, Record<TypeAbilityCoordinateType, CoordinateData>> = {
     tcg: {
-        small: {
+        smaller: {
             trueBaseline: 919,
             trueEdge: 62.50,
             trueWidth: 684.5,
         },
-        medium: {
+        normal: {
             trueBaseline: 920,
             trueEdge: 62.50,
             trueWidth: 684.5,
@@ -75,14 +104,24 @@ export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateD
             edgeAlignment: 'right',
             trueWidth: 648.5,
         },
+        highPendulumNormal: {
+            trueBaseline: 950.5,
+            trueEdge: 62.50,
+            trueWidth: 684.5,
+        },
+        highPendulumSmaller: {
+            trueBaseline: 949.5,
+            trueEdge: 62.50,
+            trueWidth: 684.5,
+        },
     },
     ocg: {
-        small: {
+        smaller: {
             trueBaseline: 917,
             trueEdge: 63.70,
             trueWidth: 684.5,
         },
-        medium: {
+        normal: {
             trueBaseline: 917,
             trueEdge: 63.70,
             trueWidth: 684.5,
@@ -92,6 +131,16 @@ export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateD
             trueEdge: 728.00,
             edgeAlignment: 'right',
             trueWidth: 642.5,
+        },
+        highPendulumNormal: {
+            trueBaseline: 949,
+            trueEdge: 62.50,
+            trueWidth: 684.5,
+        },
+        highPendulumSmaller: {
+            trueBaseline: 949,
+            trueEdge: 62.50,
+            trueWidth: 684.5,
         },
     },
 };

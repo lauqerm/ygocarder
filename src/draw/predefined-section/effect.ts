@@ -22,16 +22,25 @@ export const getEffectFontAndCoordinate = ({
     useItalic,
     statInEffect,
     typeInEffect,
+    frameType,
 }: {
     format: string,
     statInEffect: boolean,
     typeInEffect: boolean,
     useItalic: boolean,
+    frameType: 'normal' | 'scaleless',
 }) => {
-    const coordinateKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
-        .filter(entry => entry !== '').join('-');
-    const fontDataKey = [format, typeInEffect ? 'type' : '', statInEffect ? 'stat' : '']
-        .filter(entry => entry !== '').join('-');
+    const coordinateKey = [
+        format,
+        typeInEffect ? 'type' : '',
+        statInEffect ? 'stat' : ''
+    ].filter(entry => entry !== '').join('-');
+    const fontDataKey = [
+        format,
+        frameType ? 'pendulumLarge' : '',
+        typeInEffect ? 'type' : '',
+        statInEffect ? 'stat' : ''
+    ].filter(entry => entry !== '').join('-');
 
     let fontData = EffectFontData[fontDataKey];
     if (useItalic && format === 'tcg' && NormalFontData[fontDataKey]) {
@@ -41,7 +50,7 @@ export const getEffectFontAndCoordinate = ({
     return {
         fontDataKey,
         fontData,
-        sizeList: EffectCoordinateData[coordinateKey],
+        sizeList: EffectCoordinateData[frameType][coordinateKey],
     };
 };
 
@@ -50,9 +59,10 @@ export const drawEffect = ({
     content,
     isNormal = false,
     // useItalic = false,
-    fontData = EffectFontData.tcg,
+    fontDataKey = 'tcg',
+    fontData = EffectFontData[fontDataKey],
     textStyle,
-    sizeList = EffectCoordinateData['tcg-type'],
+    sizeList = EffectCoordinateData.normal['tcg-type'],
     condenseTolerant = 'strict',
     format,
     furiganaHelper,
@@ -63,6 +73,7 @@ export const drawEffect = ({
     isNormal?: boolean,
     useItalic?: boolean,
     fontData?: FontData,
+    fontDataKey?: string,
     textStyle?: CanvasTextStyle,
     sizeList?: CoordinateData[],
     condenseTolerant?: CondenseType,
@@ -219,8 +230,8 @@ export const drawEffect = ({
             });
 
             /** Condition clause of flavor text in TCG cards do not use italic font style ("Summoned Skull" TCG). */
-            if (effectFlavorCondition.length > 0) {
-                const flavorFontData = scaleFontData(EffectFontData.tcg, globalScale);
+            if (effectFlavorCondition.length > 0 && EffectFontData[fontDataKey]) {
+                const flavorFontData = scaleFontData(EffectFontData[fontDataKey], globalScale);
                 const flavorFontSizeData = flavorFontData.fontList[effectSizeLevel];
                 const {
                     fontSize,

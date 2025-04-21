@@ -1,6 +1,6 @@
 import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
 import { Foil } from './foil-finish';
-import { CondenseType } from './font-data-effect';
+import { CondenseType } from './condense';
 import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
 import { v4 as uuid } from 'uuid';
@@ -298,6 +298,7 @@ export const ExportFormatList = [
 
 export * from './canvas';
 export * from './compatible-card';
+export * from './condense';
 export * from './coordinate-data';
 export * from './dictionary';
 export * from './foil-finish';
