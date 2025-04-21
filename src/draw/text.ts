@@ -97,12 +97,12 @@ export const drawLine = ({
     } = fontData;
     const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const {
-        bulletSymbolOffset = scaledDefaultFontSizeData.bulletSymbolOffset,
-        bulletSymbolWidth,
+        bulletOffset = scaledDefaultFontSizeData.bulletOffset,
+        bulletWidth,
         capitalLetterRatio = scaledDefaultFontSizeData.capitalLetterRatio,
         fontSize,
         headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
-        iconSymbolWidth = bulletSymbolWidth,
+        iconSymbolWidth = bulletWidth,
         largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
         letterSpacing = scaledDefaultFontSizeData.letterSpacing,
         ordinalFontOffsetY = scaledDefaultFontSizeData.ordinalFontOffsetY,
@@ -203,11 +203,11 @@ export const drawLine = ({
                 drawBullet(
                     ctx,
                     fragmentEdge,
-                    trueBaseline + bulletSymbolOffset - 1 * globalScale,
-                    bulletSymbolWidth,
+                    trueBaseline + bulletOffset - 1 * globalScale,
+                    bulletWidth,
                     getBulletSpacing(format) * globalScale,
                 );
-                fragmentEdge += bulletSymbolWidth * letterSpacingRatio;
+                fragmentEdge += bulletWidth * letterSpacingRatio;
                 applyAsymmetricScale(xRatio, yRatio);
 
                 currentRightGap = 0;

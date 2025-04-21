@@ -304,6 +304,7 @@ export * from './foil-finish';
 export * from './font-data-effect';
 export * from './font-data-name';
 export * from './font-data-other';
+export * from './font-data-pendulum-effect';
 export * from './format';
 export * from './frame';
 export * from './icon';

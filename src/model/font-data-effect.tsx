@@ -15,8 +15,8 @@ export type FontGetter = {
 
 export type FontSizeData = {
     allRightSymbolOffset?: number,
-    bulletSymbolOffset?: number,
-    bulletSymbolWidth: number,
+    bulletOffset?: number,
+    bulletWidth: number,
     capitalLetterRatio?: number,
     fontSize: number,
     headTextFontRatio?: number,
@@ -34,11 +34,11 @@ export type FontSizeData = {
 };
 export const DefaultFontSizeData = {
     allRightSymbolOffset: 1,
-    bulletSymbolWidth: 23,
+    bulletWidth: 23,
     fontSize: 24.5,
     lineHeight: 24.7,
     lineCount: 6,
-    bulletSymbolOffset: 0,
+    bulletOffset: 0,
     capitalLetterRatio: 1,
     headTextFontRatio: 0.355,
     headTextSpacing: 1.5,
@@ -106,7 +106,7 @@ const DefaultEffectFontData = {
     symbolFontRatio: 1,
     headTextGapRatio: 0,
 };
-const DefaultTCGEffectFontData: FontData = {
+export const DefaultTCGEffectFontData: FontData = {
     ...DefaultEffectFontData,
     font: 'MatrixBook',
     headTextHeightRatio: 0.750,
@@ -120,7 +120,7 @@ export const DefaultTCGNormalFontData: FontData = {
     fontStyle: 'tcg',
     fontList: [],
 };
-const DefaultOCGEffectFontData: FontData = {
+export const DefaultOCGEffectFontData: FontData = {
     ...DefaultEffectFontData,
     font: '"Yu-Gi-Oh! DF Leisho 3"',
     fontStyle: 'ocg',
@@ -132,53 +132,53 @@ export const NormalFontData: Record<string, FontData> = {
     'tcg': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
-            { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 21, fontSize: 18.5, lineHeight: 19.2, lineCount: 11, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 17.0, lineHeight: 17.6, lineCount: 12, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 17, fontSize: 15.6, lineHeight: 16.3, lineCount: 13, bulletSymbolOffset: 1 },
+            { bulletWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletOffset: 1 },
+            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
+            { bulletWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
+            { bulletWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
+            { bulletWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 21, fontSize: 18.5, lineHeight: 19.2, lineCount: 11, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 17.0, lineHeight: 17.6, lineCount: 12, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.6, lineHeight: 16.3, lineCount: 13, bulletOffset: 1 },
         ],
     },
     'tcg-stat': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4, bulletSymbolOffset: 2 },
-            { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
-            { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 20, fontSize: 17.5, lineHeight: 18.2, lineCount: 10, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 17, fontSize: 15.7, lineHeight: 16.5, lineCount: 11, bulletSymbolOffset: 1 },
+            { bulletWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4, bulletOffset: 2 },
+            { bulletWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
+            { bulletWidth: 26, fontSize: 28.2, lineHeight: 30.5, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
+            { bulletWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletOffset: 1 },
+            { bulletWidth: 20, fontSize: 17.5, lineHeight: 18.2, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.7, lineHeight: 16.5, lineCount: 11, bulletOffset: 1 },
         ]
     },
     'tcg-type-stat': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
-            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
-            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 19.28, lineHeight: 21.3, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
-            { bulletSymbolWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10, bulletSymbolOffset: 2 },
+            { bulletWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3, bulletOffset: 1 },
+            { bulletWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
+            { bulletWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 19.28, lineHeight: 21.3, lineCount: 7 },
+            { bulletWidth: 23, fontSize: 17.78, lineHeight: 18.9, lineCount: 8 },
+            { bulletWidth: 19, fontSize: 15.46, lineHeight: 16.8, lineCount: 9, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 12.99, lineHeight: 15.0, lineCount: 10, bulletOffset: 2 },
         ],
     },
     'tcg-type': {
         ...DefaultTCGNormalFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4, bulletSymbolOffset: 2 },
-            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
-            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 9 },
-            { bulletSymbolWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletSymbolOffset: 1 },
+            { bulletWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4, bulletOffset: 2 },
+            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 24.5, lineHeight: 24.7, lineCount: 7 },
+            { bulletWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
+            { bulletWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 9 },
+            { bulletWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletOffset: 1 },
         ]
     },
 };
@@ -189,157 +189,91 @@ export const EffectFontData: Record<string, FontData> = {
     'tcg': {
         ...DefaultTCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
-            { bulletSymbolWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 21, fontSize: 18.5, lineHeight: 19.2, lineCount: 11, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 17.0, lineHeight: 17.6, lineCount: 12, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 17, fontSize: 15.6, lineHeight: 16.3, lineCount: 13, bulletSymbolOffset: 1 },
+            { bulletWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletOffset: 1 },
+            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
+            { bulletWidth: 26, fontSize: 28.2, lineHeight: 30.3, lineCount: 7 },
+            { bulletWidth: 23, fontSize: 24.38, lineHeight: 24.7, lineCount: 8 },
+            { bulletWidth: 23, fontSize: 19.94, lineHeight: 21.15, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 21, fontSize: 18.5, lineHeight: 19.2, lineCount: 11, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 17.0, lineHeight: 17.6, lineCount: 12, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.6, lineHeight: 16.3, lineCount: 13, bulletOffset: 1 },
         ],
     },
     'tcg-stat': {
         ...DefaultTCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletSymbolOffset: 2 },
-            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
-            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 20, fontSize: 17.5, lineHeight: 18.2, lineCount: 10, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 17, fontSize: 15.7, lineHeight: 16.5, lineCount: 11, bulletSymbolOffset: 1 },
+            { bulletWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletOffset: 2 },
+            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
+            { bulletWidth: 21, fontSize: 19.01, lineHeight: 20.15, lineCount: 9, bulletOffset: 1 },
+            { bulletWidth: 20, fontSize: 17.5, lineHeight: 18.2, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 15.7, lineHeight: 16.5, lineCount: 11, bulletOffset: 1 },
         ]
     },
     'tcg-type-stat': {
         ...DefaultTCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 45.2, lineHeight: 48.1, lineCount: 3, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
-            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 7, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 16.7, lineHeight: 16.7, lineCount: 9, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 15.0, lineHeight: 15.0, lineCount: 10, bulletSymbolOffset: 2 },
+            { bulletWidth: 40, fontSize: 45.2, lineHeight: 48.1, lineCount: 3, bulletOffset: 1 },
+            { bulletWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 5 },
+            { bulletWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 7, bulletOffset: 1 },
+            { bulletWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 8, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 16.7, lineHeight: 16.7, lineCount: 9, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 15.0, lineHeight: 15.0, lineCount: 10, bulletOffset: 2 },
         ]
     },
     'tcg-type': {
         ...DefaultTCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletSymbolOffset: 2 },
-            { bulletSymbolWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
-            { bulletSymbolWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
-            { bulletSymbolWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
-            { bulletSymbolWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
-            { bulletSymbolWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 9 },
-            { bulletSymbolWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletSymbolOffset: 1 },
-            { bulletSymbolWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletSymbolOffset: 1 },
+            { bulletWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletOffset: 2 },
+            { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
+            { bulletWidth: 26, fontSize: 27.2, lineHeight: 29.5, lineCount: 6 },
+            { bulletWidth: 23, fontSize: 25.2, lineHeight: 24.7, lineCount: 7 },
+            { bulletWidth: 23, fontSize: 19.95, lineHeight: 21.3, lineCount: 8 },
+            { bulletWidth: 23, fontSize: 18.8, lineHeight: 18.8, lineCount: 9 },
+            { bulletWidth: 20, fontSize: 16.8, lineHeight: 17.7, lineCount: 10, bulletOffset: 1 },
+            { bulletWidth: 19, fontSize: 15.1, lineHeight: 16.1, lineCount: 11, bulletOffset: 1 },
+            { bulletWidth: 17, fontSize: 14.1, lineHeight: 14.7, lineCount: 12, bulletOffset: 1 },
         ]
     },
     'ocg': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 38, fontSize: 43.2, lineHeight: 50.1, lineCount: 4, bulletSymbolOffset: 2, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 30, fontSize: 34.7, lineHeight: 40.1, lineCount: 5, bulletSymbolOffset: 1, headTextFontRatio: 0.3 },
-            { bulletSymbolWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletSymbolOffset: 1, headTextFontRatio: 0.3 },
-            { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7 },
-            { bulletSymbolWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 8 },
+            { bulletWidth: 38, fontSize: 43.2, lineHeight: 50.1, lineCount: 4, bulletOffset: 2, headTextFontRatio: 0.25 },
+            { bulletWidth: 30, fontSize: 34.7, lineHeight: 40.1, lineCount: 5, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7 },
+            { bulletWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 8 },
         ]
     },
     'ocg-stat': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletSymbolOffset: 3, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletSymbolOffset: 2, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletSymbolOffset: 1, headTextFontRatio: 0.3 },
-            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
+            { bulletWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletOffset: 2, headTextFontRatio: 0.25 },
+            { bulletWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
         ]
     },
     'ocg-type-stat': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 41, fontSize: 45.7, lineHeight: 49.8, lineCount: 3, bulletSymbolOffset: 3, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 32, fontSize: 34.7, lineHeight: 38.1, lineCount: 4, bulletSymbolOffset: 3, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 24, fontSize: 27.7, lineHeight: 30.1, lineCount: 5, bulletSymbolOffset: 2, headTextFontRatio: 0.3 },
-            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6 },
+            { bulletWidth: 41, fontSize: 45.7, lineHeight: 49.8, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 32, fontSize: 34.7, lineHeight: 38.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 24, fontSize: 27.7, lineHeight: 30.1, lineCount: 5, bulletOffset: 2, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 6 },
         ]
     },
     'ocg-type': {
         ...DefaultOCGEffectFontData,
         fontList: [
-            { bulletSymbolWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletSymbolOffset: 3, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletSymbolOffset: 2, headTextFontRatio: 0.25 },
-            { bulletSymbolWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletSymbolOffset: 1, headTextFontRatio: 0.3 },
-            { bulletSymbolWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
+            { bulletWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletOffset: 2, headTextFontRatio: 0.25 },
+            { bulletWidth: 26, fontSize: 28.7, lineHeight: 32.8, lineCount: 6, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
         ]
-    },
-};
-
-
-export const PendulumNormalFontData: Record<string, FontData> = {
-    tcg: {
-        ...DefaultTCGNormalFontData,
-        fontList: [
-            { bulletSymbolWidth: 41, fontSize: 50.3, lineHeight: 56.35, lineCount: 2 },
-            { bulletSymbolWidth: 34, fontSize: 35.3, lineHeight: 38.85, lineCount: 3, bulletSymbolOffset: 2 },
-            { bulletSymbolWidth: 27, fontSize: 26.3, lineHeight: 29.35, lineCount: 4, bulletSymbolOffset: 3 },
-            { bulletSymbolWidth: 23, fontSize: 24.3, lineHeight: 24.35, lineCount: 5 },
-            { bulletSymbolWidth: 18, fontSize: 19.5, lineHeight: 20.23, lineCount: 6 },
-            { bulletSymbolWidth: 17, fontSize: 17.0, lineHeight: 17.40, lineCount: 7 },
-            { bulletSymbolWidth: 14, fontSize: 14.7, lineHeight: 15.32, lineCount: 8 },
-        ],
-    },
-};
-export const PendulumEffectFontData: Record<string, FontData> = {
-    tcg: {
-        ...DefaultTCGEffectFontData,
-        fontList: [
-            { bulletSymbolWidth: 41, fontSize: 50.3, lineHeight: 56.35, lineCount: 2 },
-            { bulletSymbolWidth: 34, fontSize: 35.3, lineHeight: 38.85, lineCount: 3, bulletSymbolOffset: 2 },
-            { bulletSymbolWidth: 27, fontSize: 26.3, lineHeight: 29.35, lineCount: 4, bulletSymbolOffset: 3 },
-            { bulletSymbolWidth: 23, fontSize: 24.3, lineHeight: 24.35, lineCount: 5 },
-            { bulletSymbolWidth: 18, fontSize: 19.5, lineHeight: 20.23, lineCount: 6 },
-            { bulletSymbolWidth: 17, fontSize: 17.0, lineHeight: 17.40, lineCount: 7 },
-            { bulletSymbolWidth: 14, fontSize: 14.7, lineHeight: 15.32, lineCount: 8 },
-        ],
-    },
-    ocg: {
-        ...DefaultOCGEffectFontData,
-        fontList: [
-            {
-                bulletSymbolWidth: 41,
-                bulletSymbolOffset: 3,
-                fontSize: 45.55,
-                lineHeight: 57.6,
-                headTextFontRatio: 0.2,
-                lineCount: 2,
-            },
-            {
-                bulletSymbolWidth: 31,
-                bulletSymbolOffset: 2,
-                fontSize: 35.55,
-                lineHeight: 40.6,
-                headTextFontRatio: 0.3,
-                lineCount: 3,
-            },
-            {
-                bulletSymbolWidth: 23,
-                bulletSymbolOffset: 1,
-                fontSize: 25.05,
-                lineHeight: 30.6,
-                headTextFontRatio: 0.35,
-                lineCount: 4,
-            },
-            {
-                bulletSymbolWidth: 16,
-                fontSize: 22.05,
-                lineHeight: 25.2,
-                headTextFontRatio: 0.4,
-                lineCount: 5,
-            },
-        ],
     },
 };
 

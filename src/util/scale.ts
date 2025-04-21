@@ -19,8 +19,8 @@ export const scaleFontSizeData = <FontData extends FontSizeData = FontSizeData>(
 ): FontData => {
     const {
         allRightSymbolOffset,
-        bulletSymbolOffset,
-        bulletSymbolWidth,
+        bulletOffset,
+        bulletWidth,
         fontSize,
         headTextSpacing,
         iconSymbolWidth,
@@ -33,8 +33,8 @@ export const scaleFontSizeData = <FontData extends FontSizeData = FontSizeData>(
     return {
         ...fontSizeData,
         allRightSymbolOffset: typeof allRightSymbolOffset === 'number' ? allRightSymbolOffset * scale : undefined,
-        bulletSymbolOffset: typeof bulletSymbolOffset === 'number' ? bulletSymbolOffset * scale : undefined,
-        bulletSymbolWidth: bulletSymbolWidth * scale,
+        bulletOffset: typeof bulletOffset === 'number' ? bulletOffset * scale : undefined,
+        bulletWidth: bulletWidth * scale,
         fontSize: fontSize * scale,
         headTextSpacing: typeof headTextSpacing === 'number' ? headTextSpacing * scale : undefined,
         iconSymbolWidth: typeof iconSymbolWidth === 'number' ? iconSymbolWidth * scale : undefined,

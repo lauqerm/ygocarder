@@ -87,10 +87,10 @@ export const analyzeToken = ({
     } = fontData;
     const fontSizeData = fontData.fontList[fontLevel];
     const {
-        bulletSymbolWidth,
+        bulletWidth,
         capitalLetterRatio,
         fontSize,
-        iconSymbolWidth = bulletSymbolWidth,
+        iconSymbolWidth = bulletWidth,
         largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
         headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
         squareBracketRatio,
@@ -137,7 +137,7 @@ export const analyzeToken = ({
         /** Bullet symbol is unscalable ("Agave Dragon" OCG/TCG) */
         else if (fragment === BULLET_LETTER) {
             currentRightGap = 0;
-            const fragmentWidth = bulletSymbolWidth / xRatio;
+            const fragmentWidth = bulletWidth / xRatio;
             totalWidth += fragmentWidth * letterSpacingRatio;
 
             if (isLeftmostFragment) {

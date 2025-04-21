@@ -32,10 +32,30 @@ export const EffectCoordinateData: Record<string, CoordinateData[]> = {
     ],
 };
 
-export const PendulumEffectCoordinate: CoordinateData[] = [
-    { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
-    { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
-];
+export const PendulumEffectCoordinateMap: Record<'normal' | 'scaleless', Record<string, CoordinateData[]>> = {
+    normal: {
+        small: [
+            { trueWidth: 555.47, trueBaseline: 789.65, trueEdge: 128.94 },
+        ],
+        medium: [
+            { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
+        ],
+        large: [
+            { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
+        ],
+    },
+    scaleless: {
+        small: [
+            { trueWidth: 684, trueBaseline: 789.65, trueEdge: 64.5 },
+        ],
+        medium: [
+            { trueWidth: 684, trueBaseline: 746.29, trueEdge: 64.5 },
+        ],
+        large: [
+            { trueWidth: 684, trueBaseline: 746.29, trueEdge: 64.5 },
+        ],
+    },
+};
 
 export const TypeAbilityCoordinateMap: Record<string, Record<string, CoordinateData>> = {
     tcg: {

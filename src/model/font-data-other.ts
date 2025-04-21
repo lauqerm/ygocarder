@@ -11,7 +11,7 @@ export const tcgCreatorFontData: FontData = {
     fontList: [
         {
             offsetY: -1,
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 21.2,
             lineHeight: 21.2,
             lineCount: 1,
@@ -20,7 +20,7 @@ export const tcgCreatorFontData: FontData = {
             largeSymbolRatio: 1.25,
         },
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 20,
             lineHeight: 20,
             lineCount: 1,
@@ -40,7 +40,7 @@ export const ocgCreatorFontData: FontData = {
     metricMethod: 'creator',
     fontStyle: 'ocg',
     fontList: [{
-        bulletSymbolWidth: 18,
+        bulletWidth: 18,
         fontSize: 19.0,
         letterSpacing: 0.05,
         lineHeight: 20.5,
@@ -64,7 +64,7 @@ export const tcgPasswordFontData: FontData = {
     fontStyle: 'tcg',
     fontList: [
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 22.219,
             lineHeight: 22.219,
             lineCount: 1,
@@ -73,7 +73,7 @@ export const tcgPasswordFontData: FontData = {
             largeSymbolRatio: 1.25,
         },
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 22.219,
             lineHeight: 22.219,
             lineCount: 1,
@@ -96,7 +96,7 @@ export const ocgPasswordFontData: FontData = {
     metricMethod: 'furigana',
     fontList: [
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 22.219,
             lineHeight: 22.219,
             lineCount: 1,
@@ -105,7 +105,7 @@ export const ocgPasswordFontData: FontData = {
             largeSymbolRatio: 1.25,
         },
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 19.0,
             headTextFontRatio: 0,
             largeSymbolRatio: 1.25,
@@ -131,7 +131,7 @@ export const tcgTypeAbilityFontData: FontData = {
     fontStyle: 'tcg',
     fontList: [
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 31.5,
             lineHeight: 31.5,
             lineCount: 1,
@@ -141,7 +141,7 @@ export const tcgTypeAbilityFontData: FontData = {
             headTextFontRatio: 0.4,
         },
         {
-            bulletSymbolWidth: 21.80,
+            bulletWidth: 21.80,
             fontSize: 32.75,
             lineHeight: 32.75,
             lineCount: 1,
@@ -151,7 +151,7 @@ export const tcgTypeAbilityFontData: FontData = {
             headTextFontRatio: 0.4,
         },
         {
-            bulletSymbolWidth: 14.80,
+            bulletWidth: 14.80,
             fontSize: 44.5,
             lineHeight: 44.5,
             lineCount: 1,
@@ -175,7 +175,7 @@ export const ocgTypeAbilityFontData: FontData = {
     fontStyle: 'ocg',
     fontList: [
         {
-            bulletSymbolWidth: 20.05,
+            bulletWidth: 20.05,
             fontSize: 25.2,
             lineHeight: 25.2,
             lineCount: 1,
@@ -183,7 +183,7 @@ export const ocgTypeAbilityFontData: FontData = {
             headTextFontRatio: 0.300,
         },
         {
-            bulletSymbolWidth: 21.80,
+            bulletWidth: 21.80,
             fontSize: 26.5,
             lineHeight: 26.5,
             lineCount: 1,
@@ -191,7 +191,7 @@ export const ocgTypeAbilityFontData: FontData = {
             headTextFontRatio: 0.300,
         },
         {
-            bulletSymbolWidth: 36.80,
+            bulletWidth: 36.80,
             fontSize: 48,
             lineHeight: 48,
             lineCount: 1,

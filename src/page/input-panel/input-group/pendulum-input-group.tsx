@@ -117,7 +117,8 @@ const StyledPendulumInputContainer = styled.div`
             flex: 0 0 auto;
         }
         .mirror-scale {
-            display: inline-flex;
+            /** Alignment **/
+            line-height: 32px;
             align-items: center;
         }
     }
@@ -133,6 +134,7 @@ const StyledPendulumInputContainer = styled.div`
             display: inline-block;
             /** Alignment **/
             width: var(--width-label);
+            /** Alignment **/
             line-height: 32px;
             text-align: right;
             font-weight: 500;

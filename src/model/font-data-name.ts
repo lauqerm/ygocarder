@@ -19,7 +19,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             symbolFontRatio: 0.775,
             headTextHeightRatio: 0.55,
             fontList: [{
-                bulletSymbolWidth: 64,
+                bulletWidth: 64,
                 fontSize: 91.5,
                 headTextFontRatio: 0.190,
                 letterSpacing: 0.015,
@@ -165,7 +165,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             headTextHeightRatio: 0.825,
             weight: 'bold',
             fontList: [{
-                bulletSymbolWidth: 40.67,
+                bulletWidth: 40.67,
                 fontSize: 61,
                 headTextFontRatio: 0.190,
                 letterSpacing: -0.14,
@@ -193,7 +193,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             symbolFontRatio: 0.775,
             fontStyle: 'ocg',
             fontList: [{
-                bulletSymbolWidth: 42.67,
+                bulletWidth: 42.67,
                 fontSize: 64,
                 headTextFontRatio: 0.175,
                 headTextSpacing: 3,
