@@ -8,6 +8,7 @@ export const AttributeList = [
         color: '#000000',
         isCreative: false,
         isOption: false,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'DARK',
@@ -16,6 +17,7 @@ export const AttributeList = [
         color: '#b41dda',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'EARTH',
@@ -24,6 +26,7 @@ export const AttributeList = [
         color: '#8d8e8e',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'FIRE',
@@ -32,6 +35,7 @@ export const AttributeList = [
         color: '#e51b23',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'LIGHT',
@@ -40,6 +44,7 @@ export const AttributeList = [
         color: '#bfae32',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'WATER',
@@ -48,6 +53,7 @@ export const AttributeList = [
         color: '#008ecd',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'WIND',
@@ -56,6 +62,7 @@ export const AttributeList = [
         color: '#28ab35',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'DIVINE',
@@ -64,6 +71,7 @@ export const AttributeList = [
         color: '#ef6300',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'SPELL',
@@ -72,6 +80,7 @@ export const AttributeList = [
         color: '#1b8f83',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'TRAP',
@@ -80,6 +89,7 @@ export const AttributeList = [
         color: '#c32a8c',
         isCreative: false,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'LAUGH',
@@ -88,6 +98,16 @@ export const AttributeList = [
         color: '#f78f27',
         isCreative: true,
         isOption: true,
+        supportFormat: ['tcg', 'ocg'],
+    },
+    {
+        name: 'MAGIC',
+        nameKey: 'input.attribute.magic',
+        label: 'Laugh',
+        color: '#1b8f83',
+        isCreative: true,
+        isOption: true,
+        supportFormat: ['tcg', 'ocg'],
     },
 ];
 

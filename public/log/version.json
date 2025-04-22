@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.2.1 (2025/04/12)",
+        "logList": [
+            {
+                "content": "Support old Magic attribute."
+            }
+        ]
+    },
+    {
         "version": "v2.2.0 (2025/04/22)",
         "logList": [
             {

@@ -79,7 +79,7 @@ export const getFrameButtonList = () => frameList.map(({ name, nameKey, labelBac
 }));
 
 export const getAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => AttributeList
-    .map(({ name, nameKey, isCreative }) => ({
+    .map(({ name, nameKey, isCreative, supportFormat }) => ({
         label: name === NO_ATTRIBUTE
             ? <CloseCircleOutlined />
             : <Tooltip overlay={dictionary[nameKey]}>
@@ -90,8 +90,9 @@ export const getAttributeList = (format: string, dictionary: Record<string, stri
                 </Tooltip>,
         value: name,
         isCreative,
+        supportFormat,
     }))
-    .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption);
+    .filter(({ isCreative, supportFormat }) => (isCreative === false || isCreative === showCreativeOption) && supportFormat.includes(format));
 
 export const getSTIconButtonList = (dictionary: Record<string, string>) => IconList.map(({ value, nameKey }) => ({
     label: value === NO_ICON
