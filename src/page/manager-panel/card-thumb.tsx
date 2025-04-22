@@ -377,8 +377,8 @@ export const CardThumb = ({
                     }}
                 />;
             })}
-            {isPendulum && <div className="pendulum-scale blue-scale">{pendulumScaleBlue}</div>}
-            {isPendulum && <div className="pendulum-scale red-scale">{pendulumScaleRed}</div>}
+            {(isPendulum && pendulumScaleBlue) && <div className="pendulum-scale blue-scale">{pendulumScaleBlue}</div>}
+            {(isPendulum && pendulumScaleRed) && <div className="pendulum-scale red-scale">{pendulumScaleRed}</div>}
         </div>
         <div className="right-slot truncate">
             <div className="first-row truncate">

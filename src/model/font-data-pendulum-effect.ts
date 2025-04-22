@@ -72,13 +72,13 @@ export const PendulumEffectFontData: Record<string, FontData> = {
     'tcg-large': {
         ...DefaultTCGEffectFontData,
         fontList: [
+            { bulletWidth: 41, fontSize: 40.7, lineHeight: 48.52, lineCount: 3, bulletOffset: 1 },
             { bulletWidth: 36, fontSize: 35.3, lineHeight: 37.65, lineCount: 4, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 28.3, lineHeight: 30.35, lineCount: 5, bulletOffset: 2 },
             { bulletWidth: 26, fontSize: 24.3, lineHeight: 25.85, lineCount: 6, bulletOffset: 2 },
             { bulletWidth: 23, fontSize: 20.7, lineHeight: 22.05, lineCount: 7, bulletOffset: 2 },
             { bulletWidth: 19, fontSize: 18.5, lineHeight: 19.33, lineCount: 8, bulletOffset: 1 },
             { bulletWidth: 18, fontSize: 16.8, lineHeight: 17.30, lineCount: 9, bulletOffset: 1 },
-            { bulletWidth: 16, fontSize: 14.7, lineHeight: 15.52, lineCount: 10 },
         ],
     },
     'ocg-small': {

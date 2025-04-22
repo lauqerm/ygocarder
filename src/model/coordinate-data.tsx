@@ -5,7 +5,7 @@ export type CoordinateData = {
     trueEdge: number,
 };
 
-export const EffectCoordinateData: Record<'normal' | 'scaleless', Record<string, CoordinateData[]>> = {
+export const EffectCoordinateData: Record<'normal' | 'pendulumLarge', Record<string, CoordinateData[]>> = {
     normal: {
         'tcg': [
             { trueWidth: 684, trueBaseline: 890.23, trueEdge: 64.8 },
@@ -32,7 +32,7 @@ export const EffectCoordinateData: Record<'normal' | 'scaleless', Record<string,
             { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
         ],
     },
-    scaleless: {
+    pendulumLarge: {
         'tcg': [
             { trueWidth: 684, trueBaseline: 920.73, trueEdge: 64.8 },
         ],
@@ -46,20 +46,21 @@ export const EffectCoordinateData: Record<'normal' | 'scaleless', Record<string,
             { trueWidth: 684, trueBaseline: 954.5, trueEdge: 64.5 },
         ],
         'ocg': [
-            { trueWidth: 684, trueBaseline: 895.23, trueEdge: 64.8 },
+            { trueWidth: 684, trueBaseline: 923.23, trueEdge: 64.8 },
         ],
         'ocg-stat': [
-            { trueWidth: 684, trueBaseline: 891.23, trueEdge: 64.8 },
+            { trueWidth: 684, trueBaseline: 921.23, trueEdge: 64.8 },
         ],
         'ocg-type-stat': [
-            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+            { trueWidth: 684, trueBaseline: 948.5, trueEdge: 64.5 },
         ],
         'ocg-type': [
-            { trueWidth: 684, trueBaseline: 918.5, trueEdge: 64.5 },
+            { trueWidth: 684, trueBaseline: 948.5, trueEdge: 64.5 },
         ],
     },
 };
 
+export const HALF_SCALE_WIDTH_OFFSET = 64.44;
 export const PendulumEffectCoordinateMap: Record<'normal' | 'scaleless', Record<string, CoordinateData[]>> = {
     normal: {
         small: [
@@ -74,13 +75,13 @@ export const PendulumEffectCoordinateMap: Record<'normal' | 'scaleless', Record<
     },
     scaleless: {
         small: [
-            { trueWidth: 684, trueBaseline: 789.65, trueEdge: 64.5 },
+            { trueWidth: 684.35, trueBaseline: 789.65, trueEdge: 64.5 },
         ],
         medium: [
-            { trueWidth: 684, trueBaseline: 746.29, trueEdge: 64.5 },
+            { trueWidth: 684.35, trueBaseline: 746.29, trueEdge: 64.5 },
         ],
         large: [
-            { trueWidth: 684, trueBaseline: 746.29, trueEdge: 64.5 },
+            { trueWidth: 684.35, trueBaseline: 746.29, trueEdge: 64.5 },
         ],
     },
 };

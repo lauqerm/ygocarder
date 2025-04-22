@@ -504,8 +504,9 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const isPendulum = normalizeBoolean(reader('Is Pendulum'), emptyCard.isPendulum);
                 const pendulumFrame = (reader('Bottom Frame') ?? emptyCard.pendulumFrame).toLowerCase();
                 const pendulumEffect = reader('Pendulum Effect') ?? '';
-                const pendulumScaleRed = reader('Pendulum Scale Red') ?? emptyCard.pendulumScaleRed;
-                const pendulumScaleBlue = reader('Pendulum Scale Blue') ?? emptyCard.pendulumScaleBlue;
+                /** We treat empty scale value as scaleless behavior instead of assigning default value from empty card. As empty card still obey the normal card component and therefore must have a non-empty value. */
+                const pendulumScaleRed = reader('Pendulum Scale Red') ?? '';
+                const pendulumScaleBlue = reader('Pendulum Scale Blue') ?? '';
                 const pendulumSize = (reader('Pendulum Size') ?? 'medium') as PendulumSize;
 
                 const rawTypeAbility = reader('Type Ability');

@@ -2,7 +2,7 @@ import { Checkbox, Input, Popover } from 'antd';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { FrameInfoBlock, PopoverButton, RadioTrain, StyledDropdown } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
-import { useCard, useLanguage } from 'src/service';
+import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DEFAULT_PENDULUM_SIZE, FrameInfoMap, PendulumSizeMap } from 'src/model';
@@ -205,10 +205,19 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         setCard,
         getUpdater,
     })));
+    const {
+        mirrorPendulumScale,
+        updateSetting,
+    } = useSetting(useShallow(({
+        setting: { mirrorPendulumScale },
+        updateSetting,
+    }) => ({
+        mirrorPendulumScale,
+        updateSetting,
+    })));
     const containerRef = useRef<HTMLDivElement>(null);
     const bottomFrameOptionGridRef = useRef<BottomFrameOptionGridRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
-    const [isMirrorScale, setMirrorScale] = useState(true);
     const [frameDropdownVisible, setFrameDropdownVisibleVisible] = useState(false);
     const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
     const changeToPendulum = (e: any) => setCard(currentCard => {
@@ -305,7 +314,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             {(isPendulum && showCreativeOption)
                 && <div className="pendulum-size">
                 <Popover key="color-picker"
-                    trigger={['click']}
                     overlayClassName="global-input-overlay font-picker-overlay"
                     content={<div className="overlay-event-absorber">
                         <StyledDropdown.Container>
@@ -337,10 +345,10 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     onChange={e => {
                         const willMirror = e.target.checked;
 
-                        setMirrorScale(willMirror);
+                        updateSetting({ mirrorPendulumScale: willMirror });
                         if (willMirror) onRedScaleChange(pendulumScaleBlue);
                     }}
-                    checked={isMirrorScale}
+                    checked={mirrorPendulumScale}
                 >
                     {language['input.mirror-scale.label']}
                 </Checkbox>}
@@ -358,7 +366,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     value={pendulumScaleBlue}
                     onChange={e => {
                         onBlueScaleChange(e);
-                        if (isMirrorScale) onRedScaleChange(e);
+                        if (mirrorPendulumScale) onRedScaleChange(e);
                     }}
                 />
             </div>
@@ -373,7 +381,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     </span>}
                     value={pendulumScaleRed}
                     onChange={e => {
-                        if (isMirrorScale) onBlueScaleChange(e);
+                        if (mirrorPendulumScale) onBlueScaleChange(e);
                         onRedScaleChange(e);
                     }}
                 />

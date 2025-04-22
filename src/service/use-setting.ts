@@ -9,6 +9,7 @@ export type Setting = {
     showExtraDecorativeOption: boolean,
     allowHotkey: boolean,
     reduceMotionColor: boolean,
+    mirrorPendulumScale: boolean,
 };
 export type SettingStore = {
     setting: Setting,
@@ -23,6 +24,7 @@ export const useSetting = create<SettingStore>((set) => {
         globalScale,
         showCreativeOption,
         showExtraDecorativeOption,
+        mirrorPendulumScale,
     } = ((): Record<string, any> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
@@ -48,6 +50,7 @@ export const useSetting = create<SettingStore>((set) => {
             reduceMotionColor: typeof reduceMotionColor === 'boolean' ? reduceMotionColor : false,
             showCreativeOption: typeof showCreativeOption === 'boolean' ? showCreativeOption : true,
             showExtraDecorativeOption: typeof showExtraDecorativeOption === 'boolean' ? showExtraDecorativeOption : true,
+            mirrorPendulumScale: typeof mirrorPendulumScale === 'boolean' ? mirrorPendulumScale : false,
         },
         updateSetting: transformerOrPayload => {
             set(currentStore => {

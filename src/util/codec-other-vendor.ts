@@ -7,6 +7,7 @@ import {
     PresetNameStyle,
     PresetNameStyleMap,
     getDefaultNameStyle,
+    PendulumSize,
 } from 'src/model';
 import { normalizeCardEffect, normalizeCardName } from './normalize';
 import { isImageData } from './other';
@@ -23,6 +24,18 @@ const cardIconMap: Record<string, string> = {
 const reverseCardIconMap = Object.entries(cardIconMap).reduce<Record<string, string>>((acc, cur) => {
     const [vendorValue, ourValue] = cur;
     acc[ourValue] = vendorValue;
+
+    return acc;
+}, {});
+
+const boxSizeMap: Record<string, string> = {
+    large: 'Large',
+    medium: 'Normal',
+    small: 'Small',
+};
+const reverseBoxSizeMap = Object.entries(boxSizeMap).reduce<Record<string, PendulumSize>>((acc, cur) => {
+    const [vendorValue, ourValue] = cur;
+    acc[ourValue] = vendorValue as PendulumSize;
 
     return acc;
 }, {});
@@ -130,6 +143,7 @@ export const ygoCarderToCardMakerData = (
         pendulumEffect,
         pendulumScaleBlue,
         pendulumScaleRed,
+        pendulumSize,
         isPendulum,
         linkMap,
         frame,
@@ -181,7 +195,7 @@ export const ygoCarderToCardMakerData = (
             effect: normalizedPendulumEffect,
             blue: pendulumScaleBlue,
             red: pendulumScaleRed,
-            boxSize: 'Normal',
+            boxSize: boxSizeMap[pendulumSize],
             boxSizeEnabled: true,
             ...pendulum,
         },
@@ -197,7 +211,7 @@ export const ygoCarderToCardMakerData = (
             bottomRight: linkMap.includes('9') ? true : false,
         },
         layout: normalizedFrame ?? 'Normal',
-        boxSize: 'Normal',
+        boxSize: pendulumSize === 'large' ? 'Small' : 'Normal',
         rarity: normalizedRarity ?? rarity,
         /** For other card maker, inline art data is preferred over art link */
         image: artRef
@@ -293,6 +307,7 @@ export const cardMakerToYgoCarderData = (card: OtherMakerCard): { result: Card, 
         pendulumScaleBlue: blue,
         pendulumScaleRed: red,
         pendulumEffect: pendulumEffect,
+        pendulumSize: reverseBoxSizeMap[pendulumBoxSize],
         password: serial,
         externalInfo: {
             version,

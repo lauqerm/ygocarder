@@ -1,6 +1,8 @@
 export const normalizeCardName = (name: string) => {
     try {
-        return name.replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1');
+        return name
+        .replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1')
+        .replaceAll(/(^\[|\[\[|{|{{)([^{}[\]]*)[}\]]{1,2}/gm, '$2');
     } catch (e) {
         console.error(e);
         return name;
@@ -8,7 +10,9 @@ export const normalizeCardName = (name: string) => {
 };
 export const normalizeCardEffect = (effect: string) => {
     try {
-        return effect.replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1');
+        return effect
+            .replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1')
+            .replaceAll(/(^\[|\[\[|{|{{)([^{}[\]]*)[}\]]{1,2}/gm, '$2');
     } catch (e) {
         console.error(e);
         return effect;

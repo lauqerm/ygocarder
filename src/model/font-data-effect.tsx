@@ -382,6 +382,43 @@ export const EffectFontData: Record<string, FontData> = {
             { bulletWidth: 16, fontSize: 22.05, lineHeight: 25.8, lineCount: 7 },
         ]
     },
+    'ocg-pendulumLarge': {
+        ...DefaultOCGEffectFontData,
+        fontList: [
+            { bulletWidth: 39, fontSize: 45.2, lineHeight: 55.1, lineCount: 3, bulletOffset: 2, headTextFontRatio: 0.25 },
+            { bulletWidth: 31, fontSize: 35.7, lineHeight: 44.1, lineCount: 4, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 27, fontSize: 29.7, lineHeight: 35.8, lineCount: 5, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 6 },
+            { bulletWidth: 16, fontSize: 22, lineHeight: 26, lineCount: 7 },
+        ]
+    },
+    'ocg-pendulumLarge-stat': {
+        ...DefaultOCGEffectFontData,
+        fontList: [
+            { bulletWidth: 37, fontSize: 40.7, lineHeight: 48.1, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 30, fontSize: 32.7, lineHeight: 37.1, lineCount: 4, bulletOffset: 2, headTextFontRatio: 0.25 },
+            { bulletWidth: 23, fontSize: 25.7, lineHeight: 29.8, lineCount: 5, bulletOffset: 1, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 21.05, lineHeight: 24.9, lineCount: 6 },
+        ]
+    },
+    'ocg-pendulumLarge-type-stat': {
+        ...DefaultOCGEffectFontData,
+        fontList: [
+            { bulletWidth: 41, fontSize: 45.7, lineHeight: 54.8, lineCount: 2, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 32, fontSize: 35.7, lineHeight: 40.1, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 23, fontSize: 26.7, lineHeight: 30.6, lineCount: 4, bulletOffset: 2, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 21.05, lineHeight: 24.8, lineCount: 5 },
+        ]
+    },
+    'ocg-pendulumLarge-type': {
+        ...DefaultOCGEffectFontData,
+        fontList: [
+            { bulletWidth: 38, fontSize: 43.7, lineHeight: 49.8, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 31, fontSize: 34.7, lineHeight: 38.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
+            { bulletWidth: 23, fontSize: 26.7, lineHeight: 30.6, lineCount: 5, bulletOffset: 2, headTextFontRatio: 0.3 },
+            { bulletWidth: 16, fontSize: 21.05, lineHeight: 25.8, lineCount: 6 },
+        ]
+    },
 };
 
 export type FontStyle = '' | 'italic' | 'small-caps';

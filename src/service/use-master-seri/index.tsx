@@ -41,6 +41,7 @@ import {
     PendulumNormalFontData,
     PendulumSizeMap,
     PendulumSize,
+    HALF_SCALE_WIDTH_OFFSET,
 } from 'src/model';
 import {
     checkLightHeader,
@@ -220,7 +221,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             ? (isMonster || isSpeedSkill)
             : cardIcon !== 'st'
         : false;
-    const isScaleless = (pendulumScaleBlue ?? '') === '' && (pendulumScaleRed ?? '') === '';
+    const withBlueScale = !((pendulumScaleBlue ?? '') === '');
+    const withRedScale = !((pendulumScaleRed ?? '') === '');
     const {
         isInitializing,
         imageChangeCount,
@@ -325,7 +327,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 opacity: normalizedOpacity,
                 isLink, isSpeedSkill, isXyz,
                 isPendulum,
-                isScaleless,
+                pendulumFrameTypeMap: {
+                    red: withRedScale ? 'normal' : 'scaleless',
+                    blue: withBlueScale ? 'normal' : 'scaleless',
+                },
                 loopFinish,
                 loopArtFinish,
             });
@@ -507,7 +512,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isDuelTerminalCard,
         isLink,
         isPendulum,
-        isScaleless,
+        withBlueScale,
+        withRedScale,
         isSpeedCard,
         isSpeedSkill,
         isXyz,
@@ -800,7 +806,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     statInEffect,
                     typeInEffect,
                     useItalic,
-                    frameType: (isPendulum && pendulumSize === 'large') ? 'scaleless' : 'normal',
+                    frameType: (isPendulum && pendulumSize === 'large') ? 'pendulumLarge' : 'normal',
                 }),
                 textStyle: resolvedEffectTextStyle,
                 option: {
@@ -861,6 +867,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const normalizedUpSize = customPendulumStyle ? upSize : 0;
             const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
             const fontDataKey = `${format}-${pendulumSize}`;
+            const coordinateList = PendulumEffectCoordinateMap
+                [(withBlueScale && withRedScale) ? 'normal' : 'scaleless']
+                [pendulumSize];
+            /** Account for half scaleless frame */
+            const modifiedCoordinateList = (withBlueScale && withRedScale)
+                ? coordinateList
+                : coordinateList.map(({
+                    trueEdge, trueWidth, ...rest
+                }) => ({
+                    ...rest,
+                    trueEdge: trueEdge + (withBlueScale ? HALF_SCALE_WIDTH_OFFSET : 0),
+                    trueWidth: trueWidth
+                        - (withBlueScale ? HALF_SCALE_WIDTH_OFFSET : 0)
+                        - (withRedScale ? HALF_SCALE_WIDTH_OFFSET : 0),
+                }));
+
             drawEffect({
                 ctx,
                 content: pendulumEffect,
@@ -871,7 +893,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     : PendulumEffectFontData)[fontDataKey],
                 fontDataKey,
                 textStyle: resolvedPendulumEffectTextStyle,
-                sizeList: PendulumEffectCoordinateMap[isScaleless ? 'scaleless' : 'normal'][pendulumSize],
+                sizeList: modifiedCoordinateList,
                 condenseTolerant,
                 format,
                 furiganaHelper,
@@ -888,7 +910,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         condenseTolerant,
         format,
         isPendulum,
-        isScaleless,
+        withRedScale,
+        withBlueScale,
         pendulumSize,
         pendulumEffectCanvasRef,
         pendulumEffect,

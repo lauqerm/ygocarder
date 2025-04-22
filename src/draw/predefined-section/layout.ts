@@ -75,6 +75,10 @@ const {
     height: cardHeight,
     topToPendulumStructure,
     topToPendulumStructureFrame,
+    pendulumIconFrameHeight,
+    pendulumIconFrameWidth,
+    pendulumFrameHeight,
+    pendulumFrameWidth,
     pendulumStructureHeight,
     leftToPendulumStructure,
     effectBoxHeight,
@@ -100,7 +104,7 @@ export const getLayoutDrawFunction = ({
     opacity,
     isLink, isSpeedSkill, isXyz,
     isPendulum,
-    isScaleless,
+    pendulumFrameTypeMap,
     loopFinish,
     loopArtFinish,
 }: {
@@ -120,7 +124,7 @@ export const getLayoutDrawFunction = ({
     opacity: CardOpacity,
     isXyz: boolean, isSpeedSkill: boolean, isLink: boolean,
     isPendulum: boolean,
-    isScaleless: boolean,
+    pendulumFrameTypeMap: { blue: 'normal' | 'scaleless', red: 'normal' | 'scaleless' },
     loopFinish: (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
@@ -386,8 +390,22 @@ export const getLayoutDrawFunction = ({
         },
         drawPendulumScaleIcon: async () => {
             if (!ctx) return;
+            /** We create a new canvas for easier manipulation. */
+            const pendulumIconCanvas = document.createElement('canvas');
+            pendulumIconCanvas.width = pendulumIconFrameWidth;
+            pendulumIconCanvas.height = pendulumIconFrameHeight;
+            const pendulumIconContext = pendulumIconCanvas.getContext('2d');
+            await drawAsset(pendulumIconContext, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 0);
+
+            if (pendulumFrameTypeMap.blue === 'scaleless') {
+                pendulumIconContext.clearRect(0, 0, pendulumIconFrameWidth / 2, pendulumIconFrameHeight);
+            }
+            if (pendulumFrameTypeMap.red === 'scaleless') {
+                pendulumIconContext.clearRect(pendulumIconFrameWidth / 2, 0, pendulumIconFrameWidth / 2, pendulumIconFrameHeight);
+            }
+
             ctx.scale(globalScale, globalScale);
-            if (!isScaleless) await drawAsset(ctx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 750);
+            ctx.drawImage(pendulumIconCanvas, 0, 750);
             ctx.resetTransform();
         },
         /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
@@ -504,14 +522,29 @@ export const getLayoutDrawFunction = ({
             pendulumBorderCanvas.width = cardWidth;
             pendulumBorderCanvas.height = cardHeight;
             const pendulumBorderContext = pendulumBorderCanvas.getContext('2d');
-            await drawAsset(
+            await drawAssetWithSize(
                 pendulumBorderContext,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
                     + `-${foilType}`
                     + '-artless'
-                    + (isScaleless ? '-scaleless' : '')
+                    + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
                     + '.png',
                 30, topToPendulumStructureFrame,
+                pendulumFrameWidth / 2, pendulumFrameHeight,
+                0, 0,
+                pendulumFrameWidth / 2, pendulumFrameHeight,
+            );
+            await drawAssetWithSize(
+                pendulumBorderContext,
+                `frame-pendulum/border-pendulum-${pendulumSize}`
+                    + `-${foilType}`
+                    + '-artless'
+                    + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
+                    + '.png',
+                30 + pendulumFrameWidth / 2, topToPendulumStructureFrame,
+                pendulumFrameWidth / 2, pendulumFrameHeight,
+                pendulumFrameWidth / 2, 0,
+                pendulumFrameWidth / 2, pendulumFrameHeight,
             );
             if (artBorder) {
                 /**
@@ -669,11 +702,25 @@ export const getLayoutDrawFunction = ({
             await loopFinish(
                 ctx,
                 'border-pendulum',
-                async finishType => drawAsset(
-                    ctx,
-                    `finish/finish-${finishType}-border-pendulum-${pendulumSize}${isScaleless ? '-scaleless' : ''}.png`,
-                    0, 0,
-                )
+                async finishType => {
+                    const finishLinkBase = `finish/finish-${finishType}-border-pendulum-${pendulumSize}`;
+                    await drawAssetWithSize(
+                        ctx,
+                        `${finishLinkBase}${pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : ''}.png`,
+                        0, 0,
+                        cardWidth / 2, cardHeight,
+                        0, 0,
+                        cardWidth / 2, cardHeight,
+                    );
+                    await drawAssetWithSize(
+                        ctx,
+                        `${finishLinkBase}${pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : ''}.png`,
+                        0 + cardWidth / 2, 0,
+                        cardWidth / 2, cardHeight,
+                        cardWidth / 2, 0,
+                        cardWidth / 2, cardHeight,
+                    );
+                }
             );
             ctx.resetTransform();
         },

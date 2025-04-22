@@ -17,12 +17,12 @@ export const getDefaultCrop = () => ({
 
 /**
  * Check following things when adding new attributes:
- * * Default card and empty card|
+ * * Default card and empty card
  * * Convert codec
- * * Shorten codec|
- * * Card thumb|
- * * Legacy version|
- * * Import / export|
+ * * Shorten codec
+ * * Card thumb
+ * * Legacy version
+ * * Import / export
  */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({

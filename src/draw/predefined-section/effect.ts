@@ -28,7 +28,7 @@ export const getEffectFontAndCoordinate = ({
     statInEffect: boolean,
     typeInEffect: boolean,
     useItalic: boolean,
-    frameType: 'normal' | 'scaleless',
+    frameType: 'normal' | 'pendulumLarge',
 }) => {
     const coordinateKey = [
         format,
@@ -37,7 +37,7 @@ export const getEffectFontAndCoordinate = ({
     ].filter(entry => entry !== '').join('-');
     const fontDataKey = [
         format,
-        ...(frameType === 'scaleless' ? ['pendulumLarge'] : []),
+        ...(frameType === 'pendulumLarge' ? ['pendulumLarge'] : []),
         typeInEffect ? 'type' : '',
         statInEffect ? 'stat' : ''
     ].filter(entry => entry !== '').join('-');
