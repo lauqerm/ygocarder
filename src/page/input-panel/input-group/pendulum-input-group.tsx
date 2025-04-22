@@ -364,6 +364,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         )}
                     </span>}
                     value={pendulumScaleBlue}
+                    allowClear
                     onChange={e => {
                         onBlueScaleChange(e);
                         if (mirrorPendulumScale) onRedScaleChange(e);
@@ -380,6 +381,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         )}
                     </span>}
                     value={pendulumScaleRed}
+                    allowClear
                     onChange={e => {
                         if (mirrorPendulumScale) onBlueScaleChange(e);
                         onRedScaleChange(e);
