@@ -196,6 +196,7 @@
         "input.legacy.tooltip": "",
         "input.limited-edition.label": "Limited Edition",
         "input.mirror-scale.label": "同じスケール",
+        "input.pendulum-size.label": "箱のサイズ",
         "input.name-style.color.label": "カラー",
         "input.name-style.color.ruby.label": "フリガナのカラー",
         "input.name-style.color.text.label": "テキストのカラー",
@@ -334,6 +335,9 @@
         "prompt.warning.on-leave.label": "Leaving right now may make you lose unsaved progress, proceed?",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "setting.option.resolution.warning": "May affect performance",
+        "input.pendulum-size.small.label": "Small",
+        "input.pendulum-size.medium.label": "Medium",
+        "input.pendulum-size.large.label": "Large",
         "service.decode.partial.message": "Partial export mode"
     }
 }

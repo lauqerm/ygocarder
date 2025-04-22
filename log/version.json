@@ -1,5 +1,20 @@
 [
     {
+        "version": "v2.2.0 (2025/04/22)",
+        "logList": [
+            {
+                "content": "Mirror scale option now persists after reload (just like app settings)."
+            },
+            {
+                "content": "Support 3 pendulum frame sizes from Series 9. Support absence for blue/red/both scales.",
+                "image": "https://i.imgur.com/2EFEayi.png"
+            },
+            {
+                "content": "Fix: Minor behavior issues."
+            }
+        ]
+    },
+    {
         "version": "v2.1.23 (2025/04/12)",
         "logList": [
             {
