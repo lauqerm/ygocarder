@@ -14,7 +14,6 @@
 ### Improvements backlog
 
 * Dark synchro style syntax
-* Split art and effect border for pendulum
 * OCG's letter dialect ("Chef Special Recipe" OCG for example)
 * Improve UX when rendering card (reduce flashing)
 

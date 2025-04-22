@@ -1,6 +1,6 @@
 [
     {
-        "version": "v2.2.0 (2025/04/23)",
+        "version": "v2.2.0 (2025/04/22)",
         "logList": [
             {
                 "content": "Mirror scale option now persists after reload (just like app settings)."
