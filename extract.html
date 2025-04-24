@@ -9,10 +9,14 @@
 
     <script>
         let cnt = 0;
+        const size = 77;
+        /** Black bg */
         const img = new Image();
         img.crossOrigin = "anonymous";
-        img.src = "https://i.imgur.com/3FaZDer.png";
+        img.src = "https://i.imgur.com/OrbZV5L.png";
         const canvas = document.getElementById("canvas");
+        canvas.width = size;
+        canvas.height = size;
         const ctx = canvas.getContext("2d");
         img.addEventListener("load", () => {
             ctx.drawImage(img, 0, 0);
@@ -20,10 +24,13 @@
             cnt += 1;
             if (cnt === 2) driver();
         });
+        /** White bg */
         const img2 = new Image();
         img2.crossOrigin = "anonymous";
-        img2.src = "https://i.imgur.com/3fFbCbT.png";
+        img2.src = "https://i.imgur.com/qWZC6sP.png";
         const canvas2 = document.getElementById("canvas2");
+        canvas2.width = size;
+        canvas2.height = size;
         const ctx2 = canvas2.getContext("2d");
         img2.addEventListener("load", () => {
             ctx2.drawImage(img2, 0, 0);
@@ -32,7 +39,6 @@
             if (cnt === 2) driver();
         });
 
-        const size = 223;
         const driver = () => {
             const list = ctx.getImageData(0, 0, size, size).data;
             const list2 = ctx2.getImageData(0, 0, size, size).data;
@@ -78,6 +84,8 @@
                 }
             }
             const canvas3 = document.getElementById("canvas3");
+            canvas3.width = size;
+            canvas3.height = size;
             const ctx3 = canvas3.getContext("2d");
             ctx3.putImageData(new ImageData(nextList, size, size), 0, 0);
             console.log(list, list2, nextList)
