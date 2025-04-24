@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<body style="background-color: gray">
+
+    <canvas id="canvas" width="size" height="size"></canvas>
+    <canvas id="canvas2" width="size" height="size"></canvas>
+    <canvas id="canvas3" width="size" height="size"></canvas>
+
+    <script>
+        let cnt = 0;
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = "https://i.imgur.com/3FaZDer.png";
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        img.addEventListener("load", () => {
+            ctx.drawImage(img, 0, 0);
+            img.style.display = "none";
+            cnt += 1;
+            if (cnt === 2) driver();
+        });
+        const img2 = new Image();
+        img2.crossOrigin = "anonymous";
+        img2.src = "https://i.imgur.com/3fFbCbT.png";
+        const canvas2 = document.getElementById("canvas2");
+        const ctx2 = canvas2.getContext("2d");
+        img2.addEventListener("load", () => {
+            ctx2.drawImage(img2, 0, 0);
+            img2.style.display = "none";
+            cnt += 1;
+            if (cnt === 2) driver();
+        });
+
+        const size = 223;
+        const driver = () => {
+            const list = ctx.getImageData(0, 0, size, size).data;
+            const list2 = ctx2.getImageData(0, 0, size, size).data;
+
+            const nextList = new Uint8ClampedArray(size * size * 4);
+            const computeList = new Uint8ClampedArray(size * size * 4);
+            for (let i = 0; i < size * size; i++) {
+                const pixel = i * 4;
+                if (list[pixel] === list2[pixel]
+                    && list[pixel + 1] === list2[pixel + 1]
+                    && list[pixel + 2] === list2[pixel + 2]
+                    && list[pixel + 3] === list2[pixel + 3]
+                ) {
+                    nextList[pixel] = list[pixel];
+                    nextList[pixel + 1] = list[pixel + 1];
+                    nextList[pixel + 2] = list[pixel + 2];
+                    nextList[pixel + 3] = list[pixel + 3];
+                }
+            }
+            const computeC = (c1, c2) => (c1 * 255) / (c1 - c2 + 255);
+            for (let i = 0; i < size * size; i++) {
+                const pixel = i * 4;
+                if (list[pixel] === list2[pixel]
+                    && list[pixel + 1] === list2[pixel + 1]
+                    && list[pixel + 2] === list2[pixel + 2]
+                    && list[pixel + 3] === list2[pixel + 3]
+                ) {
+                } else if (
+                    (list2[pixel] === 255 && list2[pixel + 1] === 255 && list2[pixel + 2] === 255 && list2[pixel + 3] === 255)
+                    && (list[pixel] === 0 && list[pixel + 1] === 0 && list[pixel + 2] === 0 && list[pixel + 3] === 255)
+                ) {
+                } else {
+                    let r = computeC(list[pixel], list2[pixel]);
+                    let g = computeC(list[pixel + 1], list2[pixel + 1]);
+                    let b = computeC(list[pixel + 2], list2[pixel + 2]);
+                    let ra = list[pixel] / r;
+                    let ga = list[pixel + 1] / g;
+                    let ba = list[pixel + 2] / b;
+                    nextList[pixel] = Math.min(255, Math.round(r));
+                    nextList[pixel + 1] = Math.min(255, Math.round(g));
+                    nextList[pixel + 2] = Math.min(255, Math.round(b));
+                    nextList[pixel + 3] = Math.min(255, Math.round((ra + ga + ba) / 3 * 255));
+                }
+            }
+            const canvas3 = document.getElementById("canvas3");
+            const ctx3 = canvas3.getContext("2d");
+            ctx3.putImageData(new ImageData(nextList, size, size), 0, 0);
+            console.log(list, list2, nextList)
+        }
+    </script>
+
+</body>
+
+</html>
