@@ -8,7 +8,7 @@ import {
     FontData,
     NormalFontData,
 } from '../../model';
-import { condense, createFontGetter, scaleCoordinateData, scaleFontData } from '../../util';
+import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { createLineList } from '../line';
 import { drawLine } from '../text';
@@ -32,6 +32,7 @@ export const getEffectFontAndCoordinate = ({
 }) => {
     const coordinateKey = [
         format,
+        ...(frameType === 'pendulumLarge' ? ['pendulumLarge'] : []),
         typeInEffect ? 'type' : '',
         statInEffect ? 'stat' : ''
     ].filter(entry => entry !== '').join('-');
@@ -50,7 +51,7 @@ export const getEffectFontAndCoordinate = ({
     return {
         fontDataKey,
         fontData,
-        sizeList: EffectCoordinateData[frameType][coordinateKey],
+        sizeList: EffectCoordinateData[coordinateKey],
     };
 };
 
@@ -62,7 +63,7 @@ export const drawEffect = ({
     fontDataKey = 'tcg',
     fontData = EffectFontData[fontDataKey],
     textStyle,
-    sizeList = EffectCoordinateData.normal['tcg-type'],
+    sizeList = EffectCoordinateData['tcg-type'],
     condenseTolerant = 'strict',
     format,
     furiganaHelper,
@@ -91,8 +92,8 @@ export const drawEffect = ({
         forceRelaxCondenseLimit,
         globalScale = 1,
     } = option ?? {};
-    let effectSizeLevel = defaultSizeLevel ?? 0;
-    if (!ctx || !content) return effectSizeLevel;
+    let sizeLevel = defaultSizeLevel ?? 0;
+    if (!ctx || !content) return sizeLevel;
 
     const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
     const {
@@ -105,66 +106,100 @@ export const drawEffect = ({
     const additionalLineCount = (fullLineList.length ?? 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
     const paragraphList = effectText ? effectText.split('\n') : [];
 
-    const { font, fontList } = scaleFontData(fontData, globalScale);
+    let effectiveLineCount = 0;
+    const scaledFontData = scaleFontData(fontData, globalScale);
+    const { fontList } = scaledFontData;
     const yRatio = 1;
-    /** We basically go through each font size, then iterating the content multiple time with different condense ratio until the text is both fit inside the max amount of lines AND the ratio is larger than the current limit threshold. */
-    while (effectSizeLevel < fontList.length && effectSizeLevel >= 0) {
-        const tolerancePerSentence: Record<string, number> = format === 'tcg'
-            ? forceRelaxCondenseLimit && effectSizeLevel < forceRelaxCondenseLimit
-                ? CondenseTolerantMap['relaxed']
-                : CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
-            : {
-                '1': 800,
-                '2': 800,
-                '3': 800,
-            };
-        const fontSizeData = fontList[effectSizeLevel];
+    /**
+     * We basically go through each font size, then iterating the content multiple time with different condense ratio until the text is both fit inside the max amount of lines AND the ratio is larger than the current limit threshold.
+     * 
+     * If it went through every single of our font list entries, dynamic entry will be activated. It will no longer care about accuracy and just do its best to cramp all the text together. Max font entry failed when either there are too many lines, or there are too many words that is pass the condense threshold.
+     * */
+    while (sizeLevel <= fontList.length && sizeLevel >= 0) {
+        const requireDynamicSize = sizeLevel === fontList.length
+            ? true
+            : false;
+        const appliedSizeLevel = Math.min(fontList.length - 1, sizeLevel);
+        const tolerancePerSentence: Record<string, number> = requireDynamicSize
+            ? {
+                '1': 1000,
+                '2': 1000,
+                '3': 1000,
+            }
+            : (format === 'tcg'
+                ? forceRelaxCondenseLimit && appliedSizeLevel < forceRelaxCondenseLimit
+                    ? CondenseTolerantMap['relaxed']
+                    : CondenseTolerantMap[condenseTolerant] ?? CondenseTolerantMap['strict']
+                : {
+                    '1': 800,
+                    '2': 800,
+                    '3': 800,
+                });
+        const {
+            trueEdge,
+            trueWidth: trueWidthStart,
+            trueBaseline: trueBaselineStart,
+            trueHeightCap,
+        } = scaleCoordinateData(sizeList[appliedSizeLevel] ?? sizeList[sizeList.length - 1], globalScale);
+        const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 * globalScale : trueWidthStart;
+
+        const useDynamicSize = requireDynamicSize && typeof trueHeightCap === 'number';
+        const dynamicFontData = useDynamicSize
+            ? injectDynamicFont(scaledFontData, { heightCap: trueHeightCap, lineCount: effectiveLineCount })
+            : scaledFontData;
+        const dynamicSizeLevel = useDynamicSize
+            ? sizeLevel
+            : appliedSizeLevel;
+        const {
+            font: dynamicFont,
+            fontList: dynamicFontList,
+        } = dynamicFontData;
+        const fontSizeData = useDynamicSize
+            ? dynamicFontList[dynamicSizeLevel]
+            : fontList[appliedSizeLevel];
         const {
             fontSize,
             lineHeight,
             lineCount,
         } = fontSizeData;
-        const {
-            trueEdge,
-            trueWidth: trueWidthStart,
-            trueBaseline: trueBaselineStart,
-        } = scaleCoordinateData(sizeList[effectSizeLevel] ?? sizeList[sizeList.length - 1], globalScale);
-        const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 * globalScale : trueWidthStart;
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
             .setWeight(format === 'tcg' ? '' : '')
             .setSize(fontSize)
-            .setFamily(font)
+            .setFamily(dynamicFont)
             .getFont();
         ctx.textAlign = 'left';
         const textData = {
-            fontData: scaleFontData(fontData, globalScale),
-            fontLevel: effectSizeLevel,
+            fontData: dynamicFontData,
+            fontLevel: dynamicSizeLevel,
             currentFont,
         };
         // [CREATE SENTENCE ON EACH LINE]
         let lineListWithRatio: { line: string, isLast: boolean, effectiveMedian: number }[] = [];
 
         // [FIND SUITABLE CONDENSE RATIO]
-        const effectiveMedian = condense(
-            median => {
-                const { currentLineList, currentLineCount } = createLineList({
-                    ctx,
-                    median,
-                    paragraphList,
-                    additionalLineCount,
-                    format, textData,
-                    width,
-                    globalScale,
-                });
-                lineListWithRatio = currentLineList;
+        const effectiveMedian = (additionalLineCount > lineCount && typeof trueHeightCap === 'number')
+            ? 1 // If dynamic size is possible, no need to find condense value if current lint count is larger than the font's maximum line count, it will overflow anyways.
+            : condense(
+                median => {
+                    const { currentLineList, currentLineCount } = createLineList({
+                        ctx,
+                        median,
+                        paragraphList,
+                        additionalLineCount,
+                        format, textData,
+                        width,
+                        globalScale,
+                    });
+                    lineListWithRatio = currentLineList;
 
-                if (currentLineCount > lineCount) return false;
-                return true;
-            },
-            200,
-        );
+                    if (currentLineCount > lineCount) return false;
+                    return true;
+                },
+                200,
+            );
+        effectiveLineCount = lineListWithRatio.length + additionalLineCount;
 
         // [START DRAWING]
         /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
@@ -172,9 +207,9 @@ export const drawEffect = ({
         const tolerantValue = tolerancePerSentence[`${paragraphList.length}`] ?? tolerancePerSentence['3'];
         if (
             (effectiveMedian < tolerantValue)
-            && (effectSizeLevel < fontList.length - 1)
+            && (sizeLevel < fontList.length)
         ) {
-            effectSizeLevel += 1;
+            sizeLevel += 1; // If sizeLevel is larger than the length of font list, trigger dynamic size
         } else {
             clearCanvas(ctx);
 
@@ -232,7 +267,12 @@ export const drawEffect = ({
             /** Condition clause of flavor text in TCG cards do not use italic font style ("Summoned Skull" TCG). */
             if (effectFlavorCondition.length > 0 && EffectFontData[fontDataKey]) {
                 const flavorFontData = scaleFontData(EffectFontData[fontDataKey], globalScale);
-                const flavorFontSizeData = flavorFontData.fontList[effectSizeLevel];
+                const dynamicFlavorFontData = useDynamicSize
+                    ? injectDynamicFont(flavorFontData, { heightCap: trueHeightCap, lineCount: effectiveLineCount })
+                    : flavorFontData;
+                const flavorFontSizeData = useDynamicSize
+                    ? dynamicFlavorFontData.fontList[dynamicSizeLevel]
+                    : flavorFontData.fontList[appliedSizeLevel];
                 const {
                     fontSize,
                     lineHeight,
@@ -243,8 +283,8 @@ export const drawEffect = ({
                     .setFamily(flavorFontData.font)
                     .getFont();
                 const flavorTextData = {
-                    fontData: flavorFontData,
-                    fontLevel: effectSizeLevel,
+                    fontData: dynamicFlavorFontData,
+                    fontLevel: dynamicSizeLevel,
                     currentFont: flavorTextCurrentFont,
                 };
                 const internalEffectiveMedian = condense(
@@ -289,5 +329,5 @@ export const drawEffect = ({
         resetStyle();
     }
 
-    return effectSizeLevel;
+    return sizeLevel;
 };

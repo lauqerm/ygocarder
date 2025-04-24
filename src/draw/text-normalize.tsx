@@ -67,6 +67,10 @@ export const splitEffect = (effect: string, isNormal = false) => {
         effectFlavorCondition = potentialFlavorConditionText.trim();
         effectText = effectText.replace(potentialFlavorConditionText, '');
     } else effectFlavorCondition = '';
+    /** Restore all remaining nb line symbol back to their normal letters. */
+    effectText = effectText
+        .replaceAll(NB_LINE_OPEN, '[').replaceAll(NB_LINE_CLOSE, ']')
+        .replaceAll(NB_FULL_LINE_OPEN, '[[').replaceAll(NB_FULL_LINE_CLOSE, ']]');
 
     return {
         fullLineList,

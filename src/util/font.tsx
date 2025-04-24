@@ -1,4 +1,4 @@
-import { FontGetter } from 'src/model';
+import { FontData, FontGetter, FontSizeData } from 'src/model';
 
 export const createFontGetter = (props?: {
     defaultWeight?: '' | 'bold',
@@ -45,5 +45,30 @@ export const createFontGetter = (props?: {
             family = nextFamily;
             return this;
         },
+    };
+};
+
+export const getDynamicFont = ({
+    heightCap,
+    lineCount,
+}: {
+    heightCap: number,
+    lineCount: number,
+}): FontSizeData => {
+    return {
+        bulletWidth: Math.round(heightCap / lineCount * 0.9),
+        fontSize: heightCap / lineCount * 0.9,
+        lineHeight: heightCap / lineCount,
+        lineCount,
+        bulletOffset: 1,
+    };
+};
+export const injectDynamicFont = (fontData: FontData, dynamicFontOption: Parameters<typeof getDynamicFont>[0]): FontData => {
+    return {
+        ...fontData,
+        fontList: [
+            ...fontData.fontList,
+            getDynamicFont(dynamicFontOption),
+        ]
     };
 };

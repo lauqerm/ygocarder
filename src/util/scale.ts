@@ -1,11 +1,19 @@
 import { CoordinateData, FontData, FontSizeData } from 'src/model';
 
 export const scaleCoordinateData = (coordinateData: CoordinateData, scale: number): CoordinateData => {
+    const {
+        trueBaseline,
+        trueEdge,
+        trueWidth,
+        trueHeightCap,
+    } = coordinateData;
+
     return {
         ...coordinateData,
-        trueBaseline: coordinateData.trueBaseline * scale,
-        trueEdge: coordinateData.trueEdge * scale,
-        trueWidth: coordinateData.trueWidth * scale,
+        trueBaseline: trueBaseline * scale,
+        trueEdge: trueEdge * scale,
+        trueWidth: trueWidth * scale,
+        trueHeightCap: typeof trueHeightCap === 'number' ? trueHeightCap * scale : trueHeightCap,
     };
 };
 
