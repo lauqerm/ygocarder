@@ -1,6 +1,14 @@
 [
     {
-        "version": "v2.2.1 (2025/04/12)",
+        "version": "v2.2.2 (2025/04/24)",
+        "logList": [
+            {
+                "content": "Fix: Minor UI issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.1 (2025/04/22)",
         "logList": [
             {
                 "content": "Support old Magic attribute."
