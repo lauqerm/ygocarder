@@ -5,7 +5,10 @@ import { UploadOutlined } from '@ant-design/icons';
 import { decodeCard, LanguageDataDictionary, useCard } from 'src/service';
 import { StyledActionIconButton } from './styled';
 import { Card, getEmptyCard, YgoproDeckCard } from 'src/model';
-import { isYgoprodeckImage, uploadToImgur } from 'src/util';
+import {
+    isYgoprodeckImage,
+    // uploadToImgur,
+} from 'src/util';
 import { JSONUncrush } from 'src/3rd';
 
 const StyledImportContainer = styled.div`
@@ -123,26 +126,28 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                  * * The image link change each time even for the same card, so it's a huge waste of resource.
                  * * The amount of cards is so large that keeping a dictionary to map them is not feasible, and may require constant update.
                  * * The best method right now is build another dedicated server that can forward resource from YGOPRODeck as an usuable link, which is way more than the scope of this project.
+                 * 
+                 * Disable imgur import for now, it is nowhere near enough capacity for current user base. We stick with the base import, as even though it taint the canvas, it is guarantee to have image available and also we can always purge the canvas when user swithching source.
                  */
                 if (imageSurvey && decodedCard.artSource === 'online' && isYgoprodeckImage(decodedCard.art)) {
                     const surveyedDecodedCard: Card = { ...decodedCard };
-                    try {
-                        const imgurResponse = await uploadToImgur(decodedCard.art);
-                        if (imgurResponse.status !== 200) {
-                            surveyedDecodedCard.art = 'https://i.imgur.com/jjtCuG5.png';
-                            throw new Error('Imgur response status: ' + imgurResponse.status);
-                        }
-                        const imgurResponseData: { data: { link: string } } = await imgurResponse.json();
+                    // try {
+                    //     const imgurResponse = await uploadToImgur(decodedCard.art);
+                    //     if (imgurResponse.status !== 200) {
+                    //         surveyedDecodedCard.art = 'https://i.imgur.com/jjtCuG5.png';
+                    //         throw new Error('Imgur response status: ' + imgurResponse.status);
+                    //     }
+                    //     const imgurResponseData: { data: { link: string } } = await imgurResponse.json();
 
-                        surveyedDecodedCard.art = imgurResponseData.data.link;
-                    } catch (e) {
-                        /** Failing the upload process does not terminate the import process */
-                        console.error('Upload error:', e);
-                        notification.error({
-                            message: language['prompt.import.imgur.message'],
-                            description: language['prompt.import.imgur.description'],
-                        });
-                    }
+                    //     surveyedDecodedCard.art = imgurResponseData.data.link;
+                    // } catch (e) {
+                    //     /** Failing the upload process does not terminate the import process */
+                    //     console.error('Upload error:', e);
+                    //     notification.error({
+                    //         message: language['prompt.import.imgur.message'],
+                    //         description: language['prompt.import.imgur.description'],
+                    //     });
+                    // }
                     onImport(surveyedDecodedCard, {
                         forcePurityCheck: true,
                         writeOnCurrentCard: mode === 'new' ? false : true,
