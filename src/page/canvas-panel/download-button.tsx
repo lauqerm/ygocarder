@@ -8,6 +8,34 @@ import { useShallow } from 'zustand/react/shallow';
 import { forceRefocus } from 'src/util';
 import { ResolutionPicker } from 'src/component';
 
+export const ResolutionButton = styled.div`
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing);
+    border-left: var(--bw) solid var(--sub-secondary);
+    border-radius: 0 var(--br-lg) var(--br-lg) 0;
+    color: var(--color);
+    cursor: pointer;
+    .anticon {
+        font-size: var(--fs-2xl);
+        margin-left: 0;
+    }
+    .resolution-overlay {
+        position: absolute;
+        left: 50%;
+        bottom: 3px; // Alignment
+        font-size: var(--fs-xs);
+        text-align: center;
+        transform: translateX(-50%);
+    }
+    .resolution-icon {
+        transform: translateY(-5px); // Alignment
+    }
+`;
 const StyledDownloadButton = styled(Button)`
     padding: 0;
     .button-label {
@@ -20,32 +48,6 @@ const StyledDownloadButton = styled(Button)`
             border: var(--bw) solid transparent;
             border-radius: var(--br-lg);
             line-height: 29px; // Alignment
-        }
-    }
-    .button-option {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding: var(--spacing);
-        border-left: var(--bw) solid var(--sub-secondary);
-        border-radius: 0 var(--br-lg) var(--br-lg) 0;
-        .anticon {
-            font-size: var(--fs-2xl);
-            margin-left: 0;
-        }
-        .resolution-overlay {
-            position: absolute;
-            left: 50%;
-            bottom: 3px; // Alignment
-            font-size: var(--fs-xs);
-            text-align: center;
-            transform: translateX(-50%);
-        }
-        .resolution-icon {
-            transform: translateY(-5px); // Alignment
         }
     }
 `;
@@ -145,10 +147,10 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
                 placement="bottomRight"
                 overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
             >
-                <div className="button-option" onClick={e => e.stopPropagation()}>
+                <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
                     <GatewayOutlined className="resolution-icon" />
                     <span className="resolution-overlay">{resolution[1]}</span>
-                </div>
+                </ResolutionButton>
             </Dropdown>
         </StyledDownloadButton>
     </div>;

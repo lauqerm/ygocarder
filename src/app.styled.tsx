@@ -60,6 +60,18 @@ export const StyledDataButtonPanelContainer = styled.div`
         line-height: 1.35;
         position: relative;
     }
+    .save-button-tainted {
+        .alert-label {
+            flex: 1;
+            padding-top: var(--spacing-xs);
+        }
+        .resolution-option {
+            position: relative;
+            border: none;
+            border-radius: var(--br-lg);
+            background: var(--main-primary);
+        }
+    }
     .imexport {
         flex: 0 0 200px;
         display: grid;

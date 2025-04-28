@@ -143,6 +143,8 @@
         "input.duel-terminal.label": "Duel Terminal",
         "input.effect.label": "Effect",
         "input.finish.label": "Finish",
+        "input.finish.art.label": "Art",
+        "input.finish.art.tooltip": "Use art finish",
         "input.foil.gold.label": "Gold",
         "input.foil.label": "Foil",
         "input.foil.normal.label": "Normal",

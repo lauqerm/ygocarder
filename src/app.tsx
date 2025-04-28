@@ -25,6 +25,7 @@ import {
     ExportPanelRef,
     ImportPanel,
     ImportPanelRef,
+    ResolutionButton,
 } from './page';
 import WebFont from 'webfontloader';
 import {
@@ -37,10 +38,10 @@ import {
     useOCGFont,
     useSetting,
 } from './service';
-import { notification, Tooltip } from 'antd';
-import { Lightbox, LightboxRef, TaintedCanvasWarning } from './component';
+import { Dropdown, notification, Tooltip } from 'antd';
+import { Lightbox, LightboxRef, ResolutionPicker, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
-import { ZoomInOutlined, ClearOutlined } from '@ant-design/icons';
+import { ZoomInOutlined, ClearOutlined, GatewayOutlined } from '@ant-design/icons';
 import {
     CardPreviewContainer,
     ErrorAlert,
@@ -73,10 +74,12 @@ function App() {
         allowHotkey,
         softMode,
         globalScale,
-    } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor, globalScale } }) => ({
+        resolution,
+    } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor, globalScale, resolution } }) => ({
         softMode: reduceMotionColor,
         allowHotkey,
         globalScale,
+        resolution,
     })));
     const {
         isInitiating: isLanguageInitiating,
@@ -499,10 +502,21 @@ function App() {
                                 globalScale={globalScale}
                                 onDownloadError={alertDownloadError}
                             />
-                            {isTainted && <div id="save-button-tainted" className="save-button-container">
-                                <span>
+                            {isTainted && <div id="save-button-tainted" className="save-button-container save-button-tainted">
+                                <div className="alert-label">
                                     {language['alert.download.tainted-first-line']}<br />
-                                    {language['alert.download.tainted-second-line']} <TaintedCanvasWarning /></span>
+                                    {language['alert.download.tainted-second-line']} <TaintedCanvasWarning />
+                                </div>
+                                <Dropdown
+                                    className="save-button-dropdown"
+                                    placement="bottomRight"
+                                    overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
+                                >
+                                    <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
+                                        <GatewayOutlined className="resolution-icon" />
+                                        <span className="resolution-overlay">{resolution[1]}</span>
+                                    </ResolutionButton>
+                                </Dropdown>
                             </div>}
                         </StyledDataButtonPanelContainer>
                         <CardPreviewContainer className="card-preview-container">

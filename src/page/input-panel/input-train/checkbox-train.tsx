@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { getNavigationProps } from 'src/util';
 import { InputTrainStyle } from 'src/component';
+import { Tooltip } from 'antd';
 
 const StyledCheckboxTrainContainer = styled.div`
     ${InputTrainStyle}
@@ -9,7 +10,7 @@ const StyledCheckboxTrainContainer = styled.div`
 export type CheckboxTrain = {
     className?: string,
     value: string[],
-    optionList: { label: React.ReactNode, value: string | number, props?: React.LabelHTMLAttributes<HTMLLabelElement> }[],
+    optionList: { label: React.ReactNode, value: string | number, tooltip?: string, props?: React.LabelHTMLAttributes<HTMLLabelElement> }[],
     onChange: (value: (string | number)[]) => void,
     children?: React.ReactNode,
 }
@@ -44,10 +45,9 @@ export const CheckboxTrain = ({
             })}
         >
             {optionList.map((entry, index) => {
-                const { label, value, props } = entry;
+                const { label, value, props, tooltip } = entry;
                 const isChecked = Array.isArray(activeValue) ? activeValue.includes(`${value}`) : false;
-
-                return <label key={value}
+                const children = <label key={value}
                     {...props}
                     className={[
                         'ant-radio-button-wrapper',
@@ -65,6 +65,10 @@ export const CheckboxTrain = ({
                     </span>
                     <span className="label">{label}</span>
                 </label>;
+
+                return tooltip
+                    ? <Tooltip title={tooltip}>{children}</Tooltip>
+                    : children;
             })}
         </div>
     </StyledCheckboxTrainContainer>;

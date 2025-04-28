@@ -50,8 +50,9 @@ export const getFoilButtonList = (dictionary: FoilDictionary) => {
     }));
 };
 
-export const FinishButtonList = Object.values(FinishMap).map(({ value, label }) => ({
-    label,
+export const getFinishList = (dictionary: Record<string, string>) => Object.values(FinishMap).map(({ value, label, labelKey, tooltipKey }) => ({
+    label: labelKey ? dictionary[labelKey] : label,
+    tooltip: tooltipKey ? dictionary[tooltipKey] : undefined,
     value,
 }));
 

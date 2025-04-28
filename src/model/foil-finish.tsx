@@ -10,6 +10,8 @@ const type8CommonInstruction: FinishInstruction[] = [
 export type FinishInformation = {
     value: string,
     label: React.ReactNode,
+    labelKey?: string,
+    tooltipKey?: string,
     partInstructionMap: Record<string, FinishInstruction[]>,
     pendulumSubstituteMap: Record<string, string>,
 };
@@ -89,6 +91,14 @@ export const FinishMap: Record<string, FinishInformation> = {
         },
         pendulumSubstituteMap: {},
     },
+    // art: {
+    //     value: 'art',
+    //     label: 'Art',
+    //     partInstructionMap: {},
+    //     pendulumSubstituteMap: {},
+    //     labelKey: 'input.finish.art.label',
+    //     tooltipKey: 'input.finish.art.tooltip',
+    // },
 };
 
 export const ArtFinishMap: Record<string, FinishInformation> = {

@@ -144,6 +144,8 @@
         "input.duel-terminal.label": "Duel Terminal",
         "input.effect.label": "Hiệu ứng",
         "input.finish.label": "Lớp phủ",
+        "input.finish.art.label": "Ảnh",
+        "input.finish.art.tooltip": "Dùng lớp phủ ảnh",
         "input.foil.gold.label": "Gold",
         "input.foil.label": "Phôi bài",
         "input.foil.normal.label": "Không dùng",

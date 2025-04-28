@@ -19,7 +19,7 @@ import {
 import {
     getFoilButtonList,
     getAttributeList,
-    FinishButtonList,
+    getFinishList,
     FormatButtonList,
 } from './const';
 import { CharPicker } from './char-picker';
@@ -157,6 +157,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     }, [setCard]);
 
     const attributeList = useMemo(() => getAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
+    const finishList = useMemo(() => getFinishList(language), [language]);
 
     useEffect(() => {
         stylePickerRef.current?.setValue({ font: nameStyle.font });
@@ -215,7 +216,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 className="finish-checkbox"
                 value={finish}
                 onChange={onFinishChange}
-                optionList={FinishButtonList}
+                optionList={finishList}
             >
                 <span>{language['input.finish.label']}</span>
             </CheckboxTrain>}
