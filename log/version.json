@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.2.3 (2025/04/29)",
+        "logList": [
+            {
+                "content": "Allow changing export resolution even in the case of tainted card."
+            },
+            {
+                "content": "New finish type allow apply the same finish used for artwork into card level, attribute and sticker."
+            },
+            {
+                "content": "New button for FAQs. I will try to communicate with anonymous feedbacks through this button, and also help to guide users to some advance features that is already implemented but is not immediately obvious."
+            }
+        ]
+    },
+    {
         "version": "v2.2.2 (2025/04/24)",
         "logList": [
             {
@@ -128,7 +142,7 @@
         "version": "v2.1.17 (2025/03/28)",
         "logList": [
             {
-                "content": "Allow customize font style for card's effects in \"Text Style\" menu."
+                "content": "Allow customizing font style for card's effects in \"Text Style\" menu."
             }
         ]
     },

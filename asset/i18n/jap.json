@@ -141,6 +141,7 @@
         "input.duel-terminal.label": "Duel Terminal",
         "input.effect.label": "テキスト",
         "input.finish.label": "箔押",
+        "input.finish.art.label": "イラスト",
         "input.foil.gold.label": "ゴールド",
         "input.foil.label": "レアリティ",
         "input.foil.normal.label": "ノーマル",
@@ -339,6 +340,7 @@
         "input.pendulum-size.small.label": "Small",
         "input.pendulum-size.medium.label": "Medium",
         "input.pendulum-size.large.label": "Large",
+        "input.finish.art.tooltip": "Use art finish",
         "service.decode.partial.message": "Partial export mode"
     }
 }
