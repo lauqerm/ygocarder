@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.2.3 (2025/04/29)",
+        "logList": [
+            {
+                "content": "Allow changing export resolution even in the case of tainted card."
+            }
+        ]
+    },
+    {
         "version": "v2.2.2 (2025/04/24)",
         "logList": [
             {
@@ -128,7 +136,7 @@
         "version": "v2.1.17 (2025/03/28)",
         "logList": [
             {
-                "content": "Allow customize font style for card's effects in \"Text Style\" menu."
+                "content": "Allow customizing font style for card's effects in \"Text Style\" menu."
             }
         ]
     },

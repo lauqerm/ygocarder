@@ -110,7 +110,8 @@ const StyledPendulumInputContainer = styled.div`
         color: var(--sub-blue-scale);
     }
     .pendulum-option {
-        display: flex;
+        display: grid;
+        grid-template-columns: var(--width-label) 1fr;
         align-items: center;
         .pendulum-frame-input,
         .pendulum-checkbox {
@@ -272,86 +273,88 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     checked={isPendulum}
                 >{language['input.pendulum.label']}</Checkbox>
             </div>
-            {showCreativeOption && <Popover
-                visible={frameDropdownVisible}
-                onVisibleChange={setFrameDropdownVisibleVisible}
-                trigger={['hover', 'click']}
-                placement="bottom"
-                overlayClassName="pendulum-frame-picker-overlay"
-                content={<div className="overlay-event-absorber">
-                    <BottomFrameOptionGrid ref={bottomFrameOptionGridRef}
-                        frameList={frameList}
-                        pendulumFrame={pendulumFrame}
-                        onCancel={() => {
-                            setFrameDropdownVisibleVisible(false);
-                            containerRef.current?.focus();
-                        }}
-                        onChange={changeBottomFrame}
-                    />
-                </div>}
-            >
-                <StyledPendulumFrameInputContainer ref={containerRef}
-                    className="pendulum-frame-input"
-                    tabIndex={0}
-                    onKeyDown={e => {
-                        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
-                            setFrameDropdownVisibleVisible(true);
-                            /** Popover takes time to mount / become visible */
-                            setTimeout(() => {
-                                bottomFrameOptionGridRef.current?.focus();
-                            }, 200);
-
-                            return false;
-                        }
-                    }}
-                >
-                    <span className="pendulum-frame-label">{language['input.bottom-frame.label']} <CaretDownOutlined /></span>
-                    {currentPendulumFrame
-                        ? <FrameInfoBlock className="pendulum-frame-info-block" {...currentPendulumFrame} />
-                        : <FrameInfoBlock className="pendulum-frame-info-block" nameKey="input.frame.auto" />}
-                </StyledPendulumFrameInputContainer>
-            </Popover>}
-            {(isPendulum && showCreativeOption)
-                && <div className="pendulum-size">
-                <Popover key="color-picker"
-                    overlayClassName="global-input-overlay font-picker-overlay"
+            <div className="pendulum-option-container">
+                {showCreativeOption && <Popover
+                    visible={frameDropdownVisible}
+                    onVisibleChange={setFrameDropdownVisibleVisible}
+                    trigger={['hover', 'click']}
+                    placement="bottom"
+                    overlayClassName="pendulum-frame-picker-overlay"
                     content={<div className="overlay-event-absorber">
-                        <StyledDropdown.Container>
-                            {pendulumSizeList.map(({ value, label }) => {
-                                return <StyledDropdown.Option key={value}
-                                    className={pendulumSize === value ? 'menu-active' : ''}
-                                    onClick={() => {
-                                        onPendulumSizeChange(value);
-                                    }}
-                                >
-                                    {label}
-                                </StyledDropdown.Option>;
-                            })}
-                        </StyledDropdown.Container>
+                        <BottomFrameOptionGrid ref={bottomFrameOptionGridRef}
+                            frameList={frameList}
+                            pendulumFrame={pendulumFrame}
+                            onCancel={() => {
+                                setFrameDropdownVisibleVisible(false);
+                                containerRef.current?.focus();
+                            }}
+                            onChange={changeBottomFrame}
+                        />
                     </div>}
-                    placement="bottomLeft"
                 >
-                    <PopoverButton
-                        $softMode={softMode}
-                        $active={pendulumSize !== DEFAULT_PENDULUM_SIZE}
-                    >
-                        {language[PendulumSizeMap[pendulumSize].labelKey]}
-                    </PopoverButton>
-                </Popover>
-            </div>}
-            {(isPendulum && showCreativeOption)
-                && <Checkbox
-                    className="mirror-scale"
-                    onChange={e => {
-                        const willMirror = e.target.checked;
+                    <StyledPendulumFrameInputContainer ref={containerRef}
+                        className="pendulum-frame-input"
+                        tabIndex={0}
+                        onKeyDown={e => {
+                            if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
+                                setFrameDropdownVisibleVisible(true);
+                                /** Popover takes time to mount / become visible */
+                                setTimeout(() => {
+                                    bottomFrameOptionGridRef.current?.focus();
+                                }, 200);
 
-                        updateSetting({ mirrorPendulumScale: willMirror });
-                        if (willMirror) onRedScaleChange(pendulumScaleBlue);
-                    }}
-                    checked={mirrorPendulumScale}
-                >
-                    {language['input.mirror-scale.label']}
-                </Checkbox>}
+                                return false;
+                            }
+                        }}
+                    >
+                        <span className="pendulum-frame-label">{language['input.bottom-frame.label']} <CaretDownOutlined /></span>
+                        {currentPendulumFrame
+                            ? <FrameInfoBlock className="pendulum-frame-info-block" {...currentPendulumFrame} />
+                            : <FrameInfoBlock className="pendulum-frame-info-block" nameKey="input.frame.auto" />}
+                    </StyledPendulumFrameInputContainer>
+                </Popover>}
+                {(isPendulum && showCreativeOption)
+                    && <div className="pendulum-size">
+                    <Popover key="color-picker"
+                        overlayClassName="global-input-overlay font-picker-overlay"
+                        content={<div className="overlay-event-absorber">
+                            <StyledDropdown.Container>
+                                {pendulumSizeList.map(({ value, label }) => {
+                                    return <StyledDropdown.Option key={value}
+                                        className={pendulumSize === value ? 'menu-active' : ''}
+                                        onClick={() => {
+                                            onPendulumSizeChange(value);
+                                        }}
+                                    >
+                                        {label}
+                                    </StyledDropdown.Option>;
+                                })}
+                            </StyledDropdown.Container>
+                        </div>}
+                        placement="bottomLeft"
+                    >
+                        <PopoverButton
+                            $softMode={softMode}
+                            $active={pendulumSize !== DEFAULT_PENDULUM_SIZE}
+                        >
+                            {language[PendulumSizeMap[pendulumSize].labelKey]}
+                        </PopoverButton>
+                    </Popover>
+                </div>}
+                {(isPendulum && showCreativeOption)
+                    && <Checkbox
+                        className="mirror-scale"
+                        onChange={e => {
+                            const willMirror = e.target.checked;
+
+                            updateSetting({ mirrorPendulumScale: willMirror });
+                            if (willMirror) onRedScaleChange(pendulumScaleBlue);
+                        }}
+                        checked={mirrorPendulumScale}
+                    >
+                        {language['input.mirror-scale.label']}
+                    </Checkbox>}
+            </div>
         </div>
         {isPendulum && <>
             <div>

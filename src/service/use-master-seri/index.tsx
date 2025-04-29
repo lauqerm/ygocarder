@@ -42,6 +42,7 @@ import {
     PendulumSizeMap,
     PendulumSize,
     HALF_SCALE_WIDTH_OFFSET,
+    ArtFinishType,
 } from 'src/model';
 import {
     checkLightHeader,
@@ -50,6 +51,7 @@ import {
     checkNormal,
     checkSpeedSkill,
     checkXyz,
+    createCanvas,
     generateLayer,
     resolveNameStyle,
 } from 'src/util';
@@ -61,6 +63,10 @@ import { notification } from 'antd';
 const {
     height: CanvasHeight,
     width: CanvasWidth,
+    finishTypeCardWidth,
+    finishTypeCardHeight,
+    stickerX,
+    stickerY,
 } = CanvasConst;
 type DrawerProp = {
     imageChangeCount: number,
@@ -223,6 +229,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         : false;
     const withBlueScale = !((pendulumScaleBlue ?? '') === '');
     const withRedScale = !((pendulumScaleRed ?? '') === '');
+    const useArtFinish = finish.includes(ArtFinishType);
     const {
         isInitializing,
         imageChangeCount,
@@ -331,6 +338,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     red: withRedScale ? 'normal' : 'scaleless',
                     blue: withBlueScale ? 'normal' : 'scaleless',
                 },
+                useArtFinish,
                 loopFinish,
                 loopArtFinish,
             });
@@ -521,6 +529,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         linkMap,
         resolvedStatTextStyle,
         resolvedOtherEffectTextStyle,
+        finish,
+        useArtFinish,
         loopArtFinish,
         loopFinish,
         opacity,
@@ -768,13 +778,44 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         drawingPipeline.current.sticker.rerun += 1;
         drawingPipeline.current.sticker.instructor = async () => {
-            return await drawSticker({
-                ctx: stickerCanvasRef.current?.getContext('2d'),
+            const ctx = stickerCanvasRef.current?.getContext('2d');
+            if (!clearCanvas(ctx)) return;
+            const {
+                canvas: stickerCanvas,
+                context: stickerContext,
+            } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
+            await drawSticker({
+                ctx: stickerContext,
                 sticker,
                 globalScale,
+                x: stickerX,
+                y: stickerY,
             });
+            if (loopArtFinish && useArtFinish) {
+                const {
+                    canvas: stickerFinishCanvas,
+                    context: stickerFinishContext,
+                } = createCanvas(CanvasWidth, CanvasHeight);
+                stickerFinishContext.drawImage(stickerCanvas, 0, 0);
+                await loopArtFinish(
+                    stickerFinishContext,
+                    'art',
+                    async (finishType) => {
+                        return await drawAsset(
+                            stickerFinishContext,
+                            `finish/finish-typeart-${finishType}.png`,
+                            CanvasWidth - finishTypeCardWidth, CanvasHeight - finishTypeCardHeight,
+                        );
+                    },
+                );
+                stickerContext.globalCompositeOperation = 'source-in';
+                stickerContext.drawImage(stickerFinishCanvas, 0, 0);
+                ctx.drawImage(stickerCanvas, 0, 0);
+            } else {
+                ctx.drawImage(stickerCanvas, 0, 0);
+            }
         };
-    }, [readyToDraw, globalScale, sticker, stickerCanvasRef]);
+    }, [readyToDraw, globalScale, sticker, useArtFinish, stickerCanvasRef, loopArtFinish]);
 
     /** DRAW CARD EFFECT + TYPE ABILITY */
     useEffect(() => {

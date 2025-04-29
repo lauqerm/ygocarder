@@ -70,6 +70,14 @@ export const CanvasConst = {
     leftToEffectBox: 54,
     effectBoxWidth: 705,
     effectBoxHeight: 231,
+    finishTypeCardWidth: 702,
+    finishTypeCardHeight: 200,
+    stickerSize: 52,
+    attributeSize: 77,
+    attributeY: 55,
+    attributeX: 678,
+    stickerX: 739.1438,
+    stickerY: 1110.938,
 };
 
 export const DEFAULT_BASE_FILL_COLOR = '#404040';

@@ -7,6 +7,7 @@ const type8CommonInstruction: FinishInstruction[] = [
 
 /** @summary Web engine has less blend mode than photoshop (or any desktop image manipulators for that matter), the behavior of similar blend mode is also different, so we currently we cannot have a 1:1 conversion between photoshop layer into canvas. */
 
+export const ArtFinishType = 'art';
 export type FinishInformation = {
     value: string,
     label: React.ReactNode,
@@ -91,14 +92,14 @@ export const FinishMap: Record<string, FinishInformation> = {
         },
         pendulumSubstituteMap: {},
     },
-    // art: {
-    //     value: 'art',
-    //     label: 'Art',
-    //     partInstructionMap: {},
-    //     pendulumSubstituteMap: {},
-    //     labelKey: 'input.finish.art.label',
-    //     tooltipKey: 'input.finish.art.tooltip',
-    // },
+    art: {
+        value: ArtFinishType,
+        label: 'Art',
+        partInstructionMap: {},
+        pendulumSubstituteMap: {},
+        labelKey: 'input.finish.art.label',
+        tooltipKey: 'input.finish.art.tooltip',
+    },
 };
 
 export const ArtFinishMap: Record<string, FinishInformation> = {

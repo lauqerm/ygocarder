@@ -12,7 +12,7 @@ import {
     PendulumSizeMapException,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
-import { getCardIconFromFrame } from 'src/util';
+import { createCanvas, getCardIconFromFrame } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 import { getFinishIterator } from '../canvas-util';
@@ -85,6 +85,11 @@ const {
     effectBoxWidth,
     leftToEffectBox,
     topToEffectBox,
+    attributeSize,
+    attributeX,
+    attributeY,
+    finishTypeCardWidth,
+    stickerSize,
 } = CanvasConst;
 /** Various function used to draw the layout of a card is abstracted to this factory. */
 export const getLayoutDrawFunction = ({
@@ -105,6 +110,7 @@ export const getLayoutDrawFunction = ({
     isLink, isSpeedSkill, isXyz,
     isPendulum,
     pendulumFrameTypeMap,
+    useArtFinish,
     loopFinish,
     loopArtFinish,
 }: {
@@ -125,6 +131,7 @@ export const getLayoutDrawFunction = ({
     isXyz: boolean, isSpeedSkill: boolean, isLink: boolean,
     isPendulum: boolean,
     pendulumFrameTypeMap: { blue: 'normal' | 'scaleless', red: 'normal' | 'scaleless' },
+    useArtFinish: boolean,
     loopFinish: (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
@@ -356,11 +363,38 @@ export const getLayoutDrawFunction = ({
         drawAttribute: async () => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
+            const {
+                canvas: attributeCanvas,
+                context: attributeContext,
+            } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
             await drawAsset(
-                ctx,
+                attributeContext,
                 `attribute/attr-${format}-${attribute.toLowerCase()}.png`,
-                678, 55,
+                attributeX, attributeY,
             );
+            if (loopArtFinish && useArtFinish) {
+                const {
+                    canvas: attributeFinishCanvas,
+                    context: attributeFinishContext,
+                } = createCanvas(cardWidth, (attributeY + attributeSize));
+                attributeFinishContext.drawImage(attributeCanvas, 0, 0);
+                await loopArtFinish(
+                    attributeFinishContext,
+                    'art',
+                    async (finishType) => {
+                        return await drawAsset(
+                            attributeFinishContext,
+                            `finish/finish-typeart-${finishType}.png`,
+                            (cardWidth - finishTypeCardWidth) / 2, stickerSize,
+                        );
+                    },
+                );
+                attributeContext.globalCompositeOperation = 'source-in';
+                attributeContext.drawImage(attributeFinishCanvas, 0, 0);
+                ctx.drawImage(attributeCanvas, 0, 0);
+            } else {
+                ctx.drawImage(attributeCanvas, 0, 0);
+            }
             ctx.resetTransform();
         },
         drawStar: async ({ style, starAlignment }: { style?: CanvasTextStyle, starAlignment: string }) => {
@@ -376,6 +410,7 @@ export const getLayoutDrawFunction = ({
                 starAlignment,
                 style,
                 globalScale,
+                useArtFinish,
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'
                         ? Promise.resolve()
@@ -385,6 +420,7 @@ export const getLayoutDrawFunction = ({
                             async type => drawAsset(ctx, `finish/finish-${type}-star.png`, ...coordinate),
                         );
                 },
+                loopArtFinish,
             });
             ctx.resetTransform();
         },

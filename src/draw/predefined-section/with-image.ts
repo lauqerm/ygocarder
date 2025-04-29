@@ -1,12 +1,14 @@
 
 import { CanvasConst, NO_STICKER } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
-import { clearCanvas, setTextStyle } from '../canvas-util';
+import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
-import { scaleDrawCoordinate } from 'src/util';
+import { createCanvas, scaleDrawCoordinate } from 'src/util';
 
 const {
     width: CanvasWidth,
+    finishTypeCardWidth,
+    stickerSize,
 } = CanvasConst;
 
 export const drawStarContent = async ({
@@ -17,7 +19,9 @@ export const drawStarContent = async ({
     star,
     starAlignment = 'auto',
     style,
+    useArtFinish,
     onStarDraw,
+    loopArtFinish,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     globalScale: number,
@@ -26,7 +30,9 @@ export const drawStarContent = async ({
     star: string | number,
     starAlignment: string,
     style?: CanvasTextStyle,
+    useArtFinish: boolean,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
+    loopArtFinish: ReturnType<typeof getFinishIterator>,
 }) => {
     const starWidth = 50;
     const startSpacing = 4;
@@ -74,33 +80,63 @@ export const drawStarContent = async ({
         resetShadow();
     }
 
-    return await Promise.all([...Array(normalizedStarCount)]
+    const {
+        canvas: starCanvas,
+        context: starContext,
+    } = createCanvas(CanvasWidth * globalScale, (baseline + starWidth) * globalScale);
+    await Promise.all([...Array(normalizedStarCount)]
         .map(async () => {
             offset += (starWidth + startSpacing);
             let coordinate: [number, number] = [
                 leftEdge - (starWidth + offset),
                 baseline,
             ];
-            await drawAsset(ctx, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
+            await drawAsset(starContext, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
             return await onStarDraw(coordinate);
         })
     );
+    if (loopArtFinish && useArtFinish) {
+        const {
+            canvas: starFinishCanvas,
+            context: starFinishContext,
+        } = createCanvas(CanvasWidth, (baseline + starWidth));
+        starFinishContext.drawImage(starCanvas, 0, 0);
+        await loopArtFinish(
+            starFinishContext,
+            'art',
+            async (finishType) => {
+                return await drawAsset(
+                    starFinishContext,
+                    `finish/finish-typeart-${finishType}.png`,
+                    (CanvasWidth - finishTypeCardWidth) / 2, stickerSize,
+                );
+            },
+        );
+        starContext.globalCompositeOperation = 'source-in';
+        starContext.drawImage(starFinishCanvas, 0, 0);
+        ctx.drawImage(starCanvas, 0, 0);
+    } else {
+        ctx.drawImage(starCanvas, 0, 0);
+    }
 };
 
 export const drawSticker = async ({
     ctx,
     sticker,
     globalScale,
+    x, y,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     sticker: string,
     globalScale: number,
+    x: number,
+    y: number,
 }) => {
     if (!clearCanvas(ctx)) return;
 
     if (sticker === NO_STICKER) return Promise.resolve();
     ctx.scale(globalScale, globalScale);
-    await drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, 739.1438, 1110.938);
+    await drawAsset(ctx, `sticker/sticker-${sticker.toLowerCase()}.png`, x, y);
     ctx.resetTransform();
     return;
 };

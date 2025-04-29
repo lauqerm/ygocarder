@@ -15,7 +15,7 @@ export const ResolutionButton = styled.div`
     height: 100%;
     display: flex;
     align-items: center;
-    padding: var(--spacing);
+    padding: var(--spacing-xs) var(--spacing);
     border-left: var(--bw) solid var(--sub-secondary);
     border-radius: 0 var(--br-lg) var(--br-lg) 0;
     color: var(--color);

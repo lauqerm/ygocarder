@@ -63,7 +63,7 @@ export const StyledDataButtonPanelContainer = styled.div`
     .save-button-tainted {
         .alert-label {
             flex: 1;
-            padding-top: var(--spacing-xs);
+            padding-top: var(--spacing-px);
         }
         .resolution-option {
             position: relative;
