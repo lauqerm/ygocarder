@@ -94,6 +94,7 @@ html {
     // Border Width / Outline Width
     --bw: 1px;
     --bw-lg: 2px;
+    --bw-xl: 4px;
 
     // Box Shadow
     --bs-1: 0 0 0 1px #222222;
@@ -135,6 +136,13 @@ html {
         li {
             line-height: 1.5;
         }
+    }
+
+    blockquote {
+        background: var(--main-level-4);
+        border-left: var(--bw-xl) solid var(--sub-level-4);
+        margin: 0;
+        padding: var(--spacing-xs) var(--spacing-sm);
     }
 
     .center {

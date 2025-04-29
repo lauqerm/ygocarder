@@ -9,6 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
+import { QuestionAndFeedback } from './faq';
 import './app-header.scss';
 
 export const Affiliation = () => {
@@ -97,6 +98,7 @@ export const AppHeader = () => {
                         {language['contributor.bug-report.tooltip']}
                     </div>
                 </span>
+                <QuestionAndFeedback />
                 <VersionLogButton />
             </div>
             <div className="app-contribution">

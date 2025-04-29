@@ -360,3 +360,22 @@ button.ant-btn {
         color: var(--color);
     }
 }
+
+.ant-tabs {
+    color: var(--color);
+    .ant-tabs-tab {
+        &.ant-tabs-tab-active .ant-tabs-tab-btn {
+            font-weight: bold;
+            color: var(--main-secondary);
+        }
+        .ant-tabs-tab-btn {
+            font-weight: bold;
+        }
+        &:hover {
+            color: var(--sub-secondary);
+        }
+    }
+    .ant-tabs-ink-bar {
+        background: var(--sub-slider);
+    }
+}
