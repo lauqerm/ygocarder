@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     ] = useNotification('faqReminder');
 
     useEffect(() => {
-        if (true) {
+        if (faqReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(false);
 
             setAnimating(true);

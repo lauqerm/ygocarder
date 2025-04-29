@@ -20,6 +20,7 @@ export const VersionLogButtonLabel = styled.div<{ $animating: boolean }>`
     ${({ $animating }) => $animating ? css`animation: 2s linear 350ms 4 ${titlShaking};` : ''}
     ${({ $animating }) => $animating
         ? `
+            border: var(--bw) solid var(--sub-level-1);
             background: var(--main-warning);
             color: var(--color-contrast);
             text-shadow: none;
