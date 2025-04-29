@@ -175,7 +175,7 @@ export const getLayoutDrawFunction = ({
         ? frame
         : 'normal';
     const nameBorderTypeList = frame === 'synchro'
-        ? ['normal', 'xyz'] /** This produce more accurate effect */
+        ? ['normal', 'xyz', 'xyz', 'xyz', 'xyz'] /** This produce more accurate effect */
         : [frameBorderType];
     const applyArtFinish = !boundless && artBorder;
 
