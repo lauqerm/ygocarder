@@ -67,7 +67,7 @@ export const CheckboxTrain = ({
                 </label>;
 
                 return tooltip
-                    ? <Tooltip title={tooltip}>{children}</Tooltip>
+                    ? <Tooltip key={value} title={tooltip}>{children}</Tooltip>
                     : children;
             })}
         </div>

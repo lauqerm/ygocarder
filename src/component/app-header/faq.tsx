@@ -42,7 +42,7 @@ export const QuestionAndFeedback = () => {
     }, [setMemoizedReminder, faqReminder]);
 
     return <>
-        <FaqButtonLabel $animating={animating} onClick={() => setVisible(cur => !cur)}>
+        <FaqButtonLabel id="faq-button" $animating={animating} onClick={() => setVisible(cur => !cur)}>
             {'FAQ'}
         </FaqButtonLabel>
         <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
@@ -64,9 +64,13 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Anonymous User at May 01, 2025',
+                            question: 'Can you add a selection of holographic overlay to the stars, attribute, icons and sticker? that would be a great help for making some super rare cards! Looking forward to this update',
+                        },
+                        {
                             author: 'Anonymous User at Apr 28, 2025',
                             question: 'Hello, can you add art finishes on attributes, stars, icons and sticker like a holographic overlay to it? It would be a great help! THANKS!!! :))',
-                            answer: 'I am not sure what you are aiming for, but I will try to add an option that allow apply art finish on other regions of the card. If you can provide me with a sample image of what you are looking for, it would be easier to see whether it is possible or not.',
+                            answer: 'In Finish input, you can select "Art" option to apply current art finish style to other card regions. If you can provide me with a sample image of what you are looking for, it would be easier to see whether it is possible or not.',
                         },
                     ].map(({ author, question, answer }, index) => {
                         return <Quote key={index} author={author} question={question}>

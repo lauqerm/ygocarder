@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
 import { useCardList, useI18N, useLanguage } from 'src/service';
-import { Radio } from 'antd';
+import { Radio, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
@@ -93,11 +93,21 @@ export const AppHeader = () => {
                             </Radio.Button>;
                         })}
                 </Radio.Group>
-                <span className="bug-report">
-                    <div id="sentry-bug-report">
-                        {language['contributor.bug-report.tooltip']}
-                    </div>
-                </span>
+                <Tooltip title="Check the FAQ Button => Feedbacks to see if your issue is already answered.">
+                    <span
+                        className="bug-report"
+                        onMouseOver={() => {
+                            document.getElementById('faq-button')?.classList.add('js-highlight');
+                        }}
+                        onMouseOut={() => {
+                            document.getElementById('faq-button')?.classList.remove('js-highlight');
+                        }}
+                    >
+                        <div id="sentry-bug-report">
+                            {language['contributor.bug-report.tooltip']}
+                        </div>
+                    </span>
+                </Tooltip>
                 <QuestionAndFeedback />
                 <VersionLogButton />
             </div>

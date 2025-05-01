@@ -37,10 +37,14 @@ export const FaqButtonLabel = styled(VersionLogButtonLabel)`
     background-color: var(--main-level-4);
     border-radius: var(--br-lg);
     padding: 0 var(--spacing-xs);
+    &.js-highlight {
+        background: var(--main-info);
+        text-shadow: none;
+        box-shadow: 0 0 2px 0 #333333;
+    }
     ${({ $animating }) => $animating
         ? `
             background: var(--main-info);
-            color: var(--color-contrast);
             text-shadow: none;
             box-shadow: 0 0 2px 0 #333333;
         `
