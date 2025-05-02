@@ -78,6 +78,8 @@ export const CanvasConst = {
     attributeX: 678,
     stickerX: 739.1438,
     stickerY: 1110.938,
+    iconWidth: 43,
+    iconHeight: 44,
 };
 
 export const DEFAULT_BASE_FILL_COLOR = '#404040';

@@ -454,8 +454,8 @@ export const TextStylePicker = () => {
                     return <div key={keyName}
                         className="text-style-preview-section"
                         style={{
-                            background: custom ? '#eaeaea' : 'var(--sub-level-4)',
-                            color: (fillStyle ?? '').length === 0 || !custom ? '#000000' : fillStyle,
+                            background: custom ? 'var(--sub-level-2)' : 'var(--sub-level-4)',
+                            color: (fillStyle ?? '').length === 0 || !custom ? 'var(--color-contrast)' : fillStyle,
                             textShadow: (custom && hasShadow) ? `0 0 2px ${shadow}` : 'none',
                             fontStyle: (custom && fontStyle === 'italic') ? 'italic' : 'normal',
                         }}

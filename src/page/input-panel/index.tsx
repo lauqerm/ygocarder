@@ -303,6 +303,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             <div className="main-info-second">
                 <ImageInputGroup ref={imageInputGroupRef}
                     receivingCanvas={artworkCanvas}
+                    showCreativeOption={showCreativeOption}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     onSourceLoaded={onSourceLoaded}
                     onTainted={onTainted}

@@ -1,11 +1,11 @@
-import { clearCanvas, setTextStyle } from '../canvas-util';
-import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData } from 'src/util';
-import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType } from 'src/model';
+import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
+import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData, createCanvas } from 'src/util';
+import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType, CanvasConst } from 'src/model';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
 import { normalizeCardText } from '../text-normalize';
-import { drawAssetWithSize } from '../image';
+import { drawAsset, drawAssetWithSize } from '../image';
 import { CanvasTextStyle } from 'src/service';
 
 /** Small and medium size are used for type / ability text in effect box. Large type is used for "Spell/Trap type" under card's name. */
@@ -104,6 +104,12 @@ export const drawTypeAbilityText = ({
     };
 };
 
+const {
+    finishTypeCardWidth,
+    width: CanvasWidth,
+    iconHeight,
+    iconWidth,
+} = CanvasConst;
 export const drawTypeAbility = async ({
     ctx,
     globalScale,
@@ -115,6 +121,7 @@ export const drawTypeAbility = async ({
     isMonster,
     textStyle,
     furiganaHelper,
+    loopIconFinish,
 }: {
     ctx?: CanvasRenderingContext2D | null,
     globalScale: number,
@@ -126,6 +133,7 @@ export const drawTypeAbility = async ({
     isMonster: boolean,
     textStyle: CanvasTextStyle,
     furiganaHelper: boolean,
+    loopIconFinish?: ReturnType<typeof getFinishIterator>,
 }) => {
     if (!clearCanvas(ctx)) return;
 
@@ -159,19 +167,46 @@ export const drawTypeAbility = async ({
     });
     resetStyle();
 
-    let offsetY = format === 'ocg' ? -4 : 0;
+    let offsetY = format === 'ocg' ? -5 : -1;
     let offsetX = format === 'ocg' ? -3 : 0;
 
     if (willDrawIcon) {
         const { edge, baseline } = iconPositionList[0];
+        const {
+            canvas: iconCanvas,
+            context: iconContext,
+        } = createCanvas(CanvasWidth * globalScale, (baseline + iconWidth) * globalScale);
         await drawAssetWithSize(
-            ctx,
+            iconContext,
             `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
-            image => edge + (image.naturalWidth * 0.175 * xRatio + offsetX) * globalScale,
-            image => baseline - image.naturalWidth * 0.8 * globalScale + offsetY * globalScale,
-            image => globalScale * image.naturalWidth,
-            image => globalScale * image.naturalWidth,
+            () => edge + (iconWidth * 0.175 * xRatio + offsetX) * globalScale,
+            () => baseline - iconWidth * 0.8 * globalScale + offsetY * globalScale,
+            () => globalScale * iconWidth,
+            () => globalScale * iconHeight,
         );
+        if (loopIconFinish) {
+            const {
+                canvas: iconFinishCanvas,
+                context: iconFinishContext,
+            } = createCanvas(CanvasWidth, (baseline + iconWidth));
+            iconFinishContext.drawImage(iconCanvas, 0, 0);
+            await loopIconFinish(
+                iconFinishContext,
+                'art',
+                async (finishType) => {
+                    return await drawAsset(
+                        iconFinishContext,
+                        `finish/finish-typeart-${finishType}.png`,
+                        (CanvasWidth - finishTypeCardWidth) / 2, iconHeight,
+                    );
+                },
+            );
+            iconContext.globalCompositeOperation = 'source-in';
+            iconContext.drawImage(iconFinishCanvas, 0, 0);
+            ctx.drawImage(iconCanvas, 0, 0);
+        } else {
+            ctx.drawImage(iconCanvas, 0, 0);
+        }
     } else {
         /** Currently, draw icon in place of monster type is undesirable, as the icon seems out of place and user may not know how to turn them off properly if they want to. */
         // await Promise.all(iconPositionList.map(({ edge, baseline, size }) => {

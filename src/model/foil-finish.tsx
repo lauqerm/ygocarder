@@ -7,7 +7,7 @@ const type8CommonInstruction: FinishInstruction[] = [
 
 /** @summary Web engine has less blend mode than photoshop (or any desktop image manipulators for that matter), the behavior of similar blend mode is also different, so we currently we cannot have a 1:1 conversion between photoshop layer into canvas. */
 
-export const ArtFinishType = 'art';
+export const ART_FINISH_TYPE = 'art';
 export type FinishInformation = {
     value: string,
     label: React.ReactNode,
@@ -91,14 +91,6 @@ export const FinishMap: Record<string, FinishInformation> = {
             'total-overlay': [{ blendMode: 'screen', opacity: 0.45 }],
         },
         pendulumSubstituteMap: {},
-    },
-    art: {
-        value: ArtFinishType,
-        label: 'Art',
-        partInstructionMap: {},
-        pendulumSubstituteMap: {},
-        labelKey: 'input.finish.art.label',
-        tooltipKey: 'input.finish.art.tooltip',
     },
 };
 
@@ -192,6 +184,26 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
         },
     },
 };
+
+export const OtherFinishTypeMap = {
+    art: {
+        key: 'art' as const,
+        labelKey: 'input.art-finish.label',
+    },
+    attribute: {
+        key: 'attribute' as const,
+        labelKey: 'input.attribute.label',
+    },
+    icon: {
+        key: 'icon' as const,
+        labelKey: 'input.icon-type.icon.label',
+    },
+    sticker: {
+        key: 'sticker' as const,
+        labelKey: 'input.sticker.label',
+    },
+};
+export type OtherFinish = [attribute: string, icon: string, sticker: string];
 
 export type FoilDictionary = {
     normal: string,

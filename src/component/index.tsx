@@ -48,6 +48,19 @@ export const StyledDropdownContainer = styled.div`
     padding: var(--spacing-xs) 0;
     color: var(--color);
 `;
+export const StyledDropdownLabel = styled.div`
+    color: var(--color);
+    font-size: var(--fs-sm);
+    border-bottom: var(--bw) solid var(--sub-level-4);
+    padding: 0 var(--spacing);
+    padding-bottom: var(--spacing-xs);
+    line-height: 1;
+    cursor: default;
+    &:hover {
+        cursor: default;
+        background: var(--main-level-3);
+    }
+`;
 export const StyledDropdown = {
     Container: StyledDropdownContainer,
     Option: StyledDropdownOption,

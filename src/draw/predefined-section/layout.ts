@@ -1,5 +1,6 @@
 import {
     ArrowPositionMap,
+    ArtFinishMap,
     BackgroundType,
     CanvasConst,
     CardArtCanvasCoordinateMap,
@@ -7,6 +8,7 @@ import {
     Foil,
     getArtCanvasCoordinate,
     NO_ATTRIBUTE,
+    OtherFinish,
     PendulumSize,
     PendulumSizeMap,
     PendulumSizeMapException,
@@ -110,7 +112,7 @@ export const getLayoutDrawFunction = ({
     isLink, isSpeedSkill, isXyz,
     isPendulum,
     pendulumFrameTypeMap,
-    useArtFinish,
+    otherFinish,
     loopFinish,
     loopArtFinish,
 }: {
@@ -131,7 +133,7 @@ export const getLayoutDrawFunction = ({
     isXyz: boolean, isSpeedSkill: boolean, isLink: boolean,
     isPendulum: boolean,
     pendulumFrameTypeMap: { blue: 'normal' | 'scaleless', red: 'normal' | 'scaleless' },
-    useArtFinish: boolean,
+    otherFinish: OtherFinish,
     loopFinish: (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
@@ -372,13 +374,15 @@ export const getLayoutDrawFunction = ({
                 `attribute/attr-${format}-${attribute.toLowerCase()}.png`,
                 attributeX, attributeY,
             );
-            if (loopArtFinish && useArtFinish) {
+            const attributeFinish = otherFinish[0] ?? 'normal';
+            if (attributeFinish !== 'normal') {
+                const loopAttributeFinish = getFinishIterator([attributeFinish], ArtFinishMap);
                 const {
                     canvas: attributeFinishCanvas,
                     context: attributeFinishContext,
                 } = createCanvas(cardWidth, (attributeY + attributeSize));
                 attributeFinishContext.drawImage(attributeCanvas, 0, 0);
-                await loopArtFinish(
+                await loopAttributeFinish(
                     attributeFinishContext,
                     'art',
                     async (finishType) => {
@@ -402,6 +406,8 @@ export const getLayoutDrawFunction = ({
 
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
+            const starFinish = otherFinish[1] ?? 'normal';
+            const loopStarFinish = starFinish !== 'normal' ? getFinishIterator([starFinish], ArtFinishMap) : undefined;
             await drawStarContent({
                 ctx,
                 cardIcon: normalizedCardIcon,
@@ -410,7 +416,6 @@ export const getLayoutDrawFunction = ({
                 starAlignment,
                 style,
                 globalScale,
-                useArtFinish,
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'
                         ? Promise.resolve()
@@ -420,7 +425,7 @@ export const getLayoutDrawFunction = ({
                             async type => drawAsset(ctx, `finish/finish-${type}-star.png`, ...coordinate),
                         );
                 },
-                loopArtFinish,
+                loopStarFinish,
             });
             ctx.resetTransform();
         },

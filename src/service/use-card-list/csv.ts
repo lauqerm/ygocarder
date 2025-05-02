@@ -16,6 +16,7 @@ import {
     NameStyle,
     NameStyleType,
     NO_ATTRIBUTE,
+    OtherFinish,
     PendulumSize,
     PresetNameStyle,
 } from 'src/model';
@@ -137,6 +138,9 @@ const CsvStandardFieldList = [
     'Other Style - Fill Color',
     'Other Style - Has Shadow',
     'Other Style - Shadow Color',
+    'Other Finish - Attribute',
+    'Other Finish - Icon',
+    'Other Finish - Sticker',
     'External Info (JSON)',
 ] as const;
 const CsvFieldList = [
@@ -217,6 +221,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             effectTextStyle,
             externalInfo,
             finish,
+            otherFinish,
             foil,
             format,
             frame,
@@ -365,6 +370,9 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Style - Fill Color', otherTextStyle[1]);
         write('Other Style - Has Shadow', otherTextStyle[2]);
         write('Other Style - Shadow Color', otherTextStyle[3]);
+        write('Other Finish - Attribute', otherFinish[0]);
+        write('Other Finish - Icon', otherFinish[1]);
+        write('Other Finish - Sticker', otherFinish[2]);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
         if (artSource === 'offline' || (hasBackground && backgroundSource === 'offline')) {
@@ -467,6 +475,9 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                             : emptyCard.attribute;
 
                 const artFinish = (reader('Art Finish') ?? (reader('Art_Finish') ? `type${reader('Art_Finish')}` : ''));
+                const finishAttribute = reader('Other Finish - Attribute') ?? '';
+                const finishSticker = reader('Other Finish - Sticker') ?? '';
+                const finishIcon = reader('Other Finish - Icon') ?? '';
                 const atk = reader('ATK') ?? '';
                 const cardIcon = (reader('Card Icon Type') ?? emptyCard.cardIcon);
                 const creator = reader('Copyright') ?? '';
@@ -660,6 +671,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     effectTextStyle,
                     externalInfo,
                     finish,
+                    otherFinish: [finishAttribute, finishIcon, finishSticker] as OtherFinish,
                     foil,
                     format,
                     frame,

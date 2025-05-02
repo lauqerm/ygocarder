@@ -13,6 +13,7 @@ import {
     FoilDictionary,
     NO_STICKER,
     PendulumSizeMap,
+    OtherFinishTypeMap,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -54,6 +55,11 @@ export const getFinishList = (dictionary: Record<string, string>) => Object.valu
     label: labelKey ? dictionary[labelKey] : label,
     tooltip: tooltipKey ? dictionary[tooltipKey] : undefined,
     value,
+}));
+
+export const getOtherFinishList = (dictionary: Record<string, string>) => Object.values(OtherFinishTypeMap).map(({ key, labelKey }) => ({
+    label: dictionary[labelKey],
+    value: key,
 }));
 
 export const getNameFontOptionList = (dictionary: Record<string, string>) => Object.values(NameFontDataMap).map(({ value, labelKey }) => ({

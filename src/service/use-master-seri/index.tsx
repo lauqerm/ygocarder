@@ -42,7 +42,6 @@ import {
     PendulumSizeMap,
     PendulumSize,
     HALF_SCALE_WIDTH_OFFSET,
-    ArtFinishType,
 } from 'src/model';
 import {
     checkLightHeader,
@@ -110,7 +109,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const {
         format,
         hasBackground, backgroundType,
-        frame, foil, finish, artFinish, opacity,
+        frame, foil, finish, artFinish, otherFinish, opacity,
         name, nameStyle, nameStyleType,
         effectTextStyle, pendulumTextStyle, typeTextStyle, statTextStyle, otherTextStyle,
         effect,
@@ -229,7 +228,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         : false;
     const withBlueScale = !((pendulumScaleBlue ?? '') === '');
     const withRedScale = !((pendulumScaleRed ?? '') === '');
-    const useArtFinish = finish.includes(ArtFinishType);
     const {
         isInitializing,
         imageChangeCount,
@@ -240,6 +238,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const loopFinish = useMemo(() => getFinishIterator(finish, FinishMap), [finish]);
     const loopArtFinish = useMemo(() => getFinishIterator([artFinish], ArtFinishMap), [artFinish]);
+    const [, iconFinish, stickerFinish] = otherFinish;
 
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
@@ -338,7 +337,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     red: withRedScale ? 'normal' : 'scaleless',
                     blue: withBlueScale ? 'normal' : 'scaleless',
                 },
-                useArtFinish,
+                otherFinish,
                 loopFinish,
                 loopArtFinish,
             });
@@ -530,7 +529,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedStatTextStyle,
         resolvedOtherEffectTextStyle,
         finish,
-        useArtFinish,
+        otherFinish,
         loopArtFinish,
         loopFinish,
         opacity,
@@ -791,13 +790,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 x: stickerX,
                 y: stickerY,
             });
-            if (loopArtFinish && useArtFinish) {
+            const normalizedStickerFinish = stickerFinish ?? 'normal';
+            if (normalizedStickerFinish !== 'normal') {
+                const loopStickerFinish = getFinishIterator([normalizedStickerFinish], ArtFinishMap);
                 const {
                     canvas: stickerFinishCanvas,
                     context: stickerFinishContext,
                 } = createCanvas(CanvasWidth, CanvasHeight);
                 stickerFinishContext.drawImage(stickerCanvas, 0, 0);
-                await loopArtFinish(
+                await loopStickerFinish(
                     stickerFinishContext,
                     'art',
                     async (finishType) => {
@@ -815,7 +816,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ctx.drawImage(stickerCanvas, 0, 0);
             }
         };
-    }, [readyToDraw, globalScale, sticker, useArtFinish, stickerCanvasRef, loopArtFinish]);
+    }, [readyToDraw, globalScale, sticker, stickerFinish, stickerCanvasRef, loopArtFinish]);
 
     /** DRAW CARD EFFECT + TYPE ABILITY */
     useEffect(() => {
@@ -856,6 +857,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     globalScale,
                 },
             });
+            const normalizedIconFinish = iconFinish ?? 'normal';
+            const loopIconFinish = normalizedIconFinish !== 'normal' ? getFinishIterator([normalizedIconFinish], ArtFinishMap) : undefined;
             await drawTypeAbility({
                 ctx: typeCtx,
                 globalScale,
@@ -871,6 +874,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         : (effectIndexSize <= DEFAULT_EFFECT_NORMAL_SIZE ? 'normal' : 'smaller'),
                 subFamily: normalizedSubFamily,
                 typeAbility: normalizedTypeAbility,
+                loopIconFinish,
             });
         };
     }, [
@@ -887,6 +891,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isPendulum,
         pendulumSize,
         furiganaHelper,
+        iconFinish,
         isMonster,
         isNormal,
         resolvedTypeTextStyle,

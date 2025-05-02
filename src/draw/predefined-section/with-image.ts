@@ -19,9 +19,8 @@ export const drawStarContent = async ({
     star,
     starAlignment = 'auto',
     style,
-    useArtFinish,
     onStarDraw,
-    loopArtFinish,
+    loopStarFinish,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
     globalScale: number,
@@ -30,9 +29,8 @@ export const drawStarContent = async ({
     star: string | number,
     starAlignment: string,
     style?: CanvasTextStyle,
-    useArtFinish: boolean,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
-    loopArtFinish: ReturnType<typeof getFinishIterator>,
+    loopStarFinish?: ReturnType<typeof getFinishIterator>,
 }) => {
     const starWidth = 50;
     const startSpacing = 4;
@@ -95,13 +93,13 @@ export const drawStarContent = async ({
             return await onStarDraw(coordinate);
         })
     );
-    if (loopArtFinish && useArtFinish) {
+    if (loopStarFinish) {
         const {
             canvas: starFinishCanvas,
             context: starFinishContext,
         } = createCanvas(CanvasWidth, (baseline + starWidth));
         starFinishContext.drawImage(starCanvas, 0, 0);
-        await loopArtFinish(
+        await loopStarFinish(
             starFinishContext,
             'art',
             async (finishType) => {

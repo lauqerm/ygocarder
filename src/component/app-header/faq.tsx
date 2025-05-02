@@ -64,13 +64,22 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Anonymous User at May 02, 2025',
+                            question: 'can you include the icons, attributes and stars if choosing art finishes? and maybe make a choice if we will put art finish or not if choosing art finishes? Thank you!',
+                        },
+                        {
                             author: 'Anonymous User at May 01, 2025',
                             question: 'Can you add a selection of holographic overlay to the stars, attribute, icons and sticker? that would be a great help for making some super rare cards! Looking forward to this update',
                         },
                         {
                             author: 'Anonymous User at Apr 28, 2025',
                             question: 'Hello, can you add art finishes on attributes, stars, icons and sticker like a holographic overlay to it? It would be a great help! THANKS!!! :))',
-                            answer: 'In Finish input, you can select "Art" option to apply current art finish style to other card regions. If you can provide me with a sample image of what you are looking for, it would be easier to see whether it is possible or not.',
+                            answer: 'Now you can pick individual finish for each attribute, sticker and card icons (spell/trap icon and stars).',
+                        },
+                        {
+                            author: 'hello there at Apr 30, 2025',
+                            question: 'can you make the  top and left lines of Synchro monster name border/box more visible/whiter?',
+                            answer: 'Even more white it is.',
                         },
                     ].map(({ author, question, answer }, index) => {
                         return <Quote key={index} author={author} question={question}>

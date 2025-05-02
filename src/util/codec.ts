@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { Card, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { ART_FINISH_TYPE, Card, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -23,6 +23,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         baseFill: 'opbf',
     },
     finish: 'fn',
+    otherFinish: 'of',
     art: 'ar',
     artData: 'ad',
     artFit: 'af',
@@ -266,6 +267,14 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.finish == null) migratedCard.finish = [];
 
     if (migratedCard.artFinish == null) migratedCard.artFinish = 'normal';
+    if (migratedCard.finish) {
+        const finishList = migratedCard.finish;
+
+        if (finishList.includes(ART_FINISH_TYPE)) {
+            migratedCard.finish = finishList.filter(entry => entry !== ART_FINISH_TYPE);
+            migratedCard.otherFinish = [migratedCard.artFinish, migratedCard.artFinish, migratedCard.artFinish];
+        }
+    }
     if ((migratedCard as any).picture && !card.art) migratedCard.art = (migratedCard as any).picture;
     delete (migratedCard as any).picture;
 

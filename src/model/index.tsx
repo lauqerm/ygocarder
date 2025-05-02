@@ -1,5 +1,5 @@
 import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
-import { Foil } from './foil-finish';
+import { Foil, OtherFinish } from './foil-finish';
 import { CondenseType } from './condense';
 import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
@@ -32,6 +32,7 @@ export const getDefaultCard = () => ({
     foil: 'normal' as Foil,
     opacity: getDefaultCardOpacity() as Partial<CardOpacity>,
     finish: [] as string[],
+    otherFinish: ['normal', 'normal', 'normal'] as OtherFinish,
     artFinish: 'normal',
     name: 'Junko',
     nameStyleType: 'auto' as NameStyleType,
@@ -117,6 +118,7 @@ export const getEmptyCard = (): Card => ({
     opacity: getDefaultCardOpacity(),
     finish: [],
     artFinish: 'normal',
+    otherFinish: ['normal', 'normal', 'normal'],
     name: '',
     nameStyleType: 'auto',
     nameStyle: getDefaultNameStyle(),
