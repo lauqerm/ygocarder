@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.2.4 (2025/05/02)",
+        "logList": [
+            {
+                "content": "Remove mimic finish type, now allow picking individual finish type for each card level, attribute and sticker."
+            }
+        ]
+    },
+    {
         "version": "v2.2.3 (2025/04/29)",
         "logList": [
             {
