@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/ygocarder/static/css/main.02f68d20.chunk.css",
-    "main.js": "/ygocarder/static/js/main.34fefaf1.chunk.js",
-    "main.js.map": "/ygocarder/static/js/main.34fefaf1.chunk.js.map",
-    "runtime-main.js": "/ygocarder/static/js/runtime-main.65de39d3.js",
-    "runtime-main.js.map": "/ygocarder/static/js/runtime-main.65de39d3.js.map",
-    "static/css/2.d730ab20.chunk.css": "/ygocarder/static/css/2.d730ab20.chunk.css",
-    "static/js/2.ef4bd6b3.chunk.js": "/ygocarder/static/js/2.ef4bd6b3.chunk.js",
-    "static/js/2.ef4bd6b3.chunk.js.map": "/ygocarder/static/js/2.ef4bd6b3.chunk.js.map",
-    "static/js/3.7c47f066.chunk.js": "/ygocarder/static/js/3.7c47f066.chunk.js",
-    "static/js/3.7c47f066.chunk.js.map": "/ygocarder/static/js/3.7c47f066.chunk.js.map",
+    "main.css": "/ygocarder/static/css/main.1a6d7a21.chunk.css",
+    "main.js": "/ygocarder/static/js/main.1295128b.chunk.js",
+    "main.js.map": "/ygocarder/static/js/main.1295128b.chunk.js.map",
+    "runtime-main.js": "/ygocarder/static/js/runtime-main.5917111e.js",
+    "runtime-main.js.map": "/ygocarder/static/js/runtime-main.5917111e.js.map",
+    "static/css/2.070f0dca.chunk.css": "/ygocarder/static/css/2.070f0dca.chunk.css",
+    "static/js/2.5802d13d.chunk.js": "/ygocarder/static/js/2.5802d13d.chunk.js",
+    "static/js/2.5802d13d.chunk.js.map": "/ygocarder/static/js/2.5802d13d.chunk.js.map",
+    "static/js/3.a35f743b.chunk.js": "/ygocarder/static/js/3.a35f743b.chunk.js",
+    "static/js/3.a35f743b.chunk.js.map": "/ygocarder/static/js/3.a35f743b.chunk.js.map",
     "index.html": "/ygocarder/index.html",
-    "static/css/2.d730ab20.chunk.css.map": "/ygocarder/static/css/2.d730ab20.chunk.css.map",
-    "static/css/main.02f68d20.chunk.css.map": "/ygocarder/static/css/main.02f68d20.chunk.css.map",
-    "static/js/2.ef4bd6b3.chunk.js.LICENSE.txt": "/ygocarder/static/js/2.ef4bd6b3.chunk.js.LICENSE.txt"
+    "static/css/2.070f0dca.chunk.css.map": "/ygocarder/static/css/2.070f0dca.chunk.css.map",
+    "static/css/main.1a6d7a21.chunk.css.map": "/ygocarder/static/css/main.1a6d7a21.chunk.css.map",
+    "static/js/2.5802d13d.chunk.js.LICENSE.txt": "/ygocarder/static/js/2.5802d13d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.65de39d3.js",
-    "static/css/2.d730ab20.chunk.css",
-    "static/js/2.ef4bd6b3.chunk.js",
-    "static/css/main.02f68d20.chunk.css",
-    "static/js/main.34fefaf1.chunk.js"
+    "static/js/runtime-main.5917111e.js",
+    "static/css/2.070f0dca.chunk.css",
+    "static/js/2.5802d13d.chunk.js",
+    "static/css/main.1a6d7a21.chunk.css",
+    "static/js/main.1295128b.chunk.js"
   ]
 }
