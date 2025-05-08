@@ -348,6 +348,7 @@ export const getLayoutDrawFunction = ({
                 artX,
                 artY,
                 artWidth,
+                ratio,
             } = getArtCanvasCoordinate(
                 isPendulum,
                 { ...opacity, boundless: true },
@@ -359,7 +360,7 @@ export const getLayoutDrawFunction = ({
                 0, 0,
                 backgroundWidth, backgroundHeight,
                 globalScale * artX, globalScale * artY,
-                globalScale * artWidth, globalScale * artWidth / (backgroundWidth / backgroundHeight)
+                globalScale * artWidth, globalScale * artWidth / ratio,
             );
         },
         drawAttribute: async () => {
