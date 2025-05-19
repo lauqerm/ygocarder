@@ -181,14 +181,14 @@ export const drawTypeAbility = async ({
             `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
             () => edge + (iconWidth * 0.175 * xRatio + offsetX) * globalScale,
             () => baseline - iconWidth * 0.8 * globalScale + offsetY * globalScale,
-            () => globalScale * iconWidth,
-            () => globalScale * iconHeight,
+            () => iconWidth * globalScale,
+            () => iconHeight * globalScale,
         );
         if (loopIconFinish) {
             const {
                 canvas: iconFinishCanvas,
                 context: iconFinishContext,
-            } = createCanvas(CanvasWidth, (baseline + iconWidth));
+            } = createCanvas(CanvasWidth * globalScale, (baseline + iconWidth) * globalScale);
             iconFinishContext.drawImage(iconCanvas, 0, 0);
             await loopIconFinish(
                 iconFinishContext,
