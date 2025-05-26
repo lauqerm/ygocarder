@@ -597,11 +597,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx) || !statInEffect) return;
 
         const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-        drawStatText(ctx, 'ATK', 432.10, 1106.494, globalScale);
-        drawStat(ctx, atk.trim(), 508.824, 1106.494, globalScale);
+        drawStatText(ctx, 'ATK', 432.10, 1106, globalScale);
+        drawStat(ctx, atk.trim(), 508.824, 1106, globalScale);
         if (!isLink) {
-            drawStatText(ctx, 'DEF', 600.85, 1106.494, globalScale);
-            drawStat(ctx, def.trim(), 673.865, 1106.494, globalScale);
+            drawStatText(ctx, 'DEF', 600.85, 1106, globalScale);
+            drawStat(ctx, def.trim(), 673.865, 1106, globalScale);
         }
         resetStyle();
     }, [readyToDraw, globalScale, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);

@@ -112,28 +112,31 @@ export const drawStat = (
 ) => {
     if (!ctx || value == null) return;
 
+    const numberOffset = -1;
     const edge = _edge * globalScale;
     const baseline = _baseline * globalScale;
     const statWidth = 73.97 * globalScale;
     if (value === '∞') {
         ctx.textAlign = 'right';
-        ctx.font = `bold ${37 * globalScale}px matrix`;
+        ctx.font = `bold ${36.18 * globalScale}px matrix`;
         ctx.fillText(value, edge + statWidth, baseline);
     } else
     if (value === '?') {
         ctx.textAlign = 'right';
-        ctx.font = `bold ${34 * globalScale}px matrix`;
-        ctx.fillText(value, edge + statWidth, baseline);
+        ctx.scale(1, 1.29);
+        ctx.font = ` ${34 * globalScale}px MatrixBoldSmallCaps`;
+        ctx.fillText(value, edge + statWidth, numberOffset + baseline / 1.29);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     } else {
         ctx.textAlign = 'left';
         const tokenizedText = `${value}`.split('?');
 
         let totalWidth = tokenizedText.reduce((prev, curr, index) => {
-            ctx.font = `${37 * globalScale}px MatrixBoldSmallCaps`;
+            ctx.font = `${36.18 * globalScale}px MatrixBoldSmallCaps`;
             let nextWidth = prev + ctx.measureText(curr).width;
 
             if (index < tokenizedText.length - 1) {
-                ctx.font = `${37 * globalScale}px matrix`;
+                ctx.font = `${36.18 * globalScale}px matrix`;
                 nextWidth += ctx.measureText('?').width;
             }
 
@@ -147,14 +150,16 @@ export const drawStat = (
             tokenizedText.reduce((prev, _, index, arr) => {
                 const curText = arr[arr.length - 1 - index];
                 let nextEdge = prev;
-                ctx.font = `${37 * globalScale}px MatrixBoldSmallCaps`;
+                ctx.font = `${36.18 * globalScale}px MatrixBoldSmallCaps`;
                 nextEdge -= ctx.measureText(curText).width * condenseRatio;
-                ctx.fillText(curText, nextEdge / condenseRatio, baseline);
+                ctx.fillText(curText, nextEdge / condenseRatio, numberOffset + baseline);
 
                 if (index < tokenizedText.length - 1) {
-                    ctx.font = `bold ${37 * globalScale}px matrix`;
+                    ctx.font = `${34 * globalScale}px MatrixBoldSmallCaps`;
                     nextEdge -= ctx.measureText('?').width * condenseRatio;
-                    ctx.fillText('?', nextEdge / condenseRatio, baseline);
+                    ctx.scale(1, 1.29);
+                    ctx.fillText('?', nextEdge / condenseRatio, numberOffset + baseline / 1.29);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
                 }
 
                 return nextEdge;
