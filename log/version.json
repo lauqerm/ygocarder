@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.2.5 (2025/05/26)",
+        "logList": [
+            {
+                "content": "Small adjustment for size and style of card stats (ATK, DEF)."
+            },
+            {
+                "content": "Add art finish type 8."
+            }
+        ]
+    },
+    {
         "version": "v2.2.4 (2025/05/02)",
         "logList": [
             {
