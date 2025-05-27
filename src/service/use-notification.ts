@@ -6,7 +6,7 @@ const notificationLocalStorageKey = 'ygocarder-notification';
 export type NotificationMemory = {
     condenseReminder: boolean,
     versionReminder: string,
-    faqReminder: boolean,
+    faqReminder: string,
 };
 export type NotificationStore = {
     memory: NotificationMemory,
@@ -36,7 +36,7 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
 
     return {
         memory: {
-            faqReminder: typeof faqReminder === 'boolean' ? faqReminder : true,
+            faqReminder: typeof faqReminder !== 'string' ? '' : faqReminder,
             condenseReminder: typeof condenseReminder === 'boolean' ? condenseReminder : false,
             versionReminder: typeof versionReminder === 'string' ? versionReminder : '1.99.99',
         },

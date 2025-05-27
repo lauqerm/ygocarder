@@ -44,6 +44,7 @@ import {
     HALF_SCALE_WIDTH_OFFSET,
 } from 'src/model';
 import {
+    checkLightFooter,
     checkLightHeader,
     checkLink,
     checkMonster,
@@ -187,7 +188,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const { body = 100, boundless } = opacity;
     const requireShadow = !!(body < 50 || boundless);
-    const lightFooter = ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(bottomFrame);
+    const lightFooter = checkLightFooter(bottomFrame);
     const lightHeader = checkLightHeader(frame);
     const {
         levelStyle,

@@ -183,6 +183,18 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
             large: '-pendulum-medium',
         },
     },
+    type8: {
+        value: 'type8',
+        label: '8',
+        partInstructionMap: {
+            art: [{ opacity: 0.66, blendMode: 'color-dodge' }, { opacity: 0.64, blendMode: 'multiply' }],
+        },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
+        },
+    },
 };
 
 export const OtherFinishTypeMap = {

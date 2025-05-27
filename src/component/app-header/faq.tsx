@@ -31,8 +31,9 @@ export const QuestionAndFeedback = () => {
     ] = useNotification('faqReminder');
 
     useEffect(() => {
-        if (faqReminder) {
-            if (process.env.REACT_APP_VERSION) setMemoizedReminder(false);
+        const currentReminder = '27/05/2025';
+        if (faqReminder !== currentReminder) {
+            if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
             setAnimating(true);
             setTimeout(() => {
@@ -64,22 +65,24 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
-                            author: 'Anonymous User at May 02, 2025',
-                            question: 'can you include the icons, attributes and stars if choosing art finishes? and maybe make a choice if we will put art finish or not if choosing art finishes? Thank you!',
+                            author: 'Anonymous User at May 27, 2025',
+                            question: 'Hello, can you add a selection of sizes in card title? because the old card and new card have different card title alignment, the old card seems to appear the title is more stretch than the new maybe because of the card size of the old card. can you fix it pls? maybe add some choices of card title alignments?\nor maybe size? THANK YOU SO MUCH!!',
+                            answer: 'Do you have any sample image of the old card? I would like to see the difference between the two so I can decide that if it is possible or not.',
                         },
                         {
-                            author: 'Anonymous User at May 01, 2025',
-                            question: 'Can you add a selection of holographic overlay to the stars, attribute, icons and sticker? that would be a great help for making some super rare cards! Looking forward to this update',
+                            author: 'ATK/DEF at May 26, 2025',
+                            question: 'The ATK/DEF text and values seem to have different sizes than usual. Also the ? seems to be in a different format to how it appears in TCG/OCG',
+                            answer: 'I have made a bit adjustment for font size and font family of stats text.',
                         },
                         {
-                            author: 'Anonymous User at Apr 28, 2025',
-                            question: 'Hello, can you add art finishes on attributes, stars, icons and sticker like a holographic overlay to it? It would be a great help! THANKS!!! :))',
-                            answer: 'Now you can pick individual finish for each attribute, sticker and card icons (spell/trap icon and stars).',
+                            author: 'Maya at May 23, 2025',
+                            question: 'I\'d like to make a request, is it possible to put a SPEED DUEL watermark in EVERY card types in the description area like the Speed Skill type when it is set to speed duel? thank you so much. Appreciate your lovely cardmaker',
+                            answer: 'I will try, but this is pretty hard to do to be honest, don\'t keep your hope up.',
                         },
                         {
-                            author: 'hello there at Apr 30, 2025',
-                            question: 'can you make the  top and left lines of Synchro monster name border/box more visible/whiter?',
-                            answer: 'Even more white it is.',
+                            author: 'Shanaya at May 22, 2025',
+                            question: 'Can you put something rainbow effect on the Finish in number 3?',
+                            answer: 'I have added art finish type 8, which is a mix between type 3 and 6, you may try that out.',
                         },
                     ].map(({ author, question, answer }, index) => {
                         return <Quote key={index} author={author} question={question}>

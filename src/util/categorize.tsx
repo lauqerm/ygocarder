@@ -44,8 +44,12 @@ export const checkLightHeader = (frame: string) => {
     return !checkMonster({ frame }) || checkLightFrame(frame);
 };
 
+export const checkLightFooter = (frame: string) => {
+    return ['xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(frame);
+};
+
 export const checkLightFrame = (frame: string) => {
-    return ['link', 'xyz', 'dark-synchro', 'speed-skill', 'hamon', 'uria', 'raviel'].includes(frame);
+    return ['link'].includes(frame) || checkLightFooter(frame);
 };
 
 export const resolveNameStyle = ({
