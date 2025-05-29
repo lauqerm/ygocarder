@@ -175,8 +175,8 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         labelBackgroundImage: `linear-gradient(90deg, ${[
             'rgba(185,108,73,1) 23%',
             'rgba(137,72,164,1) 27%',
-            'rgba(137,72,164,1) 48%',
-            'rgba(239,239,239,1) 52%',
+            'rgba(137,72,164,1) 49%',
+            'rgba(239,239,239,1) 51%',
             'rgba(239,239,239,1) 73%',
             'rgba(0,0,0,1) 77%',
         ].join(', ')})`,

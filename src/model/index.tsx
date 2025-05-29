@@ -17,18 +17,20 @@ export const getDefaultCrop = () => ({
 
 /**
  * Check following things when adding new attributes:
- * * Default card and empty card
- * * Convert codec
- * * Shorten codec
+ * * Default card and empty card|
+ * * Convert codec|
+ * * Shorten codec|
  * * Card thumb
- * * Legacy version
- * * Import / export
+ * * Legacy version|
+ * * Import / export|
  */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
     version: 2,
     format: 'tcg',
     frame: 'fusion',
+    rightFrame: 'auto',
+    pendulumRightFrame: 'auto',
     foil: 'normal' as Foil,
     opacity: getDefaultCardOpacity() as Partial<CardOpacity>,
     finish: [] as string[],
@@ -76,10 +78,12 @@ export const getDefaultCard = () => ({
         condenseTolerant: 'strict' as CondenseType,
         fontStyle: 'auto',
         upSize: 0,
+        background: 'auto',
     },
     pendulumStyle: {
         fontStyle: 'auto',
         upSize: 0,
+        background: 'auto',
     },
     effect: `[2+ Effect Monsters on your field]
 Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
@@ -114,6 +118,8 @@ export const getEmptyCard = (): Card => ({
     version: 2,
     format: 'tcg',
     frame: 'effect',
+    rightFrame: 'auto',
+    pendulumRightFrame: 'auto',
     foil: 'normal',
     opacity: getDefaultCardOpacity(),
     finish: [],
@@ -166,10 +172,12 @@ export const getEmptyCard = (): Card => ({
         condenseTolerant: 'strict',
         fontStyle: 'auto',
         upSize: 0,
+        background: 'auto',
     },
     pendulumStyle: {
         fontStyle: 'auto',
         upSize: 0,
+        background: 'auto',
     },
     effect: '',
     setId: '',

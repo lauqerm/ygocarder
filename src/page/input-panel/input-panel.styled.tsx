@@ -4,6 +4,7 @@ import { TrainGridStyle } from './input-train';
 
 export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     padding: var(--spacing-xs);
+    position: relative;
     .radio-train {
         display: flex;
         flex-wrap: wrap;
@@ -17,6 +18,20 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     }
     .frame-auto-checkbox {
         margin-bottom: var(--spacing-xs);
+    }
+    .frame-switch-mode {
+        position: absolute;
+        top: var(--spacing-xs);
+        right: var(--spacing-xs);
+        cursor: pointer;
+        line-height: 1.35;
+        padding: 0 var(--spacing-xs);
+        border-radius: var(--br);
+        background: var(--main-primary);
+        border: var(--bw) solid var(--main-active);
+        &:hover {
+            background: var(--sub-primary);
+        }
     }
     ${TrainGridStyle}
 `;

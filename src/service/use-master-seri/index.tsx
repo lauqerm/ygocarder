@@ -110,13 +110,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const {
         format,
         hasBackground, backgroundType,
-        frame, foil, finish, artFinish, otherFinish, opacity,
+        frame,
+        foil, finish, artFinish, otherFinish, opacity,
         name, nameStyle, nameStyleType,
         effectTextStyle, pendulumTextStyle, typeTextStyle, statTextStyle, otherTextStyle,
         effect,
         effectStyle,
         typeAbility,
         isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle, pendulumSize,
+        rightFrame, pendulumRightFrame,
         atk, def, linkMap,
         attribute,
         cardIcon, subFamily, star, starAlignment,
@@ -172,6 +174,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         },
     });
 
+    const effectBackground = effectStyle.background;
+    const pendulumEffectBackground = pendulumStyle.background;
     const bottomFrame = pendulumFrame === 'auto'
         ? isPendulum
             ? 'spell'
@@ -324,7 +328,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 artworkCanvas, backgroundCanvas,
                 globalScale,
                 format,
-                frame, bottomFrame,
+                frame, pendulumFrame, rightFrame, pendulumRightFrame,
+                effectBackground, pendulumEffectBackground,
                 hasBackground,
                 backgroundType,
                 attribute,
@@ -508,11 +513,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         backgroundCanvasRef,
         frameCanvasRef,
         frame,
+        rightFrame,
+        pendulumRightFrame,
         format,
         hasBackground,
         backgroundType,
         attribute,
-        bottomFrame,
+        pendulumFrame,
         foil,
         star,
         starAlignment,
@@ -531,6 +538,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedOtherEffectTextStyle,
         finish,
         otherFinish,
+        effectBackground,
+        pendulumEffectBackground,
         loopArtFinish,
         loopFinish,
         opacity,

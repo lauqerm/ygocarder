@@ -8,6 +8,8 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     version: 've',
     format: 'fm',
     frame: 'fr',
+    rightFrame: 'rf',
+    pendulumRightFrame: 'rpf',
     foil: 'fo',
     opacity: {
         _newKey: 'op',
@@ -60,11 +62,13 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         condenseTolerant: 'cdtl',
         fontStyle: 'efs',
         upSize: 'eus',
+        background: 'ebg',
     },
     pendulumStyle: {
         _newKey: 'ps',
         fontStyle: 'pfs',
         upSize: 'pus',
+        background: 'pbg',
     },
     nameStyle: {
         _newKey: 'ns',
@@ -264,6 +268,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.format == null) migratedCard.format = 'tcg';
     if (migratedCard.pendulumFrame == null) migratedCard.pendulumFrame = 'auto';
     if (migratedCard.pendulumSize == null) migratedCard.pendulumSize = 'medium';
+    if (migratedCard.rightFrame == null) migratedCard.rightFrame = 'auto';
+    if (migratedCard.pendulumRightFrame == null) migratedCard.pendulumRightFrame = 'auto';
     if (migratedCard.finish == null) migratedCard.finish = [];
 
     if (migratedCard.artFinish == null) migratedCard.artFinish = 'normal';

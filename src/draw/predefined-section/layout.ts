@@ -14,10 +14,11 @@ import {
     PendulumSizeMapException,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
-import { createCanvas, getCardIconFromFrame } from 'src/util';
+import { createCanvas, getCardIconFromFrame, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 import { getFinishIterator } from '../canvas-util';
+import { applyAlphaMask, MaskPromise } from './mask';
 
 export const baseDrawLinkArrowMap = async (
     ctx: CanvasRenderingContext2D,
@@ -101,7 +102,8 @@ export const getLayoutDrawFunction = ({
     globalScale,
     format,
     hasBackground,
-    frame, bottomFrame,
+    frame, pendulumFrame, rightFrame, pendulumRightFrame,
+    effectBackground, pendulumEffectBackground,
     backgroundType,
     cardIcon,
     attribute,
@@ -121,7 +123,8 @@ export const getLayoutDrawFunction = ({
     backgroundCanvas: HTMLCanvasElement | null,
     globalScale: number,
     format: string,
-    frame: string, bottomFrame: string,
+    frame: string, pendulumFrame: string, rightFrame: string, pendulumRightFrame: string,
+    effectBackground: string, pendulumEffectBackground: string,
     hasBackground: boolean,
     backgroundType: BackgroundType,
     cardIcon: string,
@@ -180,6 +183,26 @@ export const getLayoutDrawFunction = ({
         ? ['normal', 'xyz', 'xyz', 'xyz', 'xyz'] /** This produce more accurate effect */
         : [frameBorderType];
     const applyArtFinish = !boundless && artBorder;
+
+    const resolvedLayoutStyle = resolveFrameStyle(
+        {
+            topLeftFrame: frame,
+            topRightFrame: rightFrame,
+            bottomLeftFrame: pendulumFrame,
+            bottomRightFrame: pendulumRightFrame,
+            effectBackground: effectBackground,
+            pendulumEffectBackground: pendulumEffectBackground,
+        },
+        isPendulum,
+    );
+    const {
+        topLeftFrame,
+        topRightFrame,
+        bottomLeftFrame,
+        bottomRightFrame,
+        effectBackground: resolvedEffectBackground,
+        pendulumEffectBackground: resolvedPendulumEffectBackground,
+    } = resolvedLayoutStyle;
 
     const resultAPI = {
         /** Calculate new art coordination for creative mode, some configurations may result in the art getting drawn at different location compare to default one used by `drawArtwork` function. A lots of calculation is involved here since we:
@@ -244,10 +267,34 @@ export const getLayoutDrawFunction = ({
         drawFrame: async () => {
             if (!ctx) return;
 
+            /** Combine layer frame here */
+            const { context: topFrameContext, canvas: topFrameCanvas } = createCanvas(cardWidth, cardHeight);
+            await drawAsset(topFrameContext, `frame/frame-${topLeftFrame}.png`, 0, 0);
+            if (topLeftFrame !== topRightFrame) {
+                const topRightCanvas = await applyAlphaMask(
+                    `frame/frame-${topRightFrame}.png`,
+                    await MaskPromise.topRight,
+                    cardWidth,
+                    cardHeight,
+                );
+                topFrameContext.drawImage(topRightCanvas, 0, 0);
+            }
+            const { context: bottomFrameContext, canvas: bottomFrameCanvas } = createCanvas(cardWidth, cardHeight);
+            await drawAsset(bottomFrameContext, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
+            if (bottomRightFrame !== bottomLeftFrame) {
+                const bottomRightCanvas = await applyAlphaMask(
+                    `frame/frame-${bottomRightFrame}.png`,
+                    await MaskPromise.bottomRight,
+                    cardWidth,
+                    cardHeight,
+                );
+                bottomFrameContext.drawImage(bottomRightCanvas, 0, 0);
+            }
+
             ctx.globalAlpha = opacityBody / 100;
             ctx.scale(globalScale, globalScale);
-            await drawAsset(ctx, `frame/frame-${frame}.png`, 0, 0);
-            await drawAsset(ctx, `frame-pendulum/frame-pendulum-${bottomFrame}.png`, 0, 0);
+            ctx.drawImage(topFrameCanvas, 0, 0);
+            ctx.drawImage(bottomFrameCanvas, 0, 0);
             ctx.resetTransform();
             if (hasBackground && backgroundCanvas && backgroundType === 'frame') {
                 const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
@@ -474,8 +521,19 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
 
             ctx.scale(globalScale, globalScale);
+            const { context: nameBackgroundContext, canvas: nameBackgroundCanvas } = createCanvas(cardWidth, topToPendulumStructure);
+            await drawAsset(nameBackgroundContext, `background/background-name-${topLeftFrame}.png`, 0, 0);
+            if (topLeftFrame !== topRightFrame) {
+                const nameRightCanvas = await applyAlphaMask(
+                    `background/background-name-${topRightFrame}.png`,
+                    await MaskPromise.name,
+                    cardWidth,
+                    topToPendulumStructure,
+                );
+                nameBackgroundContext.drawImage(nameRightCanvas, 0, 0);
+            }
             ctx.globalAlpha = opacityName / 100;
-            await drawAsset(ctx, `background/background-name-${frame}.png`, 0, 0);
+            ctx.drawImage(nameBackgroundCanvas, 0, 0);
             ctx.globalAlpha = 1;
             ctx.resetTransform();
         },
@@ -489,7 +547,7 @@ export const getLayoutDrawFunction = ({
             if (withPendulum) {
                 await drawAssetWithSize(
                     ctx,
-                    `background/background-text-${bottomFrame}.png`,
+                    `background/background-text-${resolvedEffectBackground}.png`,
                     backgroundEffectBoxX, backgroundEffectBoxY + effectBoxOffsetY,
                     backgroundEffectBoxWidth, backgroundEffectBoxHeight,
                     0, 0 + effectBoxOffsetY,
@@ -498,7 +556,7 @@ export const getLayoutDrawFunction = ({
             } else {
                 await drawAsset(
                     ctx,
-                    `background/background-text-${bottomFrame}.png`,
+                    `background/background-text-${resolvedEffectBackground}.png`,
                     backgroundEffectBoxX, backgroundEffectBoxY,
                 );
             }
@@ -507,10 +565,10 @@ export const getLayoutDrawFunction = ({
                 const {
                     exceptionFrameType = frameType,
                     exceptionPendulumBoxOffsetHeight = 0,
-                } = PendulumSizeMapException[pendulumSize][bottomFrame] ?? {};
+                } = PendulumSizeMapException[pendulumSize][resolvedPendulumEffectBackground] ?? {};
                 await drawAssetWithSize(
                     ctx,
-                    `background/background-${exceptionFrameType}-${bottomFrame}.png`,
+                    `background/background-${exceptionFrameType}-${resolvedPendulumEffectBackground}.png`,
                     pendulumBoxX, pendulumBoxY + pendulumBoxOffsetY,
                     pendulumBoxWidth, pendulumBoxHeight,
                     0, pendulumBoxOffsetY + exceptionPendulumBoxOffsetHeight,
@@ -612,7 +670,7 @@ export const getLayoutDrawFunction = ({
         drawEffectBorder: async () => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
-            if (!hasFoil && bottomFrame === 'speed-skill') {
+            if (!hasFoil && bottomLeftFrame === 'speed-skill') {
                 await drawAsset(ctx, 'frame/effect-border-speed-skill.png', effectBoxX, effectBoxY);
             } else {
                 await drawAsset(ctx, 'frame/effect-border.png', effectBoxX, effectBoxY);

@@ -52,6 +52,36 @@ export const checkLightFrame = (frame: string) => {
     return ['link'].includes(frame) || checkLightFooter(frame);
 };
 
+export const resolveFrameStyle = (frameData: Record<string, string | undefined>, isPendulum: boolean) => {
+    const {
+        topLeftFrame,
+        topRightFrame,
+        bottomLeftFrame,
+        bottomRightFrame,
+        effectBackground,
+        pendulumEffectBackground,
+    } = frameData;
+    const resolvedTopLeft = topLeftFrame ?? 'effect';
+    const resolvedTopRight = (topRightFrame === 'auto' ? resolvedTopLeft : topRightFrame) ?? 'effect';
+    const resolvedBottomLeft = (bottomLeftFrame === 'auto'
+        ? (isPendulum ? 'spell' : resolvedTopLeft)
+        : bottomLeftFrame) ?? 'effect';
+    const resolvedBottomRight = (bottomRightFrame === 'auto' ? resolvedBottomLeft : bottomRightFrame) ?? 'effect';
+    const resolvedEffectBackground = (effectBackground === 'auto' ? resolvedBottomLeft : effectBackground) ?? 'effect';
+    const resolvedPendulumEffectBackground = (pendulumEffectBackground === 'auto'
+        ? resolvedEffectBackground
+        : pendulumEffectBackground) ?? 'effect';
+
+    return {
+        topLeftFrame: resolvedTopLeft,
+        topRightFrame: resolvedTopRight,
+        bottomLeftFrame: resolvedBottomLeft,
+        bottomRightFrame: resolvedBottomRight,
+        effectBackground: resolvedEffectBackground,
+        pendulumEffectBackground: resolvedPendulumEffectBackground,
+    };
+};
+
 export const resolveNameStyle = ({
     format,
     frame,

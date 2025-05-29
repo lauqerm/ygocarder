@@ -6,10 +6,11 @@ import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DEFAULT_PENDULUM_SIZE, FrameInfoMap, PendulumSizeMap } from 'src/model';
-import { CaretDownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { getNavigationProps } from 'src/util';
+import { FrameLayoutPicker } from '../frame-layout-picker';
 
 type BottomFrameOptionGridRef = {
     focus: () => void,
@@ -19,12 +20,14 @@ type BottomFrameOptionGrid = {
     frameList: ReturnType<typeof getFrameButtonList>,
     onChange: (value: string | number) => void,
     onCancel: () => void,
+    onSwitchMode: (mode: 'standard' | 'advanced') => void,
 };
 const BottomFrameOptionGrid = forwardRef<BottomFrameOptionGridRef, BottomFrameOptionGrid>(({
     frameList,
     pendulumFrame,
     onChange,
     onCancel,
+    onSwitchMode,
 }, ref) => {
     const language = useLanguage();
     const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
@@ -54,6 +57,9 @@ const BottomFrameOptionGrid = forwardRef<BottomFrameOptionGridRef, BottomFrameOp
                 onChange(e.target.checked ? 'auto' : recentCustomPendulumFrame.current);
             }}
         >{language['input.frame.auto']}</Checkbox>
+        <div className="frame-switch-mode" onClick={() => onSwitchMode('advanced')}>
+            {language['input.frame.advance.label']} <DoubleRightOutlined />
+        </div>
         <RadioTrain
             className="frame-radio"
             value={pendulumFrame}
@@ -216,11 +222,11 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         mirrorPendulumScale,
         updateSetting,
     })));
+    const [layoutMode, setLayoutMode] = useState<'standard' | 'advanced'>('standard');
     const containerRef = useRef<HTMLDivElement>(null);
     const bottomFrameOptionGridRef = useRef<BottomFrameOptionGridRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
     const [frameDropdownVisible, setFrameDropdownVisibleVisible] = useState(false);
-    const recentCustomPendulumFrame = useRef(pendulumFrame === 'auto' ? 'spell' : pendulumFrame);
     const changeToPendulum = (e: any) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
         /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it looks closer to real card */
@@ -235,14 +241,28 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             isPendulum: willBecomePendulum,
         };
     });
-    const changeBottomFrame = (value: string | number) => {
-        const normalizedValue = `${value}`;
+    const changeBottomLeftFrame = useMemo(() => getUpdater('pendulumFrame'), [getUpdater]);
+    const changeBottomRightFrame = useMemo(() => getUpdater('pendulumRightFrame'), [getUpdater]);
+    const changeTopLeftFrame = useMemo(() => getUpdater('frame'), [getUpdater]);
+    const changeTopRightFrame = useMemo(() => getUpdater('rightFrame'), [getUpdater]);
+    const changeEffectBackground = (background: string) => setCard(currentCard => {
+        const nextEffectStyle = { ...currentCard.effectStyle };
+        nextEffectStyle.background = background;
 
-        if (normalizedValue !== 'auto') recentCustomPendulumFrame.current = normalizedValue;
-        setCard(currentCard => {
-            return { ...currentCard, pendulumFrame: normalizedValue };
-        });
-    };
+        return {
+            ...currentCard,
+            effectStyle: nextEffectStyle,
+        };
+    });
+    const changePendulumEffectBackground = (background: string) => setCard(currentCard => {
+        const nextPendulumEffectStyle = { ...currentCard.pendulumStyle };
+        nextPendulumEffectStyle.background = background;
+
+        return {
+            ...currentCard,
+            pendulumStyle: nextPendulumEffectStyle,
+        };
+    });
     const onRedScaleChange = useMemo(() => getUpdater('pendulumScaleRed'), [getUpdater]);
     const onBlueScaleChange = useMemo(() => getUpdater('pendulumScaleBlue'), [getUpdater]);
     const onPendulumSizeChange = useMemo(() => getUpdater('pendulumSize'), [getUpdater]);
@@ -277,19 +297,48 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 {showCreativeOption && <Popover
                     visible={frameDropdownVisible}
                     onVisibleChange={setFrameDropdownVisibleVisible}
-                    trigger={['hover', 'click']}
+                    trigger={['click']}
                     placement="bottom"
                     overlayClassName="pendulum-frame-picker-overlay"
                     content={<div className="overlay-event-absorber">
-                        <BottomFrameOptionGrid ref={bottomFrameOptionGridRef}
-                            frameList={frameList}
-                            pendulumFrame={pendulumFrame}
-                            onCancel={() => {
-                                setFrameDropdownVisibleVisible(false);
-                                containerRef.current?.focus();
-                            }}
-                            onChange={changeBottomFrame}
-                        />
+                        {layoutMode === 'standard'
+                            ? <BottomFrameOptionGrid ref={bottomFrameOptionGridRef}
+                                frameList={frameList}
+                                pendulumFrame={pendulumFrame}
+                                onSwitchMode={setLayoutMode}
+                                onCancel={() => {
+                                    setFrameDropdownVisibleVisible(false);
+                                    containerRef.current?.focus();
+                                }}
+                                onChange={changeBottomLeftFrame}
+                            />
+                            : <FrameLayoutPicker
+                                isPendulum={isPendulum}
+                                frameList={frameList}
+                                pendulumFrame={pendulumFrame}
+                                onCancel={() => {
+                                    setFrameDropdownVisibleVisible(false);
+                                    containerRef.current?.focus();
+                                }}
+                                onSwitchMode={setLayoutMode}
+                                onChange={layoutData => {
+                                    const {
+                                        topLeftFrame,
+                                        topRightFrame,
+                                        bottomLeftFrame,
+                                        bottomRightFrame,
+                                        effectBackground,
+                                        pendulumEffectBackground,
+                                    } = layoutData;
+
+                                    if (bottomLeftFrame) changeBottomLeftFrame(bottomLeftFrame);
+                                    if (bottomRightFrame) changeBottomRightFrame(bottomRightFrame);
+                                    if (topLeftFrame) changeTopLeftFrame(topLeftFrame);
+                                    if (topRightFrame) changeTopRightFrame(topRightFrame);
+                                    if (effectBackground) changeEffectBackground(effectBackground);
+                                    if (pendulumEffectBackground) changePendulumEffectBackground(pendulumEffectBackground);
+                                }}
+                            />}
                     </div>}
                 >
                     <StyledPendulumFrameInputContainer ref={containerRef}

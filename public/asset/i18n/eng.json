@@ -152,6 +152,8 @@
         "input.foil.platinum.label": "Platinum",
         "input.format.label": "Format",
         "input.frame.auto": "Auto",
+        "input.frame.advance.label": "To Advance Mode",
+        "input.frame.standard.label": "To Standard Mode",
         "input.frame.dark-synchro": "Dark Synchro",
         "input.frame.effect": "Effect",
         "input.frame.fusion": "Fusion",

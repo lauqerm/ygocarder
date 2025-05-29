@@ -153,6 +153,8 @@
         "input.foil.platinum.label": "Platinum",
         "input.format.label": "Format",
         "input.frame.auto": "Tự động",
+        "input.frame.advance.label": "Chế độ nâng cao",
+        "input.frame.standard.label": "Chế độ cơ bản",
         "input.frame.dark-synchro": "Dark Synchro",
         "input.frame.effect": "Effect",
         "input.frame.fusion": "Fusion",

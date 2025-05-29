@@ -127,6 +127,7 @@ const CsvStandardFieldList = [
     'Effect Style - Shadow Color',
     'Effect Style - Upsize',
     'Effect Style - Font Style',
+    'Effect Style - Background',
     'Pendulum Size',
     'Pendulum Effect Style - Is Custom',
     'Pendulum Effect Style - Fill Color',
@@ -134,6 +135,7 @@ const CsvStandardFieldList = [
     'Pendulum Effect Style - Shadow Color',
     'Pendulum Effect Style - Upsize',
     'Pendulum Effect Style - Font Style',
+    'Pendulum Effect Style - Background',
     'Other Style - Is Custom',
     'Other Style - Fill Color',
     'Other Style - Has Shadow',
@@ -141,6 +143,8 @@ const CsvStandardFieldList = [
     'Other Finish - Attribute',
     'Other Finish - Icon',
     'Other Finish - Sticker',
+    'Right Frame',
+    'Bottom Right Frame',
     'External Info (JSON)',
 ] as const;
 const CsvFieldList = [
@@ -221,7 +225,6 @@ export const cardListToCsv = (cardList: Card[]) => {
             effectTextStyle,
             externalInfo,
             finish,
-            otherFinish,
             foil,
             format,
             frame,
@@ -239,15 +242,18 @@ export const cardListToCsv = (cardList: Card[]) => {
             nameStyle,
             nameStyleType,
             opacity,
+            otherFinish,
             otherTextStyle,
             password,
             pendulumEffect,
             pendulumFrame,
             pendulumScaleBlue,
             pendulumScaleRed,
-            pendulumStyle,
             pendulumSize,
+            pendulumStyle,
             pendulumTextStyle,
+            rightFrame,
+            pendulumRightFrame,
             setId,
             star,
             starAlignment,
@@ -359,6 +365,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Effect Style - Shadow Color', effectTextStyle[3]);
         write('Effect Style - Upsize', effectStyle.upSize);
         write('Effect Style - Font Style', effectStyle.fontStyle);
+        write('Effect Style - Background', effectStyle.background);
         write('Pendulum Size', pendulumSize);
         write('Pendulum Effect Style - Is Custom', pendulumTextStyle[0]);
         write('Pendulum Effect Style - Fill Color', pendulumTextStyle[1]);
@@ -366,6 +373,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Pendulum Effect Style - Shadow Color', pendulumTextStyle[3]);
         write('Pendulum Effect Style - Upsize', pendulumStyle.upSize);
         write('Pendulum Effect Style - Font Style', pendulumStyle.fontStyle);
+        write('Pendulum Effect Style - Background', pendulumStyle.background);
         write('Other Style - Is Custom', otherTextStyle[0]);
         write('Other Style - Fill Color', otherTextStyle[1]);
         write('Other Style - Has Shadow', otherTextStyle[2]);
@@ -373,6 +381,8 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Finish - Attribute', otherFinish[0]);
         write('Other Finish - Icon', otherFinish[1]);
         write('Other Finish - Sticker', otherFinish[2]);
+        write('Right Frame', rightFrame);
+        write('Bottom Right Frame', pendulumRightFrame);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
         if (artSource === 'offline' || (hasBackground && backgroundSource === 'offline')) {
@@ -452,6 +462,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const reader = getCsvFieldReader(row, headerIndexMap);
 
                 const frame = (reader('Frame') ?? reader('Background_Type') ?? emptyCard.frame).toLowerCase();
+                const rightFrame = (reader('Right Frame') ?? emptyCard.rightFrame).toLowerCase();
+                const pendulumRightFrame = (reader('Bottom Right Frame') ?? emptyCard.pendulumRightFrame).toLowerCase();
 
                 const rawStar = reader('Star') ?? reader('Level/Rank') ?? '';
                 const star = reader('Star Type') === 'text'
@@ -531,6 +543,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const pendulumEffectUpSize = normalizeInt(reader('Pendulum Effect Style - Upsize'), emptyCard.pendulumStyle.upSize);
                 const effectFontStyle = (reader('Effect Style - Font Style') ?? emptyCard.effectStyle.fontStyle).toLowerCase();
                 const pendulumEffectFontStyle = (reader('Pendulum Effect Style - Font Style') ?? emptyCard.pendulumStyle.fontStyle).toLowerCase();
+                const effectBackground = (reader('Effect Style - Background') ?? emptyCard.effectStyle.background).toLowerCase();
+                const pendulumEffectBackground = (reader('Pendulum Effect Style - Background') ?? emptyCard.pendulumStyle.background).toLowerCase();
 
                 const emptyOpacity = getDefaultCardOpacity();
                 const opacity: CardOpacity = {
@@ -666,12 +680,11 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     condenseTolerant,
                     creator,
                     def,
-                    effectStyle: { condenseTolerant, upSize: effectUpSize, fontStyle: effectFontStyle },
                     effect,
+                    effectStyle: { condenseTolerant, upSize: effectUpSize, fontStyle: effectFontStyle, background: effectBackground },
                     effectTextStyle,
                     externalInfo,
                     finish,
-                    otherFinish: [finishAttribute, finishIcon, finishSticker] as OtherFinish,
                     foil,
                     format,
                     frame,
@@ -689,15 +702,18 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     nameStyle,
                     nameStyleType,
                     opacity,
+                    otherFinish: [finishAttribute, finishIcon, finishSticker] as OtherFinish,
                     otherTextStyle,
                     password,
                     pendulumEffect,
                     pendulumFrame,
+                    pendulumRightFrame,
                     pendulumScaleBlue,
                     pendulumScaleRed,
-                    pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle },
-                    pendulumTextStyle,
                     pendulumSize,
+                    pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle, background: pendulumEffectBackground },
+                    pendulumTextStyle,
+                    rightFrame,
                     setId,
                     star,
                     starAlignment,

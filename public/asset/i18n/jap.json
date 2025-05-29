@@ -342,6 +342,8 @@
         "input.pendulum-size.medium.label": "Medium",
         "input.pendulum-size.large.label": "Large",
         "input.finish.art.tooltip": "Use art finish",
+        "input.frame.advance.label": "To Advance Mode",
+        "input.frame.standard.label": "To Standard Mode",
         "service.decode.partial.message": "Partial export mode"
     }
 }
