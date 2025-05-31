@@ -53,6 +53,11 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Cardmaker_01',
+                            question: 'Hello, the Xyz cards have black font in Set ID and Copyright, making it invisible to Xyz cards. Attached screenshot is an example. Can you please fix those fields to white font again? tysm and more power to you :)',
+                            answer: 'It should be fixed by now, thanks for your feedback.'
+                        },
+                        {
                             author: 'galaxy dragon',
                             question: 'Can you add a little space on the edge of the spell and trap card? when it is full of text. Thank you.',
                             answer: 'I can\'t quite understand what you mean, can you be more specific, or provide a sample image?',

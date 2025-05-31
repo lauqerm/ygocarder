@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.2.7 (2025/05/31)",
+        "logList": [
+            {
+                "content": "Fix: Incorrect resolving font color for set ID and creator text on darker frames."
+            }
+        ]
+    },
+    {
         "version": "v2.2.6 (2025/05/31)",
         "logList": [
             {

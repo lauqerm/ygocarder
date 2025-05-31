@@ -53,6 +53,7 @@ import {
     checkXyz,
     createCanvas,
     generateLayer,
+    resolveFrameStyle,
     resolveNameStyle,
 } from 'src/util';
 import { useCard } from '../use-card';
@@ -193,7 +194,21 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const { body = 100, boundless } = opacity;
     const requireShadow = !!(body < 50 || boundless);
     const lightFooter = checkLightFooter(bottomFrame);
-    const lightRightFooter = checkLightFooter(pendulumRightFrame);
+    const {
+        bottomRightFrame,
+    } = resolveFrameStyle(
+        {
+            frame,
+            topLeftFrame: leftFrame,
+            topRightFrame: rightFrame,
+            bottomLeftFrame: pendulumFrame,
+            bottomRightFrame: pendulumRightFrame,
+            effectBackground: effectBackground,
+            pendulumEffectBackground: pendulumEffectBackground,
+        },
+        isPendulum,
+    );
+    const lightRightFooter = checkLightFooter(bottomRightFrame);
     const lightHeader = checkLightHeader(frame);
     const {
         levelStyle,
