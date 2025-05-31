@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.2.6 (2025/05/31)",
+        "logList": [
+            {
+                "content": "\"Bottom Frame\" option changed to \"Advanced Frame\", now allow changing frame style of all 4 corners, as well as effect's background.",
+                "image": "https://images2.imgbox.com/05/02/5EmXHbQy_o.png"
+            }
+        ]
+    },
+    {
         "version": "v2.2.5 (2025/05/26)",
         "logList": [
             {
