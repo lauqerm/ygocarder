@@ -48,22 +48,15 @@ export const QuestionAndFeedback = () => {
         </FaqButtonLabel>
         <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
             <Tabs>
-                <Tabs.TabPane key="faq" tab="Frequently Asked Questions">
-                    {[
-                        {
-                            question: 'Can you make the pendulum effect box semi-transparent? Just like real pendulum cards.',
-                            answer: 'Yes, both pendulum and default card effect box can be made semi-transparent. In "Layout" row you can find "Pendulum" and "Effect" slider, each control how transparent the effect box is (0 is fully see-through and 100 is fully solid).',
-                        },
-                    ].map(({ question, answer }, index) => {
-                        return <Quote key={index} question={question}>
-                            {answer}
-                        </Quote>;
-                    })}
-                </Tabs.TabPane>
                 <Tabs.TabPane key="feedback" tab="Feedbacks">
                     <div><i>Solved feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'galaxy dragon',
+                            question: 'Can you add a little space on the edge of the spell and trap card? when it is full of text. Thank you.',
+                            answer: 'I can\'t quite understand what you mean, can you be more specific, or provide a sample image?',
+                        },
                         {
                             author: 'Anonymous User at May 27, 2025',
                             question: 'Hello, can you add a selection of sizes in card title? because the old card and new card have different card title alignment, the old card seems to appear the title is more stretch than the new maybe because of the card size of the old card. can you fix it pls? maybe add some choices of card title alignments?\nor maybe size? THANK YOU SO MUCH!!',
@@ -86,6 +79,18 @@ export const QuestionAndFeedback = () => {
                         },
                     ].map(({ author, question, answer }, index) => {
                         return <Quote key={index} author={author} question={question}>
+                            {answer}
+                        </Quote>;
+                    })}
+                </Tabs.TabPane>
+                <Tabs.TabPane key="faq" tab="Frequently Asked Questions">
+                    {[
+                        {
+                            question: 'Can you make the pendulum effect box semi-transparent? Just like real pendulum cards.',
+                            answer: 'Yes, both pendulum and default card effect box can be made semi-transparent. In "Layout" row you can find "Pendulum" and "Effect" slider, each control how transparent the effect box is (0 is fully see-through and 100 is fully solid).',
+                        },
+                    ].map(({ question, answer }, index) => {
+                        return <Quote key={index} question={question}>
                             {answer}
                         </Quote>;
                     })}

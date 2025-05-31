@@ -17,18 +17,19 @@ export const getDefaultCrop = () => ({
 
 /**
  * Check following things when adding new attributes:
- * * Default card and empty card|
- * * Convert codec|
- * * Shorten codec|
+ * * Default card and empty card
+ * * Convert codec
+ * * Shorten codec
  * * Card thumb
- * * Legacy version|
- * * Import / export|
+ * * Legacy version
+ * * Import / export
  */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
     version: 2,
     format: 'tcg',
     frame: 'fusion',
+    leftFrame: 'auto',
     rightFrame: 'auto',
     pendulumRightFrame: 'auto',
     foil: 'normal' as Foil,
@@ -117,7 +118,9 @@ export const getDefaultInternalCard = () => ({
 export const getEmptyCard = (): Card => ({
     version: 2,
     format: 'tcg',
+    /** Why we split frame and left frame here? Because there is more nuance to the card other than individual frames, for example name bevel, border bevel, effect bevel etc..., so "frame" here is a kind of "main frame" that dictates all those nuance, why the actual card background is constructed from those 4 corner frames. */
     frame: 'effect',
+    leftFrame: 'auto',
     rightFrame: 'auto',
     pendulumRightFrame: 'auto',
     foil: 'normal',

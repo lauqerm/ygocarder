@@ -102,7 +102,7 @@ export const getLayoutDrawFunction = ({
     globalScale,
     format,
     hasBackground,
-    frame, pendulumFrame, rightFrame, pendulumRightFrame,
+    frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
     effectBackground, pendulumEffectBackground,
     backgroundType,
     cardIcon,
@@ -123,7 +123,7 @@ export const getLayoutDrawFunction = ({
     backgroundCanvas: HTMLCanvasElement | null,
     globalScale: number,
     format: string,
-    frame: string, pendulumFrame: string, rightFrame: string, pendulumRightFrame: string,
+    frame: string, leftFrame: string, pendulumFrame: string, rightFrame: string, pendulumRightFrame: string,
     effectBackground: string, pendulumEffectBackground: string,
     hasBackground: boolean,
     backgroundType: BackgroundType,
@@ -186,7 +186,8 @@ export const getLayoutDrawFunction = ({
 
     const resolvedLayoutStyle = resolveFrameStyle(
         {
-            topLeftFrame: frame,
+            frame,
+            topLeftFrame: leftFrame,
             topRightFrame: rightFrame,
             bottomLeftFrame: pendulumFrame,
             bottomRightFrame: pendulumRightFrame,
@@ -281,10 +282,15 @@ export const getLayoutDrawFunction = ({
             }
             const { context: bottomFrameContext, canvas: bottomFrameCanvas } = createCanvas(cardWidth, cardHeight);
             await drawAsset(bottomFrameContext, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
-            if (bottomRightFrame !== bottomLeftFrame) {
+            if (bottomLeftFrame !== bottomRightFrame) {
+                /** What is this?
+                 * 
+                 * Because the "bottom left" frame is not actually bottom, but both bottom left and bottom right with transparency. If we draw it first, then draw our "bottom right" frame on top of it, it will mixed with the bottom left frame (because both contains transparency), instead of replacing it, create an unintended side effect. Therefore we cut the part that may cause mixing color from the bottom left frame, before drawing the bottom right part.
+                 */
+                bottomFrameContext.clearRect(714, 0, 99, cardHeight);
                 const bottomRightCanvas = await applyAlphaMask(
                     `frame/frame-${bottomRightFrame}.png`,
-                    await MaskPromise.bottomRight,
+                    await (bottomRightFrame === topRightFrame ? MaskPromise.right : MaskPromise.bottomRight),
                     cardWidth,
                     cardHeight,
                 );

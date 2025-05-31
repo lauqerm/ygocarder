@@ -9,6 +9,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     format: 'fm',
     frame: 'fr',
     rightFrame: 'rf',
+    leftFrame: 'lf',
     pendulumRightFrame: 'rpf',
     foil: 'fo',
     opacity: {
@@ -269,6 +270,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.pendulumFrame == null) migratedCard.pendulumFrame = 'auto';
     if (migratedCard.pendulumSize == null) migratedCard.pendulumSize = 'medium';
     if (migratedCard.rightFrame == null) migratedCard.rightFrame = 'auto';
+    if (migratedCard.leftFrame == null) migratedCard.leftFrame = 'auto';
     if (migratedCard.pendulumRightFrame == null) migratedCard.pendulumRightFrame = 'auto';
     if (migratedCard.finish == null) migratedCard.finish = [];
 

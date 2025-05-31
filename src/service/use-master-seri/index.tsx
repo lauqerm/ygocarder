@@ -117,8 +117,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         effect,
         effectStyle,
         typeAbility,
-        isPendulum, pendulumFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle, pendulumSize,
-        rightFrame, pendulumRightFrame,
+        isPendulum, pendulumFrame, pendulumRightFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle, pendulumSize,
+        leftFrame, rightFrame,
         atk, def, linkMap,
         attribute,
         cardIcon, subFamily, star, starAlignment,
@@ -193,6 +193,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const { body = 100, boundless } = opacity;
     const requireShadow = !!(body < 50 || boundless);
     const lightFooter = checkLightFooter(bottomFrame);
+    const lightRightFooter = checkLightFooter(pendulumRightFrame);
     const lightHeader = checkLightHeader(frame);
     const {
         levelStyle,
@@ -328,7 +329,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 artworkCanvas, backgroundCanvas,
                 globalScale,
                 format,
-                frame, pendulumFrame, rightFrame, pendulumRightFrame,
+                frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
                 effectBackground, pendulumEffectBackground,
                 hasBackground,
                 backgroundType,
@@ -513,6 +514,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         backgroundCanvasRef,
         frameCanvasRef,
         frame,
+        leftFrame,
         rightFrame,
         pendulumRightFrame,
         format,
@@ -631,7 +633,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 isLink, isPendulum,
                 withShadow: requireShadow && !isPendulum,
                 format,
-                lightFooter,
+                lightFooter: lightRightFooter,
                 textStyle: resolvedOtherEffectTextStyle,
             }
         );
@@ -641,7 +643,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         format,
         isLink,
         isPendulum,
-        lightFooter,
+        lightRightFooter,
         setIdCanvasRef,
         setId,
         isSpeedSkill,
@@ -740,7 +742,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 alignment: 'right',
                 baselineOffset: isSpeedSkill ? -2 : 0,
                 hasShadow: requireShadow,
-                lightFooter,
+                lightFooter: lightRightFooter,
                 textStyle: resolvedOtherEffectTextStyle,
                 globalScale,
             });
@@ -776,6 +778,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isPendulum,
         isSpeedSkill,
         lightFooter,
+        lightRightFooter,
         opacity,
         requireShadow,
         resolvedOtherEffectTextStyle,

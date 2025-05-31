@@ -12,7 +12,7 @@ import {
     LinkRotateList,
     NO_ICON,
 } from 'src/model';
-import { checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName } from 'src/util';
+import { checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
 import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Popconfirm, Tooltip } from 'antd';
@@ -119,15 +119,24 @@ const StyledCardThumb = styled.div`
             left: 0;
         }
         .card-frame {
-            width: 100%;
+            width: 50%;
             height: 50%;
             position: absolute;
-            left: 0;
-            &.top-frame {
+            &.top-left-frame {
                 top: 0;
+                left: 0;
             }
-            &.bottom-frame {
+            &.top-right-frame {
+                top: 0;
+                left: 50%;
+            }
+            &.bottom-left-frame {
                 top: 50%;
+                left: 0;
+            }
+            &.bottom-right-frame {
+                top: 50%;
+                left: 50%;
             }
         }
         .thumb-link-marker-icon {
@@ -260,26 +269,38 @@ export const CardThumb = ({
         def,
         format,
         frame,
+        leftFrame, rightFrame,
         hasBackground,
         isLink,
         isPendulum,
         linkMap,
         name,
         opacity,
-        pendulumFrame,
+        pendulumFrame, pendulumRightFrame,
         pendulumScaleBlue,
         pendulumScaleRed,
         setId,
         star,
         subFamily,
         typeAbility,
+        effectStyle,
+        pendulumStyle,
     } = card;
+    const {
+        topLeftFrame,
+        topRightFrame,
+        bottomLeftFrame,
+        bottomRightFrame,
+    } = resolveFrameStyle({
+        frame,
+        topLeftFrame: leftFrame,
+        topRightFrame: rightFrame,
+        bottomLeftFrame: pendulumFrame,
+        bottomRightFrame: pendulumRightFrame,
+        effectBackground: effectStyle.background,
+        pendulumEffectBackground: pendulumStyle.background,
+    }, isPendulum);
     const normalizedCardName = normalizeCardName(name);
-    const normalizedBottomFrame = pendulumFrame === 'auto'
-        ? isPendulum
-            ? 'spell'
-            : frame
-        : pendulumFrame;
     const normalizedCardArt = artSource === 'offline'
         ? !art
             ? 'https://i.imgur.com/jjtCuG5.png' // Placeholder
@@ -315,16 +336,28 @@ export const CardThumb = ({
         <div
             className="left-slot"
         >
-            <div className="card-frame top-frame"
+            <div className="card-frame top-left-frame"
                 style={{
-                    backgroundColor: FrameInfoMap[frame]?.labelBackgroundColor,
-                    backgroundImage: FrameInfoMap[frame]?.labelBackgroundImage,
+                    backgroundColor: FrameInfoMap[topLeftFrame]?.labelBackgroundColor,
+                    backgroundImage: FrameInfoMap[topLeftFrame]?.labelBackgroundImage,
                 }}
             />
-            <div className="card-frame bottom-frame"
+            <div className="card-frame top-right-frame"
                 style={{
-                    backgroundColor: FrameInfoMap[normalizedBottomFrame]?.labelBackgroundColor,
-                    backgroundImage: FrameInfoMap[normalizedBottomFrame]?.labelBackgroundImage,
+                    backgroundColor: FrameInfoMap[topRightFrame]?.labelBackgroundColor,
+                    backgroundImage: FrameInfoMap[topRightFrame]?.labelBackgroundImage,
+                }}
+            />
+            <div className="card-frame bottom-left-frame"
+                style={{
+                    backgroundColor: FrameInfoMap[bottomLeftFrame]?.labelBackgroundColor,
+                    backgroundImage: FrameInfoMap[bottomLeftFrame]?.labelBackgroundImage,
+                }}
+            />
+            <div className="card-frame bottom-right-frame"
+                style={{
+                    backgroundColor: FrameInfoMap[bottomRightFrame]?.labelBackgroundColor,
+                    backgroundImage: FrameInfoMap[bottomRightFrame]?.labelBackgroundImage,
                 }}
             />
             <a

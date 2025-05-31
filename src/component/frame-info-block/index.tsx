@@ -1,3 +1,4 @@
+import React from 'react';
 import { FrameInfo } from 'src/model';
 import { useLanguage } from 'src/service';
 import styled from 'styled-components';
@@ -20,12 +21,17 @@ export const FrameInfoBlock = ({
     labelBackgroundColor,
     labelBackgroundColorList,
     className,
-}: Omit<FrameInfo, 'name' | 'edition' | 'labelColor' | 'sortWeight'> & { className?: string }) => {
+    onClick,
+}: Omit<FrameInfo, 'name' | 'edition' | 'labelColor' | 'sortWeight'> & {
+    className?: string,
+    onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+}) => {
     const language = useLanguage();
 
     return <StyledFrameContainer
         className={`frame-info-block ${className ?? ''}`}
         $withPillar={!!(labelBackgroundColor || labelBackgroundColorList)}
+        onClick={onClick}
     >
         {labelBackgroundColorList
             ? <StyledFramePillar>

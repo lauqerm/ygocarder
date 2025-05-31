@@ -143,6 +143,7 @@ const CsvStandardFieldList = [
     'Other Finish - Attribute',
     'Other Finish - Icon',
     'Other Finish - Sticker',
+    'Left Frame',
     'Right Frame',
     'Bottom Right Frame',
     'External Info (JSON)',
@@ -252,6 +253,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             pendulumSize,
             pendulumStyle,
             pendulumTextStyle,
+            leftFrame,
             rightFrame,
             pendulumRightFrame,
             setId,
@@ -381,6 +383,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Finish - Attribute', otherFinish[0]);
         write('Other Finish - Icon', otherFinish[1]);
         write('Other Finish - Sticker', otherFinish[2]);
+        write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
@@ -463,6 +466,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
 
                 const frame = (reader('Frame') ?? reader('Background_Type') ?? emptyCard.frame).toLowerCase();
                 const rightFrame = (reader('Right Frame') ?? emptyCard.rightFrame).toLowerCase();
+                const leftFrame = (reader('Left Frame') ?? emptyCard.leftFrame).toLowerCase();
                 const pendulumRightFrame = (reader('Bottom Right Frame') ?? emptyCard.pendulumRightFrame).toLowerCase();
 
                 const rawStar = reader('Star') ?? reader('Level/Rank') ?? '';
@@ -713,6 +717,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumSize,
                     pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle, background: pendulumEffectBackground },
                     pendulumTextStyle,
+                    leftFrame,
                     rightFrame,
                     setId,
                     star,

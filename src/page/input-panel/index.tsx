@@ -24,7 +24,7 @@ import {
 } from './const';
 import { CharPicker } from './char-picker';
 import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
-import { CheckboxTrain, FrameTrain } from './input-train';
+import { CheckboxTrain, FrameTrain, FrameTrainRef } from './input-train';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
 import { LayoutPicker, OpacityPickerRef } from './layout-picker';
@@ -111,6 +111,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         platinum: language['input.foil.platinum.label'],
     }), [language]);
 
+    const frameTrainRef = useRef<FrameTrainRef>(null);
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
     const layoutPickerRef = useRef<OpacityPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
@@ -238,7 +239,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             />
         </div>}
 
-        <FrameTrain
+        <FrameTrain ref={frameTrainRef}
             onSTFrameChange={typeAbility => postPendulumInputGroupRef.current?.setValue({ typeAbility })}
             onPasswordChange={password => footerInputGroupRef.current?.setValue({ password })}
             onStatChange={(atk, def) => footerInputGroupRef.current?.setValue({ atk, def })}
@@ -276,6 +277,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                         showExtraDecorativeOption={showExtraDecorativeOption}
                         softMode={reduceMotionColor}
                         onTakePicker={setPickerTarget}
+                        onFrameChange={frame => frameTrainRef.current.changeFrame(frame)}
                     />}
 
                 <PostPendulumInputGroup ref={postPendulumInputGroupRef} onTakePicker={setPickerTarget} />

@@ -184,3 +184,13 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
     },
 };
 export const frameList = Object.values(FrameInfoMap);
+
+export const FramePositionMap: Record<string, { labelKey: string }> = {
+    bottomLeftFrame: { labelKey: 'input.advanced-frame.name.bottom-left' },
+    bottomRightFrame: { labelKey: 'input.advanced-frame.name.bottom-right' },
+    effectBackground: { labelKey: 'input.advanced-frame.name.effect-background' },
+    pendulumEffectBackground: { labelKey: 'input.advanced-frame.name.pendulum-effect-background' },
+    frame: { labelKey: 'input.advanced-frame.name.primary' },
+    topLeftFrame: { labelKey: 'input.advanced-frame.name.top-left' },
+    topRightFrame: { labelKey: 'input.advanced-frame.name.top-right' },
+};

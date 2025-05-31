@@ -54,6 +54,7 @@ export const checkLightFrame = (frame: string) => {
 
 export const resolveFrameStyle = (frameData: Record<string, string | undefined>, isPendulum: boolean) => {
     const {
+        frame,
         topLeftFrame,
         topRightFrame,
         bottomLeftFrame,
@@ -61,16 +62,21 @@ export const resolveFrameStyle = (frameData: Record<string, string | undefined>,
         effectBackground,
         pendulumEffectBackground,
     } = frameData;
-    const resolvedTopLeft = topLeftFrame ?? 'effect';
-    const resolvedTopRight = (topRightFrame === 'auto' ? resolvedTopLeft : topRightFrame) ?? 'effect';
+    const resolvedFrame = frame ?? 'effect';
+    const resolvedTopLeft = topLeftFrame === 'auto' ? resolvedFrame : topLeftFrame;
+    const resolvedTopRight = (topRightFrame === 'auto' ? resolvedTopLeft : topRightFrame) ?? resolvedFrame;
     const resolvedBottomLeft = (bottomLeftFrame === 'auto'
         ? (isPendulum ? 'spell' : resolvedTopLeft)
-        : bottomLeftFrame) ?? 'effect';
-    const resolvedBottomRight = (bottomRightFrame === 'auto' ? resolvedBottomLeft : bottomRightFrame) ?? 'effect';
-    const resolvedEffectBackground = (effectBackground === 'auto' ? resolvedBottomLeft : effectBackground) ?? 'effect';
+        : bottomLeftFrame) ?? resolvedFrame;
+    const resolvedBottomRight = (bottomRightFrame === 'auto'
+        ? (isPendulum ? resolvedBottomLeft : resolvedFrame)
+        : bottomRightFrame) ?? resolvedFrame;
+    const resolvedEffectBackground = (effectBackground === 'auto'
+        ? (isPendulum ? resolvedBottomLeft : resolvedFrame)
+        : effectBackground) ?? resolvedFrame;
     const resolvedPendulumEffectBackground = (pendulumEffectBackground === 'auto'
-        ? resolvedEffectBackground
-        : pendulumEffectBackground) ?? 'effect';
+        ? resolvedBottomLeft
+        : pendulumEffectBackground) ?? resolvedFrame;
 
     return {
         topLeftFrame: resolvedTopLeft,

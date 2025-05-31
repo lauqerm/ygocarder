@@ -1,5 +1,5 @@
 import { useCard, useSetting } from 'src/service';
-import { useCallback, useMemo } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -11,16 +11,19 @@ const StyledFrameTrain = styled(RadioTrain)`
 	${TrainGridStyle}
 `;
 
+export type FrameTrainRef = {
+    changeFrame: (frameValue: number | string) => void,
+};
 export type FrameTrain = {
     onSTFrameChange: (value: string[]) => void,
     onPasswordChange: (value: string) => void,
     onStatChange: (atk: string, def: string) => void,
 };
-export const FrameTrain = ({
+export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
     onSTFrameChange,
     onPasswordChange,
     onStatChange,
-}: FrameTrain) => {
+}, ref) => {
     const {
         setting,
     } = useSetting();
@@ -100,5 +103,9 @@ export const FrameTrain = ({
         });
     }, [setCard, onPasswordChange, onSTFrameChange, onStatChange]);
 
+    useImperativeHandle(ref, () => ({
+        changeFrame,
+    }));
+
     return <StyledFrameTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />;
-};
+});

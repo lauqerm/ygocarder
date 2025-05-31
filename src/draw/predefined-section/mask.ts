@@ -30,6 +30,21 @@ export const getMaskPromise = () => {
         }
         return null;
     })();
+    /**
+     * Be careful: Bottom right + Top right mask does NOT cover the entire right area when bottom left frame is also presented, so if both of them are the same frame, we might need to use right mask.
+     * 
+     * Reason: Because bottom left frame also contains bottom right frame with transparency, if we draw another bottom right frame (that also has transparency) on top of it, it will not overlap the bottom frame, but merged with it, create a mix of both instead of total replacement, which is our desired effect. */
+    const rightMask = (async () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            await drawAsset(ctx, 'mask/mask-right.png');
+            return ctx.getImageData(0, 0, width, height).data;
+        }
+        return null;
+    })();
     const nameMask = (async () => {
         const canvas = document.createElement('canvas');
         canvas.width = width;
@@ -45,6 +60,7 @@ export const getMaskPromise = () => {
     return {
         topRight: topRightMask,
         bottomRight: bottomRightMask,
+        right: rightMask,
         name: nameMask,
     };
 };

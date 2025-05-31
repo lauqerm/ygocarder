@@ -8,7 +8,7 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     .radio-train {
         display: flex;
         flex-wrap: wrap;
-        max-width: 550px;
+        max-width: 480px;
         .radio-train-input-group {
             gap: var(--spacing);
         }
@@ -19,18 +19,23 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     .frame-auto-checkbox {
         margin-bottom: var(--spacing-xs);
     }
-    .frame-switch-mode {
+    .checkbox-disabled {
+        .ant-checkbox {
+            display: none;
+        }
+        visibility: hidden; // Avoid collapsing
+    }
+    .frame-part-name {
         position: absolute;
-        top: var(--spacing-xs);
-        right: var(--spacing-xs);
-        cursor: pointer;
-        line-height: 1.35;
-        padding: 0 var(--spacing-xs);
-        border-radius: var(--br);
-        background: var(--main-primary);
-        border: var(--bw) solid var(--main-active);
-        &:hover {
-            background: var(--sub-primary);
+        padding: 0 var(--spacing);
+        top: calc(-1 * var(--spacing-xs));
+        right: calc(-1 * var(--spacing-xs));
+        border-radius: 0 0 0 var(--br-lg);
+        background-color: var(--main-level-4);
+        border-left: var(--bw) solid var(--sub-level-4);
+        border-bottom: var(--bw) solid var(--sub-level-4);
+        &:empty {
+            display: none;
         }
     }
     ${TrainGridStyle}
