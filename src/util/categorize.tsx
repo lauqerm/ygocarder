@@ -69,10 +69,10 @@ export const resolveFrameStyle = (frameData: Record<string, string | undefined>,
         ? (isPendulum ? 'spell' : resolvedTopLeft)
         : bottomLeftFrame) ?? resolvedFrame;
     const resolvedBottomRight = (bottomRightFrame === 'auto'
-        ? (isPendulum ? resolvedBottomLeft : resolvedFrame)
+        ? resolvedBottomLeft
         : bottomRightFrame) ?? resolvedFrame;
     const resolvedEffectBackground = (effectBackground === 'auto'
-        ? (isPendulum ? resolvedBottomLeft : resolvedFrame)
+        ? resolvedBottomLeft
         : effectBackground) ?? resolvedFrame;
     const resolvedPendulumEffectBackground = (pendulumEffectBackground === 'auto'
         ? resolvedBottomLeft
