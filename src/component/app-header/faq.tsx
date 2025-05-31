@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     ] = useNotification('faqReminder');
 
     useEffect(() => {
-        const currentReminder = '27/05/2025';
+        const currentReminder = '31/05/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
