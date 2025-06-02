@@ -9,7 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
-import { QuestionAndFeedback } from './faq';
+import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
 import './app-header.scss';
 
 export const Affiliation = () => {
@@ -97,10 +97,10 @@ export const AppHeader = () => {
                     <span
                         className="bug-report"
                         onMouseOver={() => {
-                            document.getElementById('faq-button')?.classList.add('js-highlight');
+                            document.getElementById(FAD_BUTTON_ID)?.classList.add('js-highlight');
                         }}
                         onMouseOut={() => {
-                            document.getElementById('faq-button')?.classList.remove('js-highlight');
+                            document.getElementById(FAD_BUTTON_ID)?.classList.remove('js-highlight');
                         }}
                     >
                         <div id="sentry-bug-report">

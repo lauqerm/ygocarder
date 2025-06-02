@@ -1,7 +1,9 @@
-import { Modal, Tabs } from 'antd';
+import { Modal, notification, Tabs } from 'antd';
 import { FaqButtonLabel, QuoteContainer } from './styled';
 import { useNotification } from 'src/service';
 import React, { useEffect, useState } from 'react';
+
+export const FAD_BUTTON_ID = 'faq-button';
 
 type Quote = {
     author?: string,
@@ -25,13 +27,11 @@ const Quote = ({
 export const QuestionAndFeedback = () => {
     const [visible, setVisible] = useState(false);
     const [animating, setAnimating] = useState(false);
-    const [
-        faqReminder,
-        setMemoizedReminder,
-    ] = useNotification('faqReminder');
+    const [faqReminder, setMemoizedReminder] = useNotification('faqReminder');
+    const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '31/05/2025';
+        const currentReminder = '02/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -42,8 +42,23 @@ export const QuestionAndFeedback = () => {
         }
     }, [setMemoizedReminder, faqReminder]);
 
+    useEffect(() => {
+        if (feedbackReminder !== true) {
+            setFeedbackReminder(true);
+            setAnimating(true);
+            notification.info({
+                message: 'Feedback Reminder',
+                description: 'If you have any feedback or suggestion, please check the FAQ button first to see if your feedback has been addressed.',
+                duration: 10,
+                onClose: () => {
+                    setAnimating(false);;
+                }
+            });
+        }
+    }, [feedbackReminder, setFeedbackReminder]);
+
     return <>
-        <FaqButtonLabel id="faq-button" $animating={animating} onClick={() => setVisible(cur => !cur)}>
+        <FaqButtonLabel id={FAD_BUTTON_ID} $animating={animating} onClick={() => setVisible(cur => !cur)}>
             {'FAQ'}
         </FaqButtonLabel>
         <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
@@ -52,6 +67,11 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Anonymous User at Jun 02, 2025',
+                            question: 'please can you add sizing selection in card name? please? thank you!',
+                            answer: 'Can you provide a sample image of the old card? I would like to take a look to see if it is possible to implement it or not.',
+                        },
                         {
                             author: 'Cardmaker_01',
                             question: 'Hello, the Xyz cards have black font in Set ID and Copyright, making it invisible to Xyz cards. Attached screenshot is an example. Can you please fix those fields to white font again? tysm and more power to you :)',

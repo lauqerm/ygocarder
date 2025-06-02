@@ -7,6 +7,7 @@ export type NotificationMemory = {
     condenseReminder: boolean,
     versionReminder: string,
     faqReminder: string,
+    feedbackReminder: boolean,
 };
 export type NotificationStore = {
     memory: NotificationMemory,
@@ -22,6 +23,7 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
         condenseReminder,
         versionReminder,
         faqReminder,
+        feedbackReminder,
     } = ((): Record<string, any> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem(notificationLocalStorageKey) ?? '{}');
@@ -36,6 +38,7 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
 
     return {
         memory: {
+            feedbackReminder: typeof feedbackReminder === 'boolean' ? feedbackReminder : false,
             faqReminder: typeof faqReminder !== 'string' ? '' : faqReminder,
             condenseReminder: typeof condenseReminder === 'boolean' ? condenseReminder : false,
             versionReminder: typeof versionReminder === 'string' ? versionReminder : '1.99.99',
