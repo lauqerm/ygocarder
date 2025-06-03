@@ -68,6 +68,15 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Yugiohfann at Jun 03, 2025',
+                            question: 'Please fix the ATK/DEF font text, the numbers are higher than the ATK/DEF text.',
+                        },
+                        {
+                            author: 'Anonymous User at Jun 03, 2025',
+                            question: 'Small adjustment for size and style of card stats (ATK, DEF). Can you bring back the old size and style of card stats. Now the stats are higher than the ATK and DEF text.',
+                            answer: 'Can you provide a sample image so I can see the difference? I cannot take action blindly wihout any reference.',
+                        },
+                        {
                             author: 'Anonymous User at Jun 02, 2025',
                             question: 'please can you add sizing selection in card name? please? thank you!',
                             answer: 'Can you provide a sample image of the old card? I would like to take a look to see if it is possible to implement it or not.',
