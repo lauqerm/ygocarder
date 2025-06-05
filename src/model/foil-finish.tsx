@@ -195,6 +195,22 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
             large: '-pendulum-medium',
         },
     },
+    // type9: {
+    //     value: 'type9',
+    //     label: '9',
+    //     partInstructionMap: {
+    //         art: [
+    //             { blendMode: 'screen', opacity: 0.26 },
+    //             { blendMode: 'overlay', opacity: 0.65 },
+    //             // { blendMode: 'screen', opacity: 0.35 },
+    //         ],
+    //     },
+    //     pendulumSubstituteMap: {
+    //         small: '',
+    //         medium: '-pendulum-medium',
+    //         large: '-pendulum-medium',
+    //     },
+    // },
 };
 
 export const OtherFinishTypeMap = {

@@ -68,6 +68,16 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Anonymous User at Jun 06, 2025',
+                            question: 'When using the Link Arrows on a Pendulum card, the Link Rating disappears',
+                            answer: 'It should be fixed by now',
+                        },
+                        {
+                            author: 'Shanaya User at Jun 04, 2025',
+                            question: 'I would like to request another artwork effect like this, like the effect of the attached picture its a secret rare effect',
+                            answer: 'Unfortunately I do not have access to foil layer like this one. I will try my best, but don\'t get your hope up.',
+                        },
+                        {
                             author: 'Yugiohfann at Jun 03, 2025',
                             question: 'Please fix the ATK/DEF font text, the numbers are higher than the ATK/DEF text.',
                         },

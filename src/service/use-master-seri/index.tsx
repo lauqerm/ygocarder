@@ -505,6 +505,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (isLink && !isPendulum) {
                 await drawLinkArrowMap(linkMap, isPendulum ? 'pendulum' : 'normal');
                 await drawLinkMapFoil(false, isPendulum ? 'pendulum' : 'normal');
+            }
+            
+            if (isLink && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
                 if (statInEffect) {
                     await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
@@ -1007,11 +1010,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (isLink && isPendulum) {
                 await baseDrawLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless);
                 await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal');
-                const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-                if (statInEffect) {
-                    await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
-                }
-                resetStyle();
             }
 
             ctx.scale(globalScale, globalScale);

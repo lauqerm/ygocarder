@@ -387,7 +387,7 @@ export const CardManagerPanel = forwardRef(({
             mask={false}
             destroyOnClose={false}
             forceRender={true}
-            closeIcon={() => null}
+            closeIcon={null}
             onClose={() => toggleVisible(false)}
             width={280}
         >

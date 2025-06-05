@@ -17,6 +17,12 @@ const StyledImageRadioTrain = styled(RadioTrain)`
     .radio-train-input-group .ant-radio-button-wrapper {
         min-width: unset;
     }
+    .standalone-addon.ant-input-group-addon {
+        width: calc(var(--width-label) * 0.85);
+    }
+    .ant-radio-button-wrapper {
+        padding: 0 var(--spacing-xs);
+    }
 `;
 const FinishLabel = styled(StyledDropdown.Option)`
     display: grid;

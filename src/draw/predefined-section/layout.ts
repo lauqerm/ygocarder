@@ -505,7 +505,7 @@ export const getLayoutDrawFunction = ({
         },
         /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
         drawLinkArrowMap: async (linkMap: string[], positionType: keyof typeof ArrowPositionMap) => {
-            return baseDrawLinkArrowMap(ctx, globalScale, linkMap, positionType, boundless);
+            return await baseDrawLinkArrowMap(ctx, globalScale, linkMap, positionType, boundless);
         },
         drawStatBorder: async (style: CanvasTextStyle) => {
             if (!ctx) return;
