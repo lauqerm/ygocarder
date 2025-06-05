@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.2.9 (2025/06/05)",
+        "logList": [
+            {
+                "content": "Fix: Missing Link rating in rare cases for cards with both Pendulum frame and Link Markers."
+            }
+        ]
+    },
+    {
         "version": "v2.2.7 (2025/05/31)",
         "logList": [
             {
