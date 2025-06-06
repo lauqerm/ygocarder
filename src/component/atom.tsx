@@ -75,9 +75,21 @@ export const CardActionButton = styled.button`
     }
 `;
 
+export const SolidLabel = styled.div`
+    display: inline-flex;
+    column-gap: var(--spacing-xs);
+    border: var(--bw) solid var(--sub-level-1);
+    background-color: var(--main-level-4);
+    padding: var(--spacing-xxs) var(--spacing-xs);
+    border-radius: var(--br);
+    box-shadow: var(--bs-input);
+    .ant-checkbox-wrapper {
+        transform: translateY(-1px); // Alignment
+    }
+`;
 export const CombinedSliderContainer = styled.div`
     display: grid;
-    grid-template-columns: max-content 60px 45px 12px;
+    grid-template-columns: max-content 57px 39px 6px;
     &.inactive {
         .slider-label,
         .ant-slider,
@@ -92,15 +104,8 @@ export const CombinedSliderContainer = styled.div`
         background-color: var(--main-level-4);
     }
     .slider-label {
-        display: inline-flex;
-        column-gap: var(--spacing-xs);
         border-right: none;
-        padding: var(--spacing-xxs) var(--spacing-xs);
         border-radius: var(--br) 0 0 var(--br);
-        box-shadow: var(--bs-input);
-        .ant-checkbox-wrapper {
-            transform: translateY(-1px); // Alignment
-        }
     }
     .ant-slider {
         margin: 0;

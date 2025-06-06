@@ -13,6 +13,13 @@
 
 ### Improvements backlog
 
+* More foils
+* More icons / attributes
+* Update UI to account for increasing options
+* Separate background button
+* Foil for background (and foreground)
+* ATK DEF Link (additional advanced layout option?)
+* Left and right pendulum effects
 * Dark synchro style syntax
 * OCG's letter dialect ("Chef Special Recipe" OCG for example)
 * Improve UX when rendering card (reduce flashing)

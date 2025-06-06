@@ -12,7 +12,7 @@ import {
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
-import { CombinedSliderContainer, GuardedSlider, ImageCropper, RadioTrain } from 'src/component';
+import { CombinedSliderContainer, GuardedSlider, ImageCropper, RadioTrain, SolidLabel } from 'src/component';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
@@ -29,8 +29,37 @@ const StyledLayoutPickerContainer = styled.div`
     row-gap: var(--spacing-sm);
     padding: 2px 0;
     align-items: center;
+    .art-frame {
+        span {
+            padding: 0;
+        }
+    }
+    div.ant-slider {
+        .ant-slider-handle {
+            height: 19px;
+            top: 8px;
+            border-radius: 0;
+            width: 10px;
+        }
+        .ant-slider-step,
+        .ant-slider-track,
+        .ant-slider-rail {
+            height: 10px;
+        }
+    }
     .card-opacity-slider {
         flex: 0 1 auto;
+        .ant-slider {
+            padding-top: 8px;
+        }
+    }
+    .background-label {
+        cursor: pointer;
+        &:hover {
+            .background-preview {
+                box-shadow: 0 0 2px 0 #222222;
+            }
+        }
     }
     .background-preview {
         display: inline-block;
@@ -39,12 +68,8 @@ const StyledLayoutPickerContainer = styled.div`
         height: 17px; // Alignment
         align-self: center;
         border: 1px solid #333333;
-        cursor: pointer;
         text-align: center;
         user-select: none;
-        &:hover {
-            box-shadow: 0 0 2px 0 #222222;
-        }
         .background-preview-callback-passer {
             width: 100%;
             height: 100%;
@@ -248,14 +273,103 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                 {language['input.opacity.boundless.tooltip']}
             </StyledBoundlessOverlay>}
         >
-            <Checkbox
-                className="art-frame"
-                onChange={value => setOpacity(cur => ({ ...cur, boundless: value.target.checked }))}
-                checked={opacity.boundless}
-            >
-                {language['input.opacity.boundless.label']}
-            </Checkbox>
+            <SolidLabel className="background-label">
+                <Checkbox
+                    className="art-frame"
+                    onChange={value => setOpacity(cur => ({ ...cur, boundless: value.target.checked }))}
+                    checked={opacity.boundless}
+                >
+                    &nbsp;{language['input.opacity.boundless.label']}
+                </Checkbox>
+            </SolidLabel>
         </Tooltip>
+        <Popover
+            visible={backgroundInputVisible}
+            destroyTooltipOnHide={false}
+            trigger={['click']}
+            onVisibleChange={setBackgroundInputVisible}
+            overlayClassName={[
+                'global-input-overlay global-style-picker-overlay layout-picker-overlay',
+                backgroundInputVisible ? 'picker-visible' : '',
+                backgroundInputHidden ? 'picker-hidden' : '',
+            ].join(' ')}
+            content={<div className="overlay-event-absorber">
+                <StyledBaseFillPickerContainer
+                    className={[
+                        'custom-style-picker',
+                        noBackground ? 'overlay-no-background-image' : ''
+                    ].join(' ')}
+                >
+                    <h3 className={`custom-style-expand ${hasBackground ? '' : 'inactive'}`}>
+                        <Checkbox
+                            checked={hasBackground}
+                            onChange={e => {
+                                changeHasBackground(e);
+                            }}
+                        >{language['input.background.toggle-label']}</Checkbox>
+                        <br />
+                        <i>{language['input.background.description']}</i>
+                    </h3>
+                    <div className={`background-picker ${hasBackground ? '' : 'overlay-no-background'}`}>
+                        <BackgroundInputGroup
+                            ref={backgroundInputRef}
+                            receivingCanvas={receivingCanvas}
+                            onSourceLoaded={onSourceLoaded}
+                            onTainted={onTainted}
+                            onCropChange={onCropChange}
+                            backgroundColor={opacity.baseFill}
+                        >
+                            <div className="layout-picker-panel">
+                                <div className="layout-picker-subpanel color-section">
+                                    <h2>{language['input.background-color.label']}</h2>
+                                    <CompactPicker
+                                        colors={DefaultColorList}
+                                        color={opacity.baseFill}
+                                        onChangeComplete={color => {
+                                            setOpacity(cur => ({ ...cur, baseFill: color.hex }));
+                                        }}
+                                    />
+                                </div>
+                                {!noBackground && <div className="layout-picker-subpanel type-section">
+                                    <h2>{language['input.background-type.label']}</h2>
+                                    <RadioTrain
+                                        className="background-type-picker"
+                                        onChange={changeBackgroundType}
+                                        optionList={getBackgroundTypeList({
+                                            fit: language['input.background-type.fit.label'],
+                                            full: language['input.background-type.full.label'],
+                                            frame: language['input.background-type.frame.label'],
+                                        })}
+                                        value={backgroundType}
+                                    />
+                                </div>}
+                            </div>
+                        </BackgroundInputGroup>
+                    </div>
+                </StyledBaseFillPickerContainer>
+            </div>}
+            placement="bottom"
+        >
+            <SolidLabel className="background-label">
+                <div
+                    className="background-preview"
+                    style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}
+                >
+                    {hasBackground
+                        ? background || backgroundData
+                            ? <img
+                                className="background-image-preview"
+                                src={backgroundSource === 'online'
+                                    ? background
+                                    : backgroundData}
+                                alt="Background"
+                            />
+                            : null
+                        : <BorderOuterOutlined className="no-background-icon" />}
+                </div>
+                {language['input.background.toolip']}
+            </SolidLabel>
+        </Popover>
         {OpacityList.map(({ labelKey, type, subType, tooltipKey }) => {
             if (type === 'pendulum' && !isPendulum) return null;
             const activable = !!subType;
@@ -266,95 +380,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                     isActive ? '' : 'inactive',
                 ].join(' ')}
             >
-                <div className="slider-label">
-                    {type === 'body' && <Popover
-                        visible={backgroundInputVisible}
-                        destroyTooltipOnHide={false}
-                        trigger={['click']}
-                        onVisibleChange={setBackgroundInputVisible}
-                        overlayClassName={[
-                            'global-input-overlay global-style-picker-overlay layout-picker-overlay',
-                            backgroundInputVisible ? 'picker-visible' : '',
-                            backgroundInputHidden ? 'picker-hidden' : '',
-                        ].join(' ')}
-                        content={<div className="overlay-event-absorber">
-                            <StyledBaseFillPickerContainer
-                                className={[
-                                    'custom-style-picker',
-                                    noBackground ? 'overlay-no-background-image' : ''
-                                ].join(' ')}
-                            >
-                                <h3 className={`custom-style-expand ${hasBackground ? '' : 'inactive'}`}>
-                                    <Checkbox
-                                        checked={hasBackground}
-                                        onChange={e => {
-                                            changeHasBackground(e);
-                                        }}
-                                    >{language['input.background.toggle-label']}</Checkbox>
-                                    <br />
-                                    <i>{language['input.background.description']}</i>
-                                </h3>
-                                <div className={`background-picker ${hasBackground ? '' : 'overlay-no-background'}`}>
-                                    <BackgroundInputGroup
-                                        ref={backgroundInputRef}
-                                        receivingCanvas={receivingCanvas}
-                                        onSourceLoaded={onSourceLoaded}
-                                        onTainted={onTainted}
-                                        onCropChange={onCropChange}
-                                        backgroundColor={opacity.baseFill}
-                                    >
-                                        <div className="layout-picker-panel">
-                                            <div className="layout-picker-subpanel color-section">
-                                                <h2>{language['input.background-color.label']}</h2>
-                                                <CompactPicker
-                                                    colors={DefaultColorList}
-                                                    color={opacity.baseFill}
-                                                    onChangeComplete={color => {
-                                                        setOpacity(cur => ({ ...cur, baseFill: color.hex }));
-                                                    }}
-                                                />
-                                            </div>
-                                            {!noBackground && <div className="layout-picker-subpanel type-section">
-                                                <h2>{language['input.background-type.label']}</h2>
-                                                <RadioTrain
-                                                    className="background-type-picker"
-                                                    onChange={changeBackgroundType}
-                                                    optionList={getBackgroundTypeList({
-                                                        fit: language['input.background-type.fit.label'],
-                                                        full: language['input.background-type.full.label'],
-                                                        frame: language['input.background-type.frame.label'],
-                                                    })}
-                                                    value={backgroundType}
-                                                />
-                                            </div>}
-                                        </div>
-                                    </BackgroundInputGroup>
-                                </div>
-                            </StyledBaseFillPickerContainer>
-                        </div>}
-                        placement="bottom"
-                    >
-                        <div
-                            className="background-preview"
-                            style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}
-                        >
-                            <Tooltip overlay={language['input.background.toolip']}>
-                                <div className="background-preview-callback-passer">
-                                    {hasBackground
-                                        ? background
-                                            ? <img
-                                                className="background-image-preview"
-                                                src={backgroundSource === 'online'
-                                                    ? background
-                                                    : backgroundData}
-                                                alt="Background"
-                                            />
-                                            : null
-                                        : <BorderOuterOutlined className="no-background-icon" />}
-                                </div>
-                            </Tooltip>
-                        </div>
-                    </Popover>}
+                <SolidLabel className="slider-label">
                     {activable && <Tooltip
                         title={tooltipKey
                             ? language[tooltipKey] ?? null
@@ -367,7 +393,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         />
                     </Tooltip>}
                     {language[labelKey]}
-                </div>
+                </SolidLabel>
                 <InputNumber
                     size="small"
                     min={0}
