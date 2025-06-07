@@ -6,17 +6,19 @@ import styled from 'styled-components';
 import { mergeClass } from 'src/util';
 import { LinkRotateList } from 'src/model';
 
+const LINK_MARKER_HALF_SIZE = 13;
+export const LINK_MARKER_PICKER_WIDTH = 3 * 2 * LINK_MARKER_HALF_SIZE + 5 * 2; // 5 = --spacing-xs
 const StyledLinkMarkChooser = styled.div`
     --link-arrow-icon-size: 16px;
     --link-arrow-border-size: 8px;
-    --link-arrow-half-size: 13px;
+    --link-arrow-half-size: ${LINK_MARKER_HALF_SIZE}px;
     --link-arrow-full-size: calc(var(--link-arrow-half-size) * 2);
     --link-arrow-margin-inline: calc(var(--link-arrow-half-size) - var(--link-arrow-icon-size) / 2);
     --link-arrow-margin-block: calc(var(--link-arrow-half-size) - var(--link-arrow-border-size) / 2);
     font-weight: 500;
     color: var(--color-vendor);
     text-shadow: var(--ts);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-xs);
     background-color: var(--main-level-4);
     box-shadow: var(--bs-block);
     border-radius: var(--br-lg);
@@ -91,18 +93,18 @@ const StyledLinkMarkChooser = styled.div`
     }
 `;
 
-export type LinkMarkChooser = {
+export type LinkMarkerPicker = {
     active: boolean,
     defaultValue?: string[],
     onChange?: (value: string[]) => void,
     onStatusChange: (status: boolean) => void,
 };
-export const LinkMarkChooser = ({
+export const LinkMarkerPicker = ({
     active,
     defaultValue = [],
     onChange = () => {},
     onStatusChange,
-}: LinkMarkChooser) => {
+}: LinkMarkerPicker) => {
     const [choosenArrow, setChoosenArrow] = useState(defaultValue);
     const language = useLanguage();
 
@@ -112,7 +114,7 @@ export const LinkMarkChooser = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [literalChoosenArrow]);
 
-    return <StyledLinkMarkChooser className={mergeClass('link-marker-chooser', active ? 'chooser-active' : 'chooser-disabled')}>
+    return <StyledLinkMarkChooser className={mergeClass('link-marker-picker', active ? 'chooser-active' : 'chooser-disabled')}>
         <div className="title">
             <Checkbox
                 checked={active}

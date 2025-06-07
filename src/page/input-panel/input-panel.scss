@@ -38,6 +38,12 @@
         .main-info-second {
             flex: 0 0 375px;
             text-align: center;
+            .art-finish-checkbox {
+                display: block;
+                .standalone-addon.ant-input-group-addon {
+                    width: unset;
+                }
+            }
         }
     }
     .text-style-input {

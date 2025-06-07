@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.0 (2025/06/05)",
+        "logList": [
+            {
+                "content": "Various updates on UI, background button is moved to a more prominent display."
+            }
+        ]
+    },
+    {
         "version": "v2.2.9 (2025/06/05)",
         "logList": [
             {

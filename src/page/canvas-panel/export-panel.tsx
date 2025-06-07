@@ -292,6 +292,7 @@ export const ExportPanel = forwardRef(({
                         </div>
                     </InternalPopover>
                     {mode === 'ygocarder' && <InternalPopover
+                        placement="bottom"
                         content={isPartial
                             ? <StyledPopMarkdown>
                                 {language['prompt.export.offline-warning.message']}
@@ -311,18 +312,27 @@ export const ExportPanel = forwardRef(({
                             </CardDataCopyButton>
                         </div>
                     </InternalPopover>}
-                    {mode === 'ygocarder' && <div>
-                        <CardDataCopyButton
-                            disabled={isPartial}
-                            data={window.location.href}
-                            withText
-                        >
-                            <div className="icon"><LinkOutlined /></div>
-                            <div className="label">
-                                {language['button.export-modal.share-button.label']}
-                            </div>
-                        </CardDataCopyButton>
-                    </div>}
+                    {mode === 'ygocarder' && <InternalPopover
+                        placement="bottom"
+                        content={isPartial
+                            ? <StyledPopMarkdown>
+                                {language['image-cropper.offline-warning']}
+                            </StyledPopMarkdown>
+                            : undefined}
+                    >
+                        <div>
+                            <CardDataCopyButton
+                                disabled={isPartial}
+                                data={window.location.href}
+                                withText
+                            >
+                                <div className="icon"><LinkOutlined /></div>
+                                <div className="label">
+                                    {language['button.export-modal.share-button.label']}
+                                </div>
+                            </CardDataCopyButton>
+                        </div>
+                    </InternalPopover>}
                     <div>
                         <InternalPopover content={tainted ? <TaintedCanvasPanel /> : undefined}>
                             <div>

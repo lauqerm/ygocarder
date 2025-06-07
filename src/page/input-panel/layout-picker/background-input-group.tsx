@@ -13,7 +13,7 @@ const StyledImageCropper = styled(ImageCropper)`
     gap: 0;
     .card-image-source-input {
         display: flex;
-        flex-direction: column-reverse;
+        flex-direction: column;
         .online-image-tip {
             text-align: center;
         }

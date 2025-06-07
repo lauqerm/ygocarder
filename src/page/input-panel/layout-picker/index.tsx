@@ -120,6 +120,9 @@ const StyledBaseFillPickerContainer = styled.div`
             width: 0;
             padding: 0;
         }
+        .layout-picker-panel {
+            margin-top: var(--spacing);
+        }
         .card-image-input {
             text-align: center;
             max-width: var(--input-width);

@@ -1,6 +1,14 @@
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { LanguageDataDictionary, useCard, useLanguage } from 'src/service';
-import { ImageCropper, ImageCropperRef, LinkMarkChooser, RadioTrain, StyledDropdown, StyledDropdownLabel } from 'src/component';
+import {
+    ImageCropper,
+    ImageCropperRef,
+    LINK_MARKER_PICKER_WIDTH,
+    LinkMarkerPicker,
+    RadioTrain,
+    StyledDropdown,
+    StyledDropdownLabel,
+} from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList, getOtherFinishList } from '../const';
 import { getArtCanvasCoordinate, OtherFinish, OtherFinishTypeMap } from 'src/model';
@@ -9,16 +17,26 @@ import { CaretDownOutlined } from '@ant-design/icons';
 import { notification, Popover } from 'antd';
 import { mergeClass } from 'src/util';
 
+const LinkPickerContainer = styled.div<{ $hover: boolean }>`
+    position: relative;
+    ${({ $hover }) => $hover
+        ? `
+            .link-marker-picker {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        `
+        : ''}
+`;
 const StyledImageRadioTrain = styled(RadioTrain)`
+    text-align: left;
     .ant-input-group-addon {
         flex: 0 0 auto;
         text-align: left;
     }
-    .radio-train-input-group .ant-radio-button-wrapper {
-        min-width: unset;
-    }
-    .standalone-addon.ant-input-group-addon {
-        width: calc(var(--width-label) * 0.85);
+    .radio-train-input-group {
+        flex: 1;
     }
     .ant-radio-button-wrapper {
         padding: 0 var(--spacing-xs);
@@ -260,13 +278,17 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             : null
         }
     >
-        <div>
-            <LinkMarkChooser key={`link-${JSON.stringify(linkMap)}`}
+        <LinkPickerContainer
+            className="link-picker-container"
+            style={{ minWidth: LINK_MARKER_PICKER_WIDTH }}
+            $hover={showExtraDecorativeOption}
+        >
+            <LinkMarkerPicker key={`link-${JSON.stringify(linkMap)}`}
                 active={isLink === true}
                 defaultValue={linkMap}
                 onChange={changeLinkMap}
                 onStatusChange={changeLinkStatus}
             />
-        </div>
+        </LinkPickerContainer>
     </ImageCropper>;
 });

@@ -429,7 +429,6 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     return (
         <div className={`card-image-cropper ${className}`}>
             <div className="card-image-source-input">
-                {children}
                 <div className="card-image-source-input-container">
                     <div className="card-image-source-input-title">
                         <span className="field-title">
@@ -460,16 +459,21 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                     } else {
                                         onSourceChange('online', externalSource);
                                     }
-                                    setLoading(true);
+                                    // setLoading(true);
                                 }
                             }}
                             value={inputMode}
                         >
-                            <Radio.Button value={'online'} checked={inputMode === 'online'}>
-                                {language['image-cropper.source.online.tooltip']}
-                            </Radio.Button>
                             <Tooltip
-                                placement="topLeft"
+                                title={<div className="image-info">
+                                    {language['image-cropper.online-tip']}
+                                </div>}
+                            >
+                                <Radio.Button value={'online'} checked={inputMode === 'online'}>
+                                    {language['image-cropper.source.online.tooltip']}
+                                </Radio.Button>
+                            </Tooltip>
+                            <Tooltip
                                 title={<div className="image-warning">
                                     {language['image-cropper.offline-warning']}
                                 </div>}
@@ -488,9 +492,6 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             maxLength={512}
                             allowClear
                         />
-                        {<div className="online-image-tip">
-                            {language['image-cropper.online-tip']}
-                        </div>}
                     </div>
                     <div className={['card-image-input', inputMode === 'offline' ? '' : 'input-inactive'].join(' ')}>
                         <Input ref={fileInputRef}
@@ -499,10 +500,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             onChange={applyOfflineSource}
                             onClick={() => fileInputRef.current?.setValue('')}
                         />
-                        <hr />
-                        {language['image-cropper.offline-warning']}
                     </div>
                 </div>
+                {children}
             </div>
             {beforeCropper}
             <div className="card-cropper" onKeyDown={() => {

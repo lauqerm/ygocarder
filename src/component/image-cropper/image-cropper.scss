@@ -5,7 +5,7 @@
 	row-gap: var(--spacing-sm);
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
-		min-height: 104px; // Alignment
+		min-height: 78px; // Alignment
 	}
 	.disabled,
 	.disabled .anticon {
@@ -38,10 +38,8 @@
 	.card-image-source-input {
 		flex: 1;
 		display: grid;
-		grid-template-columns: max-content 1fr;
-		.link-marker-chooser {
-			margin-right: var(--spacing-sm);
-		}
+		grid-template-columns: 1fr max-content;
+		column-gap: var(--spacing-sm);
 		.card-image-source-input-title {
 			min-height: 34px; // Alignment
 			grid-column: span 2;

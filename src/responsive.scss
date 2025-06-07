@@ -139,6 +139,7 @@
 					.card-image-source-input {
 						grid-area: source;
 						grid-template-columns: 1fr;
+						gap: var(--spacing-sm);
 					}
 					.card-cropper {
 						grid-area: cropper;
@@ -146,9 +147,10 @@
 						height: unset;
 						position: relative;
 					}
-					.link-marker-chooser {
+					.link-marker-picker {
 						margin-right: 0;
 						margin-bottom: var(--spacing-sm);
+						position: relative;
 					}
 				}
 			}
@@ -190,11 +192,7 @@
 			}
 		}
 		.card-image-cropper {
-			.ant-input-group-addon {
-				text-align: left;
-			}
-			.card-image-source-input-title,
-			.art-finish-checkbox {
+			.card-image-source-input-title {
 				flex-wrap: wrap;
 			}
 		}
@@ -217,9 +215,9 @@
 				.card-image-cropper {
 					.card-image-source-input {
 						grid-area: source;
-						grid-template-columns: max-content 1fr;
+						grid-template-columns: 1fr max-content;
 					}
-					.link-marker-chooser {
+					.link-marker-picker {
 						margin-right: var(--spacing-sm);
 						margin-bottom: 0;
 					}
@@ -402,6 +400,11 @@
 					flex: 1 0 150px;
 				}
 			}
+			.layout-picker-subpanel.type-section .ant-radio-button-wrapper {
+				height: unset;
+				line-height: 1.5715;
+				padding: var(--spacing-xs);
+			}
 		}
 	}
 }
@@ -415,6 +418,9 @@
 						grid-area: source;
 						grid-template-columns: 1fr;
 						gap: var(--spacing-sm);
+					}
+					.link-marker-picker {
+						position: relative;
 					}
 				}
 			}
