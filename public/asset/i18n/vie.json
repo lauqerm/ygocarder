@@ -292,6 +292,7 @@
         "input.type.st.label": "Loại",
         "link-picker.label": "Link",
         "link-picker.reset.tooltip": "Xóa toàn bộ",
+        "input.other-finish.reset.tooltip": "Xóa toàn bộ",
         "manager.button.add.label": "Nhập thẻ mới",
         "manager.button.delete.cancel.label": "Hủy",
         "manager.button.delete.confirm.label": "Xóa",

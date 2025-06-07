@@ -133,10 +133,10 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
                     </Menu>}
                 >
                     <div>
-                    <IconButton
-                    onClick={() => {}}
-                        Icon={UnorderedListOutlined}
-                    />
+                        <IconButton
+                            onClick={() => {}}
+                            Icon={UnorderedListOutlined}
+                        />
                     </div>
                 </Dropdown>
             </StyledInputLabelWithButton>}

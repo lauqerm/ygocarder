@@ -4,6 +4,9 @@
         "logList": [
             {
                 "content": "Various updates on UI, background button is moved to a more prominent display."
+            },
+            {
+                "content": "Add art finish type 9. Add card finish type, 10, 11, 12, 13."
             }
         ]
     },

@@ -92,6 +92,38 @@ export const FinishMap: Record<string, FinishInformation> = {
         },
         pendulumSubstituteMap: {},
     },
+    type10: {
+        value: 'type10',
+        label: '10',
+        partInstructionMap: {
+            'total-overlay': [],
+        },
+        pendulumSubstituteMap: {},
+    },
+    type11: {
+        value: 'type11',
+        label: '11',
+        partInstructionMap: {
+            'total-overlay': [],
+        },
+        pendulumSubstituteMap: {},
+    },
+    type12: {
+        value: 'type12',
+        label: '12',
+        partInstructionMap: {
+            'total-overlay': [{ blendMode: 'source-over', opacity: 0.45 }],
+        },
+        pendulumSubstituteMap: {},
+    },
+    type13: {
+        value: 'type13',
+        label: '13',
+        partInstructionMap: {
+            'total-overlay': [],
+        },
+        pendulumSubstituteMap: {},
+    },
 };
 
 export const ArtFinishMap: Record<string, FinishInformation> = {
@@ -195,22 +227,22 @@ export const ArtFinishMap: Record<string, FinishInformation> = {
             large: '-pendulum-medium',
         },
     },
-    // type9: {
-    //     value: 'type9',
-    //     label: '9',
-    //     partInstructionMap: {
-    //         art: [
-    //             { blendMode: 'screen', opacity: 0.26 },
-    //             { blendMode: 'overlay', opacity: 0.65 },
-    //             // { blendMode: 'screen', opacity: 0.35 },
-    //         ],
-    //     },
-    //     pendulumSubstituteMap: {
-    //         small: '',
-    //         medium: '-pendulum-medium',
-    //         large: '-pendulum-medium',
-    //     },
-    // },
+    type9: {
+        value: 'type9',
+        label: '9',
+        partInstructionMap: {
+            art: [
+                { blendMode: 'darken', opacity: 1 },
+                { blendMode: 'multiply', opacity: 1 },
+                { blendMode: 'overlay', opacity: 1 },
+            ],
+        },
+        pendulumSubstituteMap: {
+            small: '',
+            medium: '-pendulum-medium',
+            large: '-pendulum-medium',
+        },
+    },
 };
 
 export const OtherFinishTypeMap = {

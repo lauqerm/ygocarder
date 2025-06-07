@@ -110,6 +110,7 @@
         "input.1st-edition.label": "1st Edition",
         "input.art-finish.label": "Art",
         "input.other-finish.label": "Finish",
+        "input.other-finish.reset.tooltip": "Remove all",
         "input.atk.label": "ATK",
         "input.attribute.dark": "Dark",
         "input.attribute.divine": "Divine",

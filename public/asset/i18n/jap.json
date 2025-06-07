@@ -280,6 +280,7 @@
         "input.type.st.label": "魔法・罠の種類",
         "link-picker.label": "リンク",
         "link-picker.reset.tooltip": "リセット",
+        "input.other-finish.reset.tooltip": "リセット",
         "manager.button.add.label": "新しいアイテム",
         "manager.button.delete.cancel.label": "閉じる",
         "manager.button.delete.confirm.label": "デリート",

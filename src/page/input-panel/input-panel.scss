@@ -8,6 +8,14 @@
     .foil-radio.radio-train {
         display: inline-flex;
     }
+    .finish-checkbox {
+        .checkbox-train-input-group {
+            .ant-radio-button-wrapper {
+                min-width: 32px; // Alignment
+                padding: 0;
+            }
+        }
+    }
     .card-layout-input {
         display: grid;
         grid-template-columns: var(--width-label) 1fr;

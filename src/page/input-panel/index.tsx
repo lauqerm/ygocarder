@@ -9,6 +9,7 @@ import {
 import {
     Affiliation,
     AppHeader,
+    IconButton,
     RadioTrain,
     StandaloneLabel,
     StyledPopMarkdown,
@@ -22,6 +23,7 @@ import {
     getFinishList,
     FormatButtonList,
 } from './const';
+import { ClearOutlined } from '@ant-design/icons';
 import { CharPicker } from './char-picker';
 import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
 import { CheckboxTrain, FrameTrain, FrameTrainRef } from './input-train';
@@ -49,6 +51,7 @@ import {
 import { useShallow } from 'zustand/react/shallow';
 import {
     StyledFormatRadioTrain,
+    StyledInputLabelWithButton,
     StyledNameSetIdInputContainer,
 } from './input-panel.styled';
 import './input-panel.scss';
@@ -219,7 +222,16 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 onChange={onFinishChange}
                 optionList={finishList}
             >
-                <span>{language['input.finish.label']}</span>
+                <StyledInputLabelWithButton className="finish-checkbox-label">
+                    <div className="input-label">{language['input.finish.label']}</div>
+                    <IconButton
+                        onClick={() => onFinishChange([])}
+                        Icon={ClearOutlined}
+                        tooltipProps={{
+                            title: language['input.other-finish.reset.tooltip'],
+                        }}
+                    />
+                </StyledInputLabelWithButton>
             </CheckboxTrain>}
         </div>
 
