@@ -286,7 +286,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
              * 
              * Because the issue happens on mobile with limited debug capability, we can't quite figure out what is the root cause, but put the fillRect call inside a promise is the only consistent way to resolve this issue.
              */
-            const fillBaseColor = (x: number, y: number, w: number, h: number, customFill?: string) => {
+            const fillBaseColor = (
+                ctx: CanvasRenderingContext2D,
+                x: number, y: number,
+                w: number, h: number,
+                customFill?: string,
+            ) => {
                 return new Promise(resolve => {
                     setTimeout(() => {
                         ctx.fillStyle = hasBackground
@@ -298,9 +303,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 });
             };
             const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-
-            /** Base colored background so the card is not see-through even with transparent artwork */
-            await fillBaseColor(0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
 
             const {
                 drawAttribute,
@@ -364,9 +366,30 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 loopArtFinish,
             });
 
+            /** Fill color background so the card is not see-through even with transparent artwork */
+            await fillBaseColor(ctx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
+
+            /** artOnCard canvas ensure the art is drawn correct size and position on the actual card, overlay for art is applied here */
+            const {
+                canvas: artOnCardCanvas,
+                context: artOnCardCtx,
+            } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
+            if (artworkCanvas && artOnCardCtx) drawCardArt(artOnCardCtx);
+            await drawArtFinish(artOnCardCtx);
+            await drawArtOverlayFinish(artOnCardCtx);
+
+            /** Combine background and artwork together, overlay for background is applied here */
+            const {
+                canvas: combinedArtCanvas,
+                context: combinedArtCtx,
+            } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
+            await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
+            if (backgroundCanvas && combinedArtCtx) drawBackground(combinedArtCtx);
+            combinedArtCtx.drawImage(artOnCardCanvas, 0, 0);
+
+            /** @summary Draw the overall layout */
             /** Start with artwork at the bottom, then main frame, then outer card border. */
-            if (backgroundCanvas && ctx) drawBackground();
-            if (artworkCanvas && ctx && !boundless) drawCardArt();
+            ctx.drawImage(combinedArtCanvas, 0, 0);
             await drawFrame();
             await drawCardBorder();
             await drawCardBorderFinish();
@@ -385,45 +408,50 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawArtBorderFinish();
             }
 
-            /** @summary Draw PENDULUM-LIKE card layout. Does not apply to Link frame since it contains link arrows. */
+            /** @summary Draw PENDULUM-LIKE card layout. */
             if (isPendulum && !boundless) {
                 /** Since pendulum art boundary is wider, we cannot relies on the artwork under frame, instead we must draw the artwork again, this time with different size. */
-                if (artworkCanvas && ctx && artworkCanvas.height > 0) {
-                    const { width: artWidth, height: artHeight } = artworkCanvas;
-                    const {
-                        sourceOffsetX, sourceOffsetY,
-                        offsetHeight,
-                        destinationX, destinationY,
-                        destinationWidth, destinationHeight,
-                        fillWidth, fillHeight,
-                    } = calculateCardArtRedrawCoordination(artworkCanvas);
+                const {
+                    artX,
+                    artY,
+                    artWidth,
+                    ratio,
+                } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
+                ctx.drawImage(
+                    combinedArtCanvas,
+                    artX, artY, artWidth, artWidth / ratio,
+                    artX, artY, artWidth, artWidth / ratio,
+                );
+            //     if (artworkCanvas && ctx && artworkCanvas.height > 0) {
+            //         const { width: artWidth, height: artHeight } = artworkCanvas;
+            //         const {
+            //             sourceOffsetX, sourceOffsetY,
+            //             offsetHeight,
+            //             destinationX, destinationY,
+            //             destinationWidth, destinationHeight,
+            //             fillWidth, fillHeight,
+            //         } = calculateCardArtRedrawCoordination(artworkCanvas);
 
-                    /** To avoid stacking transprency, we clear the area before redrawing */
-                    await fillBaseColor(
-                        globalScale * destinationX, globalScale * destinationY,
-                        globalScale * fillWidth, globalScale * fillHeight,
-                    );
+            //         /** To avoid stacking transprency, we clear the area before redrawing */
+            //         await fillBaseColor(
+            //             globalScale * destinationX, globalScale * destinationY,
+            //             globalScale * fillWidth, globalScale * fillHeight,
+            //         );
 
-                    drawBackground('pendulum');
-                    ctx.drawImage(
-                        artworkCanvas,
-                        sourceOffsetX, sourceOffsetY,
-                        artWidth - sourceOffsetX * 2, artHeight - offsetHeight,
-                        globalScale * destinationX, globalScale * destinationY,
-                        globalScale * destinationWidth, globalScale * destinationHeight,
-                    );
-                }
+            //         drawBackground('pendulum');
+            //         ctx.drawImage(
+            //             artworkCanvas,
+            //             sourceOffsetX, sourceOffsetY,
+            //             artWidth - sourceOffsetX * 2, artHeight - offsetHeight,
+            //             globalScale * destinationX, globalScale * destinationY,
+            //             globalScale * destinationWidth, globalScale * destinationHeight,
+            //         );
+            //     }
 
                 await drawNameBackground();
                 await drawEffectBackground(true);
-            }
-
-            /** We must draw art finish first because pendulum's border have those little corners that spread into the artwork. */
-            await drawArtFinish();
-            await drawArtOverlayFinish();
-
-            /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
-            if (isPendulum && !boundless) {
+                
+                /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
                 await drawPendulumScaleIcon();
                 /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
                 await drawPendulumBorder(hasArtBorder, 'normal');
@@ -438,43 +466,55 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             }
             if (hasArtBorder) await drawFrameBackgroundFinish();
 
-            /** Boundless art behavior here. If rigid frame is off, card image will extends beyond the current art border (on top of it). The extended card image is still below name, level, attribute, effect (both card and pendulum) and other predefined texts. */
+            /** Boundless art behavior here. If rigid frame is off, card image will be placed on top of the art border. The extended card image is still below name (text only), level, attribute, effect (both card and pendulum) and other predefined texts. */
             if (boundless) {
-                if (isLink) {
+                await drawNameBackground();
+                await drawNameFinish();
+                await drawNameBorder();
+                if (isLink && !isPendulum) {
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
                     await drawArtBorderFinish();
                 } else if (isPendulum) {
-                    /** We want to fill the area inside pendulum border only, so that the outside frame remains intact. */
-                    const extraHeightRatio = CardArtCanvasCoordinateMap.fullCard.ratio
-                        / CardArtCanvasCoordinateMap.extendedPendulum.ratio;
-                    /** Fill area with base color before start draw overlay artwork. In this case we do not want to fill everywhere, we just need to fill exactly the area contains inside pendulum border frame. */
-                    if (artworkCanvas && ctx && artworkCanvas.height > 0) {
-                        const {
-                            destinationX, destinationY,
-                            destinationWidth, destinationHeight,
-                        } = calculateCardArtRedrawCoordination(
-                            artworkCanvas,
-                            { ...getDefaultCardOpacity(), ...opacity, body: 100, boundless: false },
-                            extraHeightRatio,
-                        );
-    
-                        await fillBaseColor(
-                            globalScale * destinationX, globalScale * destinationY,
-                            globalScale * destinationWidth, globalScale * destinationHeight,
-                        );
-                        drawBackground('pendulum');
-                    }
                     if (hasArtBorder) {
                         await drawPendulumBorder(hasArtBorder, 'normal');
                         await drawPendulumBorder(hasArtBorder, foil);
                     }
                     await drawPendulumArtBorderFinish();
+                    // /** We want to fill the area inside pendulum border only, so that the outside frame remains intact. */
+            //         const extraHeightRatio = CardArtCanvasCoordinateMap.fullCard.ratio
+            //             / CardArtCanvasCoordinateMap.extendedPendulum.ratio;
+            //         /** Fill area with base color before start draw overlay artwork. In this case we do not want to fill everywhere, we just need to fill exactly the area contains inside pendulum border frame. */
+            //         if (artworkCanvas && ctx && artworkCanvas.height > 0) {
+            //             const {
+            //                 destinationX, destinationY,
+            //                 destinationWidth, destinationHeight,
+            //             } = calculateCardArtRedrawCoordination(
+            //                 artworkCanvas,
+            //                 { ...getDefaultCardOpacity(), ...opacity, body: 100, boundless: false },
+            //                 extraHeightRatio,
+            //             );
+    
+            //             await fillBaseColor(
+            //                 globalScale * destinationX, globalScale * destinationY,
+            //                 globalScale * destinationWidth, globalScale * destinationHeight,
+            //             );
+            //             drawBackground('pendulum');
+            //         }
                 }
-                await drawNameBackground();
-                await drawNameFinish();
-                await drawNameBorder();
-                if (artworkCanvas && ctx) drawCardArt();
-                await drawArtOverlayFinish();
+
+                const {
+                    artX,
+                    artY,
+                    artWidth,
+                    ratio,
+                } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
+                ctx.drawImage(
+                    artOnCardCanvas,
+                    artX, artY, artWidth, artWidth / ratio,
+                    artX, artY, artWidth, artWidth / ratio,
+                );
+                // if (artworkCanvas && ctx) drawCardArt();
+                // await drawArtOverlayFinish();
 
                 /** Redraw various part here because the extended artwork may overlap with those */
                 if (isPendulum) {
@@ -501,7 +541,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
-            /** If we combine both link map and pendulum frame, link markers will be pushed outward and overlay on top of the card frame */
+            /** If we combine both link map and pendulum frame, link markers will be pushed outward and overlay on top of the card frame, so they will be drawn in other useEffect. */
             if (isLink && !isPendulum) {
                 await drawLinkArrowMap(linkMap, isPendulum ? 'pendulum' : 'normal');
                 await drawLinkMapFoil(false, isPendulum ? 'pendulum' : 'normal');
@@ -1079,22 +1119,21 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         description: language['error.draw.error.description'],
                     });
                 });
-            // await generateLayer(frameCanvas, exportCtx);
             const artworkCanvas = artworkCanvasRef.current;
-            if (artworkCanvas && exportCtx) {
-                const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
-                const { width: imageWidth, height: imageHeight } = artworkCanvas;
+            // if (artworkCanvas && exportCtx) {
+            //     const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
+            //     const { width: imageWidth, height: imageHeight } = artworkCanvas;
 
-                if (imageHeight > 0) {
-                    exportCtx.drawImage(
-                        artworkCanvas,
-                        0, 0,
-                        imageWidth, imageHeight,
-                        artX, artY,
-                        artWidth, artWidth / (imageWidth / imageHeight),
-                    );
-                }
-            }
+            //     if (imageHeight > 0) {
+            //         exportCtx.drawImage(
+            //             artworkCanvas,
+            //             0, 0,
+            //             imageWidth, imageHeight,
+            //             artX, artY,
+            //             artWidth, artWidth / (imageWidth / imageHeight),
+            //         );
+            //     }
+            // }
             /** It is not worth to use promise all here, just let them go sequentially to avoid too much blob generating call. */
             await generateLayer(frameCanvasRef, exportCtx, 0);
             await generateLayer(nameCanvasRef, exportCtx, 0);
