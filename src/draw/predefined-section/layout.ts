@@ -155,8 +155,13 @@ export const getLayoutDrawFunction = ({
         boundless,
     } = opacity;
     const {
+        type,
         artX,
         artY,
+        artFrameX,
+        artFrameY,
+        artFrameHeight,
+        artFrameWidth,
         artFinishX,
         artFinishY,
         artWidth,
@@ -301,6 +306,11 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             ctx.drawImage(topFrameCanvas, 0, 0);
             ctx.drawImage(bottomFrameCanvas, 0, 0);
+            /** Leave empty space for card art */
+            if (isPendulum) {
+                ctx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+            }
+                console.log('🚀 ~ drawFrame: ~ artX:', type, artX);
             ctx.resetTransform();
             if (hasBackground && backgroundCanvas && backgroundType === 'frame') {
                 const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;

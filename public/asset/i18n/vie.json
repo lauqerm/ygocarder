@@ -133,7 +133,7 @@
         "input.background-type.label": "Kích thước nền tranh",
         "input.background.description": "Nền tranh chỉ lộ ra khi bạn dùng ảnh trong suốt.",
         "input.background.toggle-label": "Tùy biến nền?",
-        "input.background.toolip": "Nền thẻ",
+        "input.background.label": "Nền thẻ",
         "input.bottom-frame.label": "Nền thẻ dưới",
         "input.advanced-frame.detailed.label": "Chi tiết",
         "input.advanced-frame.label": "Nền nâng cao",

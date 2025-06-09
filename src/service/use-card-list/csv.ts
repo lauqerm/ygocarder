@@ -141,6 +141,7 @@ const CsvStandardFieldList = [
     'Other Style - Has Shadow',
     'Other Style - Shadow Color',
     'Other Finish - Attribute',
+    'Other Finish - Background',
     'Other Finish - Icon',
     'Other Finish - Sticker',
     'Left Frame',
@@ -383,6 +384,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Finish - Attribute', otherFinish[0]);
         write('Other Finish - Icon', otherFinish[1]);
         write('Other Finish - Sticker', otherFinish[2]);
+        write('Other Finish - Background', otherFinish[3]);
         write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
@@ -494,6 +496,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const finishAttribute = reader('Other Finish - Attribute') ?? '';
                 const finishSticker = reader('Other Finish - Sticker') ?? '';
                 const finishIcon = reader('Other Finish - Icon') ?? '';
+                const finishBackground = reader('Other Finish - Background') ?? '';
                 const atk = reader('ATK') ?? '';
                 const cardIcon = (reader('Card Icon Type') ?? emptyCard.cardIcon);
                 const creator = reader('Copyright') ?? '';
@@ -706,7 +709,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     nameStyle,
                     nameStyleType,
                     opacity,
-                    otherFinish: [finishAttribute, finishIcon, finishSticker] as OtherFinish,
+                    otherFinish: [finishAttribute, finishIcon, finishSticker, finishBackground] as OtherFinish,
                     otherTextStyle,
                     password,
                     pendulumEffect,

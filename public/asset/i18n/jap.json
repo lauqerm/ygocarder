@@ -134,7 +134,7 @@
         "input.background-type.label": "カバータイプ。",
         "input.background.description": "透明なイラストを使用する場合は、カードの色と背景を設定してください。",
         "input.background.toggle-label": "バックグランドがありますか",
-        "input.background.toolip": "背景",
+        "input.background.label": "背景",
         "input.card-art.label": "イラスト",
         "input.char-picker.guide.header": "取説:",
         "input.char-picker.guide.instruction-1": "いずれかのテキストフィールドで挿入したい位置をクリックしてください。",

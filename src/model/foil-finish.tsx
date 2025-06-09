@@ -250,6 +250,10 @@ export const OtherFinishTypeMap = {
         key: 'art' as const,
         labelKey: 'input.art-finish.label',
     },
+    background: {
+        key: 'background' as const,
+        labelKey: 'input.background.label',
+    },
     attribute: {
         key: 'attribute' as const,
         labelKey: 'input.attribute.label',
@@ -263,7 +267,7 @@ export const OtherFinishTypeMap = {
         labelKey: 'input.sticker.label',
     },
 };
-export type OtherFinish = [attribute: string, icon: string, sticker: string];
+export type OtherFinish = [attribute: string, icon: string, sticker: string, background: string];
 
 export type FoilDictionary = {
     normal: string,

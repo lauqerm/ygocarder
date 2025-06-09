@@ -133,7 +133,7 @@
         "input.background-type.label": "Cover Type",
         "input.background.description": "Define the color and background of the card if you use transparent artwork.",
         "input.background.toggle-label": "Has Background?",
-        "input.background.toolip": "Background",
+        "input.background.label": "Background",
         "input.advanced-frame.detailed.label": "Detailed",
         "input.advanced-frame.label": "Advanced Layout",
         "input.advanced-frame.main.label": "General",

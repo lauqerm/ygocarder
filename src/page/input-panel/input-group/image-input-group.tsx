@@ -62,7 +62,7 @@ const FinishLabel = styled(StyledDropdown.Option)`
 `;
 
 type OtherFinishPicker = {
-    finishValueList: [...OtherFinish, art: string],
+    finishValueList: [art: string, ...OtherFinish],
     changeFinish: (valueMap: Record<keyof typeof OtherFinishTypeMap, string>) => void,
     language: LanguageDataDictionary,
     showCreativeOption: boolean,
@@ -74,11 +74,13 @@ const OtherFinishPicker = ({
     showCreativeOption,
 }: OtherFinishPicker) => {
     const [selectedType, setSelectedType] = useState<keyof typeof OtherFinishTypeMap>(OtherFinishTypeMap['art'].key);
+    /** Be careful, we use added order here, so latest foil target is highest index. */
     const valueMap = {
-        [OtherFinishTypeMap['attribute'].key]: finishValueList[0],
-        [OtherFinishTypeMap['icon'].key]: finishValueList[1],
-        [OtherFinishTypeMap['sticker'].key]: finishValueList[2],
-        [OtherFinishTypeMap['art'].key]: finishValueList[3],
+        [OtherFinishTypeMap['attribute'].key]: finishValueList[1],
+        [OtherFinishTypeMap['background'].key]: finishValueList[4],
+        [OtherFinishTypeMap['icon'].key]: finishValueList[2],
+        [OtherFinishTypeMap['sticker'].key]: finishValueList[3],
+        [OtherFinishTypeMap['art'].key]: finishValueList[0],
     };
     const activeWidget = Object.values(valueMap).some(entry => entry !== 'normal');
     const finishList = useMemo(() => getOtherFinishList(language), [language]);
@@ -263,13 +265,14 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         ratio={getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize).ratio}
         beforeCropper={showExtraDecorativeOption
             ? <OtherFinishPicker
-                finishValueList={[...otherFinish, artFinish]}
+                finishValueList={[artFinish, ...otherFinish]}
                 changeFinish={finishMap => {
                     changeArtFinish(finishMap[OtherFinishTypeMap['art'].key]);
                     changeOtherFinish([
                         finishMap[OtherFinishTypeMap['attribute'].key],
                         finishMap[OtherFinishTypeMap['icon'].key],
                         finishMap[OtherFinishTypeMap['sticker'].key],
+                        finishMap[OtherFinishTypeMap['background'].key],
                     ]);
                 }}
                 language={language}

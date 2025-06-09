@@ -68,6 +68,7 @@ const {
     finishTypeCardHeight,
     stickerX,
     stickerY,
+    stickerSize,
 } = CanvasConst;
 type DrawerProp = {
     imageChangeCount: number,
@@ -399,12 +400,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     } = calculateCardArtRedrawCoordination(artworkCanvas);
 
                     /** To avoid stacking transprency, we clear the area before redrawing */
-                    await fillBaseColor(
-                        globalScale * destinationX, globalScale * destinationY,
-                        globalScale * fillWidth, globalScale * fillHeight,
-                    );
+                    // await fillBaseColor(
+                    //     globalScale * destinationX, globalScale * destinationY,
+                    //     globalScale * fillWidth, globalScale * fillHeight,
+                    // );
 
-                    drawBackground('pendulum');
+                    // drawBackground('pendulum');
                     ctx.drawImage(
                         artworkCanvas,
                         sourceOffsetX, sourceOffsetY,
@@ -458,11 +459,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                             extraHeightRatio,
                         );
     
-                        await fillBaseColor(
-                            globalScale * destinationX, globalScale * destinationY,
-                            globalScale * destinationWidth, globalScale * destinationHeight,
-                        );
-                        drawBackground('pendulum');
+                        // await fillBaseColor(
+                        //     globalScale * destinationX, globalScale * destinationY,
+                        //     globalScale * destinationWidth, globalScale * destinationHeight,
+                        // );
+                        // drawBackground('pendulum');
                     }
                     if (hasArtBorder) {
                         await drawPendulumBorder(hasArtBorder, 'normal');
@@ -827,8 +828,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const {
                     canvas: stickerFinishCanvas,
                     context: stickerFinishContext,
-                } = createCanvas(CanvasWidth, CanvasHeight);
+                } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
                 stickerFinishContext.drawImage(stickerCanvas, 0, 0);
+                stickerFinishContext.scale(globalScale, globalScale);
                 await loopStickerFinish(
                     stickerFinishContext,
                     'art',
@@ -836,7 +838,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         return await drawAsset(
                             stickerFinishContext,
                             `finish/finish-typeart-${finishType}.png`,
-                            CanvasWidth - finishTypeCardWidth, CanvasHeight - finishTypeCardHeight,
+                            stickerX - finishTypeCardWidth + stickerSize, stickerY - finishTypeCardHeight + stickerSize,
                         );
                     },
                 );

@@ -370,7 +370,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                             : null
                         : <BorderOuterOutlined className="no-background-icon" />}
                 </div>
-                {language['input.background.toolip']}
+                {language['input.background.label']}
             </SolidLabel>
         </Popover>
         {OpacityList.map(({ labelKey, type, subType, tooltipKey }) => {
