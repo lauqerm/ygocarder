@@ -307,57 +307,65 @@ export const getLayoutDrawFunction = ({
             ctx.drawImage(topFrameCanvas, 0, 0);
             ctx.drawImage(bottomFrameCanvas, 0, 0);
             /** Leave empty space for card art */
-            if (isPendulum) {
-                ctx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
-            }
+            // if (isPendulum) {
+            //     ctx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+            // }
                 console.log('🚀 ~ drawFrame: ~ artX:', type, artX);
             ctx.resetTransform();
-            if (hasBackground && backgroundCanvas && backgroundType === 'frame') {
-                const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
-                const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
-
-                const clonedCanvasContext = clonedCanvas?.getContext('2d');
-                if (clonedCanvas && clonedCanvasContext) {
-                    /** Clone background to create a new frame */
-                    clonedCanvas.width = cardWidth * globalScale;
-                    clonedCanvas.height = cardHeight * globalScale;
-                    clonedCanvasContext.drawImage(
-                        backgroundCanvas,
-                        0, 0, backgroundWidth, backgroundHeight,
-                        0, 0, cardWidth * globalScale, cardHeight * globalScale,
-                    );
-                    /** Clear slot for card art */
-                    clonedCanvasContext.clearRect(
-                        globalScale * CardArtCanvasCoordinateMap.normal.artX,
-                        globalScale * CardArtCanvasCoordinateMap.normal.artY,
-                        globalScale * CardArtCanvasCoordinateMap.normal.artWidth,
-                        globalScale * CardArtCanvasCoordinateMap.normal.artWidth / CardArtCanvasCoordinateMap.normal.artRatio,
-                    );
-                    /** Clear slot for effect box */
-                    clonedCanvasContext.clearRect(
-                        globalScale * leftToEffectBox,
-                        globalScale * topToEffectBox,
-                        globalScale * effectBoxWidth,
-                        globalScale * effectBoxHeight,
-                    );
-                    ctx.drawImage(
-                        clonedCanvas,
-                        0, 0,
-                        globalScale * cardWidth, globalScale * cardHeight,
-                        0, 0,
-                        globalScale * cardWidth, globalScale * cardHeight,
-                    );
-                }
+            if (!hasBackground || !backgroundCanvas || backgroundType !== 'frame') {
+                ctx.globalAlpha = 1;
+                return;
             }
+
+            const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
+            const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
+
+            const clonedCanvasContext = clonedCanvas?.getContext('2d');
+            if (!clonedCanvas || !clonedCanvasContext) {
+                ctx.globalAlpha = 1;
+                return;
+            }
+
+            /** Clone background to create a new frame */
+            clonedCanvas.width = cardWidth * globalScale;
+            clonedCanvas.height = cardHeight * globalScale;
+            clonedCanvasContext.drawImage(
+                backgroundCanvas,
+                0, 0, backgroundWidth, backgroundHeight,
+                0, 0, cardWidth * globalScale, cardHeight * globalScale,
+            );
+            // /** Clear slot for card art */
+            // clonedCanvasContext.clearRect(
+            //     globalScale * CardArtCanvasCoordinateMap.normal.artX,
+            //     globalScale * CardArtCanvasCoordinateMap.normal.artY,
+            //     globalScale * CardArtCanvasCoordinateMap.normal.artWidth,
+            //     globalScale * CardArtCanvasCoordinateMap.normal.artWidth / CardArtCanvasCoordinateMap.normal.artRatio,
+            // );
+            // /** Clear slot for effect box */
+            // clonedCanvasContext.clearRect(
+            //     globalScale * leftToEffectBox,
+            //     globalScale * topToEffectBox,
+            //     globalScale * effectBoxWidth,
+            //     globalScale * effectBoxHeight,
+            // );
+            ctx.drawImage(
+                clonedCanvas,
+                0, 0,
+                globalScale * cardWidth, globalScale * cardHeight,
+                0, 0,
+                globalScale * cardWidth, globalScale * cardHeight,
+            );
             ctx.globalAlpha = 1;
         },
         /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas. */
-        drawCardArt: () => {
-            if (!artworkCanvas || !ctx) return;
+        drawCardArt: (
+            externalCtx = ctx,
+        ) => {
+            if (!artworkCanvas || !externalCtx) return;
             const { width: imageWidth, height: imageHeight } = artworkCanvas;
 
             if (imageHeight <= 0) return;
-            ctx.drawImage(
+            externalCtx.drawImage(
                 artworkCanvas,
                 0, 0,
                 imageWidth, imageHeight,
@@ -366,46 +374,47 @@ export const getLayoutDrawFunction = ({
             );
         },
         drawBackground: (
+            externalCtx = ctx,
             boundary?: 'pendulum',
         ) => {
-            if (!backgroundCanvas || !ctx || !hasBackground) return;
+            if (!backgroundCanvas || !externalCtx || !hasBackground) return;
             const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
 
             if (backgroundHeight <= 0) return;
-            if (boundary === 'pendulum' && backgroundType !== 'frame') {
-                let redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(backgroundCanvas);
+            // if (boundary === 'pendulum' && backgroundType !== 'frame') {
+            //     let redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(backgroundCanvas);
 
-                if (backgroundType === 'full') {
-                    redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(
-                        backgroundCanvas,
-                        { ...opacity, body: 0 },
-                        undefined,
-                        'full',
-                    );
-                } else if (backgroundType === 'fit') {
-                    redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(
-                        backgroundCanvas,
-                        opacity,
-                        undefined,
-                        'fit',
-                    );
-                }
+            //     if (backgroundType === 'full') {
+            //         redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(
+            //             backgroundCanvas,
+            //             { ...opacity, body: 0 },
+            //             undefined,
+            //             'full',
+            //         );
+            //     } else if (backgroundType === 'fit') {
+            //         redrawCoordination = resultAPI.calculateCardArtRedrawCoordination(
+            //             backgroundCanvas,
+            //             opacity,
+            //             undefined,
+            //             'fit',
+            //         );
+            //     }
 
-                const {
-                    sourceOffsetX: backgroundSourceOffsetX, sourceOffsetY: backgroundSourceOffsetY,
-                    offsetHeight: backgroundOffsetHeight,
-                    destinationX: backgroundDestinationX, destinationY: backgroundDestinationY,
-                    destinationWidth: backgroundDestinationWidth, destinationHeight: backgroundDestinationHeight,
-                } = redrawCoordination;
-                ctx.drawImage(
-                    backgroundCanvas,
-                    backgroundSourceOffsetX, backgroundSourceOffsetY,
-                    backgroundWidth - backgroundSourceOffsetX * 2, backgroundHeight - backgroundOffsetHeight,
-                    globalScale * backgroundDestinationX, globalScale * backgroundDestinationY,
-                    globalScale * backgroundDestinationWidth, globalScale * backgroundDestinationHeight,
-                );
-                return;
-            }
+            //     const {
+            //         sourceOffsetX: backgroundSourceOffsetX, sourceOffsetY: backgroundSourceOffsetY,
+            //         offsetHeight: backgroundOffsetHeight,
+            //         destinationX: backgroundDestinationX, destinationY: backgroundDestinationY,
+            //         destinationWidth: backgroundDestinationWidth, destinationHeight: backgroundDestinationHeight,
+            //     } = redrawCoordination;
+            //     externalCtx.drawImage(
+            //         backgroundCanvas,
+            //         backgroundSourceOffsetX, backgroundSourceOffsetY,
+            //         backgroundWidth - backgroundSourceOffsetX * 2, backgroundHeight - backgroundOffsetHeight,
+            //         globalScale * backgroundDestinationX, globalScale * backgroundDestinationY,
+            //         globalScale * backgroundDestinationWidth, globalScale * backgroundDestinationHeight,
+            //     );
+            //     return;
+            // }
 
             const {
                 artX,
@@ -414,11 +423,11 @@ export const getLayoutDrawFunction = ({
                 ratio,
             } = getArtCanvasCoordinate(
                 isPendulum,
-                { ...opacity, boundless: true },
+                opacity,
                 backgroundType,
                 pendulumSize,
             );
-            ctx.drawImage(
+            externalCtx.drawImage(
                 backgroundCanvas,
                 0, 0,
                 backgroundWidth, backgroundHeight,
@@ -515,7 +524,10 @@ export const getLayoutDrawFunction = ({
         },
         /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
         drawLinkArrowMap: async (linkMap: string[], positionType: keyof typeof ArrowPositionMap) => {
-            return await baseDrawLinkArrowMap(ctx, globalScale, linkMap, positionType, boundless);
+            const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
+            console.log('🚀 ~ drawLinkArrowMap: ~ hasArtBorder:', hasArtBorder);
+
+            return await baseDrawLinkArrowMap(ctx, globalScale, linkMap, positionType, boundless || !hasArtBorder);
         },
         drawStatBorder: async (style: CanvasTextStyle) => {
             if (!ctx) return;
@@ -634,10 +646,10 @@ export const getLayoutDrawFunction = ({
         drawPendulumBorder: async (artBorder: boolean, foilType: Foil) => {
             if (!ctx) return;
             /** We create a new canvas for easier manipulation. */
-            const pendulumBorderCanvas = document.createElement('canvas');
-            pendulumBorderCanvas.width = cardWidth;
-            pendulumBorderCanvas.height = cardHeight;
-            const pendulumBorderContext = pendulumBorderCanvas.getContext('2d');
+            const {
+                canvas: pendulumBorderCanvas,
+                context: pendulumBorderContext,
+            } = createCanvas(cardWidth, cardHeight);
             await drawAssetWithSize(
                 pendulumBorderContext,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
@@ -740,24 +752,25 @@ export const getLayoutDrawFunction = ({
                 ctx.resetTransform();
             }
         },
-        drawArtFinish: async () => {
-            if (applyArtFinish && ctx) {
-                ctx.scale(globalScale, globalScale);
-                await loopArtFinish(
-                    ctx,
-                    'art',
-                    async (finishType, pendulumSuffix) => {
-                        return await drawAssetWithSize(
-                            ctx,
-                            `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,
-                            artFinishX, artFinishY,
-                            artWidth, artWidth / artRatio,
-                        );
-                    },
-                    pendulumSize,
-                );
-                ctx.resetTransform();
-            }
+        drawArtFinish: async (
+            artContext = ctx,
+        ) => {
+            if (!applyArtFinish || !artContext) return;
+            artContext.scale(globalScale, globalScale);
+            await loopArtFinish(
+                artContext,
+                'art',
+                async (finishType, pendulumSuffix) => {
+                    return await drawAssetWithSize(
+                        artContext,
+                        `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,
+                        artFinishX, artFinishY,
+                        artFrameWidth, artFrameWidth / artRatio,
+                    );
+                },
+                pendulumSize,
+            );
+            artContext.resetTransform();
         },
         /**
          * * ArtFinish: Controlled by `artFinish` attribute.
@@ -766,15 +779,17 @@ export const getLayoutDrawFunction = ({
          * * OverlayFinish type `art`: Apply only when art border is present, for example a dark finish will darken all the card EXCEPT the artwork. But when art border is no longer present (for example full-art card), it will darken the whole card.
          * * OverlayFinish type `unart`: Apply only when art border is not present.
          */
-        drawArtOverlayFinish: async () => {
-            if (!ctx) return;
-            ctx.scale(globalScale, globalScale);
+        drawArtOverlayFinish: async (
+            artContext = ctx,
+        ) => {
+            if (!artContext) return;
+            artContext.scale(globalScale, globalScale);
             await loopFinish(
-                ctx,
+                artContext,
                 'art-overlay',
                 async type => {
                     return drawAsset(
-                        ctx,
+                        artContext,
                         'finish/finish'
                         + `-${type}`
                         + `-${applyArtFinish ? 'art' : 'unart'}`
@@ -785,7 +800,7 @@ export const getLayoutDrawFunction = ({
                     );
                 },
             );
-            ctx.resetTransform();
+            artContext.resetTransform();
         },
         drawArtBorderFinish: async () => {
             if (artBorder && ctx) {
