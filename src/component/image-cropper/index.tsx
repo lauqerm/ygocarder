@@ -570,7 +570,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         </div>
                     </Tooltip>}
                 </div>}
-                {(!hasImage || (error && crossorigin === undefined)) && <Empty
+                {((!hasImage || (error && crossorigin === undefined)) && !isLoading) && <Empty
                     description={language['image-cropper.not-found-warning']}
                     image={null}
                 />}

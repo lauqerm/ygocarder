@@ -73,6 +73,7 @@ export * from './error-boundary';
 export * from './explanation';
 export * from './formatting-guide';
 export * from './frame-info-block';
+export * from './inline-color-picker';
 export * from './icon-button';
 export * from './input-train';
 export * from './lightbox';

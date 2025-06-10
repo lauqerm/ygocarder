@@ -6,10 +6,17 @@ import { useNotification } from 'src/service';
 import { VersionLogButtonLabel } from './styled';
 
 const LogSentence = styled.li`
+    text-align: center;
+    .content {
+        text-align: left;
+    }
+    a {
+        display: inline-block;
+    }
     img {
         display: block;
         max-width: 400px;
-        max-height: 200px;
+        max-height: 300px;
         margin: auto;
         box-shadow: var(--bs-1);
         margin-top: var(--spacing-xs);
@@ -70,8 +77,12 @@ export const VersionLog = () => {
                     {/* Using index as key here is safe as the component is stateless */}
                     {logList.map(({ content, image }, index) => {
                         return <LogSentence key={index}>
-                            {content}
-                            {image && <img src={image} alt={`version-${version}-illust`} />}
+                            <div className="content">
+                                {content}
+                            </div>
+                            {image && <a target="_blank" rel="noreferrer" href={image} title="Click to open in new tab">
+                                <img src={image} alt={`version-${version}-illust`} />
+                            </a>}
                         </LogSentence>;
                     })}
                 </ul>

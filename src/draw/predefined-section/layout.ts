@@ -304,12 +304,13 @@ export const getLayoutDrawFunction = ({
 
             ctx.globalAlpha = opacityBody / 100;
             ctx.scale(globalScale, globalScale);
+            /** Leave empty space for card art */
+            if (isPendulum) {
+                topFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                bottomFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+            }
             ctx.drawImage(topFrameCanvas, 0, 0);
             ctx.drawImage(bottomFrameCanvas, 0, 0);
-            /** Leave empty space for card art */
-            // if (isPendulum) {
-            //     ctx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
-            // }
                 console.log('🚀 ~ drawFrame: ~ artX:', type, artX);
             ctx.resetTransform();
             if (!hasBackground || !backgroundCanvas || backgroundType !== 'frame') {
@@ -373,8 +374,9 @@ export const getLayoutDrawFunction = ({
                 globalScale * artWidth, globalScale * artWidth / (imageWidth / imageHeight),
             );
         },
-        drawBackground: (
+        drawBackground: async (
             externalCtx = ctx,
+            hasArtBorder = false,
             boundary?: 'pendulum',
         ) => {
             if (!backgroundCanvas || !externalCtx || !hasBackground) return;
@@ -420,7 +422,11 @@ export const getLayoutDrawFunction = ({
                 artX,
                 artY,
                 artWidth,
+                artFrameWidth,
+                artFrameX,
+                artFrameY,
                 ratio,
+                artRatio,
             } = getArtCanvasCoordinate(
                 isPendulum,
                 opacity,
@@ -434,6 +440,22 @@ export const getLayoutDrawFunction = ({
                 globalScale * artX, globalScale * artY,
                 globalScale * artWidth, globalScale * artWidth / ratio,
             );
+            const backgroundFinish = otherFinish[3] ?? 'normal';
+            console.log('🚀 ~ backgroundFinish:', backgroundFinish);
+            if (backgroundFinish !== 'normal' && hasArtBorder) {
+                const loopBackgroundFinish = getFinishIterator([backgroundFinish], ArtFinishMap);
+                await loopBackgroundFinish(
+                    externalCtx,
+                    'art',
+                    async type => drawAssetWithSize(
+                        externalCtx,
+                        `finish/art-finish-${type}.png`,
+                        globalScale * artFrameX, globalScale * artFrameY,
+                        globalScale * artFrameWidth, globalScale * artFrameWidth / artRatio,
+                    ),
+                );
+            }
+            // await drawAssetWithSize(externalCtx, 'finish/art-finish-type8.png', 100, 55, 400, 400);
         },
         drawAttribute: async () => {
             if (!ctx) return;
@@ -755,12 +777,14 @@ export const getLayoutDrawFunction = ({
         drawArtFinish: async (
             artContext = ctx,
         ) => {
+            console.log('🚀 ~ drawArtFinish:');
             if (!applyArtFinish || !artContext) return;
             artContext.scale(globalScale, globalScale);
             await loopArtFinish(
                 artContext,
                 'art',
                 async (finishType, pendulumSuffix) => {
+                    console.log('🚀 ~ finishType:', finishType);
                     return await drawAssetWithSize(
                         artContext,
                         `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,

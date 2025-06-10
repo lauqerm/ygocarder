@@ -16,7 +16,7 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     .ant-checkbox-wrapper {
         color: var(--color-heavy);
     }
-    .frame-auto-checkbox {
+    .inline-input {
         margin-bottom: var(--spacing-xs);
     }
     .checkbox-disabled {

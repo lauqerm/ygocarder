@@ -385,7 +385,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 context: combinedArtCtx,
             } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
             await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
-            if (backgroundCanvas && combinedArtCtx) drawBackground(combinedArtCtx);
+            if (backgroundCanvas && combinedArtCtx) await drawBackground(combinedArtCtx, hasArtBorder);
             if (!boundless) combinedArtCtx.drawImage(artOnCardCanvas, 0, 0);
 
             /** @summary Draw the overall layout */
@@ -477,11 +477,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     await drawArtBorderFinish();
                 } else if (isPendulum) {
                     // const drawCompletePendulumBorder = async () => {
-                        // if (hasArtBorder) {
-                        //     await drawPendulumBorder(hasArtBorder, 'normal');
-                        //     await drawPendulumBorder(hasArtBorder, foil);
-                        // }
-                        // await drawPendulumArtBorderFinish();
+                        if (hasArtBorder) {
+                            await drawPendulumBorder(hasArtBorder, 'normal');
+                            await drawPendulumBorder(hasArtBorder, foil);
+                        }
+                        await drawPendulumArtBorderFinish();
                     // }
                     // /** We want to fill the area inside pendulum border only, so that the outside frame remains intact. */
             //         const extraHeightRatio = CardArtCanvasCoordinateMap.fullCard.ratio

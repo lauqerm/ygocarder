@@ -186,7 +186,11 @@ export const CardLayoutPreview = ({
             } = FrameInfoMap[frame];
             return <div key={key}
                 tabIndex={0}
-                className={`${className} ${key === activeLayout ? 'active' : ''} ${baseLayoutState?.[key] === 'auto' ? 'unmodified' : ''}`}
+                className={mergeClass(
+                    className,
+                    key === activeLayout ? 'active' : '',
+                    baseLayoutState?.[key] === 'auto' ? 'unmodified' : '',
+                )}
                 onClick={() => onClick?.(key)}
                 style={labelBackgroundImage
                     ? { backgroundImage: labelBackgroundImage }
@@ -359,13 +363,21 @@ export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPic
                     {language[FramePositionMap[activeLayout]?.labelKey]}
                 </div>
                 <Checkbox ref={inputRef}
-                    className={mergeClass('frame-auto-checkbox', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
+                    className={mergeClass('inline-input', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
                     checked={activeFrame === 'auto'}
                     disabled={activeLayout === 'frame'}
                     onChange={e => {
                         changeLayout(e.target.checked ? 'auto' : (recentCustomPendulumFrame.current[activeLayout] ?? 'auto'));
                     }}
                 >{language['input.frame.auto']}</Checkbox>
+                <Checkbox ref={inputRef}
+                    className={mergeClass('inline-input', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
+                    checked={activeFrame === 'transparent'}
+                    disabled={activeLayout === 'frame'}
+                    onChange={e => {
+                        changeLayout(e.target.checked ? 'transparent' : (recentCustomPendulumFrame.current[activeLayout] ?? 'transparent'));
+                    }}
+                >{language['input.frame.transparent']}</Checkbox>
                 <RadioTrain
                     className="frame-radio"
                     value={activeFrame}

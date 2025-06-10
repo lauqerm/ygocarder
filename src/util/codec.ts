@@ -280,8 +280,18 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
         if (finishList.includes(ART_FINISH_TYPE)) {
             migratedCard.finish = finishList.filter(entry => entry !== ART_FINISH_TYPE);
-            migratedCard.otherFinish = [migratedCard.artFinish, migratedCard.artFinish, migratedCard.artFinish];
+            migratedCard.otherFinish = [
+                migratedCard.artFinish,
+                migratedCard.artFinish,
+                migratedCard.artFinish,
+                migratedCard.artFinish,
+            ];
         }
+    }
+    if (Array.isArray(migratedCard.otherFinish)
+        && ((migratedCard.otherFinish as unknown[]).length === 3 || migratedCard.otherFinish[3] == null)
+    ) {
+        migratedCard.otherFinish[3] = getEmptyCard().otherFinish[3];
     }
     if ((migratedCard as any).picture && !card.art) migratedCard.art = (migratedCard as any).picture;
     delete (migratedCard as any).picture;
