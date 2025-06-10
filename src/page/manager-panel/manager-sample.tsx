@@ -8,6 +8,7 @@ import {
     ArtFinishMap,
     AttributeList,
     CondenseTolerantMap,
+    ExtraAttributeList,
     FinishMap,
     frameList,
     getBackgroundTypeList,
@@ -199,7 +200,7 @@ export const ManagerSample = ({
                                 {
                                     field: 'Attribute',
                                     value: <div>
-                                        {AttributeList
+                                        {[...AttributeList, ...ExtraAttributeList]
                                             .filter(({ isOption }) => isOption)
                                             .map(({ name }) => <CopiableCode key={name} data={name}>{name}</CopiableCode>)}
                                     </div>

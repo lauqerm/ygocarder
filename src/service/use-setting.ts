@@ -7,6 +7,7 @@ export type Setting = {
     resolution: [number, number],
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
+    showExtraAttribute: boolean,
     allowHotkey: boolean,
     reduceMotionColor: boolean,
     mirrorPendulumScale: boolean,
@@ -19,12 +20,13 @@ export const useSetting = create<SettingStore>((set) => {
     const {
         allowHotkey,
         exportFormat,
+        globalScale,
+        mirrorPendulumScale,
         reduceMotionColor,
         resolution,
-        globalScale,
         showCreativeOption,
+        showExtraAttribute,
         showExtraDecorativeOption,
-        mirrorPendulumScale,
     } = ((): Record<string, any> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
@@ -49,6 +51,7 @@ export const useSetting = create<SettingStore>((set) => {
             allowHotkey: typeof allowHotkey === 'boolean' ? allowHotkey : true,
             reduceMotionColor: typeof reduceMotionColor === 'boolean' ? reduceMotionColor : false,
             showCreativeOption: typeof showCreativeOption === 'boolean' ? showCreativeOption : true,
+            showExtraAttribute: typeof showExtraAttribute === 'boolean' ? showExtraAttribute : true,
             showExtraDecorativeOption: typeof showExtraDecorativeOption === 'boolean' ? showExtraDecorativeOption : true,
             mirrorPendulumScale: typeof mirrorPendulumScale === 'boolean' ? mirrorPendulumScale : false,
         },

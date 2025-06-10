@@ -22,8 +22,9 @@ import {
     getAttributeList,
     getFinishList,
     FormatButtonList,
+    getExtraAttributeList,
 } from './const';
-import { ClearOutlined } from '@ant-design/icons';
+import { ClearOutlined, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { CharPicker } from './char-picker';
 import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
 import { CheckboxTrain, FrameTrain, FrameTrainRef } from './input-train';
@@ -101,8 +102,8 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         getUpdater,
         setCard,
     })));
-    const { setting } = useSetting();
-    const { showCreativeOption, showExtraDecorativeOption, reduceMotionColor } = setting;
+    const { setting, updateSetting } = useSetting();
+    const { showCreativeOption, showExtraDecorativeOption, reduceMotionColor, showExtraAttribute } = setting;
 
     const stylePickerRef = useRef<NameStylePickerRef>(null);
 
@@ -161,6 +162,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     }, [setCard]);
 
     const attributeList = useMemo(() => getAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
+    const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
     const finishList = useMemo(() => getFinishList(language), [language]);
 
     useEffect(() => {
@@ -275,13 +277,35 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         <div className="main-info">
             <div className="main-info-first">
                 <RadioTrain
-                    className="fill-input-train attribute-input"
+                    className="fill-input-train span-input-train attribute-input"
                     value={attribute}
                     onChange={changeAttribute}
                     optionList={attributeList}
+                    suffix={!showExtraAttribute && showExtraDecorativeOption
+                        ? <IconButton
+                            onClick={() => updateSetting({ showExtraAttribute: true })}
+                            Icon={DoubleRightOutlined}
+                            tooltipProps={{ overlay: language['button.more.label'] }}
+                        />
+                        : null}
                 >
                     <span>{language['input.attribute.label']}</span>
                 </RadioTrain>
+                {(showExtraDecorativeOption && showExtraAttribute) && <RadioTrain
+                    className="fill-input-train extra-attribute-input"
+                    value={attribute}
+                    onChange={changeAttribute}
+                    optionList={extraAttributeList}
+                    suffix={showExtraDecorativeOption && showExtraAttribute
+                        ? <IconButton
+                            onClick={() => updateSetting({ showExtraAttribute: false })}
+                            Icon={DoubleLeftOutlined}
+                            tooltipProps={{ overlay: language['button.less.label'] }}
+                        />
+                        : null}
+                >
+                    &nbsp;
+                </RadioTrain>}
 
                 {(isPendulum || showCreativeOption)
                     && <PendulumInputGroup ref={pendulumInputGroupRef}

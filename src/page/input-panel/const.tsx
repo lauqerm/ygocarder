@@ -14,6 +14,7 @@ import {
     NO_STICKER,
     PendulumSizeMap,
     OtherFinishTypeMap,
+    ExtraAttributeList,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -94,7 +95,21 @@ export const getAttributeList = (format: string, dictionary: Record<string, stri
                     alt={dictionary[nameKey]}
                     src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
                 />
-                </Tooltip>,
+            </Tooltip>,
+        value: name,
+        isCreative,
+        supportFormat,
+    }))
+    .filter(({ isCreative, supportFormat }) => (isCreative === false || isCreative === showCreativeOption) && supportFormat.includes(format));
+
+export const getExtraAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => ExtraAttributeList
+    .map(({ name, nameKey, isCreative, supportFormat }) => ({
+        label: <Tooltip overlay={dictionary[nameKey]}>
+            <img
+                alt={dictionary[nameKey]}
+                src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
+            />
+        </Tooltip>,
         value: name,
         isCreative,
         supportFormat,

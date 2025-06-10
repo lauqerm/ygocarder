@@ -16,6 +16,7 @@ export const StyledIconButtonContainer = styled.span`
     border-radius: var(--br-lg);
     box-shadow: var(--bs-button);
 	cursor: pointer;
+    font-size: var(--fs);
 	&:hover {
 		background-color: var(--sub-level-4);
 	}

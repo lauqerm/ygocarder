@@ -23,6 +23,11 @@
         align-content: center;
         min-height: 32px; // Alignment
     }
+    .extra-attribute-input {
+        .radio-train-input-group {
+            flex: 0 1 auto;
+        }
+    }
     .attribute-input {
         .ant-radio-button-wrapper {
             padding: 0 var(--spacing-xxs);

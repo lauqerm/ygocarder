@@ -2,6 +2,7 @@ import { css } from 'styled-components';
 
 export const InputTrainStyle = css`
     display: flex;
+    align-items: center;
     .checkbox-train-input-group,
     .radio-train-input-group {
         display: flex;
