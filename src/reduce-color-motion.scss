@@ -47,6 +47,7 @@
         --main-active: #7272ff;
     }
     .card-info-panel .pendulum-frame-input {
+        .card-layout-preview-container,
         .pendulum-frame-label {
             border-color: var(--main-level-4);
         }
@@ -60,6 +61,7 @@
         }
         .anticon {
             transform: translateY(1px); // Alignment
+            border: none;
         }
     }
     .link-marker-picker {

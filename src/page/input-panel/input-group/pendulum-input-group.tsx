@@ -54,9 +54,17 @@ const StyledPendulumFrameInputContainer = styled.div`
             border-right: var(--bw) solid var(--sub-level-1);
         }
     }
+    .card-layout-preview-container {
+        line-height: 0;
+        border: var(--bw) solid var(--sub-level-1);
+        overflow: hidden;
+    }
     .anticon {
         align-content: center;
         padding: 0 var(--spacing-xs);
+        border: var(--bw) solid var(--sub-level-1);
+        border-left: none;
+        border-radius: 0 var(--br-lg) var(--br-lg) 0;
     }
 `;
 const StyledPendulumInputContainer = styled.div`
@@ -240,7 +248,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         effectBackground,
         pendulumEffectBackground,
     };
-    const advanceLayoutPreviewHeight = 32; // Alignment with frame input
+    const advanceLayoutPreviewHeight = 30; // Alignment with frame input
     const flagList = flag
         .map((entry, index) => {
             if (entry !== 0) return <li key={FlagInfoList[index].labelKey}>
@@ -298,13 +306,15 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         <span className="pendulum-frame-label">
                             {language['input.advanced-frame.label']}
                         </span>
-                        <CardLayoutPreview
-                            width={advanceLayoutPreviewHeight * width / height}
-                            height={advanceLayoutPreviewHeight}
-                            isPendulum={isPendulum}
-                            resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
-                            tabIndex={-1}
-                        />
+                        <div className="card-layout-preview-container">
+                            <CardLayoutPreview
+                                width={Math.round(advanceLayoutPreviewHeight * width / height)}
+                                height={advanceLayoutPreviewHeight}
+                                isPendulum={isPendulum}
+                                resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
+                                tabIndex={-1}
+                            />
+                        </div>
                         {flagList.length > 0
                             ? <InternalPopover
                                 content={<StyledPopMarkdown>
