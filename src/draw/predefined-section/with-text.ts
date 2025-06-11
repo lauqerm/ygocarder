@@ -38,9 +38,9 @@ export const drawScale = (
 
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
-    _edge = 99,
-    _baseline = 1150.93,
-    _baselineOffset = 0,
+    edge = 99,
+    baseline = 1150.93,
+    baselineOffset = 0,
     option: {
         stroke?: boolean,
         textStyle?: CanvasTextStyle,
@@ -53,9 +53,9 @@ export const draw1stEdition = (
     if (!ctx) return;
 
     const { stroke = false, textStyle, globalScale } = option ?? {};
-    const edge = _edge * globalScale;
-    const baseline = _baseline * globalScale;
-    const baselineOffset = _baselineOffset * globalScale;
+    const actualEdge = edge * globalScale;
+    const actualBaseline = baseline * globalScale;
+    const actualBaselineOffset = baselineOffset * globalScale;
     const resetStyle = setTextStyle({
         ctx,
         globalScale,
@@ -65,19 +65,19 @@ export const draw1stEdition = (
     const superTextOffset = 7.4 * globalScale;
     ctx.font = `bold ${23.7 * globalScale}px palatino-linotype-bold`;
 
-    let left = edge;
-    ctx.fillText('1', left, baseline + baselineOffset);
-    if (stroke) ctx.strokeText('1', left, baseline);
+    let left = actualEdge;
+    ctx.fillText('1', left, actualBaseline + actualBaselineOffset);
+    if (stroke) ctx.strokeText('1', left, actualBaseline);
     left += ctx.measureText('1').width - 2 * globalScale;
 
     ctx.font = `bold ${17.78 * globalScale}px palatino-linotype-bold`;
-    ctx.fillText('st', left, baseline - superTextOffset + baselineOffset);
-    if (stroke) ctx.strokeText('st', left, baseline - superTextOffset);
+    ctx.fillText('st', left, actualBaseline - superTextOffset + actualBaselineOffset);
+    if (stroke) ctx.strokeText('st', left, actualBaseline - superTextOffset);
     left += ctx.measureText('st').width;
 
     ctx.font = `bold ${22.22 * globalScale}px palatino-linotype-bold`;
-    ctx.fillText(' Edition', left, baseline + baselineOffset);
-    if (stroke) ctx.strokeText(' Edition', left, baseline);
+    ctx.fillText(' Edition', left, actualBaseline + actualBaselineOffset);
+    if (stroke) ctx.strokeText(' Edition', left, actualBaseline);
     resetStyle();
 };
 

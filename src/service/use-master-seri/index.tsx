@@ -34,7 +34,6 @@ import {
     FinishMap,
     ArtFinishMap,
     CardOpacity,
-    CardArtCanvasCoordinateMap,
     DEFAULT_BASE_FILL_COLOR,
     DEFAULT_EFFECT_NORMAL_SIZE,
     DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
@@ -340,8 +339,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawFrameBackgroundFinish,
                 drawOverlayFinish,
                 drawCardBorderFinish,
-
-                calculateCardArtRedrawCoordination,
             } = getLayoutDrawFunction({
                 canvas: frameCanvasRef.current,
                 artworkCanvas, backgroundCanvas,
@@ -420,34 +417,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
                 ctx.drawImage(
                     combinedArtCanvas,
-                    artX, artY, artWidth, artWidth / ratio,
-                    artX, artY, artWidth, artWidth / ratio,
+                    globalScale * artX, globalScale * artY,
+                    globalScale * artWidth, globalScale * artWidth / ratio,
+                    globalScale * artX, globalScale * artY,
+                    globalScale * artWidth, globalScale * artWidth / ratio,
                 );
-            //     if (artworkCanvas && ctx && artworkCanvas.height > 0) {
-            //         const { width: artWidth, height: artHeight } = artworkCanvas;
-            //         const {
-            //             sourceOffsetX, sourceOffsetY,
-            //             offsetHeight,
-            //             destinationX, destinationY,
-            //             destinationWidth, destinationHeight,
-            //             fillWidth, fillHeight,
-            //         } = calculateCardArtRedrawCoordination(artworkCanvas);
-
-            //         /** To avoid stacking transprency, we clear the area before redrawing */
-            //         await fillBaseColor(
-            //             globalScale * destinationX, globalScale * destinationY,
-            //             globalScale * fillWidth, globalScale * fillHeight,
-            //         );
-
-            //         drawBackground('pendulum');
-            //         ctx.drawImage(
-            //             artworkCanvas,
-            //             sourceOffsetX, sourceOffsetY,
-            //             artWidth - sourceOffsetX * 2, artHeight - offsetHeight,
-            //             globalScale * destinationX, globalScale * destinationY,
-            //             globalScale * destinationWidth, globalScale * destinationHeight,
-            //         );
-            //     }
 
                 await drawNameBackground();
                 await drawEffectBackground(true);
@@ -476,33 +450,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
                     await drawArtBorderFinish();
                 } else if (isPendulum) {
-                    // const drawCompletePendulumBorder = async () => {
-                        if (hasArtBorder) {
-                            await drawPendulumBorder(hasArtBorder, 'normal');
-                            await drawPendulumBorder(hasArtBorder, foil);
-                        }
-                        await drawPendulumArtBorderFinish();
-                    // }
-                    // /** We want to fill the area inside pendulum border only, so that the outside frame remains intact. */
-            //         const extraHeightRatio = CardArtCanvasCoordinateMap.fullCard.ratio
-            //             / CardArtCanvasCoordinateMap.extendedPendulum.ratio;
-            //         /** Fill area with base color before start draw overlay artwork. In this case we do not want to fill everywhere, we just need to fill exactly the area contains inside pendulum border frame. */
-            //         if (artworkCanvas && ctx && artworkCanvas.height > 0) {
-            //             const {
-            //                 destinationX, destinationY,
-            //                 destinationWidth, destinationHeight,
-            //             } = calculateCardArtRedrawCoordination(
-            //                 artworkCanvas,
-            //                 { ...getDefaultCardOpacity(), ...opacity, body: 100, boundless: false },
-            //                 extraHeightRatio,
-            //             );
-    
-            //             await fillBaseColor(
-            //                 globalScale * destinationX, globalScale * destinationY,
-            //                 globalScale * destinationWidth, globalScale * destinationHeight,
-            //             );
-            //             drawBackground('pendulum');
-            //         }
+                    if (hasArtBorder) {
+                        await drawPendulumBorder(hasArtBorder, 'normal');
+                        await drawPendulumBorder(hasArtBorder, foil);
+                    }
+                    await drawPendulumArtBorderFinish();
                 }
 
                 const {
@@ -511,15 +463,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     artWidth,
                     ratio,
                 } = getArtCanvasCoordinate(isPendulum, opacity, 'full', pendulumSize);
-                    console.log('🚀 ~ drawingPipeline.current.frame.instructor= ~ artY:', artX, artY, artWidth, ratio);
                 ctx.drawImage(
                     artOnCardCanvas,
-                    artX, artY, artWidth, artWidth / ratio,
-                    artX, artY, artWidth, artWidth / ratio,
+                    globalScale * artX, globalScale * artY,
+                    globalScale * artWidth, globalScale * artWidth / ratio,
+                    globalScale * artX, globalScale * artY,
+                    globalScale * artWidth, globalScale * artWidth / ratio,
                 );
-                // if (artworkCanvas && ctx) drawCardArt();
-                // await drawArtOverlayFinish();
-
                 /** Redraw various part here because the extended artwork may overlap with those */
                 if (isPendulum) {
                     await drawEffectBackground(true);
@@ -723,9 +673,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const isNumberPassword = /^[0-9]*$/.test(password);
         const mayOffset = isNumberPassword && isPendulum && isLink;
         const willOffset = mayOffset;
-        const {
-            rightEdge,
-        } = drawPasswordText({
+        const { rightEdge } = drawPasswordText({
             ctx,
             globalScale,
             value: password,
@@ -1058,7 +1006,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     artBorder: keepArtBorder,
                     body: opacityBody,
                     boundless,
-                    baseFill,
                 } = normalizedOpacity;
                 const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
 
@@ -1093,18 +1040,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
 
     const drawHistory = useRef<Record<string, number>>({});
-    const onExport = useCallback(async (exportProps: {
+    const onExport = useCallback(async (_exportProps: {
         isPendulum: boolean,
         opacity: Partial<CardOpacity>,
         pendulumSize: PendulumSize,
         // isRelevant: () => boolean,
     }) => {
-        const {
-            // isRelevant,
-            pendulumSize,
-            isPendulum = false,
-            opacity,
-        } = exportProps;
+        // const {
+        //     isRelevant,
+        //     pendulumSize,
+        //     isPendulum = false,
+        //     opacity,
+        // } = exportProps;
         const exportCanvas = exportCanvasRef.current;
         const exportCtx = exportCanvas?.getContext('2d');
 
@@ -1134,21 +1081,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         description: language['error.draw.error.description'],
                     });
                 });
-            const artworkCanvas = artworkCanvasRef.current;
-            // if (artworkCanvas && exportCtx) {
-            //     const { artX, artY, artWidth } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
-            //     const { width: imageWidth, height: imageHeight } = artworkCanvas;
-
-            //     if (imageHeight > 0) {
-            //         exportCtx.drawImage(
-            //             artworkCanvas,
-            //             0, 0,
-            //             imageWidth, imageHeight,
-            //             artX, artY,
-            //             artWidth, artWidth / (imageWidth / imageHeight),
-            //         );
-            //     }
-            // }
             /** It is not worth to use promise all here, just let them go sequentially to avoid too much blob generating call. */
             await generateLayer(frameCanvasRef, exportCtx, 0);
             await generateLayer(nameCanvasRef, exportCtx, 0);
@@ -1179,7 +1111,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         }
     }, [
         language,
-        artworkCanvasRef, 
         cardIconCanvasRef, 
         creatorCanvasRef, 
         exportCanvasRef, 

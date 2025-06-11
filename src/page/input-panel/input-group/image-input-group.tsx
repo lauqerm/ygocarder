@@ -86,8 +86,14 @@ const OtherFinishPicker = ({
     const finishList = useMemo(() => getOtherFinishList(language), [language]);
 
     const IconDropdownLabel = showCreativeOption
-        ? <>{language[OtherFinishTypeMap[selectedType].labelKey]} <CaretDownOutlined /></>
-        : language[OtherFinishTypeMap[selectedType].labelKey];
+        ? <>
+            <label>{language['input.finish.label']}:</label>&nbsp;
+            {language[OtherFinishTypeMap[selectedType].labelKey]} <CaretDownOutlined />
+        </>
+        : <>
+            <label>{language['input.finish.label']}:</label>&nbsp;
+            {language[OtherFinishTypeMap[selectedType].labelKey]}
+        </>;
     const IconDropdown = <Popover key="icon-type-picker"
         trigger={['click']}
         overlayClassName="global-input-overlay pattern-picker-overlay"

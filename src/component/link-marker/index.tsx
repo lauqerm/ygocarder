@@ -24,7 +24,7 @@ const StyledLinkMarkChooser = styled.div`
     border-radius: var(--br-lg);
     display: inline-block;
     .title {
-        line-height: 0;
+        line-height: 1;
         margin-bottom: var(--spacing-sm);
     }
     .container {
