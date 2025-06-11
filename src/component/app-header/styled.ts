@@ -55,6 +55,7 @@ export const FaqButtonLabel = styled(VersionLogButtonLabel)`
 `;
 
 export const QuoteContainer = styled.div`
+    white-space: pre-line;
     label {
         font-weight: bold;
         font-style: italic;

@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, Card, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { ART_FINISH_TYPE, Card, CardFlag, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -350,7 +350,15 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
 
-    if (!Array.isArray(migratedCard.flag)) migratedCard.flag = getDefaultCardFlag();
+    const defaultFlagList = getDefaultCardFlag();
+    if (!Array.isArray(migratedCard.flag)) migratedCard.flag = defaultFlagList;
+    else if (migratedCard.flag.length < defaultFlagList.length) {
+        const currentFlagList = [...migratedCard.flag];
+        migratedCard.flag = defaultFlagList.map((entry, index) => {
+            if (typeof currentFlagList[index] === 'number') return currentFlagList[index];
+            return entry;
+        }) as CardFlag;
+    }
 
     if (migratedCard.version === 0 || migratedCard.version === 1) {
         migratedCard.version = 2;

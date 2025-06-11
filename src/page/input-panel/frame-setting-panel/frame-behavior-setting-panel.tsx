@@ -1,4 +1,5 @@
 import { Checkbox } from 'antd';
+import { RadioTrain } from 'src/component';
 import { CardFlag, FlagInfoList } from 'src/model';
 import { useCard, useLanguage } from 'src/service';
 import styled from 'styled-components';
@@ -8,6 +9,21 @@ const FrameBehaviorSettingPanelContainer = styled.div`
     background-color: var(--main-level-3);
     padding: var(--spacing-sm);
     border-top: var(--bw) solid var(--sub-level-3);
+    > * + * {
+        margin-top: var(--spacing-sm);
+    }
+    .link-rating-behavior-panel {
+        .radio-train-input-group {
+            flex: 0 0 auto;
+            margin-right: var(--spacing-sm);
+        }
+        label {
+            flex: 1 1 auto;
+            text-align: left;
+            font-size: var(--fs);
+            color: var(--color);
+        }
+    }
 `;
 
 export type FrameBehaviorSettingPanel = {
@@ -42,18 +58,36 @@ export const FrameBehaviorSettingPanel = () => {
 
     return <FrameBehaviorSettingPanelContainer>
         {flag.map((entry, index) => {
-            const { labelKey } = FlagInfoList[index];
+            const { labelKey, type } = FlagInfoList[index];
 
-            return <div key={labelKey}>
-                <Checkbox
-                    checked={entry !== 0}
-                    onChange={e => {
-                        const value = e.target.checked ? 1 : 0;
+            if (type === 'checkbox') {
+                return <div key={labelKey}>
+                    <Checkbox
+                        checked={entry !== 0}
+                        onChange={e => {
+                            const value = e.target.checked ? 1 : 0;
 
-                        updateFlag(value, index);
-                    }}
-                >{language[labelKey]}</Checkbox>
-            </div>;
+                            updateFlag(value, index);
+                        }}
+                    >{language[labelKey]}</Checkbox>
+                </div>;
+            }
+            if (type === 'link-rating-behavior') {
+                return <RadioTrain key={labelKey}
+                    className="link-rating-behavior-panel"
+                    onChange={(value) => updateFlag(Number(value), index)}
+                    optionList={[
+                        { label: language['input.flag.link-rating-behavior.auto'], value: 0 },
+                        { label: language['input.flag.link-rating-behavior.show'], value: 1 },
+                        { label: language['input.flag.link-rating-behavior.hide'], value: 2 },
+                    ]}
+                    value={entry}
+                    suffix={<label>
+                        {language[labelKey]}
+                    </label>}
+                />;
+            }
+            return null;
         })}
     </FrameBehaviorSettingPanelContainer>;
 };

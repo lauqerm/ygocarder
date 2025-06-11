@@ -247,6 +247,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     ] = flag;
     const showDefAndLink = isLink && showDefAndLinkFlag;
     const statInEffect = !!(atk || def)
+        || !!linkRating
         || !!(isPendulum && setId);
     const typeInEffect = normalizedTypeAbility.length > 0
         ? cardIcon === 'auto'
@@ -631,12 +632,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx) || !statInEffect) return;
 
         const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-        const leftOffset = showDefAndLink ? 168.75 : 0;
-        drawStatText(ctx, 'ATK', 432.10 - leftOffset, 1106, globalScale);
-        drawStat(ctx, atk.trim(), 508.824 - leftOffset, 1106.5, globalScale);
-        if (!isLink || showDefAndLink) {
-            drawStatText(ctx, 'DEF', 600.85 - leftOffset, 1106, globalScale);
-            drawStat(ctx, def.trim(), 673.865 - leftOffset, 1106.5, globalScale);
+        // const hasAtk = !!atk;
+        const hasDef = isLink
+            ? !!def && showDefAndLink
+            : !!def;
+        const hasLink = isLink;
+        if (atk) {
+            const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0);
+            drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
+            drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5, globalScale);
+        }
+        if (def && (!isLink || showDefAndLink)) {
+            const offset = hasLink ? 168.75 : 0;
+            drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
+            drawStat(ctx, def.trim(), 673.865 - offset, 1106.5, globalScale);
         }
         resetStyle();
     }, [readyToDraw, globalScale, atk, def, isLink, isMonster, showDefAndLink, resolvedStatTextStyle, statCanvasRef, statInEffect]);

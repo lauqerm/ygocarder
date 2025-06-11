@@ -9,6 +9,7 @@ import {
     Foil,
     FoilNameMap,
     getArtCanvasCoordinate,
+    getDefaultCardFlag,
     getDefaultCardOpacity,
     getDefaultCrop,
     getDefaultNameStyle,
@@ -677,7 +678,11 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 } catch (e) {
                     console.error('csvToCardList', e);
                 }
-                const flag = reader('Flag').split('|').map(Number).slice(0, FLAG_LENGTH) as CardFlag;
+                const baseFlag = reader('Flag').split('|').map(Number).slice(0, FLAG_LENGTH) as CardFlag;
+                const flag = getDefaultCardFlag().map((entry, index) => {
+                    if (typeof baseFlag[index] === 'number') return baseFlag[index];
+                    return entry;
+                }) as CardFlag;
 
                 return {
                     id: uuid(),
