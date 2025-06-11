@@ -9,7 +9,7 @@ import { CaretDownOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
-import { CardLayoutPreview, FramelayoutPicker, FrameLayoutPicker } from '../frame-layout-picker';
+import { CardLayoutPreview, FramelayoutPicker, FrameLayoutSettingPanel } from '../frame-layout-picker';
 
 const {
     width,
@@ -256,7 +256,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                     placement="bottom"
                     overlayClassName="pendulum-frame-picker-overlay"
                     content={<div className="overlay-event-absorber">
-                        <FrameLayoutPicker
+                        <FrameLayoutSettingPanel ref={bottomFrameOptionGridRef}
                             isPendulum={isPendulum}
                             frameList={frameList}
                             pendulumFrame={pendulumFrame}
@@ -291,6 +291,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                             height={advanceLayoutPreviewHeight}
                             isPendulum={isPendulum}
                             resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
+                            tabIndex={-1}
                         />
                         <CaretDownOutlined />
                     </StyledPendulumFrameInputContainer>

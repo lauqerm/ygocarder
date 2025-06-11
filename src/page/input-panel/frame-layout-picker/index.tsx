@@ -59,6 +59,9 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
     box-shadow: 0 0 2px 0 #202020;
     position: relative;
     background: var(--main-level-2);
+    button {
+        border: none;
+    }
     .overlay-patch {
         position: absolute;
         width: 100%;
@@ -150,6 +153,7 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
 `;
 
 export type CardLayoutPreview = {
+    tabIndex?: number,
     width: number,
     height: number,
     baseLayoutState?: Record<string, string | undefined>,
@@ -159,6 +163,7 @@ export type CardLayoutPreview = {
     onClick?: (key: string) => void,
 };
 export const CardLayoutPreview = ({
+    tabIndex = 0,
     width,
     height,
     baseLayoutState,
@@ -184,8 +189,8 @@ export const CardLayoutPreview = ({
                 labelBackgroundColor,
                 labelBackgroundImage,
             } = FrameInfoMap[frame];
-            return <div key={key}
-                tabIndex={0}
+            return <button key={key}
+                {...tabIndex < 0 ? {} : { tabIndex }}
                 className={mergeClass(
                     className,
                     key === activeLayout ? 'active' : '',
@@ -200,7 +205,7 @@ export const CardLayoutPreview = ({
                 <div
                     className="overlay-patch"
                 />
-            </div>;
+            </button>;
         })}
     </CardLayoutContainer>;
 };
@@ -215,7 +220,7 @@ export type FramelayoutPicker = {
     onFrameChange: (frame: string) => void,
     onCancel: () => void,
 };
-export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPicker>(({
+export const FrameLayoutSettingPanel = forwardRef<FramelayoutPickerRef, FramelayoutPicker>(({
     frameList,
     onFrameChange,
     onCancel,
@@ -258,9 +263,9 @@ export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPic
         effectBackground: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
         pendulumEffectBackground: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
     });
-    const inputRef = useRef<HTMLInputElement>(null);
     const [focus, setFocus] = useState(0);
     const [activeLayout, setActiveLayout] = useState('frame');
+    const frameLayoutMainId = 'frame-layout-main';
 
     useEffect(() => {
         /** Avoid confusion */
@@ -268,7 +273,7 @@ export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPic
     }, [activeLayout, isPendulum]);
 
     useImperativeHandle(ref, () => ({
-        focus: () => inputRef.current?.focus(),
+        focus: () => document.getElementById(frameLayoutMainId)?.focus(),
     }));
 
     const changeBottomLeftFrame = useMemo(() => getUpdater('pendulumFrame'), [getUpdater]);
@@ -317,6 +322,8 @@ export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPic
         <div className="visual-preview-container">
             <label>{language['input.advanced-frame.main.label']}</label>
             <FrameInfoBlock
+                id={frameLayoutMainId}
+                tabIndex={0}
                 className={activeLayout === 'frame' ? 'active' : ''}
                 {...FrameInfoMap[frame]}
                 onClick={() => setActiveLayout('frame')}
@@ -362,7 +369,7 @@ export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPic
                 <div className="frame-part-name">
                     {language[FramePositionMap[activeLayout]?.labelKey]}
                 </div>
-                <Checkbox ref={inputRef}
+                <Checkbox
                     className={mergeClass('inline-input', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
                     checked={activeFrame === 'auto'}
                     disabled={activeLayout === 'frame'}
@@ -370,14 +377,6 @@ export const FrameLayoutPicker = forwardRef<FramelayoutPickerRef, FramelayoutPic
                         changeLayout(e.target.checked ? 'auto' : (recentCustomPendulumFrame.current[activeLayout] ?? 'auto'));
                     }}
                 >{language['input.frame.auto']}</Checkbox>
-                <Checkbox ref={inputRef}
-                    className={mergeClass('inline-input', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
-                    checked={activeFrame === 'transparent'}
-                    disabled={activeLayout === 'frame'}
-                    onChange={e => {
-                        changeLayout(e.target.checked ? 'transparent' : (recentCustomPendulumFrame.current[activeLayout] ?? 'transparent'));
-                    }}
-                >{language['input.frame.transparent']}</Checkbox>
                 <RadioTrain
                     className="frame-radio"
                     value={activeFrame}

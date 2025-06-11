@@ -155,3 +155,32 @@ export const PopoverButton = styled.div<{ $active?: boolean, $softMode: boolean 
         background-color: var(--sub-level-4);
     }
 `;
+
+const ResolutionLabelContainer = styled.div<{ $warning: boolean }>`
+    display: grid;
+    grid-template-columns: 3em max-content 3em;
+    gap: var(--spacing-xs);
+    .left-part {
+        text-align: right;
+    }
+    .right-part {
+        text-align: left;
+    }
+    ${({ $warning }) => $warning
+        ? `
+            color: var(--main-warning);
+        `
+        : ''}
+`;
+export type ResolutionLabel = {
+    warning?: boolean,
+    width: number,
+    height: number,
+}
+export const ResolutionLabel = ({ width, height, warning }: ResolutionLabel) => {
+    return <ResolutionLabelContainer $warning={warning}>
+        <span className="left-part">{width}</span>
+        <span>×</span>
+        <span className="right-part">{height}</span>
+    </ResolutionLabelContainer>;
+};

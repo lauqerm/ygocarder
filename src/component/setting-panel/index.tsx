@@ -3,7 +3,7 @@ import { ExportFormat, ExportFormatList, ResolutionList } from 'src/model';
 import { useLanguage, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { StyledPopMarkdown } from '../atom';
+import { ResolutionLabel, StyledPopMarkdown } from '../atom';
 
 const StyledDownloadDropdownLabel = styled(Menu.Item)`
     color: var(--color);
@@ -67,9 +67,9 @@ export const ResolutionPicker = ({
                             {language['setting.option.resolution.warning']}
                         </StyledPopMarkdown>}
                     >
-                        {label}
+                        <ResolutionLabel width={width} height={height} warning={true} />
                     </Popover>
-                    : label}
+                    : <ResolutionLabel width={width} height={height} />}
             </StyledDownloadDropdownOption>;
         })}
     </Menu>;

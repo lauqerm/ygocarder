@@ -5,7 +5,7 @@ import { Checkbox, Popover, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { RadioTrain } from '../input-train';
 import { ExportFormatList, ResolutionList, ResolutionMap } from 'src/model';
-import { StyledPopMarkdown } from '../atom';
+import { ResolutionLabel, StyledPopMarkdown } from '../atom';
 
 const rotate = keyframes`
     to {
@@ -113,9 +113,9 @@ export const SettingButton = () => {
                                         {language['setting.option.resolution.warning']}
                                     </StyledPopMarkdown>}
                                 >
-                                    {label}
+                                    <ResolutionLabel width={width} height={height} warning={true} />
                                 </Popover>
-                                : label,
+                                : <ResolutionLabel width={width} height={height} />,
                         }))}
                         onChange={value => {
                             const resolutionValue = ResolutionMap[value as keyof typeof ResolutionMap];
