@@ -2,8 +2,10 @@ import { Crop } from 'react-image-crop';
 import {
     BackgroundType,
     Card,
+    CardFlag,
     CardOpacity,
     CondenseType,
+    FLAG_LENGTH,
     Foil,
     FoilNameMap,
     getArtCanvasCoordinate,
@@ -70,6 +72,7 @@ const CsvStandardFieldList = [
     'Star Type',
     'Star Alignment',
     'Card Icon Type',
+    'Link Rating',
     'Opacity - Body',
     'Opacity - Pendulum',
     'Opacity - Text',
@@ -147,6 +150,7 @@ const CsvStandardFieldList = [
     'Left Frame',
     'Right Frame',
     'Bottom Right Frame',
+    'Flag',
     'External Info (JSON)',
 ] as const;
 const CsvFieldList = [
@@ -227,6 +231,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             effectTextStyle,
             externalInfo,
             finish,
+            flag,
             foil,
             format,
             frame,
@@ -239,7 +244,9 @@ export const cardListToCsv = (cardList: Card[]) => {
             isLink,
             isPendulum,
             isSpeedCard,
+            leftFrame,
             linkMap,
+            linkRating,
             name,
             nameStyle,
             nameStyleType,
@@ -249,14 +256,13 @@ export const cardListToCsv = (cardList: Card[]) => {
             password,
             pendulumEffect,
             pendulumFrame,
+            pendulumRightFrame,
             pendulumScaleBlue,
             pendulumScaleRed,
             pendulumSize,
             pendulumStyle,
             pendulumTextStyle,
-            leftFrame,
             rightFrame,
-            pendulumRightFrame,
             setId,
             star,
             starAlignment,
@@ -267,6 +273,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             typeTextStyle,
         } = cardList[cnt];
         const stringifedExternalInfo = JSON.stringify(externalInfo);
+        const stringifedFlag = flag.join('|');
 
         write('Format', format);
         write('Frame', frame);
@@ -296,6 +303,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Link - Bottom Left Arrow', linkMap.includes('7'));
         write('Link - Bottom Arrow', linkMap.includes('8'));
         write('Link - Bottom Right Arrow', linkMap.includes('9'));
+        write('Link Rating', linkRating);
         write('Is First Edition', isFirstEdition);
         write('Is Speed Card', isSpeedCard);
         write('Is Limited Edition', isLimitedEdition);
@@ -388,6 +396,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
+        write('Flag', stringifedFlag);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
         if (artSource === 'offline' || (hasBackground && backgroundSource === 'offline')) {
@@ -629,6 +638,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     normalizeBoolean(reader('Link - Bottom Arrow'), false) ? '8' : '',
                     normalizeBoolean(reader('Link - Bottom Right Arrow'), false) ? '9' : '',
                 ].filter(entry => entry !== '') ?? [];
+                const linkRating = reader('Link Rating') ?? '';
 
                 const emptyTextStyle = getDefaultTextStyle();
                 const statTextStyle = [
@@ -667,6 +677,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 } catch (e) {
                     console.error('csvToCardList', e);
                 }
+                const flag = reader('Flag').split('|').map(Number).slice(0, FLAG_LENGTH) as CardFlag;
 
                 return {
                     id: uuid(),
@@ -692,6 +703,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     effectTextStyle,
                     externalInfo,
                     finish,
+                    flag,
                     foil,
                     format,
                     frame,
@@ -704,7 +716,9 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     isLink,
                     isPendulum,
                     isSpeedCard,
+                    leftFrame,
                     linkMap,
+                    linkRating,
                     name,
                     nameStyle,
                     nameStyleType,
@@ -720,7 +734,6 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumSize,
                     pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle, background: pendulumEffectBackground },
                     pendulumTextStyle,
-                    leftFrame,
                     rightFrame,
                     setId,
                     star,

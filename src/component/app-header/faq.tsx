@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '02/06/2025';
+        const currentReminder = '11/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -75,7 +75,7 @@ export const QuestionAndFeedback = () => {
                         {
                             author: 'Shanaya User at Jun 04, 2025',
                             question: 'I would like to request another artwork effect like this, like the effect of the attached picture its a secret rare effect',
-                            answer: 'Unfortunately I do not have access to foil layer like this one. I will try my best, but don\'t get your hope up.',
+                            answer: 'I have added foil 9, this is my best and final attempt, sorry if it does not match your need.',
                         },
                         {
                             author: 'Yugiohfann at Jun 03, 2025',

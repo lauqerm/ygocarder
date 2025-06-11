@@ -1,15 +1,15 @@
 import { Checkbox, Input, Popover } from 'antd';
-import { PopoverButton, StyledDropdown } from 'src/component';
+import { InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap } from 'src/model';
-import { CaretDownOutlined } from '@ant-design/icons';
+import { CanvasConst, DEFAULT_PENDULUM_SIZE, FlagInfoList, PendulumSizeMap } from 'src/model';
+import { CaretDownOutlined, ApartmentOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
-import { CardLayoutPreview, FramelayoutPicker, FrameLayoutSettingPanel } from '../frame-layout-picker';
+import { CardLayoutPreview, FrameBehaviorSettingPanel, FramelayoutSettingPanel, FrameLayoutSettingPanel } from '../frame-setting-panel';
 
 const {
     width,
@@ -134,7 +134,7 @@ export type PendulumInputGroup = {
     showExtraDecorativeOption: boolean,
 }
 & Pick<CardTextInput, 'onTakePicker'>
-& Pick<FramelayoutPicker, 'onFrameChange'>;
+& Pick<FramelayoutSettingPanel, 'onFrameChange'>;
 export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInputGroup>(({
     softMode,
     showCreativeOption,
@@ -152,6 +152,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumScaleBlue,
         pendulumScaleRed,
         pendulumSize,
+        flag,
         setCard,
         getUpdater,
     } = useCard(useShallow(({
@@ -165,6 +166,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             pendulumSize,
             effectStyle,
             pendulumStyle,
+            flag,
         },
         setCard,
         getUpdater,
@@ -178,6 +180,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumSize,
         effectBackground: effectStyle.background,
         pendulumEffectBackground: pendulumStyle.background,
+        flag,
         setCard,
         getUpdater,
     })));
@@ -238,6 +241,14 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumEffectBackground,
     };
     const advanceLayoutPreviewHeight = 32; // Alignment with frame input
+    const flagList = flag
+        .map((entry, index) => {
+            if (entry !== 0) return <li key={FlagInfoList[index].labelKey}>
+                {language[FlagInfoList[index].labelKey]}
+            </li>;
+            return null;
+        })
+        .filter(entry => entry != null);
     return <StyledPendulumInputContainer
         className="pendulum-input"
     >
@@ -266,6 +277,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                                 containerRef.current?.focus();
                             }}
                         />
+                        <FrameBehaviorSettingPanel />
                     </div>}
                 >
                     <StyledPendulumFrameInputContainer ref={containerRef}
@@ -293,6 +305,16 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                             resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
                             tabIndex={-1}
                         />
+                        {flagList.length > 0
+                            ? <InternalPopover
+                                content={<StyledPopMarkdown>
+                                    {language['input.flag.effective.label']}
+                                    <ul>{flagList}</ul>
+                                </StyledPopMarkdown>}
+                            >
+                                <ApartmentOutlined />
+                            </InternalPopover>
+                            : null}
                         <CaretDownOutlined />
                     </StyledPendulumFrameInputContainer>
                 </Popover>}

@@ -17,7 +17,7 @@ export type FrameTrainRef = {
 export type FrameTrain = {
     onSTFrameChange: (value: string[]) => void,
     onPasswordChange: (value: string) => void,
-    onStatChange: (atk: string, def: string) => void,
+    onStatChange: (atk: string, def: string, linkRating: string) => void,
 };
 export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
     onSTFrameChange,
@@ -55,6 +55,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
                 star,
                 atk,
                 def,
+                linkRating,
             } = currentCard;
             const nextFrame = `${frameValue}`;
             const willBecomeST = nextFrame === 'spell' || nextFrame === 'trap';
@@ -73,6 +74,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
                 : password;
             const nextAtk = willRemoveStat ? '' : atk;
             const nextDef = willRemoveStat ? '' : def;
+            const nextLinkRating = willRemoveStat ? '' : linkRating;
             const nextStar = nextFrame === 'token'
                 ? 0
                 : star;
@@ -82,7 +84,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
                 onSTFrameChange(nextTypeAbility);
             }
             if (willRemoveStat) {
-                onStatChange(nextAtk, nextDef);
+                onStatChange(nextAtk, nextDef, nextLinkRating);
             }
 
             return {
@@ -99,6 +101,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
                 password: nextPassword,
                 atk: nextAtk,
                 def: nextDef,
+                linkRating: nextLinkRating,
             };
         });
     }, [setCard, onPasswordChange, onSTFrameChange, onStatChange]);

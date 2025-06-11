@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, Card, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { ART_FINISH_TYPE, Card, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -102,6 +102,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     starAlignment: 'sa',
     cardIcon: 'it',
     linkMap: 'lm',
+    linkRating: 'lr',
     isLink: 'il',
     isPendulum: 'ip',
     pendulumFrame: 'pf',
@@ -128,6 +129,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     statTextStyle: 'sts',
     typeTextStyle: 'tts',
     otherTextStyle: 'ots',
+    flag: 'fl',
     externalInfo: 'ei',
 };
 const legacyCardFieldShortenMap = {
@@ -330,6 +332,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.isLink == null && migratedCard.frame === 'link') {
         migratedCard.isLink = true;
     }
+    if (migratedCard.linkRating == null) migratedCard.linkRating = '';
 
     if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
     delete (migratedCard as any).kanjiHelper;
@@ -346,6 +349,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (typeof migratedCard.isLimitedEdition === 'undefined') migratedCard.isLimitedEdition = false;
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
+
+    if (!Array.isArray(migratedCard.flag)) migratedCard.flag = getDefaultCardFlag();
 
     if (migratedCard.version === 0 || migratedCard.version === 1) {
         migratedCard.version = 2;

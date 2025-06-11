@@ -9,8 +9,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { StickerButtonList } from '../const';
 import styled from 'styled-components';
 import { StyledInputLabelWithButton } from '../input-panel.styled';
-import { Dropdown, Menu } from 'antd';
-import { copyrightMap } from 'src/model';
+import { Checkbox, Dropdown, Menu, Tooltip } from 'antd';
+import { copyrightMap, FlagIndexMap } from 'src/model';
 
 const StyledFooterInputContainer = styled.div`
     display: grid;
@@ -31,9 +31,26 @@ const StyledFooterInputContainer = styled.div`
         padding-right: var(--spacing-sm);
     }
 `;
+const StyledLinkRatingInputContainer = styled(StyledInputLabelWithButton)`
+    .auto-link-rating-input {
+        margin-left: var(--spacing-sm);
+    }
+    .auto-link-rating {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1;
+        text-align: center;
+        padding: var(--spacing-xs);
+        background: var(--main-level-4);
+        border-radius: var(--br-lg);
+        font-family: 'RoGSanSrfStd-Bd';
+        box-shadow: var(--bs-button);
+    }
+`;
 
 export type FooterInputGroupRef = {
-    setValue: (value: { password?: string, creator?: string, atk?: string, def?: string }) => void,
+    setValue: (value: { password?: string, creator?: string, atk?: string, def?: string, linkRating?: string }) => void,
 };
 export type FooterInputGroup = {
     isMonster: boolean,
@@ -46,21 +63,30 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
 }, ref) => {
     const language = useLanguage();
     const {
+        isLink,
+        linkRating,
+        autoLinkRating,
+        showDefAndLink,
         sticker,
         format,
         getUpdater,
     } = useCard(useShallow(({
-        card: { sticker, format },
+        card: { sticker, format, flag, isLink, linkRating, linkMap },
         getUpdater,
     }) => ({
+        linkRating,
+        autoLinkRating: linkMap.length,
+        isLink,
         sticker,
         format,
+        showDefAndLink: flag[FlagIndexMap['showDefAndLink']] === 1,
         getUpdater,
     })));
     const passwordInputRef = useRef<CardTextInputRef>(null);
     const creatorInputRef = useRef<CardTextInputRef>(null);
     const atkInputRef = useRef<CardTextInputRef>(null);
     const defInputRef = useRef<CardTextInputRef>(null);
+    const linkRatingInputRef = useRef<CardTextInputRef>(null);
 
     const copyrightList = (format && copyrightMap[format as keyof typeof copyrightMap])
         ? copyrightMap[format as keyof typeof copyrightMap]
@@ -68,16 +94,18 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
 
     const changeATK = useMemo(() => getUpdater('atk', value => typeof value === 'string' ? value : value), [getUpdater]);
     const changeDEF = useMemo(() => getUpdater('def', value => typeof value === 'string' ? value : value), [getUpdater]);
+    const changeLinkRating = useMemo(() => getUpdater('linkRating', value => typeof value === 'string' ? value : value), [getUpdater]);
     const changePassword = useMemo(() => getUpdater('password', undefined, 'debounce'), [getUpdater]);
     const onStickerChange = useMemo(() => getUpdater('sticker'), [getUpdater]);
     const changeCreator = useMemo(() => getUpdater('creator', undefined, 'debounce'), [getUpdater]);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ password, creator, atk, def }) => {
+        setValue: ({ password, creator, atk, def, linkRating }) => {
             if (typeof atk === 'string') atkInputRef.current?.setValue(atk);
             if (typeof def === 'string') defInputRef.current?.setValue(def);
             if (typeof password === 'string') passwordInputRef.current?.setValue(password);
             if (typeof creator === 'string') creatorInputRef.current?.setValue(creator);
+            if (typeof linkRating === 'string') linkRatingInputRef.current?.setValue(linkRating);
         }
     }));
 
@@ -90,13 +118,40 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
                 onChange={changeATK}
                 onTakePicker={onTakePicker}
             />
-            <CardTextInput ref={defInputRef}
+            {(!isLink || (isLink && showDefAndLink)) && <CardTextInput ref={defInputRef}
                 id="def"
                 addonBefore={language['input.def.label']}
                 defaultValue={useCard.getState().card.def}
                 onChange={changeDEF}
                 onTakePicker={onTakePicker}
-            />
+            />}
+            {(isLink && showDefAndLink) && <div />}
+            {isLink && <CardTextInput ref={linkRatingInputRef}
+                id="link"
+                addonBefore={<StyledLinkRatingInputContainer className="input-label-with-button">
+                    <div className="input-label">{language['input.link.label']}</div>
+                    <Tooltip title={language['input.link.auto.tooltip']}>
+                        <div className="auto-link-rating-input">
+                            {(typeof linkRating === 'string' && linkRating.length > 0)
+                                ? <Checkbox
+                                    onChange={e => {
+                                        if (e.target.checked) {
+                                            changeLinkRating('');
+                                            linkRatingInputRef.current.setValue('');
+                                        }
+                                    }}
+                                />
+                                : <div className="auto-link-rating">
+                                    {isLink ? autoLinkRating : '-'}
+                                </div>}
+                        </div>
+                    </Tooltip>
+                </StyledLinkRatingInputContainer>}
+                defaultValue={`${useCard.getState().card.linkRating}`}
+                onChange={changeLinkRating}
+                onTakePicker={onTakePicker}
+                placeholder={language['input.link.custom.placeholder']}
+            />}
         </>}
         <CardTextInput ref={passwordInputRef}
             id="password"

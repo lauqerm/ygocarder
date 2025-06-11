@@ -1,9 +1,15 @@
 [
     {
-        "version": "v2.3.0 (2025/06/05)",
+        "version": "v2.3.0 (2025/06/11)",
         "logList": [
             {
                 "content": "Various updates on UI. Background button is moved to a more prominent display."
+            },
+            {
+                "content": "Allow custom Link rating."
+            },
+            {
+                "content": "Add new behavior in Advanced Layout: allow displaying both DEF and Link rating of a card if it has both."
             },
             {
                 "content": "Add art finish type 9. Add card finish type 10, 11, 12, 13."

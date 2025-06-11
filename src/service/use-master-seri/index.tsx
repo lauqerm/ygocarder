@@ -120,7 +120,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         typeAbility,
         isPendulum, pendulumFrame, pendulumRightFrame, pendulumEffect, pendulumScaleBlue, pendulumScaleRed, pendulumStyle, pendulumSize,
         leftFrame, rightFrame,
-        atk, def, linkMap,
+        atk, def, linkMap, linkRating,
         attribute,
         cardIcon, subFamily, star, starAlignment,
         setId,
@@ -128,6 +128,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isLegacyCard,
         isFirstEdition, isDuelTerminalCard, isSpeedCard, isLimitedEdition,
         furiganaHelper,
+        flag,
     } = card;
 
     const drawingPipeline = useRef<Record<string, DrawingPipeline>>({
@@ -241,7 +242,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
-    const statInEffect = !!(atk || def) || !!(isPendulum && setId);
+    const [
+        showDefAndLinkFlag,
+    ] = flag;
+    const showDefAndLink = isLink && showDefAndLinkFlag;
+    const statInEffect = !!(atk || def)
+        || !!(isPendulum && setId);
     const typeInEffect = normalizedTypeAbility.length > 0
         ? cardIcon === 'auto'
             ? (isMonster || isSpeedSkill)
@@ -504,7 +510,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (isLink && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
                 if (statInEffect) {
-                    await drawLinkRatingText(frameCanvasRef.current, linkMap ?? [], resolvedStatTextStyle, globalScale);
+                    const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
+                        ? linkRating
+                        : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
+                    await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
                 }
                 resetStyle();
             }
@@ -548,6 +557,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isXyz,
         lightFooter,
         linkMap,
+        linkRating,
         resolvedStatTextStyle,
         resolvedOtherEffectTextStyle,
         finish,
@@ -621,14 +631,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx) || !statInEffect) return;
 
         const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-        drawStatText(ctx, 'ATK', 432.10, 1106, globalScale);
-        drawStat(ctx, atk.trim(), 508.824, 1106.5, globalScale);
-        if (!isLink) {
-            drawStatText(ctx, 'DEF', 600.85, 1106, globalScale);
-            drawStat(ctx, def.trim(), 673.865, 1106.5, globalScale);
+        const leftOffset = showDefAndLink ? 168.75 : 0;
+        drawStatText(ctx, 'ATK', 432.10 - leftOffset, 1106, globalScale);
+        drawStat(ctx, atk.trim(), 508.824 - leftOffset, 1106.5, globalScale);
+        if (!isLink || showDefAndLink) {
+            drawStatText(ctx, 'DEF', 600.85 - leftOffset, 1106, globalScale);
+            drawStat(ctx, def.trim(), 673.865 - leftOffset, 1106.5, globalScale);
         }
         resetStyle();
-    }, [readyToDraw, globalScale, atk, def, isLink, isMonster, resolvedStatTextStyle, statCanvasRef, statInEffect]);
+    }, [readyToDraw, globalScale, atk, def, isLink, isMonster, showDefAndLink, resolvedStatTextStyle, statCanvasRef, statInEffect]);
 
     /** DRAW SET ID */
     useEffect(() => {

@@ -237,13 +237,13 @@ export const drawLimitedEditionMark = async ({
 
 export const drawLinkRatingText = async (
     canvas: HTMLCanvasElement,
-    linkMap: string[],
+    rating: string,
     style: CanvasTextStyle,
     globalScale: number,
 ) => {
     const ctx = canvas.getContext('2d');
 
-    if (!ctx || !Array.isArray(linkMap)) return;
+    if (!ctx || typeof rating !== 'string') return;
 
     await drawWithStyle(
         canvas,
@@ -252,11 +252,14 @@ export const drawLinkRatingText = async (
         globalScale,
         style,
     );
+    const baseline = isNaN(Number(rating))
+        ? 1106
+        : 1105;
     const resetStyle = setTextStyle({ ctx, ...style, globalScale });
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
     ctx.font = `bold ${26.55 * globalScale}px RoGSanSrfStd-Bd`;
-    ctx.fillText(`${linkMap.length}`, 622.75 * globalScale, 1105 * globalScale);
+    ctx.fillText(`${rating}`, 622.75 * globalScale, baseline * globalScale);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';
     resetStyle();

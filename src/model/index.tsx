@@ -5,6 +5,7 @@ import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
 import { v4 as uuid } from 'uuid';
 import { DEFAULT_PENDULUM_SIZE } from './pendulum';
+import { getDefaultCardFlag } from './flag';
 
 export const getDefaultCrop = () => ({
     x: 0,
@@ -63,6 +64,7 @@ export const getDefaultCard = () => ({
         '7',
         '9',
     ] as string[],
+    linkRating: '',
     isLink: false as boolean | null,
     isPendulum: false,
     pendulumFrame: 'auto',
@@ -105,6 +107,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
     otherTextStyle: getDefaultTextStyle(),
+    flag: getDefaultCardFlag(),
     /** Extra information come from different card source such as YGOPro custom card maker */
     externalInfo: {} as Record<string, any>,
 });
@@ -163,6 +166,7 @@ export const getEmptyCard = (): Card => ({
         aspect: 1,
     },
     linkMap: [],
+    linkRating: '',
     isLink: null,
     isPendulum: false,
     pendulumFrame: 'auto',
@@ -201,6 +205,7 @@ export const getEmptyCard = (): Card => ({
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
     otherTextStyle: getDefaultTextStyle(),
+    flag: getDefaultCardFlag(),
     externalInfo: {},
 });
 
@@ -314,6 +319,7 @@ export * from './compatible-card';
 export * from './condense';
 export * from './coordinate-data';
 export * from './dictionary';
+export * from './flag';
 export * from './foil-finish';
 export * from './font-data-effect';
 export * from './font-data-name';

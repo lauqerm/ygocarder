@@ -18,7 +18,7 @@ const FrameLayoutContainer = styled.div`
     grid-template-columns: max-content 1fr;
     column-gap: var(--spacing-sm);
     background-color: var(--main-level-3);
-    padding: var(--spacing-xs);
+    padding: var(--spacing-sm);
     ${StyledPendulumFrameContainer} {
         border: none;
         box-shadow: none;
@@ -210,17 +210,17 @@ export const CardLayoutPreview = ({
     </CardLayoutContainer>;
 };
 
-type FramelayoutPickerRef = {
+type FramelayoutSettingPanelRef = {
     focus: () => void,
 };
-export type FramelayoutPicker = {
+export type FramelayoutSettingPanel = {
     isPendulum: boolean,
     pendulumFrame: string,
     frameList: ReturnType<typeof getFrameButtonList>,
     onFrameChange: (frame: string) => void,
     onCancel: () => void,
 };
-export const FrameLayoutSettingPanel = forwardRef<FramelayoutPickerRef, FramelayoutPicker>(({
+export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, FramelayoutSettingPanel>(({
     frameList,
     onFrameChange,
     onCancel,
@@ -390,3 +390,5 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutPickerRef, Framelay
         </div>
     </FrameLayoutContainer>;
 });
+
+export * from './frame-behavior-setting-panel';

@@ -4,12 +4,12 @@ import { ExtractProps } from 'src/type';
 import styled from 'styled-components';
 import React from 'react';
 
-export const StyledIconButtonContainer = styled.span`
+export const StyledIconButtonContainer = styled.span<{ $freeSize: boolean }>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-left: var(--spacing-xs);
-    width: 24px;
+    ${({ $freeSize }) => $freeSize ? 'padding: 0 var(--spacing-xxs);' : 'width: 24px;'};
     height: 24px;
     border: var(--bw) solid var(--sub-level-1);
     background-color: var(--main-level-4);
@@ -55,6 +55,7 @@ export const IconButton = ({
                 }
             }}
             className={['icon-button', className ?? ''].join(' ')}
+            $freeSize={!Icon}
         >
             <>
                 {Icon && <Icon {...iconProps} />}{children}
