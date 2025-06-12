@@ -13,7 +13,7 @@ import {
     PendulumSizeMapException,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
-import { createCanvas, getCardIconFromFrame, resolveFrameStyle } from 'src/util';
+import { createCanvas, dyeCanvas, getCardIconFromFrame, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 import { getFinishIterator } from '../canvas-util';
@@ -208,8 +208,9 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
 
             /** Combine layer frame here */
-            const { context: topFrameContext, canvas: topFrameCanvas } = createCanvas(cardWidth, cardHeight);
+            const { context: topFrameContext, canvas: topFrameCanvas } = createCanvas();
             await drawAsset(topFrameContext, `frame/frame-${topLeftFrame}.png`, 0, 0);
+            const { canvas: dyedTopFrameCanvas, context: dyedTopFrameContext } = dyeCanvas(topFrameCanvas, '#00aaaa');
             if (topLeftFrame !== topRightFrame) {
                 const topRightCanvas = await applyAlphaMask(
                     `frame/frame-${topRightFrame}.png`,
@@ -217,58 +218,39 @@ export const getLayoutDrawFunction = ({
                     cardWidth,
                     cardHeight,
                 );
-                topFrameContext.drawImage(topRightCanvas, 0, 0);
+                const { canvas: dyedTopRightCanvas } = dyeCanvas(topRightCanvas, '#aa00aa');
+                dyedTopFrameContext.drawImage(dyedTopRightCanvas, 0, 0);
             }
-            const { context: bottomFrameContext, canvas: bottomFrameCanvas } = createCanvas(cardWidth, cardHeight);
+
+            const { context: bottomFrameContext, canvas: bottomFrameCanvas } = createCanvas();
             await drawAsset(bottomFrameContext, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
+            const { canvas: dyedBottomFrameCanvas, context: dyedBottomFrameContext } = dyeCanvas(bottomFrameCanvas, '#aaaa00');
             if (bottomLeftFrame !== bottomRightFrame) {
                 /** What is this?
                  * 
                  * Because the "bottom left" frame is not actually bottom, but both bottom left and bottom right with transparency. If we draw it first, then draw our "bottom right" frame on top of it, it will mixed with the bottom left frame (because both contains transparency), instead of replacing it, create an unintended side effect. Therefore we cut the part that may cause mixing color from the bottom left frame, before drawing the bottom right part.
                  */
-                bottomFrameContext.clearRect(714, 0, 99, cardHeight);
+                dyedBottomFrameContext.clearRect(714, 0, 99, cardHeight);
                 const bottomRightCanvas = await applyAlphaMask(
                     `frame/frame-${bottomRightFrame}.png`,
                     await (bottomRightFrame === topRightFrame ? MaskPromise.right : MaskPromise.bottomRight),
                     cardWidth,
                     cardHeight,
                 );
-                bottomFrameContext.drawImage(bottomRightCanvas, 0, 0);
+                const { canvas: dyedBottomRightCanvas } = dyeCanvas(bottomRightCanvas, '#00aa00');
+                dyedBottomFrameContext.drawImage(dyedBottomRightCanvas, 0, 0);
             }
-
-            const { context: overlayContext, canvas: overlayCanvas } = createCanvas(cardWidth, cardHeight);
 
             ctx.globalAlpha = opacityBody / 100;
             ctx.scale(globalScale, globalScale);
             /** Leave empty space for card art */
             if (isPendulum) {
-                topFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
-                bottomFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedTopFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedBottomFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
             }
-            overlayContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
             /** Start assembling the canvas */
-            overlayContext.fillStyle = '#ff0000';
-            overlayContext.fillRect(0, 0, cardWidth, cardHeight);
-            overlayContext.globalCompositeOperation = 'destination-in';
-            overlayContext.drawImage(topFrameCanvas, 0, 0);
-            ctx.filter = 'grayscale(1)';
-            ctx.drawImage(topFrameCanvas, 0, 0);
-            ctx.filter = 'none';
-            ctx.globalCompositeOperation = 'overlay';
-            ctx.drawImage(overlayCanvas, 0, 0);
-            ctx.globalCompositeOperation = 'source-over';
-
-            overlayContext.globalCompositeOperation = 'source-over';
-            overlayContext.fillStyle = '#00ffff';
-            overlayContext.fillRect(0, 0, cardWidth, cardHeight);
-            overlayContext.globalCompositeOperation = 'destination-in';
-            overlayContext.drawImage(bottomFrameCanvas, 0, 0);
-            ctx.filter = 'grayscale(1)';
-            ctx.drawImage(bottomFrameCanvas, 0, 0);
-            ctx.filter = 'none';
-            ctx.globalCompositeOperation = 'overlay';
-            ctx.drawImage(overlayCanvas, 0, 0);
-            ctx.globalCompositeOperation = 'source-over';
+            ctx.drawImage(dyedTopFrameCanvas, 0, 0);
+            ctx.drawImage(dyedBottomFrameCanvas, 0, 0);
             ctx.resetTransform();
 
             /** Check for background that replace the frame here */
@@ -472,6 +454,10 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             const { context: nameBackgroundContext, canvas: nameBackgroundCanvas } = createCanvas(cardWidth, topToPendulumStructure);
             await drawAsset(nameBackgroundContext, `background/background-name-${topLeftFrame}.png`, 0, 0);
+            const {
+                canvas: dyedLeftNameCanvas,
+                context: dyedLeftNameContext
+            } = dyeCanvas(nameBackgroundCanvas, '#aa0000', cardWidth, topToPendulumStructure);
             if (topLeftFrame !== topRightFrame) {
                 const nameRightCanvas = await applyAlphaMask(
                     `background/background-name-${topRightFrame}.png`,
@@ -479,10 +465,11 @@ export const getLayoutDrawFunction = ({
                     cardWidth,
                     topToPendulumStructure,
                 );
-                nameBackgroundContext.drawImage(nameRightCanvas, 0, 0);
+                const dyedRightNameCanvas = dyeCanvas(nameRightCanvas, '#0000aa', cardWidth, topToPendulumStructure).canvas;
+                dyedLeftNameContext.drawImage(dyedRightNameCanvas, 0, 0);
             }
             ctx.globalAlpha = opacityName / 100;
-            ctx.drawImage(nameBackgroundCanvas, 0, 0);
+            ctx.drawImage(dyedLeftNameCanvas, 0, 0);
             ctx.globalAlpha = 1;
             ctx.resetTransform();
         },
@@ -491,11 +478,11 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
 
             ctx.scale(globalScale, globalScale);
-            ctx.globalAlpha = opacityText / 100;
 
+            const { context: effectBackgroundContext, canvas: effectBackgroundCanvas } = createCanvas();
             if (withPendulum) {
                 await drawAssetWithSize(
-                    ctx,
+                    effectBackgroundContext,
                     `background/background-text-${resolvedEffectBackground}.png`,
                     backgroundEffectBoxX, backgroundEffectBoxY + effectBoxOffsetY,
                     backgroundEffectBoxWidth, backgroundEffectBoxHeight,
@@ -504,25 +491,32 @@ export const getLayoutDrawFunction = ({
                 );
             } else {
                 await drawAsset(
-                    ctx,
+                    effectBackgroundContext,
                     `background/background-text-${resolvedEffectBackground}.png`,
                     backgroundEffectBoxX, backgroundEffectBoxY,
                 );
             }
+            const dyedEffectBackgroundCanvas = dyeCanvas(effectBackgroundCanvas, '#aaffaa').canvas;
+            ctx.globalAlpha = opacityText / 100;
+            ctx.drawImage(dyedEffectBackgroundCanvas, 0, 0);
+
             if (withPendulum) {
-                ctx.globalAlpha = opacityPendulum / 100;
+                const { context: pendulumEffectBackgroundContext, canvas: pendulumEffectBackgroundCanvas } = createCanvas();
                 const {
                     exceptionFrameType = frameType,
                     exceptionPendulumBoxOffsetHeight = 0,
                 } = PendulumSizeMapException[pendulumSize][resolvedPendulumEffectBackground] ?? {};
                 await drawAssetWithSize(
-                    ctx,
+                    pendulumEffectBackgroundContext,
                     `background/background-${exceptionFrameType}-${resolvedPendulumEffectBackground}.png`,
                     pendulumBoxX, pendulumBoxY + pendulumBoxOffsetY,
                     pendulumBoxWidth, pendulumBoxHeight,
                     0, pendulumBoxOffsetY + exceptionPendulumBoxOffsetHeight,
                     pendulumBoxWidth, pendulumBoxHeight + exceptionPendulumBoxOffsetHeight,
                 );
+                const dyedPendulumEffectBackgroundCanvas = dyeCanvas(pendulumEffectBackgroundCanvas, '#ffaaff').canvas;
+                ctx.globalAlpha = opacityPendulum / 100;
+                ctx.drawImage(dyedPendulumEffectBackgroundCanvas, 0, 0);
             }
             ctx.globalAlpha = 1;
             ctx.resetTransform();
@@ -567,10 +561,7 @@ export const getLayoutDrawFunction = ({
         drawPendulumBorder: async (artBorder: boolean, foilType: Foil) => {
             if (!ctx) return;
             /** We create a new canvas for easier manipulation. */
-            const {
-                canvas: pendulumBorderCanvas,
-                context: pendulumBorderContext,
-            } = createCanvas(cardWidth, cardHeight);
+            const { canvas: pendulumBorderCanvas, context: pendulumBorderContext } = createCanvas();
             await drawAssetWithSize(
                 pendulumBorderContext,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
