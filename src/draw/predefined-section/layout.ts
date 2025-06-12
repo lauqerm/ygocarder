@@ -236,6 +236,8 @@ export const getLayoutDrawFunction = ({
                 bottomFrameContext.drawImage(bottomRightCanvas, 0, 0);
             }
 
+            const { context: overlayContext, canvas: overlayCanvas } = createCanvas(cardWidth, cardHeight);
+
             ctx.globalAlpha = opacityBody / 100;
             ctx.scale(globalScale, globalScale);
             /** Leave empty space for card art */
@@ -243,9 +245,33 @@ export const getLayoutDrawFunction = ({
                 topFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
                 bottomFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
             }
+            overlayContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+            /** Start assembling the canvas */
+            overlayContext.fillStyle = '#ff0000';
+            overlayContext.fillRect(0, 0, cardWidth, cardHeight);
+            overlayContext.globalCompositeOperation = 'destination-in';
+            overlayContext.drawImage(topFrameCanvas, 0, 0);
+            ctx.filter = 'grayscale(1)';
             ctx.drawImage(topFrameCanvas, 0, 0);
+            ctx.filter = 'none';
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.drawImage(overlayCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+
+            overlayContext.globalCompositeOperation = 'source-over';
+            overlayContext.fillStyle = '#00ffff';
+            overlayContext.fillRect(0, 0, cardWidth, cardHeight);
+            overlayContext.globalCompositeOperation = 'destination-in';
+            overlayContext.drawImage(bottomFrameCanvas, 0, 0);
+            ctx.filter = 'grayscale(1)';
             ctx.drawImage(bottomFrameCanvas, 0, 0);
+            ctx.filter = 'none';
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.drawImage(overlayCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
             ctx.resetTransform();
+
+            /** Check for background that replace the frame here */
             if (!hasBackground || !backgroundCanvas || backgroundType !== 'frame') {
                 ctx.globalAlpha = 1;
                 return;
@@ -253,7 +279,6 @@ export const getLayoutDrawFunction = ({
 
             const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
             const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
-
             const clonedCanvasContext = clonedCanvas?.getContext('2d');
             if (!clonedCanvas || !clonedCanvasContext) {
                 ctx.globalAlpha = 1;
