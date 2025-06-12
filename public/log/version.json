@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.3.1 (2025/06/12)",
+        "logList": [
+            {
+                "content": "New behavior in Advanced Layout: allow always show / hidden link rating."
+            },
+            {
+                "content": "ATK and DEF now disappear entirely (even the label) if their values are empty."
+            }
+        ]
+    },
+    {
         "version": "v2.3.0 (2025/06/11)",
         "logList": [
             {

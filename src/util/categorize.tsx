@@ -1,4 +1,14 @@
-import { Card, Foil, frameList, NameStyle, NameStyleType, PresetNameStyleMap } from '../model';
+import {
+    Card,
+    Foil,
+    frameList,
+    LINK_RATING_ALWAYS_AUTO,
+    LINK_RATING_ALWAYS_HIDE,
+    LINK_RATING_ALWAYS_SHOW,
+    NameStyle,
+    NameStyleType,
+    PresetNameStyleMap,
+} from '../model';
 
 export const checkNormal = (card: Pick<Card, 'frame'>) => {
     return card.frame === 'normal' && checkMonster(card);
@@ -50,6 +60,17 @@ export const checkLightFooter = (frame: string) => {
 
 export const checkLightFrame = (frame: string) => {
     return ['link'].includes(frame) || checkLightFooter(frame);
+};
+
+export const checkDiplayLinkRating = (displayMode: number, isLink: boolean) => {
+    let showLinkRating = false;
+    switch (displayMode) {
+        case LINK_RATING_ALWAYS_SHOW: showLinkRating = true; break;
+        case LINK_RATING_ALWAYS_HIDE: showLinkRating = false; break;
+        case LINK_RATING_ALWAYS_AUTO: showLinkRating = isLink; break;
+    }
+
+    return showLinkRating;
 };
 
 export const resolveFrameStyle = (frameData: Record<string, string | undefined>, isPendulum: boolean) => {

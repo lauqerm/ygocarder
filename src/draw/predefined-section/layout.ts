@@ -425,12 +425,6 @@ export const getLayoutDrawFunction = ({
             ctx.drawImage(pendulumIconCanvas, 0, 750);
             ctx.resetTransform();
         },
-        /** Individual arrows has two state (active/inactive) and two different parts (base and core) */
-        drawLinkArrowMap: async (linkMap: string[], positionType: keyof typeof ArrowPositionMap) => {
-            const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-
-            return await baseDrawLinkArrowMap(ctx, globalScale, linkMap, positionType, boundless || !hasArtBorder);
-        },
         drawStatBorder: async (style: CanvasTextStyle) => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
@@ -627,9 +621,6 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
             ctx.resetTransform();
-        },
-        drawLinkMapFoil: async (withBorder = artBorder, positionType: keyof typeof ArrowPositionMap) => {
-            return baseDrawLinkMapFoil(ctx, globalScale, foil, withBorder, positionType);
         },
 
         /** @summary FINISH section */

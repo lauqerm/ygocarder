@@ -1,6 +1,12 @@
 import { Checkbox } from 'antd';
 import { RadioTrain } from 'src/component';
-import { CardFlag, FlagInfoList } from 'src/model';
+import {
+    CardFlag,
+    FlagInfoList,
+    LINK_RATING_ALWAYS_AUTO,
+    LINK_RATING_ALWAYS_HIDE,
+    LINK_RATING_ALWAYS_SHOW,
+} from 'src/model';
 import { useCard, useLanguage } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -77,9 +83,9 @@ export const FrameBehaviorSettingPanel = () => {
                     className="link-rating-behavior-panel"
                     onChange={(value) => updateFlag(Number(value), index)}
                     optionList={[
-                        { label: language['input.flag.link-rating-behavior.auto'], value: 0 },
-                        { label: language['input.flag.link-rating-behavior.show'], value: 1 },
-                        { label: language['input.flag.link-rating-behavior.hide'], value: 2 },
+                        { label: language['input.flag.link-rating-behavior.auto'], value: LINK_RATING_ALWAYS_AUTO },
+                        { label: language['input.flag.link-rating-behavior.show'], value: LINK_RATING_ALWAYS_SHOW },
+                        { label: language['input.flag.link-rating-behavior.hide'], value: LINK_RATING_ALWAYS_HIDE },
                     ]}
                     value={entry}
                     suffix={<label>

@@ -43,6 +43,7 @@ import {
     HALF_SCALE_WIDTH_OFFSET,
 } from 'src/model';
 import {
+    checkDiplayLinkRating,
     checkLightFooter,
     checkLightHeader,
     checkLink,
@@ -244,10 +245,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
     const [
         showDefAndLinkFlag,
+        linkRatingDisplayMode,
     ] = flag;
-    const showDefAndLink = isLink && showDefAndLinkFlag;
+
+    /** One special case where we do not show link rating */
+    const isLinkST = !isPendulum && !isMonster && isLink && !(atk || def);
+    const showLinkRating = checkDiplayLinkRating(linkRatingDisplayMode, isLink) && !isLinkST;
+    const showDefAndLink = showLinkRating && showDefAndLinkFlag;
     const statInEffect = !!(atk || def)
-        || !!linkRating
+        || showLinkRating
         || !!(isPendulum && setId);
     const typeInEffect = normalizedTypeAbility.length > 0
         ? cardIcon === 'auto'
@@ -316,7 +322,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawBackground,
                 drawCardArt,
                 drawFrame,
-                drawLinkArrowMap,
                 drawPendulumScaleIcon,
                 drawStar,
 
@@ -335,7 +340,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawAttributeFinish,
                 drawArtBorderFoil,
                 drawEffectBorderFoil,
-                drawLinkMapFoil,
 
                 drawNameFinish,
                 drawArtFinish,
@@ -502,20 +506,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
             await drawFrameBorder();
-            /** If we combine both link map and pendulum frame, link markers will be pushed outward and overlay on top of the card frame, so they will be drawn in other useEffect. */
-            if (isLink && !isPendulum) {
-                await drawLinkArrowMap(linkMap, isPendulum ? 'pendulum' : 'normal');
-                await drawLinkMapFoil(false, isPendulum ? 'pendulum' : 'normal');
-            }
             
-            if (isLink && statInEffect) {
+            if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
-                if (statInEffect) {
-                    const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
-                        ? linkRating
-                        : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
-                    await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
-                }
+                const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
+                    ? linkRating
+                    : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
+                await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
                 resetStyle();
             }
             await drawPredefinedMark({
@@ -559,6 +556,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         lightFooter,
         linkMap,
         linkRating,
+        showLinkRating,
         resolvedStatTextStyle,
         resolvedOtherEffectTextStyle,
         finish,
@@ -633,22 +631,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
         // const hasAtk = !!atk;
-        const hasDef = isLink
+        const hasDef = showLinkRating
             ? !!def && showDefAndLink
             : !!def;
-        const hasLink = isLink;
+        const hasLink = showLinkRating;
         if (atk) {
             const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0);
             drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5, globalScale);
         }
-        if (def && (!isLink || showDefAndLink)) {
+        if (def && (!showLinkRating || showDefAndLink)) {
             const offset = hasLink ? 168.75 : 0;
             drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, def.trim(), 673.865 - offset, 1106.5, globalScale);
         }
         resetStyle();
-    }, [readyToDraw, globalScale, atk, def, isLink, isMonster, showDefAndLink, resolvedStatTextStyle, statCanvasRef, statInEffect]);
+    }, [readyToDraw, globalScale, atk, def, showLinkRating, isMonster, showDefAndLink, resolvedStatTextStyle, statCanvasRef, statInEffect]);
 
     /** DRAW SET ID */
     useEffect(() => {
@@ -1020,7 +1018,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
 
-            if (isLink && isPendulum) {
+            if (isLink) {
                 const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
                 const {
                     artBorder: keepArtBorder,
@@ -1028,7 +1026,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     boundless,
                 } = normalizedOpacity;
                 const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-
                 await baseDrawLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
                 await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal');
             }

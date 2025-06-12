@@ -72,8 +72,8 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
             const nextPassword = nextFrame === 'token'
                 ? passwordSentenceMap[format]
                 : password;
-            const nextAtk = willRemoveStat ? '' : atk;
-            const nextDef = willRemoveStat ? '' : def;
+            const nextAtk = willRemoveStat ? '' : (atk === '' ? '0' : atk);
+            const nextDef = willRemoveStat ? '' : (def === '' ? '0' : def);
             const nextLinkRating = willRemoveStat ? '' : linkRating;
             const nextStar = nextFrame === 'token'
                 ? 0
@@ -83,9 +83,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
             if (willBecomeST) {
                 onSTFrameChange(nextTypeAbility);
             }
-            if (willRemoveStat) {
-                onStatChange(nextAtk, nextDef, nextLinkRating);
-            }
+            onStatChange(nextAtk, nextDef, nextLinkRating);
 
             return {
                 ...currentCard,

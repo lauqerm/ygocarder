@@ -252,7 +252,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const flagList = flag
         .map((entry, index) => {
             if (entry !== 0) return <li key={FlagInfoList[index].labelKey}>
-                {language[FlagInfoList[index].labelKey]}
+                {FlagInfoList[index].displayKey(language, entry)}
             </li>;
             return null;
         })

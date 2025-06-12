@@ -3,7 +3,7 @@ import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { IconButton, RadioTrain } from 'src/component';
 import { CardCheckboxGroup } from '../input-checkbox-group';
-import { randomPassword } from 'src/util';
+import { checkDiplayLinkRating, randomPassword } from 'src/util';
 import { SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useShallow } from 'zustand/react/shallow';
 import { StickerButtonList } from '../const';
@@ -67,6 +67,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         linkRating,
         autoLinkRating,
         showDefAndLink,
+        linkRatingDisplayMode,
         sticker,
         format,
         getUpdater,
@@ -80,6 +81,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         sticker,
         format,
         showDefAndLink: flag[FlagIndexMap['showDefAndLink']] === 1,
+        linkRatingDisplayMode: flag[FlagIndexMap['linkRating']],
         getUpdater,
     })));
     const passwordInputRef = useRef<CardTextInputRef>(null);
@@ -88,6 +90,12 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     const defInputRef = useRef<CardTextInputRef>(null);
     const linkRatingInputRef = useRef<CardTextInputRef>(null);
 
+    const showAtkInput = true;
+    const showLinkInput = checkDiplayLinkRating(linkRatingDisplayMode, isLink);
+    const showDefInput = showLinkInput
+        ? showDefAndLink
+        : true;
+    const showPadding = [showAtkInput, showDefInput, showLinkInput].filter(entry => entry === true).length % 2 === 1;
     const copyrightList = (format && copyrightMap[format as keyof typeof copyrightMap])
         ? copyrightMap[format as keyof typeof copyrightMap]
         : copyrightMap.tcg;
@@ -111,22 +119,22 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
 
     return <StyledFooterInputContainer className="card-footer-input">
         {(isMonster || showCreativeOption) && <>
-            <CardTextInput ref={atkInputRef}
+            {showAtkInput && <CardTextInput ref={atkInputRef}
                 id="atk"
                 addonBefore={language['input.atk.label']}
                 defaultValue={useCard.getState().card.atk}
                 onChange={changeATK}
                 onTakePicker={onTakePicker}
-            />
-            {(!isLink || (isLink && showDefAndLink)) && <CardTextInput ref={defInputRef}
+            />}
+            {showDefInput && <CardTextInput ref={defInputRef}
                 id="def"
                 addonBefore={language['input.def.label']}
                 defaultValue={useCard.getState().card.def}
                 onChange={changeDEF}
                 onTakePicker={onTakePicker}
             />}
-            {(isLink && showDefAndLink) && <div />}
-            {isLink && <CardTextInput ref={linkRatingInputRef}
+            {showPadding && <div />}
+            {showLinkInput && <CardTextInput ref={linkRatingInputRef}
                 id="link"
                 addonBefore={<StyledLinkRatingInputContainer className="input-label-with-button">
                     <div className="input-label">{language['input.link.label']}</div>

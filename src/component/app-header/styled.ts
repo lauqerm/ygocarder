@@ -68,6 +68,7 @@ export const QuoteContainer = styled.div`
     }
     .answer {
         margin: var(--spacing) 0;
+        margin-bottom: var(--spacing-lg);
     }
     &:last-child {
         .answer {
