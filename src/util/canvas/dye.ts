@@ -1,5 +1,6 @@
 import { CanvasConst } from 'src/model';
 import { createCanvas } from './create';
+import { HexColorRegex } from '..';
 
 const {
     width: cardWidth,
@@ -7,6 +8,11 @@ const {
 } = CanvasConst;
 export const dyeCanvas = (baseCanvas: HTMLCanvasElement, color: string, width = cardWidth, height = cardHeight) => {
     const { context: overlayContext, canvas: overlayCanvas } = createCanvas(width, height);
+
+    if (!HexColorRegex.test(color)) return {
+        canvas: baseCanvas,
+        context: baseCanvas.getContext('2d'),
+    };
 
     /** Draw the target image with grayscale */
     overlayContext.filter = 'grayscale(1)';

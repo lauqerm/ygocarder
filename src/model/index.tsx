@@ -1,5 +1,5 @@
 import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
-import { Foil, OtherFinish } from './foil-finish';
+import { Foil, getDefaultDyeList, OtherFinish } from './foil-finish';
 import { CondenseType } from './condense';
 import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
@@ -108,6 +108,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     pendulumTextStyle: getDefaultTextStyle(),
     otherTextStyle: getDefaultTextStyle(),
     flag: getDefaultCardFlag(),
+    dyeList: getDefaultDyeList(),
     /** Extra information come from different card source such as YGOPro custom card maker */
     externalInfo: {} as Record<string, any>,
 });
@@ -205,6 +206,7 @@ export const getEmptyCard = (): Card => ({
     effectTextStyle: getDefaultTextStyle(),
     pendulumTextStyle: getDefaultTextStyle(),
     otherTextStyle: getDefaultTextStyle(),
+    dyeList: getDefaultDyeList(),
     flag: getDefaultCardFlag(),
     externalInfo: {},
 });

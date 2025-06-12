@@ -8,10 +8,12 @@ import {
     FLAG_LENGTH,
     Foil,
     FoilNameMap,
+    FrameDyeList,
     getArtCanvasCoordinate,
     getDefaultCardFlag,
     getDefaultCardOpacity,
     getDefaultCrop,
+    getDefaultDyeList,
     getDefaultNameStyle,
     getDefaultTextStyle,
     getEmptyCard,
@@ -151,6 +153,7 @@ const CsvStandardFieldList = [
     'Left Frame',
     'Right Frame',
     'Bottom Right Frame',
+    'Dye List',
     'Flag',
     'External Info (JSON)',
 ] as const;
@@ -272,9 +275,11 @@ export const cardListToCsv = (cardList: Card[]) => {
             subFamily,
             typeAbility,
             typeTextStyle,
+            dyeList,
         } = cardList[cnt];
         const stringifedExternalInfo = JSON.stringify(externalInfo);
         const stringifedFlag = flag.join('|');
+        const stringifedDyeList = dyeList.join('|');
 
         write('Format', format);
         write('Frame', frame);
@@ -397,6 +402,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
+        write('Dye List', stringifedDyeList);
         write('Flag', stringifedFlag);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
@@ -684,6 +690,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     return entry;
                 }) as CardFlag;
 
+                const baseDyeList = reader('Dye List').split('|').map(String).slice(0, FLAG_LENGTH) as FrameDyeList;
+                const dyeList = getDefaultDyeList().map((entry, index) => {
+                    if (typeof baseDyeList[index] === 'string') return baseDyeList[index];
+                    return entry;
+                }) as FrameDyeList;
+
                 return {
                     id: uuid(),
                     ...emptyCard,
@@ -703,6 +715,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     condenseTolerant,
                     creator,
                     def,
+                    dyeList,
                     effect,
                     effectStyle: { condenseTolerant, upSize: effectUpSize, fontStyle: effectFontStyle, background: effectBackground },
                     effectTextStyle,

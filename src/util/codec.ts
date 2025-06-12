@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, Card, CardFlag, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { ART_FINISH_TYPE, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -129,6 +129,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     statTextStyle: 'sts',
     typeTextStyle: 'tts',
     otherTextStyle: 'ots',
+    dyeList: 'dl',
     flag: 'fl',
     externalInfo: 'ei',
 };
@@ -358,6 +359,16 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
             if (typeof currentFlagList[index] === 'number') return currentFlagList[index];
             return entry;
         }) as CardFlag;
+    }
+
+    const defaultDyeList = getDefaultDyeList();
+    if (!Array.isArray(migratedCard.dyeList)) migratedCard.dyeList = defaultDyeList;
+    else if (migratedCard.dyeList.length < defaultDyeList.length) {
+        const currentDyeList = [...migratedCard.dyeList];
+        migratedCard.dyeList = defaultDyeList.map((entry, index) => {
+            if (typeof currentDyeList[index] === 'string') return currentDyeList[index];
+            return entry;
+        }) as FrameDyeList;
     }
 
     if (migratedCard.version === 0 || migratedCard.version === 1) {

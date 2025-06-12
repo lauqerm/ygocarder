@@ -300,3 +300,14 @@ export const getFoilList = (dictionary?: FoilDictionary) => [
     },
 ];
 export type Foil = ReturnType<typeof getFoilList>[0]['name'];
+
+export type FrameDyeList = [
+    topLeft: string,
+    topRight: string,
+    bottomLeft: string,
+    bottomRight: string,
+    effect: string,
+    pendulumEffect: string,
+];
+export const getDefaultDyeList = () => ['#ff0000', '#00ff00', '#ff0000', '#00ff00', '#0000ff', '#0000ff'] as FrameDyeList;
+console.log(getDefaultDyeList());

@@ -5,6 +5,7 @@ import {
     CanvasConst,
     CardOpacity,
     Foil,
+    FrameDyeList,
     getArtCanvasCoordinate,
     NO_ATTRIBUTE,
     OtherFinish,
@@ -96,6 +97,7 @@ export const getLayoutDrawFunction = ({
     format,
     hasBackground,
     frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
+    dyeList,
     effectBackground, pendulumEffectBackground,
     backgroundType,
     cardIcon,
@@ -117,6 +119,7 @@ export const getLayoutDrawFunction = ({
     globalScale: number,
     format: string,
     frame: string, leftFrame: string, pendulumFrame: string, rightFrame: string, pendulumRightFrame: string,
+    dyeList: FrameDyeList,
     effectBackground: string, pendulumEffectBackground: string,
     hasBackground: boolean,
     backgroundType: BackgroundType,
@@ -210,22 +213,22 @@ export const getLayoutDrawFunction = ({
             /** Combine layer frame here */
             const { context: topFrameContext, canvas: topFrameCanvas } = createCanvas();
             await drawAsset(topFrameContext, `frame/frame-${topLeftFrame}.png`, 0, 0);
-            const { canvas: dyedTopFrameCanvas, context: dyedTopFrameContext } = dyeCanvas(topFrameCanvas, '#00aaaa');
-            if (topLeftFrame !== topRightFrame) {
+            const { canvas: dyedTopFrameCanvas, context: dyedTopFrameContext } = dyeCanvas(topFrameCanvas, dyeList[0]);
+            if (topLeftFrame !== topRightFrame || dyeList[1] !== '') {
                 const topRightCanvas = await applyAlphaMask(
                     `frame/frame-${topRightFrame}.png`,
                     await MaskPromise.topRight,
                     cardWidth,
                     cardHeight,
                 );
-                const { canvas: dyedTopRightCanvas } = dyeCanvas(topRightCanvas, '#aa00aa');
+                const { canvas: dyedTopRightCanvas } = dyeCanvas(topRightCanvas, dyeList[1]);
                 dyedTopFrameContext.drawImage(dyedTopRightCanvas, 0, 0);
             }
 
             const { context: bottomFrameContext, canvas: bottomFrameCanvas } = createCanvas();
             await drawAsset(bottomFrameContext, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
-            const { canvas: dyedBottomFrameCanvas, context: dyedBottomFrameContext } = dyeCanvas(bottomFrameCanvas, '#aaaa00');
-            if (bottomLeftFrame !== bottomRightFrame) {
+            const { canvas: dyedBottomFrameCanvas, context: dyedBottomFrameContext } = dyeCanvas(bottomFrameCanvas, dyeList[2]);
+            if (bottomLeftFrame !== bottomRightFrame || dyeList[3] !== '') {
                 /** What is this?
                  * 
                  * Because the "bottom left" frame is not actually bottom, but both bottom left and bottom right with transparency. If we draw it first, then draw our "bottom right" frame on top of it, it will mixed with the bottom left frame (because both contains transparency), instead of replacing it, create an unintended side effect. Therefore we cut the part that may cause mixing color from the bottom left frame, before drawing the bottom right part.
@@ -237,7 +240,7 @@ export const getLayoutDrawFunction = ({
                     cardWidth,
                     cardHeight,
                 );
-                const { canvas: dyedBottomRightCanvas } = dyeCanvas(bottomRightCanvas, '#00aa00');
+                const { canvas: dyedBottomRightCanvas } = dyeCanvas(bottomRightCanvas, dyeList[3]);
                 dyedBottomFrameContext.drawImage(dyedBottomRightCanvas, 0, 0);
             }
 
@@ -457,15 +460,15 @@ export const getLayoutDrawFunction = ({
             const {
                 canvas: dyedLeftNameCanvas,
                 context: dyedLeftNameContext
-            } = dyeCanvas(nameBackgroundCanvas, '#aa0000', cardWidth, topToPendulumStructure);
-            if (topLeftFrame !== topRightFrame) {
+            } = dyeCanvas(nameBackgroundCanvas, dyeList[0]);
+            if (topLeftFrame !== topRightFrame || dyeList[1] !== '') {
                 const nameRightCanvas = await applyAlphaMask(
                     `background/background-name-${topRightFrame}.png`,
                     await MaskPromise.name,
                     cardWidth,
                     topToPendulumStructure,
                 );
-                const dyedRightNameCanvas = dyeCanvas(nameRightCanvas, '#0000aa', cardWidth, topToPendulumStructure).canvas;
+                const dyedRightNameCanvas = dyeCanvas(nameRightCanvas, dyeList[1]).canvas;
                 dyedLeftNameContext.drawImage(dyedRightNameCanvas, 0, 0);
             }
             ctx.globalAlpha = opacityName / 100;
@@ -496,7 +499,7 @@ export const getLayoutDrawFunction = ({
                     backgroundEffectBoxX, backgroundEffectBoxY,
                 );
             }
-            const dyedEffectBackgroundCanvas = dyeCanvas(effectBackgroundCanvas, '#aaffaa').canvas;
+            const dyedEffectBackgroundCanvas = dyeCanvas(effectBackgroundCanvas, dyeList[4]).canvas;
             ctx.globalAlpha = opacityText / 100;
             ctx.drawImage(dyedEffectBackgroundCanvas, 0, 0);
 
@@ -514,7 +517,7 @@ export const getLayoutDrawFunction = ({
                     0, pendulumBoxOffsetY + exceptionPendulumBoxOffsetHeight,
                     pendulumBoxWidth, pendulumBoxHeight + exceptionPendulumBoxOffsetHeight,
                 );
-                const dyedPendulumEffectBackgroundCanvas = dyeCanvas(pendulumEffectBackgroundCanvas, '#ffaaff').canvas;
+                const dyedPendulumEffectBackgroundCanvas = dyeCanvas(pendulumEffectBackgroundCanvas, dyeList[5]).canvas;
                 ctx.globalAlpha = opacityPendulum / 100;
                 ctx.drawImage(dyedPendulumEffectBackgroundCanvas, 0, 0);
             }
