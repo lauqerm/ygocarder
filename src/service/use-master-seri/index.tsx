@@ -383,7 +383,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             /** artOnCard canvas ensure the art is drawn correct size and position on the actual card, overlay for art is applied here */
             const {
                 canvas: artOnCardCanvas,
-                context: artOnCardCtx,
+                ctx: artOnCardCtx,
             } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
             if (artworkCanvas && artOnCardCtx) drawCardArt(artOnCardCtx);
             await drawArtFinish(artOnCardCtx);
@@ -392,7 +392,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             /** Combine background and artwork together, overlay for background is applied here */
             const {
                 canvas: combinedArtCanvas,
-                context: combinedArtCtx,
+                ctx: combinedArtCtx,
             } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
             await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
             if (backgroundCanvas && combinedArtCtx) await drawBackground(combinedArtCtx, hasArtBorder);
@@ -825,7 +825,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!clearCanvas(ctx)) return;
             const {
                 canvas: stickerCanvas,
-                context: stickerContext,
+                ctx: stickerContext,
             } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
             await drawSticker({
                 ctx: stickerContext,
@@ -839,7 +839,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const loopStickerFinish = getFinishIterator([normalizedStickerFinish], ArtFinishMap);
                 const {
                     canvas: stickerFinishCanvas,
-                    context: stickerFinishContext,
+                    ctx: stickerFinishContext,
                 } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
                 stickerFinishContext.drawImage(stickerCanvas, 0, 0);
                 stickerFinishContext.scale(globalScale, globalScale);

@@ -77,15 +77,15 @@ export const applyAlphaMask = async (
     width: number,
     height: number,
 ) => {
-    const { context, canvas } = createCanvas(width, height);
-    if (typeof urlOrCanvas === 'string') await drawAsset(context, urlOrCanvas, 0, 0);
-    else context.drawImage(urlOrCanvas, 0, 0, width, height);
-    const layerData = context.getImageData(0, 0, width, height).data;
+    const { ctx, canvas } = createCanvas(width, height);
+    if (typeof urlOrCanvas === 'string') await drawAsset(ctx, urlOrCanvas, 0, 0);
+    else ctx.drawImage(urlOrCanvas, 0, 0, width, height);
+    const layerData = ctx.getImageData(0, 0, width, height).data;
     for (let cnt = 0; cnt < layerData.length; cnt += 4) {
         layerData[cnt + 3] = maskData[cnt + 3];
     }
 
-    context.putImageData(new ImageData(layerData, width, height), 0, 0);
+    ctx.putImageData(new ImageData(layerData, width, height), 0, 0);
 
     return canvas;
 };

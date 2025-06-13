@@ -50,7 +50,7 @@ export const EffectCoordinateData: Record<string, CoordinateData[]> = {
         { trueWidth: 684, trueBaseline: 921.23, trueEdge: 64.8, trueHeightCap: 144 },
     ],
     'ocg-pendulumLarge-type-stat': [
-        { trueWidth: 684, trueBaseline: 948.5, trueEdge: 64.5, trueHeightCap: 118 },
+        { trueWidth: 684, trueBaseline: 951.5, trueEdge: 64.5, trueHeightCap: 118 },
     ],
     'ocg-pendulumLarge-type': [
         { trueWidth: 684, trueBaseline: 948.5, trueEdge: 64.5, trueHeightCap: 144 },

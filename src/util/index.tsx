@@ -1,74 +1,5 @@
-export const randomCharacter = (charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', length = 1) => {
-    let result = '';
-    const charactersLength = charSet.length;
-    for (let i = 0; i < length; i++) {
-        result += charSet.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-};
-
-export const randomSetID = (format: string) => {
-    return randomCharacter('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4)
-        + '-'
-        + (format === 'OCG' ? 'JP' : 'EN')
-        /** Most set does not reach 200+ index, so 0, 1 and 2 has significantly higher chance to roll */
-        + randomCharacter('0000000000111111111122222222223456789', 1)
-        + randomCharacter('0123456789', 2);
-};
-
-export const randomPassword = () => {
-    return `${randomCharacter('0123456789', 8)}`;
-};
-
-export const nextChar = (c: string) => {
-    return String.fromCharCode(c.charCodeAt(0) + 1);
-};
-
-export function insertUrlParam(key: string, value: string) {
-    if (window.history.pushState) {
-        let searchParams = new URLSearchParams(window.location.search);
-        searchParams.set(key, value);
-        let newurl = window.location.protocol
-            + '//'
-            + window.location.host
-            + window.location.pathname
-            + '?'
-            + searchParams.toString();
-        window.history.pushState({ path: newurl }, '', newurl);
-    }
-};
-
 export const forceRefocus = (selector = '.radio-train-input-group') => {
     document.querySelector<HTMLElement>(selector)?.focus();
-};
-
-export const HexColorRegex = /^#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?$/;
-export const hexToRGBA = (hex: string, withAlpha = true) => {
-    try {
-        const pureHex = hex.replace('#', '');
-        let rgbaList = [0, 0, 0, 1];
-
-        if (pureHex.length === 3 || pureHex.length === 4) {
-            rgbaList = [
-                parseInt(`${pureHex[0]}${pureHex[0]}`, 16),
-                parseInt(`${pureHex[1]}${pureHex[1]}`, 16),
-                parseInt(`${pureHex[2]}${pureHex[2]}`, 16),
-                parseInt(`${pureHex[3] ?? 'f'}${pureHex[3] ?? 'f'}`, 16),
-            ];
-        }
-        if (pureHex.length === 6 || pureHex.length === 8) {
-            rgbaList = [
-                parseInt(pureHex.slice(0, 2), 16),
-                parseInt(pureHex.slice(2, 4), 16),
-                parseInt(pureHex.slice(4, 6), 16),
-                parseInt(pureHex.slice(6, 8) ?? 'ff', 16),
-            ];
-        }
-
-        return rgbaList.map(entry => isNaN(entry) ? 255 : entry).slice(0, withAlpha ? 4 : 3);
-    } catch (e) {
-        return [0, 0, 0, 1].slice(0, withAlpha ? 4 : 3);
-    }
 };
 
 /** Seriously, what the hell? */
@@ -90,6 +21,7 @@ export * from './categorize';
 export * from './codec';
 export * from './codec-other-vendor';
 export * from './codec-ygoprodeck';
+export * from './color';
 export * from './condenser';
 export * from './font';
 export * from './gradient';

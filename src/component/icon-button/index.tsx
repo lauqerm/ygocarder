@@ -4,25 +4,36 @@ import { ExtractProps } from 'src/type';
 import styled from 'styled-components';
 import React from 'react';
 
-export const StyledIconButtonContainer = styled.span<{ $freeSize: boolean }>`
+export const StyledIconButtonContainer = styled.span<{ $freeSize: boolean, $size: 'sm' | 'md' }>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-left: var(--spacing-xs);
-    ${({ $freeSize }) => $freeSize ? 'padding: 0 var(--spacing-xxs);' : 'width: 24px;'};
-    height: 24px;
+    ${({ $freeSize, $size }) => $freeSize
+        ? 'padding: 0 var(--spacing-xxs);'
+        : $size === 'sm' ? 'width: 18px;' : 'width: 24px;'
+    };
+    ${({ $size }) => $size === 'sm'
+        ? `
+            height: 18px;
+            font-size: var(--fs-sm);
+        `
+        : `
+            height: 24px;
+            font-size: var(--fs);
+        `}
     border: var(--bw) solid var(--sub-level-1);
     background-color: var(--main-level-4);
     border-radius: var(--br-lg);
     box-shadow: var(--bs-button);
 	cursor: pointer;
-    font-size: var(--fs);
 	&:hover {
 		background-color: var(--sub-level-4);
 	}
 `;
 
 export type IconButton = {
+    size?: 'sm' | 'md',
     Icon?: typeof SyncOutlined,
     children?: React.ReactNode,
     onClick?: () => void,
@@ -31,6 +42,7 @@ export type IconButton = {
     containerProps?: React.HTMLAttributes<HTMLSpanElement>,
 }
 export const IconButton = ({
+    size = 'md',
     Icon,
     children,
     onClick,
@@ -42,6 +54,7 @@ export const IconButton = ({
 
     return <Tooltip title={null} {...tooltipProps}>
         <StyledIconButtonContainer
+            $size={size}
             tabIndex={0}
             {...restContainerProps}
             onClick={e => {

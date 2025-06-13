@@ -38,6 +38,9 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
             display: none;
         }
     }
+    .horizontal-sketch-picker {
+        margin-top: var(--spacing);
+    }
     ${TrainGridStyle}
 `;
 

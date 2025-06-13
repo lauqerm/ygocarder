@@ -211,9 +211,9 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
 
             /** Combine layer frame here */
-            const { context: topFrameContext, canvas: topFrameCanvas } = createCanvas();
-            await drawAsset(topFrameContext, `frame/frame-${topLeftFrame}.png`, 0, 0);
-            const { canvas: dyedTopFrameCanvas, context: dyedTopFrameContext } = dyeCanvas(topFrameCanvas, dyeList[0]);
+            const { ctx: topFrameCtx, canvas: topFrameCanvas } = createCanvas();
+            await drawAsset(topFrameCtx, `frame/frame-${topLeftFrame}.png`, 0, 0);
+            const { canvas: dyedTopFrameCanvas, ctx: dyedTopFrameCtx } = dyeCanvas(topFrameCanvas, dyeList[0]);
             if (topLeftFrame !== topRightFrame || dyeList[1] !== '') {
                 const topRightCanvas = await applyAlphaMask(
                     `frame/frame-${topRightFrame}.png`,
@@ -222,34 +222,34 @@ export const getLayoutDrawFunction = ({
                     cardHeight,
                 );
                 const { canvas: dyedTopRightCanvas } = dyeCanvas(topRightCanvas, dyeList[1]);
-                dyedTopFrameContext.drawImage(dyedTopRightCanvas, 0, 0);
+                dyedTopFrameCtx.drawImage(dyedTopRightCanvas, 0, 0);
             }
 
-            const { context: bottomFrameContext, canvas: bottomFrameCanvas } = createCanvas();
-            await drawAsset(bottomFrameContext, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
-            const { canvas: dyedBottomFrameCanvas, context: dyedBottomFrameContext } = dyeCanvas(bottomFrameCanvas, dyeList[2]);
+            const { ctx: bottomFrameCtx, canvas: bottomFrameCanvas } = createCanvas();
+            await drawAsset(bottomFrameCtx, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
+            const { canvas: dyedBottomFrameCanvas, ctx: dyedBottomFrameCtx } = dyeCanvas(bottomFrameCanvas, dyeList[2]);
             if (bottomLeftFrame !== bottomRightFrame || dyeList[3] !== '') {
                 /** What is this?
                  * 
                  * Because the "bottom left" frame is not actually bottom, but both bottom left and bottom right with transparency. If we draw it first, then draw our "bottom right" frame on top of it, it will mixed with the bottom left frame (because both contains transparency), instead of replacing it, create an unintended side effect. Therefore we cut the part that may cause mixing color from the bottom left frame, before drawing the bottom right part.
                  */
-                dyedBottomFrameContext.clearRect(714, 0, 99, cardHeight);
+                dyedBottomFrameCtx.clearRect(714, 0, 99, cardHeight);
                 const bottomRightCanvas = await applyAlphaMask(
                     `frame/frame-${bottomRightFrame}.png`,
-                    await (bottomRightFrame === topRightFrame ? MaskPromise.right : MaskPromise.bottomRight),
+                    await MaskPromise.bottomRight,
                     cardWidth,
                     cardHeight,
                 );
                 const { canvas: dyedBottomRightCanvas } = dyeCanvas(bottomRightCanvas, dyeList[3]);
-                dyedBottomFrameContext.drawImage(dyedBottomRightCanvas, 0, 0);
+                dyedBottomFrameCtx.drawImage(dyedBottomRightCanvas, 0, 0);
             }
 
             ctx.globalAlpha = opacityBody / 100;
             ctx.scale(globalScale, globalScale);
             /** Leave empty space for card art */
             if (isPendulum) {
-                dyedTopFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
-                dyedBottomFrameContext.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedTopFrameCtx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedBottomFrameCtx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
             }
             /** Start assembling the canvas */
             ctx.drawImage(dyedTopFrameCanvas, 0, 0);
@@ -264,8 +264,8 @@ export const getLayoutDrawFunction = ({
 
             const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
             const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
-            const clonedCanvasContext = clonedCanvas?.getContext('2d');
-            if (!clonedCanvas || !clonedCanvasContext) {
+            const clonedCanvasCtx = clonedCanvas?.getContext('2d');
+            if (!clonedCanvas || !clonedCanvasCtx) {
                 ctx.globalAlpha = 1;
                 return;
             }
@@ -273,7 +273,7 @@ export const getLayoutDrawFunction = ({
             /** Clone background to create a new frame */
             clonedCanvas.width = cardWidth * globalScale;
             clonedCanvas.height = cardHeight * globalScale;
-            clonedCanvasContext.drawImage(
+            clonedCanvasCtx.drawImage(
                 backgroundCanvas,
                 0, 0, backgroundWidth, backgroundHeight,
                 0, 0, cardWidth * globalScale, cardHeight * globalScale,
@@ -354,10 +354,10 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             const {
                 canvas: attributeCanvas,
-                context: attributeContext,
+                ctx: attributeCtx,
             } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
             await drawAsset(
-                attributeContext,
+                attributeCtx,
                 `attribute/attr-${format}-${attribute.toLowerCase()}.png`,
                 attributeX, attributeY,
             );
@@ -366,22 +366,22 @@ export const getLayoutDrawFunction = ({
                 const loopAttributeFinish = getFinishIterator([attributeFinish], ArtFinishMap);
                 const {
                     canvas: attributeFinishCanvas,
-                    context: attributeFinishContext,
+                    ctx: attributeFinishCtx,
                 } = createCanvas(cardWidth, (attributeY + attributeSize));
-                attributeFinishContext.drawImage(attributeCanvas, 0, 0);
+                attributeFinishCtx.drawImage(attributeCanvas, 0, 0);
                 await loopAttributeFinish(
-                    attributeFinishContext,
+                    attributeFinishCtx,
                     'art',
                     async (finishType) => {
                         return await drawAsset(
-                            attributeFinishContext,
+                            attributeFinishCtx,
                             `finish/finish-typeart-${finishType}.png`,
                             (cardWidth - finishTypeCardWidth) / 2, stickerSize,
                         );
                     },
                 );
-                attributeContext.globalCompositeOperation = 'source-in';
-                attributeContext.drawImage(attributeFinishCanvas, 0, 0);
+                attributeCtx.globalCompositeOperation = 'source-in';
+                attributeCtx.drawImage(attributeFinishCanvas, 0, 0);
                 ctx.drawImage(attributeCanvas, 0, 0);
             } else {
                 ctx.drawImage(attributeCanvas, 0, 0);
@@ -420,15 +420,15 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
             const {
                 canvas: pendulumIconCanvas,
-                context: pendulumIconContext,
+                ctx: pendulumIconCtx,
             } = createCanvas(pendulumIconFrameWidth, pendulumIconFrameHeight);
-            await drawAsset(pendulumIconContext, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 0);
+            await drawAsset(pendulumIconCtx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 0);
 
             if (pendulumFrameTypeMap.blue === 'scaleless') {
-                pendulumIconContext.clearRect(0, 0, pendulumIconFrameWidth / 2, pendulumIconFrameHeight);
+                pendulumIconCtx.clearRect(0, 0, pendulumIconFrameWidth / 2, pendulumIconFrameHeight);
             }
             if (pendulumFrameTypeMap.red === 'scaleless') {
-                pendulumIconContext.clearRect(pendulumIconFrameWidth / 2, 0, pendulumIconFrameWidth / 2, pendulumIconFrameHeight);
+                pendulumIconCtx.clearRect(pendulumIconFrameWidth / 2, 0, pendulumIconFrameWidth / 2, pendulumIconFrameHeight);
             }
 
             ctx.scale(globalScale, globalScale);
@@ -455,11 +455,11 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
 
             ctx.scale(globalScale, globalScale);
-            const { context: nameBackgroundContext, canvas: nameBackgroundCanvas } = createCanvas(cardWidth, topToPendulumStructure);
-            await drawAsset(nameBackgroundContext, `background/background-name-${topLeftFrame}.png`, 0, 0);
+            const { ctx: nameBackgroundCtx, canvas: nameBackgroundCanvas } = createCanvas(cardWidth, topToPendulumStructure);
+            await drawAsset(nameBackgroundCtx, `background/background-name-${topLeftFrame}.png`, 0, 0);
             const {
                 canvas: dyedLeftNameCanvas,
-                context: dyedLeftNameContext
+                ctx: dyedLeftNameCtx
             } = dyeCanvas(nameBackgroundCanvas, dyeList[0]);
             if (topLeftFrame !== topRightFrame || dyeList[1] !== '') {
                 const nameRightCanvas = await applyAlphaMask(
@@ -469,7 +469,7 @@ export const getLayoutDrawFunction = ({
                     topToPendulumStructure,
                 );
                 const dyedRightNameCanvas = dyeCanvas(nameRightCanvas, dyeList[1]).canvas;
-                dyedLeftNameContext.drawImage(dyedRightNameCanvas, 0, 0);
+                dyedLeftNameCtx.drawImage(dyedRightNameCanvas, 0, 0);
             }
             ctx.globalAlpha = opacityName / 100;
             ctx.drawImage(dyedLeftNameCanvas, 0, 0);
@@ -482,10 +482,10 @@ export const getLayoutDrawFunction = ({
 
             ctx.scale(globalScale, globalScale);
 
-            const { context: effectBackgroundContext, canvas: effectBackgroundCanvas } = createCanvas();
+            const { ctx: effectBackgroundCtx, canvas: effectBackgroundCanvas } = createCanvas();
             if (withPendulum) {
                 await drawAssetWithSize(
-                    effectBackgroundContext,
+                    effectBackgroundCtx,
                     `background/background-text-${resolvedEffectBackground}.png`,
                     backgroundEffectBoxX, backgroundEffectBoxY + effectBoxOffsetY,
                     backgroundEffectBoxWidth, backgroundEffectBoxHeight,
@@ -494,7 +494,7 @@ export const getLayoutDrawFunction = ({
                 );
             } else {
                 await drawAsset(
-                    effectBackgroundContext,
+                    effectBackgroundCtx,
                     `background/background-text-${resolvedEffectBackground}.png`,
                     backgroundEffectBoxX, backgroundEffectBoxY,
                 );
@@ -504,13 +504,13 @@ export const getLayoutDrawFunction = ({
             ctx.drawImage(dyedEffectBackgroundCanvas, 0, 0);
 
             if (withPendulum) {
-                const { context: pendulumEffectBackgroundContext, canvas: pendulumEffectBackgroundCanvas } = createCanvas();
+                const { ctx: pendulumEffectBackgroundCtx, canvas: pendulumEffectBackgroundCanvas } = createCanvas();
                 const {
                     exceptionFrameType = frameType,
                     exceptionPendulumBoxOffsetHeight = 0,
                 } = PendulumSizeMapException[pendulumSize][resolvedPendulumEffectBackground] ?? {};
                 await drawAssetWithSize(
-                    pendulumEffectBackgroundContext,
+                    pendulumEffectBackgroundCtx,
                     `background/background-${exceptionFrameType}-${resolvedPendulumEffectBackground}.png`,
                     pendulumBoxX, pendulumBoxY + pendulumBoxOffsetY,
                     pendulumBoxWidth, pendulumBoxHeight,
@@ -564,9 +564,9 @@ export const getLayoutDrawFunction = ({
         drawPendulumBorder: async (artBorder: boolean, foilType: Foil) => {
             if (!ctx) return;
             /** We create a new canvas for easier manipulation. */
-            const { canvas: pendulumBorderCanvas, context: pendulumBorderContext } = createCanvas();
+            const { canvas: pendulumBorderCanvas, ctx: pendulumBorderCtx } = createCanvas();
             await drawAssetWithSize(
-                pendulumBorderContext,
+                pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
                     + `-${foilType}`
                     + '-artless'
@@ -578,7 +578,7 @@ export const getLayoutDrawFunction = ({
                 pendulumFrameWidth / 2, pendulumFrameHeight,
             );
             await drawAssetWithSize(
-                pendulumBorderContext,
+                pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
                     + `-${foilType}`
                     + '-artless'
@@ -593,9 +593,9 @@ export const getLayoutDrawFunction = ({
                 /**
                  * In artless border, the top of the pendulum effect box has shadow. But there is no shadow in normal border, so if art border is present, we cut the top of the artless border to remove the shadow, before seemlessly join it with the art border part.
                  */
-                pendulumBorderContext.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
+                pendulumBorderCtx.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
                 await drawAsset(
-                    pendulumBorderContext,
+                    pendulumBorderCtx,
                     `frame-pendulum/border-pendulum-${pendulumSize}`
                         + `-${foilType}`
                         + '.png',
@@ -665,16 +665,16 @@ export const getLayoutDrawFunction = ({
             }
         },
         drawArtFinish: async (
-            artContext = ctx,
+            artCtx = ctx,
         ) => {
-            if (!applyArtFinish || !artContext) return;
-            artContext.scale(globalScale, globalScale);
+            if (!applyArtFinish || !artCtx) return;
+            artCtx.scale(globalScale, globalScale);
             await loopArtFinish(
-                artContext,
+                artCtx,
                 'art',
                 async (finishType, pendulumSuffix) => {
                     return await drawAssetWithSize(
-                        artContext,
+                        artCtx,
                         `finish/art-finish-${finishType}${isPendulum ? pendulumSuffix : ''}.png`,
                         artFinishX, artFinishY,
                         artFrameWidth, artFrameWidth / artRatio,
@@ -682,7 +682,7 @@ export const getLayoutDrawFunction = ({
                 },
                 pendulumSize,
             );
-            artContext.resetTransform();
+            artCtx.resetTransform();
         },
         /**
          * * ArtFinish: Controlled by `artFinish` attribute.
@@ -692,16 +692,16 @@ export const getLayoutDrawFunction = ({
          * * OverlayFinish type `unart`: Apply only when art border is not present.
          */
         drawArtOverlayFinish: async (
-            artContext = ctx,
+            artCtx = ctx,
         ) => {
-            if (!artContext) return;
-            artContext.scale(globalScale, globalScale);
+            if (!artCtx) return;
+            artCtx.scale(globalScale, globalScale);
             await loopFinish(
-                artContext,
+                artCtx,
                 'art-overlay',
                 async type => {
                     return drawAsset(
-                        artContext,
+                        artCtx,
                         'finish/finish'
                         + `-${type}`
                         + `-${applyArtFinish ? 'art' : 'unart'}`
@@ -712,7 +712,7 @@ export const getLayoutDrawFunction = ({
                     );
                 },
             );
-            artContext.resetTransform();
+            artCtx.resetTransform();
         },
         drawArtBorderFinish: async () => {
             if (artBorder && ctx) {

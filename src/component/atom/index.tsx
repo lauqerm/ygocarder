@@ -184,3 +184,5 @@ export const ResolutionLabel = ({ width, height, warning }: ResolutionLabel) => 
         <span className="right-part">{height}</span>
     </ResolutionLabelContainer>;
 };
+
+export * from './color';

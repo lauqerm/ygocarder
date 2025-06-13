@@ -309,5 +309,14 @@ export type FrameDyeList = [
     effect: string,
     pendulumEffect: string,
 ];
-export const getDefaultDyeList = () => ['#ff0000', '#00ff00', '#ff0000', '#00ff00', '#0000ff', '#0000ff'] as FrameDyeList;
-console.log(getDefaultDyeList());
+export const getDefaultDyeList = () => ['', '', '', '', '', ''] as FrameDyeList;
+export const DYE_LIST_LENGTH = getDefaultDyeList().length;
+
+export const DyeIndexMap = {
+    topLeftFrame: 0,
+    topRightFrame: 1,
+    bottomLeftFrame: 2,
+    bottomRightFrame: 3,
+    effectBackground: 4,
+    pendulumEffectBackground: 5,
+};

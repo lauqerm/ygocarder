@@ -61,6 +61,14 @@ html {
     --main-online: #3ec93e;
     --sub-online: #4fcf4f;
 
+    --gradient-diagonal-stripe: repeating-linear-gradient(
+        45deg,
+        #44444466,
+        #44444466 8px,
+        #00000000 8px,
+        #00000000 12px
+    );
+
     // Margin / Padding
     --spacing-px: 1px;
     --spacing-xxs: 2px;

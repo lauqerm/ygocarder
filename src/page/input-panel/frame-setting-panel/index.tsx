@@ -4,9 +4,9 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState }
 import { useCard, useLanguage } from 'src/service';
 import { getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
-import { FrameInfoBlock, RadioTrain } from 'src/component';
+import { FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
 import styled from 'styled-components';
-import { CanvasConst, FrameInfoMap, FramePositionMap } from 'src/model';
+import { CanvasConst, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 
 const {
@@ -51,7 +51,8 @@ const FrameLayoutContainer = styled.div`
     }
 `;
 const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hoverable: boolean }>`
-    --layout-width: ${props => props.$width}px;
+    /** Ensure even width */
+    --layout-width: ${props => Math.round(props.$width / 2) * 2}px;
     --layout-height: ${props => props.$height}px;
     display: inline-block;
     width: var(--layout-width);
@@ -69,17 +70,24 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
         top: 0;
         left: 0;
     }
+    .dye-patch {
+        position: absolute;
+        z-index: 1;
+        top: 10%;
+        left: 50%;
+        min-width: 6px;
+        min-height: 6px;
+        width: ${props => props.$width / 6}px;
+        height: ${props => props.$width / 6}px;
+        border-radius: var(--br-lg);
+        transform: translateX(-50%);
+    }
     .card-layout {
         position: absolute;
         cursor: pointer;
+        padding: 0;
         &.unmodified .overlay-patch {
-            background: repeating-linear-gradient(
-                45deg,
-                #44444466,
-                #44444466 8px,
-                #00000000 8px,
-                #00000000 12px
-            );
+            background: var(--gradient-diagonal-stripe);
         }
     }
     .partial-layout {
@@ -160,6 +168,7 @@ export type CardLayoutPreview = {
     resolvedLayoutState: Record<string, string | undefined>,
     isPendulum: boolean,
     activeLayout?: string,
+    dyeList: string[],
     onClick?: (key: string) => void,
 };
 export const CardLayoutPreview = ({
@@ -170,6 +179,7 @@ export const CardLayoutPreview = ({
     resolvedLayoutState,
     isPendulum,
     activeLayout,
+    dyeList,
     onClick,
 }: CardLayoutPreview) => {
     return <CardLayoutContainer $width={width} $height={height} $hoverable={!!onClick}>
@@ -182,6 +192,8 @@ export const CardLayoutPreview = ({
             { key: 'pendulumEffectBackground', className: 'card-layout float-layout pendulum-effect-background' },
         ].map(({ className, key }) => {
             const frame = resolvedLayoutState[key];
+            const dyeIndex = DyeIndexMap[key];
+            const dyeColor = dyeIndex == null ? undefined : dyeList[DyeIndexMap[key]];
 
             if (!frame) return null;
             if (!isPendulum && key === 'pendulumEffectBackground') return null;
@@ -204,6 +216,9 @@ export const CardLayoutPreview = ({
             >
                 <div
                     className="overlay-patch"
+                    style={{
+                        boxShadow: `0 0 0 ${Math.round(width / 16)}px ${dyeColor} inset`,
+                    }}
                 />
             </button>;
         })}
@@ -232,6 +247,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
         effectBackground, pendulumEffectBackground,
+        dyeList,
         setCard,
         getUpdater,
     } = useCard(useShallow(({
@@ -240,6 +256,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
             frame,
             leftFrame, rightFrame,
             pendulumFrame, pendulumRightFrame,
+            dyeList,
             effectStyle,
             pendulumStyle,
         },
@@ -252,6 +269,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         pendulumFrame, pendulumRightFrame,
         effectBackground: effectStyle.background,
         pendulumEffectBackground: pendulumStyle.background,
+        dyeList,
         setCard,
         getUpdater,
     })));
@@ -298,6 +316,19 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
             pendulumStyle: nextPendulumEffectStyle,
         };
     });
+    const changeDyeList = useMemo(() => getUpdater('dyeList'), [getUpdater]);
+    const changeDye = (color: string, name: string) => setCard(currentCard => {
+        const position = DyeIndexMap[name];
+
+        if (typeof position !== 'number') return currentCard;
+        const nextDyeList = [...currentCard.dyeList] as FrameDyeList;
+        nextDyeList[position] = color;
+
+        return {
+            ...currentCard,
+            dyeList: nextDyeList,
+        };
+    });
     const changeLayout = (layoutValue: string) => {
         if (activeLayout === 'bottomLeftFrame') changeBottomLeftFrame(layoutValue);
         if (activeLayout === 'bottomRightFrame') changeBottomRightFrame(layoutValue);
@@ -318,6 +349,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     };
     const activeFrame = layoutState[activeLayout];
     const resolvedLayoutStyle = resolveFrameStyle(layoutState, isPendulum);
+    const dyeColor = DyeIndexMap[activeLayout];
     return <FrameLayoutContainer>
         <div className="visual-preview-container">
             <label>{language['input.advanced-frame.main.label']}</label>
@@ -337,6 +369,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 resolvedLayoutState={resolvedLayoutStyle}
                 activeLayout={activeLayout}
                 onClick={key => setActiveLayout(key)}
+                dyeList={dyeList}
             />
             <Button
                 size="small"
@@ -348,6 +381,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                     changeTopRightFrame('auto');
                     changeEffectBackground('auto');
                     changePendulumEffectBackground('auto');
+                    changeDyeList(getDefaultDyeList());
                 }}
             >
                 {language['button.reset.label']}
@@ -386,6 +420,14 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                     }}
                     optionList={frameList}
                 />
+                {typeof dyeColor === 'number' && <HorizontalSketchPicker
+                    value={dyeList[dyeColor]}
+                    onChange={color => {
+                        if (color !== dyeList[dyeColor]) changeDye(color, activeLayout);
+                    }}
+                >
+                    {language['input.advanced-frame.dye']}
+                </HorizontalSketchPicker>}
             </StyledPendulumFrameContainer>
         </div>
     </FrameLayoutContainer>;

@@ -9,10 +9,10 @@ export const createCanvas = (width = cardWidth, height = cardHeight) => {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
 
     return {
         canvas,
-        context,
+        ctx,
     };
 };

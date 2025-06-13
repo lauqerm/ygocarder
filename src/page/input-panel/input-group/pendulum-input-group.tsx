@@ -160,6 +160,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumScaleBlue,
         pendulumScaleRed,
         pendulumSize,
+        dyeList,
         flag,
         setCard,
         getUpdater,
@@ -174,6 +175,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             pendulumSize,
             effectStyle,
             pendulumStyle,
+            dyeList,
             flag,
         },
         setCard,
@@ -188,6 +190,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumSize,
         effectBackground: effectStyle.background,
         pendulumEffectBackground: pendulumStyle.background,
+        dyeList,
         flag,
         setCard,
         getUpdater,
@@ -313,6 +316,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                                 isPendulum={isPendulum}
                                 resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
                                 tabIndex={-1}
+                                dyeList={dyeList}
                             />
                         </div>
                         {flagList.length > 0
@@ -328,8 +332,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         <CaretDownOutlined />
                     </StyledPendulumFrameInputContainer>
                 </Popover>}
-                {(isPendulum && showCreativeOption)
-                    && <div className="pendulum-size">
+                {(isPendulum && showCreativeOption) && <div className="pendulum-size">
                     <Popover key="color-picker"
                         overlayClassName="global-input-overlay font-picker-overlay"
                         content={<div className="overlay-event-absorber">

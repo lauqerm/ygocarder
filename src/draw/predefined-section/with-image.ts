@@ -80,7 +80,7 @@ export const drawStarContent = async ({
 
     const {
         canvas: starCanvas,
-        context: starContext,
+        ctx: starCtx,
     } = createCanvas(CanvasWidth * globalScale, (baseline + starWidth) * globalScale);
     await Promise.all([...Array(normalizedStarCount)]
         .map(async () => {
@@ -89,29 +89,29 @@ export const drawStarContent = async ({
                 leftEdge - (starWidth + offset),
                 baseline,
             ];
-            await drawAsset(starContext, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
+            await drawAsset(starCtx, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
             return await onStarDraw(coordinate);
         })
     );
     if (loopStarFinish) {
         const {
             canvas: starFinishCanvas,
-            context: starFinishContext,
+            ctx: starFinishCtx,
         } = createCanvas(CanvasWidth, (baseline + starWidth));
-        starFinishContext.drawImage(starCanvas, 0, 0);
+        starFinishCtx.drawImage(starCanvas, 0, 0);
         await loopStarFinish(
-            starFinishContext,
+            starFinishCtx,
             'art',
             async (finishType) => {
                 return await drawAsset(
-                    starFinishContext,
+                    starFinishCtx,
                     `finish/finish-typeart-${finishType}.png`,
                     (CanvasWidth - finishTypeCardWidth) / 2, stickerSize,
                 );
             },
         );
-        starContext.globalCompositeOperation = 'source-in';
-        starContext.drawImage(starFinishCanvas, 0, 0);
+        starCtx.globalCompositeOperation = 'source-in';
+        starCtx.drawImage(starFinishCanvas, 0, 0);
         ctx.drawImage(starCanvas, 0, 0);
     } else {
         ctx.drawImage(starCanvas, 0, 0);

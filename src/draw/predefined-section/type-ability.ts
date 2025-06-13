@@ -174,10 +174,10 @@ export const drawTypeAbility = async ({
         const { edge, baseline } = iconPositionList[0];
         const {
             canvas: iconCanvas,
-            context: iconContext,
+            ctx: iconCtx,
         } = createCanvas(CanvasWidth * globalScale, (baseline + iconWidth) * globalScale);
         await drawAssetWithSize(
-            iconContext,
+            iconCtx,
             `subfamily/subfamily-${subFamily.toLowerCase()}.png`,
             () => edge + (iconWidth * 0.175 * xRatio + offsetX) * globalScale,
             () => baseline - iconWidth * 0.8 * globalScale + offsetY * globalScale,
@@ -187,22 +187,22 @@ export const drawTypeAbility = async ({
         if (loopIconFinish) {
             const {
                 canvas: iconFinishCanvas,
-                context: iconFinishContext,
+                ctx: iconFinishCtx,
             } = createCanvas(CanvasWidth * globalScale, (baseline + iconWidth) * globalScale);
-            iconFinishContext.drawImage(iconCanvas, 0, 0);
+            iconFinishCtx.drawImage(iconCanvas, 0, 0);
             await loopIconFinish(
-                iconFinishContext,
+                iconFinishCtx,
                 'art',
                 async (finishType) => {
                     return await drawAsset(
-                        iconFinishContext,
+                        iconFinishCtx,
                         `finish/finish-typeart-${finishType}.png`,
                         (CanvasWidth - finishTypeCardWidth) / 2, iconHeight,
                     );
                 },
             );
-            iconContext.globalCompositeOperation = 'source-in';
-            iconContext.drawImage(iconFinishCanvas, 0, 0);
+            iconCtx.globalCompositeOperation = 'source-in';
+            iconCtx.drawImage(iconFinishCanvas, 0, 0);
             ctx.drawImage(iconCanvas, 0, 0);
         } else {
             ctx.drawImage(iconCanvas, 0, 0);
