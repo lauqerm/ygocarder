@@ -64,7 +64,7 @@ export const FrameBehaviorSettingPanel = () => {
 
     return <FrameBehaviorSettingPanelContainer>
         {flag.map((entry, index) => {
-            const { labelKey, type } = FlagInfoList[index];
+            const { labelKey, type } = FlagInfoList[index] ?? {};
 
             if (type === 'checkbox') {
                 return <div key={labelKey}>

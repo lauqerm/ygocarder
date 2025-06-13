@@ -254,8 +254,10 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const advanceLayoutPreviewHeight = 30; // Alignment with frame input
     const flagList = flag
         .map((entry, index) => {
-            if (entry !== 0) return <li key={FlagInfoList[index].labelKey}>
-                {FlagInfoList[index].displayKey(language, entry)}
+            const target = FlagInfoList[index];
+
+            if (entry !== 0 && target) return <li key={target.labelKey}>
+                {target.displayKey(language, entry)}
             </li>;
             return null;
         })

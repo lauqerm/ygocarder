@@ -29,6 +29,18 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
     );
 }
 
+export const isCropEqual = (cropL: Partial<ReactCrop.Crop>, cropR: Partial<ReactCrop.Crop>) => {
+    const { aspect: aspectL, height: heightL, unit: unitL, width: widthL, x: xL, y: yL } = cropL;
+    const { aspect: aspectR, height: heightR, unit: unitR, width: widthR, x: xR, y: yR } = cropR;
+    if (Math.abs(widthL - widthR) > 0.01) return false;
+    if (Math.abs(heightL - heightR) > 0.01) return false;
+    if (Math.abs(xL - xR) > 0.01) return false;
+    if (Math.abs(yL - yR) > 0.01) return false;
+    if (Math.abs(aspectL - aspectR) > 0.01) return false;
+    if (unitL !== unitR) return false;
+    return true;
+};
+
 /**
  * Historic reason: cropData initially used `px` as unit, but this create a hard link between cropData and size of the cropper (NOT the actual image). This means the cropData only match a specific cropper size, and will become incorrect if the size change (which is happening when we got to v2).
  * 
@@ -587,11 +599,11 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         }}
                     onImageLoaded={onLoad}
                     onImageError={() => {
-                        pendingCrop.current = {
-                            source: '',
-                            crop: null,
-                        };
                         if (!receivingCanvas) {
+                            pendingCrop.current = {
+                                source: '',
+                                crop: null,
+                            };
                             setLoading(false);
                             setError('No receiving canvas');
                             onTainted();
@@ -600,6 +612,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             (sourceType === 'online' && (externalSource ?? '') === '')
                             || (sourceType === 'offline' && (internalSource ?? '') === '')
                         ) {
+                            pendingCrop.current = {
+                                source: '',
+                                crop: null,
+                            };
                             const { width, height } = receivingCanvas;
                             const ctx = receivingCanvas.getContext('2d');
 

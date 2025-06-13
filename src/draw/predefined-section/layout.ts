@@ -214,7 +214,7 @@ export const getLayoutDrawFunction = ({
             const { ctx: topFrameCtx, canvas: topFrameCanvas } = createCanvas();
             await drawAsset(topFrameCtx, `frame/frame-${topLeftFrame}.png`, 0, 0);
             const { canvas: dyedTopFrameCanvas, ctx: dyedTopFrameCtx } = dyeCanvas(topFrameCanvas, dyeList[0]);
-            if (topLeftFrame !== topRightFrame || dyeList[1] !== '') {
+            if (topLeftFrame !== topRightFrame || dyeList[0] !== '' || dyeList[1] !== '') {
                 const topRightCanvas = await applyAlphaMask(
                     `frame/frame-${topRightFrame}.png`,
                     await MaskPromise.topRight,
@@ -228,7 +228,7 @@ export const getLayoutDrawFunction = ({
             const { ctx: bottomFrameCtx, canvas: bottomFrameCanvas } = createCanvas();
             await drawAsset(bottomFrameCtx, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
             const { canvas: dyedBottomFrameCanvas, ctx: dyedBottomFrameCtx } = dyeCanvas(bottomFrameCanvas, dyeList[2]);
-            if (bottomLeftFrame !== bottomRightFrame || dyeList[3] !== '') {
+            if (bottomLeftFrame !== bottomRightFrame || dyeList[2] !== '' || dyeList[3] !== '') {
                 /** What is this?
                  * 
                  * Because the "bottom left" frame is not actually bottom, but both bottom left and bottom right with transparency. If we draw it first, then draw our "bottom right" frame on top of it, it will mixed with the bottom left frame (because both contains transparency), instead of replacing it, create an unintended side effect. Therefore we cut the part that may cause mixing color from the bottom left frame, before drawing the bottom right part.

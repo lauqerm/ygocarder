@@ -216,9 +216,11 @@ export const CardLayoutPreview = ({
             >
                 <div
                     className="overlay-patch"
-                    style={{
-                        boxShadow: `0 0 0 ${Math.round(width / 16)}px ${dyeColor} inset`,
-                    }}
+                    style={dyeColor
+                        ? {
+                            boxShadow: `0 0 0 ${Math.round(width / 16)}px ${dyeColor} inset`,
+                        }
+                        : {}}
                 />
             </button>;
         })}
