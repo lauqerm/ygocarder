@@ -1,9 +1,24 @@
 [
     {
+        "version": "v2.3.1 (2025/06/13)",
+        "logList": [
+            {
+                "content": "New behavior in Advanced Layout: allow always show / hidden link rating."
+            },
+            {
+                "content": "ATK and DEF now disappear entirely (even the label) if their values are empty."
+            },
+            {
+                "content": "Support dyeing for frames in Advanced Layout: allow merging the current frame with a color of choice.",
+                "image": "https://images2.imgbox.com/a4/68/CFbr3ntD_o.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.0 (2025/06/11)",
         "logList": [
             {
-                "content": "Various updates on UI. Background button is moved to a more prominent display."
+                "content": "Various updates on UI. The Background button is moved to a more prominent display."
             },
             {
                 "content": "Allow custom Link rating."
