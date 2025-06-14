@@ -4,12 +4,13 @@ import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, FlagInfoList, PendulumSizeMap } from 'src/model';
+import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap } from 'src/model';
 import { CaretDownOutlined, ApartmentOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
 import { CardLayoutPreview, FrameBehaviorSettingPanel, FramelayoutSettingPanel, FrameLayoutSettingPanel } from '../frame-setting-panel';
+import { FlagPresentationList } from '../../common';
 
 const {
     width,
@@ -254,10 +255,10 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const advanceLayoutPreviewHeight = 30; // Alignment with frame input
     const flagList = flag
         .map((entry, index) => {
-            const target = FlagInfoList[index];
+            const target = FlagPresentationList[index];
 
             if (entry !== 0 && target) return <li key={target.labelKey}>
-                {target.displayKey(language, entry)}
+                {target.valueDisplay(language, entry)}
             </li>;
             return null;
         })

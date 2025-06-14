@@ -685,13 +685,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 } catch (e) {
                     console.error('csvToCardList', e);
                 }
-                const baseFlag = reader('Flag').split('|').map(Number).slice(0, FLAG_LENGTH) as CardFlag;
+                const baseFlag = (reader('Flag') ?? '').split('|').map(Number).slice(0, FLAG_LENGTH) as CardFlag;
                 const flag = getDefaultCardFlag().map((entry, index) => {
                     if (typeof baseFlag[index] === 'number') return baseFlag[index];
                     return entry;
                 }) as CardFlag;
 
-                const baseDyeList = reader('Dye List').split('|').map(String).slice(0, DYE_LIST_LENGTH) as FrameDyeList;
+                const baseDyeList = (reader('Dye List') ?? '').split('|').map(String).slice(0, DYE_LIST_LENGTH) as FrameDyeList;
                 const dyeList = getDefaultDyeList().map((entry, index) => {
                     if (typeof baseDyeList[index] === 'string') return baseDyeList[index];
                     return entry;

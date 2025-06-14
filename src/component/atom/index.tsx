@@ -1,14 +1,6 @@
 import { Popover } from 'antd';
 import styled from 'styled-components';
 
-export const StyledCode = styled.span`
-    background: var(--main-level-1);
-    padding: var(--spacing-px) var(--spacing-xxs);
-    border: var(--bw) solid #4e84a4;
-    border-radius: var(--br);
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-`;
-
 export const StyledMarkdown = styled.div`
     padding: var(--spacing-xs);
     background-color: var(--main-level-3);
@@ -186,3 +178,4 @@ export const ResolutionLabel = ({ width, height, warning }: ResolutionLabel) => 
 };
 
 export * from './color';
+export * from './copiable';
