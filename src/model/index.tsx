@@ -1,5 +1,5 @@
 import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
-import { Foil, getDefaultDyeList, OtherFinish } from './foil-finish';
+import { Foil, getDefaultDyeList, OtherFinish } from './foil-finish-dye';
 import { CondenseType } from './condense';
 import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
@@ -322,7 +322,7 @@ export * from './condense';
 export * from './coordinate-data';
 export * from './dictionary';
 export * from './flag';
-export * from './foil-finish';
+export * from './foil-finish-dye';
 export * from './font-data-effect';
 export * from './font-data-name';
 export * from './font-data-other';

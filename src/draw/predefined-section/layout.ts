@@ -461,7 +461,7 @@ export const getLayoutDrawFunction = ({
                 canvas: dyedLeftNameCanvas,
                 ctx: dyedLeftNameCtx
             } = dyeCanvas(nameBackgroundCanvas, dyeList[0]);
-            if (topLeftFrame !== topRightFrame || dyeList[1] !== '') {
+            if (topLeftFrame !== topRightFrame || dyeList[0] !== '' || dyeList[1] !== '') {
                 const nameRightCanvas = await applyAlphaMask(
                     `background/background-name-${topRightFrame}.png`,
                     await MaskPromise.name,
