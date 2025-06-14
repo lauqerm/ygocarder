@@ -42,14 +42,18 @@ const compareStar = (l: InternalCard, r: InternalCard) => {
     return compareInt(l.star, r.star);
 };
 const compareFrame = (l: InternalCard, r: InternalCard) => {
-    const frameResult = FrameInfoMap[r.frame].sortWeight - FrameInfoMap[l.frame].sortWeight;
+    try {
+        const frameResult = FrameInfoMap[r.frame].sortWeight - FrameInfoMap[l.frame].sortWeight;
 
-    if (frameResult !== 0) return frameResult;
+        if (frameResult !== 0) return frameResult;
 
-    /** Assume we do not find frame result because it is "auto", and auto is the highest order */
-    const bottomFrameResult = (FrameInfoMap[r.pendulumFrame]?.sortWeight ?? 1000) - (FrameInfoMap[l.pendulumFrame]?.sortWeight ?? 1000);
+        /** Assume we do not find frame result because it is "auto", and auto is the highest order */
+        const bottomFrameResult = (FrameInfoMap[r.pendulumFrame]?.sortWeight ?? 1000) - (FrameInfoMap[l.pendulumFrame]?.sortWeight ?? 1000);
 
-    return bottomFrameResult;
+        return bottomFrameResult;
+    } catch (e) {
+        return 0;
+    }
 };
 const normalizeCard = (card: InternalCard) => {
     const normalizedCard = { ...card };

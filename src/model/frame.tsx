@@ -184,6 +184,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
     },
 };
 export const frameList = Object.values(FrameInfoMap);
+export const DefaultFrameInfo = FrameInfoMap['effect'];
 
 export const FramePositionMap: Record<string, { labelKey: string }> = {
     bottomLeftFrame: { labelKey: 'input.advanced-frame.name.bottom-left' },

@@ -6,7 +6,7 @@ import { getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
 import { FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
 import styled from 'styled-components';
-import { CanvasConst, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
+import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 
 const {
@@ -200,7 +200,7 @@ export const CardLayoutPreview = ({
             const {
                 labelBackgroundColor,
                 labelBackgroundImage,
-            } = FrameInfoMap[frame];
+            } = FrameInfoMap[frame] ?? {};
             return <button key={key}
                 {...tabIndex < 0 ? {} : { tabIndex }}
                 className={mergeClass(
@@ -359,7 +359,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 id={frameLayoutMainId}
                 tabIndex={0}
                 className={activeLayout === 'frame' ? 'active' : ''}
-                {...FrameInfoMap[frame]}
+                {...FrameInfoMap[frame] ?? DefaultFrameInfo}
                 onClick={() => setActiveLayout('frame')}
             />
             <label>{language['input.advanced-frame.detailed.label']}</label>

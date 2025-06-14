@@ -13,7 +13,6 @@
 
 ### Improvements backlog
 
-* Custom blending for frames
 * Left and right pendulum effects
 * Dark synchro style syntax
 * OCG's letter dialect ("Chef Special Recipe" OCG for example)
