@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.2 (2025/06/14)",
+        "logList": [
+            {
+                "content": "Fix: Issue when import card list."
+            }
+        ]
+    },
+    {
         "version": "v2.3.1 (2025/06/13)",
         "logList": [
             {
