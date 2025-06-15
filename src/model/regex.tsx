@@ -36,6 +36,9 @@ export const NormalizeTextRegex = new RegExp(`[${[
     NB_WORD_OPEN,
 ].join('')}]|(\\|[^}]+})`, 'g');
 
+export const FULL_LINE_PLACEHOLDER = '⸦⸧';
+export const FLAVOR_LINE_PLACEHOLDER = '⸦⸦⸧⸧';
+
 export const CONTEXTUAL_DOUBLE_QUOTE_SOURCE = `(^|[-\\u2014/[(\\u2018${NB_WORD_OPEN}${NB_LINE_OPEN}${NB_FULL_LINE_OPEN}${NB_UNCOMPRESSED_START}\\s])"`;
 export const contextualDoubleQuoteRegex = new RegExp(CONTEXTUAL_DOUBLE_QUOTE_SOURCE, 'g');
 

@@ -7,6 +7,8 @@ import {
     CondenseTolerantMap,
     FontData,
     NormalFontData,
+    FULL_LINE_PLACEHOLDER,
+    FLAVOR_LINE_PLACEHOLDER,
 } from '../../model';
 import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
@@ -97,14 +99,10 @@ export const drawEffect = ({
 
     const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
     const {
-        effectText,
-        effectFlavorCondition,
-        fullLineList,
+        lineList,
         fullLineListOption,
+        effectFlavorCondition,
     } = splitEffect(normalizedContent, isNormal);
-
-    const additionalLineCount = (fullLineList.length ?? 0) + (effectFlavorCondition.length > 0 ? 1 : 0);
-    const paragraphList = effectText ? effectText.split('\n') : [];
 
     let effectiveLineCount = 0;
     const scaledFontData = scaleFontData(fontData, globalScale);
@@ -179,15 +177,15 @@ export const drawEffect = ({
         let lineListWithRatio: { line: string, isLast: boolean, effectiveMedian: number }[] = [];
 
         // [FIND SUITABLE CONDENSE RATIO]
-        const effectiveMedian = (additionalLineCount > lineCount && typeof trueHeightCap === 'number')
+        const effectiveMedian = (lineList.length > lineCount && typeof trueHeightCap === 'number')
             ? 1 // If dynamic size is possible, no need to find condense value if current lint count is larger than the font's maximum line count, it will overflow anyways.
             : condense(
                 median => {
                     const { currentLineList, currentLineCount } = createLineList({
                         ctx,
                         median,
-                        paragraphList,
-                        additionalLineCount,
+                        paragraphList: lineList,
+                        additionalLineCount: 0,
                         format, textData,
                         width,
                         globalScale,
@@ -199,12 +197,12 @@ export const drawEffect = ({
                 },
                 200,
             );
-        effectiveLineCount = lineListWithRatio.length + additionalLineCount;
+        effectiveLineCount = lineListWithRatio.length;
 
         // [START DRAWING]
         /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
         const resetStyle = setTextStyle({ ctx, ...textStyle, globalScale });
-        const tolerantValue = tolerancePerSentence[`${paragraphList.length}`] ?? tolerancePerSentence['3'];
+        const tolerantValue = tolerancePerSentence[`${lineList.length}`] ?? tolerancePerSentence['3'];
         if (
             (effectiveMedian < tolerantValue)
             && (sizeLevel < fontList.length)
@@ -214,116 +212,108 @@ export const drawEffect = ({
             clearCanvas(ctx);
 
             let trueBaseline = trueBaselineStart + lineHeight;
-            /** Naturally, non-brekable lines have their own condense ratio. */
-            const fullLineListWithRatio = fullLineList.map((line, index) => {
-                return {
-                    line,
-                    isLast: fullLineListOption[index].alignment === 'justify' ? false : true,
-                    effectiveMedian: condense(
-                        median => {
-                            const { currentLineCount } = createLineList({
-                                ctx,
-                                median,
-                                paragraphList: [line],
-                                format, textData,
-                                width,
-                                globalScale,
-                            });
-    
-                            if (currentLineCount > 1) return false;
-                            return true;
-                        },
-                    )
-                };
-            });
+            lineListWithRatio
+                .forEach(({
+                    line: precalculatedLine,
+                    effectiveMedian,
+                    isLast,
+                }) => {
+                    if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
+                        const { line, alignment } = fullLineListOption.shift();
+                        const isLast = alignment === 'justify' ? false : true;
+                        const xRatio = 1/1000 * condense(
+                            median => {
+                                const { currentLineCount } = createLineList({
+                                    ctx,
+                                    median,
+                                    paragraphList: [line],
+                                    format, textData,
+                                    width,
+                                    globalScale,
+                                });
 
-            /** Draw each line based on their token list and corresponding ratio. */
-            [
-                ...fullLineListWithRatio,
-                ...lineListWithRatio,
-            ].forEach(({
-                line,
-                isLast,
-                effectiveMedian,
-            }) => {
-                const xRatio = effectiveMedian / 1000;
-                const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width, globalScale });
-
-                ctx.scale(xRatio, yRatio);
-                drawLine({
-                    ctx,
-                    tokenList,
-                    xRatio, yRatio,
-                    trueEdge, trueBaseline,
-                    spaceWidth,
-                    textData,
-                    format,
-                    globalScale,
-                });
-                trueBaseline += lineHeight;
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-            });
-
-            /** Condition clause of flavor text in TCG cards do not use italic font style ("Summoned Skull" TCG). */
-            if (effectFlavorCondition.length > 0 && EffectFontData[fontDataKey]) {
-                const flavorFontData = scaleFontData(EffectFontData[fontDataKey], globalScale);
-                const dynamicFlavorFontData = useDynamicSize
-                    ? injectDynamicFont(flavorFontData, { heightCap: trueHeightCap, lineCount: effectiveLineCount })
-                    : flavorFontData;
-                const flavorFontSizeData = useDynamicSize
-                    ? dynamicFlavorFontData.fontList[dynamicSizeLevel]
-                    : flavorFontData.fontList[appliedSizeLevel];
-                const {
-                    fontSize,
-                    lineHeight,
-                } = flavorFontSizeData;
-                const flavorTextCurrentFont = createFontGetter();
-                ctx.font = flavorTextCurrentFont
-                    .setSize(fontSize)
-                    .setFamily(flavorFontData.font)
-                    .getFont();
-                const flavorTextData = {
-                    fontData: dynamicFlavorFontData,
-                    fontLevel: dynamicSizeLevel,
-                    currentFont: flavorTextCurrentFont,
-                };
-                const internalEffectiveMedian = condense(
-                    median => {
-                        const { currentLineCount } = createLineList({
+                                if (currentLineCount > 1) return false;
+                                return true;
+                            },
+                        );
+                        const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width, globalScale });
+                        ctx.scale(xRatio, yRatio);
+                        drawLine({
                             ctx,
-                            median,
-                            paragraphList: [effectFlavorCondition],
-                            format, textData: flavorTextData,
-                            width,
+                            tokenList,
+                            xRatio, yRatio,
+                            trueEdge, trueBaseline,
+                            spaceWidth,
+                            textData,
+                            format,
                             globalScale,
                         });
+                    } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
+                        const effectiveLineCount = lineListWithRatio.length;
+                        const flavorFontData = scaleFontData(EffectFontData[fontDataKey], globalScale);
+                        const dynamicFlavorFontData = useDynamicSize
+                            ? injectDynamicFont(flavorFontData, { heightCap: trueHeightCap, lineCount: effectiveLineCount })
+                            : flavorFontData;
+                        const { fontSize } = useDynamicSize
+                            ? dynamicFlavorFontData.fontList[dynamicSizeLevel]
+                            : flavorFontData.fontList[appliedSizeLevel];
+                        const flavorTextCurrentFont = createFontGetter();
+                        ctx.font = flavorTextCurrentFont
+                            .setSize(fontSize)
+                            .setFamily(flavorFontData.font)
+                            .getFont();
+                        const flavorTextData = {
+                            fontData: dynamicFlavorFontData,
+                            fontLevel: dynamicSizeLevel,
+                            currentFont: flavorTextCurrentFont,
+                        };
+                        const xRatio = 1/1000 * condense(
+                            median => {
+                                const { currentLineCount } = createLineList({
+                                    ctx,
+                                    median,
+                                    paragraphList: [effectFlavorCondition],
+                                    format, textData: flavorTextData,
+                                    width,
+                                    globalScale,
+                                });
 
-                        if (currentLineCount > 1) return false;
-                        return true;
-                    },
-                );
-                const xRatio = internalEffectiveMedian / 1000;
+                                if (currentLineCount > 1) return false;
+                                return true;
+                            },
+                        );
+                        const tokenList = tokenizeText(effectFlavorCondition);
+                        ctx.scale(xRatio, yRatio);
+                        drawLine({
+                            ctx,
+                            tokenList,
+                            xRatio, yRatio,
+                            trueEdge, trueBaseline,
+                            textData: flavorTextData,
+                            format,
+                            globalScale,
+                        });
+                    } else {
+                        /** Normal line: Draw with the calculated median */
+                        const xRatio = effectiveMedian / 1000;
+                        const line = precalculatedLine;
+                        const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width, globalScale });
+                        ctx.scale(xRatio, yRatio);
+                        drawLine({
+                            ctx,
+                            tokenList,
+                            xRatio, yRatio,
+                            trueEdge, trueBaseline,
+                            spaceWidth,
+                            textData,
+                            format,
+                            globalScale,
+                        });
+                    }
 
-                ctx.scale(xRatio, yRatio);
-                const tokenList = tokenizeText(effectFlavorCondition);
-                /** We use two new line character to identify condition clause among flavor text. Because in normal case the user will try to put in many new lines to ensure that the condition clause is placed at bottom of the card text.
-                 * 
-                 * But this method has a caveat: For example if current line limit is 6, and the flavor text already take 5 lines. If user put the condition clause at line 6, it is indistinguishable from a normal paragraph, and therefore drawn with italic font. But if user put a new line between, it will force the draw function to increase the line limit into 7.
-                 * 
-                 * To combat this, we perform a simple remove that additional new line, that means if conditional clause is present, two new lines in textare actually result only one new line. This does not create much hassle since user rarely notice this behavior.
-                 * */
-                drawLine({
-                    ctx,
-                    tokenList,
-                    xRatio, yRatio,
-                    trueEdge, trueBaseline,
-                    textData: flavorTextData,
-                    format,
-                    globalScale,
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    trueBaseline += lineHeight;
                 });
-                trueBaseline += lineHeight;
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-            }
             break;
         }
         resetStyle();

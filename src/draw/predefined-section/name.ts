@@ -303,7 +303,7 @@ export const drawName = async (
     if (hasOutline) {
         const resetStroke = setTextStyle({
             ctx,
-            lineWidth: lineWidth + embossThickness,
+            lineWidth: lineWidth + (hasEmboss ? embossThickness : 0),
             lineColor,
             globalScale,
             useDefault: false,

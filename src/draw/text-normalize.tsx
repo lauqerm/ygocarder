@@ -1,81 +1,95 @@
 import {
-    NB_LINE_OPEN,
-    NB_LINE_CLOSE,
-    OCG_RUBY_SOURCE,
-    OCG_KEYWORD_SOURCE,
-    ocgKeywordDataMap,
-    WHOLE_WORD_SOURCE,
-    NOT_END_OF_LINE_SOURCE,
-    NOT_START_OF_LINE_SOURCE,
-    NOT_SPLIT_SOURCE,
-    OCG_BULLET_SOURCE,
-    tcgToOCGLetterMap,
-    ocgToTCGLetterMap,
-    UNCOMPRESSED_SOURCE,
-    ocgNumberCircleMap,
-    NB_WORD_OPEN,
-    NB_WORD_CLOSE,
     FLAVOR_CONDITION_SOURCE,
-    NB_UNCOMPRESSED_START,
-    NB_UNCOMPRESSED_END,
-    contextualDoubleQuoteRegex,
+    FLAVOR_LINE_PLACEHOLDER,
+    FULL_LINE_PLACEHOLDER,
+    NB_FULL_LINE_CLOSE,
     NB_FULL_LINE_OPEN,
-    NB_FULL_LINE_CLOSE
+    NB_LINE_CLOSE,
+    NB_LINE_OPEN,
+    NB_UNCOMPRESSED_END,
+    NB_UNCOMPRESSED_START,
+    NB_WORD_CLOSE,
+    NB_WORD_OPEN,
+    NOT_END_OF_LINE_SOURCE,
+    NOT_SPLIT_SOURCE,
+    NOT_START_OF_LINE_SOURCE,
+    OCG_BULLET_SOURCE,
+    OCG_KEYWORD_SOURCE,
+    OCG_RUBY_SOURCE,
+    UNCOMPRESSED_SOURCE,
+    WHOLE_WORD_SOURCE,
+    contextualDoubleQuoteRegex,
+    ocgKeywordDataMap,
+    ocgNumberCircleMap,
+    ocgToTCGLetterMap,
+    tcgToOCGLetterMap,
 } from 'src/model';
 
 export type LineOption = {
+    line: string,
     alignment: 'left' | 'justify',
 };
 export const splitEffect = (effect: string, isNormal = false) => {
-    let effectText = effect;
-
-    const fullLineList = [];
-    const fullLineListOption: LineOption[] = [];
     const lineRegexSource = `^(${NB_LINE_OPEN}([^${NB_LINE_CLOSE}]*)${NB_LINE_CLOSE}\\s*)`;
     const fullLineRegexSource = `^(${NB_FULL_LINE_OPEN}([^${NB_FULL_LINE_CLOSE}]*)${NB_FULL_LINE_CLOSE}\\s*)`;
+    const fullLineListOption: LineOption[] = [];
+    const lineList: string[] = [];
     const wholeLineRegex = new RegExp([lineRegexSource, fullLineRegexSource].join('|'));
-    let lineReplacement: string | undefined;
-    let lineContent: string | undefined;
-    let fullLineReplacement: string | undefined;
-    let fullLineContent: string | undefined;
-    let willContinue = false;
-    do {
-        const result = wholeLineRegex.exec(effectText);
-        lineReplacement = result?.[1];
-        lineContent = result?.[2];
-        fullLineReplacement = result?.[3];
-        fullLineContent = result?.[4];
-
-        willContinue = false;
-        if (lineContent && lineReplacement) {
-            fullLineList.push(lineContent);
-            effectText = effectText.replace(lineReplacement, '');
-            fullLineListOption.push({ alignment: 'left' });
-            willContinue = true;
-        } else if (fullLineContent && fullLineReplacement) {
-            fullLineList.push(fullLineContent);
-            effectText = effectText.replace(fullLineReplacement, '');
-            fullLineListOption.push({ alignment: 'justify' });
-            willContinue = true;
-        }
-    } while (willContinue);
-
+    let effectText = effect;
     let effectFlavorCondition = '';
+    /** We use two new line character to identify condition clause among flavor text. Because in normal case the user will try to put in many new lines to ensure that the condition clause is placed at bottom of the card text.
+     * 
+     * But this method has a caveat: For example if current line limit is 6, and the flavor text already take 5 lines. If user put the condition clause at line 6, it is indistinguishable from a normal paragraph, and therefore drawn with italic font. But if user put a new line between, it will force the draw function to increase the line limit into 7.
+     * 
+     * To combat this, we perform a simple remove that additional new line, that means if conditional clause is present, two new lines in textare actually result only one new line. This does not create much hassle since user rarely notice this behavior.
+     * */
     const flavorConditionRegex = new RegExp(FLAVOR_CONDITION_SOURCE, 'm');
     const potentialFlavorConditionText = flavorConditionRegex.exec(effect)?.[1];
     if (potentialFlavorConditionText && isNormal) {
         effectFlavorCondition = potentialFlavorConditionText.trim();
         effectText = effectText.replace(potentialFlavorConditionText, '');
     } else effectFlavorCondition = '';
-    /** Restore all remaining nb line symbol back to their normal letters. */
-    effectText = effectText
-        .replaceAll(NB_LINE_OPEN, '[').replaceAll(NB_LINE_CLOSE, ']')
-        .replaceAll(NB_FULL_LINE_OPEN, '[[').replaceAll(NB_FULL_LINE_CLOSE, ']]');
+
+    /** Infinite loop guarding just in case, we are dealing with while loop anyways */
+    let tryCnt = 0;
+    while (effectText.length > 0 && tryCnt <= 100) {
+        const result = wholeLineRegex.exec(effectText);
+        const lineReplacement = result?.[1];
+        const lineContent = result?.[2];
+        const fullLineReplacement = result?.[3];
+        const fullLineContent = result?.[4];
+
+        if (lineContent && lineReplacement) {
+            effectText = effectText.replace(lineReplacement, '');
+            fullLineListOption.push({ line: lineContent, alignment: 'left' });
+            lineList.push(FULL_LINE_PLACEHOLDER);
+        } else if (fullLineContent && fullLineReplacement) {
+            effectText = effectText.replace(fullLineReplacement, '');
+            fullLineListOption.push({ line: fullLineContent, alignment: 'justify' });
+            lineList.push(FULL_LINE_PLACEHOLDER);
+        } else {
+            const paragraphResult = /(.*)(\n|$)/.exec(effectText);
+            const lineReplacement = paragraphResult?.[0];
+            const lineContent = paragraphResult?.[1];
+            if (lineReplacement) {
+                /** Restore all remaining nb line symbol back to their normal letters. Then split those paragraph into lines. */
+                lineList.push(...lineContent
+                    .replaceAll(NB_LINE_OPEN, '[').replaceAll(NB_LINE_CLOSE, ']')
+                    .replaceAll(NB_FULL_LINE_OPEN, '[[').replaceAll(NB_FULL_LINE_CLOSE, ']]')
+                    .split('\n')
+                );
+                effectText = effectText.replace(lineReplacement, '');
+            }
+        }
+        tryCnt++;
+    }
+    if (effectFlavorCondition) {
+        lineList.push(FLAVOR_LINE_PLACEHOLDER);
+    }
 
     return {
-        fullLineList,
-        fullLineListOption,
-        effectText,
+        lineList,
+        fullLineListOption: [...fullLineListOption],
         effectFlavorCondition,
     };
 };
