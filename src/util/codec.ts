@@ -64,12 +64,14 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         fontStyle: 'efs',
         upSize: 'eus',
         background: 'ebg',
+        minLine: 'eml',
     },
     pendulumStyle: {
         _newKey: 'ps',
         fontStyle: 'pfs',
         upSize: 'pus',
         background: 'pbg',
+        minLine: 'pml',
     },
     nameStyle: {
         _newKey: 'ns',

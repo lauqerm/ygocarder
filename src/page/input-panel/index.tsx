@@ -189,6 +189,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 effect,
                 atk, def,
                 creator, password,
+                effectStyle, pendulumStyle,
             } = card;
 
             imageInputGroupRef.current?.setValue({ art, artCrop, artData, artSource });
@@ -199,7 +200,11 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
             effectInputGroupRef.current?.setValue(effect);
-            postPendulumInputGroupRef.current?.setValue({ typeAbility });
+            postPendulumInputGroupRef.current?.setValue({
+                typeAbility,
+                effectMinLine: effectStyle.minLine,
+                pendulumEffectMinLine: pendulumStyle.minLine,
+            });
             footerInputGroupRef.current?.setValue({ atk, def, creator, password });
         }
     }));

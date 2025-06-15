@@ -87,13 +87,16 @@ export const drawEffect = ({
         forceRelaxCondenseLimit?: number,
         defaultSizeLevel?: number,
         globalScale: number,
+        minLine?: number,
     },
 }) => {
     const {
         defaultSizeLevel,
         forceRelaxCondenseLimit,
         globalScale = 1,
+        minLine: baseMinLine = 0,
     } = option ?? {};
+    const minLine = typeof baseMinLine === 'number' ? baseMinLine : 0;
     let sizeLevel = defaultSizeLevel ?? 0;
     if (!ctx || !content) return sizeLevel;
 
@@ -178,7 +181,7 @@ export const drawEffect = ({
 
         // [FIND SUITABLE CONDENSE RATIO]
         const effectiveMedian = (lineList.length > lineCount && typeof trueHeightCap === 'number')
-            ? 1 // If dynamic size is possible, no need to find condense value if current lint count is larger than the font's maximum line count, it will overflow anyways.
+            ? 1 // If dynamic size is possible, no need to find condense value if current line count is larger than the font's maximum line count, it will overflow anyways.
             : condense(
                 median => {
                     const { currentLineList, currentLineCount } = createLineList({
@@ -197,15 +200,14 @@ export const drawEffect = ({
                 },
                 200,
             );
-        effectiveLineCount = lineListWithRatio.length;
-
+        effectiveLineCount = Math.max(minLine, lineListWithRatio.length);
         // [START DRAWING]
         /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
         const resetStyle = setTextStyle({ ctx, ...textStyle, globalScale });
         const tolerantValue = tolerancePerSentence[`${lineList.length}`] ?? tolerancePerSentence['3'];
         if (
-            (effectiveMedian < tolerantValue)
-            && (sizeLevel < fontList.length)
+            ((effectiveMedian < tolerantValue) && (sizeLevel < fontList.length))
+            || minLine > lineCount
         ) {
             sizeLevel += 1; // If sizeLevel is larger than the length of font list, trigger dynamic size
         } else {
@@ -249,10 +251,9 @@ export const drawEffect = ({
                             globalScale,
                         });
                     } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
-                        const effectiveLineCount = lineListWithRatio.length;
                         const flavorFontData = scaleFontData(EffectFontData[fontDataKey], globalScale);
                         const dynamicFlavorFontData = useDynamicSize
-                            ? injectDynamicFont(flavorFontData, { heightCap: trueHeightCap, lineCount: effectiveLineCount })
+                            ? injectDynamicFont(flavorFontData, { heightCap: trueHeightCap, lineCount: Math.max(minLine, lineListWithRatio.length) })
                             : flavorFontData;
                         const { fontSize } = useDynamicSize
                             ? dynamicFlavorFontData.fontList[dynamicSizeLevel]

@@ -258,7 +258,7 @@ export const drawLinkRatingText = async (
     const resetStyle = setTextStyle({ ctx, ...style, globalScale });
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
-    ctx.font = `bold ${26.55 * globalScale}px RoGSanSrfStd-Bd`;
+    ctx.font = `bold ${24 * globalScale}px RoGSanSrfStd-Bd`;
     ctx.fillText(`${rating}`, 622.75 * globalScale, baseline * globalScale);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';

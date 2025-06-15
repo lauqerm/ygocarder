@@ -135,6 +135,7 @@ const CsvStandardFieldList = [
     'Effect Style - Upsize',
     'Effect Style - Font Style',
     'Effect Style - Background',
+    'Effect Style - Min Line',
     'Pendulum Size',
     'Pendulum Effect Style - Is Custom',
     'Pendulum Effect Style - Fill Color',
@@ -143,6 +144,7 @@ const CsvStandardFieldList = [
     'Pendulum Effect Style - Upsize',
     'Pendulum Effect Style - Font Style',
     'Pendulum Effect Style - Background',
+    'Pendulum Effect Style - Min Line',
     'Other Style - Is Custom',
     'Other Style - Fill Color',
     'Other Style - Has Shadow',
@@ -384,6 +386,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Effect Style - Upsize', effectStyle.upSize);
         write('Effect Style - Font Style', effectStyle.fontStyle);
         write('Effect Style - Background', effectStyle.background);
+        write('Effect Style - Min Line', effectStyle.minLine);
         write('Pendulum Size', pendulumSize);
         write('Pendulum Effect Style - Is Custom', pendulumTextStyle[0]);
         write('Pendulum Effect Style - Fill Color', pendulumTextStyle[1]);
@@ -392,6 +395,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Pendulum Effect Style - Upsize', pendulumStyle.upSize);
         write('Pendulum Effect Style - Font Style', pendulumStyle.fontStyle);
         write('Pendulum Effect Style - Background', pendulumStyle.background);
+        write('Pendulum Effect Style - Min Line', pendulumStyle.minLine);
         write('Other Style - Is Custom', otherTextStyle[0]);
         write('Other Style - Fill Color', otherTextStyle[1]);
         write('Other Style - Has Shadow', otherTextStyle[2]);
@@ -569,6 +573,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const pendulumEffectFontStyle = (reader('Pendulum Effect Style - Font Style') ?? emptyCard.pendulumStyle.fontStyle).toLowerCase();
                 const effectBackground = (reader('Effect Style - Background') ?? emptyCard.effectStyle.background).toLowerCase();
                 const pendulumEffectBackground = (reader('Pendulum Effect Style - Background') ?? emptyCard.pendulumStyle.background).toLowerCase();
+                const effectMinLine = normalizeInt(reader('Effect Style - Min Line'), emptyCard.effectStyle.minLine);
+                const pendulumEffectMinLine = normalizeInt(reader('Pendulum Effect Style - Min Line'), emptyCard.pendulumStyle.minLine);
 
                 const emptyOpacity = getDefaultCardOpacity();
                 const opacity: CardOpacity = {
@@ -718,7 +724,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     def,
                     dyeList,
                     effect,
-                    effectStyle: { condenseTolerant, upSize: effectUpSize, fontStyle: effectFontStyle, background: effectBackground },
+                    effectStyle: {
+                        condenseTolerant,
+                        upSize: effectUpSize,
+                        fontStyle: effectFontStyle,
+                        background: effectBackground,
+                        minLine: effectMinLine,
+                    },
                     effectTextStyle,
                     externalInfo,
                     finish,
@@ -751,7 +763,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumScaleBlue,
                     pendulumScaleRed,
                     pendulumSize,
-                    pendulumStyle: { upSize: pendulumEffectUpSize, fontStyle: pendulumEffectFontStyle, background: pendulumEffectBackground },
+                    pendulumStyle: {
+                        upSize: pendulumEffectUpSize,
+                        fontStyle: pendulumEffectFontStyle, 
+                        background: pendulumEffectBackground,
+                        minLine: pendulumEffectMinLine,
+                    },
                     pendulumTextStyle,
                     rightFrame,
                     setId,

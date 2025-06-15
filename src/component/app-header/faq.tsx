@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '12/06/2025';
+        const currentReminder = '16/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,26 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'TheDuelistt at Jun 15, 2025',
+                            question: 'Can you make this L letter to be consistent with the rest of the INK, also, can you make the Link Rating value (number) lower and consistent with the INK, and the dash "-" a little bolder, so that the overall look is similar to the official Konami Yugioh Card template. Thank you.',
+                            answer: 'I have updated the layer, hopefully it look better now.',
+                        },
+                        {
+                            author: 'text format at Jun 14, 2025',
+                            question: 'The text format looks completely different with the pendulum effect than with the monster effect',
+                            answer: 'Text effect is automatically calculated to best fit in the card, I always recommended to let it flow naturally, but regardless, I have added input to define the minimum lines of effect you would want in your cards.',
+                        },
+                        {
+                            author: 'Anonymous User at Jun 14, 2025',
+                            question: 'The outline is a bit uneven depending on the letter.',
+                            answer: 'This is a known issue, unfortunately this is the best I can offer right now.',
+                        },
+                        {
+                            author: 'Anonymous User at Jun 14, 2025',
+                            question: 'Justify doesn\'t seem to work',
+                            answer: 'It should work normally by now.',
+                        },
                         {
                             author: 'Phan Trí Dĩ at Jun 11, 2025',
                             question: 'Hi, firstly, I want to thanks to your hardwork for making a wonderful website, very appreciate your work. There\'s some K9 card with a special hash sign. It get a bit smaller when I use it. I wondering if you can fix it. Thank you very much.',

@@ -61,24 +61,24 @@ export const HALF_SCALE_WIDTH_OFFSET = 64.44;
 export const PendulumEffectCoordinateMap: Record<'normal' | 'scaleless', Record<string, CoordinateData[]>> = {
     normal: {
         small: [
-            { trueWidth: 555.47, trueBaseline: 789.65, trueEdge: 128.94 },
+            { trueWidth: 555.47, trueBaseline: 789.65, trueEdge: 128.94, trueHeightCap: 80 },
         ],
         medium: [
-            { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
+            { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94, trueHeightCap: 122.6 },
         ],
         large: [
-            { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94 },
+            { trueWidth: 555.47, trueBaseline: 746.29, trueEdge: 128.94, trueHeightCap: 155.8 },
         ],
     },
     scaleless: {
         small: [
-            { trueWidth: 684.35, trueBaseline: 789.65, trueEdge: 64.5 },
+            { trueWidth: 684.35, trueBaseline: 789.65, trueEdge: 64.5, trueHeightCap: 79.8 },
         ],
         medium: [
-            { trueWidth: 684.35, trueBaseline: 746.29, trueEdge: 64.5 },
+            { trueWidth: 684.35, trueBaseline: 746.29, trueEdge: 64.5, trueHeightCap: 126.1 },
         ],
         large: [
-            { trueWidth: 684.35, trueBaseline: 746.29, trueEdge: 64.5 },
+            { trueWidth: 684.35, trueBaseline: 746.29, trueEdge: 64.5, trueHeightCap: 155.5 },
         ],
     },
 };

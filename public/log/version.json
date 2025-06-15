@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.3.3 (2025/06/16)",
+        "logList": [
+            {
+                "content": "Loosen up the requirement for non-breakable line syntaxes (normal and justified). Before: Can only be used at the start of the effect, or after another non-breakable lines. After: Can be used at the start of the effect, or after any paragraphs."
+            },
+            {
+                "content": "Minor tweaks for Link Rating."
+            },
+            {
+                "content": "Allow explicit control for the minimum lines of effect / pendulum effect."
+            }
+        ]
+    },
+    {
         "version": "v2.3.2 (2025/06/14)",
         "logList": [
             {

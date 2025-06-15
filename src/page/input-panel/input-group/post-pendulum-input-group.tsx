@@ -1,36 +1,52 @@
-import { Checkbox, Tooltip } from 'antd';
+import { Checkbox, InputNumber, Tooltip } from 'antd';
 import { Explanation, FormattingHelpDrawer, RadioTrain, StyledPopMarkdown } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CondenseType, IconTypeMap } from 'src/model';
 import { CondenseThresholdButtonList } from '../const';
 import styled from 'styled-components';
 import { checkMonster } from 'src/util';
 
-const StyledPostPendulumInputContainer = styled.div`
-    display: grid;
-    grid-template-columns: 1fr max-content;
-    grid-template-areas:
-        "type-input input-helper"
-        "condense-input help-button";
-    gap: var(--spacing-sm);
-    align-items: center;
+const PostPendulumFirstLineContainer = styled.div`
+    &.first-line,
+    &.second-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+        align-items: center;
+        justify-content: right;
+    }
+    .type-ability-input {
+        flex: 1 1 auto;
+        width: unset;
+        max-width: 40rem;
+    }
+    .condense-input {
+        flex: 1 1 auto;
+    }
+    .line-input {
+        flex: 0 0 auto;
+        display: inline-grid;
+        grid-template-columns: var(--width-label) max-content max-content;
+        gap: var(--spacing-sm);
+        align-items: center;
+        .ant-input-number {
+            width: 65px;
+        }
+    }
+    .formatting-help-button,
+    .input-kanji-helper {
+        flex: 0 0 auto;
+    }
     .formatting-help-button {
         grid-area: help-button;
         &:focus {
             box-shadow: 0 0 0 2px var(--focus);
         }
     }
-    .input-kanji-helper {
-        grid-area: input-helper;
-    }
-    .type-ability-input {
-        grid-area: type-input;
-    }
     .condense-input {
-        grid-area: condense-input;
 		.standalone-addon.ant-input-group-addon {
 			width: unset;
 		}
@@ -38,15 +54,14 @@ const StyledPostPendulumInputContainer = styled.div`
 			flex: 1 1 90px;
 		}
 	}
-    &.variant-tcg {
-        .type-ability-input {
-            grid-column: span 2;
-        }
-    }
 `;
 
 export type PostPendulumInputGroupRef = {
-    setValue: (value: { typeAbility?: string[] }) => void,
+    setValue: (value: {
+        typeAbility?: string[],
+        effectMinLine?: number,
+        pendulumEffectMinLine?: number,
+    }) => void,
 }
 export type PostPendulumInputGroup = {} & Pick<CardTextInput, 'onTakePicker'>;
 export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, PostPendulumInputGroup>(({
@@ -82,6 +97,9 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
     })));
     const typeAbilitySeparator = format === 'ocg' ? '／' : '/';
     const typeAbilityInputRef = useRef<CardTextInputRef>(null);
+    const [effectMinLine, setEffectMinLine] = useState(() => useCard.getState().card.effectStyle.minLine);
+    const [pendulumEffectMinLine, setPendulumEffectMinLine] = useState(() => useCard.getState().card.pendulumStyle.minLine);
+
     const changeTypeAbility = useMemo(() => {
         return getUpdater(
             'typeAbility',
@@ -108,9 +126,32 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         });
     };
 
+    useEffect(() => {
+        /** Changing min line force render effect, so we should do so sparingly */
+        let relevant = true;
+        setTimeout(() => {
+            if (relevant) setCard(currentCard => {
+                const newEffectStyle = { ...currentCard.effectStyle, minLine: effectMinLine };
+                const newPendulumEffectStyle = { ...currentCard.pendulumStyle, minLine: pendulumEffectMinLine };
+
+                return {
+                    ...currentCard,
+                    effectStyle: newEffectStyle,
+                    pendulumStyle: newPendulumEffectStyle,
+                };
+            });
+        }, 500);
+
+        return () => {
+            relevant = false;
+        };
+    }, [effectMinLine, pendulumEffectMinLine, setCard]);
+
     useImperativeHandle(ref, () => ({
-        setValue: ({ typeAbility }) => {
+        setValue: ({ typeAbility, effectMinLine, pendulumEffectMinLine }) => {
             if (typeAbility) typeAbilityInputRef.current?.setValue(typeAbility.join(typeAbilitySeparator));
+            if (typeof effectMinLine === 'number') setEffectMinLine(effectMinLine);
+            if (typeof pendulumEffectMinLine === 'number') setPendulumEffectMinLine(pendulumEffectMinLine);
         }
     }));
 
@@ -122,36 +163,61 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             ? 'input.type.st.label'
             : 'input.type.monster.label';
     const isOCG = format === 'ocg';
-    return <StyledPostPendulumInputContainer className={`post-pendulum-input variant-${format}`}>
-        <CardTextInput ref={typeAbilityInputRef}
-            addonBefore={language[typeLabel]}
-            id="type-ability"
-            defaultValue={useCard.getState().card.typeAbility.join(typeAbilitySeparator)}
-            onChange={changeTypeAbility}
-            onTakePicker={onTakePicker}
-        />
-        {isOCG && <Tooltip
-            overlay={language['input.furigana-helper.tooltip']}
-            overlayClassName="long-tooltip-overlay"
-        >
-            <Checkbox
-                className="input-kanji-helper"
-                onChange={toggleFuriganaHelper}
-                checked={furiganaHelper}
+    return <>
+        <PostPendulumFirstLineContainer className={`post-pendulum-input first-line variant-${format}`}>
+            <CardTextInput ref={typeAbilityInputRef}
+                addonBefore={language[typeLabel]}
+                id="type-ability"
+                defaultValue={useCard.getState().card.typeAbility.join(typeAbilitySeparator)}
+                onChange={changeTypeAbility}
+                onTakePicker={onTakePicker}
+            />
+            {isOCG && <Tooltip
+                overlay={language['input.furigana-helper.tooltip']}
+                overlayClassName="long-tooltip-overlay"
             >
-                {language['input.furigana-helper.label']}
-            </Checkbox>
-        </Tooltip>}
-        <RadioTrain className="condense-input" value={`${condenseTolerant}`}
-            onChange={value => onCondenseTolerantChange(value as CondenseType)}
-            optionList={CondenseThresholdButtonList}
-        >
-            <span>
-                {language['input.condense.label']} <Explanation
-                    content={<StyledPopMarkdown>{language['input.condense.tooltip']}</StyledPopMarkdown>}
+                <Checkbox
+                    className="input-kanji-helper"
+                    onChange={toggleFuriganaHelper}
+                    checked={furiganaHelper}
+                >
+                    {language['input.furigana-helper.label']}
+                </Checkbox>
+            </Tooltip>}
+            <FormattingHelpDrawer />
+        </PostPendulumFirstLineContainer>
+        <PostPendulumFirstLineContainer className={`post-pendulum-input second-line variant-${format}`}>
+            <RadioTrain className="condense-input" value={`${condenseTolerant}`}
+                onChange={value => onCondenseTolerantChange(value as CondenseType)}
+                optionList={CondenseThresholdButtonList}
+            >
+                <span>
+                    {language['input.condense.label']} <Explanation
+                        content={<StyledPopMarkdown>{language['input.condense.tooltip']}</StyledPopMarkdown>}
+                    />
+                </span>
+            </RadioTrain>
+            <div className="line-input">
+                <div>
+                    {language['input.text-style.min-line.label']}
+                </div>
+                <InputNumber
+                    id="effect-line"
+                    value={effectMinLine}
+                    placeholder={language['input.text-style.min-line.effect.placeholder']}
+                    onChange={value => setEffectMinLine(typeof value === 'number' ? value : 0)}
+                    min={0}
+                    max={50}
                 />
-            </span>
-        </RadioTrain>
-        <FormattingHelpDrawer />
-    </StyledPostPendulumInputContainer>;
+                <InputNumber
+                    id="pendulum-effect-line"
+                    value={pendulumEffectMinLine}
+                    placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
+                    onChange={value => setPendulumEffectMinLine(typeof value === 'number' ? value : 0)}
+                    min={0}
+                    max={50}
+                />
+            </div>
+        </PostPendulumFirstLineContainer>
+    </>;
 });

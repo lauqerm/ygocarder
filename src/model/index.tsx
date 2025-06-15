@@ -82,11 +82,13 @@ export const getDefaultCard = () => ({
         fontStyle: 'auto',
         upSize: 0,
         background: 'auto',
+        minLine: 0,
     },
     pendulumStyle: {
         fontStyle: 'auto',
         upSize: 0,
         background: 'auto',
+        minLine: 0,
     },
     effect: `[2+ Effect Monsters on your field]
 Each time an opponent's monster activates its effect, place 1 Pure Counter on that opponent's monster (max. 1) after that effect resolves. Unaffected by activated effects from monster with a Pure Counter. Cannot be destroyed by battle with monsters with a Pure Counter.`,
@@ -181,11 +183,13 @@ export const getEmptyCard = (): Card => ({
         fontStyle: 'auto',
         upSize: 0,
         background: 'auto',
+        minLine: 0,
     },
     pendulumStyle: {
         fontStyle: 'auto',
         upSize: 0,
         background: 'auto',
+        minLine: 0,
     },
     effect: '',
     setId: '',
