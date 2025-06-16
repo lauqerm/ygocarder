@@ -6,10 +6,11 @@
                 "content": "Loosen up the requirement for non-breakable line syntaxes (normal and justified). Before: Can only be used at the start of the effect, or after another non-breakable lines. After: Can be used at the start of the effect, or after any paragraphs."
             },
             {
-                "content": "Minor tweaks for Link Rating."
+                "content": "Minor tweaks for Link Rating and Pendulum Scale Numbers."
             },
             {
-                "content": "Allow explicit control for the minimum lines of effect / pendulum effect."
+                "content": "Allow explicit control for the minimum lines of effect / pendulum effect, offer more granular control compare to Condense option.",
+                "image": "https://images2.imgbox.com/d5/3d/vtPX77V7_o.png"
             }
         ]
     },

@@ -68,6 +68,19 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'KaibaSetoo at Jun 15, 2025',
+                            question: 'Hello, can you fix the scale number 10, 11 and 12. They are not in the center of the scale value border. Thank you.',
+                            answer: 'I have updated some cases, but please note that some scale numbers does not place at the center of the box at all, but deviated a bit to the right side (very clear in cards like "D/D Savant Kepler").',
+                        },
+                        {
+                            author: 'Anonymous User at Jun 16, 2025',
+                            question: 'Can you change back the *LINK-* text as before, like before the increase card larger update, the letter *L* is now higher.',
+                        },
+                        {
+                            author: 'Anonymous User at Jun 16, 2025',
+                            question: 'And the LINK number are now higher then the text too.',
+                        },
+                        {
                             author: 'TheDuelistt at Jun 15, 2025',
                             question: 'Can you make this L letter to be consistent with the rest of the INK, also, can you make the Link Rating value (number) lower and consistent with the INK, and the dash "-" a little bolder, so that the overall look is similar to the official Konami Yugioh Card template. Thank you.',
                             answer: 'I have updated the layer, hopefully it look better now.',

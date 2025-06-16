@@ -16,23 +16,60 @@ export const drawScale = (
         ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
         ctx.textAlign = 'left';
 
-        const exceptionDigitWidthRatio = 0.8;
         const digitList = `${value}`.split('');
-        let totalWidth = 0;
 
-        digitList.forEach(digit => {
-            totalWidth += ctx.measureText(digit).width * (digit === '1' ? exceptionDigitWidthRatio : 1);
-        });
-        let accLeft = edge - totalWidth / 2;
+        if (digitList.length === 1) {
+            const digit = digitList[0];
+            const digitWidth = ctx.measureText(digit).width;
+            const accLeft = edge - digitWidth / 2;
 
-        digitList.forEach(digit => {
             ctx.fillText(
                 digit,
-                digit === '1' ? accLeft + 1 * globalScale : accLeft,
+                digit === '1' ? accLeft + 2 * globalScale : accLeft,
                 baseline + fontSize,
             );
-            accLeft += ctx.measureText(digit).width * (digit === '1' ? exceptionDigitWidthRatio : 1);
-        });
+        } else if (digitList.length === 2) {
+            /** Observable behavior: The number "1" in 2-digits pendulum scale (10, 11, 12, 13) stay in the exact same place no matter which is the second digit, so we try to emulate this pattern here. */
+            const firstDigit = digitList[0];
+            const secondDigit = digitList[1];
+            const firstDigitWidth = ctx.measureText(firstDigit).width * 0.825;
+            const secondDigitWidth = ctx.measureText(secondDigit).width;
+            const accLeft = edge - firstDigitWidth - (firstDigit === '1'
+                ? 0
+                : firstDigitWidth * 0.1
+            );
+
+            ctx.fillText(
+                firstDigit,
+                accLeft,
+                baseline + fontSize,
+            );
+            ctx.fillText(
+                secondDigit,
+                accLeft + firstDigitWidth - (firstDigit === '1'
+                    ? (secondDigit === '1'
+                        ? ctx.measureText('1').width * 0.1
+                        : secondDigitWidth * 0.1)
+                    : secondDigitWidth * -0.1),
+                baseline + fontSize,
+            );
+        } else {
+            let totalWidth = 0;
+
+            digitList.forEach(digit => {
+                totalWidth += ctx.measureText(digit).width * (digit === '1' ? 0.7 : 1);
+            });
+            let accLeft = edge - totalWidth / 2;
+
+            digitList.forEach(digit => {
+                ctx.fillText(
+                    digit,
+                    accLeft,
+                    baseline + fontSize,
+                );
+                accLeft += ctx.measureText(digit).width * (digit === '1' ? 0.7 : 1);
+            });
+        }
     }
 };
 
