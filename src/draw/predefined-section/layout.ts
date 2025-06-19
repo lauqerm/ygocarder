@@ -1,6 +1,7 @@
 import {
     ArrowPositionMap,
     ArtFinishMap,
+    AttributeSetMap,
     BackgroundType,
     CanvasConst,
     CardOpacity,
@@ -94,7 +95,7 @@ export const getLayoutDrawFunction = ({
     artworkCanvas,
     backgroundCanvas,
     globalScale,
-    format,
+    region,
     hasBackground,
     frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
     dyeList,
@@ -117,7 +118,7 @@ export const getLayoutDrawFunction = ({
     artworkCanvas: HTMLCanvasElement | null,
     backgroundCanvas: HTMLCanvasElement | null,
     globalScale: number,
-    format: string,
+    region: string,
     frame: string, leftFrame: string, pendulumFrame: string, rightFrame: string, pendulumRightFrame: string,
     dyeList: FrameDyeList,
     effectBackground: string, pendulumEffectBackground: string,
@@ -358,7 +359,7 @@ export const getLayoutDrawFunction = ({
             } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
             await drawAsset(
                 attributeCtx,
-                `attribute/attr-${format}-${attribute.toLowerCase()}.png`,
+                `attribute/attr-${AttributeSetMap[region].fileKey}-${attribute.toLowerCase()}.png`,
                 attributeX, attributeY,
             );
             const attributeFinish = otherFinish[0] ?? 'normal';

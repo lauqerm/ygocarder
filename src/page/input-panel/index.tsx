@@ -19,12 +19,10 @@ import {
 } from '../../util';
 import {
     getFoilButtonList,
-    getAttributeList,
     getFinishList,
     FormatButtonList,
-    getExtraAttributeList,
 } from './const';
-import { ClearOutlined, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
+import { ClearOutlined } from '@ant-design/icons';
 import { CharPicker } from './char-picker';
 import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
 import { CheckboxTrain, FrameTrain, FrameTrainRef } from './input-train';
@@ -32,6 +30,7 @@ import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
 import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
+    AttributeInputGroup,
     CardIconInputGroup,
     EffectInputGroup,
     EffectInputGroupRef,
@@ -78,7 +77,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
         isPendulum,
-        attribute,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
@@ -88,7 +86,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             nameStyleType, nameStyle,
             isPendulum,
             isLink,
-            attribute,
         },
         getUpdater,
         setCard,
@@ -98,12 +95,11 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         nameStyleType, nameStyle,
         isPendulum,
         isLink,
-        attribute,
         getUpdater,
         setCard,
     })));
-    const { setting, updateSetting } = useSetting();
-    const { showCreativeOption, showExtraDecorativeOption, reduceMotionColor, showExtraAttribute } = setting;
+    const { setting } = useSetting();
+    const { showCreativeOption, showExtraDecorativeOption, reduceMotionColor } = setting;
 
     const stylePickerRef = useRef<NameStylePickerRef>(null);
 
@@ -150,7 +146,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     const changeFoil = useMemo(() => getUpdater('foil'), [getUpdater]);
     const onFinishChange = useMemo(() => getUpdater('finish'), [getUpdater]);
     const changeOpacity = useCallback((opacity: CardOpacity) => setCard(curr => ({ ...curr, opacity })), [setCard]);
-    const changeAttribute = useMemo(() => getUpdater('attribute'), [getUpdater]);
     const changeNameStyle = useCallback((type: NameStyleType, value: Partial<NameStyle>) => {
         setCard(currentCard => {
             return {
@@ -161,8 +156,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         });
     }, [setCard]);
 
-    const attributeList = useMemo(() => getAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
-    const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
     const finishList = useMemo(() => getFinishList(language), [language]);
 
     useEffect(() => {
@@ -281,36 +274,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         </StyledNameSetIdInputContainer>
         <div className="main-info">
             <div className="main-info-first">
-                <RadioTrain
-                    className="fill-input-train span-input-train attribute-input"
-                    value={attribute}
-                    onChange={changeAttribute}
-                    optionList={attributeList}
-                    suffix={!showExtraAttribute && showExtraDecorativeOption
-                        ? <IconButton
-                            onClick={() => updateSetting({ showExtraAttribute: true })}
-                            Icon={DoubleRightOutlined}
-                            tooltipProps={{ overlay: language['button.more.label'] }}
-                        />
-                        : null}
-                >
-                    <span>{language['input.attribute.label']}</span>
-                </RadioTrain>
-                {(showExtraDecorativeOption && showExtraAttribute) && <RadioTrain
-                    className="fill-input-train extra-attribute-input"
-                    value={attribute}
-                    onChange={changeAttribute}
-                    optionList={extraAttributeList}
-                    suffix={showExtraDecorativeOption && showExtraAttribute
-                        ? <IconButton
-                            onClick={() => updateSetting({ showExtraAttribute: false })}
-                            Icon={DoubleLeftOutlined}
-                            tooltipProps={{ overlay: language['button.less.label'] }}
-                        />
-                        : null}
-                >
-                    &nbsp;
-                </RadioTrain>}
+                <AttributeInputGroup language={language} />
 
                 {(isPendulum || showCreativeOption)
                     && <PendulumInputGroup ref={pendulumInputGroupRef}

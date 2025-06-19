@@ -15,6 +15,7 @@ import {
     PendulumSizeMap,
     OtherFinishTypeMap,
     ExtraAttributeList,
+    AttributeSetMap,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -86,24 +87,23 @@ export const getFrameButtonList = () => frameList.map(({ name, nameKey, labelBac
     edition,
 }));
 
-export const getAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => AttributeList
-    .map(({ name, nameKey, isCreative, supportFormat }) => ({
+export const getAttributeList = (region: string, dictionary: Record<string, string>, showCreativeOption: boolean) => AttributeList
+    .map(({ name, nameKey, isCreative }) => ({
         label: name === NO_ATTRIBUTE
             ? <CloseCircleOutlined />
             : <Tooltip overlay={dictionary[nameKey]}>
                 <img
                     alt={dictionary[nameKey]}
-                    src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
+                    src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${AttributeSetMap[region]?.fileKey}-${name.toLowerCase()}.png`}
                 />
             </Tooltip>,
         value: name,
         isCreative,
-        supportFormat,
     }))
-    .filter(({ isCreative, supportFormat }) => (isCreative === false || isCreative === showCreativeOption) && supportFormat.includes(format));
+    .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption);
 
 export const getExtraAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => ExtraAttributeList
-    .map(({ name, nameKey, isCreative, supportFormat }) => ({
+    .map(({ name, nameKey, isCreative }) => ({
         label: <Tooltip overlay={dictionary[nameKey]}>
             <img
                 alt={dictionary[nameKey]}
@@ -112,9 +112,8 @@ export const getExtraAttributeList = (format: string, dictionary: Record<string,
         </Tooltip>,
         value: name,
         isCreative,
-        supportFormat,
     }))
-    .filter(({ isCreative, supportFormat }) => (isCreative === false || isCreative === showCreativeOption) && supportFormat.includes(format));
+    .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption);
 
 export const getSTIconButtonList = (dictionary: Record<string, string>) => IconList.map(({ value, nameKey }) => ({
     label: value === NO_ICON

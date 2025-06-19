@@ -110,7 +110,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         previewCanvasRef,
     } = canvasMap;
     const {
-        format,
+        format, region,
         hasBackground, backgroundType,
         frame,
         foil, finish, artFinish, otherFinish, opacity,
@@ -357,7 +357,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 canvas: frameCanvasRef.current,
                 artworkCanvas, backgroundCanvas,
                 globalScale,
-                format,
+                region,
                 frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
                 dyeList,
                 effectBackground, pendulumEffectBackground,
@@ -543,6 +543,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         finish,
         foil,
         format,
+        region,
         frame,
         frameCanvasRef,
         hasBackground,

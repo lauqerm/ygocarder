@@ -72,6 +72,7 @@ const CsvStandardFieldList = [
     'Art Crop - Width (%)',
     'Art Crop - Height (%)',
     'Is Using Full Art',
+    'Region',
     /** Creative customize stuff */
     'Star Type',
     'Star Alignment',
@@ -241,6 +242,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             flag,
             foil,
             format,
+            region,
             frame,
             furiganaHelper,
             hasBackground,
@@ -285,6 +287,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         const stringifedDyeList = dyeList.join('|');
 
         write('Format', format);
+        write('Region', region);
         write('Frame', frame);
         write('Name', name);
         write('Attribute', attribute);
@@ -525,6 +528,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const effect = reader('Effect') ?? '';
                 const finish = reader('Card Finish')?.split(/,| /).filter(entry => entry !== '') ?? [] as string[];
                 const format = (reader('Format') ?? emptyCard.format).toLowerCase();
+                const region = (reader('Region') ?? emptyCard.region).toLowerCase();
                 const furiganaHelper = normalizeBoolean(reader('Use Furigana Helper'), emptyCard.furiganaHelper);
                 const name = reader('Name') ?? '';
                 const password = reader('Password') ?? '';
@@ -770,6 +774,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                         minLine: pendulumEffectMinLine,
                     },
                     pendulumTextStyle,
+                    region,
                     rightFrame,
                     setId,
                     star,

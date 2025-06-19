@@ -1,3 +1,4 @@
+export * from './attribute-input-group';
 export * from './card-icon-input-group';
 export * from './effect-input-group';
 export * from './footer-input-group';

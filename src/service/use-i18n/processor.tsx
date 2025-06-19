@@ -22,6 +22,9 @@ export type RawLanguageData = LanguageMetadata & {
 };
 export type LanguageData = ReturnType<typeof processLanguage>;
 export type LanguageDataDictionary = LanguageData['dictionary'];
+export type WithLanguage = {
+    language: LanguageDataDictionary
+};
 
 export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDictionary: Record<string, string> = {}) => {
     const normalizedRawDictionary = {

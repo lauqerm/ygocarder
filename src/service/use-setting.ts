@@ -2,15 +2,15 @@ import { CanvasConst, ExportFormat } from 'src/model';
 import { create } from 'zustand';
 
 export type Setting = {
-    globalScale: number,
+    allowHotkey: boolean,
     exportFormat: ExportFormat,
+    globalScale: number,
+    mirrorPendulumScale: boolean,
+    reduceMotionColor: boolean,
     resolution: [number, number],
     showCreativeOption: boolean,
-    showExtraDecorativeOption: boolean,
     showExtraAttribute: boolean,
-    allowHotkey: boolean,
-    reduceMotionColor: boolean,
-    mirrorPendulumScale: boolean,
+    showExtraDecorativeOption: boolean,
 };
 export type SettingStore = {
     setting: Setting,

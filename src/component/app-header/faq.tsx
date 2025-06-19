@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '16/06/2025';
+        const currentReminder = '19/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,21 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Die Frauen at Jun 19, 2025',
+                            question: 'This may be a bit crazy, but since you\'ve already come a long way with customization, do you think it\'d be possible to toggle Star Types to be sorted manually in any combinations of the ones currently available?\n\nAnd on that note, and this here may be a bit too out there, but do you think you could use the Spell/Trap iconography as you would any of those? And if it\'s not too much of a bother, maybe the monster Attributes downsized on that row as well?',
+                            answer: 'Putting Spell/Trap/Monster Attribute icon in star slots is possible. As for manual icon of each star slot, I think *technically* it should be doable, but I need to do a bit more test, probably will look into it this weekend.',
+                        },
+                        {
+                            author: 'Die Frauen at Jun 19, 2025',
+                            question: 'Hello, first of all I would like to congratulate you on creating what\'s probably the best card editor there is, and thank you for making things convenient for everyone using it. I shall formally make a request of sorts in a different report, but I couldn\'t just not commend the efforts you and all others involved have done. Even managed to  mesh together the Link Arrows for a Pendulum frame in a not entirely unsightly way, and the new hue feature for advanced layouts is also superb for custom card frame efforts.\n\nSuperb work, keep it up',
+                            answer: 'Thanks for your kind words, appreciate your support.',
+                        },
+                        {
+                            author: 'Not really a feedback but... at Jun 19, 2025',
+                            question: 'It would be cool to see the Attributes in other languages available in TCG',
+                            answer: 'I have added many more Attributes that I could find on Yugipedia.',
+                        },
                         {
                             author: 'TheDuelistt at Jun 15, 2025',
                             question: 'Can you make this L letter to be consistent with the rest of the INK, also, can you make the Link Rating value (number) lower and consistent with the INK, and the dash "-" a little bolder, so that the overall look is similar to the official Konami Yugioh Card template. Thank you.',

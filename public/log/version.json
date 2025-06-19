@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.4 (2025/06/19)",
+        "logList": [
+            {
+                "content": "Additional attribute for other regions: French, German, Italian, Spanish and Chinese."
+            }
+        ]
+    },
+    {
         "version": "v2.3.3 (2025/06/16)",
         "logList": [
             {

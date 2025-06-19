@@ -8,7 +8,6 @@ export const AttributeList = [
         color: '#000000',
         isCreative: false,
         isOption: false,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'DARK',
@@ -17,7 +16,6 @@ export const AttributeList = [
         color: '#b41dda',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'EARTH',
@@ -26,7 +24,6 @@ export const AttributeList = [
         color: '#8d8e8e',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'FIRE',
@@ -35,7 +32,6 @@ export const AttributeList = [
         color: '#e51b23',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'LIGHT',
@@ -44,7 +40,6 @@ export const AttributeList = [
         color: '#bfae32',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'WATER',
@@ -53,7 +48,6 @@ export const AttributeList = [
         color: '#008ecd',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'WIND',
@@ -62,7 +56,6 @@ export const AttributeList = [
         color: '#28ab35',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'DIVINE',
@@ -71,7 +64,6 @@ export const AttributeList = [
         color: '#ef6300',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'SPELL',
@@ -80,7 +72,6 @@ export const AttributeList = [
         color: '#1b8f83',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'TRAP',
@@ -89,7 +80,6 @@ export const AttributeList = [
         color: '#c32a8c',
         isCreative: false,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
 ];
 export const ExtraAttributeList = [
@@ -100,7 +90,6 @@ export const ExtraAttributeList = [
         color: '#f78f27',
         isCreative: true,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'MAGIC',
@@ -109,7 +98,6 @@ export const ExtraAttributeList = [
         color: '#1b8f83',
         isCreative: true,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'BOSS-1',
@@ -118,7 +106,6 @@ export const ExtraAttributeList = [
         color: '#9b325d',
         isCreative: true,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'BOSS-2',
@@ -127,7 +114,6 @@ export const ExtraAttributeList = [
         color: '#942a56',
         isCreative: true,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'BOSS-3',
@@ -136,7 +122,6 @@ export const ExtraAttributeList = [
         color: '#86214b',
         isCreative: true,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
     {
         name: 'BOSS-START',
@@ -145,9 +130,21 @@ export const ExtraAttributeList = [
         color: '#a13864',
         isCreative: true,
         isOption: true,
-        supportFormat: ['tcg', 'ocg'],
     },
 ];
+export const AttributeSetMap: Record<string, { key: string, category: 'tcg' | 'ocg', fileKey: string }> = {
+    'jp': { key: 'jp', category: 'ocg', fileKey: 'ocg' },
+    'ch': { key: 'ch', category: 'ocg', fileKey: 'ch' },
+    'en': { key: 'en', category: 'tcg', fileKey: 'tcg' },
+    'fr': { key: 'fr', category: 'tcg', fileKey: 'fr' },
+    'de': { key: 'de', category: 'tcg', fileKey: 'de' },
+    'it': { key: 'it', category: 'tcg', fileKey: 'it' },
+    'sp': { key: 'sp', category: 'tcg', fileKey: 'sp' },
+};
+export const DefaultFormatAttribute: Record<string, string> = {
+    tcg: AttributeSetMap.en.key,
+    ocg: AttributeSetMap.jp.key,
+};
 
 export const NO_ICON = 'NO ICON';
 export const IconList = [
