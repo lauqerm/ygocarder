@@ -28,9 +28,9 @@ export const PendulumSizeMap = {
         pendulumBoxOffsetY: 0,
         numberBlueX: 84.4,
         numberRedX: 728.0,
-        numberY: 790,
+        numberY: 792,
         artlessFrameY: 553,
-        fontSize: 60.5,
+        fontSize: 56.5,
     },
     large: {
         key: 'large' as const,
@@ -44,9 +44,9 @@ export const PendulumSizeMap = {
         pendulumBoxOffsetY: 0,
         numberBlueX: 84.4,
         numberRedX: 728.0,
-        numberY: 806,
+        numberY: 808,
         artlessFrameY: 553,
-        fontSize: 60.5,
+        fontSize: 56.5,
     },
 };
 export const PendulumSizeList = Object.values(PendulumSizeMap);
