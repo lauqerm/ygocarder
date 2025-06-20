@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.5 (2025/06/22)",
+        "logList": [
+            {
+                "content": "Allow using monster Attributes and Spell / Trap icons as additional star type."
+            }
+        ]
+    },
+    {
         "version": "v2.3.4 (2025/06/19)",
         "logList": [
             {

@@ -426,12 +426,12 @@ export const CardThumb = ({
                     />}
                 {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
-                {(!isLink && normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
+                {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
                     src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon.toLowerCase()}.png`}
                     alt="Icon"
                 />}
-                {(!isLink && !isSpeedSkill && normalizedCardIconType !== 'st') && <span
+                {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'st' && normalizedCardIconType !== 'none') && <span
                     className={mergeClass('star-content truncate', joinedTypeAbility.toLowerCase().includes('tuner') ? 'tuner' : '')}
                 >
                     {typeof star === 'number'

@@ -159,7 +159,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         ? checkMonster({ frame })
             ? 'input.type.monster.label'
             : 'input.type.st.label'
-        : IconTypeMap[cardIcon].value === 'st'
+        : IconTypeMap[cardIcon]?.value === 'st'
             ? 'input.type.st.label'
             : 'input.type.monster.label';
     const isOCG = format === 'ocg';

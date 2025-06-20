@@ -1,4 +1,5 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { WithLanguage } from 'src/service';
 
 export const NO_ATTRIBUTE = 'NONE';
 export const AttributeList = [
@@ -242,10 +243,11 @@ export const StickerList = [
 
 export const IconTypeMap: Record<string, {
     value: string,
-    labelKey: string,
+    labelKey: string | ((language: WithLanguage) => React.ReactNode),
     fullLabelKey: string,
     icon: React.ReactNode,
     isOption: boolean,
+    showIcon: boolean,
 }> = {
     'auto': {
         value: 'auto',
@@ -253,6 +255,7 @@ export const IconTypeMap: Record<string, {
         fullLabelKey: 'input.icon-type.auto.full.label',
         icon: null,
         isOption: false,
+        showIcon: false,
     },
     'st': {
         value: 'st',
@@ -261,9 +264,10 @@ export const IconTypeMap: Record<string, {
         icon: <img
             className="icon-image"
             alt="s/t-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`}
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-icon-list.png`}
         />,
         isOption: true,
+        showIcon: false,
     },
     'level': {
         value: 'level',
@@ -275,6 +279,7 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level.png`}
         />,
         isOption: true,
+        showIcon: false,
     },
     'negative-level': {
         value: 'negative-level',
@@ -286,6 +291,7 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-negative-level.png`}
         />,
         isOption: true,
+        showIcon: false,
     },
     'rank': {
         value: 'rank',
@@ -297,6 +303,215 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-rank.png`}
         />,
         isOption: true,
+        showIcon: false,
     },
 };
 export const IconTypeList = Object.values(IconTypeMap);
+
+export const IconTypeAttributeMap: Record<string, {
+    value: string,
+    labelKey: string | ((language: WithLanguage) => React.ReactNode),
+    fullLabelKey: string,
+    icon: React.ReactNode,
+    isOption: boolean,
+    showIcon: boolean,
+}> = {
+    'attribute-dark': {
+        value: 'attribute-dark',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.dark',
+        icon: <img
+            className="icon-image"
+            alt="attribute-dark-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-dark.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-earth': {
+        value: 'attribute-earth',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.earth',
+        icon: <img
+            className="icon-image"
+            alt="attribute-earth-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-earth.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-fire': {
+        value: 'attribute-fire',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.fire',
+        icon: <img
+            className="icon-image"
+            alt="attribute-fire-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-fire.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-light': {
+        value: 'attribute-light',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.light',
+        icon: <img
+            className="icon-image"
+            alt="attribute-light-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-light.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-water': {
+        value: 'attribute-water',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.water',
+        icon: <img
+            className="icon-image"
+            alt="attribute-water-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-water.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-wind': {
+        value: 'attribute-wind',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.wind',
+        icon: <img
+            className="icon-image"
+            alt="attribute-wind-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-wind.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-divine': {
+        value: 'attribute-divine',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.divine',
+        icon: <img
+            className="icon-image"
+            alt="attribute-divine-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-divine.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-spell': {
+        value: 'attribute-spell',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.spell',
+        icon: <img
+            className="icon-image"
+            alt="attribute-spell-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-spell.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'attribute-trap': {
+        value: 'attribute-trap',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.attribute.trap',
+        icon: <img
+            className="icon-image"
+            alt="attribute-trap-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-trap.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+};
+export const IconTypeAttributeList = Object.values(IconTypeAttributeMap);
+
+export const IconTypeStMap: Record<string, {
+    value: string,
+    labelKey: string | ((language: WithLanguage) => React.ReactNode),
+    fullLabelKey: string,
+    icon: React.ReactNode,
+    isOption: boolean,
+    showIcon: boolean,
+}> = {
+    'continuous': {
+        value: 'continuous',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.continuous',
+        icon: <img
+            className="icon-image"
+            alt="continuous-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'counter': {
+        value: 'counter',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.counter',
+        icon: <img
+            className="icon-image"
+            alt="counter-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-counter.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'equip': {
+        value: 'equip',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.equip',
+        icon: <img
+            className="icon-image"
+            alt="equip-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-equip.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'field': {
+        value: 'field',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.field',
+        icon: <img
+            className="icon-image"
+            alt="field-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-field.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'quick-play': {
+        value: 'quick-play',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.quick-play',
+        icon: <img
+            className="icon-image"
+            alt="quick-play-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-quick-play.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+    'ritual': {
+        value: 'ritual',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.ritual',
+        icon: <img
+            className="icon-image"
+            alt="ritual-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-ritual.png`}
+        />,
+        isOption: true,
+        showIcon: true,
+    },
+};
+export const IconTypeStList = Object.values(IconTypeStMap);
+
+export const TotalIconTypeMap = {
+    ...IconTypeMap,
+    ...IconTypeAttributeMap,
+    ...IconTypeStMap,
+};
