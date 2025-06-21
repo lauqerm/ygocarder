@@ -3,7 +3,7 @@ import { CanvasConst, NO_STICKER } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
-import { createCanvas, scaleDrawCoordinate } from 'src/util';
+import { createCanvas, filterFromTrail, scaleDrawCoordinate } from 'src/util';
 
 const {
     width: CanvasWidth,
@@ -17,6 +17,7 @@ export const drawStarContent = async ({
     cardIcon,
     text,
     star,
+    starList,
     starAlignment = 'auto',
     style,
     onStarDraw,
@@ -27,16 +28,23 @@ export const drawStarContent = async ({
     cardIcon: string,
     text: string | null,
     star: string | number,
+    starList: string[],
     starAlignment: string,
     style?: CanvasTextStyle,
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
     loopStarFinish?: ReturnType<typeof getFinishIterator>,
 }) => {
+    /** We filter out all undefined star only at the trail of the star list */
+    const normalizedStarList = Array.isArray(starList)
+        ? filterFromTrail(starList)
+        : [];
     const starWidth = 50;
     const startSpacing = 4;
-    let normalizedStarCount = typeof star === 'string'
-        ? star === '' ? 0 : 1
-        : typeof star === 'number' ? star : 0;
+    let normalizedStarCount = cardIcon === 'custom'
+        ? normalizedStarList.length
+        : typeof star === 'string'
+            ? star === '' ? 0 : 1
+            : typeof star === 'number' ? star : 0;
     let totalWidth = starWidth * normalizedStarCount + startSpacing * (normalizedStarCount - 1);
     const baseline = 145;
 
@@ -83,13 +91,16 @@ export const drawStarContent = async ({
         ctx: starCtx,
     } = createCanvas(CanvasWidth * globalScale, (baseline + starWidth) * globalScale);
     await Promise.all([...Array(normalizedStarCount)]
-        .map(async () => {
+        .map(async (_, index) => {
             offset += (starWidth + startSpacing);
+            /** We must factor alignment here, because presentation does not factor alignment */
+            const cardIconIndex = normalizedStarCount - 1 - index;
+            const cardIconName = cardIcon === 'custom' ? normalizedStarList[cardIconIndex] : cardIcon;
             let coordinate: [number, number] = [
                 leftEdge - (starWidth + offset),
                 baseline,
             ];
-            await drawAsset(starCtx, `subfamily/subfamily-${cardIcon}.png`, ...coordinate);
+            await drawAsset(starCtx, `subfamily/subfamily-${cardIconName}.png`, ...coordinate);
             return await onStarDraw(coordinate);
         })
     );

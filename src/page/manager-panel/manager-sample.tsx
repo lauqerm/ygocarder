@@ -19,6 +19,7 @@ import {
     PendulumSizeList,
     PresetNameStyleMap,
     StickerList,
+    TotalIconTypeMap,
 } from 'src/model';
 import { FileTextOutlined } from '@ant-design/icons';
 import { CopiableCode, StyledMono } from 'src/component';
@@ -305,6 +306,16 @@ export const ManagerSample = ({
                                         field: 'Other Finish - Sticker',
                                         value: <div>
                                             {Object.values(ArtFinishMap)
+                                                .map(({ value }) => <CopiableCode key={value} data={value}>{value}</CopiableCode>)}
+                                        </div>
+                                    },
+                                    {
+                                        field: 'Star List',
+                                        value: <div>
+                                            <div>{language['manager.template.description.star-list']}</div>
+                                            {Object
+                                                .values(TotalIconTypeMap)
+                                                .filter(({ isMixable }) => isMixable)
                                                 .map(({ value }) => <CopiableCode key={value} data={value}>{value}</CopiableCode>)}
                                         </div>
                                     },

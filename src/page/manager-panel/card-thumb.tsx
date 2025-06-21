@@ -428,7 +428,9 @@ export const CardThumb = ({
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
                 {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
-                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${normalizedCardIcon.toLowerCase()}.png`}
+                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom'
+                        ? 'icon-list'
+                        : normalizedCardIcon).toLowerCase()}.png`}
                     alt="Icon"
                 />}
                 {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'st' && normalizedCardIconType !== 'none') && <span

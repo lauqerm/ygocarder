@@ -19,6 +19,7 @@ import {
     getDefaultTextStyle,
     getEmptyCard,
     InternalCard,
+    MAX_SUBFAMILY_LENGTH,
     NameStyle,
     NameStyleType,
     NO_ATTRIBUTE,
@@ -158,6 +159,7 @@ const CsvStandardFieldList = [
     'Right Frame',
     'Bottom Right Frame',
     'Dye List',
+    'Star List',
     'Flag',
     'External Info (JSON)',
 ] as const;
@@ -278,6 +280,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             statTextStyle,
             sticker,
             subFamily,
+            starList,
             typeAbility,
             typeTextStyle,
             dyeList,
@@ -285,6 +288,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         const stringifedExternalInfo = JSON.stringify(externalInfo);
         const stringifedFlag = flag.join('|');
         const stringifedDyeList = dyeList.join('|');
+        const stringifedSubFamilyList = starList.join('|');
 
         write('Format', format);
         write('Region', region);
@@ -411,6 +415,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
         write('Dye List', stringifedDyeList);
+        write('Star List', stringifedSubFamilyList);
         write('Flag', stringifedFlag);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
@@ -707,6 +712,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     return entry;
                 }) as FrameDyeList;
 
+                const starList = (reader('Star List') ?? '').split('|').map(String).slice(0, MAX_SUBFAMILY_LENGTH);
+
                 return {
                     id: uuid(),
                     ...emptyCard,
@@ -778,6 +785,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     rightFrame,
                     setId,
                     star,
+                    starList,
                     starAlignment,
                     statTextStyle,
                     sticker,

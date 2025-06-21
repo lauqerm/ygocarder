@@ -241,20 +241,32 @@ export const StickerList = [
     },
 ];
 
-export const IconTypeMap: Record<string, {
+export type IconTypeInfo = {
     value: string,
     labelKey: string | ((language: WithLanguage) => React.ReactNode),
     fullLabelKey: string,
     icon: React.ReactNode,
     isOption: boolean,
+    isMixable: boolean,
     showIcon: boolean,
-}> = {
+}
+export const IconTypeMap: Record<string, IconTypeInfo> = {
     'auto': {
         value: 'auto',
         labelKey: 'input.icon-type.auto.label',
         fullLabelKey: 'input.icon-type.auto.full.label',
         icon: null,
         isOption: false,
+        isMixable: false,
+        showIcon: false,
+    },
+    'custom': {
+        value: 'custom',
+        labelKey: 'input.icon-type.custom.label',
+        fullLabelKey: 'input.icon-type.custom.full.label',
+        icon: null,
+        isOption: false,
+        isMixable: false,
         showIcon: false,
     },
     'st': {
@@ -267,6 +279,7 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-icon-list.png`}
         />,
         isOption: true,
+        isMixable: false,
         showIcon: false,
     },
     'level': {
@@ -279,6 +292,7 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: false,
     },
     'negative-level': {
@@ -291,6 +305,7 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-negative-level.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: false,
     },
     'rank': {
@@ -303,19 +318,26 @@ export const IconTypeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-rank.png`}
         />,
         isOption: true,
+        isMixable: true,
+        showIcon: false,
+    },
+    'level-rank': {
+        value: 'level-rank',
+        labelKey: 'input.icon-type.level-rank.label',
+        fullLabelKey: 'input.icon-type.level-rank.full.label',
+        icon: <img
+            className="icon-image"
+            alt="level-rank-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-level-rank.png`}
+        />,
+        isOption: true,
+        isMixable: true,
         showIcon: false,
     },
 };
 export const IconTypeList = Object.values(IconTypeMap);
 
-export const IconTypeAttributeMap: Record<string, {
-    value: string,
-    labelKey: string | ((language: WithLanguage) => React.ReactNode),
-    fullLabelKey: string,
-    icon: React.ReactNode,
-    isOption: boolean,
-    showIcon: boolean,
-}> = {
+export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
     'dark': {
         value: 'dark',
         labelKey: 'input.icon-type.icon.label',
@@ -326,6 +348,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-dark.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'earth': {
@@ -338,6 +361,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-earth.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'fire': {
@@ -350,6 +374,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-fire.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'light': {
@@ -362,6 +387,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-light.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'water': {
@@ -374,6 +400,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-water.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'wind': {
@@ -386,6 +413,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-wind.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'divine': {
@@ -398,6 +426,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-divine.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'spell': {
@@ -410,6 +439,7 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-spell.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'trap': {
@@ -422,19 +452,13 @@ export const IconTypeAttributeMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-trap.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
 };
 export const IconTypeAttributeList = Object.values(IconTypeAttributeMap);
 
-export const IconTypeStMap: Record<string, {
-    value: string,
-    labelKey: string | ((language: WithLanguage) => React.ReactNode),
-    fullLabelKey: string,
-    icon: React.ReactNode,
-    isOption: boolean,
-    showIcon: boolean,
-}> = {
+export const IconTypeStMap: Record<string, IconTypeInfo> = {
     'continuous-l': {
         value: 'continuous-l',
         labelKey: 'input.icon-type.icon.label',
@@ -445,6 +469,7 @@ export const IconTypeStMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous-l.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'counter-l': {
@@ -457,6 +482,7 @@ export const IconTypeStMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-counter-l.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'equip-l': {
@@ -469,6 +495,7 @@ export const IconTypeStMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-equip-l.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'field-l': {
@@ -481,6 +508,7 @@ export const IconTypeStMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-field-l.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'quick-play-l': {
@@ -493,6 +521,7 @@ export const IconTypeStMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-quick-play-l.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
     'ritual-l': {
@@ -505,6 +534,7 @@ export const IconTypeStMap: Record<string, {
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-ritual-l.png`}
         />,
         isOption: true,
+        isMixable: true,
         showIcon: true,
     },
 };
@@ -515,3 +545,4 @@ export const TotalIconTypeMap = {
     ...IconTypeAttributeMap,
     ...IconTypeStMap,
 };
+export const MAX_SUBFAMILY_LENGTH = 13;

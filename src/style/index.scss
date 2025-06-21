@@ -315,6 +315,11 @@ button.ant-btn {
     .ant-modal-close-x {
         line-height: 53px; /** Alignment */
     }
+    &.global-no-close {
+        .ant-modal-close-x {
+            display: none;
+        }
+    }
 }
 .ant-drawer {
     .ant-drawer-header {

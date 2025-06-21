@@ -287,6 +287,15 @@
 					text-align: right;
 				}
 			}
+			.custom-star-picker .star-preview-entry {
+				.icon-image {
+					max-width: 14px;
+					max-height: 14px;
+				}
+				.anticon-close-circle {
+					font-size: var(--fs);
+				}
+			}
 		}
 	}
 	.app-container .card-preview-panel {
@@ -307,6 +316,15 @@
 					.type-ability-input {
 						grid-column: span 2;
 					}
+				}
+			}
+			.custom-star-picker .star-preview-entry {
+				.icon-image {
+					max-width: 22px;
+					max-height: 22px;
+				}
+				.anticon-close-circle {
+                	font-size: var(--fs-xl);
 				}
 			}
 		}

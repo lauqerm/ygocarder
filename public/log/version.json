@@ -1,9 +1,14 @@
 [
     {
-        "version": "v2.3.5 (2025/06/22)",
+        "version": "v2.3.5 (2025/06/21)",
         "logList": [
             {
-                "content": "Allow using monster Attributes and Spell / Trap icons as additional star type."
+                "content": "Allow using Level/Rank combined, monster Attributes, Spell / Trap icons as additional star type.",
+                "image": "https://images2.imgbox.com/f8/1a/x26qSXHu_o.png"
+            },
+            {
+                "content": "Allow custom star list, which can be used to display a combination of available star types.",
+                "image": "https://images2.imgbox.com/58/51/hLLDqgbD_o.png"
             }
         ]
     },

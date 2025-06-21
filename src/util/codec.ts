@@ -101,6 +101,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     attribute: 'at',
     subFamily: 'sf',
+    starList: 'stl',
     star: 'st',
     starAlignment: 'sa',
     cardIcon: 'it',
@@ -280,6 +281,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.leftFrame == null) migratedCard.leftFrame = 'auto';
     if (migratedCard.pendulumRightFrame == null) migratedCard.pendulumRightFrame = 'auto';
     if (migratedCard.finish == null) migratedCard.finish = [];
+    if (!Array.isArray(migratedCard.starList)) migratedCard.starList = [];
 
     if (migratedCard.artFinish == null) migratedCard.artFinish = 'normal';
     if (migratedCard.finish) {
