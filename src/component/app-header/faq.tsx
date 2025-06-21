@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '19/06/2025';
+        const currentReminder = '21/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -70,7 +70,7 @@ export const QuestionAndFeedback = () => {
                         {
                             author: 'Die Frauen at Jun 19, 2025',
                             question: 'This may be a bit crazy, but since you\'ve already come a long way with customization, do you think it\'d be possible to toggle Star Types to be sorted manually in any combinations of the ones currently available?\n\nAnd on that note, and this here may be a bit too out there, but do you think you could use the Spell/Trap iconography as you would any of those? And if it\'s not too much of a bother, maybe the monster Attributes downsized on that row as well?',
-                            answer: 'Putting Spell/Trap/Monster Attribute icon in star slots is possible. As for manual icon of each star slot, I think *technically* it should be doable, but I need to do a bit more test, probably will look into it this weekend.',
+                            answer: 'Putting Spell/Trap/Monster Attribute icon in star slots is possible. As for manual icon of each star slot, I think *technically* it should be doable, but I need to do a bit more test, probably will look into it this weekend.\nUpdate: I have added those options, you may try it out now.',
                         },
                         {
                             author: 'Die Frauen at Jun 19, 2025',
