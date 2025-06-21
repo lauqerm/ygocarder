@@ -57,7 +57,7 @@ const StyledLayoutPickerContainer = styled.div`
         cursor: pointer;
         &:hover {
             .background-preview {
-                box-shadow: 0 0 2px 0 #222222;
+                box-shadow: 0 0 2px 0 #2a2a2a;
             }
         }
     }

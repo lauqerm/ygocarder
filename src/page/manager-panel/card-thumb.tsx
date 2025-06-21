@@ -199,7 +199,7 @@ const StyledCardThumb = styled.div`
         right: 0;
         background: var(--main-level-3);
         height: 100%;
-        box-shadow: 0 0 3px 0 #222222;
+        box-shadow: 0 0 3px 0 #2a2a2a;
         cursor: default;
         &.force-visible {
             display: block;

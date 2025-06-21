@@ -76,7 +76,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         format,
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
-        isPendulum,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
@@ -84,7 +83,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             format,
             frame, foil, finish, opacity,
             nameStyleType, nameStyle,
-            isPendulum,
             isLink,
         },
         getUpdater,
@@ -93,7 +91,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         format,
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
-        isPendulum,
         isLink,
         getUpdater,
         setCard,
@@ -276,14 +273,13 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             <div className="main-info-first">
                 <AttributeInputGroup language={language} />
 
-                {(isPendulum || showCreativeOption)
-                    && <PendulumInputGroup ref={pendulumInputGroupRef}
-                        showCreativeOption={showCreativeOption}
-                        showExtraDecorativeOption={showExtraDecorativeOption}
-                        softMode={reduceMotionColor}
-                        onTakePicker={setPickerTarget}
-                        onFrameChange={frame => frameTrainRef.current.changeFrame(frame)}
-                    />}
+                <PendulumInputGroup ref={pendulumInputGroupRef}
+                    showCreativeOption={showCreativeOption}
+                    showExtraDecorativeOption={showExtraDecorativeOption}
+                    softMode={reduceMotionColor}
+                    onTakePicker={setPickerTarget}
+                    onFrameChange={frame => frameTrainRef.current.changeFrame(frame)}
+                />
 
                 <PostPendulumInputGroup ref={postPendulumInputGroupRef} onTakePicker={setPickerTarget} />
 

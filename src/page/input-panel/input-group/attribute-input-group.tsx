@@ -80,7 +80,9 @@ export const AttributeInputGroup = ({
         >
             <span>{language['input.attribute.label']}</span>
         </RadioTrain>
-        <AttributeRegionTrain className={mergeClass('attribute-region-container', showExtraAttribute ? 'container-block' : 'container-float')}>
+        {showExtraDecorativeOption && <AttributeRegionTrain
+            className={mergeClass('attribute-region-container', showExtraAttribute ? 'container-block' : 'container-float')}
+        >
             <RadioTrain
                 className="attribute-region-picker"
                 optionList={Object
@@ -93,7 +95,7 @@ export const AttributeInputGroup = ({
                 value={region}
                 onChange={changeRegion}
             />
-        </AttributeRegionTrain>
+        </AttributeRegionTrain>}
         {(showExtraDecorativeOption && showExtraAttribute) && <RadioTrain
             className="fill-input-train extra-attribute-input"
             value={attribute}

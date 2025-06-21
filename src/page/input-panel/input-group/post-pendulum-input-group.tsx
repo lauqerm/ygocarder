@@ -1,7 +1,7 @@
 import { Checkbox, InputNumber, Tooltip } from 'antd';
 import { Explanation, FormattingHelpDrawer, RadioTrain, StyledPopMarkdown } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
-import { useCard, useLanguage } from 'src/service';
+import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CondenseType, IconTypeMap } from 'src/model';
@@ -95,6 +95,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         setCard,
         getUpdater,
     })));
+    const showExtraDecorativeOption = useSetting(state => state.setting.showExtraDecorativeOption);
     const typeAbilitySeparator = format === 'ocg' ? '／' : '/';
     const typeAbilityInputRef = useRef<CardTextInputRef>(null);
     const [effectMinLine, setEffectMinLine] = useState(() => useCard.getState().card.effectStyle.minLine);
@@ -197,7 +198,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
                     />
                 </span>
             </RadioTrain>
-            <div className="line-input">
+            {showExtraDecorativeOption && <div className="line-input">
                 <div>
                     {language['input.text-style.min-line.label']}
                 </div>
@@ -217,7 +218,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
                     min={0}
                     max={50}
                 />
-            </div>
+            </div>}
         </PostPendulumFirstLineContainer>
     </>;
 });
