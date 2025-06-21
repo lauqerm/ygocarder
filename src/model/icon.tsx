@@ -316,110 +316,110 @@ export const IconTypeAttributeMap: Record<string, {
     isOption: boolean,
     showIcon: boolean,
 }> = {
-    'attribute-dark': {
-        value: 'attribute-dark',
+    'dark': {
+        value: 'dark',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.dark',
         icon: <img
             className="icon-image"
-            alt="attribute-dark-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-dark.png`}
+            alt="dark-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-dark.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-earth': {
-        value: 'attribute-earth',
+    'earth': {
+        value: 'earth',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.earth',
         icon: <img
             className="icon-image"
-            alt="attribute-earth-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-earth.png`}
+            alt="earth-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-earth.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-fire': {
-        value: 'attribute-fire',
+    'fire': {
+        value: 'fire',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.fire',
         icon: <img
             className="icon-image"
-            alt="attribute-fire-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-fire.png`}
+            alt="fire-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-fire.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-light': {
-        value: 'attribute-light',
+    'light': {
+        value: 'light',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.light',
         icon: <img
             className="icon-image"
-            alt="attribute-light-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-light.png`}
+            alt="light-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-light.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-water': {
-        value: 'attribute-water',
+    'water': {
+        value: 'water',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.water',
         icon: <img
             className="icon-image"
-            alt="attribute-water-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-water.png`}
+            alt="water-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-water.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-wind': {
-        value: 'attribute-wind',
+    'wind': {
+        value: 'wind',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.wind',
         icon: <img
             className="icon-image"
-            alt="attribute-wind-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-wind.png`}
+            alt="wind-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-wind.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-divine': {
-        value: 'attribute-divine',
+    'divine': {
+        value: 'divine',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.divine',
         icon: <img
             className="icon-image"
-            alt="attribute-divine-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-divine.png`}
+            alt="divine-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-divine.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-spell': {
-        value: 'attribute-spell',
+    'spell': {
+        value: 'spell',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.spell',
         icon: <img
             className="icon-image"
-            alt="attribute-spell-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-spell.png`}
+            alt="spell-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-spell.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'attribute-trap': {
-        value: 'attribute-trap',
+    'trap': {
+        value: 'trap',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.attribute.trap',
         icon: <img
             className="icon-image"
-            alt="attribute-trap-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-attribute-trap.png`}
+            alt="trap-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-trap.png`}
         />,
         isOption: true,
         showIcon: true,
@@ -435,74 +435,74 @@ export const IconTypeStMap: Record<string, {
     isOption: boolean,
     showIcon: boolean,
 }> = {
-    'continuous': {
-        value: 'continuous',
+    'continuous-l': {
+        value: 'continuous-l',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon.continuous',
         icon: <img
             className="icon-image"
-            alt="continuous-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous.png`}
+            alt="continuous-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-continuous-l.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'counter': {
-        value: 'counter',
+    'counter-l': {
+        value: 'counter-l',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon.counter',
         icon: <img
             className="icon-image"
-            alt="counter-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-counter.png`}
+            alt="counter-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-counter-l.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'equip': {
-        value: 'equip',
+    'equip-l': {
+        value: 'equip-l',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon.equip',
         icon: <img
             className="icon-image"
-            alt="equip-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-equip.png`}
+            alt="equip-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-equip-l.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'field': {
-        value: 'field',
+    'field-l': {
+        value: 'field-l',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon.field',
         icon: <img
             className="icon-image"
-            alt="field-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-field.png`}
+            alt="field-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-field-l.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'quick-play': {
-        value: 'quick-play',
+    'quick-play-l': {
+        value: 'quick-play-l',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon.quick-play',
         icon: <img
             className="icon-image"
-            alt="quick-play-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-quick-play.png`}
+            alt="quick-play-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-quick-play-l.png`}
         />,
         isOption: true,
         showIcon: true,
     },
-    'ritual': {
-        value: 'ritual',
+    'ritual-l': {
+        value: 'ritual-l',
         labelKey: 'input.icon-type.icon.label',
         fullLabelKey: 'input.icon.ritual',
         icon: <img
             className="icon-image"
-            alt="ritual-icon"
-            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-ritual.png`}
+            alt="ritual-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-ritual-l.png`}
         />,
         isOption: true,
         showIcon: true,

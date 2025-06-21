@@ -98,7 +98,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         labelKey,
         icon,
         showIcon,
-    } = iconTypeData;
+    } = iconTypeData ?? TotalIconTypeMap['level'];
     const iconDropdownText = typeof labelKey === 'string'
         ? language[labelKey]
         : labelKey({ language });
@@ -218,7 +218,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                 </Popover>
             </>
             : null
-        : iconTypeData.value === 'st'
+        : iconTypeData?.value === 'st'
             ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={getSTIconButtonList(language)}>
                 {DropdownChildren}
             </RadioTrain>
