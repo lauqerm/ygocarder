@@ -133,7 +133,7 @@ export const ExtraAttributeList = [
         isOption: true,
     },
 ];
-export const AttributeSetMap: Record<string, { key: string, category: 'tcg' | 'ocg', fileKey: string }> = {
+export const RegionMap: Record<string, { key: string, category: 'tcg' | 'ocg', fileKey: string }> = {
     'jp': { key: 'jp', category: 'ocg', fileKey: 'ocg' },
     'ch': { key: 'ch', category: 'ocg', fileKey: 'ch' },
     'en': { key: 'en', category: 'tcg', fileKey: 'tcg' },
@@ -143,8 +143,8 @@ export const AttributeSetMap: Record<string, { key: string, category: 'tcg' | 'o
     'sp': { key: 'sp', category: 'tcg', fileKey: 'sp' },
 };
 export const DefaultFormatAttribute: Record<string, string> = {
-    tcg: AttributeSetMap.en.key,
-    ocg: AttributeSetMap.jp.key,
+    tcg: RegionMap.en.key,
+    ocg: RegionMap.jp.key,
 };
 
 export const NO_ICON = 'NO ICON';

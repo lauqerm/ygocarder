@@ -4,7 +4,7 @@ import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { getAttributeList, getExtraAttributeList } from '../const';
-import { AttributeSetMap } from 'src/model';
+import { RegionMap } from 'src/model';
 import styled from 'styled-components';
 import { mergeClass } from 'src/util';
 
@@ -86,7 +86,7 @@ export const AttributeInputGroup = ({
             <RadioTrain
                 className="attribute-region-picker"
                 optionList={Object
-                    .values(AttributeSetMap)
+                    .values(RegionMap)
                     .map(({ key }) => ({
                         value: key,
                         label: key.toUpperCase(),

@@ -2,9 +2,10 @@ export const isImageData = (data: any) => typeof data === 'string' && data.start
 
 export const downloadBlob = (name: string, blob: Blob, type: string) => {
     const link = document.createElement('a');
+    const href = window.URL.createObjectURL(blob);
 
     link.download = name;
-    link.href = window.URL.createObjectURL(blob);
+    link.href = href;
     link.dataset.downloadurl = [type, link.download, link.href].join(':');
 
     const downloadEvent = new MouseEvent('click', {
@@ -15,6 +16,7 @@ export const downloadBlob = (name: string, blob: Blob, type: string) => {
 
     link.dispatchEvent(downloadEvent);
     link.remove();
+    window.URL.revokeObjectURL(href);
 };
 
 export const nextChar = (c: string) => {

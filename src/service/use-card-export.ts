@@ -5,6 +5,7 @@ import { CardOpacity, PendulumSize } from 'src/model';
 import { useSetting } from './use-setting';
 import { notification } from 'antd';
 import { useLanguage } from './use-i18n';
+import { useBatchDownload } from './use-batch-download';
 
 export type UseCardExport = {
     isTainted: boolean,
@@ -36,6 +37,11 @@ export const useCardExport = ({
     const {
         card: currentCard,
     } = useCard();
+    const {
+        addToBatch,
+        batchDataMap,
+        isBatchDownloading,
+    } = useBatchDownload();
     const resolution = useSetting(state => state.setting.resolution);
     const {
         opacity,
@@ -43,9 +49,10 @@ export const useCardExport = ({
         isPendulum,
         pendulumSize,
     } = currentCard;
+    const normalizedName = normalizeCardName(name);
     const pendingSave = useRef(false);
 
-    const download = useCallback((size: [number, number] = resolution) => {
+    const getCardDataUrl = useCallback((size: [number, number] = resolution) => {
         const drawCanvas = exportCanvasRef.current;
         /** Clone node so we can resize it as will */
         const clonedCanvas = drawCanvas?.cloneNode() as HTMLCanvasElement | null;
@@ -55,32 +62,46 @@ export const useCardExport = ({
             && clonedCanvas && clonedCanvasContext
             && !isTainted
         ) {
-            try {
-                if (size) {
-                    clonedCanvas.width = size[0];
-                    clonedCanvas.height = size[1];
-                }
-                /** Resize here */
-                clonedCanvasContext.drawImage(
-                    drawCanvas,
-                    0, 0, drawCanvas.width, drawCanvas.height,
-                    0, 0, clonedCanvas.width, clonedCanvas.height,
-                );
-
-                const normalizedName = normalizeCardName(name);
-                var link = document.createElement('a');
-                link.download = normalizedName
-                    ? `${normalizedName}.png`
-                    : 'card.png';
-                link.href = clonedCanvas.toDataURL('image/png');
-                link.click();
-            } catch (e) {
-                onDownloadError();
+            if (size) {
+                clonedCanvas.width = size[0];
+                clonedCanvas.height = size[1];
             }
+            /** Resize here */
+            clonedCanvasContext.drawImage(
+                drawCanvas,
+                0, 0, drawCanvas.width, drawCanvas.height,
+                0, 0, clonedCanvas.width, clonedCanvas.height,
+            );
+
+            return clonedCanvas.toDataURL('image/png');
+        }
+    }, [exportCanvasRef, isTainted, resolution]);
+    const addToCurrentBatch = useCallback(async (cardId: string, size: [number, number] = resolution) => {
+        try {
+            const fetchedDataUrl = await fetch(getCardDataUrl(size));
+            const blob = await fetchedDataUrl.blob();
+            addToBatch(cardId, `${normalizedName}.png`, blob);
+        } catch (e) {
+            onDownloadError();
         }
         document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
         onDownloadComplete();
-    }, [exportCanvasRef, isTainted, name, resolution, onDownloadComplete, onDownloadError]);
+    }, [addToBatch, getCardDataUrl, normalizedName, onDownloadComplete, onDownloadError, resolution]);
+    const download = useCallback((size: [number, number] = resolution) => {
+        try {
+            const normalizedName = normalizeCardName(name);
+            var link = document.createElement('a');
+            link.download = normalizedName
+                ? `${normalizedName}.png`
+                : 'card.png';
+            link.href = getCardDataUrl(size);
+            link.click();
+        } catch (e) {
+            onDownloadError();
+        }
+        document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
+        onDownloadComplete();
+    }, [resolution, onDownloadComplete, name, getCardDataUrl, onDownloadError]);
     const onSave = (size?: [number, number]) => {
         document.querySelector('#export-canvas-guard')?.classList.add('guard-on');
         const queuingSize = size ? [...size] as [number, number] : undefined;
@@ -95,8 +116,6 @@ export const useCardExport = ({
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {
-            const normalizedName = normalizeCardName(name);
-
             if (relevant) {
                 document.title = normalizedName
                     ? `${normalizedName} - Yu-Gi-Oh Carder`
@@ -107,7 +126,7 @@ export const useCardExport = ({
         return () => {
             relevant = false;
         };
-    }, [name]);
+    }, [normalizedName]);
 
     useEffect(() => {
         let saveBeforeReload = () => {
@@ -189,6 +208,9 @@ export const useCardExport = ({
                             if (pendingSave.current) {
                                 pendingSave.current = false;
                                 download();
+                            }
+                            if (isBatchDownloading && !batchDataMap[normalizedCard.id]) {
+                                addToCurrentBatch(normalizedCard.id);
                             }
                         }
                     }

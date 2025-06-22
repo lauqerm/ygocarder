@@ -1,4 +1,4 @@
-import { AttributeSetMap, DefaultFormatAttribute, InternalCard, ocgToTCGTermMap, tcgToOCGTermMap } from 'src/model';
+import { RegionMap, DefaultFormatAttribute, InternalCard, ocgToTCGTermMap, tcgToOCGTermMap } from 'src/model';
 
 export const changeCardFormat = (card: InternalCard, targetFormat: string): InternalCard => {
     const {
@@ -17,9 +17,9 @@ export const changeCardFormat = (card: InternalCard, targetFormat: string): Inte
 
     if (format === targetFormat) return card;
 
-    const targetRegion = AttributeSetMap[region].category === targetFormat
+    const targetRegion = RegionMap[region].category === targetFormat
         ? region
-        : AttributeSetMap[DefaultFormatAttribute[targetFormat]].key;
+        : RegionMap[DefaultFormatAttribute[targetFormat]].key;
     const termMap = targetFormat === 'ocg' ? tcgToOCGTermMap : ocgToTCGTermMap;
     const newSetId = (targetFormat === 'ocg' && /-EN/.test(setId))
         ? setId.replace('-EN', '-JP')

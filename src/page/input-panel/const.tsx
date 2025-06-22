@@ -15,7 +15,7 @@ import {
     PendulumSizeMap,
     OtherFinishTypeMap,
     ExtraAttributeList,
-    AttributeSetMap,
+    RegionMap,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -94,7 +94,7 @@ export const getAttributeList = (region: string, dictionary: Record<string, stri
             : <Tooltip overlay={dictionary[nameKey]}>
                 <img
                     alt={dictionary[nameKey]}
-                    src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${AttributeSetMap[region]?.fileKey}-${name.toLowerCase()}.png`}
+                    src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${RegionMap[region]?.fileKey}-${name.toLowerCase()}.png`}
                 />
             </Tooltip>,
         value: name,

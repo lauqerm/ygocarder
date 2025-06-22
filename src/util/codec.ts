@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, AttributeSetMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -274,7 +274,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
     if (migratedCard.version == null) migratedCard.version = 1;
     if (migratedCard.format == null) migratedCard.format = 'tcg';
-    if (migratedCard.region == null) migratedCard.region = AttributeSetMap[migratedCard.format === 'tcg' ? 'en' : 'jp'].key;
+    if (migratedCard.region == null) migratedCard.region = RegionMap[migratedCard.format === 'tcg' ? 'en' : 'jp'].key;
     if (migratedCard.pendulumFrame == null) migratedCard.pendulumFrame = 'auto';
     if (migratedCard.pendulumSize == null) migratedCard.pendulumSize = 'medium';
     if (migratedCard.rightFrame == null) migratedCard.rightFrame = 'auto';

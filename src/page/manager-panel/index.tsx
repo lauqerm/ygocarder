@@ -335,7 +335,7 @@ export const CardManagerPanel = forwardRef(({
                                             const fileName = fileList[0].name.replace(/\.[^/.]+$/, '');
 
                                             /** Assume data from only the very first sheet */
-                                            /** 65001 codepage allow display unicode characters such as japanese */
+                                            /** 65001 codepage allow display unicode characters such as Japanese */
                                             const workbook = XLSX.read(file, { codepage: 65001 });
                                             const csvBook = XLSX.utils.sheet_to_json<string[]>(
                                                 workbook.Sheets[workbook.SheetNames[0]],

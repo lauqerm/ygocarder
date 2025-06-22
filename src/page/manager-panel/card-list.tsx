@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { Button } from 'antd';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, FixedSizeList as List } from 'react-window';
+import { BatchDownloadButton } from './batch-download-button';
 
 const StyledManagerCardList = styled.div`
     display: flex;
@@ -17,6 +18,9 @@ const StyledManagerCardList = styled.div`
     .list-container {
         flex: 1;
         overflow: auto;
+    }
+    .batch-download-button {
+        margin-bottom: var(--spacing-xs);
     }
     .no-card {
         padding: var(--spacing);
@@ -113,6 +117,7 @@ export const ManagerCardList = ({
         duplicateCard,
         resetFilter,
     })));
+
     const [reselectCnt, setReselectCnt] = useState(0);
 
     const deleteAndReselect = (id: string) => {
@@ -177,6 +182,10 @@ export const ManagerCardList = ({
                 {language['manager.button.search.button.reset.label']}
             </div>
         </div>}
+        {cardDisplayList.length !== 0 && <BatchDownloadButton
+            language={language}
+            onSelect={onSelect}
+        />}
         <Button
             className="add-card"
             onClick={onRequestImport}

@@ -1,7 +1,7 @@
 import {
     ArrowPositionMap,
     ArtFinishMap,
-    AttributeSetMap,
+    RegionMap,
     BackgroundType,
     CanvasConst,
     CardOpacity,
@@ -361,7 +361,7 @@ export const getLayoutDrawFunction = ({
             } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
             await drawAsset(
                 attributeCtx,
-                `attribute/attr-${AttributeSetMap[region].fileKey}-${attribute.toLowerCase()}.png`,
+                `attribute/attr-${RegionMap[region].fileKey}-${attribute.toLowerCase()}.png`,
                 attributeX, attributeY,
             );
             const attributeFinish = otherFinish[0] ?? 'normal';

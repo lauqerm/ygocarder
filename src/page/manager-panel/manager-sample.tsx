@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import {
     ArtFinishMap,
     AttributeList,
+    RegionMap,
     CondenseTolerantMap,
     DyeIndexMap,
     ExtraAttributeList,
@@ -307,6 +308,13 @@ export const ManagerSample = ({
                                         value: <div>
                                             {Object.values(ArtFinishMap)
                                                 .map(({ value }) => <CopiableCode key={value} data={value}>{value}</CopiableCode>)}
+                                        </div>
+                                    },
+                                    {
+                                        field: 'Region',
+                                        value: <div>
+                                            {Object.values(RegionMap)
+                                                .map(({ key }) => <CopiableCode key={key} data={key}>{key}</CopiableCode>)}
                                         </div>
                                     },
                                     {
