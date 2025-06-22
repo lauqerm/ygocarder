@@ -223,6 +223,7 @@
         "input.icon-type.slot.select-all.label": "Select All",
         "input.icon.continuous": "Continuous",
         "input.icon.counter": "Counter",
+        "input.icon.normal": "Normal",
         "input.icon.equip": "Equip",
         "input.icon.field": "Field",
         "input.icon.none": "None",

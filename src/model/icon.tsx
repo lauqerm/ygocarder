@@ -191,6 +191,12 @@ export const IconList = [
         nameKey: 'input.icon.counter',
         isOption: true,
     },
+    {
+        label: 'Normal',
+        value: 'NORMAL',
+        nameKey: 'input.icon.normal',
+        isOption: true,
+    },
 ];
 
 export const NO_STICKER = 'no-sticker';
@@ -532,6 +538,19 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
             className="icon-image"
             alt="ritual-large-icon"
             src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-ritual-l.png`}
+        />,
+        isOption: true,
+        isMixable: true,
+        showIcon: true,
+    },
+    'normal-l': {
+        value: 'normal-l',
+        labelKey: 'input.icon-type.icon.label',
+        fullLabelKey: 'input.icon.normal',
+        icon: <img
+            className="icon-image"
+            alt="normal-large-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-normal-l.png`}
         />,
         isOption: true,
         isMixable: true,
