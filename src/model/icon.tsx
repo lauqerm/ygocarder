@@ -564,4 +564,5 @@ export const TotalIconTypeMap = {
     ...IconTypeAttributeMap,
     ...IconTypeStMap,
 };
-export const MAX_SUBFAMILY_LENGTH = 13;
+export const MAX_STAR_LENGTH = 13;
+export const NORMAL_STAR_LENGTH = 12;

@@ -3,7 +3,7 @@ import { CanvasConst, NO_STICKER } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
-import { createCanvas, filterFromTrail, scaleDrawCoordinate } from 'src/util';
+import { createCanvas, scaleDrawCoordinate } from 'src/util';
 
 const {
     width: CanvasWidth,
@@ -36,7 +36,7 @@ export const drawStarContent = async ({
 }) => {
     /** We filter out all undefined star only at the trail of the star list */
     const normalizedStarList = Array.isArray(starList)
-        ? filterFromTrail(starList)
+        ? starList
         : [];
     const starWidth = 50;
     const startSpacing = 4;

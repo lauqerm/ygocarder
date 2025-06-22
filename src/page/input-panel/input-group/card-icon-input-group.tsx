@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { CaretDownOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { StarButtonList, getSTIconButtonList } from '../const';
-import { filterFromTrail, getCardIconFromFrame } from 'src/util';
+import { getCardIconFromFrame } from 'src/util';
 import styled from 'styled-components';
 import { IconTypeAttributeList, IconTypeList, IconTypeStList, TotalIconTypeMap } from 'src/model';
 import { StarPicker, StarPickerRef, StarTypeSelector, StyledIconDropdown } from '../star-picker';
@@ -184,7 +184,6 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
     const DropdownChildren = showCreativeOption
         ? IconDropdown
         : IconDropdownLabel;
-    const normalizedStarList = filterFromTrail(starList);
     return <>
         <StarPicker ref={starPickerRef} language={language} />
         {cardIcon === 'auto' && autoIconType === 'none'
@@ -272,9 +271,9 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                     ? <CustomStarContainer className="custom-star-picker">
                         <label className="standalone-addon ant-input-group-addon">{DropdownChildren}</label>
                         <div className="custom-star-content">
-                            {normalizedStarList.length > 0
+                            {starList.length > 0
                                 ? <div className="custom-star-preview">
-                                    {normalizedStarList.map((entry, index) => {
+                                    {starList.map((entry, index) => {
                                         const iconEntry = TotalIconTypeMap[entry];
 
                                         return <span key={`${entry}-${index}`} className="star-preview-entry">
@@ -291,11 +290,6 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                                 }}
                             >{language['input.icon-type.slot.edit.label']}</Button>
                         </div>
-                        <CardIconAlignmentPicker
-                            language={language}
-                            value={starAlignment}
-                            onChange={changeStarAlignment}
-                        />
                     </CustomStarContainer>
                     : <StyledCheckboxStarTrain
                         className="checkbox-star-train"

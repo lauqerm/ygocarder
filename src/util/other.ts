@@ -52,3 +52,12 @@ export const filterFromTrail = (list: (string | undefined | null)[]) => {
 
     return nextList;
 };
+
+export const padRight = (list: (string | undefined | null)[], limit: number, padUnit = '') => {
+    const nextList = [...list];
+    for (let cnt = list.length; cnt < limit; cnt++) {
+        nextList.push(padUnit);
+    }
+
+    return nextList;
+};

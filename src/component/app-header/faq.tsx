@@ -68,6 +68,20 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Rush Duel at Jun 22, 2025',
+                            question: 'This card maker is amazing! Have you ever consider doing a rush duel section as well?',
+                            answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
+                        },
+                        {
+                            author: 'Die Frauen at Jun 22, 2025',
+                            question: 'Fantastic job, you understood the assignment. It sappears it still needs to be better centered out , the custom array is a bit skewed to the right, and it appears the toggle to move them to the left/center aren\'t quite there yet.\n\nA minor update I would like is, to add a "normal spell/trap" icon, I think you can find it on the wiki if you look it up, as a blank template.',
+                        },
+                        {
+                            author: 'Die Frauen at Jun 22, 2025',
+                            question: 'Addendum (Disregard the alignment comment, or to rephrase, it works fine. I was under the impression it would align on its own, and put the level at the edges and it projected as though it were the 13th icon).\n\nI assume you can organize those manually, but for all intents and purposes it is perfectly functional!',
+                            answer: 'Come to think of it, maybe the star editor is not intuitive enough to use, so I have updated it a bit more. Also the normal icon for Spell/Trap is now available.',
+                        },
+                        {
                             author: 'Die Frauen at Jun 19, 2025',
                             question: 'This may be a bit crazy, but since you\'ve already come a long way with customization, do you think it\'d be possible to toggle Star Types to be sorted manually in any combinations of the ones currently available?\n\nAnd on that note, and this here may be a bit too out there, but do you think you could use the Spell/Trap iconography as you would any of those? And if it\'s not too much of a bother, maybe the monster Attributes downsized on that row as well?',
                             answer: 'Putting Spell/Trap/Monster Attribute icon in star slots is possible. As for manual icon of each star slot, I think *technically* it should be doable, but I need to do a bit more test, probably will look into it this weekend.\nUpdate: I have added those options, you may try it out now.',

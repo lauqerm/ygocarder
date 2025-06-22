@@ -1,12 +1,20 @@
 import { Button, Checkbox, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
-import { IconTypeAttributeList, IconTypeInfo, IconTypeList, IconTypeStList, MAX_SUBFAMILY_LENGTH, TotalIconTypeMap } from 'src/model';
+import {
+    IconTypeAttributeList,
+    IconTypeInfo,
+    IconTypeList,
+    IconTypeStList,
+    MAX_STAR_LENGTH,
+    NORMAL_STAR_LENGTH,
+    TotalIconTypeMap,
+} from 'src/model';
 import { useCard, WithLanguage } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { StyledDropdown } from 'src/component';
-import { mergeClass } from 'src/util';
+import { mergeClass, padRight } from 'src/util';
 
 const IconDropdownOverlay = styled.div`
     position: absolute;
@@ -104,7 +112,12 @@ export const StarTypeSelector = ({
     </IconDropdownContainer>;
 };
 
+const StarListSelectPanel = styled.div`
+    margin-bottom: var(--spacing);
+`;
 const StarListControlPanel = styled.div`
+    display: flex;
+    justify-content: space-between;
     margin-bottom: var(--spacing);
 `;
 const StarListContainer = styled.div`
@@ -129,9 +142,6 @@ const StarListContainer = styled.div`
         .anticon-close-circle {
             font-size: var(--fs-lg)
         }
-        &:hover {
-            border-color: var(--sub-active);
-        }
     }
     .icon-image {
         max-width: 1.5rem; // Alignment
@@ -141,6 +151,15 @@ const StarListContainer = styled.div`
         .star-value {
             border-color: var(--main-active);
         }
+    }
+    .entry-disable {
+        filter: opacity(0.65) grayscale(0.85);
+        * {
+            cursor: not-allowed;
+        }
+    }
+    :not(.entry-disable) .star-value:hover {
+        border-color: var(--sub-active);
     }
 `;
 
@@ -155,32 +174,41 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
 }, ref) => {
     const {
         starList,
-        getUpdater,
+        setCard,
     } = useCard(useShallow(({
         card: {
             starList,
         },
-        getUpdater,
+        setCard,
     }) => ({
         starList,
-        getUpdater,
+        setCard,
     })));
     const [visible, setVisible] = useState(false);
-    const changeStarList = useMemo(() => getUpdater('starList'), [getUpdater]);
+    const changeStarList = useMemo(() => (transformer: string[] | ((prev: string[]) => string[])) => {
+        setCard(card => {
+            const nextStarList = Array.isArray(transformer) ? transformer : transformer(card.starList);
+
+            return {
+                ...card,
+                starList: nextStarList,
+            };
+        });
+    }, [setCard]);
     const [{
         slotList,
-        fullSlotList,
-    }] = useState(() => {
-        const slotList = [];
-        const fullSlotList = [];
-        for (let cnt = 0; cnt < MAX_SUBFAMILY_LENGTH; cnt++) {
-            slotList.push({ slot: `slot-${cnt}`, index: cnt });
-            fullSlotList.push(cnt);
+        use12,
+    }, setSlot] = useState(() => {
+        const slotList: { slot: string, index: number, disabled: boolean }[] = [];
+        const use12 = starList.length <= NORMAL_STAR_LENGTH ? true : false;
+        for (let cnt = 0; cnt < MAX_STAR_LENGTH; cnt++) {
+            slotList.push({ slot: `slot-${cnt}`, index: cnt, disabled: false });
         }
+        if (use12) slotList[MAX_STAR_LENGTH - 1].disabled = true;
 
         return {
             slotList,
-            fullSlotList,
+            use12,
         };
     });
     const [activeInformation, setActiveInformation] = useState({
@@ -204,19 +232,48 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
         activeList
     } = activeInformation;
     return <Modal
-            className="global-overlay global-no-close"
-            visible={visible}
-            width={506}
-            onCancel={() => setVisible(false)}
-            cancelText={language['manager.template.button.cancel.label']}
-            okButtonProps={{
-                style: { display: 'none' },
-            }}
-        >
-        <StarListControlPanel className="star-list-control-panel">
+        className="global-overlay global-no-close"
+        visible={visible}
+        width={506}
+        onCancel={() => setVisible(false)}
+        cancelText={language['manager.template.button.cancel.label']}
+        okButtonProps={{
+            style: { display: 'none' },
+        }}
+    >
+        <StarListSelectPanel className="star-list-control-panel">
+            <Checkbox
+                checked={use12}
+                onChange={e => {
+                    if (e.target.checked) {
+                        setSlot(({ slotList }) => {
+                            const nextSlotList: typeof slotList = [
+                                ...slotList.slice(0, NORMAL_STAR_LENGTH),
+                                { disabled: true, index: MAX_STAR_LENGTH - 1, slot: `slot-${MAX_STAR_LENGTH - 1}` }
+                            ];
+
+                            return { slotList: nextSlotList, use12: true };
+                        });
+                        changeStarList(currentStarList => currentStarList.slice(0, NORMAL_STAR_LENGTH));
+                        setActiveInformation(({ activeList }) => ({ activeList: activeList.filter(entry => entry !== MAX_STAR_LENGTH - 1) }));
+                    } else {
+                        setSlot(({ slotList }) => {
+                            const nextSlotList: typeof slotList = [
+                                ...slotList.slice(0, NORMAL_STAR_LENGTH),
+                                { disabled: false, index: MAX_STAR_LENGTH - 1, slot: `slot-${MAX_STAR_LENGTH - 1}` }
+                            ];
+
+                            return { slotList: nextSlotList, use12: false };
+                        });
+                        changeStarList(currentStarList => padRight(currentStarList, MAX_STAR_LENGTH));
+                    }
+                }}
+            >{language['input.icon-type.slot.use-12.label']}</Checkbox>
             <Button size="small" onClick={() => {
                 setActiveInformation(cur => {
-                    const nextActiveList = fullSlotList.filter(entry => !cur.activeList.includes(entry));
+                    const nextActiveList = slotList
+                        .filter(entry => !cur.activeList.includes(entry.index) && !entry.disabled)
+                        .map(entry => entry.index);
 
                     return { activeList: nextActiveList };
                 });
@@ -225,7 +282,7 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
             </Button>
             &nbsp;
             <Button size="small" onClick={() => {
-                setActiveInformation({ activeList: [...fullSlotList] });
+                setActiveInformation({ activeList: slotList.filter(entry => !entry.disabled).map(entry => entry.index) });
             }}>
                 {language['input.icon-type.slot.select-all.label']}
             </Button>
@@ -235,18 +292,26 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
             }}>
                 {language['input.icon-type.slot.deselect-all.label']}
             </Button>
-        </StarListControlPanel>
+        </StarListSelectPanel>
         <StarListContainer className="star-list-container">
-            {slotList.map(({ slot, index }) => {
+            {slotList.map(({ slot, index, disabled }) => {
                 const slotValue = starList[index];
                 const starInfo = TotalIconTypeMap[slotValue ?? ''];
-                const isActive = activeList.includes(index);
+                const active = activeList.includes(index);
 
-                return <div key={slot} className={mergeClass('star-list-entry', isActive ? 'entry-active' : '')}>
+                return <div key={slot}
+                    className={mergeClass(
+                        'star-list-entry',
+                        active ? 'entry-active' : '',
+                        disabled ? 'entry-disable' : '',
+                    )}
+                >
                     <div className="checkbox-container">
                         <Checkbox
-                            checked={isActive}
+                            disabled={disabled}
+                            checked={active}
                             onChange={e => {
+                                if (disabled) return;
                                 const willChecked = e.target.checked;
                                 if (willChecked) {
                                     setActiveInformation(cur => {
@@ -264,12 +329,42 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
                             }}
                         />
                     </div>
-                    <div className="star-value" onClick={() => setActiveInformation({ activeList: [index] })}>
+                    <div
+                        className="star-value"
+                        onClick={() => {
+                            if (disabled) return;
+                            setActiveInformation({ activeList: [index] });
+                        }}
+                    >
                         {!starInfo ? <CloseCircleOutlined /> : starInfo.icon}
                     </div>
                 </div>;
             })}
         </StarListContainer>
+        <StarListControlPanel>
+            <Button
+                size="small"
+                onClick={() => {
+                    changeStarList(currentStarList => {
+                        return [...currentStarList.slice(1, currentStarList.length), ''];
+                    });
+                    setActiveInformation({ activeList: [] });
+                }}
+            >
+                <DoubleLeftOutlined />&nbsp;{language['input.icon-type.slot.shift-left.label']}
+            </Button>
+            <Button
+                size="small"
+                onClick={() => {
+                    changeStarList(currentStarList => {
+                        return ['', ...currentStarList.slice(0, currentStarList.length - 1)];
+                    });
+                    setActiveInformation({ activeList: [] });
+                }}
+            >
+                {language['input.icon-type.slot.shift-right.label']}&nbsp;<DoubleRightOutlined />
+            </Button>
+        </StarListControlPanel>
         <StarTypeSelector
             disabled={activeList.length === 0}
             language={language}
@@ -277,20 +372,20 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
             showMixableOnly={true}
             showRemove={true}
             onRemove={() => {
-                const nextStarList = slotList.map((_, index) => {
-                    if (activeList.includes(index)) return '';
-                    return starList[index];
+                changeStarList(currentStarList => {
+                    return slotList.filter(entry => !entry.disabled).map((_, index) => {
+                        if (activeList.includes(index)) return '';
+                        return currentStarList[index];
+                    });
                 });
-
-                changeStarList(nextStarList);
             }}
             onChange={value => {
-                const nextStarList = slotList.map((_, index) => {
-                    if (activeList.includes(index)) return value;
-                    return starList[index];
+                changeStarList(currentStarList => {
+                    return slotList.filter(entry => !entry.disabled).map((_, index) => {
+                        if (activeList.includes(index)) return value;
+                        return currentStarList[index];
+                    });
                 });
-
-                changeStarList(nextStarList);
             }}
         />
     </Modal>;

@@ -1,5 +1,17 @@
 [
     {
+        "version": "v2.3.6 (2025/06/22)",
+        "logList": [
+            {
+                "content": "Add Normal icon as star type / subcategory type."
+            },
+            {
+                "content": "Update the usability of custom star list, now the position of stars in editor reflect exactly their positions on the card (no longer affected by alignment). Also adding some utility buttons and allow display in either 12 or 13 stars distribution.",
+                "image": "https://images2.imgbox.com/46/b8/ur9AKvUE_o.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.5 (2025/06/21)",
         "logList": [
             {

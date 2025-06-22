@@ -433,7 +433,11 @@ export const CardThumb = ({
                         : normalizedCardIcon).toLowerCase()}.png`}
                     alt="Icon"
                 />}
-                {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'st' && normalizedCardIconType !== 'none') && <span
+                {(normalizedCardIcon !== NO_ICON
+                    && normalizedCardIconType !== 'st'
+                    && normalizedCardIconType !== 'none'
+                    && normalizedCardIconType !== 'custom'
+                ) && <span
                     className={mergeClass('star-content truncate', joinedTypeAbility.toLowerCase().includes('tuner') ? 'tuner' : '')}
                 >
                     {typeof star === 'number'

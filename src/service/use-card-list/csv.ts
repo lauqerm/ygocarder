@@ -19,7 +19,7 @@ import {
     getDefaultTextStyle,
     getEmptyCard,
     InternalCard,
-    MAX_SUBFAMILY_LENGTH,
+    MAX_STAR_LENGTH,
     NameStyle,
     NameStyleType,
     NO_ATTRIBUTE,
@@ -712,7 +712,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     return entry;
                 }) as FrameDyeList;
 
-                const starList = (reader('Star List') ?? '').split('|').map(String).slice(0, MAX_SUBFAMILY_LENGTH);
+                const starList = (reader('Star List') ?? '').split('|').map(String).slice(0, MAX_STAR_LENGTH);
 
                 return {
                     id: uuid(),
