@@ -213,11 +213,17 @@ export const getLayoutDrawFunction = ({
         drawFrame: async () => {
             if (!ctx) return;
 
+            const willReplaceFrame = hasBackground && backgroundCanvas && backgroundType === 'frame';
+
             /** Combine layer frame here */
             const { ctx: topFrameCtx, canvas: topFrameCanvas } = createCanvas();
             await drawAsset(topFrameCtx, `frame/frame-${topLeftFrame}.png`, 0, 0);
             const { canvas: dyedTopFrameCanvas, ctx: dyedTopFrameCtx } = dyeCanvas(topFrameCanvas, dyeList[0]);
-            if (topLeftFrame !== topRightFrame || dyeList[0] !== '' || dyeList[1] !== '') {
+            /** No need to dye if background is gonna replace the frame */
+            if (
+                !willReplaceFrame
+                && (topLeftFrame !== topRightFrame || dyeList[0] !== '' || dyeList[1] !== '')
+            ) {
                 const topRightCanvas = await applyAlphaMask(
                     `frame/frame-${topRightFrame}.png`,
                     await MaskPromise.topRight,
@@ -231,7 +237,10 @@ export const getLayoutDrawFunction = ({
             const { ctx: bottomFrameCtx, canvas: bottomFrameCanvas } = createCanvas();
             await drawAsset(bottomFrameCtx, `frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
             const { canvas: dyedBottomFrameCanvas, ctx: dyedBottomFrameCtx } = dyeCanvas(bottomFrameCanvas, dyeList[2]);
-            if (bottomLeftFrame !== bottomRightFrame || dyeList[2] !== '' || dyeList[3] !== '') {
+            if (
+                !willReplaceFrame
+                && (bottomLeftFrame !== bottomRightFrame || dyeList[2] !== '' || dyeList[3] !== '')
+            ) {
                 /** What is this?
                  * 
                  * Because the "bottom left" frame is not actually bottom, but both bottom left and bottom right with transparency. If we draw it first, then draw our "bottom right" frame on top of it, it will mixed with the bottom left frame (because both contains transparency), instead of replacing it, create an unintended side effect. Therefore we cut the part that may cause mixing color from the bottom left frame, before drawing the bottom right part.
@@ -254,40 +263,26 @@ export const getLayoutDrawFunction = ({
                 dyedTopFrameCtx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
                 dyedBottomFrameCtx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
             }
+            /** Background replace frame */
+            if (willReplaceFrame) {
+                const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
+                dyedTopFrameCtx.globalCompositeOperation = 'source-atop';
+                dyedTopFrameCtx.drawImage(
+                    backgroundCanvas,
+                    0, 0, backgroundWidth, backgroundHeight,
+                    0, 0, cardWidth, cardHeight,
+                );
+                dyedBottomFrameCtx.globalCompositeOperation = 'source-atop';
+                dyedBottomFrameCtx.drawImage(
+                    backgroundCanvas,
+                    0, 0, backgroundWidth, backgroundHeight,
+                    0, 0, cardWidth, cardHeight,
+                );
+            }
             /** Start assembling the canvas */
             ctx.drawImage(dyedTopFrameCanvas, 0, 0);
             ctx.drawImage(dyedBottomFrameCanvas, 0, 0);
             ctx.resetTransform();
-
-            /** Check for background that replace the frame here */
-            if (!hasBackground || !backgroundCanvas || backgroundType !== 'frame') {
-                ctx.globalAlpha = 1;
-                return;
-            }
-
-            const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
-            const clonedCanvas = backgroundCanvas.cloneNode() as HTMLCanvasElement | null;
-            const clonedCanvasCtx = clonedCanvas?.getContext('2d');
-            if (!clonedCanvas || !clonedCanvasCtx) {
-                ctx.globalAlpha = 1;
-                return;
-            }
-
-            /** Clone background to create a new frame */
-            clonedCanvas.width = cardWidth * globalScale;
-            clonedCanvas.height = cardHeight * globalScale;
-            clonedCanvasCtx.drawImage(
-                backgroundCanvas,
-                0, 0, backgroundWidth, backgroundHeight,
-                0, 0, cardWidth * globalScale, cardHeight * globalScale,
-            );
-            ctx.drawImage(
-                clonedCanvas,
-                0, 0,
-                globalScale * cardWidth, globalScale * cardHeight,
-                0, 0,
-                globalScale * cardWidth, globalScale * cardHeight,
-            );
             ctx.globalAlpha = 1;
         },
         /** Draw card artwork is synchronous because the image is already loaded from cropper's canvas. */
@@ -330,13 +325,23 @@ export const getLayoutDrawFunction = ({
                 backgroundType,
                 pendulumSize,
             );
-            externalCtx.drawImage(
-                backgroundCanvas,
-                0, 0,
-                backgroundWidth, backgroundHeight,
-                globalScale * artX, globalScale * artY,
-                globalScale * artWidth, globalScale * artWidth / ratio,
-            );
+            if (backgroundType !== 'frame') {
+                externalCtx.drawImage(
+                    backgroundCanvas,
+                    0, 0,
+                    backgroundWidth, backgroundHeight,
+                    globalScale * artX, globalScale * artY,
+                    globalScale * artWidth, globalScale * artWidth / ratio,
+                );
+            } else {
+                externalCtx.drawImage(
+                    backgroundCanvas,
+                    0, 0,
+                    backgroundWidth, backgroundHeight,
+                    0, 0,
+                    globalScale * cardWidth, globalScale * cardHeight,
+                );
+            }
             const backgroundFinish = otherFinish[3] ?? 'normal';
             if (backgroundFinish !== 'normal' && hasArtBorder) {
                 const loopBackgroundFinish = getFinishIterator([backgroundFinish], ArtFinishMap);
@@ -572,10 +577,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + `-${foilType}`
-                    + '-artless'
-                    + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
-                    + '.png',
+                + `-${foilType}`
+                + '-artless'
+                + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
+                + '.png',
                 30, topToPendulumStructureFrame,
                 pendulumFrameWidth / 2, pendulumFrameHeight,
                 0, 0,
@@ -584,10 +589,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + `-${foilType}`
-                    + '-artless'
-                    + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
-                    + '.png',
+                + `-${foilType}`
+                + '-artless'
+                + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
+                + '.png',
                 30 + pendulumFrameWidth / 2, topToPendulumStructureFrame,
                 pendulumFrameWidth / 2, pendulumFrameHeight,
                 pendulumFrameWidth / 2, 0,
@@ -601,8 +606,8 @@ export const getLayoutDrawFunction = ({
                 await drawAsset(
                     pendulumBorderCtx,
                     `frame-pendulum/border-pendulum-${pendulumSize}`
-                        + `-${foilType}`
-                        + '.png',
+                    + `-${foilType}`
+                    + '.png',
                     30, topToPendulumStructureFrame,
                 );
             }

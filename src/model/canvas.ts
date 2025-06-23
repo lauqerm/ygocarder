@@ -338,6 +338,7 @@ export const getArtCanvasCoordinate = (
     const result = CardArtCanvasCoordinateMap[distributionMode];
     return {
         ...result,
+        /** Unlike span background, frame background replace the entire frame even under the border. So frame background start from 0,0 while span background start from 28,28. */
         backgroundRatio: backgroundType === 'frame'
             ? 0.686
             : result.backgroundRatio,

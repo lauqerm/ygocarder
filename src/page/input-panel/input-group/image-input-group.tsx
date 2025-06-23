@@ -111,7 +111,7 @@ const OtherFinishPicker = ({
                         }}
                     >
                         <div className="value">
-                            <div className="tag">{valueMap[value] === 'normal' ? 'Auto' : valueMap[value]}</div>
+                            <div className="tag">{valueMap[value] === 'normal' || valueMap[value] === '' ? 'Auto' : valueMap[value]}</div>
                         </div>
                         <div className="label">{label}</div>
                     </FinishLabel>;
