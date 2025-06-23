@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { Button } from 'antd';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, FixedSizeList as List } from 'react-window';
-import { BatchDownloadButton } from './batch-download-button';
+// import { BatchDownloadButton } from './batch-download-button';
 
 const StyledManagerCardList = styled.div`
     display: flex;
@@ -182,10 +182,10 @@ export const ManagerCardList = ({
                 {language['manager.button.search.button.reset.label']}
             </div>
         </div>}
-        {cardDisplayList.length !== 0 && <BatchDownloadButton
+        {/* {cardDisplayList.length !== 0 && <BatchDownloadButton
             language={language}
             onSelect={onSelect}
-        />}
+        />} */}
         <Button
             className="add-card"
             onClick={onRequestImport}

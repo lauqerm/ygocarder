@@ -243,6 +243,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         statTextStyle,
         typeTextStyle,
     ]);
+    const foilDyeColor = dyeList[6];
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
@@ -1038,7 +1039,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 } = normalizedOpacity;
                 const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
                 await baseDrawLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
-                await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal');
+                await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
             }
 
             ctx.scale(globalScale, globalScale);
@@ -1054,6 +1055,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         globalScale,
         finishCanvasRef,
         loopFinish,
+        foilDyeColor,
         name,
         isLink,
         isPendulum,

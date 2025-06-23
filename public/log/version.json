@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.7 (2025/06/24)",
+        "logList": [
+            {
+                "content": "Fix: Issue when displaying card art in non-Pendulum cards when choosing \"Replace Frame\" cover option."
+            }
+        ]
+    },
+    {
         "version": "v2.3.6 (2025/06/22)",
         "logList": [
             {

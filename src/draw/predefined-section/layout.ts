@@ -15,7 +15,7 @@ import {
     PendulumSizeMapException,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
-import { createCanvas, dyeCanvas, getCardIconFromFrame, resolveFrameStyle } from 'src/util';
+import { createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
 import { getFinishIterator } from '../canvas-util';
@@ -54,22 +54,36 @@ export const baseDrawLinkMapFoil = async (
     foil: string,
     withBorder: boolean,
     positionType: keyof typeof ArrowPositionMap,
+    dyeColor: string,
 ) => {
     if (!ctx) return;
-    if (foil === 'normal') return;
+    const willDyed = HexColorRegex.test(dyeColor);
+    if (foil === 'normal' && !willDyed) return;
+    /** Because we do not have "normal" foil, we use gold as a base to dye. */
+    const usedFoil = willDyed ? 'gold' : foil;
+    const drawFunction = async (ctx: CanvasRenderingContext2D) => {
+        if (withBorder) {
+            await drawAsset(ctx, `link/link-overlay-arrow-${usedFoil}.png`, 0, 175);
+        } else {
+            await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
+                .map(async entry => {
+                    const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
+                    const coordinate = [left, top, width, height] as const;
+
+                    await drawAssetWithSize(ctx, `link/link-overlay-${entry}-${usedFoil}.png`, ...coordinate);
+                })
+            );
+        }
+    };
 
     ctx.scale(globalScale, globalScale);
-    if (withBorder) {
-        await drawAsset(ctx, `link/link-overlay-arrow-${foil}.png`, 0, 175);
+    if (willDyed) {
+        const { ctx: linkMapFoilCtx, canvas: linkMapFoilCanvas } = createCanvas();
+        await drawFunction(linkMapFoilCtx);
+        const { canvas: dyedLinkMapFoilCanvas } = dyeCanvas(linkMapFoilCanvas, dyeColor);
+        ctx.drawImage(dyedLinkMapFoilCanvas, 0, 0);
     } else {
-        await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
-            .map(async entry => {
-                const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
-                const coordinate = [left, top, width, height] as const;
-
-                await drawAssetWithSize(ctx, `link/link-overlay-${entry}-${foil}.png`, ...coordinate);
-            })
-        );
+        await drawFunction(ctx);
     }
     ctx.resetTransform();
 };
@@ -632,7 +646,14 @@ export const getLayoutDrawFunction = ({
         drawCardBorder: async () => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
-            await drawAsset(ctx, `frame/card-border${hasFoil ? `-${foil}` : ''}.png`, 0, 0);
+            if (HexColorRegex.test(dyeList[6])) {
+                const { ctx: cardBorderFoilCtx, canvas: cardBorderFoilCanvas } = createCanvas();
+                await drawAsset(cardBorderFoilCtx, `frame/card-border${hasFoil ? `-${foil}` : ''}.png`, 0, 0);
+                const { canvas: dyedCardBorderFoilCanvas } = dyeCanvas(cardBorderFoilCanvas, dyeList[6]);
+                ctx.drawImage(dyedCardBorderFoilCanvas, 0, 0);
+            } else {
+                await drawAsset(ctx, `frame/card-border${hasFoil ? `-${foil}` : ''}.png`, 0, 0);
+            }
             ctx.resetTransform();
         },
 
@@ -641,13 +662,29 @@ export const getLayoutDrawFunction = ({
         drawArtBorderFoil: async () => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
-            if (artBorder) await drawAsset(ctx, `frame/art-border-${foil}.png`, artBoxX, artBoxY);
+            if (artBorder) {
+                if (HexColorRegex.test(dyeList[6])) {
+                    const { ctx: artBorderFoilCtx, canvas: artBorderFoilCanvas } = createCanvas();
+                    await drawAsset(artBorderFoilCtx, `frame/art-border-${foil}.png`, artBoxX, artBoxY);
+                    const { canvas: dyedArtBorderFoilCanvas } = dyeCanvas(artBorderFoilCanvas, dyeList[6]);
+                    ctx.drawImage(dyedArtBorderFoilCanvas, 0, 0);
+                } else {
+                    await drawAsset(ctx, `frame/art-border-${foil}.png`, artBoxX, artBoxY);
+                }
+            }
             ctx.resetTransform();
         },
         drawEffectBorderFoil: async () => {
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
-            await drawAsset(ctx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
+            if (HexColorRegex.test(dyeList[6])) {
+                const { ctx: effectBorderFoilCtx, canvas: effectBorderFoilCanvas } = createCanvas();
+                await drawAsset(effectBorderFoilCtx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
+                const { canvas: dyedEffectBorderFoilCanvas } = dyeCanvas(effectBorderFoilCanvas, dyeList[6]);
+                ctx.drawImage(dyedEffectBorderFoilCanvas, 0, 0);
+            } else {
+                await drawAsset(ctx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
+            }
             ctx.resetTransform();
         },
 

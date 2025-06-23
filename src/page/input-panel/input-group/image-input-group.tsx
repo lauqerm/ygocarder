@@ -74,7 +74,7 @@ const OtherFinishPicker = ({
     showCreativeOption,
 }: OtherFinishPicker) => {
     const [selectedType, setSelectedType] = useState<keyof typeof OtherFinishTypeMap>(OtherFinishTypeMap['art'].key);
-    /** Be careful, we use added order here, so latest foil target is highest index. */
+    /** Be careful, we use added order here, so latest finish target is highest index. */
     const valueMap = {
         [OtherFinishTypeMap['attribute'].key]: finishValueList[1],
         [OtherFinishTypeMap['background'].key]: finishValueList[4],

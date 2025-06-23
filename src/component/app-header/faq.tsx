@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '21/06/2025';
+        const currentReminder = '24/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,16 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Blake at Jun 23, 2025',
+                            question: 'When choose an image for the background of the card, not only it covers the card but also the main image of the card. Can you do something to fix it please?',
+                            answer: 'Hi there, the background system is indeed has a bug, but in your case, it seems that you are using the "Replace Frame" option, which will replace the usual card frame (Normal, Effect, etc...) with your background. You may want to switch cover type into "Fit to art border" instead.',
+                        },
+                        {
+                            author: 'Die Frauen at Jun 22, 2025',
+                            question: 'Looking good. One last change for now I\'d like to see is, if you could implement that dye feature on the card layout for the card frames as well. That way you could get different variations from just Gold and Platinum',
+                            answer: 'Foil system contains more parts, but I think it should be doable. I will look into it later.',
+                        },
                         {
                             author: 'Rush Duel at Jun 22, 2025',
                             question: 'This card maker is amazing! Have you ever consider doing a rush duel section as well?',
@@ -142,7 +152,7 @@ export const QuestionAndFeedback = () => {
                         {
                             author: 'Shanaya User at Jun 04, 2025',
                             question: 'I would like to request another artwork effect like this, like the effect of the attached picture its a secret rare effect',
-                            answer: 'I have added foil 9, this is my best and final attempt, sorry if it does not match your need.',
+                            answer: 'I have added finish type 9, this is my best and final attempt, sorry if it does not match your need.',
                         },
                         {
                             author: 'Yugiohfann at Jun 03, 2025',
@@ -182,11 +192,6 @@ export const QuestionAndFeedback = () => {
                             author: 'Maya at May 23, 2025',
                             question: 'I\'d like to make a request, is it possible to put a SPEED DUEL watermark in EVERY card types in the description area like the Speed Skill type when it is set to speed duel? thank you so much. Appreciate your lovely cardmaker',
                             answer: 'I will try, but this is pretty hard to do to be honest, don\'t keep your hope up.',
-                        },
-                        {
-                            author: 'Shanaya at May 22, 2025',
-                            question: 'Can you put something rainbow effect on the Finish in number 3?',
-                            answer: 'I have added art finish type 8, which is a mix between type 3 and 6, you may try that out.',
                         },
                     ].map(({ author, question, answer }, index) => {
                         return <Quote key={index} author={author} question={question}>

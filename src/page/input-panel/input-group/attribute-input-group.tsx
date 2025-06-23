@@ -11,7 +11,7 @@ import { mergeClass } from 'src/util';
 const AttributeRegionTrain = styled.div`
     align-self: flex-end;
     position: relative;
-    min-height: 4px; // Alignment
+    min-height: 6px; // Alignment
     .attribute-region-picker {
         position: absolute;
         right: 0;

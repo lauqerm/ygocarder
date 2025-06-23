@@ -308,8 +308,9 @@ export type FrameDyeList = [
     bottomRight: string,
     effect: string,
     pendulumEffect: string,
+    foil: string,
 ];
-export const getDefaultDyeList = () => ['', '', '', '', '', ''] as FrameDyeList;
+export const getDefaultDyeList = () => ['', '', '', '', '', '', ''] as FrameDyeList;
 export const DYE_LIST_LENGTH = getDefaultDyeList().length;
 
 export const DyeIndexMap = {
@@ -319,4 +320,5 @@ export const DyeIndexMap = {
     bottomRightFrame: 3,
     effectBackground: 4,
     pendulumEffectBackground: 5,
+    foil: 6,
 };

@@ -27,7 +27,7 @@
 		}
 		.card-image-source-input-title,
 		.checkbox-train:not(.frame-radio),
-		.radio-train:not(.frame-radio) {
+		.radio-train:not(.frame-radio):not(.attribute-region-picker) {
 			.ant-radio-group,
 			.checkbox-train-input-group,
 			.radio-train-input-group {
