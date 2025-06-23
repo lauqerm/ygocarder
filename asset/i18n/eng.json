@@ -390,6 +390,9 @@
         "setting.option.hotkey.tooltip": "Warning: Using hotkey may affect undo / redo feature.",
         "setting.option.resolution.label": "Resolution (px)",
         "setting.option.resolution.warning": "May affect performance",
-        "setting.option.soft-mode.label": "Reduce Color and Motion"
+        "setting.option.soft-mode.label": "Reduce Color and Motion",
+        "manager.batch.download-all.label": "Download All",
+        "manager.batch.download-all.cancel-all.label": "Stop All",
+        "manager.batch.download-all.premature-stop.label": "Download current result"
     }
 }
