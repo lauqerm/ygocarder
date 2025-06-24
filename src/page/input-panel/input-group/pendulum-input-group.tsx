@@ -142,8 +142,8 @@ export type PendulumInputGroup = {
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
 }
-& Pick<CardTextInput, 'onTakePicker'>
-& Pick<FramelayoutSettingPanel, 'onFrameChange'>;
+    & Pick<CardTextInput, 'onTakePicker'>
+    & Pick<FramelayoutSettingPanel, 'onFrameChange'>;
 export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInputGroup>(({
     softMode,
     showCreativeOption,
@@ -155,6 +155,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const {
         isPendulum,
         frame,
+        foil,
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
         effectBackground, pendulumEffectBackground,
@@ -169,6 +170,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         card: {
             isPendulum,
             frame,
+            foil,
             leftFrame, rightFrame,
             pendulumFrame, pendulumRightFrame,
             pendulumScaleBlue,
@@ -184,6 +186,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     }) => ({
         isPendulum,
         frame,
+        foil,
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
         pendulumScaleBlue,
@@ -320,6 +323,8 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                                 resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
                                 tabIndex={-1}
                                 dyeList={dyeList}
+                                foil={foil}
+                                language={language}
                             />
                         </div>
                         {flagList.length > 0
@@ -382,7 +387,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 <Input
                     addonBefore={<span>
                         {language['input.scale.label'](
-                            <span key="blue-scale"  className="blue-scale">
+                            <span key="blue-scale" className="blue-scale">
                                 {language['input.scale.blue.label']}
                             </span>
                         )}

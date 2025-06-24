@@ -13,6 +13,21 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
             gap: var(--spacing);
         }
     }
+    .radio-train.foil-radio {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-px); // Alignment
+        .ant-radio-button-wrapper {
+            font-size: var(--fs);
+        }
+        .standalone-addon {
+            border: none;
+            padding-bottom: var(--spacing-xxs);
+        }
+        .radio-train-input-group {
+            gap: 0;
+        }
+    }
     .ant-checkbox-wrapper {
         color: var(--color-heavy);
     }
@@ -28,8 +43,8 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
     .frame-part-name {
         position: absolute;
         padding: 0 var(--spacing);
-        top: calc(-1 * var(--spacing-xs));
-        right: calc(-1 * var(--spacing-xs));
+        top: calc(-1 * var(--spacing-sm));
+        right: calc(-1 * var(--spacing-sm));
         border-radius: 0 0 0 var(--br-lg);
         background-color: var(--main-level-4);
         border-left: var(--bw) solid var(--sub-level-4);

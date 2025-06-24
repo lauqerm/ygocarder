@@ -194,4 +194,5 @@ export const FramePositionMap: Record<string, { labelKey: string }> = {
     frame: { labelKey: 'input.advanced-frame.name.primary' },
     topLeftFrame: { labelKey: 'input.advanced-frame.name.top-left' },
     topRightFrame: { labelKey: 'input.advanced-frame.name.top-right' },
+    foil: { labelKey: 'input.foil.label' },
 };

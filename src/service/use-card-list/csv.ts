@@ -8,7 +8,7 @@ import {
     DYE_LIST_LENGTH,
     FLAG_LENGTH,
     Foil,
-    FoilNameMap,
+    FoilMap,
     FrameDyeList,
     getArtCanvasCoordinate,
     getDefaultCardFlag,
@@ -508,7 +508,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                         : rawStar;
 
                 const rawFoil = (reader('Foil') ?? reader('Rarity') ?? 'normal').toLowerCase() as Foil;
-                const foil = FoilNameMap[rawFoil] ? rawFoil : 'normal';
+                const foil = FoilMap[rawFoil] ? rawFoil : 'normal';
 
                 const rawAttribute = reader('Attribute')?.toUpperCase();
                 const attribute = rawAttribute

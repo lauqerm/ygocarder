@@ -59,8 +59,8 @@ export const baseDrawLinkMapFoil = async (
     if (!ctx) return;
     const willDyed = HexColorRegex.test(dyeColor);
     if (foil === 'normal' && !willDyed) return;
-    /** Because we do not have "normal" foil, we use gold as a base to dye. */
-    const usedFoil = willDyed ? 'gold' : foil;
+    /** Because we do not have "normal" foil, we use platinum as a base to dye. */
+    const usedFoil = willDyed ? 'platinum' : foil;
     const drawFunction = async (ctx: CanvasRenderingContext2D) => {
         if (withBorder) {
             await drawAsset(ctx, `link/link-overlay-arrow-${usedFoil}.png`, 0, 175);
@@ -584,14 +584,15 @@ export const getLayoutDrawFunction = ({
                 ctx.resetTransform();
             }
         },
-        drawPendulumBorder: async (artBorder: boolean, foilType: Foil) => {
+        drawPendulumBorder: async (artBorder: boolean, foilType: Foil, willDye = false) => {
             if (!ctx) return;
+            const usedFoil = willDye && foilType === 'normal' ? 'platinum' : foilType;
             /** We create a new canvas for easier manipulation. */
             const { canvas: pendulumBorderCanvas, ctx: pendulumBorderCtx } = createCanvas();
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                + `-${foilType}`
+                + `-${usedFoil}`
                 + '-artless'
                 + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
                 + '.png',
@@ -603,7 +604,7 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                + `-${foilType}`
+                + `-${usedFoil}`
                 + '-artless'
                 + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
                 + '.png',
@@ -612,18 +613,37 @@ export const getLayoutDrawFunction = ({
                 pendulumFrameWidth / 2, 0,
                 pendulumFrameWidth / 2, pendulumFrameHeight,
             );
+            if (willDye && HexColorRegex.test(dyeList[6])) {
+                const { canvas: dyedCardBorderFoilCanvas } = dyeCanvas(pendulumBorderCanvas, dyeList[6]);
+                pendulumBorderCtx.drawImage(dyedCardBorderFoilCanvas, 0, 0);
+            }
             if (artBorder) {
                 /**
                  * In artless border, the top of the pendulum effect box has shadow. But there is no shadow in normal border, so if art border is present, we cut the top of the artless border to remove the shadow, before seemlessly join it with the art border part.
                  */
                 pendulumBorderCtx.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
-                await drawAsset(
-                    pendulumBorderCtx,
-                    `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + `-${foilType}`
-                    + '.png',
-                    30, topToPendulumStructureFrame,
-                );
+                if (HexColorRegex.test(dyeList[6])) {
+                    /** Because we do not have "normal" foil, we use platinum as a base to dye. */
+                    const usedFoil = foilType === 'normal' ? 'platinum' : foilType;
+                    const { ctx: pendulumBorderFoilCtx, canvas: pendulumBorderFoilCanvas } = createCanvas();
+                    await drawAsset(
+                        pendulumBorderFoilCtx,
+                        `frame-pendulum/border-pendulum-${pendulumSize}`
+                        + `-${usedFoil}`
+                        + '.png',
+                        30, topToPendulumStructureFrame,
+                    );
+                    const { canvas: dyedPendulumBorderFoilCanvas } = dyeCanvas(pendulumBorderFoilCanvas, dyeList[6]);
+                    pendulumBorderCtx.drawImage(dyedPendulumBorderFoilCanvas, 0, 0);
+                } else {
+                    await drawAsset(
+                        pendulumBorderCtx,
+                        `frame-pendulum/border-pendulum-${pendulumSize}`
+                        + `-${foilType}`
+                        + '.png',
+                        30, topToPendulumStructureFrame,
+                    );
+                }
             }
 
             ctx.scale(globalScale, globalScale);
@@ -647,8 +667,10 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
             if (HexColorRegex.test(dyeList[6])) {
+                /** Because we do not have "normal" foil, we use platinum as a base to dye. */
+                const usedFoil = foil === 'normal' ? 'platinum' : foil;
                 const { ctx: cardBorderFoilCtx, canvas: cardBorderFoilCanvas } = createCanvas();
-                await drawAsset(cardBorderFoilCtx, `frame/card-border${hasFoil ? `-${foil}` : ''}.png`, 0, 0);
+                await drawAsset(cardBorderFoilCtx, `frame/card-border-${usedFoil}.png`, 0, 0);
                 const { canvas: dyedCardBorderFoilCanvas } = dyeCanvas(cardBorderFoilCanvas, dyeList[6]);
                 ctx.drawImage(dyedCardBorderFoilCanvas, 0, 0);
             } else {
@@ -664,8 +686,10 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             if (artBorder) {
                 if (HexColorRegex.test(dyeList[6])) {
+                    /** Because we do not have "normal" foil, we use platinum as a base to dye. */
+                    const usedFoil = foil === 'normal' ? 'platinum' : foil;
                     const { ctx: artBorderFoilCtx, canvas: artBorderFoilCanvas } = createCanvas();
-                    await drawAsset(artBorderFoilCtx, `frame/art-border-${foil}.png`, artBoxX, artBoxY);
+                    await drawAsset(artBorderFoilCtx, `frame/art-border-${usedFoil}.png`, artBoxX, artBoxY);
                     const { canvas: dyedArtBorderFoilCanvas } = dyeCanvas(artBorderFoilCanvas, dyeList[6]);
                     ctx.drawImage(dyedArtBorderFoilCanvas, 0, 0);
                 } else {
@@ -678,8 +702,10 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
             if (HexColorRegex.test(dyeList[6])) {
+                /** Because we do not have "normal" foil, we use platinum as a base to dye. */
+                const usedFoil = foil === 'normal' ? 'platinum' : foil;
                 const { ctx: effectBorderFoilCtx, canvas: effectBorderFoilCanvas } = createCanvas();
-                await drawAsset(effectBorderFoilCtx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
+                await drawAsset(effectBorderFoilCtx, `frame/effect-border-${usedFoil}.png`, effectBoxX, effectBoxY);
                 const { canvas: dyedEffectBorderFoilCanvas } = dyeCanvas(effectBorderFoilCanvas, dyeList[6]);
                 ctx.drawImage(dyedEffectBorderFoilCanvas, 0, 0);
             } else {

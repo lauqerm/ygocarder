@@ -1,12 +1,12 @@
-import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
+import { getNavigationProps, HexColorRegex, mergeClass, resolveFrameStyle } from 'src/util';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { useCard, useLanguage } from 'src/service';
-import { getFrameButtonList } from '../const';
+import { useCard, useLanguage, WithLanguage } from 'src/service';
+import { getFoilButtonList, getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
 import { FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
 import styled from 'styled-components';
-import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
+import { CanvasConst, DefaultFrameInfo, DyeIndexMap, Foil, FoilMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 
 const {
@@ -29,7 +29,8 @@ const FrameLayoutContainer = styled.div`
         width: 110px; // Alignment
         text-align: center;
         label {
-            padding-bottom: var(--spacing-xs);
+            display: block;
+            padding-bottom: var(--spacing-xxs);
         }
         .frame-info-block {
 			height: 30px; // Alignment
@@ -93,7 +94,7 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
     .partial-layout {
         background-clip: padding-box;
         ${props => props.$hoverable
-            ? `
+        ? `
                 border: var(--bw) solid var(--main-level-1);
                 &.active {
                     border: var(--bw) dashed var(--main-level-1);
@@ -102,11 +103,11 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
                     border: var(--bw) dashed var(--main-level-2);
                 }
             `
-            : ''}
+        : ''}
     }
     .float-layout {
         ${props => props.$hoverable
-            ? `
+        ? `
                 border: var(--bw) solid var(--main-level-1);
                 &.active {
                     border: var(--bw) dashed var(--main-level-2);
@@ -117,7 +118,7 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
                     box-shadow: 0 0 1px 0 var(--main-level-1);
                 }
             `
-            : ''}
+        : ''}
     }
     /** For Zarc's gradient */
     .partial-layout {
@@ -158,6 +159,27 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
         background-size: 125%;
         background-position-x: 50%;
     }
+    &.is-vertical {
+        margin-bottom: var(--spacing-3xl);
+        .float-layout.foil {
+            width: 100%;
+            left: 0;
+            bottom: -22.5%;
+            font-size: var(--fs-sm);
+            background-color: var(--main-level-1);
+        }
+    }
+    &.is-horizontal {
+        margin-right: var(--spacing);
+        .float-layout.foil {
+            width: 50%;
+            height: 80%;
+            top: 10%;
+            right: -40%;
+            font-size: 0;
+            background-color: var(--main-level-1);
+        }
+    }
 `;
 
 export type CardLayoutPreview = {
@@ -169,8 +191,10 @@ export type CardLayoutPreview = {
     isPendulum: boolean,
     activeLayout?: string,
     dyeList: string[],
+    foil: Foil,
     onClick?: (key: string) => void,
-};
+    vertical?: boolean,
+} & WithLanguage;
 export const CardLayoutPreview = ({
     tabIndex = 0,
     width,
@@ -180,9 +204,17 @@ export const CardLayoutPreview = ({
     isPendulum,
     activeLayout,
     dyeList,
+    foil,
     onClick,
+    language,
+    vertical = false,
 }: CardLayoutPreview) => {
-    return <CardLayoutContainer $width={width} $height={height} $hoverable={!!onClick}>
+    return <CardLayoutContainer
+        $width={width}
+        $height={height}
+        $hoverable={!!onClick}
+        className={mergeClass('card-layout-container', vertical ? 'is-vertical' : 'is-horizontal')}
+    >
         {[
             { key: 'topLeftFrame', className: 'card-layout partial-layout top-left' },
             { key: 'topRightFrame', className: 'card-layout partial-layout top-right' },
@@ -224,6 +256,19 @@ export const CardLayoutPreview = ({
                 />
             </button>;
         })}
+        <button
+            {...tabIndex < 0 ? {} : { tabIndex }}
+            className={mergeClass(
+                'card-layout float-layout foil',
+                'foil' === activeLayout ? 'active' : '',
+            )}
+            onClick={() => onClick?.('foil')}
+            style={{ boxShadow: `0 0 0 2px ${HexColorRegex.test(dyeList[DyeIndexMap.foil])
+                ? dyeList[DyeIndexMap.foil]
+                : FoilMap[foil].color} inset` }}
+        >
+            {language['input.foil.label']}
+        </button>
     </CardLayoutContainer>;
 };
 
@@ -245,6 +290,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const language = useLanguage();
     const {
         isPendulum,
+        foil,
         frame,
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
@@ -255,6 +301,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     } = useCard(useShallow(({
         card: {
             isPendulum,
+            foil,
             frame,
             leftFrame, rightFrame,
             pendulumFrame, pendulumRightFrame,
@@ -266,6 +313,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         getUpdater,
     }) => ({
         isPendulum,
+        foil,
         frame,
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
@@ -286,6 +334,11 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const [focus, setFocus] = useState(0);
     const [activeLayout, setActiveLayout] = useState('frame');
     const frameLayoutMainId = 'frame-layout-main';
+    const foilButtonList = useMemo(() => getFoilButtonList({
+        normal: language['input.foil.normal.label'],
+        gold: language['input.foil.gold.label'],
+        platinum: language['input.foil.platinum.label'],
+    }), [language]);
 
     useEffect(() => {
         /** Avoid confusion */
@@ -296,6 +349,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         focus: () => document.getElementById(frameLayoutMainId)?.focus(),
     }));
 
+    const changeFoil = useMemo(() => getUpdater('foil'), [getUpdater]);
     const changeBottomLeftFrame = useMemo(() => getUpdater('pendulumFrame'), [getUpdater]);
     const changeBottomRightFrame = useMemo(() => getUpdater('pendulumRightFrame'), [getUpdater]);
     const changeTopLeftFrame = useMemo(() => getUpdater('leftFrame'), [getUpdater]);
@@ -372,6 +426,9 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 activeLayout={activeLayout}
                 onClick={key => setActiveLayout(key)}
                 dyeList={dyeList}
+                foil={foil}
+                language={language}
+                vertical={true}
             />
             <Button
                 size="small"
@@ -383,6 +440,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                     changeTopRightFrame('auto');
                     changeEffectBackground('auto');
                     changePendulumEffectBackground('auto');
+                    changeFoil('normal');
                     changeDyeList(getDefaultDyeList());
                 }}
             >
@@ -405,23 +463,28 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 <div className="frame-part-name">
                     {language[FramePositionMap[activeLayout]?.labelKey]}
                 </div>
-                <Checkbox
+                {/** Avoid collapsing in case of frame */}
+                {activeLayout !== 'foil' && <Checkbox
                     className={mergeClass('inline-input', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
                     checked={activeFrame === 'auto'}
                     disabled={activeLayout === 'frame'}
                     onChange={e => {
                         changeLayout(e.target.checked ? 'auto' : (recentCustomPendulumFrame.current[activeLayout] ?? 'auto'));
                     }}
-                >{language['input.frame.auto']}</Checkbox>
-                <RadioTrain
-                    className="frame-radio"
-                    value={activeFrame}
-                    onChange={value => {
-                        if (activeLayout === 'frame') onFrameChange(value);
-                        else changeLayout(value);
-                    }}
-                    optionList={frameList}
-                />
+                >{language['input.frame.auto']}</Checkbox>}
+                {activeLayout === 'foil'
+                    ? <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
+                        <span>{language['input.foil.label']}</span>
+                    </RadioTrain>
+                    : <RadioTrain
+                        className="frame-radio"
+                        value={activeFrame}
+                        onChange={value => {
+                            if (activeLayout === 'frame') onFrameChange(value);
+                            else changeLayout(value);
+                        }}
+                        optionList={frameList}
+                    />}
                 {typeof dyeColor === 'number' && <HorizontalSketchPicker
                     value={dyeList[dyeColor]}
                     onChange={color => {
