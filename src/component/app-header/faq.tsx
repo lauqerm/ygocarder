@@ -68,6 +68,11 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Anonymous User at Jun 24, 2025',
+                            question: 'In a line with brackets (), with no justifing syntax, the line with brackets will appear more compressed compared to a line with no brackets',
+                            answer: 'The first line ("3 Xyz...") is using the non-breakable line syntax, which does not obey the overall compressing ratio. I will update the description to make it more clear.'
+                        },
+                        {
                             author: 'Blake at Jun 23, 2025',
                             question: 'When choose an image for the background of the card, not only it covers the card but also the main image of the card. Can you do something to fix it please?',
                             answer: 'Hi there, the background system is indeed has a bug, but in your case, it seems that you are using the "Replace Frame" option, which will replace the usual card frame (Normal, Effect, etc...) with your background. You may want to switch cover type into "Fit to art border" instead.',
@@ -75,7 +80,7 @@ export const QuestionAndFeedback = () => {
                         {
                             author: 'Die Frauen at Jun 22, 2025',
                             question: 'Looking good. One last change for now I\'d like to see is, if you could implement that dye feature on the card layout for the card frames as well. That way you could get different variations from just Gold and Platinum',
-                            answer: 'Foil system contains more parts, but I think it should be doable. I will look into it later.',
+                            answer: 'Update: I already implement the feature.\nFoil system contains more parts, but I think it should be doable. I will look into it later.',
                         },
                         {
                             author: 'Rush Duel at Jun 22, 2025',

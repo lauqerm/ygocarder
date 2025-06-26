@@ -170,12 +170,12 @@ const CardLayoutContainer = styled.div<{ $width: number, $height: number, $hover
         }
     }
     &.is-horizontal {
-        margin-right: var(--spacing);
+        margin-right: var(--spacing-lg);
         .float-layout.foil {
             width: 50%;
             height: 80%;
             top: 10%;
-            right: -40%;
+            right: -60%;
             font-size: 0;
             background-color: var(--main-level-1);
         }
