@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.8 (2025/06/26)",
+        "logList": [
+            {
+                "content": "Support dyeing for foil."
+            }
+        ]
+    },
+    {
         "version": "v2.3.7 (2025/06/24)",
         "logList": [
             {
