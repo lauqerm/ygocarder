@@ -391,8 +391,14 @@
         "setting.option.resolution.label": "Resolution (px)",
         "setting.option.resolution.warning": "May affect performance",
         "setting.option.soft-mode.label": "Reduce Color and Motion",
-        "manager.batch.download-all.label": "Download All",
-        "manager.batch.download-all.cancel-all.label": "Stop All",
-        "manager.batch.download-all.premature-stop.label": "Download current result"
+        "manager.batch.batch-download.clear.label": "Clear",
+        "manager.batch.batch-download.all.label": "Select All",
+        "manager.batch.batch-download.export-option.with-id.label": "Set ID + Card Name",
+        "manager.batch.batch-download.export-option.with-name.label": "Card Name",
+        "manager.batch.batch-download.export-scheme.label": "Scheme",
+        "manager.batch.batch-download.label": "Download All",
+        "manager.batch.batch-download.partial-download.label": "Download Selected",
+        "manager.batch.batch-download.cancel-all.label": "Stop All",
+        "manager.batch.batch-download.premature-stop.label": "Download current result"
     }
 }

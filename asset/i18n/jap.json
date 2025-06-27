@@ -391,6 +391,15 @@
         "prompt.warning.on-leave.label": "Leaving right now may make you lose unsaved progress, proceed?",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "service.decode.partial.message": "Partial export mode",
-        "setting.option.resolution.warning": "May affect performance"
+        "setting.option.resolution.warning": "May affect performance",
+        "manager.batch.batch-download.clear.label": "Clear",
+        "manager.batch.batch-download.all.label": "Select All",
+        "manager.batch.batch-download.export-option.with-id.label": "Set ID + Card Name",
+        "manager.batch.batch-download.export-option.with-name.label": "Card Name",
+        "manager.batch.batch-download.export-scheme.label": "Scheme",
+        "manager.batch.batch-download.label": "Download All",
+        "manager.batch.batch-download.partial-download.label": "Download Selected",
+        "manager.batch.batch-download.cancel-all.label": "Stop All",
+        "manager.batch.batch-download.premature-stop.label": "Download current result"
     }
 }
