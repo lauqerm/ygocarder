@@ -37,7 +37,7 @@
         "contributor.bug-report.cancel.label": "Cancel",
         "contributor.bug-report.message.label": "Description",
         "contributor.bug-report.message.placeholder": "If your issue is not addressed for about 2 weeks, it would be me unable to fix it, so sorry in advance and thank you for your understanding.",
-        "contributor.bug-report.name.label": "Name\nHi",
+        "contributor.bug-report.name.label": "Name",
         "contributor.bug-report.name.placeholder": "",
         "contributor.bug-report.remove-screenshot.label": "Remove",
         "contributor.bug-report.required.label": "(Required)",
