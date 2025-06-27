@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '27/06/2025';
+        const currentReminder = '28/06/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,11 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Skip at Jun 27, 2025',
+                            question: 'Good job! I notice a mistake with the attribute spell card in french. It is not "SPELL" but "MAGIE" we should use.',
+                            answer: 'Indeed, I have messed up the Spell attribute between French and German cards. It should be fixed by now.'
+                        },
                         {
                             author: 'Anonymous User at Jun 24, 2025',
                             question: 'In a line with brackets (), with no justifing syntax, the line with brackets will appear more compressed compared to a line with no brackets',

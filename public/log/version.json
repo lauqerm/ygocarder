@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.3.9 (2025/06/27)",
+        "logList": [
+            {
+                "content": "Fix: Wrong Attribute image for French and German region."
+            },
+            {
+                "content": "Fix: Incorrect color apply on bottom half of pendulum frame structure."
+            }
+        ]
+    },
+    {
         "version": "v2.3.8 (2025/06/26)",
         "logList": [
             {
