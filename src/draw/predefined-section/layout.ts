@@ -586,7 +586,8 @@ export const getLayoutDrawFunction = ({
         },
         drawPendulumBorder: async (artBorder: boolean, foilType: Foil, willDye = false) => {
             if (!ctx) return;
-            const usedFoil = willDye && foilType === 'normal' ? 'platinum' : foilType;
+            const validDyeColor = HexColorRegex.test(dyeList[6]);
+            const usedFoil = validDyeColor && willDye && foilType === 'normal' ? 'platinum' : foilType;
             /** We create a new canvas for easier manipulation. */
             const { canvas: pendulumBorderCanvas, ctx: pendulumBorderCtx } = createCanvas();
             await drawAssetWithSize(
@@ -613,7 +614,7 @@ export const getLayoutDrawFunction = ({
                 pendulumFrameWidth / 2, 0,
                 pendulumFrameWidth / 2, pendulumFrameHeight,
             );
-            if (willDye && HexColorRegex.test(dyeList[6])) {
+            if (willDye && validDyeColor) {
                 const { canvas: dyedCardBorderFoilCanvas } = dyeCanvas(pendulumBorderCanvas, dyeList[6]);
                 pendulumBorderCtx.drawImage(dyedCardBorderFoilCanvas, 0, 0);
             }
@@ -622,7 +623,7 @@ export const getLayoutDrawFunction = ({
                  * In artless border, the top of the pendulum effect box has shadow. But there is no shadow in normal border, so if art border is present, we cut the top of the artless border to remove the shadow, before seemlessly join it with the art border part.
                  */
                 pendulumBorderCtx.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
-                if (HexColorRegex.test(dyeList[6])) {
+                if (validDyeColor) {
                     /** Because we do not have "normal" foil, we use platinum as a base to dye. */
                     const usedFoil = foilType === 'normal' ? 'platinum' : foilType;
                     const { ctx: pendulumBorderFoilCtx, canvas: pendulumBorderFoilCanvas } = createCanvas();
