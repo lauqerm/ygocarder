@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.10 (2025/06/27)",
+        "logList": [
+            {
+                "content": "Batch download for card list."
+            }
+        ]
+    },
+    {
         "version": "v2.3.9 (2025/06/27)",
         "logList": [
             {

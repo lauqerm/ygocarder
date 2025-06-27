@@ -15,7 +15,7 @@ import {
 import { checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
 import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
-import { Popconfirm, Tooltip } from 'antd';
+import { Checkbox, Popconfirm, Tooltip } from 'antd';
 import { LanguageDataDictionary } from 'src/service';
 import { useEffect, useRef, useState } from 'react';
 import ReactCrop from 'react-image-crop';
@@ -59,6 +59,10 @@ const StyledCardThumb = styled.div`
         overflow: hidden;
         padding: var(--spacing-xs);
         border-left: var(--bw) solid var(--main-level-3);
+        .select-box {
+            display: inline-block;
+            margin-right: var(--spacing-xs);
+        }
         .first-row {
             &:empty:before {
                 content: "\\00a0";
@@ -232,10 +236,12 @@ export type CardThumb = {
     index: number,
     card: InternalCard,
     active: boolean,
+    selected,
     language: LanguageDataDictionary,
     onDuplicate: (card: InternalCard) => void,
     onDownload: (card: InternalCard) => void,
-    onSelect: (card: InternalCard) => void,
+    onActive: (card: InternalCard) => void,
+    onSelect: (card: InternalCard, type: 'add' | 'remove') => void,
     onDelete: (id: string) => void,
     style?: React.CSSProperties,
 }
@@ -243,10 +249,12 @@ export const CardThumb = ({
     index,
     card,
     active,
+    selected,
     language,
     onDuplicate,
-    onSelect,
+    onActive,
     onDelete,
+    onSelect,
     // onDownload,
     style,
 }: CardThumb) => {
@@ -330,7 +338,7 @@ export const CardThumb = ({
             active ? 'active' : '',
             index % 2 === 0 ? 'alternative-color' : '',
         )}
-        onClick={() => onSelect(card)}
+        onClick={() => onActive(card)}
         style={style}
     >
         <div
@@ -415,6 +423,14 @@ export const CardThumb = ({
         </div>
         <div className="right-slot truncate">
             <div className="first-row truncate">
+                <div className="select-box" onClick={e => e.stopPropagation()}>
+                    <Checkbox
+                        checked={selected}
+                        onChange={e => {
+                            onSelect(card, e.target.checked ? 'add' : 'remove');
+                        }}
+                    />
+                </div>
                 {normalizedCardName}
             </div>
             <div className="second-row truncate">

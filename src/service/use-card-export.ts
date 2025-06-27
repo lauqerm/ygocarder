@@ -43,6 +43,7 @@ export const useCardExport = ({
         isBatchDownloading,
     } = useBatchDownload();
     const resolution = useSetting(state => state.setting.resolution);
+    const exportScheme = useSetting(state => state.setting.exportScheme);
     const {
         opacity,
         name,
@@ -76,17 +77,21 @@ export const useCardExport = ({
             return clonedCanvas.toDataURL('image/png');
         }
     }, [exportCanvasRef, isTainted, resolution]);
-    const addToCurrentBatch = useCallback(async (cardId: string, size: [number, number] = resolution) => {
+    const addToCurrentBatch = useCallback(async (
+        cardName: string,
+        cardId: string,
+        size: [number, number] = resolution,
+    ) => {
         try {
             const fetchedDataUrl = await fetch(getCardDataUrl(size));
             const blob = await fetchedDataUrl.blob();
-            addToBatch(cardId, `${normalizedName}.png`, blob);
+            if (isBatchDownloading) addToBatch(cardId, cardName, blob);
         } catch (e) {
             onDownloadError();
         }
         document.querySelector('#export-canvas-guard')?.classList.remove('guard-on');
         onDownloadComplete();
-    }, [addToBatch, getCardDataUrl, normalizedName, onDownloadComplete, onDownloadError, resolution]);
+    }, [addToBatch, getCardDataUrl, isBatchDownloading, onDownloadComplete, onDownloadError, resolution]);
     const download = useCallback((size: [number, number] = resolution) => {
         try {
             const normalizedName = normalizeCardName(name);
@@ -210,7 +215,14 @@ export const useCardExport = ({
                                 download();
                             }
                             if (isBatchDownloading && !batchDataMap[normalizedCard.id]) {
-                                addToCurrentBatch(normalizedCard.id);
+                                setTimeout(() => {
+                                    addToCurrentBatch(
+                                        exportScheme === 'with-name'
+                                            ? `${normalizedName}.png`
+                                            : `${normalizedCard.setId} - ${normalizedName}.png`,
+                                        normalizedCard.id,
+                                    );
+                                }, 200);
                             }
                         }
                     }

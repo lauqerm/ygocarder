@@ -4,6 +4,7 @@ import { create } from 'zustand';
 export type Setting = {
     allowHotkey: boolean,
     exportFormat: ExportFormat,
+    exportScheme: string,
     globalScale: number,
     mirrorPendulumScale: boolean,
     reduceMotionColor: boolean,
@@ -20,6 +21,7 @@ export const useSetting = create<SettingStore>((set) => {
     const {
         allowHotkey,
         exportFormat,
+        exportScheme,
         globalScale,
         mirrorPendulumScale,
         reduceMotionColor,
@@ -41,6 +43,7 @@ export const useSetting = create<SettingStore>((set) => {
 
     return {
         setting: {
+            exportScheme: typeof exportScheme === 'string' ? exportScheme : 'with-name',
             globalScale: typeof globalScale === 'number' && globalScale <= CanvasConst.maximumScale
                 ? globalScale
                 : 1,

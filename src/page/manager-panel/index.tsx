@@ -182,6 +182,7 @@ export const CardManagerPanel = forwardRef(({
 
     return <StyledCardManagerPanel>
         <StyledCardManagerDrawer
+            className="card-manager-panel"
             title={<div className="card-manager-header truncate">
                 <CardManagerMonitor className="manager-label-container truncate" language={language}>
                     {cardList.length}
@@ -393,7 +394,7 @@ export const CardManagerPanel = forwardRef(({
         >
             <ManagerCardList
                 language={language}
-                onSelect={activeCard}
+                onActive={activeCard}
                 onDownload={onDownload}
                 onRequestImport={onRequestImport}
             />

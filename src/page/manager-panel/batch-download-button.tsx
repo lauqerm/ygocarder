@@ -25,21 +25,24 @@ const ExportingListContainer = styled.div`
 `;
 
 export type BatchDownloadButton = {
-    onSelect: (card: InternalCard) => void,
+    onActive: (card: InternalCard) => void,
 } & WithLanguage;
 export const BatchDownloadButton = ({
     language,
-    onSelect,
+    onActive,
 }: BatchDownloadButton) => {
     const {
+        selectedMap,
         listName,
         activeId,
         cardDisplayList,
     } = useCardList(useShallow(({
+        selectedMap,
         listName,
         activeId,
         cardDisplayList,
     }) => ({
+        selectedMap,
         listName,
         activeId,
         cardDisplayList,
@@ -49,9 +52,18 @@ export const BatchDownloadButton = ({
         batchDataMap,
         isBatchDownloading,
         isReady,
+        clearQueue,
         stopBatchDownload,
         startBatchDownload,
     } = useBatchDownload();
+    /**
+     * The batch download process is as follow:
+     * * Start the process, block the screen with a popup and mark the process as started.
+     * * During the process, the top card of the exporting list is picked, and force select.
+     * * After it fully render (we check it at the useCardExport hook), it trigger the recording process, while also remove the recorded card from exporting list.
+     * * When the exporting list changed, jump back to step 2. If the exporting list is now empty, we zip it and trigger the download.
+     * * Clean up and end the process.
+     */
     const nextSelectedId = batchQueue[0];
     const lastSelectedId = useRef('');
     useEffect(() => {
@@ -60,10 +72,10 @@ export const BatchDownloadButton = ({
             const targetCard = cardDisplayList.find(card => card.id === nextSelectedId);
 
             if (targetCard) {
-                onSelect(targetCard);
+                onActive(targetCard);
             }
         }
-    }, [cardDisplayList, isBatchDownloading, nextSelectedId, onSelect]);
+    }, [cardDisplayList, isBatchDownloading, nextSelectedId, onActive]);
 
     useEffect(() => {
         let relevant = true;
@@ -96,20 +108,23 @@ export const BatchDownloadButton = ({
         };
     }, [isReady, stopBatchDownload]);
 
+    const exportAllCard = Object.keys(selectedMap).length === 0;
     return <>
         <Modal
             visible={isBatchDownloading}
             onCancel={() => stopBatchDownload()}
-            onOk={() => stopBatchDownload()}
-            cancelText={language['manager.batch.download-all.cancel-all.label']}
-            okText={language['manager.batch.download-all.premature-stop.label']}
+            onOk={() => clearQueue()}
+            cancelText={language['manager.batch.batch-download.cancel-all.label']}
+            okText={language['manager.batch.batch-download.premature-stop.label']}
             okButtonProps={{
+                type: 'default',
             }}
         >
             <ExportingListContainer className="exporting-list">
                 {Object
                     .values(cardDisplayList)
                     .map(({ id, name }) => {
+                        if (!exportAllCard && !selectedMap[id]) return null;
                         return <div key={id} className="exporting-item">
                             <div className="export-status">
                                 {activeId === id
@@ -125,9 +140,16 @@ export const BatchDownloadButton = ({
         </Modal>
         <Button
             className="batch-download-button"
-            onClick={() => startBatchDownload(listName, cardDisplayList.map(card => card.id))}
+            onClick={() => startBatchDownload(
+                listName,
+                exportAllCard
+                    ? cardDisplayList.map(card => card.id)
+                    : Object.keys(selectedMap),
+            )}
         >
-            {language['manager.batch.download-all.label']}
+            {exportAllCard
+                ? language['manager.batch.batch-download.label']
+                : language['manager.batch.batch-download.partial-download.label']}
         </Button>
     </>;
 };

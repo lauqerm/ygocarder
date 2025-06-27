@@ -8,6 +8,7 @@ export type BatchDownloadStore = {
     isReady: boolean,
     startBatchDownload: (batchName: string, batchQueue: string[]) => void,
     stopBatchDownload: () => void,
+    clearQueue: () => void,
     addToBatch: (cardId: string, cardName: string, cardBlob: Blob) => void,
 };
 export const useBatchDownload = create<BatchDownloadStore>((set, get) => {
@@ -32,6 +33,11 @@ export const useBatchDownload = create<BatchDownloadStore>((set, get) => {
                 batchDataMap: {},
                 isBatchDownloading: false,
                 isReady: false,
+            });
+        },
+        clearQueue: () => {
+            set({
+                batchQueue: [],
             });
         },
         addToBatch: (cardId, cardName, cardBlob) => {

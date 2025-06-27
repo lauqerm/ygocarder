@@ -198,6 +198,7 @@ export type CardListStore = {
     activeId: string,
     cardDisplayList: InternalCard[],
     cardList: InternalCard[],
+    selectedMap: Record<string, string>,
     filterFunctionMap: Partial<Record<CardFilterType, (cardList: InternalCard[]) => InternalCard[]>>,
     filterResetSignal: number,
     isListDirty: boolean,
@@ -208,9 +209,11 @@ export type CardListStore = {
     changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
     changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
     deleteCard: (id: string) => void,
+    selectCard: (id: string, type: 'add' | 'remove') => void,
     duplicateCard: (card: Card, ) => void,
     resetFilter: () => void,
     setActiveId: (id: string) => void,
+    setSelectMap: (id: InternalCard[], type?: 'add' | 'replace') => void,
     setCardList: (cardList: InternalCard[], activeId?: string) => void,
     setFilterFunction: (type: CardFilter) => void,
     setListName: (name: string) => void,
@@ -226,6 +229,7 @@ export const useCardList = create<
         activeId: '',
         cardDisplayList: [],
         cardList: [],
+        selectedMap: {},
         filterFunctionMap: {},
         filterResetSignal: 0,
         isListDirty: false,
@@ -308,6 +312,21 @@ export const useCardList = create<
             });
         },
         setActiveId: id => set({ activeId: id }),
+        selectCard: (id, type) => {
+            set(({ selectedMap }) => {
+                const nextMap = { ...selectedMap };
+                if (type === 'add') nextMap[id] = id;
+                else delete nextMap[id];
+
+                return { selectedMap: nextMap };
+            });
+        },
+        setSelectMap: (cardList, type) => set(({ selectedMap }) => ({
+            selectedMap: cardList.reduce((prev, curr) => {
+                prev[curr.id] = curr.id;
+                return prev;
+            }, type === 'replace' ? {} : { ...selectedMap } as Record<string, string>),
+        })),
         setCardList: (cardList, activeId) => {
             /** Reset all filter each time a new list is coming */
             set({
