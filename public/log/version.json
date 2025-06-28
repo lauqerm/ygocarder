@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.11 (2025/06/28)",
+        "logList": [
+            {
+                "content": "Fix: Update DARK/LIGHT Attribute image for French region."
+            }
+        ]
+    },
+    {
         "version": "v2.3.10 (2025/06/27)",
         "logList": [
             {

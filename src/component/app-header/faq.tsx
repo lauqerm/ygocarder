@@ -68,6 +68,20 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Anonymous User Jun 28, 2025',
+                            question: 'It seems to me that the attribute "darkness" in French is not the correct image. The name "Ténèbres" is written in larger letters (less constricted) and extends beyond the circle because it is a long word.\nMaybe the same problem for light too "LUMIERE".\nSee this link:\nhttps://yugioh.fandom.com/fr/wiki/T%C3%89N%C3%88BRES',
+                            answer: 'I have updated the icon, hopefully it looks better now.'
+                        },
+                        {
+                            author: 'Blake Jun 27, 2025',
+                            question: 'Can you make a website with rush duel. card templates just like this one? Not only effect and fusion, but all card types.',
+                        },
+                        {
+                            author: 'Blake Jun 27, 2025',
+                            question: 'Can you also put in the link in the description?',
+                            answer: 'At the moment, no. You may check the FAQ for more detail.'
+                        },
+                        {
                             author: 'Skip at Jun 27, 2025',
                             question: 'Good job! I notice a mistake with the attribute spell card in french. It is not "SPELL" but "MAGIE" we should use.',
                             answer: 'Indeed, I have messed up the Spell attribute between French and German cards. It should be fixed by now.'
@@ -179,26 +193,6 @@ export const QuestionAndFeedback = () => {
                             answer: 'Can you provide a sample image of the old card? I would like to take a look to see if it is possible to implement it or not.',
                         },
                         {
-                            author: 'Cardmaker_01',
-                            question: 'Hello, the Xyz cards have black font in Set ID and Copyright, making it invisible to Xyz cards. Attached screenshot is an example. Can you please fix those fields to white font again? tysm and more power to you :)',
-                            answer: 'It should be fixed by now, thanks for your feedback.'
-                        },
-                        {
-                            author: 'galaxy dragon',
-                            question: 'Can you add a little space on the edge of the spell and trap card? when it is full of text. Thank you.',
-                            answer: 'I can\'t quite understand what you mean, can you be more specific, or provide a sample image?',
-                        },
-                        {
-                            author: 'Anonymous User at May 27, 2025',
-                            question: 'Hello, can you add a selection of sizes in card title? because the old card and new card have different card title alignment, the old card seems to appear the title is more stretch than the new maybe because of the card size of the old card. can you fix it pls? maybe add some choices of card title alignments?\nor maybe size? THANK YOU SO MUCH!!',
-                            answer: 'Do you have any sample image of the old card? I would like to see the difference between the two so I can decide that if it is possible or not.',
-                        },
-                        {
-                            author: 'ATK/DEF at May 26, 2025',
-                            question: 'The ATK/DEF text and values seem to have different sizes than usual. Also the ? seems to be in a different format to how it appears in TCG/OCG',
-                            answer: 'I have made a bit adjustment for font size and font family of stats text.',
-                        },
-                        {
                             author: 'Maya at May 23, 2025',
                             question: 'I\'d like to make a request, is it possible to put a SPEED DUEL watermark in EVERY card types in the description area like the Speed Skill type when it is set to speed duel? thank you so much. Appreciate your lovely cardmaker',
                             answer: 'I will try, but this is pretty hard to do to be honest, don\'t keep your hope up.',
@@ -215,6 +209,10 @@ export const QuestionAndFeedback = () => {
                             question: 'Can you make the pendulum effect box semi-transparent? Just like real pendulum cards.',
                             answer: 'Yes, both pendulum and default card effect box can be made semi-transparent. In "Layout" row you can find "Pendulum" and "Effect" slider, each control how transparent the effect box is (0 is fully see-through and 100 is fully solid).',
                         },
+                        {
+                            question: 'Will you make another version for Rush Duel cards?',
+                            answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
+                        }
                     ].map(({ question, answer }, index) => {
                         return <Quote key={index} question={question}>
                             {answer}

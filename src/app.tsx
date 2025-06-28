@@ -5,7 +5,6 @@ import './style/index.scss';
 import './responsive.scss';
 import './reduce-color-motion.scss';
 import {
-    InternalCard,
     CanvasConst,
     Card,
     getDefaultCard,
@@ -391,12 +390,6 @@ function App() {
         }
     }, [allowHotkey, language, sourceType]);
 
-    const exportCardInList = useCallback((card: InternalCard) => {
-        const { id, ...exportableCard } = card;
-
-        exportData(undefined, false, exportableCard);
-    }, [exportData]);
-
     const downloadFromHotkey = useCallback((event?: { preventDefault: () => void }, fromHotkey = false) => {
         if (fromHotkey && !allowHotkey) return;
 
@@ -659,7 +652,6 @@ function App() {
                 <CardManagerPanel
                     language={language}
                     onVisibleChange={toggleManagerMode}
-                    onDownload={exportCardInList}
                     onSelect={treatNewCard}
                     onRequestImport={() => {
                         importPanelRef.current?.requestImport('new');

@@ -71,7 +71,6 @@ type CardThumbRowData = {
     selectedMap: Record<string, string>,
     language: LanguageDataDictionary,
     onDuplicate: (card: InternalCard) => void,
-    onDownload: (card: InternalCard) => void,
     onActive: (card: InternalCard) => void,
     onDelete: (id: string) => void,
 } & Pick<CardThumb, 'onSelect'>;
@@ -86,7 +85,6 @@ const CardThumbRow = ({
         language,
         list,
         onDelete,
-        onDownload,
         onDuplicate,
         onActive,
         onSelect,
@@ -100,7 +98,6 @@ const CardThumbRow = ({
         language={language}
         onDuplicate={onDuplicate}
         onActive={onActive}
-        onDownload={onDownload}
         onDelete={onDelete}
         onSelect={onSelect}
         style={style}
@@ -113,13 +110,11 @@ const CardThumbRow = ({
 export type ManagerCardList = {
     language: LanguageDataDictionary,
     onActive: (card: InternalCard) => void,
-    onDownload: (card: InternalCard) => void,
     onRequestImport: () => void,
 };
 export const ManagerCardList = ({
     language,
     onActive,
-    onDownload,
     onRequestImport,
 }: ManagerCardList) => {
     const {
@@ -256,7 +251,6 @@ export const ManagerCardList = ({
                             selectedMap,
                             onDuplicate: duplicateCard,
                             onActive,
-                            onDownload,
                             onDelete: deleteAndReselect,
                             onSelect,
                         }}

@@ -87,14 +87,12 @@ export type CardManagerPanel = {
     language: LanguageDataDictionary,
     onVisibleChange: (status: boolean) => void,
     onSelect: (card: InternalCard) => void,
-    onDownload: (card: InternalCard) => void,
     onRequestImport: () => void,
 };
 export const CardManagerPanel = forwardRef(({
     language,
     onVisibleChange,
     onSelect,
-    onDownload,
     onRequestImport,
 }: CardManagerPanel, ref: React.ForwardedRef<CardManagerPanelRef>) => {
     const listUploadId = 'list-upload-id';
@@ -395,7 +393,6 @@ export const CardManagerPanel = forwardRef(({
             <ManagerCardList
                 language={language}
                 onActive={activeCard}
-                onDownload={onDownload}
                 onRequestImport={onRequestImport}
             />
         </StyledCardManagerDrawer>

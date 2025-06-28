@@ -13,12 +13,13 @@ import {
     NO_ICON,
 } from 'src/model';
 import { checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
-import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
+import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Checkbox, Popconfirm, Tooltip } from 'antd';
 import { LanguageDataDictionary } from 'src/service';
 import { useEffect, useRef, useState } from 'react';
 import ReactCrop from 'react-image-crop';
+import copy from 'copy-to-clipboard';
 
 const THUMB_ART_SIZE = 56;
 export const THUMB_SIZE = 68;
@@ -239,7 +240,6 @@ export type CardThumb = {
     selected,
     language: LanguageDataDictionary,
     onDuplicate: (card: InternalCard) => void,
-    onDownload: (card: InternalCard) => void,
     onActive: (card: InternalCard) => void,
     onSelect: (card: InternalCard, type: 'add' | 'remove') => void,
     onDelete: (id: string) => void,
@@ -255,7 +255,6 @@ export const CardThumb = ({
     onActive,
     onDelete,
     onSelect,
-    // onDownload,
     style,
 }: CardThumb) => {
     const [actionVisible, setActionVisible] = useState<boolean>(false);
@@ -479,9 +478,15 @@ export const CardThumb = ({
                 <Tooltip placement="left" title={language['manager.button.duplicate.tooltip']}>
                     <CopyOutlined className="action-button action-duplicate" onClick={() => onDuplicate(card)} />
                 </Tooltip>
-                {/* <Tooltip placement="left" title={language['manager.button.download.tooltip']}>
-                    <DownloadOutlined className="action-button action-download" onClick={() => onDownload(card)} />
-                </Tooltip> */}
+                <Tooltip placement="left" title={language['manager.button.download.tooltip']}>
+                    <DownloadOutlined
+                        className="action-button action-download"
+                        onClick={() => {
+                            const { id, ...exportableCard } = card;
+                            copy(JSON.stringify(exportableCard));
+                        }}
+                    />
+                </Tooltip>
                 <Popconfirm
                     placement="left"
                     title={language['manager.button.delete.label']}
@@ -547,11 +552,9 @@ const calculateThumbArtStyle = (
         left: croppedLeft,
         width: thumbImageWidth,
         height: fit ? thumbImageHeight : undefined,
-        transform: `translateX(${
-            - thumbArtXGap * THUMB_TO_CARD_RATIO
-        }px) translateY(${
-            - thumbArtYGap * THUMB_TO_CARD_RATIO
-        }px)`,
+        transform: `translateX(${- thumbArtXGap * THUMB_TO_CARD_RATIO
+            }px) translateY(${- thumbArtYGap * THUMB_TO_CARD_RATIO
+            }px)`,
     };
 };
 /** The image should not load instantly to avoid stagnant request when user scroll through their card list. Also to prevent sudden image change when cropper reconciliate. */
