@@ -340,7 +340,7 @@
         "manager.button.delete.confirm.label": "Xóa",
         "manager.button.delete.label": "Xóa thẻ này?",
         "manager.button.delete.tooltip": "Xóa",
-        "manager.button.download.tooltip": "Xuất dữ liệu",
+        "manager.button.download.tooltip": "Sao chép dữ liệu",
         "manager.button.duplicate.tooltip": "Sao chép",
         "manager.button.search.button.reset.label": "Hiển thị danh sách đầy đủ",
         "manager.button.search.no-card.message": "Không có kết quả",

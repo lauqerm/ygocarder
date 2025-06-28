@@ -329,7 +329,7 @@
         "manager.button.delete.confirm.label": "Delete",
         "manager.button.delete.label": "Delete this card?",
         "manager.button.delete.tooltip": "Delete",
-        "manager.button.download.tooltip": "Export",
+        "manager.button.download.tooltip": "Copy raw data",
         "manager.button.duplicate.tooltip": "Duplicate",
         "manager.button.search.button.reset.label": "Reset filters",
         "manager.button.search.no-card.message": "No cards in list",
