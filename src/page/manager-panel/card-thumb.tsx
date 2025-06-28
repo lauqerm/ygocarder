@@ -12,7 +12,7 @@ import {
     LinkRotateList,
     NO_ICON,
 } from 'src/model';
-import { checkSpeedSkill, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
+import { checkSpeedSkill, compressCardData, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
 import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Checkbox, Popconfirm, Tooltip } from 'antd';
@@ -483,7 +483,7 @@ export const CardThumb = ({
                         className="action-button action-download"
                         onClick={() => {
                             const { id, ...exportableCard } = card;
-                            copy(JSON.stringify(exportableCard));
+                            copy(JSON.stringify(compressCardData(exportableCard)));
                         }}
                     />
                 </Tooltip>
