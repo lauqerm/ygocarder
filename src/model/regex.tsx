@@ -2,14 +2,26 @@ import { ocgKeywordDataList } from './dictionary';
 
 export const ST_ICON_SYMBOL = '⦾';
 
-export const CAPITAL_LETTER_SOURCE = '[A-ZＡ-Ｚ]';
+export const CAPITAL_LETTER_SOURCE = '[A-ZＡ-ＺÀ-Ö]';
 export const CapitalLetterRegex = new RegExp(CAPITAL_LETTER_SOURCE);
 
 export const SQUARE_BRACKET_SOURCE = '[\\[\\]【】]';
 export const SquareBracketLetterRegex = new RegExp(SQUARE_BRACKET_SOURCE);
 
-export const WHOLE_WORD_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
+/** 
+ * Beside usual alphabet letter and number, we try to support accented letters and Japanese's version of alphabet too.
+ * * Latin-1 Supplement block, without arithmetic symbol such as × and ÷
+ * * Latin Extended-A
+ * * Latin Extended-B
+ * * Latin Extended Additional
+ * 
+ * Multiple letter that is not used in normal word but have appear in YGO card is also included such as ∞.
+ */
+export const WHOLE_WORD_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９À-ÖÙ-öù-ÿĀ-žƀ-ɏḀ-ỿ!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
 export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE);
+
+export const VIETNAMESE_DIACRITIC_LETTER = '[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]';
+export const VietnameseDiacriticLetterRegex = new RegExp(VIETNAMESE_DIACRITIC_LETTER);
 
 export const FragmentSplitRegex = new RegExp(`({[^{}]+?}|${WHOLE_WORD_SOURCE}|.)`);
 // export const FragmentSplitRegex = new RegExp('({[^{}]+?}|.)');

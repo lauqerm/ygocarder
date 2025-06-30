@@ -39,6 +39,8 @@ export const getTextWorker = (
         numberFont = font,
         numberFontRatio = 1,
         furiganaFont,
+        vietnameseFont,
+        vietnameseFontRatio = 1,
     } = fontData;
 
     let numberFontMemory = fontController.getFontInfo();
@@ -50,6 +52,18 @@ export const getTextWorker = (
         ctx.font = fontController
             .setFamily(numberFontMemory.family)
             .setSize(numberFontMemory.size)
+            .getFont();
+    };
+
+    let vietnameseFontMemory = fontController.getFontInfo();
+    const applyVietnameseFont = () => {
+        vietnameseFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setFamily(vietnameseFont).setSize(fontSize * vietnameseFontRatio).getFont();
+    };
+    const stopApplyVietnameseFont = () => {
+        ctx.font = fontController
+            .setFamily(vietnameseFontMemory.family)
+            .setSize(vietnameseFontMemory.size)
             .getFont();
     };
 
@@ -116,11 +130,12 @@ export const getTextWorker = (
     };
 
     return {
-        applyNumberFont, stopApplyNumberFont,
-        applyLargerText, stopApplyLargerText,
-        applySymbolFont, stopApplySymbolFont,
-        applyOrdinalFont, stopApplyOrdinalFont,
         applyFuriganaFont, stopApplyFuriganaFont,
+        applyLargerText, stopApplyLargerText,
+        applyNumberFont, stopApplyNumberFont,
+        applyOrdinalFont, stopApplyOrdinalFont,
+        applySymbolFont, stopApplySymbolFont,
+        applyVietnameseFont, stopApplyVietnameseFont,
 
         applyAsymmetricScale,
         applyScale,

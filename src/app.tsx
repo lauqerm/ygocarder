@@ -192,6 +192,7 @@ function App() {
                     'MatrixBook',
                     'MatrixRegularSmallCaps',
                     'RoGSanSrfStd-Bd',
+                    'SVN-Times New Roman Italic',
                     'StoneSerif-Italic',
                     'YuGiOhITCStoneSerifBSc',
                     'matrix',
