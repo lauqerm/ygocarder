@@ -1,29 +1,30 @@
 import {
-    FontData,
     BULLET_LETTER,
-    TCGSymbolLetterRegex,
-    OCGAlphabetRegex,
-    MAX_LINE_REVERSE_INDENT,
-    START_OF_LINE_ALPHABET_OFFSET,
-    FragmentSplitRegex,
-    WholeWordRegex,
-    DefaultFontSizeData,
-    ST_ICON_SYMBOL,
-    TextData,
-    NoSpaceRegex,
-    LETTER_GAP_RATIO,
-    NB_UNCOMPRESSED_START,
-    NB_UNCOMPRESSED_END,
-    SquareBracketLetterRegex,
     CapitalLetterRegex,
-    NumberRegex,
-    OCGNoOverheadGapRegex,
-    GAP_PER_WIDTH_RATIO,
-    RUBY_REGEX,
     DefaultFontData,
-    RUBY_BONUS_RATIO,
+    DefaultFontSizeData,
+    FontData,
+    FragmentSplitRegex,
+    GAP_PER_WIDTH_RATIO,
+    LETTER_GAP_RATIO,
+    MAX_LINE_REVERSE_INDENT,
+    NB_UNCOMPRESSED_END,
+    NB_UNCOMPRESSED_START,
     NON_BREAKABLE_SYMBOL_SOURCE,
+    NoSpaceRegex,
     NonCompressableRegex,
+    NumberRegex,
+    OCGAlphabetRegex,
+    OCGNoOverheadGapRegex,
+    RUBY_BONUS_RATIO,
+    RUBY_REGEX,
+    START_OF_LINE_ALPHABET_OFFSET,
+    ST_ICON_SYMBOL,
+    SquareBracketLetterRegex,
+    TCGSymbolLetterRegex,
+    TextData,
+    VietnameseDiacriticLetterRegex,
+    WholeWordRegex,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter, scaleFontSizeData } from 'src/util';
@@ -104,6 +105,7 @@ export const analyzeToken = ({
         applyOrdinalFont, stopApplyOrdinalFont,
         applySymbolFont, stopApplySymbolFont,
         applyNumberFont, stopApplyNumberFont,
+        applyVietnameseFont, stopApplyVietnameseFont,
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
     const token = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
     const letterSpacingRatio = 1 + letterSpacing / 2;
@@ -250,6 +252,12 @@ export const analyzeToken = ({
                     applyScale(capitalLetterRatio);
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     reverseScale(capitalLetterRatio);
+                }
+                /** Vietnamese letter use different font, for the sake of simplicity, we use a widely supported Times New Roman font instead of a more specific one. */
+                else if (VietnameseDiacriticLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                    applyVietnameseFont();
+                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    stopApplyVietnameseFont();
                 }
                 /** Number letters may use different font, for the sake of simplicity, we assume that the font does not affect (too much) to the letter's width. In short, we assume that the letter "8" in font X have the same width with the letter "8" in font Y, just different shape. */
                 else if (NumberRegex.test(currentLetter)) {

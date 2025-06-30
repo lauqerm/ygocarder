@@ -20,6 +20,7 @@ import {
     SquareBracketLetterRegex,
     TCGSymbolLetterRegex,
     TextData,
+    VietnameseDiacriticLetterRegex,
     WholeWordRegex,
     getBulletSpacing,
 } from 'src/model';
@@ -118,6 +119,7 @@ export const drawLine = ({
         stopApplyOrdinalFont, applyOrdinalFont,
         applyScale, reverseScale,
         applySymbolFont, stopApplySymbolFont,
+        applyVietnameseFont, stopApplyVietnameseFont,
         applyAsymmetricScale, resetScale,
     } = textWorker;
 
@@ -436,6 +438,11 @@ export const drawLine = ({
                             baseline: baseline / capitalLetterRatio
                         });
                         reverseScale(capitalLetterRatio);
+                    } else if (VietnameseDiacriticLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                        applyVietnameseFont();
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                        drawLetter(drawLetterofWordParameter);
+                        stopApplyVietnameseFont();
                     } else if (NumberRegex.test(currentLetter)) {
                         applyNumberFont();
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;

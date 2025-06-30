@@ -22,6 +22,12 @@
     font-display: swap;
 }
 @font-face {
+    font-family: 'SVN-Times New Roman Italic';
+    src: url('./font/SVN-Times New Roman Italic.ttf');
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
     font-family: 'RoGSanSrfStd-Bd';
     src: url('./font/RoGSanSrfStd-Bd.otf') format('opentype');
     font-weight: normal;

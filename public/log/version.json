@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.12 (2025/06/30)",
+        "logList": [
+            {
+                "content": "Fix: Better behavior for accented letter (for example \"é\")."
+            }
+        ]
+    },
+    {
         "version": "v2.3.11 (2025/06/28)",
         "logList": [
             {

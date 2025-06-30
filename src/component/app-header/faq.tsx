@@ -68,16 +68,31 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
-                            author: 'Anonymous User Jun 28, 2025',
+                            author: 'Error "é" at Jun 30, 2025',
+                            question: 'There is a problem with the writing. The line wrap is sometimes incorrect when using this "é" character.\nThe last word is "Matériel". The last word should not be cut.',
+                            answer: 'I have updated the algorithm to have a better behavior for non-alphabet letters. But in case it goes wrong, you can always use non-breakable text syntax to keep the word in line.'
+                        },
+                        {
+                            author: 'Anonymous User at Jun 30, 2025',
+                            question: 'Having a format similar for cards similar to Master Duel cards.',
+                            answer: 'I have no plan to support format like Master Duel right now.'
+                        },
+                        {
+                            author: 'Anonymous User at Jun 29, 2025',
+                            question: 'Add a predefined rainbow gradient for Name Styles similar to the one for Secret Rares in Simplified Chinese\'s proxies',
+                            answer: 'I don\'t think I can do it. I don\'t even know what those proxies look like.'
+                        },
+                        {
+                            author: 'Anonymous User at Jun 28, 2025',
                             question: 'It seems to me that the attribute "darkness" in French is not the correct image. The name "Ténèbres" is written in larger letters (less constricted) and extends beyond the circle because it is a long word.\nMaybe the same problem for light too "LUMIERE".\nSee this link:\nhttps://yugioh.fandom.com/fr/wiki/T%C3%89N%C3%88BRES',
                             answer: 'I have updated the icon, hopefully it looks better now.'
                         },
                         {
-                            author: 'Blake Jun 27, 2025',
+                            author: 'Blake Jun at 27, 2025',
                             question: 'Can you make a website with rush duel. card templates just like this one? Not only effect and fusion, but all card types.',
                         },
                         {
-                            author: 'Blake Jun 27, 2025',
+                            author: 'Blake Jun at 27, 2025',
                             question: 'Can you also put in the link in the description?',
                             answer: 'At the moment, no. You may check the FAQ for more detail.'
                         },
