@@ -731,6 +731,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 bottom,
                 bottomOffset,
                 {
+                    stroke: false,
                     globalScale,
                     textStyle: {
                         color: lightFooter ? '#ffffff' : '#000000',
