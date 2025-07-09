@@ -271,7 +271,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         /** Increase image size for a bit */
         receivingCanvas.style.transform = 'scale(2)';
         const ctx = receivingCanvas.getContext('2d');
-        if (!ctx || typeof ratio !== 'number' || ratio <= 0) return;
+        if (!ctx || typeof ratio !== 'number' || ratio <= 0 || isLoading) return;
 
         const { naturalHeight, naturalWidth } = image;
         const zoomX = naturalWidth / image.width;
@@ -639,7 +639,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                     }}
                     onChange={(pixelCropData, percentCropData) => {
                         const image = imgRef.current;
-                        if (pendingCrop.current.crop) return;
+                        if (pendingCrop.current.crop || isLoading) return;
                         if (!isMigrated) {
                             setMigrated(true);
                             setCrop(cur => {
@@ -658,7 +658,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         }
                     }}
                     onComplete={(_, percentData) => {
-                        if (!pendingCrop.current.crop) setCrop(cur => ({ ...cur, completed: percentData }));
+                        if (!pendingCrop.current.crop || isLoading) setCrop(cur => ({ ...cur, completed: percentData }));
                     }}
                     ruleOfThirds={true}
                     crossorigin={crossorigin}
