@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.13 (2025/07/09)",
+        "logList": [
+            {
+                "content": "Fix: Minor issues."
+            }
+        ]
+    },
+    {
         "version": "v2.3.12 (2025/06/30)",
         "logList": [
             {
