@@ -690,7 +690,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedOtherEffectTextStyle,
     ]);
 
-    /** DRAW FIRST EDITION NOTICE AND PASSWORD */
+    /** DRAW FIRST EDITION (1st Edition Text) NOTICE AND PASSWORD */
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = passwordCanvasRef.current?.getContext('2d');

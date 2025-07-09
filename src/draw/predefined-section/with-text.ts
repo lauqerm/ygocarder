@@ -90,7 +90,7 @@ export const draw1stEdition = (
     if (!ctx) return;
 
     const {
-        // stroke = false,
+        stroke = false,
         textStyle,
         globalScale,
     } = option ?? {};
@@ -104,21 +104,21 @@ export const draw1stEdition = (
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
     const superTextOffset = 7.4 * globalScale;
-    ctx.font = `bold ${23.7 * globalScale}px palatino-linotype-bold`;
+    ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
 
     let left = actualEdge;
     ctx.fillText('1', left, actualBaseline + actualBaselineOffset);
-    // if (stroke) ctx.strokeText('1', left, actualBaseline);
+    if (stroke) ctx.strokeText('1', left, actualBaseline);
     left += ctx.measureText('1').width - 2 * globalScale;
 
-    ctx.font = `bold ${17.78 * globalScale}px palatino-linotype-bold`;
+    ctx.font = `${17.78 * globalScale}px palatino-linotype-bold`;
     ctx.fillText('st', left, actualBaseline - superTextOffset + actualBaselineOffset);
-    // if (stroke) ctx.strokeText('st', left, actualBaseline - superTextOffset);
+    if (stroke) ctx.strokeText('st', left, actualBaseline - superTextOffset);
     left += ctx.measureText('st').width;
 
-    ctx.font = `bold ${22.22 * globalScale}px palatino-linotype-bold`;
+    ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
     ctx.fillText(' Edition', left, actualBaseline + actualBaselineOffset);
-    // if (stroke) ctx.strokeText(' Edition', left, actualBaseline);
+    if (stroke) ctx.strokeText(' Edition', left, actualBaseline);
     resetStyle();
 };
 

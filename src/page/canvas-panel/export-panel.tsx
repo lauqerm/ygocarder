@@ -301,7 +301,7 @@ export const ExportPanel = forwardRef(({
                     >
                         <div>
                             <CardDataCopyButton
-                                disabled={isPartial}
+                                disabled={false}
                                 data={internalCardData.ygocarder.data}
                                 withText
                             >

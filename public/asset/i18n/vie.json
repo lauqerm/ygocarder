@@ -372,7 +372,7 @@
         "manager.title": "Trang quản lý",
         "prompt.download.tainted.message": "Không thể lưu thẻ. Bạn có thể lưu thủ công bằng cách nhấn chuột phải vào ảnh → Chọn \"Save image as...\"",
         "prompt.export.message": "Lưu lại thông tin thẻ",
-        "prompt.export.offline-warning.message": "Dữ liệu quá lớn không thể sao chép trực tiếp.",
+        "prompt.export.offline-warning.message": "Dữ liệu quá lớn, không thể sao chép trực tiếp.",
         "prompt.import.alternative.label": "- hoặc -",
         "prompt.import.imgur.description": "Ảnh không hợp lệ hoặc đã quá giới hạn tải về.",
         "prompt.import.imgur.error": "Không thể tải ảnh về",
