@@ -68,6 +68,16 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'TheTonyB at Jul 10, 2025',
+                            question: 'Can you improve compatibility with greek letters in TCG format? The only ones that work fine are α, β and Ω. In OCG format they all work perfectly.',
+                            answer: 'I have updated font, hopefully it looks better now.'
+                        },
+                        {
+                            author: 'San_San at Jul 10, 2025',
+                            question: 'Al escribir en español las vocales con tilde sobresalen ligeramente del resto de letras',
+                            answer: 'Can you provide an example image? As far as I check words like "número" or "además" looks normal to me.'
+                        },
+                        {
                             author: 'Error "é" at Jun 30, 2025',
                             question: 'There is a problem with the writing. The line wrap is sometimes incorrect when using this "é" character.\nThe last word is "Matériel". The last word should not be cut.',
                             answer: 'I have updated the algorithm to have a better behavior for non-alphabet letters. But in case it goes wrong, you can always use non-breakable text syntax to keep the word in line.'

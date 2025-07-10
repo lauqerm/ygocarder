@@ -62,7 +62,11 @@ export const FLAVOR_CONDITION_SOURCE = `(\\n^[\\r\\t\\f\\v \\u00a0\\u1680\\u2000
 
 /** Small reminder: `g` flag turn regex into stateful, and cannot be reused without reset it first. */
 export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\[\\]\\\\';
-export const TCG_SYMBOL_JOINLIST = '#★☆@∞';
+/** Additional symbol including
+ * * Greek Extended 
+ * * Greek and Coptic
+ */
+export const TCG_SYMBOL_JOINLIST = '#★☆@∞Ͱ-Ͽἀ-῾';
 export const TCGSymbolLetterRegex = new RegExp(`[${TCG_SYMBOL_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
