@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.3.16 (2025/07/12)",
+        "logList": [
+            {
+                "content": "Support drag and drop image from device into card art / background."
+            },
+            {
+                "content": "Fix: Minor font updates."
+            }
+        ]
+    },
+    {
         "version": "v2.3.15 (2025/07/10)",
         "logList": [
             {
