@@ -123,6 +123,7 @@ export const DefaultTCGNormalFontData: FontData = {
     vietnameseFont: '"SVN-Times New Roman Italic"',
     headTextHeightRatio: 0.750,
     fontStyle: 'tcg',
+    vietnameseFontRatio: 1.08,
     fontList: [],
 };
 export const DefaultOCGEffectFontData: FontData = {
