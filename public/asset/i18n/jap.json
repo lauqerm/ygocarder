@@ -100,6 +100,7 @@
         "image-cropper.button.force-fit.tooltip": "画像全体を使用",
         "image-cropper.button.use-crop.tooltip": "トリミングを許可する",
         "image-cropper.download": "ダウンロード",
+        "image-cropper.drop.tooltip": "ここに画像ファイルをドロップします",
         "image-cropper.no-download": "画像が見つかりません",
         "image-cropper.not-found-warning": "画像が見つかりません",
         "image-cropper.offline-warning": "オフライン画像カードのURLを共有することはできません",

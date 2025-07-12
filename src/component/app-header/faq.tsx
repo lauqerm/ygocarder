@@ -68,6 +68,15 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'New Feature Suggestion at Jul 12, 2025',
+                            question: 'For the card art, maybe you could make a drag and drop feature to it?',
+                            answer: 'I have added the feature, you may try it now.'
+                        },
+                        {
+                            author: 'TheTonyB at Jul 10, 2025',
+                            question: 'Can you add support for greek letters in TCG format? Currently, the only ones that work fine are α, β, Ω, and I think μ too. In OCG format they all work perfectly. I included a screeenshot of me trying to use the greek letter Ν. Goated card maker by the way.',
+                        },
+                        {
                             author: 'TheTonyB at Jul 10, 2025',
                             question: 'Can you improve compatibility with greek letters in TCG format? The only ones that work fine are α, β and Ω. In OCG format they all work perfectly.',
                             answer: 'I have updated font, hopefully it looks better now.'

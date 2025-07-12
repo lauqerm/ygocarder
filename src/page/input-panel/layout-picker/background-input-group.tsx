@@ -19,7 +19,7 @@ const StyledImageCropper = styled(ImageCropper)`
         }
     }
     .card-cropper {
-        width: 375px;
+        width: var(--cropper-width);
         text-align: center;
     }
 `;

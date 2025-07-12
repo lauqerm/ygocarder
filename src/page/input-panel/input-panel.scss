@@ -49,7 +49,7 @@
             }
         }
         .main-info-second {
-            flex: 0 0 375px;
+            flex: 0 0 var(--cropper-width);
             text-align: center;
             .art-finish-checkbox {
                 display: block;

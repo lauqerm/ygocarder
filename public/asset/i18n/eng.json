@@ -103,6 +103,7 @@
         "image-cropper.button.force-fit.tooltip": "Use whole image",
         "image-cropper.button.use-crop.tooltip": "Allow cropping",
         "image-cropper.download": "Download cropped image",
+        "image-cropper.drop.tooltip": "Drop image here",
         "image-cropper.not-found-warning": "Image not found, result card may not be displayed correctly.",
         "image-cropper.offline-warning": "Cannot share card's URL with offline image.",
         "image-cropper.online-tip": "You may use popular hosts such as \"imgur\".",

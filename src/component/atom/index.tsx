@@ -1,5 +1,5 @@
 import { Popover } from 'antd';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 export const StyledMarkdown = styled.div`
     padding: var(--spacing-xs);
@@ -176,6 +176,38 @@ export const ResolutionLabel = ({ width, height, warning }: ResolutionLabel) => 
         <span className="right-part">{height}</span>
     </ResolutionLabelContainer>;
 };
+
+const backgroundMarch = keyframes`
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+`;
+export const DropZone = styled.div<{ $visible: boolean }>`
+	display: ${({ $visible }) => $visible ? 'flex' : 'none'};
+	width: 100%;
+	height: 100%;
+	background-color: #8888cc44;
+	z-index: 1;
+	font-size: var(--fs-3xl);
+	align-items: center;
+    justify-content: center;
+	text-shadow: 0 0 3px #222;
+    border: 5px dashed #cccccc;
+    background: linear-gradient(-45deg, #ee7752aa, #e73c7e88, #23a6d588, #23d5ab88);
+	background-size: 400% 400%;
+    padding: 5px;
+    label {
+        color: var(--color-heavy);
+        line-height: 1.25;
+    }
+    ${css`animation: ${backgroundMarch} 6s linear infinite;`}
+`;
 
 export * from './color';
 export * from './copiable';

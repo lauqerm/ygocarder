@@ -4,10 +4,13 @@ import ReactCrop from 'react-image-crop';
 import { DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
-import { useLanguage } from 'src/service';
+import { useGlobal, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
+import { DropZone } from '../atom';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
+
+export const CROPPER_WIDTH = 375;
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
     if (!crop || !canvas) return;
@@ -52,7 +55,7 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 
     /** Migrate old unit */
     if (unit === 'px') {
-        const oldHeightToWidthRatio = 300 / 375;
+        const oldHeightToWidthRatio = 300 / CROPPER_WIDTH;
         const newHeightToWidthRatio = 400 / 300;
         const { width: imageWidth, height: imageHeight } = image;
 
@@ -171,6 +174,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const [inputMode, setInputMode] = useState<'offline' | 'online'>(normalizedDefaultSource);
     const [internalSource, setInternalSource] = useState(defaultInternalSource);
     const [isLoading, setLoading] = useState(false);
+    const [activeDropzone, setActiveDropzone] = useGlobal('activeDropzone');
     const [error, setError] = useState<any>(null);
     const [interacted, setInteracted] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
@@ -186,29 +190,27 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         completed: completedCrop,
     } = crop;
 
-    const applyOfflineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const targetFile = e.target.files[0];
-            const maxFileSize = 4;
+    const applyOfflineSource = (fileList: FileList) => {
+        const targetFile = fileList[0];
+        const maxFileSize = 4;
 
-            if (targetFile.size < maxFileSize * 1024 * 1024) {
-                setLoading(true);
-                const reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    if (typeof reader.result === 'string') {
-                        setCrossOrigin('anonymous');
-                        setInternalSource(reader.result);
-                        setSourceType('offline');
-                        setInputMode('offline');
-                        onSourceChange('offline', reader.result);
-                        setLoading(false);
-                    }
-                });
-                reader.readAsDataURL(targetFile);
-            } else {
-                onMaxSizeExceeded(maxFileSize);
-            }
-        } else alert(language['image-cropper.not-found-warning']);
+        if (targetFile.size < maxFileSize * 1024 * 1024) {
+            setLoading(true);
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                if (typeof reader.result === 'string') {
+                    setCrossOrigin('anonymous');
+                    setInternalSource(reader.result);
+                    setSourceType('offline');
+                    setInputMode('offline');
+                    onSourceChange('offline', reader.result);
+                    setLoading(false);
+                }
+            });
+            reader.readAsDataURL(targetFile);
+        } else {
+            onMaxSizeExceeded(maxFileSize);
+        }
     };
 
     const pendingCrop = useRef({
@@ -439,7 +441,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         || (sourceType === 'online' && (externalSource ?? '').length > 0);
     const isDownloadable = receivingCanvas && hasImage && !isLoading && completedCrop?.width && completedCrop?.height;
     return (
-        <div className={`card-image-cropper ${className}`}>
+        <div className={mergeClass('card-image-cropper', className)}>
             <div className="card-image-source-input">
                 <div className="card-image-source-input-container">
                     <div className="card-image-source-input-title">
@@ -509,7 +511,11 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         <Input ref={fileInputRef}
                             type="file"
                             accept="image/*"
-                            onChange={applyOfflineSource}
+                            onChange={e => {
+                                if (e.target.files && e.target.files.length > 0) {
+                                    applyOfflineSource(e.target.files);
+                                } else alert(language['image-cropper.not-found-warning']);
+                            }}
                             onClick={() => fileInputRef.current?.setValue('')}
                         />
                     </div>
@@ -517,10 +523,34 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 {children}
             </div>
             {beforeCropper}
-            <div className="card-cropper" onKeyDown={() => {
-                /** Nudge selection also count as user interaction */
-                setInteracted(true);
-            }}>
+            <div
+                className={mergeClass('card-cropper')}
+                onKeyDown={() => {
+                    /** Nudge selection also count as user interaction */
+                    setInteracted(true);
+                }}
+            >
+                <DropZone
+                    $visible={activeDropzone > 0}
+                    className="drop-zone"
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => {
+                        e.preventDefault();
+                        setActiveDropzone(0);
+                        if (e.currentTarget.classList.contains('drop-zone')) {
+                            // const itemList = e.dataTransfer.items;
+                            // for (let cnt = 0; cnt < itemList.length; cnt++) {
+                            //     console.log(`kind = ${itemList[cnt].kind}, type = ${itemList[cnt].type}`);
+                            //     itemList[cnt].getAsString((value) => {/** Redundant to support paste image link here */ });
+                            // }
+                            const fileList = e.dataTransfer.files;
+                        console.log('dropped', fileList);
+                            applyOfflineSource(fileList);
+                        }
+                    }}
+                >
+                    <label>{language['image-cropper.drop.tooltip']}</label>
+                </DropZone>
                 {isLoading && <Loading.FullView />}
                 {(hasImage && !error) && <div className="card-image-option">
                     <Tooltip

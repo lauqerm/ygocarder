@@ -33,12 +33,13 @@ import {
     retrieveSavedCard,
     useCard,
     useCardList,
+    useGlobal,
     useI18N,
     useOCGFont,
     useSetting,
 } from './service';
 import { Dropdown, notification, Tooltip } from 'antd';
-import { Lightbox, LightboxRef, ResolutionPicker, TaintedCanvasWarning } from './component';
+import { CROPPER_WIDTH, Lightbox, LightboxRef, ResolutionPicker, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined, GatewayOutlined } from '@ant-design/icons';
 import {
@@ -106,6 +107,7 @@ function App() {
         loadDefaultLanguage,
     })));
     const [isInitializing, setInitializing] = useState(true);
+    const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [error, setError] = useState('');
     const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
     const [managerVisible, setManagerVisible] = useState(false);
@@ -155,6 +157,25 @@ function App() {
     const importPanelRef = useRef<ImportPanelRef>(null);
 
     const [imageChangeCount, setImageChangeCount] = useState(0);
+
+    useEffect(() => {
+        /** Each time a drag over event is fired, we keep the heartbeat, and stop it if there is no heartbeat after a while. */
+        const stopDrag = () => {
+            setActiveDropzone(0);
+        };
+        let timeoutHandle = window.setTimeout(stopDrag, 200);
+        const checkDragHeartbeat = () => {
+            setActiveDropzone(1);
+            window.clearTimeout(timeoutHandle);
+            timeoutHandle = window.setTimeout(stopDrag, 200);
+        };
+
+        document.addEventListener('dragover', checkDragHeartbeat);
+
+        return () => {
+            document.removeEventListener('dragover', checkDragHeartbeat);
+        };
+    }, [setActiveDropzone]);
 
     useEffect(() => {
         initiateI18N();
@@ -440,17 +461,19 @@ function App() {
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
                 /** Prevent accidentally replace the page when dragging image into card art input. */
-                onDrop={() => { }}
+                onDrop={e => {
+                    e.preventDefault();
+                }}
                 className={`language-${languageInfo.codeName} manager-${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
-                    backgroundImage: `url("${
-                        process.env.PUBLIC_URL
-                    }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                    backgroundImage: `url("${process.env.PUBLIC_URL
+                        }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: isMobileDevice() ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasHeight * globalScale}px`,
                         '--card-width': `${CanvasWidth * globalScale}px`,
                         '--global-scale': `${globalScale}`,
+                        '--cropper-width': `${CROPPER_WIDTH}px`,
                     }),
                 }}
             >

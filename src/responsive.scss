@@ -143,7 +143,7 @@
 					}
 					.card-cropper {
 						grid-area: cropper;
-						max-width: 375px;
+						max-width: var(--cropper-width);
 						height: unset;
 						position: relative;
 					}
@@ -400,7 +400,7 @@
 			grid-template-columns: 1fr;
 			gap: var(--spacing);
 			.card-image-source-input {
-				width: 375px;
+				width: var(--cropper-width);
 				margin-right: 0;
 				padding-right: 0;
 				border-right: none;
