@@ -95,20 +95,18 @@ export const drawName = async (
     style: Partial<NameStyle>,
     option: {
         frame: string,
-        cloneNode: HTMLCanvasElement | null | undefined,
         format: string,
         isSpeedSkill?: boolean,
         furiganaHelper: boolean,
         globalScale: number,
     },
 ) => {
-    const { isSpeedSkill, format, cloneNode, frame, furiganaHelper, globalScale } = option;
+    const { isSpeedSkill, format, frame, furiganaHelper, globalScale } = option;
     const edge = _edge * globalScale;
     const trueBaseline = _trueBaseline * globalScale;
     const width = _width * globalScale;
-    const cloneCtx = cloneNode?.getContext('2d');
 
-    if (!(ctx && cloneCtx && value)) return;
+    if (!(ctx && value)) return;
     const {
         embossPitch,
         embossYaw,

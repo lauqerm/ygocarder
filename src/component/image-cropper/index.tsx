@@ -540,11 +540,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         if (e.currentTarget.classList.contains('drop-zone')) {
                             // const itemList = e.dataTransfer.items;
                             // for (let cnt = 0; cnt < itemList.length; cnt++) {
-                            //     console.log(`kind = ${itemList[cnt].kind}, type = ${itemList[cnt].type}`);
                             //     itemList[cnt].getAsString((value) => {/** Redundant to support paste image link here */ });
                             // }
                             const fileList = e.dataTransfer.files;
-                        console.log('dropped', fileList);
                             applyOfflineSource(fileList);
                         }
                     }}

@@ -1,5 +1,11 @@
+import { useEffect, useRef } from 'react';
 import { StyledDropdown } from 'src/component';
+import { drawName } from 'src/draw';
+import { FrameInfo, NameStyle } from 'src/model';
+import { useCard } from 'src/service';
+import { resolveNameStyle } from 'src/util';
 import styled from 'styled-components';
+import { useShallow } from 'zustand/react/shallow';
 
 export const StyledPatternContainer = styled(StyledDropdown.Container)`
     display: grid;
@@ -11,6 +17,13 @@ export const StyledPatternContainer = styled(StyledDropdown.Container)`
         font-size: var(--fs-sm);
         text-align: center;
     }
+`;
+export const StyledPresetContainer = styled(StyledDropdown.Container)`
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    max-width: 450px; // Alignment
 `;
 export const StyledPatternOption = styled.div`
     line-height: 0;
@@ -73,3 +86,79 @@ export const StyledPredefinedOption = styled.div`
         max-width: 100%;
     }
 `;
+
+const OPTION_WIDTH = 140;
+const OPTION_HEIGHT = 30;
+const PresetOptionContainer = styled(StyledPatternOption)`
+    width: ${OPTION_WIDTH}px;
+    height: ${OPTION_HEIGHT}px;
+`;
+export type PresetOption = React.PropsWithChildren<{
+    frameInfo: FrameInfo,
+    presetContent: Partial<NameStyle>,
+    onClick: () => void,
+}>;
+export const PresetOption = ({
+    frameInfo,
+    presetContent,
+    onClick,
+}: PresetOption) => {
+    const {
+        format, foil,
+    } = useCard(useShallow(({
+        card: { format, foil },
+    }) => ({
+        format, foil,
+    })));
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const {
+        name,
+        labelBackgroundColor,
+        labelBackgroundImage,
+    } = frameInfo;
+    const normalizedFrame = name ?? 'effect';
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext('2d');
+        if (canvas && ctx) {
+            ctx.clearRect(0, 0, OPTION_WIDTH, OPTION_HEIGHT);
+            const { font } = presetContent;
+            const value = font === 'OCG' ? 'カード名' : 'Card Name';
+            const top = 60;
+            const left = font === 'OCG' ? 65 : 12;
+            drawName(
+                canvas,
+                ctx,
+                value,
+                left,
+                top,
+                OPTION_WIDTH / 0.4,
+                resolveNameStyle({
+                    foil,
+                    format,
+                    frame: normalizedFrame,
+                    nameStyle: presetContent,
+                    nameStyleType: 'custom',
+                }),
+                {
+                    frame: normalizedFrame,
+                    format,
+                    furiganaHelper: false,
+                    globalScale: 0.4,
+                    isSpeedSkill: true,
+                }
+            );
+        }
+    }, [foil, format, normalizedFrame, presetContent]);
+
+    return <PresetOptionContainer
+        onClick={onClick}
+        style={{
+            background: labelBackgroundColor,
+            backgroundImage: labelBackgroundImage,
+        }}
+    >
+        <canvas ref={canvasRef} width={OPTION_WIDTH} height={OPTION_HEIGHT} />
+    </PresetOptionContainer>;
+};

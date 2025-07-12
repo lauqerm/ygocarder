@@ -39,7 +39,7 @@ export const getDefaultTextStyle = (): TextStyle => [
     '#000000',
 ];
 
-const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameStyle> => ({
+export const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<NameStyle> => ({
     hasGradient: false,
     hasOutline: false,
     hasShadow: false,

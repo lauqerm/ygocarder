@@ -1,4 +1,4 @@
-import { Checkbox, Popover } from 'antd';
+import { Button, Checkbox, Popover } from 'antd';
 import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, useMemo } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -16,14 +16,17 @@ import { TextGradientPicker } from './gradient-picker';
 import { getNameFontOptionList } from '../const';
 import { StyledDropdown, PopoverButton } from 'src/component';
 import {
+    PresetOption,
     StyledPatternContainer,
     StyledPatternOption,
+    StyledPresetContainer,
 } from './style-picker.styled';
-import { useLanguage, useSetting } from 'src/service';
+import { useGlobal, useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import { EmbossController, EmbossControllerRef } from './emboss-controller';
 import { TextColorPicker } from './text-color-picker';
+import { v4 as uuid } from 'uuid';
 import './style-picker.scss';
 
 export type NameStylePickerRef = {
@@ -45,6 +48,7 @@ export const NameStylePicker = forwardRef(({
 }: NameStylePicker, ref: ForwardedRef<NameStylePickerRef>) => {
     const language = useLanguage();
     const optionGridRef = useRef<PredefinedOptionGridRef>(null);
+    const [nameStylePresetList, setNameStylePresetList] = useGlobal('nameStylePresetList');
     const [focus, setFocus] = useState(-1);
     const [predefinedDropdownVisible, setPredefinedDropdownVisible] = useState(false);
     const [type, setType] = useState(defaultType);
@@ -534,6 +538,51 @@ export const NameStylePicker = forwardRef(({
                             {language['input.name-style.emboss.label']}
                         </PopoverButton>
                     </Popover>}
+                    <div className="save-preset-button-group">
+                        <Button
+                            size="small"
+                            className="picker-dropdown preset-picker-dropdown"
+                            type="primary"
+                            onClick={() => {
+                                setNameStylePresetList(cur => {
+                                    return [
+                                        ...cur,
+                                        {
+                                            id: uuid(),
+                                            content: { ...value },
+                                        }
+                                    ];
+                                });
+                            }}
+                        >
+                            {language['input.name-style.preset.label']}
+                        </Button>
+                        <Popover key="preset-picker"
+                            trigger={['click']}
+                            overlayClassName="global-input-overlay global-style-picker-overlay"
+                            content={<div className="overlay-event-absorber">
+                                <StyledPresetContainer onClick={e => e.stopPropagation()}>
+                                    {nameStylePresetList.map(({ id, content }) => {
+                                        return <PresetOption key={id}
+                                            frameInfo={frameInfo}
+                                            presetContent={content}
+                                            onClick={() => {
+                                                setValue({ ...content });
+                                                requestUpdateCustomStyle();
+                                            }}
+                                        >
+                                            {content.preset}
+                                        </PresetOption>;
+                                    })}
+                                </StyledPresetContainer>
+                            </div>}
+                            placement="bottomLeft"
+                        >
+                            <div className="custom-preset-button">
+                                <CaretDownOutlined />
+                            </div>
+                        </Popover>
+                    </div>
                 </div>
             </span>
         </span>

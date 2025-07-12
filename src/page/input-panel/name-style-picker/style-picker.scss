@@ -33,3 +33,27 @@
         outline: 2px solid var(--focus);
     }
 }
+.save-preset-button-group {
+    display: inline-flex;
+    height: 22px; // Alignment
+    margin: calc(-1 * var(--spacing-xxs)) 0;
+    align-items: center;
+    .preset-picker-dropdown {
+        height: 100%;
+        line-height: 1;
+        border-radius: 2px 0 0 2px;
+    }
+    .custom-preset-button {
+        height: 100%;
+        border-radius: 0 2px 2px 0;
+        background: var(--main-primary);
+        border: var(--bw) solid var(--main-active);
+        border-left-width: 0;
+        padding: 0 var(--spacing-xxs);
+        cursor: pointer;
+        align-content: center;
+        &:hover {
+            background: var(--sub-primary);
+        }
+    }
+}

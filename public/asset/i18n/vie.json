@@ -272,6 +272,7 @@
         "input.name-style.pattern.alert": "Nền chữ sẽ che dải màu",
         "input.name-style.pattern.label": "Nền chữ",
         "input.name-style.pattern.no-pattern.label": "Không dùng nền",
+        "input.name-style.preset.label": "Lưu",
         "input.name-style.shadow.label": "Đổ bóng",
         "input.name-style.shadow.toggle.label": "Áp dụng đổ bóng?",
         "input.name-style.slider.blur.label": "Độ mờ",

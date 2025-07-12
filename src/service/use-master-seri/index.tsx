@@ -599,9 +599,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.name.rerun += 1;
         drawingPipeline.current.name.instructor = async () => {
             const ctx = nameCanvasRef.current?.getContext('2d');
-            const cloneNode = nameCanvasRef.current?.cloneNode() as HTMLCanvasElement | undefined;
 
-            if (!clearCanvas(ctx) || !cloneNode) return;
+            if (!clearCanvas(ctx)) return;
 
             await drawName(
                 nameCanvasRef.current,
@@ -612,7 +611,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),
                 resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
-                { isSpeedSkill, format, cloneNode, frame, furiganaHelper, globalScale },
+                { isSpeedSkill, format, frame, furiganaHelper, globalScale },
             );
         };
     }, [
@@ -717,7 +716,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 : true;
             const left = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? isLink ? 151 : 89
-                : Math.max(rightEdge / globalScale + 14.813, 142.2) - (format === 'ocg' ? 7 : 0);
+                : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
             const bottom = (isLegacyCard || !isNumberPassword) && !isPendulum
                 ? 871
                 : 1150.93;

@@ -270,6 +270,7 @@
         "input.name-style.pattern.alert": "Pattern will disable gradient",
         "input.name-style.pattern.label": "Pattern",
         "input.name-style.pattern.no-pattern.label": "No Pattern",
+        "input.name-style.preset.label": "Save",
         "input.name-style.shadow.label": "Shadow",
         "input.name-style.shadow.toggle.label": "Has Shadow?",
         "input.name-style.slider.blur.label": "Blur",
