@@ -151,6 +151,9 @@
 }
 
 .global-style-picker-overlay {
+    &.low-index {
+        z-index: 1000;
+    }
     hr {
         border-color: var(--sub-level-4);
     }

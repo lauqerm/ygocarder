@@ -1,4 +1,4 @@
-import { Button, Checkbox, Popover } from 'antd';
+import { Button, Checkbox, Empty, Popover } from 'antd';
 import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, useMemo } from 'react';
 import { CompactPicker } from 'react-color';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -516,7 +516,8 @@ export const NameStylePicker = forwardRef(({
                                         document.getElementById(colorPickerButtonId)?.click();
                                     }}
                                     onChange={({ thickness, yaw, pitch }) => {
-                                        setValue(cur => ({ ...cur,
+                                        setValue(cur => ({
+                                            ...cur,
                                             embossPitch: pitch,
                                             embossYaw: yaw,
                                             embossThickness: thickness,
@@ -559,16 +560,22 @@ export const NameStylePicker = forwardRef(({
                         </Button>
                         <Popover key="preset-picker"
                             trigger={['click']}
-                            overlayClassName="global-input-overlay global-style-picker-overlay"
+                            overlayClassName="global-input-overlay global-style-picker-overlay low-index"
                             content={<div className="overlay-event-absorber">
                                 <StyledPresetContainer onClick={e => e.stopPropagation()}>
+                                    {nameStylePresetList.length === 0 && <Empty
+                                        description={language['generic.empty.label']}
+                                    />}
                                     {nameStylePresetList.map(({ id, content }) => {
                                         return <PresetOption key={id}
                                             frameInfo={frameInfo}
                                             presetContent={content}
-                                            onClick={() => {
+                                            onActive={() => {
                                                 setValue({ ...content });
                                                 requestUpdateCustomStyle();
+                                            }}
+                                            onDelete={() => {
+                                                setNameStylePresetList(cur => cur.filter(entry => entry.id !== id));
                                             }}
                                         >
                                             {content.preset}
@@ -576,7 +583,7 @@ export const NameStylePicker = forwardRef(({
                                     })}
                                 </StyledPresetContainer>
                             </div>}
-                            placement="bottomLeft"
+                            placement="bottomRight"
                         >
                             <div className="custom-preset-button">
                                 <CaretDownOutlined />

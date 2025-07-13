@@ -127,21 +127,26 @@ const StyledCardThumb = styled.div`
             width: 50%;
             height: 50%;
             position: absolute;
+            background-size: 200% 200%;
             &.top-left-frame {
                 top: 0;
                 left: 0;
+                background-position: 0% 0%;
             }
             &.top-right-frame {
                 top: 0;
                 left: 50%;
+                background-position: 100% 0%;
             }
             &.bottom-left-frame {
                 top: 50%;
                 left: 0;
+                background-position: 0% 0%;
             }
             &.bottom-right-frame {
                 top: 50%;
                 left: 50%;
+                background-position: 100% 0%;
             }
         }
         .thumb-link-marker-icon {

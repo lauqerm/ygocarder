@@ -288,7 +288,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                                     changeCardIcon('custom');
                                     starPickerRef.current?.changeStatus('open');
                                 }}
-                            >{language['input.icon-type.slot.edit.label']}</Button>
+                            >{language['generic.edit.label']}</Button>
                         </div>
                     </CustomStarContainer>
                     : <StyledCheckboxStarTrain

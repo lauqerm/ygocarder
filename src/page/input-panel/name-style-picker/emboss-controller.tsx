@@ -18,13 +18,11 @@ const MaterialColor = styled.div<{ $color: string }>`
     ${({ $color }) => `background-color: ${$color};`}
 `;
 const EmbossControlContainer = styled.div`
-    display: inline-grid;
-    grid-template-columns: max-content max-content;
+    width: 245px; // Exact same width with text color picker, for alignment
     color: var(--color);
     .emboss-control-title {
-        grid-column: -1 / 1;
         font-size: var(--fs-sm);
-        text-align: center;
+        text-align: left;
         padding: var(--spacing-sm);
         padding-bottom: 0;
     }
@@ -104,7 +102,7 @@ export type EmbossController = {
     materialColor?: string,
     children?: React.ReactNode,
     language: LanguageDataDictionary,
-    onColorTabNavigate: () => void,
+    onColorTabNavigate?: () => void,
     onChange: (value: {
         lightColorVec: [number, number, number],
         lightAngleVec: [number, number, number],
@@ -186,7 +184,11 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                     $color={materialColor}
                 />
             </h2>
-            {language['input.name-style.emboss.color.alert'](<span key="color-navigate" className="navigate-button" onClick={onColorTabNavigate}>
+            {language['input.name-style.emboss.color.alert'](<span
+                key="color-navigate"
+                className={!!onColorTabNavigate ? 'navigate-button' : ''}
+                onClick={onColorTabNavigate}
+            >
                 {language['input.name-style.color.label']}
             </span>)}
             <h2 className="thickness-row">
