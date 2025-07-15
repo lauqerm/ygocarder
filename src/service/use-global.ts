@@ -1,10 +1,28 @@
 import { useCallback } from 'react';
-import { createPresetNameStyle, NameStyle } from 'src/model';
+import { createPresetNameStyle, Foil, FrameDyeList, NameStyle } from 'src/model';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
 export type GlobalMemory = {
     activeDropzone: number,
+    framePresetList: {
+        id: string,
+        content: {
+            foil: Foil,
+            frame: string,
+            pendulumFrame: string,
+            leftFrame: string,
+            rightFrame: string,
+            pendulumRightFrame: string,
+            effectStyle: {
+                background: string,
+            },
+            pendulumStyle: {
+                background: string,
+            },
+            dyeList: FrameDyeList,
+        },
+    }[],
     nameStylePresetList: {
         id: string,
         content: Partial<NameStyle>,
@@ -19,6 +37,7 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
     return {
         memory: {
             activeDropzone: 0,
+            framePresetList: [],
             nameStylePresetList: [
                 {
                     id: 'abc',

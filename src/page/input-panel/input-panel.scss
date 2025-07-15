@@ -150,6 +150,11 @@
     }
 }
 
+.pendulum-frame-picker-overlay .ant-popover-content .ant-popover-inner-content {
+    border-radius: 2px;
+    border: var(--bw) solid var(--sub-level-1);
+}
+
 .global-style-picker-overlay {
     &.low-index {
         z-index: 1000;

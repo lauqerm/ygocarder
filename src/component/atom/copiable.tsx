@@ -1,7 +1,7 @@
 import copy from 'copy-to-clipboard';
 import { CheckOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
-import { useState } from 'react';
+import styled, { css } from 'styled-components';
+import React, { useState } from 'react';
 
 export const StyledCode = styled.span`
     background: var(--main-level-1);
@@ -11,12 +11,7 @@ export const StyledCode = styled.span`
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 `;
 
-export const StyledMono = styled(StyledCode)`
-    display: inline-block;
-    font-size: var(--fs-sm);
-    border-color: var(--sub-level-1);
-    line-height: 1;
-    cursor: pointer;
+export const CopiableOverlayStyle = css`
     position: relative;
     .copiable-overlay {
         align-items: center;
@@ -35,15 +30,33 @@ export const StyledMono = styled(StyledCode)`
         z-index: 999;
     }
 `;
+export const StyledMono = styled(StyledCode)`
+    display: inline-block;
+    font-size: var(--fs-sm);
+    border-color: var(--sub-level-1);
+    line-height: 1;
+    cursor: pointer;
+    ${CopiableOverlayStyle}
+`;
 
-export type CopiableCode = {
+export type Copiable = {
     data: string | number,
     children?: React.ReactNode,
+    disabled?: boolean,
+    overlay?: React.ReactNode,
+    container: React.ComponentType<{
+        children?: React.ReactNode,
+        disabled?: boolean,
+        onClick: (e: { stopPropagation: () => void }) => void,
+    }>,
 }
-export const CopiableCode = ({
+export const Copiable = ({
     data,
     children,
-}: CopiableCode) => {
+    disabled,
+    overlay = <CheckOutlined />,
+    container: Container,
+}: Copiable) => {
     const [showFlashOverlay, setFlashOverlay] = useState(false);
     const callFlashNotification = (copyingContent: string | number) => {
         copy(typeof copyingContent === 'number' ? `${copyingContent}` : copyingContent);
@@ -53,13 +66,25 @@ export const CopiableCode = ({
         }, 1000);
     };
 
-    return <StyledMono
+    return <Container
+        disabled={disabled}
         onClick={e => {
             e.stopPropagation();
             callFlashNotification(data);
         }}
     >
-        {showFlashOverlay ? <div className="copiable-overlay"><CheckOutlined /></div> : null}
+        {showFlashOverlay ? <div className="copiable-overlay">{overlay}</div> : null}
         {children}
-    </StyledMono>;
+    </Container>;
+};
+
+export type CopiableCode = {
+    data: string | number,
+    children?: React.ReactNode,
+}
+export const CopiableCode = ({
+    data,
+    children,
+}: CopiableCode) => {
+    return <Copiable data={data} container={StyledMono}>{children}</Copiable>;
 };

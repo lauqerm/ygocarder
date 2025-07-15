@@ -537,7 +537,7 @@ function App() {
                             </div>}
                         </StyledDataButtonPanelContainer>
                         <CardPreviewContainer className="card-preview-container">
-                            <Tooltip title={language['button.reset.tooltip']}>
+                            <Tooltip title={language['generic.reset.tooltip']}>
                                 <ResetButton
                                     className="reset-button"
                                     onClick={() => {

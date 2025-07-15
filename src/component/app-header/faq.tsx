@@ -64,9 +64,28 @@ export const QuestionAndFeedback = () => {
         <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
             <Tabs>
                 <Tabs.TabPane key="feedback" tab="Feedbacks">
-                    <div><i>Solved feedbacks are removed.</i></div>
+                    <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Blake at Jul 14, 2025',
+                            question: 'Isn’t there any other person that’s able to create a website like this one but only rush duel?',
+                        },
+                        {
+                            author: 'Blake at Jul 13, 2025',
+                            question: 'On GitHub Rushify, can you add the other card types?',
+                            answer: 'I am not the author of Rushify, so I afraid I can\'t help much',
+                        },
+                        {
+                            author: 'Anonymous User at Jul 14, 2025',
+                            question: 'The outline when placed at 0/0 is not evenly positioned',
+                            answer: 'The image you provided is the app working properly, this is kind of a technical limitation on my side and I can\'t do much about it.'
+                        },
+                        {
+                            author: 'Being able to save some Customs Presets at Jul 12, 2025',
+                            question: 'The ability to save 2-3 Customs Presets',
+                            answer: 'Let\'s see if I can come up with something.'
+                        },
                         {
                             author: 'New Feature Suggestion at Jul 12, 2025',
                             question: 'For the card art, maybe you could make a drag and drop feature to it?',
@@ -181,50 +200,6 @@ export const QuestionAndFeedback = () => {
                             author: 'TheDuelistt at Jun 15, 2025',
                             question: 'Can you make this L letter to be consistent with the rest of the INK, also, can you make the Link Rating value (number) lower and consistent with the INK, and the dash "-" a little bolder, so that the overall look is similar to the official Konami Yugioh Card template. Thank you.',
                             answer: 'I have updated the layer, hopefully it look better now.',
-                        },
-                        {
-                            author: 'text format at Jun 14, 2025',
-                            question: 'The text format looks completely different with the pendulum effect than with the monster effect',
-                            answer: 'Text effect is automatically calculated to best fit in the card, I always recommended to let it flow naturally, but regardless, I have added input to define the minimum lines of effect you would want in your cards.',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 14, 2025',
-                            question: 'The outline is a bit uneven depending on the letter.',
-                            answer: 'This is a known issue, unfortunately this is the best I can offer right now.',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 14, 2025',
-                            question: 'Justify doesn\'t seem to work',
-                            answer: 'It should work normally by now.',
-                        },
-                        {
-                            author: 'Phan Trí Dĩ at Jun 11, 2025',
-                            question: 'Hi, firstly, I want to thanks to your hardwork for making a wonderful website, very appreciate your work. There\'s some K9 card with a special hash sign. It get a bit smaller when I use it. I wondering if you can fix it. Thank you very much.',
-                            answer: 'Hi there. There are two parts of the problem here:\nThe first thing is the hash sign, which is not a bug. This design has been used on many cards in the past, for example "Hi-Speedroid Glider #2", and there is no sign that it would be different this time.\nThe second thing is the letter "Ø", which currently only appear on the OCG card, as Lupus itself is not yet revealed for TCG, we doesn\'t know if the TCG would keep this letter or not.',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 06, 2025',
-                            question: 'When using the Link Arrows on a Pendulum card, the Link Rating disappears',
-                            answer: 'It should be fixed by now',
-                        },
-                        {
-                            author: 'Shanaya User at Jun 04, 2025',
-                            question: 'I would like to request another artwork effect like this, like the effect of the attached picture its a secret rare effect',
-                            answer: 'I have added finish type 9, this is my best and final attempt, sorry if it does not match your need.',
-                        },
-                        {
-                            author: 'Yugiohfann at Jun 03, 2025',
-                            question: 'Please fix the ATK/DEF font text, the numbers are higher than the ATK/DEF text.',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 03, 2025',
-                            question: 'Small adjustment for size and style of card stats (ATK, DEF). Can you bring back the old size and style of card stats. Now the stats are higher than the ATK and DEF text.',
-                            answer: 'Can you provide a sample image so I can see the difference? I cannot take action blindly wihout any reference.',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 02, 2025',
-                            question: 'please can you add sizing selection in card name? please? thank you!',
-                            answer: 'Can you provide a sample image of the old card? I would like to take a look to see if it is possible to implement it or not.',
                         },
                         {
                             author: 'Maya at May 23, 2025',

@@ -568,6 +568,7 @@ export const NameStylePicker = forwardRef(({
                                     />}
                                     {nameStylePresetList.map(({ id, content }) => {
                                         return <PresetOption key={id}
+                                            language={language}
                                             frameInfo={frameInfo}
                                             presetContent={content}
                                             onActive={() => {

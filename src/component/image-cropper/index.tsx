@@ -192,6 +192,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
     const applyOfflineSource = (fileList: FileList) => {
         const targetFile = fileList[0];
+        if (!targetFile) return;
         const maxFileSize = 4;
 
         if (targetFile.size < maxFileSize * 1024 * 1024) {

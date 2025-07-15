@@ -32,9 +32,7 @@ const FrameBehaviorSettingPanelContainer = styled.div`
     }
 `;
 
-export type FrameBehaviorSettingPanel = {
-    
-};
+export type FrameBehaviorSettingPanel = {};
 export const FrameBehaviorSettingPanel = () => {
     const language = useLanguage();
     const {

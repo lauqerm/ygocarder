@@ -2,11 +2,12 @@ import { useEffect, useRef } from 'react';
 import { StyledDropdown } from 'src/component';
 import { drawName } from 'src/draw';
 import { FrameInfo, NameStyle } from 'src/model';
-import { useCard } from 'src/service';
+import { useCard, WithLanguage } from 'src/service';
 import { mergeClass, resolveNameStyle } from 'src/util';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
 
 export const StyledPatternContainer = styled(StyledDropdown.Container)`
     display: grid;
@@ -117,11 +118,12 @@ export type PresetOption = React.PropsWithChildren<{
     active?: boolean,
     onActive?: () => void,
     onDelete?: () => void,
-}>;
+} & WithLanguage>;
 export const PresetOption = ({
     frameInfo,
     presetContent,
     active = false,
+    language,
     onActive,
     onDelete,
 }: PresetOption) => {
@@ -188,7 +190,14 @@ export const PresetOption = ({
             <canvas ref={canvasRef} width={OPTION_WIDTH} height={OPTION_HEIGHT} />
         </StyledPatternOption>
         <div className="preset-option-action">
-            <CloseCircleOutlined onClick={onDelete} />
+            <Popconfirm
+                title={language['generic.delete.label']}
+                okText={language['generic.yes.label']}
+                cancelText={language['generic.no.label']}
+                onConfirm={() => onDelete()}
+            >
+                <CloseOutlined />
+            </Popconfirm>
         </div>
     </PresetOptionContainer>;
 };

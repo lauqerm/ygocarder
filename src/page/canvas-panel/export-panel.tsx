@@ -1,10 +1,9 @@
 import { Dropdown, Input, Menu, Modal, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react';
-import { InternalPopover, RadioTrain, ResolutionPicker, StyledPopMarkdown, TaintedCanvasPanel } from 'src/component';
+import { Copiable, CopiableOverlayStyle, InternalPopover, RadioTrain, ResolutionPicker, StyledPopMarkdown, TaintedCanvasPanel } from 'src/component';
 import { LanguageDataDictionary, useCard, useLanguage, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
-import copy from 'copy-to-clipboard';
 import { downloadBlob, mergeClass, normalizeCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
 import { DownloadOutlined, CheckOutlined, CopyOutlined, FileImageOutlined, LinkOutlined } from '@ant-design/icons';
 import { Card } from 'src/model';
@@ -71,23 +70,7 @@ const StyledExportContainer = styled.div`
 `;
 
 const StyledCardDataCopyButton = styled(StyledActionIconButton)`
-    position: relative;
-    .copiable-overlay {
-        align-items: center;
-        background-color: var(--color-contrast);
-        font-size: var(--fs);
-        font-weight: bold;
-        border-radius: var(--br);
-        color: var(--color);
-        display: flex;
-        height: 100%;
-        justify-content: center;
-        left: 0;
-        position: absolute;
-        top: 0;
-        width: 100%;
-        z-index: 999;
-    }
+    ${CopiableOverlayStyle}
 `;
 type CardDataCopyButton = {
     data: string,
@@ -101,31 +84,14 @@ const CardDataCopyButton = ({
     disabled,
     withText,
 }: CardDataCopyButton) => {
-    const [showFlashOverlay, setFlashOverlay] = useState(false);
-    const callFlashNotification = (copyingContent: string) => {
-        copy(copyingContent);
-        setFlashOverlay(true);
-        setTimeout(() => {
-            setFlashOverlay(false);
-        }, 1000);
-    };
-
-    return <StyledCardDataCopyButton
+    return <Copiable
         disabled={disabled}
-        onClick={e => {
-            e.stopPropagation();
-            callFlashNotification(data);
-        }}
-    >
-        {showFlashOverlay
-            ? <div className="copiable-overlay">
-                {withText
-                    ? <>Copied&nbsp;<CheckOutlined /></>
-                    : <CheckOutlined />}
-                </div>
-            : null}
-        {children}
-    </StyledCardDataCopyButton>;
+        data={data}
+        container={StyledCardDataCopyButton}
+        overlay={withText
+            ? <>Copied&nbsp;<CheckOutlined /></>
+            : <CheckOutlined />}
+    >{children}</Copiable>;
 };
 
 type ExportMode = 'ygocarder' | 'other';
@@ -372,7 +338,7 @@ export const ExportPanel = forwardRef(({
                 {language['button.export.label']}
             </button>
         </Tooltip>
-        <Dropdown 
+        <Dropdown
             overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
                 {getExportModeDataList(language).map(({ converter, label }, index) => {
                     return <Menu.Item key={`${index}`}
