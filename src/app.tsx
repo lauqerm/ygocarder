@@ -461,9 +461,7 @@ function App() {
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
                 /** Prevent accidentally replace the page when dragging image into card art input. */
-                onDrop={e => {
-                    e.preventDefault();
-                }}
+                onDrop={() => {}}
                 className={`language-${languageInfo.codeName} manager-${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
