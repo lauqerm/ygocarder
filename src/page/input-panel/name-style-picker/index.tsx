@@ -21,7 +21,7 @@ import {
     StyledPatternOption,
     StyledPresetContainer,
 } from './style-picker.styled';
-import { useGlobal, useLanguage, useSetting } from 'src/service';
+import { useCarderDb, useGlobal, useLanguage, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import { EmbossController, EmbossControllerRef } from './emboss-controller';
@@ -54,6 +54,7 @@ export const NameStylePicker = forwardRef(({
     const [type, setType] = useState(defaultType);
     const [value, setValue] = useState(defaultValue);
     const [requestUpdateCustomStyle, sendCustomStyleSignal] = useRefresh();
+    const { db } = useCarderDb();
     const onChange = useRef(debounce(undebouncedOnChange, 250)).current;
     const memoizedOnGradientChange = useCallback((palette, gradientAngle) => {
         setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
@@ -544,12 +545,12 @@ export const NameStylePicker = forwardRef(({
                             size="small"
                             className="picker-dropdown preset-picker-dropdown"
                             type="primary"
-                            onClick={() => {
+                            onClick={async () => {
                                 setNameStylePresetList(cur => {
                                     return [
                                         ...cur,
                                         {
-                                            id: uuid(),
+                                            key: uuid(),
                                             content: { ...value },
                                         }
                                     ];
@@ -566,8 +567,8 @@ export const NameStylePicker = forwardRef(({
                                     {nameStylePresetList.length === 0 && <Empty
                                         description={language['generic.empty.label']}
                                     />}
-                                    {nameStylePresetList.map(({ id, content }) => {
-                                        return <PresetOption key={id}
+                                    {nameStylePresetList.map(({ key, content }) => {
+                                        return <PresetOption key={key}
                                             language={language}
                                             frameInfo={frameInfo}
                                             presetContent={content}
@@ -576,7 +577,7 @@ export const NameStylePicker = forwardRef(({
                                                 requestUpdateCustomStyle();
                                             }}
                                             onDelete={() => {
-                                                setNameStylePresetList(cur => cur.filter(entry => entry.id !== id));
+                                                setNameStylePresetList(cur => cur.filter(entry => entry.key !== key));
                                             }}
                                         >
                                             {content.preset}

@@ -79,6 +79,8 @@
         "error.load.font.tcg": "{familyName} font could not be loaded, this may impact your card quality",
         "error.max-size.description": "Maximum image size allowed is {fileSize} MB.",
         "error.max-size.message": "File size exceeded",
+        "error.database-initialize.description": "You won't be able to retrieve locally saved data on this device.",
+        "error.database-initialize.message": "Could not connect local database",
         "generic.delete.label": "Delete?",
         "generic.edit.label": "Edit",
         "generic.empty.label": "No data",

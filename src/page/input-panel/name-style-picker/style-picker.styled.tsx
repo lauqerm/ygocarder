@@ -113,7 +113,7 @@ const PresetOptionContainer = styled.div`
     }
 `;
 export type PresetOption = React.PropsWithChildren<{
-    frameInfo: FrameInfo,
+    frameInfo?: FrameInfo,
     presetContent: Partial<NameStyle>,
     active?: boolean,
     onActive?: () => void,
@@ -139,7 +139,7 @@ export const PresetOption = ({
         name,
         labelBackgroundColor,
         labelBackgroundImage,
-    } = frameInfo;
+    } = frameInfo ?? {};
     const normalizedFrame = name ?? 'effect';
 
     useEffect(() => {
@@ -194,7 +194,7 @@ export const PresetOption = ({
                 title={language['generic.delete.label']}
                 okText={language['generic.yes.label']}
                 cancelText={language['generic.no.label']}
-                onConfirm={() => onDelete()}
+                onConfirm={() => onDelete?.()}
             >
                 <CloseOutlined />
             </Popconfirm>

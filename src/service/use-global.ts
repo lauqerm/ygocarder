@@ -3,28 +3,29 @@ import { createPresetNameStyle, Foil, FrameDyeList, NameStyle } from 'src/model'
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
+export type FramePreset = {
+    foil: Foil,
+    frame: string,
+    pendulumFrame: string,
+    leftFrame: string,
+    rightFrame: string,
+    pendulumRightFrame: string,
+    effectStyle: {
+        background: string,
+    },
+    pendulumStyle: {
+        background: string,
+    },
+    dyeList: FrameDyeList,
+};
 export type GlobalMemory = {
     activeDropzone: number,
-    framePresetList: {
-        id: string,
-        content: {
-            foil: Foil,
-            frame: string,
-            pendulumFrame: string,
-            leftFrame: string,
-            rightFrame: string,
-            pendulumRightFrame: string,
-            effectStyle: {
-                background: string,
-            },
-            pendulumStyle: {
-                background: string,
-            },
-            dyeList: FrameDyeList,
-        },
+    layoutPresetList: {
+        key: string,
+        content: FramePreset,
     }[],
     nameStylePresetList: {
-        id: string,
+        key: string,
         content: Partial<NameStyle>,
     }[],
 };
@@ -37,10 +38,10 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
     return {
         memory: {
             activeDropzone: 0,
-            framePresetList: [],
+            layoutPresetList: [],
             nameStylePresetList: [
                 {
-                    id: 'abc',
+                    key: 'abc',
                     content: createPresetNameStyle({
                         preset: 'animeGold',
                         shadowColor: '#f8f8f8',
@@ -59,7 +60,7 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
                     })
                 },
                 {
-                    id: 'cde',
+                    key: 'cde',
                     content: createPresetNameStyle({
                         preset: 'promo',
                         fillStyle: '#c7080b',
@@ -77,7 +78,7 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
                     })
                 },
                 {
-                    id: 'efg',
+                    key: 'efg',
                     content: createPresetNameStyle({
                         preset: 'promo',
                         fillStyle: '#080bc7',
@@ -95,7 +96,7 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
                     })
                 },
                 {
-                    id: 'ghi',
+                    key: 'ghi',
                     content: createPresetNameStyle({
                         preset: 'animeGold',
                         shadowColor: '#f8f8f8',

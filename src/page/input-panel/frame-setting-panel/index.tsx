@@ -1,7 +1,7 @@
 import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { useCard, useGlobal, useLanguage } from 'src/service';
+import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage } from 'src/service';
 import { getFoilButtonList, getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
 import { FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
@@ -98,6 +98,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     onFrameChange,
     onCancel,
 }, ref) => {
+    const { db } = useCarderDb();
     const language = useLanguage();
     const {
         isPendulum,
@@ -134,7 +135,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         setCard,
         getUpdater,
     })));
-    const [, setFramePresetList] = useGlobal('framePresetList');
+    const [, setFramePresetList] = useGlobal('layoutPresetList');
     const recentCustomPendulumFrame = useRef({
         topLeftFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
         topRightFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
@@ -261,22 +262,29 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 <Button
                     size="small"
                     type="primary"
-                    onClick={() => {
+                    onClick={async () => {
+                        const key = uuid();
+                        const value: FramePreset = {
+                            foil,
+                            frame,
+                            leftFrame,
+                            pendulumFrame,
+                            pendulumRightFrame,
+                            rightFrame,
+                            effectStyle: { background: effectBackground },
+                            pendulumStyle: { background: pendulumEffectBackground },
+                            dyeList: [...dyeList],
+                        };
+                        if (db) {
+                            const tx = db.transaction('presetLayoutStore', 'readwrite');
+                            await db.put('presetLayoutStore', { key, content: JSON.stringify(value) });
+                            await tx.done;
+                        }
                         setFramePresetList(cur => [
                             ...cur,
                             {
-                                id: uuid(),
-                                content: {
-                                    foil,
-                                    frame,
-                                    leftFrame,
-                                    pendulumFrame,
-                                    pendulumRightFrame,
-                                    rightFrame,
-                                    effectStyle: { background: effectBackground },
-                                    pendulumStyle: { background: pendulumEffectBackground },
-                                    dyeList: [...dyeList],
-                                }
+                                key,
+                                content: value,
                             },
                         ]);
                     }}

@@ -29,11 +29,14 @@ import {
 import WebFont from 'webfontloader';
 import {
     changeCardFormat,
+    FramePreset,
     getLanguage,
     retrieveSavedCard,
     useCard,
+    useCarderDb,
     useCardList,
     useGlobal,
+    useGlobalMemory,
     useI18N,
     useOCGFont,
     useSetting,
@@ -110,6 +113,7 @@ function App() {
     const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [error, setError] = useState('');
     const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
+    const { db, dbReady } = useCarderDb();
     const [managerVisible, setManagerVisible] = useState(false);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
@@ -195,7 +199,35 @@ function App() {
             document.body.style.setProperty(styleName, languageInfo.style?.[styleName] ?? '' as any);
         });
     }, [languageInfo]);
+    useEffect(() => {
+        (async () => {
+            try {
+                if (db && isLanguageLoading === false && language) {
+                    const tx = db.transaction('presetLayoutStore', 'readonly');
+                    const layoutPresetList: {
+                        key: string,
+                        content: FramePreset,
+                    }[] = [];
 
+                    for await (const cursor of tx.store) {
+                        const { content, key } = cursor.value;
+                        layoutPresetList.push({
+                            key,
+                            content: JSON.parse(content) as FramePreset,
+                        });
+                    }
+                    await tx.done;
+                    useGlobalMemory.getState().updateGlobalMemory({ layoutPresetList });
+                }
+            } catch (e) {
+                console.error('Error reading database', e);
+                notification.error({
+                    message: language['error.database-initialize.message'],
+                    description: language['error.database-initialize.description'],
+                });
+            }
+        })();
+    }, [db, isLanguageLoading, language]);
     useEffect(() => {
         const ctx = exportCanvasRef.current?.getContext('2d');
         const setCard = useCard.getState().setCard;
@@ -456,12 +488,12 @@ function App() {
         setManagerVisible(value);
     }, []);
 
-    const isLoading = isLanguageLoading || isInitializing;
+    const isLoading = isLanguageLoading || isInitializing || !dbReady;
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
                 /** Prevent accidentally replace the page when dragging image into card art input. */
-                onDrop={() => {}}
+                onDrop={() => { }}
                 className={`language-${languageInfo.codeName} manager-${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL

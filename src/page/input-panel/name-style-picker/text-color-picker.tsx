@@ -12,7 +12,7 @@ const TextColorPickerContainer = styled.div`
     }
 `;
 export type TextColorPicker = {
-    color: string,
+    color?: string,
     onChange: (color: string) => void,
 };
 export const TextColorPicker = ({

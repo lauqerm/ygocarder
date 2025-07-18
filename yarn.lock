@@ -6907,6 +6907,11 @@
   dependencies:
     "postcss" "^7.0.14"
 
+"idb@^8.0.3":
+  "integrity" "sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg=="
+  "resolved" "https://registry.npmjs.org/idb/-/idb-8.0.3.tgz"
+  "version" "8.0.3"
+
 "identity-obj-proxy@3.0.0":
   "integrity" "sha1-lNK9qWCERT7zb7xarsN+D3nx/BQ="
   "resolved" "https://registry.npmjs.org/identity-obj-proxy/-/identity-obj-proxy-3.0.0.tgz"

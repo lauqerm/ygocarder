@@ -400,6 +400,8 @@
         "service.decode.partial.description": "Các thông tin không tương thích sẽ bị loại bỏ.",
         "service.decode.partial.message": "Xuất dữ liệu ở dạng tương thích",
         "setting.alert": "Tùy chọn chỉ được lưu cục bộ ở thiết bị",
+        "error.database-initialize.description": "Bạn sẽ không tiếp cận được một số nội dung đã lưu trên thiết bị này.",
+        "error.database-initialize.message": "Không đọc được thông tin cục bộ",
         "setting.button.label": "Tùy chọn",
         "setting.option.creative.label": "Hiển thị chức năng nâng cao",
         "setting.option.export-format.label": "Định dạng danh sách thẻ",

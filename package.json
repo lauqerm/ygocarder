@@ -13,6 +13,7 @@
     "antd": "4.9.4",
     "copy-to-clipboard": "^3.3.3",
     "distance-transform": "^1.0.2",
+    "idb": "^8.0.3",
     "jszip": "^3.10.1",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.0.8",

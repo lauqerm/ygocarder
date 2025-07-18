@@ -1,4 +1,4 @@
-import { GlobalMemory, useGlobal, WithLanguage } from 'src/service';
+import { GlobalMemory, useCarderDb, useGlobal, WithLanguage } from 'src/service';
 import styled from 'styled-components';
 import { CardLayoutPreview } from './card-layout-preview';
 import { CanvasConst } from 'src/model';
@@ -30,18 +30,19 @@ const FramePresetPanelContainer = styled.div`
 
 export type FramePresetPanel = WithLanguage & {
     isPendulum: boolean,
-    onActive: (content: GlobalMemory['framePresetList'][0]['content']) => void,
+    onActive: (content: GlobalMemory['layoutPresetList'][0]['content']) => void,
 };
 export const FramePresetPanel = ({
     isPendulum,
     onActive,
     language,
 }: FramePresetPanel) => {
-    const [framePresetList, setFramePresetList] = useGlobal('framePresetList');
+    const { db } = useCarderDb();
+    const [layoutPresetList, setFramePresetList] = useGlobal('layoutPresetList');
 
-    if (framePresetList.length === 0) return <></>;
+    if (layoutPresetList.length === 0) return <></>;
     return <FramePresetPanelContainer className="frame-preset-panel">
-        {framePresetList.map(({ content, id }) => {
+        {layoutPresetList.map(({ content, key }) => {
             const {
                 dyeList,
                 foil,
@@ -63,7 +64,7 @@ export const FramePresetPanel = ({
                 pendulumEffectBackground: pendulumStyle?.background,
             };
 
-            return <div key={id} className="frame-preset-option">
+            return <div key={key} className="frame-preset-option">
                 <div className="preview-container" onClick={() => onActive(content)}>
                     <CardLayoutPreview
                         width={Math.round(40 * width / height)}
@@ -81,8 +82,13 @@ export const FramePresetPanel = ({
                         title={language['generic.delete.label']}
                         okText={language['generic.yes.label']}
                         cancelText={language['generic.no.label']}
-                        onConfirm={() => {
-                            setFramePresetList(cur => cur.filter(({ id: currentId }) => id !== currentId));
+                        onConfirm={async () => {
+                            if (db) {
+                                const tx = db.transaction('presetLayoutStore', 'readwrite');
+                                await db.delete('presetLayoutStore', key);
+                                await tx.done;
+                            }
+                            setFramePresetList(cur => cur.filter(({ key: currentKey }) => key !== currentKey));
                         }}
                     >
                         <CloseOutlined />
