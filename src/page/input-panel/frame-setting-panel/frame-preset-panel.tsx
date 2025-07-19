@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { CardLayoutPreview } from './card-layout-preview';
 import { CanvasConst } from 'src/model';
 import { resolveFrameStyle } from 'src/util';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 
 const {
@@ -30,10 +30,12 @@ const FramePresetPanelContainer = styled.div`
 
 export type FramePresetPanel = WithLanguage & {
     isPendulum: boolean,
+    onOverwrite?: (key: string) => void,
     onActive: (content: GlobalMemory['layoutPresetList'][0]['content']) => void,
 };
 export const FramePresetPanel = ({
     isPendulum,
+    onOverwrite,
     onActive,
     language,
 }: FramePresetPanel) => {
@@ -92,6 +94,14 @@ export const FramePresetPanel = ({
                         }}
                     >
                         <CloseOutlined />
+                    </Popconfirm>
+                    <Popconfirm
+                        title={language['generic.overwrite.label']}
+                        okText={language['generic.yes.label']}
+                        cancelText={language['generic.no.label']}
+                        onConfirm={() => onOverwrite?.(key)}
+                    >
+                        <SaveOutlined />
                     </Popconfirm>
                 </div>
             </div>;

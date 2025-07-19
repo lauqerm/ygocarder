@@ -83,6 +83,7 @@
         "error.database-initialize.message": "Could not connect local database",
         "generic.delete.label": "Delete?",
         "generic.edit.label": "Edit",
+        "generic.overwrite.label": "Overwrite?",
         "generic.empty.label": "No data",
         "generic.no.label": "No",
         "generic.reset.label": "Reset",

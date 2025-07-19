@@ -586,6 +586,22 @@ export const NameStylePicker = forwardRef(({
                                                 setValue({ ...content });
                                                 requestUpdateCustomStyle();
                                             }}
+                                            onOverwrite={async () => {
+                                                if (db) {
+                                                    const tx = db.transaction('presetNameStyleStore', 'readwrite');
+                                                    await db.put('presetNameStyleStore', { key, content: JSON.stringify(value) });
+                                                    await tx.done;
+                                                }
+                                                setNameStylePresetList(cur => {
+                                                    return cur.map(entry => {
+                                                        if (entry.key === key) return {
+                                                            key,
+                                                            content: { ...value },
+                                                        };
+                                                        return entry;
+                                                    });
+                                                });
+                                            }}
                                             onDelete={async () => {
                                                 if (db) {
                                                     const tx = db.transaction('presetNameStyleStore', 'readwrite');

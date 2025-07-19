@@ -70,14 +70,19 @@ const FrameLayoutContainer = styled.div`
         padding-top: var(--spacing-sm);
         border-top: var(--bw) solid var(--sub-level-3);
     }
-    .frame-preset-option {
-        display: inline-block;
+    .preset-option-action {
         line-height: 1.25;
         text-align: center;
+        display: flex;
+        justify-content: space-evenly;
+        gap: var(--spacing-xxs);
         .anticon {
             cursor: pointer;
-            &:hover {
+            &.anticon-close:hover {
                 color: var(--sub-danger);
+            }
+            &.anticon-save:hover {
+                color: var(--sub-info);
             }
         }
     }
@@ -344,6 +349,34 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         <FramePresetPanel
             language={language}
             isPendulum={isPendulum}
+            onOverwrite={async key => {
+                const value: FramePreset = {
+                    foil,
+                    frame,
+                    leftFrame,
+                    pendulumFrame,
+                    pendulumRightFrame,
+                    rightFrame,
+                    effectStyle: { background: effectBackground },
+                    pendulumStyle: { background: pendulumEffectBackground },
+                    dyeList: [...dyeList],
+                };
+                if (db) {
+                    const tx = db.transaction('presetLayoutStore', 'readwrite');
+                    await db.put('presetLayoutStore', { key, content: JSON.stringify(value) });
+                    await tx.done;
+                }
+                setFramePresetList(cur => cur.map(entry => {
+                    if (entry.key === key) {
+                        return {
+                            key,
+                            content: value,
+                        };
+                    } else {
+                        return entry;
+                    }
+                }));
+            }}
             onActive={content => {
                 const {
                     dyeList,

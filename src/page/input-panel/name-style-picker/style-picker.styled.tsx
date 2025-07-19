@@ -6,7 +6,7 @@ import { useCard, WithLanguage } from 'src/service';
 import { mergeClass, resolveNameStyle } from 'src/util';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 
 export const StyledPatternContainer = styled(StyledDropdown.Container)`
@@ -104,10 +104,16 @@ const PresetOptionContainer = styled.div`
         height: ${OPTION_HEIGHT}px;
     }
     .preset-option-action {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xxs);
         .anticon {
             cursor: pointer;
-            &:hover {
+            &.anticon-close:hover {
                 color: var(--sub-danger);
+            }
+            &.anticon-save:hover {
+                color: var(--sub-info);
             }
         }
     }
@@ -116,6 +122,7 @@ export type PresetOption = React.PropsWithChildren<{
     frameInfo?: FrameInfo,
     presetContent: Partial<NameStyle>,
     active?: boolean,
+    onOverwrite?: () => void,
     onActive?: () => void,
     onDelete?: () => void,
 } & WithLanguage>;
@@ -124,6 +131,7 @@ export const PresetOption = ({
     presetContent,
     active = false,
     language,
+    onOverwrite,
     onActive,
     onDelete,
 }: PresetOption) => {
@@ -197,6 +205,14 @@ export const PresetOption = ({
                 onConfirm={() => onDelete?.()}
             >
                 <CloseOutlined />
+            </Popconfirm>
+            <Popconfirm
+                title={language['generic.overwrite.label']}
+                okText={language['generic.yes.label']}
+                cancelText={language['generic.no.label']}
+                onConfirm={() => onOverwrite?.()}
+            >
+                <SaveOutlined />
             </Popconfirm>
         </div>
     </PresetOptionContainer>;

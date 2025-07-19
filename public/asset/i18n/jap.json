@@ -80,6 +80,7 @@
         "error.max-size.message": "許容される最大画像サイズは{fileSize}MBです",
         "generic.delete.label": "デリート？",
         "generic.edit.label": "編集",
+        "generic.overwrite.label": "上書きしますか？",
         "generic.no.label": "偽",
         "generic.reset.label": "リセット",
         "generic.reset.tooltip": "リセット",

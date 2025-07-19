@@ -80,6 +80,7 @@
         "error.max-size.description": "Chỉ chấp nhận ảnh tối đa {fileSize} MB.",
         "error.max-size.message": "Quá dung lượng tối đa",
         "generic.delete.label": "Xóa?",
+        "generic.overwrite.label": "Ghi đè?",
         "generic.edit.label": "Sửa",
         "generic.empty.label": "Không có dữ liệu",
         "generic.no.label": "Không",
