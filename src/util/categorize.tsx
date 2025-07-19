@@ -1,4 +1,5 @@
 import {
+    AUTO_FONT,
     Card,
     Foil,
     frameList,
@@ -122,17 +123,21 @@ export const resolveNameStyle = ({
     format: string,
     foil: Foil,
 }) => {
+    const isSpeedSkill = checkSpeedSkill({ frame });
+    let contextualFont = nameStyle.font;
+    if (contextualFont === AUTO_FONT && format === 'ocg') contextualFont = 'OCG';
+    if (contextualFont === AUTO_FONT && format === 'tcg') contextualFont = 'Default';
+    if (contextualFont === AUTO_FONT && isSpeedSkill && format === 'tcg') contextualFont = 'Arial';
+
     /** Custom style will be kept as is */
     if (nameStyleType === 'custom') {
-        return nameStyle;
+        return {
+            ...nameStyle,
+            font: contextualFont,
+        };
     }
 
-    const isSpeedSkill = checkSpeedSkill({ frame });
     const lightHeader = checkLightHeader(frame);
-
-    let contextualFont = 'Default';
-    if (format === 'ocg') contextualFont = 'OCG';
-    if (isSpeedSkill && format === 'tcg') contextualFont = 'Arial';
 
     /** Predefined name style has dynamic font based on format unless explictly stated */
     let contextualColor = {

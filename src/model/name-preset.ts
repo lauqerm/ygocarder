@@ -1,7 +1,8 @@
 export type NameStyleType = 'auto' | 'custom' | 'predefined';
 export type NameStyle = ReturnType<typeof getDefaultNameStyle>;
+export const AUTO_FONT = 'Auto';
 export const getDefaultNameStyle = () => ({
-    font: 'Default',
+    font: AUTO_FONT,
     fillStyle: '#000000',
     headTextFillStyle: '#000000',
     shadowColor: '#000000',

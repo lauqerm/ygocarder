@@ -8,6 +8,7 @@ import {
     CanvasConst,
     Card,
     getDefaultCard,
+    NameStyle,
 } from './model';
 import {
     forceRefocus,
@@ -168,7 +169,7 @@ function App() {
             setActiveDropzone(0);
         };
         let timeoutHandle = window.setTimeout(stopDrag, 200);
-        const checkDragHeartbeat = () => {
+        const checkDragHeartbeat: Document['ondragover'] = () => {
             setActiveDropzone(1);
             window.clearTimeout(timeoutHandle);
             timeoutHandle = window.setTimeout(stopDrag, 200);
@@ -203,21 +204,37 @@ function App() {
         (async () => {
             try {
                 if (db && isLanguageLoading === false && language) {
-                    const tx = db.transaction('presetLayoutStore', 'readonly');
+                    const layoutPresetTx = db.transaction('presetLayoutStore', 'readonly');
                     const layoutPresetList: {
                         key: string,
                         content: FramePreset,
                     }[] = [];
 
-                    for await (const cursor of tx.store) {
+                    for await (const cursor of layoutPresetTx.store) {
                         const { content, key } = cursor.value;
                         layoutPresetList.push({
                             key,
                             content: JSON.parse(content) as FramePreset,
                         });
                     }
-                    await tx.done;
+                    await layoutPresetTx.done;
                     useGlobalMemory.getState().updateGlobalMemory({ layoutPresetList });
+
+                    const nameStylePresetTx = db.transaction('presetNameStyleStore', 'readonly');
+                    const nameStylePresetList: {
+                        key: string,
+                        content: Partial<NameStyle>,
+                    }[] = [];
+
+                    for await (const cursor of nameStylePresetTx.store) {
+                        const { content, key } = cursor.value;
+                        nameStylePresetList.push({
+                            key,
+                            content: JSON.parse(content) as Partial<NameStyle>,
+                        });
+                    }
+                    await nameStylePresetTx.done;
+                    useGlobalMemory.getState().updateGlobalMemory({ nameStylePresetList });
                 }
             } catch (e) {
                 console.error('Error reading database', e);

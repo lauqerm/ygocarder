@@ -248,8 +248,8 @@ export const legacyRebuildCardData = (
 
 /** Migrate old version of card data into the new version without information loss */
 export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): InternalCard => {
-    /** Ensure that we detech the actual version from incoming cards. */
-    delete baseCard.version;
+    /** Ensure that we detect the actual version from incoming cards. */
+    delete (baseCard as Record<string, unknown>).version;
     const migratedCard = {
         id: uuid(),
         ...baseCard,
@@ -395,6 +395,16 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
             migratedCard.atk = '';
             migratedCard.def = '';
         }
+    }
+    if (migratedCard.version === 2) {
+        migratedCard.version = 3;
+        const font = migratedCard.nameStyle.font;
+        const format = migratedCard.format;
+        /**
+         * For older cards, we dynamically switch font every time user switch the format, which lead to ambiguous situation where user want to keep the font for whatever reason. From ver 3 onward we introduce "Auto" font for the switch behavior, and keep the current font otherwise.
+         */
+        if (font === 'TCG' && format === 'tcg') migratedCard.nameStyle.font = 'Auto';
+        if (font === 'OCG' && format === 'ocg') migratedCard.nameStyle.font = 'Auto';
     }
 
     return migratedCard;

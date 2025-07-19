@@ -397,9 +397,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 canvas: combinedArtCanvas,
                 ctx: combinedArtCtx,
             } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
-            await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
+            if (combinedArtCtx) await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
             if (backgroundCanvas && combinedArtCtx) await drawBackground(combinedArtCtx, hasArtBorder);
-            if (!boundless) combinedArtCtx.drawImage(artOnCardCanvas, 0, 0);
+            if (!boundless && combinedArtCtx) combinedArtCtx.drawImage(artOnCardCanvas, 0, 0);
 
             /** @summary Draw the overall layout */
             /** Start with artwork at the bottom, then main frame, then outer card border. */
@@ -600,7 +600,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.name.instructor = async () => {
             const ctx = nameCanvasRef.current?.getContext('2d');
 
-            if (!clearCanvas(ctx)) return;
+            if (!clearCanvas(ctx) || !nameCanvasRef.current) return;
 
             await drawName(
                 nameCanvasRef.current,
@@ -846,22 +846,24 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     canvas: stickerFinishCanvas,
                     ctx: stickerFinishContext,
                 } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
-                stickerFinishContext.drawImage(stickerCanvas, 0, 0);
-                stickerFinishContext.scale(globalScale, globalScale);
-                await loopStickerFinish(
-                    stickerFinishContext,
-                    'art',
-                    async (finishType) => {
-                        return await drawAsset(
-                            stickerFinishContext,
-                            `finish/finish-typeart-${finishType}.png`,
-                            stickerX - finishTypeCardWidth + stickerSize, stickerY - finishTypeCardHeight + stickerSize,
-                        );
-                    },
-                );
-                stickerContext.globalCompositeOperation = 'source-in';
-                stickerContext.drawImage(stickerFinishCanvas, 0, 0);
-                ctx.drawImage(stickerCanvas, 0, 0);
+                if (stickerFinishContext && stickerContext) {
+                    stickerFinishContext.drawImage(stickerCanvas, 0, 0);
+                    stickerFinishContext.scale(globalScale, globalScale);
+                    await loopStickerFinish(
+                        stickerFinishContext,
+                        'art',
+                        async (finishType) => {
+                            return await drawAsset(
+                                stickerFinishContext,
+                                `finish/finish-typeart-${finishType}.png`,
+                                stickerX - finishTypeCardWidth + stickerSize, stickerY - finishTypeCardHeight + stickerSize,
+                            );
+                        },
+                    );
+                    stickerContext.globalCompositeOperation = 'source-in';
+                    stickerContext.drawImage(stickerFinishCanvas, 0, 0);
+                    ctx.drawImage(stickerCanvas, 0, 0);
+                }
             } else {
                 ctx.drawImage(stickerCanvas, 0, 0);
             }

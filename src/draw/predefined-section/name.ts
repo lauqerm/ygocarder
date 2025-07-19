@@ -223,7 +223,7 @@ export const drawName = async (
      * If we use emboss, additional thickness will be added to the text to increase embossed area. We use stroke text so it can inherit color, gradient and pattern style.
      */
     let thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
-    let resetEmbossStroke = () => {};
+    let resetEmbossStroke = () => { };
     if (thickenEmboss) {
         resetEmbossStroke = setTextStyle({
             ctx,
@@ -260,23 +260,25 @@ export const drawName = async (
     if (patternImage) {
         const patternCanvas = canvas.cloneNode() as HTMLCanvasElement;
         const patternContext = patternCanvas.getContext('2d');
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        /** Some patterns are partially transparent, so we need to draw the current frame under it first. */
-        patternContext.scale(globalScale, globalScale);
-        await drawAsset(patternContext, `frame/frame-${frame}.png`, 0, 0);
-        await drawAsset(patternContext, `background/background-name-${frame}.png`, 0, 0);
-        patternContext.globalCompositeOperation = patternBlendMode;
-        patternContext.resetTransform();
-        await drawAssetWithSize(
-            patternContext, `finish-name/${patternImage}.png`,
-            edge, trueBaseline - maxAscent,
-            width,
-            maxAscent + maxDescent,
-        );
-        ctx.globalCompositeOperation = 'source-in';
-        ctx.drawImage(patternCanvas, 0, 0);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.scale(xRatio, yRatio);
+        if (patternContext) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            /** Some patterns are partially transparent, so we need to draw the current frame under it first. */
+            patternContext.scale(globalScale, globalScale);
+            await drawAsset(patternContext, `frame/frame-${frame}.png`, 0, 0);
+            await drawAsset(patternContext, `background/background-name-${frame}.png`, 0, 0);
+            patternContext.globalCompositeOperation = patternBlendMode;
+            patternContext.resetTransform();
+            await drawAssetWithSize(
+                patternContext, `finish-name/${patternImage}.png`,
+                edge, trueBaseline - maxAscent,
+                width,
+                maxAscent + maxDescent,
+            );
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.drawImage(patternCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.scale(xRatio, yRatio);
+        }
     }
 
     /** Third iteration: Apply emboss effect */
@@ -290,7 +292,7 @@ export const drawName = async (
             maxIntensity: 0.9,
             affectedWidth: Math.ceil(tokenEdge + affectedWidthExtraPadding),
         });
-        ctx.putImageData(embossedImageData, 0, 0);
+        if (embossedImageData) ctx.putImageData(embossedImageData, 0, 0);
     }
 
     /**
@@ -336,21 +338,23 @@ export const drawName = async (
     if (hasShadow) {
         const shadowCanvas = canvas.cloneNode() as HTMLCanvasElement;
         const shadowContext = shadowCanvas.getContext('2d');
-        const resetShadow = setTextStyle({
-            ctx: shadowContext,
-            x: shadowOffsetX,
-            y: shadowOffsetY,
-            shadowColor: shadowColor,
-            blur: shadowBlur,
-            globalScale,
-            useDefault: false,
-        });
-        ctx.scale(1 / xRatio, 1 / yRatio);
-        shadowContext.drawImage(canvas, 0, 0);
-        ctx.globalCompositeOperation = 'destination-over';
-        ctx.drawImage(shadowCanvas, 0, 0);
-        ctx.globalCompositeOperation = 'source-over';
-        resetShadow();
+        if (shadowContext) {
+            const resetShadow = setTextStyle({
+                ctx: shadowContext,
+                x: shadowOffsetX,
+                y: shadowOffsetY,
+                shadowColor: shadowColor,
+                blur: shadowBlur,
+                globalScale,
+                useDefault: false,
+            });
+            ctx.scale(1 / xRatio, 1 / yRatio);
+            shadowContext.drawImage(canvas, 0, 0);
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.drawImage(shadowCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+            resetShadow();
+        }
     }
 
     /** Sixth iteration: Draw furigana, which is not affected by all other text style except furigana color. Again we draw it on base canvas for the same data loss reason. */
@@ -362,7 +366,7 @@ export const drawName = async (
         textData,
         format,
         globalScale,
-        textDrawer: () => {},
+        textDrawer: () => { },
     });
 
     const defaultTextStyle = getDefaultNameStyle();

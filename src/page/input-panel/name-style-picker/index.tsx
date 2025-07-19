@@ -489,7 +489,11 @@ export const NameStylePicker = forwardRef(({
                         </div>}
                         placement="bottomLeft"
                     >
-                        <PopoverButton $softMode={reduceColorMotion} className="picker-dropdown font-picker-dropdown">
+                        <PopoverButton
+                            $softMode={reduceColorMotion}
+                            $active={isStyleCustom && font !== 'Auto'}
+                            className="picker-dropdown font-picker-dropdown"
+                        >
                             {language['input.name-style.font.label']}
                         </PopoverButton>
                     </Popover>
@@ -546,11 +550,17 @@ export const NameStylePicker = forwardRef(({
                             className="picker-dropdown preset-picker-dropdown"
                             type="primary"
                             onClick={async () => {
+                                const key = uuid();
+                                if (db) {
+                                    const tx = db.transaction('presetNameStyleStore', 'readwrite');
+                                    await db.put('presetNameStyleStore', { key, content: JSON.stringify(value) });
+                                    await tx.done;
+                                }
                                 setNameStylePresetList(cur => {
                                     return [
                                         ...cur,
                                         {
-                                            key: uuid(),
+                                            key,
                                             content: { ...value },
                                         }
                                     ];
@@ -576,7 +586,12 @@ export const NameStylePicker = forwardRef(({
                                                 setValue({ ...content });
                                                 requestUpdateCustomStyle();
                                             }}
-                                            onDelete={() => {
+                                            onDelete={async () => {
+                                                if (db) {
+                                                    const tx = db.transaction('presetNameStyleStore', 'readwrite');
+                                                    await db.delete('presetNameStyleStore', key);
+                                                    await tx.done;
+                                                }
                                                 setNameStylePresetList(cur => cur.filter(entry => entry.key !== key));
                                             }}
                                         >

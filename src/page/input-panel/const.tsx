@@ -16,6 +16,7 @@ import {
     OtherFinishTypeMap,
     ExtraAttributeList,
     RegionMap,
+    AUTO_FONT,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -64,10 +65,13 @@ export const getOtherFinishList = (dictionary: Record<string, string>) => Object
     value: key,
 }));
 
-export const getNameFontOptionList = (dictionary: Record<string, string>) => Object.values(NameFontDataMap).map(({ value, labelKey }) => ({
-    label: dictionary[labelKey],
-    value,
-}));
+export const getNameFontOptionList = (dictionary: Record<string, string>) => [
+    { label: dictionary['input.name-style.type.auto.label'], value: AUTO_FONT },
+    ...Object.values(NameFontDataMap).map(({ value, labelKey }) => ({
+        label: dictionary[labelKey],
+        value,
+    })),
+];
 
 export const ArtFinishButtonList = [
     { value: 'normal', label: <CloseCircleOutlined /> },

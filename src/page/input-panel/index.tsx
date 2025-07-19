@@ -278,7 +278,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     softMode={reduceMotionColor}
                     onTakePicker={setPickerTarget}
-                    onFrameChange={frame => frameTrainRef.current.changeFrame(frame)}
+                    onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
                 />
 
                 <PostPendulumInputGroup ref={postPendulumInputGroupRef} onTakePicker={setPickerTarget} />
