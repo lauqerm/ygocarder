@@ -255,7 +255,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
             visible={visible}
             title={mode === 'merge'
                 ? language['button.import.merge.label']
-                : language['button.import.label']}
+                : language['generic.import.label']}
             className="global-overlay"
             onCancel={cleanup}
             okText={language['prompt.import.ok.label']}
@@ -344,7 +344,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                     setVisible(true);
                 }}
             >
-                {language['button.import.label']}
+                {language['generic.import.label']}
             </button>
         </Tooltip>
         <Tooltip overlay={language['button.import.tooltip']}>

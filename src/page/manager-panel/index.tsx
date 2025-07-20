@@ -1,4 +1,4 @@
-import { Drawer, Dropdown, Input, Menu, notification, Tooltip } from 'antd';
+import { Dropdown, Input, Menu, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { InternalCard } from 'src/model';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
 import XLSX from 'xlsx';
+import { ManagerDrawer } from 'src/component';
 
 const chanceToRemindBackup = getNaivePseudoRandomizer();
 const StyledCardManagerPanel = styled.div`
@@ -25,24 +26,10 @@ const StyledCardManagerPanel = styled.div`
     right: 0;
     top: 125px;
 `;
-const StyledCardManagerDrawer = styled(Drawer)`
+const StyledCardManagerDrawer = styled(ManagerDrawer)`
     .ant-drawer-header {
         padding: 0;
     }
-    .ant-drawer-content {
-        box-shadow: 0 0 3px 2px #202020;
-    }
-    .ant-drawer-body {
-        padding: 0;
-        height: 100%;
-    }
-    .ant-drawer-close {
-        display: none;
-    }
-    .ant-drawer-content {
-        background-color: #484848;
-    }
-
     .manager-label-container {
         padding: var(--spacing-sm) 0 0 var(--spacing-sm);
     }

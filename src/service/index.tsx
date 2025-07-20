@@ -10,4 +10,5 @@ export * from './use-i18n';
 export * from './use-master-seri';
 export * from './use-notification';
 export * from './use-ocg-font';
+export * from './use-preset-manager';
 export * from './use-setting';

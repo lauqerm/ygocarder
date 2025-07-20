@@ -335,7 +335,7 @@ export const ExportPanel = forwardRef(({
                 onRequireExportData();
                 setVisible(true);
             }}>
-                {language['button.export.label']}
+                {language['generic.export.label']}
             </button>
         </Tooltip>
         <Dropdown

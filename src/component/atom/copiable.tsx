@@ -47,7 +47,7 @@ export type Copiable = {
     container: React.ComponentType<{
         children?: React.ReactNode,
         disabled?: boolean,
-        onClick: (e: { stopPropagation: () => void }) => void,
+        onClick?: (e: { stopPropagation: () => void }) => void,
     }>,
 }
 export const Copiable = ({

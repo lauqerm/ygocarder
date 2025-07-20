@@ -1,4 +1,4 @@
-import { Popover } from 'antd';
+import { Drawer, Popover } from 'antd';
 import styled, { css, keyframes } from 'styled-components';
 
 export const StyledMarkdown = styled.div`
@@ -169,7 +169,7 @@ export type ResolutionLabel = {
     width: number,
     height: number,
 }
-export const ResolutionLabel = ({ width, height, warning }: ResolutionLabel) => {
+export const ResolutionLabel = ({ width, height, warning = false }: ResolutionLabel) => {
     return <ResolutionLabelContainer $warning={warning}>
         <span className="left-part">{width}</span>
         <span>×</span>
@@ -207,6 +207,26 @@ export const DropZone = styled.div<{ $visible: boolean }>`
         line-height: 1.25;
     }
     ${css`animation: ${backgroundMarch} 6s linear infinite;`}
+`;
+
+
+export const ManagerDrawer = styled(Drawer)`
+    .ant-drawer-header {
+        padding: var(--spacing);
+    }
+    .ant-drawer-content {
+        box-shadow: 0 0 3px 2px #202020;
+    }
+    .ant-drawer-body {
+        padding: 0;
+        height: 100%;
+    }
+    .ant-drawer-close {
+        display: none;
+    }
+    .ant-drawer-content {
+        background-color: #484848;
+    }
 `;
 
 export * from './color';

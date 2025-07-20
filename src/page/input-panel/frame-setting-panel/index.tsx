@@ -4,12 +4,11 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState }
 import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage } from 'src/service';
 import { getFoilButtonList, getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
-import { FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
+import { CardLayoutPreview, FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
 import styled from 'styled-components';
 import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 import { FramePresetPanel } from './frame-preset-panel';
-import { CardLayoutPreview } from './card-layout-preview';
 import { v4 as uuid } from 'uuid';
 
 const {
@@ -63,28 +62,8 @@ const FrameLayoutContainer = styled.div`
     }
     .frame-preset-panel {
         grid-column: -1 / 1;
-        margin-top: var(--spacing-sm);
-        display: grid;
-        grid-template-columns: repeat(auto-fit, 55px);
-        row-gap: var(--spacing-sm);
         padding-top: var(--spacing-sm);
         border-top: var(--bw) solid var(--sub-level-3);
-    }
-    .preset-option-action {
-        line-height: 1.25;
-        text-align: center;
-        display: flex;
-        justify-content: space-evenly;
-        gap: var(--spacing-xxs);
-        .anticon {
-            cursor: pointer;
-            &.anticon-close:hover {
-                color: var(--sub-danger);
-            }
-            &.anticon-save:hover {
-                color: var(--sub-info);
-            }
-        }
     }
 `;
 
@@ -140,7 +119,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         setCard,
         getUpdater,
     })));
-    const [, setFramePresetList] = useGlobal('layoutPresetList');
+    const [, setLayoutPresetList] = useGlobal('layoutPresetList');
     const recentCustomPendulumFrame = useRef({
         topLeftFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
         topRightFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
@@ -285,7 +264,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                             await db.put('presetLayoutStore', { key, content: JSON.stringify(value) });
                             await tx.done;
                         }
-                        setFramePresetList(cur => [
+                        setLayoutPresetList(cur => [
                             ...cur,
                             {
                                 key,
@@ -366,7 +345,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                     await db.put('presetLayoutStore', { key, content: JSON.stringify(value) });
                     await tx.done;
                 }
-                setFramePresetList(cur => cur.map(entry => {
+                setLayoutPresetList(cur => cur.map(entry => {
                     if (entry.key === key) {
                         return {
                             key,
@@ -404,4 +383,4 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
 });
 
 export * from './frame-behavior-setting-panel';
-export * from './card-layout-preview';
+export * from '../../../component/card-layout-preview';

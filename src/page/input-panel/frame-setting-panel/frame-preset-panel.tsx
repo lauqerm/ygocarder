@@ -1,10 +1,8 @@
-import { GlobalMemory, useCarderDb, useGlobal, WithLanguage } from 'src/service';
+import { GlobalMemory, useCarderDb, useGlobal, usePresetManager, WithLanguage } from 'src/service';
 import styled from 'styled-components';
-import { CardLayoutPreview } from './card-layout-preview';
 import { CanvasConst } from 'src/model';
 import { resolveFrameStyle } from 'src/util';
-import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import { Popconfirm } from 'antd';
+import { LayoutPresetOption } from 'src/component';
 
 const {
     width,
@@ -12,7 +10,18 @@ const {
 } = CanvasConst;
 
 const FramePresetPanelContainer = styled.div`
+    margin-top: var(--spacing-sm);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+    row-gap: var(--spacing-sm);
     background-color: var(--main-level-3);
+    color: var(--color);
+    .preset-panel-top {
+        grid-column: -1 / 1;
+    }
+    .preset-warning {
+        width: 590px; // Alignment with layout picker / dye panel
+    }
     .preview-container {
         line-height: 0;
         padding: var(--spacing-xxs) 0;
@@ -26,11 +35,18 @@ const FramePresetPanelContainer = styled.div`
             border-color: var(--main-active);
         }
     }
+    .open-preset-manager {
+        cursor: pointer;
+        color: var(--main-link);
+        &:hover {
+            color: var(--sub-link);
+        }
+    }
 `;
 
 export type FramePresetPanel = WithLanguage & {
     isPendulum: boolean,
-    onOverwrite?: (key: string) => void,
+    onOverwrite?: (key: string) => Promise<void>,
     onActive: (content: GlobalMemory['layoutPresetList'][0]['content']) => void,
 };
 export const FramePresetPanel = ({
@@ -40,10 +56,18 @@ export const FramePresetPanel = ({
     language,
 }: FramePresetPanel) => {
     const { db } = useCarderDb();
-    const [layoutPresetList, setFramePresetList] = useGlobal('layoutPresetList');
+    const [layoutPresetList, setLayoutPresetList] = useGlobal('layoutPresetList');
+    const setVisible = usePresetManager(state => state.setVisible);
 
     if (layoutPresetList.length === 0) return <></>;
     return <FramePresetPanelContainer className="frame-preset-panel">
+        {layoutPresetList.length > 0 && <div className="preset-panel-top">
+            <div className="preset-warning">
+                {language['preset.warning.label']}
+                &nbsp;
+                <span className="open-preset-manager" onClick={() => setVisible(true)}>{language['preset.manager.check.label']}</span>
+            </div>
+        </div>}
         {layoutPresetList.map(({ content, key }) => {
             const {
                 dyeList,
@@ -66,45 +90,26 @@ export const FramePresetPanel = ({
                 pendulumEffectBackground: pendulumStyle?.background,
             };
 
-            return <div key={key} className="frame-preset-option">
-                <div className="preview-container" onClick={() => onActive(content)}>
-                    <CardLayoutPreview
-                        width={Math.round(40 * width / height)}
-                        height={40}
-                        isPendulum={isPendulum}
-                        resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
-                        tabIndex={-1}
-                        dyeList={dyeList}
-                        foil={foil}
-                        language={language}
-                    />
-                </div>
-                <div className="preset-option-action">
-                    <Popconfirm
-                        title={language['generic.delete.label']}
-                        okText={language['generic.yes.label']}
-                        cancelText={language['generic.no.label']}
-                        onConfirm={async () => {
-                            if (db) {
-                                const tx = db.transaction('presetLayoutStore', 'readwrite');
-                                await db.delete('presetLayoutStore', key);
-                                await tx.done;
-                            }
-                            setFramePresetList(cur => cur.filter(({ key: currentKey }) => key !== currentKey));
-                        }}
-                    >
-                        <CloseOutlined />
-                    </Popconfirm>
-                    <Popconfirm
-                        title={language['generic.overwrite.label']}
-                        okText={language['generic.yes.label']}
-                        cancelText={language['generic.no.label']}
-                        onConfirm={() => onOverwrite?.(key)}
-                    >
-                        <SaveOutlined />
-                    </Popconfirm>
-                </div>
-            </div>;
+            return <LayoutPresetOption
+                width={Math.round(40 * width / height)}
+                height={40}
+                isPendulum={isPendulum}
+                resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
+                tabIndex={-1}
+                dyeList={dyeList}
+                foil={foil}
+                language={language}
+                onActive={() => onActive(content)}
+                onDelete={async () => {
+                    if (db) {
+                        const tx = db.transaction('presetLayoutStore', 'readwrite');
+                        await db.delete('presetLayoutStore', key);
+                        await tx.done;
+                    }
+                    setLayoutPresetList(cur => cur.filter(({ key: currentKey }) => key !== currentKey));
+                }}
+                onOverwrite={onOverwrite ? (() => onOverwrite?.(key)) : undefined}
+            />;
         })}
     </FramePresetPanelContainer>;
 };

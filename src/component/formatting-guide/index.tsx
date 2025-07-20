@@ -70,13 +70,13 @@ export const FormattingHelpDrawer = () => {
             footer={null}
             visible={modalOpen}
             width={'60%'}
-            title={<div className="overlay-title">{language['guide.format.label']} <Button
+            title={<div className="overlay-title">{language['guide.format.label']}&nbsp;&nbsp;<Button
                 size="small"
                 type="primary"
                 onClick={() => {
                     setDrawerOpen(false);
                 }}
-            >{language['guide.format.close']}</Button></div>}
+            >{language['generic.close.label']}</Button></div>}
             className="formattting-guide-overlay"
             onClose={() => {
                 setDrawerOpen(false);

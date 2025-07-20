@@ -14,14 +14,12 @@ import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import { getNameFontOptionList } from '../const';
-import { StyledDropdown, PopoverButton } from 'src/component';
+import { StyledDropdown, PopoverButton, StyledPatternOption, PresetOption } from 'src/component';
 import {
-    PresetOption,
     StyledPatternContainer,
-    StyledPatternOption,
     StyledPresetContainer,
 } from './style-picker.styled';
-import { useCarderDb, useGlobal, useLanguage, useSetting } from 'src/service';
+import { useCarderDb, useGlobal, useLanguage, usePresetManager, useSetting } from 'src/service';
 import { GridSliderInput, GridSliderInputRef } from './grid-slider-input';
 import { PredefinedOptionGrid, PredefinedOptionGridRef } from './predefined-option-grid';
 import { EmbossController, EmbossControllerRef } from './emboss-controller';
@@ -56,6 +54,7 @@ export const NameStylePicker = forwardRef(({
     const [requestUpdateCustomStyle, sendCustomStyleSignal] = useRefresh();
     const { db } = useCarderDb();
     const onChange = useRef(debounce(undebouncedOnChange, 250)).current;
+    const setVisible = usePresetManager(state => state.setVisible);
     const memoizedOnGradientChange = useCallback((palette, gradientAngle) => {
         setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
         requestUpdateCustomStyle();
@@ -574,6 +573,13 @@ export const NameStylePicker = forwardRef(({
                             overlayClassName="global-input-overlay global-style-picker-overlay low-index"
                             content={<div className="overlay-event-absorber">
                                 <StyledPresetContainer onClick={e => e.stopPropagation()}>
+                                    {nameStylePresetList.length > 0 && <div className="preset-warning">
+                                        {language['preset.warning.label']}
+                                        &nbsp;
+                                        <span className="open-preset-manager"
+                                            onClick={() => setVisible(true)}
+                                        >{language['preset.manager.check.label']}</span>
+                                    </div>}
                                     {nameStylePresetList.length === 0 && <Empty
                                         description={language['generic.empty.label']}
                                     />}

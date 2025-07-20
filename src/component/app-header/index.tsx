@@ -1,8 +1,8 @@
-import { GithubFilled, DatabaseFilled } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, AuditOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
-import { useCardList, useI18N, useLanguage } from 'src/service';
+import { useCardList, useI18N, useLanguage, usePresetManager } from 'src/service';
 import { Radio, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
@@ -11,6 +11,7 @@ import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
 import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
 import './app-header.scss';
+import { PresetManager } from '../preset-manager';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -73,6 +74,16 @@ export const AppHeader = () => {
         cardList,
         isListDirty,
         toggleVisible,
+        visible,
+    })));
+    const {
+        setVisible: setPresetManagerVisible,
+        visible: presetManagerVisible,
+    } = usePresetManager(useShallow(({
+        setVisible,
+        visible,
+    }) => ({
+        setVisible,
         visible,
     })));
 
@@ -178,6 +189,18 @@ export const AppHeader = () => {
                     {(isListDirty && cardList.length > 1) && <div className="manager-notice">*</div>}
                 </div>
             </StyledHeaderButtonContainer>
+        </StyledAppHeaderButtonContainer>
+        <StyledAppHeaderButtonContainer className="preset-manager">
+            <StyledHeaderButtonContainer
+                className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
+                onClick={() => setPresetManagerVisible()}
+            >
+                <div className="button-label">
+                    <AuditOutlined />
+                    <label>{language['preset.manager.label']}</label>
+                </div>
+            </StyledHeaderButtonContainer>
+            <PresetManager language={language} />
         </StyledAppHeaderButtonContainer>
     </div>;
 };

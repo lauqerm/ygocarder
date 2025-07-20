@@ -1,7 +1,9 @@
+import { Popconfirm } from 'antd';
 import { DyeIndexMap, Foil, FoilMap, FrameInfoMap } from 'src/model';
 import { WithLanguage } from 'src/service';
 import { HexColorRegex, mergeClass } from 'src/util';
 import styled from 'styled-components';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 
 const CardLayoutContainer = styled.div<{ $width: number, $height: number, $layoutHoverable: boolean, $hoverable: boolean }>`
     /** Ensure even width */
@@ -228,4 +230,60 @@ export const CardLayoutPreview = ({
             {language['input.foil.label']}
         </button>
     </CardLayoutContainer>;
+};
+
+const LayoutPresetOptionContainer = styled.div`
+    text-align: center;
+    .layout-preset-option-action {
+        line-height: 1.25;
+        text-align: center;
+        .anticon {
+            cursor: pointer;
+            &.anticon-close:hover {
+                color: var(--sub-danger);
+            }
+            &.anticon-save:hover {
+                color: var(--sub-info);
+            }
+            + .anticon {
+                margin-left: var(--spacing-xs);
+            }
+        }
+    }
+`;
+export type LayoutPresetOption = {
+    onActive?: () => void,
+    onOverwrite?: () => Promise<void>,
+    onDelete?: () => Promise<void>,
+} & CardLayoutPreview;
+export const LayoutPresetOption = ({
+    onActive,
+    onDelete,
+    onOverwrite,
+    language,
+    ...rest
+}: LayoutPresetOption) => {
+    return <LayoutPresetOptionContainer className="frame-preset-option">
+        <div className="preview-container" onClick={onActive}>
+            <CardLayoutPreview {...rest} language={language} />
+        </div>
+        <div className="layout-preset-option-action">
+            <Popconfirm
+                title={language['generic.delete.label']}
+                okText={language['generic.yes.label']}
+                cancelText={language['generic.no.label']}
+                onConfirm={onDelete}
+            >
+                <CloseOutlined />
+            </Popconfirm>
+            {onOverwrite && <Popconfirm
+                title={language['generic.overwrite.label']}
+                okText={language['generic.yes.label']}
+                cancelText={language['generic.no.label']}
+                onConfirm={() => onOverwrite()}
+            >
+                <SaveOutlined />
+            </Popconfirm>}
+        </div>
+    </LayoutPresetOptionContainer>;
 };
