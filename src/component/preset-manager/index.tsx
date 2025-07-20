@@ -2,18 +2,342 @@ import { GlobalMemory, useCard, useCarderDb, useGlobal, usePresetManager, WithLa
 import { useShallow } from 'zustand/react/shallow';
 import { ManagerDrawer } from '../atom';
 import { PresetOption } from '../preset-option';
-import { CanvasConst, FrameInfoMap } from 'src/model';
+import { CanvasConst, FrameInfo, FrameInfoMap } from 'src/model';
 import styled from 'styled-components';
 import { LayoutPresetOption } from '../card-layout-preview';
-import { downloadBlob, resolveFrameStyle } from 'src/util';
+import { downloadBlob, mergeClass, resolveFrameStyle } from 'src/util';
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, Modal, notification } from 'antd';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
 const {
     width,
     height,
 } = CanvasConst;
+
+const PresetImportReviewModalContainer = styled(Modal)`
+    .import-review-title {
+        margin-bottom: var(--spacing-xs);
+    }
+    .import-action-table {
+        width: 100%;
+        table-layout: fixed;
+        background-color: #494949;
+        th,
+        td {
+            border: var(--bw) solid var(--sub-level-4);
+            padding: var(--spacing-xs);
+            &:nth-child(1) {
+                width: 150px;
+            }
+            &:nth-child(2) {
+                width: 150px;
+            }
+        }
+        .action-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xs);
+        }
+    }
+`;
+type MergeEntry<Value> = Value & { verdict: 'keep-old' | 'keep-new' | 'keep-both' };
+type NameStylePreset = GlobalMemory['nameStylePresetList'][0];
+type LayoutPreset = GlobalMemory['layoutPresetList'][0];
+type PresetImportReviewModal = {
+    frameInfo: FrameInfo,
+    isPendulum: boolean,
+    importData: Pick<GlobalMemory, 'layoutPresetList' | 'nameStylePresetList'>,
+    onCancel: () => void,
+} & WithLanguage;
+const PresetImportReviewModal = ({
+    language,
+    isPendulum,
+    frameInfo,
+    importData,
+    onCancel,
+}: PresetImportReviewModal) => {
+    const { db } = useCarderDb();
+    const [nameStylePresetList, setNameStylePresetList] = useGlobal('nameStylePresetList');
+    const [layoutPresetList, setLayoutPresetList] = useGlobal('layoutPresetList');
+    const {
+        layoutPresetMap,
+        nameStylePresetMap,
+    } = useMemo(() => {
+        const nameStylePresetMap = nameStylePresetList.reduce<Record<string, NameStylePreset>>((acc, cur) => {
+            acc[cur.key] = cur;
+            return acc;
+        }, {});
+        const layoutPresetMap = layoutPresetList.reduce<Record<string, LayoutPreset>>((acc, cur) => {
+            acc[cur.key] = cur;
+            return acc;
+        }, {});
+
+        return {
+            nameStylePresetMap,
+            layoutPresetMap,
+        };
+    }, [layoutPresetList, nameStylePresetList]);
+    const {
+        layoutPresetList: nextLayoutPresetList = [],
+        nameStylePresetList: nextNameStylePresetList = [],
+    } = importData;
+    const [decisionMap, setDecisionMap] = useState(() => {
+        const layoutPresetMap = nextLayoutPresetList.reduce<Record<string, MergeEntry<LayoutPreset>>>((acc, cur) => {
+            acc[cur.key] = { ...cur, verdict: 'keep-new' };
+            return acc;
+        }, {});
+        const nameStylePresetMap = nextNameStylePresetList.reduce<Record<string, MergeEntry<NameStylePreset>>>((acc, cur) => {
+            acc[cur.key] = { ...cur, verdict: 'keep-new' };
+            return acc;
+        }, {});
+
+        return { layoutPresetMap, nameStylePresetMap };
+    });
+
+    return <PresetImportReviewModalContainer
+        visible={true}
+        width={600}
+        maskClosable={false}
+        okText={language['preset.button.import.label']}
+        cancelText={language['preset.button.discard.label']}
+        onCancel={onCancel}
+        onOk={async () => {
+            const layoutVerdictList = Object.values(decisionMap.layoutPresetMap);
+            const nameStyleVerdictList = Object.values(decisionMap.nameStylePresetMap);
+
+            const layoutReplaceMap: Record<string, LayoutPreset> = {};
+            const layoutFullList: LayoutPreset[] = [];
+            const layoutNewList: LayoutPreset[] = [];
+            layoutVerdictList
+                .filter(({ verdict }) => verdict !== 'keep-old')
+                .forEach(entry => {
+                    const { key, content, verdict } = entry;
+                    layoutFullList.push({ key, content });
+                    /** If choose to keep new and there is no existing entry => push new entry */
+                    if (layoutPresetMap[key] == null && verdict === 'keep-new') {
+                        layoutNewList.push({ key, content });
+                    }
+                    /** If choose to keep both => push new entry regardless of the existing one */
+                    else if (verdict === 'keep-both') {
+                        const newKey = uuid();
+                        layoutNewList.push({ key: newKey, content });
+                    }
+                    /** => Otherwise, replace the existing entry */
+                    else {
+                        layoutReplaceMap[key] = { key, content };
+                    }
+                });
+            if (db) {
+                const layoutPresetTx = db.transaction('presetLayoutStore', 'readwrite');
+                for (const { key, content } of layoutFullList) {
+                    await db.put('presetLayoutStore', { key, content: JSON.stringify(content) });
+                }
+                await layoutPresetTx.done;
+            }
+            setLayoutPresetList(cur => {
+                const newList = [
+                    ...cur.map(entry => {
+                        if (layoutReplaceMap[entry.key]) return layoutReplaceMap[entry.key];
+                        return entry;
+                    }),
+                    ...layoutNewList,
+                ];
+
+                return newList;
+            });
+
+            const nameStyleReplaceMap: Record<string, NameStylePreset> = {};
+            const nameStyleFullList: NameStylePreset[] = [];
+            const nameStyleNewList: NameStylePreset[] = [];
+            nameStyleVerdictList
+                .filter(({ verdict }) => verdict !== 'keep-old')
+                .forEach(entry => {
+                    const { key, content, verdict } = entry;
+                    nameStyleFullList.push({ key, content });
+                    /** If choose to keep new and there is no existing entry => push new entry */
+                    if (nameStylePresetMap[key] == null && verdict === 'keep-new') {
+                        nameStyleNewList.push({ key, content });
+                    }
+                    /** If choose to keep both => push new entry regardless of the existing one */
+                    else if (verdict === 'keep-both') {
+                        const newKey = uuid();
+                        nameStyleNewList.push({ key: newKey, content });
+                    }
+                    /** => Otherwise, replace the existing entry */
+                    else {
+                        nameStyleReplaceMap[key] = { key, content };
+                    }
+                });
+            if (db) {
+                const nameStylePresetTx = db.transaction('presetNameStyleStore', 'readwrite');
+                for (const { key, content } of nameStyleFullList) {
+                    await db.put('presetNameStyleStore', { key, content: JSON.stringify(content) });
+                }
+                await nameStylePresetTx.done;
+            }
+            setNameStylePresetList(cur => {
+                const newList = [
+                    ...cur.map(entry => {
+                        if (nameStyleReplaceMap[entry.key]) return nameStyleReplaceMap[entry.key];
+                        return entry;
+                    }),
+                    ...nameStyleNewList,
+                ];
+
+                return newList;
+            });
+            onCancel();
+        }}
+    >
+        <div className="import-review-title">
+            <h2>{language['preset.review-title.label']}</h2>
+            {language['preset.review-description']}
+        </div>
+        <table className="import-action-table">
+            <tbody>
+                <tr className="import-action-row import-header-row">
+                    <th className="header-row">{language['preset.review-table.current.label']}</th>
+                    <th className="header-row">{language['preset.review-table.new.label']}</th>
+                    <th className="header-row">{language['preset.review-table.action.label']}</th>
+                </tr>
+                {nextNameStylePresetList.map(({ key, content }) => {
+                    const commonProps = { language, frameInfo };
+                    const currentContent = nameStylePresetMap[key]?.content;
+                    const willKeepNew = decisionMap.nameStylePresetMap[key].verdict;
+
+                    return <tr key={key} className={mergeClass('import-action-row', willKeepNew ? 'will-keep-new' : '')}>
+                        <td className="current-version">
+                            {currentContent && <PresetOption {...commonProps} presetContent={currentContent}>
+                                {currentContent.preset}
+                            </PresetOption>}
+                        </td>
+                        <td className="new-version">
+                            <PresetOption {...commonProps} presetContent={content}>
+                                {content.preset}
+                            </PresetOption>
+                        </td>
+                        <td className="action-list">
+                            <div className="action-panel">
+                                <Button
+                                    size="small"
+                                    type={willKeepNew === 'keep-new' ? 'default' : 'primary'}
+                                    onClick={() => setDecisionMap(cur => {
+                                        const nextMap: Record<string, MergeEntry<NameStylePreset>> = { ...cur.nameStylePresetMap };
+                                        nextMap[key] = { ...nextMap[key], verdict: 'keep-old' };
+
+                                        return { ...cur, nameStylePresetMap: nextMap };
+                                    })}
+                                >
+                                    {language[currentContent
+                                        ? 'preset.review-table.action.keep-old.label'
+                                        : 'preset.review-table.action.discard.label'
+                                    ]}
+                                </Button>
+                                <Button
+                                    size="small"
+                                    type={willKeepNew === 'keep-new' ? 'primary' : 'default'}
+                                    onClick={() => setDecisionMap(cur => {
+                                        const nextMap: Record<string, MergeEntry<NameStylePreset>> = { ...cur.nameStylePresetMap };
+                                        nextMap[key] = { ...nextMap[key], verdict: 'keep-new' };
+
+                                        return { ...cur, nameStylePresetMap: nextMap };
+                                    })}
+                                >
+                                    {language[currentContent
+                                        ? 'preset.review-table.action.keep-new.label'
+                                        : 'preset.review-table.action.import.label'
+                                    ]}
+                                </Button>
+                            </div>
+                        </td>
+                    </tr>;
+                })}
+                {nextLayoutPresetList.map(({ key, content }) => {
+                    const commonProps = {
+                        width: Math.round(40 * width / height),
+                        height: 40,
+                        isPendulum,
+                        tabIndex: -1,
+                        language: language,
+                    };
+                    const currentContent = layoutPresetMap[key]?.content;
+                    const willKeepNew = decisionMap.layoutPresetMap[key].verdict;
+
+                    return <tr key={key} className={mergeClass('import-action-row', willKeepNew ? 'will-keep-new' : '')}>
+                        <td className="current-version">
+                            {currentContent && <LayoutPresetOption
+                                resolvedLayoutState={resolveFrameStyle({
+                                    frame: currentContent.frame,
+                                    topLeftFrame: currentContent.leftFrame,
+                                    topRightFrame: currentContent.rightFrame,
+                                    bottomLeftFrame: currentContent.pendulumFrame,
+                                    bottomRightFrame: currentContent.pendulumRightFrame,
+                                    effectBackground: currentContent.effectStyle?.background,
+                                    pendulumEffectBackground: currentContent.pendulumStyle?.background,
+                                }, isPendulum)}
+                                dyeList={currentContent.dyeList}
+                                foil={currentContent.foil}
+                                {...commonProps}
+                            />}
+                        </td>
+                        <td className="new-version">
+                            <LayoutPresetOption
+                                resolvedLayoutState={resolveFrameStyle({
+                                    frame: content.frame,
+                                    topLeftFrame: content.leftFrame,
+                                    topRightFrame: content.rightFrame,
+                                    bottomLeftFrame: content.pendulumFrame,
+                                    bottomRightFrame: content.pendulumRightFrame,
+                                    effectBackground: content.effectStyle?.background,
+                                    pendulumEffectBackground: content.pendulumStyle?.background,
+                                }, isPendulum)}
+                                dyeList={content.dyeList}
+                                foil={content.foil}
+                                {...commonProps}
+                            />
+                        </td>
+                        <td className="action-list">
+                            <div className="action-panel">
+                                <Button
+                                    size="small"
+                                    type={willKeepNew === 'keep-new' ? 'default' : 'primary'}
+                                    onClick={() => setDecisionMap(cur => {
+                                        const nextMap: Record<string, MergeEntry<LayoutPreset>> = { ...cur.layoutPresetMap };
+                                        nextMap[key] = { ...nextMap[key], verdict: 'keep-old' };
+
+                                        return { ...cur, layoutPresetMap: nextMap };
+                                    })}
+                                >
+                                    {language[currentContent
+                                        ? 'preset.review-table.action.keep-old.label'
+                                        : 'preset.review-table.action.discard.label'
+                                    ]}
+                                </Button>
+                                <Button
+                                    size="small"
+                                    type={willKeepNew === 'keep-new' ? 'primary' : 'default'}
+                                    onClick={() => setDecisionMap(cur => {
+                                        const nextMap: Record<string, MergeEntry<LayoutPreset>> = { ...cur.layoutPresetMap };
+                                        nextMap[key] = { ...nextMap[key], verdict: 'keep-new' };
+
+                                        return { ...cur, layoutPresetMap: nextMap };
+                                    })}
+                                >
+                                    {language[currentContent
+                                        ? 'preset.review-table.action.keep-new.label'
+                                        : 'preset.review-table.action.import.label'
+                                    ]}
+                                </Button>
+                            </div>
+                        </td>
+                    </tr>;
+                })}
+            </tbody>
+        </table>
+    </PresetImportReviewModalContainer>;
+};
 
 const PresetManagerContainer = styled(ManagerDrawer)`
     .ant-drawer-body {
@@ -112,8 +436,8 @@ export const PresetManager = ({
                     } catch (e) {
                         console.error(e);
                         notification.error({
-                            description: 'error.preset-import.description',
-                            message: 'error.preset-import.message',
+                            description: language['error.preset-import.description'],
+                            message: language['error.preset-import.message'],
                         });
                     }
                 };
@@ -122,7 +446,6 @@ export const PresetManager = ({
             }
         };
         setInputKey(cur => cur + 1);
-        setVisible(false);
     };
 
     return <PresetManagerContainer
@@ -247,11 +570,12 @@ export const PresetManager = ({
                 />;
             })}
         </div>
-        {importData.visible && <Modal
-            visible={true}
+        {importData.visible && <PresetImportReviewModal
             onCancel={() => setImportData(cur => ({ ...cur, visible: false }))}
-        >
-            Hi
-        </Modal>}
+            importData={importData}
+            frameInfo={frameInfo}
+            isPendulum={isPendulum}
+            language={language}
+        />}
     </PresetManagerContainer>;
 };

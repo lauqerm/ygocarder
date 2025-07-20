@@ -20,6 +20,7 @@ export const StyledPresetContainer = styled(StyledDropdown.Container)`
     max-width: 507px; // Alignment
     .preset-warning {
         flex: 0 0 100%;
+        font-size: var(--fs-sm);
     }
     .panel-action {
         flex: 0 0 100%;

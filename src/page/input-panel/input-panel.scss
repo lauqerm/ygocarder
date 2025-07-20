@@ -150,9 +150,12 @@
     }
 }
 
-.pendulum-frame-picker-overlay .ant-popover-content .ant-popover-inner-content {
-    border-radius: 2px;
-    border: var(--bw) solid var(--sub-level-1);
+.pendulum-frame-picker-overlay {
+    width: 613px; // Perfect fit
+    .ant-popover-content .ant-popover-inner-content {
+        border-radius: 2px;
+        border: var(--bw) solid var(--sub-level-1);
+    }
 }
 
 .global-style-picker-overlay {

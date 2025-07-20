@@ -20,7 +20,7 @@ const FramePresetPanelContainer = styled.div`
         grid-column: -1 / 1;
     }
     .preset-warning {
-        width: 590px; // Alignment with layout picker / dye panel
+        font-size: var(--fs-sm);
     }
     .preview-container {
         line-height: 0;

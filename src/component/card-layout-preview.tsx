@@ -268,14 +268,14 @@ export const LayoutPresetOption = ({
             <CardLayoutPreview {...rest} language={language} />
         </div>
         <div className="layout-preset-option-action">
-            <Popconfirm
+            {onDelete && <Popconfirm
                 title={language['generic.delete.label']}
                 okText={language['generic.yes.label']}
                 cancelText={language['generic.no.label']}
                 onConfirm={onDelete}
             >
                 <CloseOutlined />
-            </Popconfirm>
+            </Popconfirm>}
             {onOverwrite && <Popconfirm
                 title={language['generic.overwrite.label']}
                 okText={language['generic.yes.label']}
