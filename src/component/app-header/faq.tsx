@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '28/06/2025';
+        const currentReminder = '21/07/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,13 +68,22 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
+                            author: 'Anonymous User at Jun 18, 2025',
+                            question: 'The drag and drop feature is pretty nice... Is there a way for it not to take precedence over the drag and drop in the text box? It kinda makes it fizzle.',
+                            answer: 'This should be fixed by now.',
+                        },
+                        {
+                            author: 'Blake at Jul 19, 2025',
+                            question: 'On rushify, can you make rush rare of the cards look like the real ones?',
+                        },
+                        {
                             author: 'Blake at Jul 14, 2025',
                             question: 'Isn’t there any other person that’s able to create a website like this one but only rush duel?',
                         },
                         {
                             author: 'Blake at Jul 13, 2025',
                             question: 'On GitHub Rushify, can you add the other card types?',
-                            answer: 'I am not the author of Rushify, so I afraid I can\'t help much',
+                            answer: 'I am not the author of Rushify, so I afraid I can\'t help much.',
                         },
                         {
                             author: 'Anonymous User at Jul 14, 2025',
@@ -167,39 +176,6 @@ export const QuestionAndFeedback = () => {
                             author: 'Die Frauen at Jun 22, 2025',
                             question: 'Addendum (Disregard the alignment comment, or to rephrase, it works fine. I was under the impression it would align on its own, and put the level at the edges and it projected as though it were the 13th icon).\n\nI assume you can organize those manually, but for all intents and purposes it is perfectly functional!',
                             answer: 'Come to think of it, maybe the star editor is not intuitive enough to use, so I have updated it a bit more. Also the normal icon for Spell/Trap is now available.',
-                        },
-                        {
-                            author: 'Die Frauen at Jun 19, 2025',
-                            question: 'This may be a bit crazy, but since you\'ve already come a long way with customization, do you think it\'d be possible to toggle Star Types to be sorted manually in any combinations of the ones currently available?\n\nAnd on that note, and this here may be a bit too out there, but do you think you could use the Spell/Trap iconography as you would any of those? And if it\'s not too much of a bother, maybe the monster Attributes downsized on that row as well?',
-                            answer: 'Putting Spell/Trap/Monster Attribute icon in star slots is possible. As for manual icon of each star slot, I think *technically* it should be doable, but I need to do a bit more test, probably will look into it this weekend.\nUpdate: I have added those options, you may try it out now.',
-                        },
-                        {
-                            author: 'Die Frauen at Jun 19, 2025',
-                            question: 'Hello, first of all I would like to congratulate you on creating what\'s probably the best card editor there is, and thank you for making things convenient for everyone using it. I shall formally make a request of sorts in a different report, but I couldn\'t just not commend the efforts you and all others involved have done. Even managed to  mesh together the Link Arrows for a Pendulum frame in a not entirely unsightly way, and the new hue feature for advanced layouts is also superb for custom card frame efforts.\n\nSuperb work, keep it up',
-                            answer: 'Thanks for your kind words, appreciate your support.',
-                        },
-                        {
-                            author: 'Not really a feedback but... at Jun 19, 2025',
-                            question: 'It would be cool to see the Attributes in other languages available in TCG',
-                            answer: 'I have added many more Attributes that I could find on Yugipedia.',
-                        },
-                        {
-                            author: 'KaibaSetoo at Jun 15, 2025',
-                            question: 'Hello, can you fix the scale number 10, 11 and 12. They are not in the center of the scale value border. Thank you.',
-                            answer: 'I have updated some cases, but please note that some scale numbers does not place at the center of the box at all, but deviated a bit to the right side (very clear in cards like "D/D Savant Kepler").',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 16, 2025',
-                            question: 'Can you change back the *LINK-* text as before, like before the increase card larger update, the letter *L* is now higher.',
-                        },
-                        {
-                            author: 'Anonymous User at Jun 16, 2025',
-                            question: 'And the LINK number are now higher then the text too.',
-                        },
-                        {
-                            author: 'TheDuelistt at Jun 15, 2025',
-                            question: 'Can you make this L letter to be consistent with the rest of the INK, also, can you make the Link Rating value (number) lower and consistent with the INK, and the dash "-" a little bolder, so that the overall look is similar to the official Konami Yugioh Card template. Thank you.',
-                            answer: 'I have updated the layer, hopefully it look better now.',
                         },
                         {
                             author: 'Maya at May 23, 2025',

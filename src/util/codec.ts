@@ -274,7 +274,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
     if (migratedCard.version == null) migratedCard.version = 1;
     if (migratedCard.format == null) migratedCard.format = 'tcg';
-    if (migratedCard.region == null) migratedCard.region = RegionMap[migratedCard.format === 'tcg' ? 'en' : 'jp'].key;
+    if (card.region == null) migratedCard.region = RegionMap[migratedCard.format === 'tcg' ? 'en' : 'jp'].key;
     if (migratedCard.pendulumFrame == null) migratedCard.pendulumFrame = 'auto';
     if (migratedCard.pendulumSize == null) migratedCard.pendulumSize = 'medium';
     if (migratedCard.rightFrame == null) migratedCard.rightFrame = 'auto';
@@ -399,12 +399,10 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (migratedCard.version === 2) {
         migratedCard.version = 3;
         const font = migratedCard.nameStyle.font;
-        const format = migratedCard.format;
         /**
          * For older cards, we dynamically switch font every time user switch the format, which lead to ambiguous situation where user want to keep the font for whatever reason. From ver 3 onward we introduce "Auto" font for the switch behavior, and keep the current font otherwise.
          */
-        if (font === 'TCG' && format === 'tcg') migratedCard.nameStyle.font = 'Auto';
-        if (font === 'OCG' && format === 'ocg') migratedCard.nameStyle.font = 'Auto';
+        if (font === 'Default' || font === 'OCG') migratedCard.nameStyle.font = 'Auto';
     }
 
     return migratedCard;

@@ -37,8 +37,26 @@ const PresetImportReviewModalContainer = styled(Modal)`
         }
         .action-panel {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: var(--spacing-xs);
+        }
+        .import-action-row {
+            &.keep-old {
+                td:nth-child(1) {
+                    background-color: var(--main-level-4);
+                }
+            }
+            &.keep-new {
+                td:nth-child(2) {
+                    background-color: var(--main-level-4);
+                }
+            }
+            &.keep-both {
+                td:nth-child(1),
+                td:nth-child(2) {
+                    background-color: var(--main-level-4);
+                }
+            }
         }
     }
 `;
@@ -98,7 +116,7 @@ const PresetImportReviewModal = ({
 
     return <PresetImportReviewModalContainer
         visible={true}
-        width={600}
+        width={700}
         maskClosable={false}
         okText={language['preset.button.import.label']}
         cancelText={language['preset.button.discard.label']}
@@ -205,9 +223,9 @@ const PresetImportReviewModal = ({
                 {nextNameStylePresetList.map(({ key, content }) => {
                     const commonProps = { language, frameInfo };
                     const currentContent = nameStylePresetMap[key]?.content;
-                    const willKeepNew = decisionMap.nameStylePresetMap[key].verdict;
+                    const verdict = decisionMap.nameStylePresetMap[key].verdict;
 
-                    return <tr key={key} className={mergeClass('import-action-row', willKeepNew ? 'will-keep-new' : '')}>
+                    return <tr key={key} className={mergeClass('import-action-row', verdict)}>
                         <td className="current-version">
                             {currentContent && <PresetOption {...commonProps} presetContent={currentContent}>
                                 {currentContent.preset}
@@ -222,7 +240,7 @@ const PresetImportReviewModal = ({
                             <div className="action-panel">
                                 <Button
                                     size="small"
-                                    type={willKeepNew === 'keep-new' ? 'default' : 'primary'}
+                                    type={verdict === 'keep-old' ? 'primary' : 'default'}
                                     onClick={() => setDecisionMap(cur => {
                                         const nextMap: Record<string, MergeEntry<NameStylePreset>> = { ...cur.nameStylePresetMap };
                                         nextMap[key] = { ...nextMap[key], verdict: 'keep-old' };
@@ -237,7 +255,7 @@ const PresetImportReviewModal = ({
                                 </Button>
                                 <Button
                                     size="small"
-                                    type={willKeepNew === 'keep-new' ? 'primary' : 'default'}
+                                    type={verdict === 'keep-new' ? 'primary' : 'default'}
                                     onClick={() => setDecisionMap(cur => {
                                         const nextMap: Record<string, MergeEntry<NameStylePreset>> = { ...cur.nameStylePresetMap };
                                         nextMap[key] = { ...nextMap[key], verdict: 'keep-new' };
@@ -250,6 +268,18 @@ const PresetImportReviewModal = ({
                                         : 'preset.review-table.action.import.label'
                                     ]}
                                 </Button>
+                                {currentContent && <Button
+                                    size="small"
+                                    type={verdict === 'keep-both' ? 'primary' : 'default'}
+                                    onClick={() => setDecisionMap(cur => {
+                                        const nextMap: Record<string, MergeEntry<NameStylePreset>> = { ...cur.nameStylePresetMap };
+                                        nextMap[key] = { ...nextMap[key], verdict: 'keep-both' };
+
+                                        return { ...cur, nameStylePresetMap: nextMap };
+                                    })}
+                                >
+                                    {language['preset.review-table.action.keep-both.label']}
+                                </Button>}
                             </div>
                         </td>
                     </tr>;
@@ -263,9 +293,9 @@ const PresetImportReviewModal = ({
                         language: language,
                     };
                     const currentContent = layoutPresetMap[key]?.content;
-                    const willKeepNew = decisionMap.layoutPresetMap[key].verdict;
+                    const verdict = decisionMap.layoutPresetMap[key].verdict;
 
-                    return <tr key={key} className={mergeClass('import-action-row', willKeepNew ? 'will-keep-new' : '')}>
+                    return <tr key={key} className={mergeClass('import-action-row', verdict)}>
                         <td className="current-version">
                             {currentContent && <LayoutPresetOption
                                 resolvedLayoutState={resolveFrameStyle({
@@ -302,7 +332,7 @@ const PresetImportReviewModal = ({
                             <div className="action-panel">
                                 <Button
                                     size="small"
-                                    type={willKeepNew === 'keep-new' ? 'default' : 'primary'}
+                                    type={verdict === 'keep-old' ? 'primary' : 'default'}
                                     onClick={() => setDecisionMap(cur => {
                                         const nextMap: Record<string, MergeEntry<LayoutPreset>> = { ...cur.layoutPresetMap };
                                         nextMap[key] = { ...nextMap[key], verdict: 'keep-old' };
@@ -317,7 +347,7 @@ const PresetImportReviewModal = ({
                                 </Button>
                                 <Button
                                     size="small"
-                                    type={willKeepNew === 'keep-new' ? 'primary' : 'default'}
+                                    type={verdict === 'keep-new' ? 'primary' : 'default'}
                                     onClick={() => setDecisionMap(cur => {
                                         const nextMap: Record<string, MergeEntry<LayoutPreset>> = { ...cur.layoutPresetMap };
                                         nextMap[key] = { ...nextMap[key], verdict: 'keep-new' };
@@ -330,6 +360,18 @@ const PresetImportReviewModal = ({
                                         : 'preset.review-table.action.import.label'
                                     ]}
                                 </Button>
+                                {currentContent && <Button
+                                    size="small"
+                                    type={verdict === 'keep-both' ? 'primary' : 'default'}
+                                    onClick={() => setDecisionMap(cur => {
+                                        const nextMap: Record<string, MergeEntry<LayoutPreset>> = { ...cur.layoutPresetMap };
+                                        nextMap[key] = { ...nextMap[key], verdict: 'keep-both' };
+
+                                        return { ...cur, layoutPresetMap: nextMap };
+                                    })}
+                                >
+                                    {language['preset.review-table.action.keep-both.label']}
+                                </Button>}
                             </div>
                         </td>
                     </tr>;
