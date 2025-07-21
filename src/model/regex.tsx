@@ -66,7 +66,7 @@ export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\
  * * Greek Extended 
  * * Greek and Coptic
  */
-export const TCG_SYMBOL_JOINLIST = '#★☆@∞Ͱ-Ͽἀ-῾';
+export const TCG_SYMBOL_JOINLIST = 'Ø#★☆@∞Ͱ-Ͽἀ-῾';
 export const TCGSymbolLetterRegex = new RegExp(`[${TCG_SYMBOL_JOINLIST}]`);
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
