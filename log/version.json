@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.3.17 (2025/07/21)",
+        "logList": [
+            {
+                "content": "Beta version for presets. Now you can save custom layout and name style as presets to reuse later. Presets are saved locally but can be exported and imported elsewhere."
+            },
+            {
+                "content": "Fix: Minor UX updates."
+            }
+        ]
+    },
+    {
         "version": "v2.3.16 (2025/07/12)",
         "logList": [
             {
