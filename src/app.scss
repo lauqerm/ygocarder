@@ -175,7 +175,7 @@ hr {
     overflow-y: scroll;
     position: relative;
 }
-.manager-visible {
+.manager_visible {
     .app-container {
         margin-right: 280px;
     }
@@ -223,6 +223,11 @@ hr {
         #save-button-tainted {
             text-align: center;
             justify-content: space-around;
+        }
+        .preview-sliding-window {
+            padding-bottom: var(--spacing-sm);
+            border-radius: var(--br-xl);
+            transition: transform 0.5s ease-in-out;
         }
     }
 }

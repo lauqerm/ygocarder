@@ -99,8 +99,7 @@ export const CardPreviewContainer = styled.div`
     display: block;
     width: calc(var(--card-width) * var(--resize-ratio) * 1 / var(--global-scale));
     height: calc(var(--card-height) * var(--resize-ratio) * 1 / var(--global-scale));
-    margin: var(--spacing);
-    margin-top: 0;
+    margin: 0 var(--spacing);
     .reset-button,
     .lightbox-button {
         display: none;

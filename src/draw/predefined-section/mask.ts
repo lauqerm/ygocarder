@@ -73,13 +73,15 @@ export const MaskPromise = getMaskPromise();
  * */
 export const applyAlphaMask = async (
     urlOrCanvas: string | CanvasImageSource,
-    maskData: Uint8ClampedArray<ArrayBufferLike>,
+    maskData: Uint8ClampedArray<ArrayBufferLike> | null,
     width: number,
     height: number,
 ) => {
     const { ctx, canvas } = createCanvas(width, height);
+    if (!ctx) return canvas;
     if (typeof urlOrCanvas === 'string') await drawAsset(ctx, urlOrCanvas, 0, 0);
     else ctx.drawImage(urlOrCanvas, 0, 0, width, height);
+    if (!maskData) return canvas;
     const layerData = ctx.getImageData(0, 0, width, height).data;
     for (let cnt = 0; cnt < layerData.length; cnt += 4) {
         layerData[cnt + 3] = maskData[cnt + 3];

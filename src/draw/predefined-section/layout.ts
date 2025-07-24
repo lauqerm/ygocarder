@@ -79,7 +79,7 @@ export const baseDrawLinkMapFoil = async (
     ctx.scale(globalScale, globalScale);
     if (willDyed) {
         const { ctx: linkMapFoilCtx, canvas: linkMapFoilCanvas } = createCanvas();
-        await drawFunction(linkMapFoilCtx);
+        if (linkMapFoilCtx) await drawFunction(linkMapFoilCtx);
         const { canvas: dyedLinkMapFoilCanvas } = dyeCanvas(linkMapFoilCanvas, dyeColor);
         ctx.drawImage(dyedLinkMapFoilCanvas, 0, 0);
     } else {
@@ -237,6 +237,7 @@ export const getLayoutDrawFunction = ({
             if (
                 !willReplaceFrame
                 && (topLeftFrame !== topRightFrame || dyeList[0] !== '' || dyeList[1] !== '')
+                && dyedTopFrameCtx
             ) {
                 const topRightCanvas = await applyAlphaMask(
                     `frame/frame-${topRightFrame}.png`,
@@ -254,6 +255,7 @@ export const getLayoutDrawFunction = ({
             if (
                 !willReplaceFrame
                 && (bottomLeftFrame !== bottomRightFrame || dyeList[2] !== '' || dyeList[3] !== '')
+                && dyedBottomFrameCtx
             ) {
                 /** What is this?
                  * 
@@ -274,11 +276,11 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             /** Leave empty space for card art */
             if (isPendulum) {
-                dyedTopFrameCtx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
-                dyedBottomFrameCtx.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedTopFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedBottomFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
             }
             /** Background replace frame */
-            if (willReplaceFrame) {
+            if (willReplaceFrame && dyedTopFrameCtx && dyedBottomFrameCtx) {
                 const { width: backgroundWidth, height: backgroundHeight } = backgroundCanvas;
                 dyedTopFrameCtx.globalCompositeOperation = 'source-atop';
                 dyedTopFrameCtx.drawImage(
@@ -390,7 +392,7 @@ export const getLayoutDrawFunction = ({
                     canvas: attributeFinishCanvas,
                     ctx: attributeFinishCtx,
                 } = createCanvas(cardWidth, (attributeY + attributeSize));
-                attributeFinishCtx.drawImage(attributeCanvas, 0, 0);
+                attributeFinishCtx?.drawImage(attributeCanvas, 0, 0);
                 await loopAttributeFinish(
                     attributeFinishCtx,
                     'art',
@@ -402,8 +404,10 @@ export const getLayoutDrawFunction = ({
                         );
                     },
                 );
-                attributeCtx.globalCompositeOperation = 'source-in';
-                attributeCtx.drawImage(attributeFinishCanvas, 0, 0);
+                if (attributeCtx) {
+                    attributeCtx.globalCompositeOperation = 'source-in';
+                    attributeCtx.drawImage(attributeFinishCanvas, 0, 0);
+                }
                 ctx.drawImage(attributeCanvas, 0, 0);
             } else {
                 ctx.drawImage(attributeCanvas, 0, 0);
@@ -440,11 +444,11 @@ export const getLayoutDrawFunction = ({
             ctx.resetTransform();
         },
         drawPendulumScaleIcon: async () => {
-            if (!ctx) return;
             const {
                 canvas: pendulumIconCanvas,
                 ctx: pendulumIconCtx,
             } = createCanvas(pendulumIconFrameWidth, pendulumIconFrameHeight);
+            if (!ctx || !pendulumIconCtx) return;
             await drawAsset(pendulumIconCtx, `frame-pendulum/pendulum-scale-${pendulumSize}.png`, 0, 0);
 
             if (pendulumFrameTypeMap.blue === 'scaleless') {
@@ -492,7 +496,7 @@ export const getLayoutDrawFunction = ({
                     topToPendulumStructure,
                 );
                 const dyedRightNameCanvas = dyeCanvas(nameRightCanvas, dyeList[1]).canvas;
-                dyedLeftNameCtx.drawImage(dyedRightNameCanvas, 0, 0);
+                dyedLeftNameCtx?.drawImage(dyedRightNameCanvas, 0, 0);
             }
             ctx.globalAlpha = opacityName / 100;
             ctx.drawImage(dyedLeftNameCanvas, 0, 0);
@@ -616,13 +620,13 @@ export const getLayoutDrawFunction = ({
             );
             if (willDye && validDyeColor) {
                 const { canvas: dyedCardBorderFoilCanvas } = dyeCanvas(pendulumBorderCanvas, dyeList[6]);
-                pendulumBorderCtx.drawImage(dyedCardBorderFoilCanvas, 0, 0);
+                pendulumBorderCtx?.drawImage(dyedCardBorderFoilCanvas, 0, 0);
             }
             if (artBorder) {
                 /**
                  * In artless border, the top of the pendulum effect box has shadow. But there is no shadow in normal border, so if art border is present, we cut the top of the artless border to remove the shadow, before seemlessly join it with the art border part.
                  */
-                pendulumBorderCtx.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
+                pendulumBorderCtx?.clearRect(0, 0, cardWidth, artlessFrameY + topToPendulumStructureFrame);
                 if (validDyeColor) {
                     /** Because we do not have "normal" foil, we use platinum as a base to dye. */
                     const usedFoil = foilType === 'normal' ? 'platinum' : foilType;
@@ -635,7 +639,7 @@ export const getLayoutDrawFunction = ({
                         30, topToPendulumStructureFrame,
                     );
                     const { canvas: dyedPendulumBorderFoilCanvas } = dyeCanvas(pendulumBorderFoilCanvas, dyeList[6]);
-                    pendulumBorderCtx.drawImage(dyedPendulumBorderFoilCanvas, 0, 0);
+                    pendulumBorderCtx?.drawImage(dyedPendulumBorderFoilCanvas, 0, 0);
                 } else {
                     await drawAsset(
                         pendulumBorderCtx,

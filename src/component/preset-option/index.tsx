@@ -49,6 +49,7 @@ const PresetOptionContainer = styled.div`
     .canvas-container {
         width: ${OPTION_WIDTH}px;
         height: ${OPTION_HEIGHT}px;
+        box-shadow: var(--bs-1);
     }
     .preset-option-action {
         display: grid;

@@ -116,6 +116,8 @@ function App() {
     const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
     const { db, dbReady } = useCarderDb();
     const [managerVisible, setManagerVisible] = useState(false);
+    const slidingWindowRef = useRef<HTMLDivElement>(null);
+    const containerWindowRef = useRef<HTMLDivElement>(null);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -511,7 +513,22 @@ function App() {
             <div id="app"
                 /** Prevent accidentally replace the page when dragging image into card art input. */
                 onDrop={() => { }}
-                className={`language-${languageInfo.codeName} manager-${managerVisible ? 'visible' : 'hidden'}`}
+                onScroll={e => {
+                    // console.log('e', e.currentTarget.scrollLeft, e.currentTarget.scrollTop, e.currentTarget.getBoundingClientRect());
+                    if (slidingWindowRef.current && containerWindowRef.current) {
+                        const threshold = Math.max(
+                            0,
+                            containerWindowRef.current.getBoundingClientRect().height
+                            - slidingWindowRef.current.getBoundingClientRect().height
+                        );
+                        const padding = 0;
+                        slidingWindowRef.current.style.transform = `translateY(${Math.max(
+                            0,
+                            Math.min(threshold, e.currentTarget.scrollTop) - padding,
+                        )}px)`;
+                    }
+                }}
+                className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
                         }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
@@ -539,177 +556,179 @@ function App() {
                             : languageInfo.initialMessage ?? ''}
                     </StyledAppLoading>}
                     {/* <div className="card-filter-panel"></div> */}
-                    <div className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
-                        <StyledDataButtonPanelContainer className="data-button-panel">
-                            <div className="imexport">
-                                <ExportPanel ref={exportPanelRef}
-                                    tainted={isTainted}
-                                    artworkCanvas={artworkCanvasRef.current}
-                                    onRequireExportData={exportData}
-                                    onRequireDownload={() => downloadButtonRef.current?.download()}
-                                    onClose={forceRefocus}
-                                />
-                                <div />
-                                <ImportPanel ref={importPanelRef}
-                                    onImport={treatNewCard}
-                                    onClose={forceRefocus}
-                                    allowHotkey={allowHotkey}
-                                    language={language}
-                                />
-                            </div>
-                            <BatchConverter language={language} />
-                            <DownloadButton ref={downloadButtonRef}
-                                canvasMap={canvasMap}
-                                imageChangeCount={imageChangeCount}
-                                isTainted={isTainted}
-                                isInitializing={isInitializing}
-                                globalScale={globalScale}
-                                onDownloadError={alertDownloadError}
-                            />
-                            {isTainted && <div id="save-button-tainted" className="save-button-container save-button-tainted">
-                                <div className="alert-label">
-                                    {language['alert.download.tainted-first-line']}<br />
-                                    {language['alert.download.tainted-second-line']} <TaintedCanvasWarning />
+                    <div ref={containerWindowRef} className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
+                        <div ref={slidingWindowRef} className="preview-sliding-window">
+                            <StyledDataButtonPanelContainer className="data-button-panel">
+                                <div className="imexport">
+                                    <ExportPanel ref={exportPanelRef}
+                                        tainted={isTainted}
+                                        artworkCanvas={artworkCanvasRef.current}
+                                        onRequireExportData={exportData}
+                                        onRequireDownload={() => downloadButtonRef.current?.download()}
+                                        onClose={forceRefocus}
+                                    />
+                                    <div />
+                                    <ImportPanel ref={importPanelRef}
+                                        onImport={treatNewCard}
+                                        onClose={forceRefocus}
+                                        allowHotkey={allowHotkey}
+                                        language={language}
+                                    />
                                 </div>
-                                <Dropdown
-                                    className="save-button-dropdown"
-                                    placement="bottomRight"
-                                    overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
-                                >
-                                    <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
-                                        <GatewayOutlined className="resolution-icon" />
-                                        <span className="resolution-overlay">{resolution[1]}</span>
-                                    </ResolutionButton>
-                                </Dropdown>
-                            </div>}
-                        </StyledDataButtonPanelContainer>
-                        <CardPreviewContainer className="card-preview-container">
-                            <Tooltip title={language['generic.reset.tooltip']}>
-                                <ResetButton
-                                    className="reset-button"
-                                    onClick={() => {
-                                        const consent = window.confirm(language['prompt.reset.message']);
+                                <BatchConverter language={language} />
+                                <DownloadButton ref={downloadButtonRef}
+                                    canvasMap={canvasMap}
+                                    imageChangeCount={imageChangeCount}
+                                    isTainted={isTainted}
+                                    isInitializing={isInitializing}
+                                    globalScale={globalScale}
+                                    onDownloadError={alertDownloadError}
+                                />
+                                {isTainted && <div id="save-button-tainted" className="save-button-container save-button-tainted">
+                                    <div className="alert-label">
+                                        {language['alert.download.tainted-first-line']}<br />
+                                        {language['alert.download.tainted-second-line']} <TaintedCanvasWarning />
+                                    </div>
+                                    <Dropdown
+                                        className="save-button-dropdown"
+                                        placement="bottomRight"
+                                        overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
+                                    >
+                                        <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
+                                            <GatewayOutlined className="resolution-icon" />
+                                            <span className="resolution-overlay">{resolution[1]}</span>
+                                        </ResolutionButton>
+                                    </Dropdown>
+                                </div>}
+                            </StyledDataButtonPanelContainer>
+                            <CardPreviewContainer className="card-preview-container">
+                                <Tooltip title={language['generic.reset.tooltip']}>
+                                    <ResetButton
+                                        className="reset-button"
+                                        onClick={() => {
+                                            const consent = window.confirm(language['prompt.reset.message']);
 
-                                        if (consent) {
-                                            const { setCard, card } = useCard.getState();
-                                            const defaultCard = { id: card.id, ...getDefaultCard() };
-                                            const contextualDefaultCardData = card.format === 'tcg'
-                                                ? defaultCard
-                                                : changeCardFormat(defaultCard, 'ocg');
+                                            if (consent) {
+                                                const { setCard, card } = useCard.getState();
+                                                const defaultCard = { id: card.id, ...getDefaultCard() };
+                                                const contextualDefaultCardData = card.format === 'tcg'
+                                                    ? defaultCard
+                                                    : changeCardFormat(defaultCard, 'ocg');
 
-                                            setCard(contextualDefaultCardData, true);
-                                            setImageChangeCount(cnt => cnt + 1);
-                                            cardInputRef.current?.forceCardData(contextualDefaultCardData);
-                                        }
-                                    }}
-                                >
-                                    <ClearOutlined />
-                                </ResetButton>
-                            </Tooltip>
-                            <Tooltip title={<div className="center">
-                                {language['button.full-size.label']}
-                                {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
-                            </div>}>
-                                <LightboxButton className="lightbox-button" onClick={() => displayLightbox()}>
-                                    <ZoomInOutlined />
-                                </LightboxButton>
-                            </Tooltip>
-                            {/** Preview canvas is used to display a presentable card for user, in contrast of the actual rendered card below.
-                             * The reason is because when the card become bigger, we must resize it down to display it fully, which lead to a blurry or too sharp image. Canvas resizing is better than css resizing, so we use a separate smaller canvas to preview, but forward all user-action through it so user can still copy the card as full-size.
-                             */}
-                            <canvas
-                                key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.2}
-                                id="preview-canvas"
-                                ref={previewCanvasRef}
-                                width={CanvasWidth}
-                                height={CanvasHeight}
-                            />
-                            <CardCanvasGroupContainer className="card-canvas-group">
+                                                setCard(contextualDefaultCardData, true);
+                                                setImageChangeCount(cnt => cnt + 1);
+                                                cardInputRef.current?.forceCardData(contextualDefaultCardData);
+                                            }
+                                        }}
+                                    >
+                                        <ClearOutlined />
+                                    </ResetButton>
+                                </Tooltip>
+                                <Tooltip title={<div className="center">
+                                    {language['button.full-size.label']}
+                                    {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
+                                </div>}>
+                                    <LightboxButton className="lightbox-button" onClick={() => displayLightbox()}>
+                                        <ZoomInOutlined />
+                                    </LightboxButton>
+                                </Tooltip>
+                                {/** Preview canvas is used to display a presentable card for user, in contrast of the actual rendered card below.
+                                 * The reason is because when the card become bigger, we must resize it down to display it fully, which lead to a blurry or too sharp image. Canvas resizing is better than css resizing, so we use a separate smaller canvas to preview, but forward all user-action through it so user can still copy the card as full-size.
+                                 */}
                                 <canvas
-                                    key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.1}
-                                    id="export-canvas"
-                                    ref={exportCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
+                                    key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.2}
+                                    id="preview-canvas"
+                                    ref={previewCanvasRef}
+                                    width={CanvasWidth}
+                                    height={CanvasHeight}
                                 />
-                                {/** Overlay guarding seems very janky, cursor should suffix for now */}
-                                <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
-                                    {/* <div className="canvas-guard-alert">Generating...</div> */}
-                                </div>
-                                <canvas id="frameCanvas"
-                                    key={(lightboxRef.current?.getCanvasKey() ?? 0)}
-                                    ref={frameCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="nameCanvas"
-                                    ref={nameCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={148 * globalScale}
-                                />
-                                <canvas id="cardIconCanvas"
-                                    ref={cardIconCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={222 * globalScale}
-                                />
-                                <canvas id="pendulumScaleCanvas"
-                                    ref={pendulumScaleCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={920 * globalScale}
-                                />
-                                <canvas id="pendulumEffectCanvas"
-                                    ref={pendulumEffectCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={920 * globalScale}
-                                />
-                                <canvas id="typeCanvas"
-                                    ref={typeCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="effectCanvas"
-                                    ref={effectCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="statCanvas"
-                                    ref={statCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="setIdCanvas"
-                                    ref={setIdCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="passwordCanvas"
-                                    ref={passwordCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="creatorCanvas"
-                                    ref={creatorCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="stickerCanvas"
-                                    ref={stickerCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas id="finishCanvas"
-                                    ref={finishCanvasRef}
-                                    width={CanvasWidth * globalScale}
-                                    height={CanvasHeight * globalScale}
-                                />
-                                <canvas className="crop-canvas"
-                                    ref={artworkCanvasRef}
-                                />
-                                <canvas className="crop-canvas"
-                                    ref={backgroundCanvasRef}
-                                />
-                            </CardCanvasGroupContainer>
-                        </CardPreviewContainer>
+                                <CardCanvasGroupContainer className="card-canvas-group">
+                                    <canvas
+                                        key={(lightboxRef.current?.getCanvasKey() ?? 0) + 0.1}
+                                        id="export-canvas"
+                                        ref={exportCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    {/** Overlay guarding seems very janky, cursor should suffix for now */}
+                                    <div id="export-canvas-guard" onContextMenu={e => e.preventDefault()}>
+                                        {/* <div className="canvas-guard-alert">Generating...</div> */}
+                                    </div>
+                                    <canvas id="frameCanvas"
+                                        key={(lightboxRef.current?.getCanvasKey() ?? 0)}
+                                        ref={frameCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="nameCanvas"
+                                        ref={nameCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={148 * globalScale}
+                                    />
+                                    <canvas id="cardIconCanvas"
+                                        ref={cardIconCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={222 * globalScale}
+                                    />
+                                    <canvas id="pendulumScaleCanvas"
+                                        ref={pendulumScaleCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={920 * globalScale}
+                                    />
+                                    <canvas id="pendulumEffectCanvas"
+                                        ref={pendulumEffectCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={920 * globalScale}
+                                    />
+                                    <canvas id="typeCanvas"
+                                        ref={typeCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="effectCanvas"
+                                        ref={effectCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="statCanvas"
+                                        ref={statCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="setIdCanvas"
+                                        ref={setIdCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="passwordCanvas"
+                                        ref={passwordCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="creatorCanvas"
+                                        ref={creatorCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="stickerCanvas"
+                                        ref={stickerCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas id="finishCanvas"
+                                        ref={finishCanvasRef}
+                                        width={CanvasWidth * globalScale}
+                                        height={CanvasHeight * globalScale}
+                                    />
+                                    <canvas className="crop-canvas"
+                                        ref={artworkCanvasRef}
+                                    />
+                                    <canvas className="crop-canvas"
+                                        ref={backgroundCanvasRef}
+                                    />
+                                </CardCanvasGroupContainer>
+                            </CardPreviewContainer>
+                        </div>
                     </div>
                     {isLoading === false && <CardInputPanel
                         ref={cardInputRef}
