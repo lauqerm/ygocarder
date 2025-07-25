@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '21/07/2025';
+        const currentReminder = '25/07/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,16 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Anonymous User at Jun 24, 2025',
+                            question: 'Is it possible to make it so that users can scroll through the customization options while the card preview always stays in place onscreen? (Or alternatively, is it possible to give the card preview its own separate scroll bar?)',
+                            answer: 'I have added some auto scroll behavior to keep the card in view, hopefully it looks better now.',
+                        },
+                        {
+                            author: 'Blake at Jun 23, 2025',
+                            question: 'Are you able to make custom attributes and upload them on here?',
+                            answer: 'No I can\'t unfortunately, as best I can provide you a way to use your own custom attribute.',
+                        },
                         {
                             author: 'Anonymous User at Jun 18, 2025',
                             question: 'The drag and drop feature is pretty nice... Is there a way for it not to take precedence over the drag and drop in the text box? It kinda makes it fizzle.',

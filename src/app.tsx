@@ -514,18 +514,27 @@ function App() {
                 /** Prevent accidentally replace the page when dragging image into card art input. */
                 onDrop={() => { }}
                 onScroll={e => {
-                    // console.log('e', e.currentTarget.scrollLeft, e.currentTarget.scrollTop, e.currentTarget.getBoundingClientRect());
+                    const currentScrollY = e.currentTarget.scrollTop;
                     if (slidingWindowRef.current && containerWindowRef.current) {
-                        const threshold = Math.max(
-                            0,
-                            containerWindowRef.current.getBoundingClientRect().height
-                            - slidingWindowRef.current.getBoundingClientRect().height
-                        );
-                        const padding = 0;
-                        slidingWindowRef.current.style.transform = `translateY(${Math.max(
-                            0,
-                            Math.min(threshold, e.currentTarget.scrollTop) - padding,
-                        )}px)`;
+                        const viewportWidth = document.body.clientWidth;
+                        // const viewportHeight = window.innerHeight;
+                        const padding = viewportWidth < 1600 ? 0 : 10;
+                        const viewportHeight = e.currentTarget.getBoundingClientRect().height;
+                        const slidingWindowHeight = slidingWindowRef.current.getBoundingClientRect().height;
+                        /** If the sliding window fit entirely inside viewport, just keep their position updated */
+                        if (viewportHeight > slidingWindowHeight + padding) {
+                            const threshold = Math.max(
+                                0,
+                                containerWindowRef.current.getBoundingClientRect().height - slidingWindowHeight
+                            );
+                            slidingWindowRef.current.style.transform = `translateY(${Math.max(
+                                0,
+                                Math.min(threshold, currentScrollY) - padding,
+                            )}px)`;
+                        } else {
+                            /** It's not worth to deal with this case right now, as the UX here is very complex */
+                            slidingWindowRef.current.style.transform = '';
+                        }
                     }
                 }}
                 className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
