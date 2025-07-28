@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '25/07/2025';
+        const currentReminder = '28/07/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,11 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Anonymous User at Jun 28, 2025',
+                            question: 'Thank you for responding so quickly! I don\'t see the auto-scroll effect happening for the card preview, though. I reset my browser just in case, but that didn\'t seem to work. (Maybe I just need to wait a bit for the update to kick in or if there\'s some new hidden option to toggle it?) In any case, I hope it works eventually because this card maker is awesome!',
+                            answer: 'That\'s pretty weird indeed. The feature should apply automatically without any additional action. Anyway, in the Report dialog there should be a "Take screenshot" button, if possible please submit the app\'s screenshot so I can try to diagnose the problem. Thanks for your help.',
+                        },
                         {
                             author: 'Anonymous User at Jun 24, 2025',
                             question: 'Is it possible to make it so that users can scroll through the customization options while the card preview always stays in place onscreen? (Or alternatively, is it possible to give the card preview its own separate scroll bar?)',
@@ -157,21 +162,6 @@ export const QuestionAndFeedback = () => {
                             author: 'Skip at Jun 27, 2025',
                             question: 'Good job! I notice a mistake with the attribute spell card in french. It is not "SPELL" but "MAGIE" we should use.',
                             answer: 'Indeed, I have messed up the Spell attribute between French and German cards. It should be fixed by now.'
-                        },
-                        {
-                            author: 'Anonymous User at Jun 24, 2025',
-                            question: 'In a line with brackets (), with no justifing syntax, the line with brackets will appear more compressed compared to a line with no brackets',
-                            answer: 'The first line ("3 Xyz...") is using the non-breakable line syntax, which does not obey the overall compressing ratio. I will update the description to make it more clear.'
-                        },
-                        {
-                            author: 'Blake at Jun 23, 2025',
-                            question: 'When choose an image for the background of the card, not only it covers the card but also the main image of the card. Can you do something to fix it please?',
-                            answer: 'Hi there, the background system is indeed has a bug, but in your case, it seems that you are using the "Replace Frame" option, which will replace the usual card frame (Normal, Effect, etc...) with your background. You may want to switch cover type into "Fit to art border" instead.',
-                        },
-                        {
-                            author: 'Die Frauen at Jun 22, 2025',
-                            question: 'Looking good. One last change for now I\'d like to see is, if you could implement that dye feature on the card layout for the card frames as well. That way you could get different variations from just Gold and Platinum',
-                            answer: 'Update: I already implement the feature.\nFoil system contains more parts, but I think it should be doable. I will look into it later.',
                         },
                         {
                             author: 'Rush Duel at Jun 22, 2025',
