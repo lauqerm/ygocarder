@@ -429,6 +429,9 @@
         "setting.option.hotkey.tooltip": "Cảnh báo: Sử dụng phím tắt có thể khiến bạn không hoàn tác lại văn bản trước đó.",
         "setting.option.resolution.label": "Độ phân giải (px)",
         "setting.option.resolution.warning": "Ảnh hưởng tới hiệu suất",
+        "setting.option.sliding-type.auto.label": "Tự di chuyển",
+        "setting.option.sliding-type.label": "Xem trước",
+        "setting.option.sliding-type.manual.label": "Kéo thủ công",
         "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }

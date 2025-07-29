@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '28/07/2025';
+        const currentReminder = '28/07/2025.1';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,11 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Anonymous User at Jun 28, 2025',
+                            question: 'Happy to help! I tried to screenshot the auto-scroll issue via the app before, but the UI doesn\'t let me scroll down and screenshot at the same time, so I won\'t be able to show you clearly. (I\'d use my own screenshots, but I can\'t paste or upload them, either.) What I can tell you is that the card preview scrolls up along with the rest of the page, so it never moves below the "Finish: Art" section. If there\'s another way I can show you the issue to help you solve this, please let me know!',
+                            answer: 'Don\'t worry, even if you could not capture the exact behavior, it still provide information about your layout and screensize which could be useful for debugging.\n\nOn the other hand, I have added the manual option that allow you to grab the preview and slide it at will. You can change the behavior in Setting => "Preview sliding"',
+                        },
                         {
                             author: 'Anonymous User at Jun 28, 2025',
                             question: 'Thank you for responding so quickly! I don\'t see the auto-scroll effect happening for the card preview, though. I reset my browser just in case, but that didn\'t seem to work. (Maybe I just need to wait a bit for the update to kick in or if there\'s some new hidden option to toggle it?) In any case, I hope it works eventually because this card maker is awesome!',

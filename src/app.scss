@@ -227,7 +227,20 @@ hr {
         .preview-sliding-window {
             padding-bottom: var(--spacing-sm);
             border-radius: var(--br-xl);
-            transition: transform 0.5s ease-in-out;
+        }
+        &.sliding-type_manual {
+            #preview-canvas.js-export-available,
+            .preview-sliding-window {
+                cursor: grab;
+            }
+            canvas {
+                cursor: grab !important;
+            }
+        }
+        &.sliding-type_auto {
+            .preview-sliding-window {
+                transition: transform 0.5s ease-in-out;
+            }
         }
     }
 }
@@ -324,4 +337,11 @@ input:-internal-autofill-selected {
     --dialog-border-radius: var(--br-xl);
     --dialog-padding: var(--spacing);
     --input-focus-outline: var(--bw) auto var(--main-active);
+}
+
+.sliding-movable-window {
+    .moveable-line,
+    .moveable-control {
+        visibility: hidden;
+    }
 }

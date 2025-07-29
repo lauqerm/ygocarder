@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.19 (2025/07/28)",
+        "logList": [
+            {
+                "content": "Support manual drag option for sticky preview feature."
+            }
+        ]
+    },
+    {
         "version": "v2.3.18 (2025/07/25)",
         "logList": [
             {

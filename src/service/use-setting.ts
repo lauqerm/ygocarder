@@ -1,4 +1,4 @@
-import { CanvasConst, ExportFormat } from 'src/model';
+import { CanvasConst, ExportFormat, SlindingType } from 'src/model';
 import { create } from 'zustand';
 
 export type Setting = {
@@ -12,6 +12,7 @@ export type Setting = {
     showCreativeOption: boolean,
     showExtraAttribute: boolean,
     showExtraDecorativeOption: boolean,
+    slidingType: SlindingType,
 };
 export type SettingStore = {
     setting: Setting,
@@ -29,6 +30,7 @@ export const useSetting = create<SettingStore>((set) => {
         showCreativeOption,
         showExtraAttribute,
         showExtraDecorativeOption,
+        slidingType,
     } = ((): Record<string, any> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
@@ -48,6 +50,7 @@ export const useSetting = create<SettingStore>((set) => {
                 ? globalScale
                 : 1,
             exportFormat: typeof exportFormat === 'string' ? exportFormat as ExportFormat : 'csv',
+            slidingType: typeof slidingType === 'string' ? slidingType as SlindingType : 'auto',
             resolution: Array.isArray(resolution) && typeof resolution[0] === 'number' && typeof resolution[1] === 'number'
                 ? resolution as [number, number]
                 : [CanvasConst.width, CanvasConst.height],

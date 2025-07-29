@@ -6,6 +6,7 @@ import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } fr
 import { v4 as uuid } from 'uuid';
 import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
+import { LanguageDataDictionary } from 'src/service';
 
 export const getDefaultCrop = () => ({
     x: 0,
@@ -321,6 +322,18 @@ export const ExportFormatList = [
     {
         value: 'xlsx' as const,
         label: '.xlsx',
+    },
+];
+
+export type SlindingType = ReturnType<typeof getSlindingTypeList>[0]['value'];
+export const getSlindingTypeList = (language: LanguageDataDictionary) => [
+    {
+        value: 'auto' as const,
+        label: language['setting.option.sliding-type.auto.label'],
+    },
+    {
+        value: 'manual' as const,
+        label: language['setting.option.sliding-type.manual.label'],
     },
 ];
 

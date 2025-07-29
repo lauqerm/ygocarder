@@ -13,6 +13,7 @@ import {
 import {
     forceRefocus,
     isMobileDevice,
+    mergeClass,
 } from './util';
 import {
     BatchConverter,
@@ -59,6 +60,7 @@ import {
 import { configure, HotKeys } from 'react-hotkeys';
 import { useShallow } from 'zustand/react/shallow';
 import * as Sentry from '@sentry/react';
+import Moveable from 'react-moveable';
 
 /** React hotkey setup */
 configure({
@@ -79,11 +81,19 @@ function App() {
         softMode,
         globalScale,
         resolution,
-    } = useSetting(useShallow(({ setting: { allowHotkey, reduceMotionColor, globalScale, resolution } }) => ({
+        slidingType,
+    } = useSetting(useShallow(({ setting: {
+        allowHotkey,
+        reduceMotionColor,
+        globalScale,
+        resolution,
+        slidingType,
+    } }) => ({
         softMode: reduceMotionColor,
         allowHotkey,
         globalScale,
         resolution,
+        slidingType,
     })));
     const {
         isInitiating: isLanguageInitiating,
@@ -118,6 +128,7 @@ function App() {
     const [managerVisible, setManagerVisible] = useState(false);
     const slidingWindowRef = useRef<HTMLDivElement>(null);
     const containerWindowRef = useRef<HTMLDivElement>(null);
+    const moveableRef = useRef<Moveable>(null);
 
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -202,6 +213,12 @@ function App() {
             document.body.style.setProperty(styleName, languageInfo.style?.[styleName] ?? '' as any);
         });
     }, [languageInfo]);
+    useEffect(() => {
+        setImageChangeCount(cnt => cnt + 1);
+        if (slidingType === 'auto' && slidingWindowRef.current) {
+            slidingWindowRef.current.style.transform = '';
+        }
+    }, [slidingType]);
     useEffect(() => {
         (async () => {
             try {
@@ -515,7 +532,7 @@ function App() {
                 onDrop={() => { }}
                 onScroll={e => {
                     const currentScrollY = e.currentTarget.scrollTop;
-                    if (slidingWindowRef.current && containerWindowRef.current) {
+                    if (slidingWindowRef.current && containerWindowRef.current && slidingType === 'auto') {
                         const viewportWidth = document.body.clientWidth;
                         // const viewportHeight = window.innerHeight;
                         const padding = viewportWidth < 1600 ? 0 : 10;
@@ -565,7 +582,11 @@ function App() {
                             : languageInfo.initialMessage ?? ''}
                     </StyledAppLoading>}
                     {/* <div className="card-filter-panel"></div> */}
-                    <div ref={containerWindowRef} className={`card-preview-panel ${isTainted ? 'export-tainted' : 'export-normal'}`}>
+                    <div ref={containerWindowRef} className={mergeClass(
+                        'card-preview-panel',
+                        isTainted ? 'export-tainted' : 'export-normal',
+                        `sliding-type_${slidingType}`,
+                    )}>
                         <div ref={slidingWindowRef} className="preview-sliding-window">
                             <StyledDataButtonPanelContainer className="data-button-panel">
                                 <div className="imexport">
@@ -738,6 +759,29 @@ function App() {
                                 </CardCanvasGroupContainer>
                             </CardPreviewContainer>
                         </div>
+                        <Moveable
+                            ref={moveableRef}
+                            target={slidingWindowRef}
+                            className="sliding-movable-window"
+                            draggable={true}
+                            throttleDrag={1}
+                            edgeDraggable={false}
+                            startDragRotate={0}
+                            throttleDragRotate={0}
+                            throttleScale={0}
+                            snappable={true}
+                            snapContainer={'.card-preview-panel'}
+                            bounds={{
+                                left: 0,
+                                top: 0,
+                                right: 0,
+                                bottom: 0,
+                                position: 'css',
+                            }}
+                            onDrag={e => {
+                                if (slidingType === 'manual') e.target.style.transform = e.transform;
+                            }}
+                        />
                     </div>
                     {isLoading === false && <CardInputPanel
                         ref={cardInputRef}
