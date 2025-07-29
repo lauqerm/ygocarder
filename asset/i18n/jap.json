@@ -428,6 +428,9 @@
         "prompt.warning.on-leave.label": "Leaving right now may make you lose unsaved progress, proceed?",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "service.decode.partial.message": "Partial export mode",
-        "setting.option.resolution.warning": "May affect performance"
+        "setting.option.resolution.warning": "May affect performance",
+        "setting.option.sliding-type.label": "Preview sliding",
+        "setting.option.sliding-type.auto.label": "Auto",
+        "setting.option.sliding-type.manual.label": "Manual drag"
     }
 }
