@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '29/07/2025';
+        const currentReminder = '29/07/2025.1';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,9 +68,13 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
-                            author: 'Ebrahim at Jun 29, 2025',
+                            author: 'Ivan/Liger  at Jul 29, 2025',
+                            question: 'Hello, sorry to bother you. I\'m not sure if your site is under maintenance, but I\'ve noticed some major issues recently. It all started when I could no longer save images — nothing in the top bar seems to work anymore. I tried switching my browser to “Desktop mode” to see if it would help, but that made things even worse. The default zoom setting at 100% doesn\'t display properly, so I had to set it to 50% just to see the full layout. Unfortunately, I still can\'t do anything at the moment. I hope this helps. I haven’t noticed any other issues for now.\n\nBest regards,\nIvan / Liger'
+                        },
+                        {
+                            author: 'Ebrahim at Jul 29, 2025',
                             question: 'I\'m trying to download the card from the website to my phone but the download button isn\'t working can you please fix it.',
-                            answer: 'I will try, but generally Opera mobile is not the intended browser to use the app. You should use Chrome or Firefox on mobile for a better experience.',
+                            answer: 'Both issues seem to have the same cause, it should be fixed by now.',
                         },
                         {
                             author: 'Anonymous User at Jul 29, 2025',
@@ -78,27 +82,27 @@ export const QuestionAndFeedback = () => {
                             answer: 'Thanks, happy that the work around worked because honestly I\'m out of ideas otherwise.',
                         },
                         {
-                            author: 'Anonymous User at Jun 28, 2025',
+                            author: 'Anonymous User at Jul 28, 2025',
                             question: 'Happy to help! I tried to screenshot the auto-scroll issue via the app before, but the UI doesn\'t let me scroll down and screenshot at the same time, so I won\'t be able to show you clearly. (I\'d use my own screenshots, but I can\'t paste or upload them, either.) What I can tell you is that the card preview scrolls up along with the rest of the page, so it never moves below the "Finish: Art" section. If there\'s another way I can show you the issue to help you solve this, please let me know!',
                             answer: 'Don\'t worry, even if you could not capture the exact behavior, it still provide information about your layout and screensize which could be useful for debugging.\n\nOn the other hand, I have added the manual option that allow you to grab the preview and slide it at will. You can change the behavior in Setting => "Preview sliding"',
                         },
                         {
-                            author: 'Anonymous User at Jun 28, 2025',
+                            author: 'Anonymous User at Jul 28, 2025',
                             question: 'Thank you for responding so quickly! I don\'t see the auto-scroll effect happening for the card preview, though. I reset my browser just in case, but that didn\'t seem to work. (Maybe I just need to wait a bit for the update to kick in or if there\'s some new hidden option to toggle it?) In any case, I hope it works eventually because this card maker is awesome!',
                             answer: 'That\'s pretty weird indeed. The feature should apply automatically without any additional action. Anyway, in the Report dialog there should be a "Take screenshot" button, if possible please submit the app\'s screenshot so I can try to diagnose the problem. Thanks for your help.',
                         },
                         {
-                            author: 'Anonymous User at Jun 24, 2025',
+                            author: 'Anonymous User at Jul 24, 2025',
                             question: 'Is it possible to make it so that users can scroll through the customization options while the card preview always stays in place onscreen? (Or alternatively, is it possible to give the card preview its own separate scroll bar?)',
                             answer: 'I have added some auto scroll behavior to keep the card in view, hopefully it looks better now.',
                         },
                         {
-                            author: 'Blake at Jun 23, 2025',
+                            author: 'Blake at Jul 23, 2025',
                             question: 'Are you able to make custom attributes and upload them on here?',
                             answer: 'No I can\'t unfortunately, as best I can provide you a way to use your own custom attribute.',
                         },
                         {
-                            author: 'Anonymous User at Jun 18, 2025',
+                            author: 'Anonymous User at Jul 18, 2025',
                             question: 'The drag and drop feature is pretty nice... Is there a way for it not to take precedence over the drag and drop in the text box? It kinda makes it fizzle.',
                             answer: 'This should be fixed by now.',
                         },

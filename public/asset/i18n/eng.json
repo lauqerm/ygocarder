@@ -428,7 +428,7 @@
         "setting.option.resolution.label": "Resolution (px)",
         "setting.option.resolution.warning": "May affect performance",
         "setting.option.sliding-type.auto.label": "Auto",
-        "setting.option.sliding-type.label": "Preview sliding",
+        "setting.option.sliding-type.label": "Preview sliding (Desktop only)",
         "setting.option.sliding-type.manual.label": "Manual drag",
         "setting.option.soft-mode.label": "Reduce Color and Motion"
     }

@@ -213,7 +213,7 @@ export const ExportPanel = forwardRef(({
         <Modal
             visible={visible}
             title={language['button.export-modal.label']}
-            className="global-overlay"
+            className="global-overlay export-modal"
             onCancel={() => {
                 setVisible(false);
                 onClose();

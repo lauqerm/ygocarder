@@ -87,7 +87,7 @@
     .ant-input-wrapper .ant-input:first-child,
     .ant-input-wrapper .ant-input:last-child,
     textarea.ant-input,
-    .ant-input-group>.ant-input-affix-wrapper:not(:first-child) {
+    .ant-input-group > .ant-input-affix-wrapper:not(:first-child) {
         border-radius: var(--br);
         border-top-left-radius: var(--br);
         border-bottom-left-radius: var(--br);
@@ -108,7 +108,6 @@ span.ant-input-affix-wrapper {
 }
 
 .ant-input-group {
-
     .ant-radio-button-wrapper,
     .ant-input,
     .ant-input-affix-wrapper {
@@ -185,7 +184,6 @@ div.ant-slider {
     }
 
     &:hover {
-
         .ant-slider-handle:not(.ant-tooltip-open),
         .ant-slider-handle {
             border-color: var(--sub-active);
@@ -219,7 +217,7 @@ div.ant-slider {
     border-color: var(--main-active);
 }
 
-.ant-checkbox-input:focus+.ant-checkbox-inner {
+.ant-checkbox-input:focus + .ant-checkbox-inner {
     border: 1px solid var(--sub-active);
     box-shadow: 0 0 0 2px var(--sub-active);
 }
@@ -348,7 +346,7 @@ button.ant-btn {
     }
 }
 
-.ant-checkbox+span {
+.ant-checkbox + span {
     transform: translateY(1px);
     display: inline-block;
 }
@@ -431,7 +429,7 @@ button.ant-btn {
 }
 
 .ant-collapse {
-    >.ant-collapse-item>.ant-collapse-header {
+    > .ant-collapse-item > .ant-collapse-header {
         color: var(--color);
     }
 
@@ -461,4 +459,8 @@ button.ant-btn {
     .ant-tabs-ink-bar {
         background: var(--sub-slider);
     }
+}
+
+.global-overlay {
+    max-width: 90%;
 }

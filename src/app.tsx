@@ -120,6 +120,7 @@ function App() {
         initiate,
         loadDefaultLanguage,
     })));
+    const isMobile = isMobileDevice();
     const [isInitializing, setInitializing] = useState(true);
     const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [error, setError] = useState('');
@@ -759,7 +760,7 @@ function App() {
                                 </CardCanvasGroupContainer>
                             </CardPreviewContainer>
                         </div>
-                        <Moveable
+                        {!isMobile && <Moveable
                             ref={moveableRef}
                             target={slidingWindowRef}
                             className="sliding-movable-window"
@@ -770,6 +771,7 @@ function App() {
                             throttleDragRotate={0}
                             throttleScale={0}
                             snappable={true}
+                            pinchable={true}
                             snapContainer={'.card-preview-panel'}
                             bounds={{
                                 left: 0,
@@ -781,7 +783,7 @@ function App() {
                             onDrag={e => {
                                 if (slidingType === 'manual') e.target.style.transform = e.transform;
                             }}
-                        />
+                        />}
                     </div>
                     {isLoading === false && <CardInputPanel
                         ref={cardInputRef}

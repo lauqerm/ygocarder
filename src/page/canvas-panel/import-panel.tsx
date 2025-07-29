@@ -256,7 +256,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
             title={mode === 'merge'
                 ? language['button.import.merge.label']
                 : language['generic.import.label']}
-            className="global-overlay"
+            className="global-overlay import-modal"
             onCancel={cleanup}
             okText={language['prompt.import.ok.label']}
             confirmLoading={loading}

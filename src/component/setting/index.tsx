@@ -21,6 +21,7 @@ const StyledSettingPanel = styled.div`
     border: var(--bw) solid var(--sub-level-1);
     border-radius: var(--br-lg);
     color: var(--color);
+    min-width: 15rem;
     .list-option {
         margin-bottom: var(--spacing-xs);
     }
