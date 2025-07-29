@@ -23,6 +23,8 @@ import {
     VietnameseDiacriticLetterRegex,
     WholeWordRegex,
     getBulletSpacing,
+    TCGSymbolRatioMap,
+    TCGSymbolBaselineOffsetMap,
 } from 'src/model';
 import {
     drawBullet,
@@ -449,9 +451,12 @@ export const drawLine = ({
                         drawLetter(drawLetterofWordParameter);
                         stopApplyNumberFont();
                     } else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
-                        applySymbolFont();
+                        const { fontSize } = applySymbolFont(TCGSymbolRatioMap[currentLetter]);
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        drawLetter(drawLetterofWordParameter);
+                        drawLetter({
+                            ...drawLetterofWordParameter,
+                            baseline: drawLetterofWordParameter.baseline + fontSize * (TCGSymbolBaselineOffsetMap[fragment] ?? 0),
+                        });
                         stopApplySymbolFont();
                     } else {
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
@@ -469,7 +474,7 @@ export const drawLine = ({
             /** Some specific letter ("Evil★Twin's Trouble Sunny" TCG) requires different font. */
             else if (TCGSymbolLetterRegex.test(fragment) && fontStyle === 'tcg') {
                 const letter = fragment;
-                applySymbolFont();
+                const { fontSize } = applySymbolFont(TCGSymbolRatioMap[fragment]);
 
                 const letterWidth = ctx.measureText(letter).width * letterSpacingRatio * xRatio;
                 const leftGap = Math.max(defaultGap, letterWidth * gapRatio);
@@ -477,7 +482,12 @@ export const drawLine = ({
                 const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
 
                 fragmentEdge -= lostLeftWidth;
-                drawLetter({ ...drawLetterParameter, letter, edge: fragmentEdge });
+                drawLetter({
+                    ...drawLetterParameter,
+                    baseline: drawLetterParameter.baseline + fontSize * (TCGSymbolBaselineOffsetMap[fragment] ?? 0),
+                    letter,
+                    edge: fragmentEdge,
+                });
                 fragmentEdge += letterWidth;
 
                 stopApplySymbolFont();

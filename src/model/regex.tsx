@@ -68,6 +68,14 @@ export const TCG_LETTER_JOINLIST = '&A-Za-z0-9\\-/\\s\\(\\)!,.‘“’”:;<>\\
  */
 export const TCG_SYMBOL_JOINLIST = 'Ø#★☆@∞Ͱ-Ͽἀ-῾';
 export const TCGSymbolLetterRegex = new RegExp(`[${TCG_SYMBOL_JOINLIST}]`);
+export const TCGSymbolRatioMap = {
+    '★': 0.55,
+    '☆': 0.55,
+};
+export const TCGSymbolBaselineOffsetMap = {
+    '★': -0.05,
+    '☆': -0.05,
+};
 
 export const OCG_KEYWORD_JOIN_REGEX = ocgKeywordDataList.map(entry => entry.regexForm ?? entry.shortForm).join('|');
 export const OCG_KEYWORD_SOURCE = `(${OCG_KEYWORD_JOIN_REGEX})(?![^{]*})`;

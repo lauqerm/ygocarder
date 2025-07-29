@@ -25,6 +25,7 @@ import {
     TextData,
     VietnameseDiacriticLetterRegex,
     WholeWordRegex,
+    TCGSymbolRatioMap,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter, scaleFontSizeData } from 'src/util';
@@ -267,7 +268,7 @@ export const analyzeToken = ({
                 }
                 /** Special symbol in TCG card ("Evil☆Twin") may use different font, again we assume the letter have similar size. */
                 else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
-                    applySymbolFont();
+                    applySymbolFont(TCGSymbolRatioMap[currentLetter]);
                     actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     stopApplySymbolFont();
                 }
@@ -294,7 +295,7 @@ export const analyzeToken = ({
         }
         /** Special symbol in TCG card ("Evil☆Twin") may use different font */
         else if (TCGSymbolLetterRegex.test(fragment) && fontStyle === 'tcg') {
-            applySymbolFont();
+            applySymbolFont(TCGSymbolRatioMap[fragment]);
             const fragmentWidth = ctx.measureText(fragment).width * letterSpacingRatio;
             stopApplySymbolFont();
 

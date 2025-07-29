@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '29/07/2025.1';
+        const currentReminder = '29/07/2025.2';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,7 +68,12 @@ export const QuestionAndFeedback = () => {
                     <br />
                     {[
                         {
-                            author: 'Ivan/Liger  at Jul 29, 2025',
+                            author: '★ at Jul 29, 2025',
+                            question: 'The ★ doesn\'t get displayed correctly',
+                            answer: 'It should be fixed by now.'
+                        },
+                        {
+                            author: 'Ivan/Liger at Jul 29, 2025',
                             question: 'Hello, sorry to bother you. I\'m not sure if your site is under maintenance, but I\'ve noticed some major issues recently. It all started when I could no longer save images — nothing in the top bar seems to work anymore. I tried switching my browser to “Desktop mode” to see if it would help, but that made things even worse. The default zoom setting at 100% doesn\'t display properly, so I had to set it to 50% just to see the full layout. Unfortunately, I still can\'t do anything at the moment. I hope this helps. I haven’t noticed any other issues for now.\n\nBest regards,\nIvan / Liger'
                         },
                         {

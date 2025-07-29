@@ -68,9 +68,13 @@ export const getTextWorker = (
     };
 
     let symbolFontMemory = fontController.getFontInfo();
-    const applySymbolFont = () => {
+    const applySymbolFont = (ratio = symbolFontRatio) => {
         symbolFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(symbolFont).setSize(fontSize * symbolFontRatio).getFont();
+        const nextRatio = fontSize * ratio;
+        ctx.font = fontController.setFamily(symbolFont).setSize(nextRatio).getFont();
+        return {
+            fontSize: nextRatio,
+        };
     };
     const stopApplySymbolFont = () => {
         ctx.font = fontController

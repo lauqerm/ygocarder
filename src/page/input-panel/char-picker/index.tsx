@@ -148,7 +148,7 @@ export const CharPicker = ({
                 '™',
                 'Ɐ',
                 'Я',
-                '∅',
+                'Ø',
                 '※',
             ].map(entry => {
                 return <button key={entry}

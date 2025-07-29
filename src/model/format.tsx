@@ -92,6 +92,7 @@ export const tcgToOCGLetterMap: Record<string, string> = {
     '＆': '&',
     '＇': '\'',
     '＠': '@',
+    'Ø': '∅',
 };
 export const ocgToTCGLetterMap: Record<string, string> = {
     '０': '0',
@@ -187,6 +188,7 @@ export const ocgToTCGLetterMap: Record<string, string> = {
     '＆': '&',
     '＇': '\'',
     '＠': '@',
+    '∅': 'Ø',
 };
 
 // const MirrorableLetter = {
