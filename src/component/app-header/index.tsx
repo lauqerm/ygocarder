@@ -10,8 +10,8 @@ import { mergeClass } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
 import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
-import './app-header.scss';
 import { PresetManager } from '../preset-manager';
+import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">

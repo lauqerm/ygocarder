@@ -35,11 +35,11 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
 export const isCropEqual = (cropL: Partial<ReactCrop.Crop>, cropR: Partial<ReactCrop.Crop>) => {
     const { aspect: aspectL, height: heightL, unit: unitL, width: widthL, x: xL, y: yL } = cropL;
     const { aspect: aspectR, height: heightR, unit: unitR, width: widthR, x: xR, y: yR } = cropR;
-    if (Math.abs(widthL - widthR) > 0.01) return false;
-    if (Math.abs(heightL - heightR) > 0.01) return false;
-    if (Math.abs(xL - xR) > 0.01) return false;
-    if (Math.abs(yL - yR) > 0.01) return false;
-    if (Math.abs(aspectL - aspectR) > 0.01) return false;
+    if (typeof widthL === 'number' && typeof widthR === 'number' && Math.abs(widthL - widthR) > 0.01) return false;
+    if (typeof heightL === 'number' && typeof heightR === 'number' && Math.abs(heightL - heightR) > 0.01) return false;
+    if (typeof xL === 'number' && typeof xR === 'number' && Math.abs(xL - xR) > 0.01) return false;
+    if (typeof yL === 'number' && typeof yR === 'number' && Math.abs(yL - yR) > 0.01) return false;
+    if (typeof aspectL === 'number' && typeof aspectR === 'number' && Math.abs(aspectL - aspectR) > 0.01) return false;
     if (unitL !== unitR) return false;
     return true;
 };

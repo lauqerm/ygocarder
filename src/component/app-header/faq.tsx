@@ -31,7 +31,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '28/07/2025.1';
+        const currentReminder = '29/07/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -67,6 +67,16 @@ export const QuestionAndFeedback = () => {
                     <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
                     <br />
                     {[
+                        {
+                            author: 'Ebrahim at Jun 29, 2025',
+                            question: 'I\'m trying to download the card from the website to my phone but the download button isn\'t working can you please fix it.',
+                            answer: 'I will try, but generally Opera mobile is not the intended browser to use the app. You should use Chrome or Firefox on mobile for a better experience.',
+                        },
+                        {
+                            author: 'Anonymous User at Jul 29, 2025',
+                            question: 'The manual scroll option works perfectly! Thank you so much for the update and for staying in touch!',
+                            answer: 'Thanks, happy that the work around worked because honestly I\'m out of ideas otherwise.',
+                        },
                         {
                             author: 'Anonymous User at Jun 28, 2025',
                             question: 'Happy to help! I tried to screenshot the auto-scroll issue via the app before, but the UI doesn\'t let me scroll down and screenshot at the same time, so I won\'t be able to show you clearly. (I\'d use my own screenshots, but I can\'t paste or upload them, either.) What I can tell you is that the card preview scrolls up along with the rest of the page, so it never moves below the "Finish: Art" section. If there\'s another way I can show you the issue to help you solve this, please let me know!',

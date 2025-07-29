@@ -23,26 +23,31 @@ export interface YgoCarderDb extends DBSchema {
 };
 
 export async function setupYgoCarderDb() {
-    const db = await openDB<YgoCarderDb>(
-        'YgoCarderDb',
-        3,
-        {
-            upgrade(db) {
-                if (!db.objectStoreNames.contains('messageStore')) {
-                    db.createObjectStore('messageStore', { keyPath: 'key' });
-                }
-                if (!db.objectStoreNames.contains('presetLayoutStore')) {
-                    db.createObjectStore('presetLayoutStore', { keyPath: 'key' });
-                }
-                if (!db.objectStoreNames.contains('presetNameStyleStore')) {
-                    db.createObjectStore('presetNameStyleStore', { keyPath: 'key' });
-                }
-                console.info('YgoCarderDb ready');
-            },
-        }
-    );
+    try {
+        const db = await openDB<YgoCarderDb>(
+            'YgoCarderDb',
+            3,
+            {
+                upgrade(db) {
+                    if (!db.objectStoreNames.contains('messageStore')) {
+                        db.createObjectStore('messageStore', { keyPath: 'key' });
+                    }
+                    if (!db.objectStoreNames.contains('presetLayoutStore')) {
+                        db.createObjectStore('presetLayoutStore', { keyPath: 'key' });
+                    }
+                    if (!db.objectStoreNames.contains('presetNameStyleStore')) {
+                        db.createObjectStore('presetNameStyleStore', { keyPath: 'key' });
+                    }
+                    console.info('YgoCarderDb ready');
+                },
+            }
+        );
 
-    return db;
+        return db;
+    } catch (e) {
+        console.error('setupYgoCarderDb', e);
+        return null;
+    }
 };
 
 export const useCarderDb = () => {
