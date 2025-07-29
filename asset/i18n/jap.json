@@ -429,7 +429,7 @@
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "service.decode.partial.message": "Partial export mode",
         "setting.option.resolution.warning": "May affect performance",
-        "setting.option.sliding-type.label": "Preview sliding",
+        "setting.option.sliding-type.label": "Preview sliding (Desktop only)",
         "setting.option.sliding-type.auto.label": "Auto",
         "setting.option.sliding-type.manual.label": "Manual drag"
     }
