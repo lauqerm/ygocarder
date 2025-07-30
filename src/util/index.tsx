@@ -12,6 +12,10 @@ export const isMobileDevice = () => {
     return check;
 };
 
+export const isTouchDevice = () => {
+    return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+};
+
 export function mergeClass(...args: (boolean | string | undefined | null)[]) {
     return args.filter(Boolean).join(' ');
 }

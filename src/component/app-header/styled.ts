@@ -70,6 +70,10 @@ export const QuoteContainer = styled.div`
         margin: var(--spacing) 0;
         margin-bottom: var(--spacing-lg);
     }
+    .image {
+        max-width: 100%;
+        padding: 0 var(--spacing) var(--spacing-lg) var(--spacing);
+    }
     &:last-child {
         .answer {
             margin-bottom: 0;

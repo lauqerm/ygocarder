@@ -29,6 +29,10 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                 lineHeight: 91.5,
                 offsetY: 0,
             }],
+            letterOffsetMap: {
+                '★': { ratio: 0.55, baseline: -0.05 },
+                '☆': { ratio: 0.55, baseline: -0.05 },
+            },
             letterDeviationMap: {
                 '1': {
                     threshold: 0.94,

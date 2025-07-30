@@ -76,6 +76,7 @@ export type FontData = {
     headTextHeightRatio?: number,
     headTextOverflow?: 'normal' | 'condense',
     letterDeviationMap?: Record<string, FontDeviationMap>,
+    letterOffsetMap?: Record<string, { ratio: number, baseline: number }>,
     metricMethod?: MetricMethod,
     numberFont?: string,
     numberFontRatio?: number,
@@ -109,6 +110,10 @@ const DefaultEffectFontData = {
     symbolFontRatio: 1,
     vietnameseFont: 'Times New Roman',
     vietnameseFontRatio: 1.1,
+    letterOffsetMap: {
+        '★': { ratio: 0.9, baseline: -0.05 },
+        '☆': { ratio: 0.9, baseline: -0.05 },
+    },
 };
 export const DefaultTCGEffectFontData: FontData = {
     ...DefaultEffectFontData,
