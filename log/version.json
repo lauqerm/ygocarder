@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.22 (2025/07/30)",
+        "logList": [
+            {
+                "content": "Fix: Another fix for exotic letters (★ and Ø) and freezing issue on mobile / touch device."
+            }
+        ]
+    },
+    {
         "version": "v2.3.21 (2025/07/29)",
         "logList": [
             {
