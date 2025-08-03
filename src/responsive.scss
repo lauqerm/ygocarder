@@ -95,9 +95,11 @@
 				row-gap: var(--spacing-sm);
 				column-gap: var(--spacing-sm);
 			}
-			.anticon-caret-down,
-			.anticon-caret-up {
-				display: none;
+			.picker-dropdown {
+				.anticon-caret-down,
+				.anticon-caret-up {
+					display: none;
+				}
 			}
 			.picker-dropdown {
 				margin: 0;
@@ -324,7 +326,7 @@
 					max-height: 22px;
 				}
 				.anticon-close-circle {
-                	font-size: var(--fs-xl);
+					font-size: var(--fs-xl);
 				}
 			}
 		}
@@ -358,6 +360,8 @@
 			.main-info {
 				.card-image-cropper {
 					display: grid;
+					grid-template-columns: 1fr;
+					grid-template-areas: "source" "finish" "cropper";
 				}
 			}
 		}
@@ -377,9 +381,32 @@
 		}
 		.card-info-panel {
 			padding-top: 0;
+			.finish-checkbox .checkbox-train-input-group .ant-radio-button-wrapper {
+				min-width: 3rem;
+			}
 		}
 		.checkbox-input {
 			grid-column: span 1;
+		}
+		.checkbox-star-train {
+			display: grid;
+			grid-template-columns: var(--width-label) 1fr;
+			row-gap: var(--spacing-xs);
+			.checkbox-star-suffix {
+				grid-column: 2;
+				margin: 0;
+			}
+		}
+		.text-style-input {
+			.style-picker {
+				gap: var(--spacing);
+			}
+			.picker-dropdown {
+				padding: var(--spacing-xs) var(--spacing-sm);
+			}
+			.save-preset-button-group {
+				height: 28px; // Alignment
+			}
 		}
 	}
 	.layout-picker-overlay {
@@ -432,11 +459,6 @@
 		.card-info-panel {
 			.main-info {
 				.card-image-cropper {
-					.card-image-source-input {
-						grid-area: source;
-						grid-template-columns: 1fr;
-						gap: var(--spacing-sm);
-					}
 					.link-marker-picker {
 						position: relative;
 					}
