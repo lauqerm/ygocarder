@@ -216,6 +216,10 @@ function App() {
             document.body.style.setProperty(styleName, languageInfo.style?.[styleName] ?? '' as any);
         });
     }, [languageInfo]);
+    /** Fix weird issue when frame layer does not render correctly when manager's visibility is changed. Happens on Opera GX */
+    useEffect(() => {
+        setImageChangeCount(cnt => cnt + 1);
+    }, [managerVisible]);
     useEffect(() => {
         setImageChangeCount(cnt => cnt + 1);
         if (slidingType === 'auto' && slidingWindowRef.current) {
