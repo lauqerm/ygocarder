@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.23 (2025/08/06)",
+        "logList": [
+            {
+                "content": "Fix: Minor UI and font ratio updates."
+            }
+        ]
+    },
+    {
         "version": "v2.3.22 (2025/07/30)",
         "logList": [
             {
