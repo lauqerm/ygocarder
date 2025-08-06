@@ -472,8 +472,16 @@ export const drawLine = ({
             }
             /** Some specific letter ("Evil★Twin's Trouble Sunny" TCG) requires different font. */
             else if (TCGSymbolLetterRegex.test(fragment) && fontStyle === 'tcg') {
+                const {
+                    yRatio = 1,
+                    ratio: fontSizeRatio,
+                    baseline: offsetBaseline = 0,
+                    edge: offsetEdge = 0,
+                } = letterOffsetMap[fragment] ?? {};
+
                 const letter = fragment;
-                const { fontSize } = applySymbolFont(letterOffsetMap[fragment]?.ratio);
+                const { fontSize } = applySymbolFont(fontSizeRatio);
+                ctx.scale(1, yRatio);
 
                 const letterWidth = ctx.measureText(letter).width * letterSpacingRatio * xRatio;
                 const leftGap = Math.max(defaultGap, letterWidth * gapRatio);
@@ -483,12 +491,13 @@ export const drawLine = ({
                 fragmentEdge -= lostLeftWidth;
                 drawLetter({
                     ...drawLetterParameter,
-                    baseline: drawLetterParameter.baseline + fontSize * (letterOffsetMap[fragment]?.baseline ?? 0),
+                    baseline: (drawLetterParameter.baseline + fontSize * offsetBaseline) / yRatio,
                     letter,
-                    edge: fragmentEdge,
+                    edge: fragmentEdge + fontSize * offsetEdge,
                 });
                 fragmentEdge += letterWidth;
 
+                ctx.scale(1, 1 / yRatio);
                 stopApplySymbolFont();
 
                 currentRightGap = rightGap;

@@ -41,7 +41,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '30/07/2025';
+        const currentReminder = '06/08/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,6 +68,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'the ¡ symbol is to long (for spanish card names) at Aug 5, 2025',
+            question: 'hi, i was trying to create a card using the ¡ symbol in the name, but its too long, not like the ! in the screenshot. for exaple: if u try to write the name \'Caza del Cielo Movilizar - ¡Atacar!\' you can see the symbol ¡ is too long compared to the pics of the same card in spanish. i hope you can fix that and ty for the web:3',
+            answer: 'I have updated the ratio, hopefully it looks better now.',
+        },
         {
             author: 'Re: ★ at Jul 30, 2025',
             question: 'I am not sure your latest fix for ★, and ☆ was correct: As far as I can tell, the size of the characters is too small.\nAccording to official cards, they should be as tall as a capital letter.\nMy source of comparison was the "Evil★Twin" Archetype.',
