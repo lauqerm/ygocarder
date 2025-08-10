@@ -3,6 +3,9 @@
         "version": "v2.3.24 (2025/08/09)",
         "logList": [
             {
+                "content": "Support rgb inputs for dye color picker."
+            },
+            {
                 "content": "Move Minimum Lines input into Paragraph Style button for better layout."
             },
             {

@@ -69,6 +69,16 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Die Frauen at Aug 9, 2025',
+            question: 'As for a suggestion related to the pevious query, this may be a bit too crazy, but since it\'s lodged together with the advanced/custom layout feature, do you think perhaps the foil could be split into 5 pieces the same as it? (all 4 corners and the text frame). If it may take too much effort or is not feasible I\'ll understand that.',
+            answer: 'I don\'t think this would be possible, as card foils are divided into multiple pieces for different places, so I couldn\'t split them the same way as card frames at all.',
+        },
+        {
+            author: 'Die Frauen at Aug 9, 2025',
+            question: 'For convenience\'s sake, I think it\'d be a bit more useful if the foil dye set also had a hue slider, or a toggle for the RGB values like the one in the name coloring tabs... for the less inclined to memorize the Hex values.',
+            answer: 'I have added rgb inputs for dye color picker.'
+        },
+        {
             author: 'Anonymous User at Aug 8, 2025',
             question: 'There should be an effect text formatting option to justify text while making it respect the rest of the text\'s compression ratio, like actual cards do.',
             answer: 'I cannot support a new syntax right now, but if your use-case is just wanting the last line of effect / pendulum effect to be justfiy-aligned, you can use the newly implemented Justify Ratio in Paragraph Style button.',
