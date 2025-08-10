@@ -41,7 +41,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '06/08/2025';
+        const currentReminder = '09/08/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,6 +68,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous User at Aug 8, 2025',
+            question: 'There should be an effect text formatting option to justify text while making it respect the rest of the text\'s compression ratio, like actual cards do.',
+            answer: 'I cannot support a new syntax right now, but if your use-case is just wanting the last line of effect / pendulum effect to be justfiy-aligned, you can use the newly implemented Justify Ratio in Paragraph Style button.',
+        },
         {
             author: 'the ¡ symbol is to long (for spanish card names) at Aug 5, 2025',
             question: 'hi, i was trying to create a card using the ¡ symbol in the name, but its too long, not like the ! in the screenshot. for exaple: if u try to write the name \'Caza del Cielo Movilizar - ¡Atacar!\' you can see the symbol ¡ is too long compared to the pics of the same card in spanish. i hope you can fix that and ty for the web:3',
@@ -175,11 +180,6 @@ export const QuestionAndFeedback = () => {
             answer: 'Can you provide an example image? As far as I check words like "número" or "además" looks normal to me.'
         },
         {
-            author: 'Error "é" at Jun 30, 2025',
-            question: 'There is a problem with the writing. The line wrap is sometimes incorrect when using this "é" character.\nThe last word is "Matériel". The last word should not be cut.',
-            answer: 'I have updated the algorithm to have a better behavior for non-alphabet letters. But in case it goes wrong, you can always use non-breakable text syntax to keep the word in line.'
-        },
-        {
             author: 'Anonymous User at Jun 30, 2025',
             question: 'Having a format similar for cards similar to Master Duel cards.',
             answer: 'I have no plan to support format like Master Duel right now.'
@@ -197,15 +197,6 @@ export const QuestionAndFeedback = () => {
             author: 'Rush Duel at Jun 22, 2025',
             question: 'This card maker is amazing! Have you ever consider doing a rush duel section as well?',
             answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
-        },
-        {
-            author: 'Die Frauen at Jun 22, 2025',
-            question: 'Fantastic job, you understood the assignment. It sappears it still needs to be better centered out , the custom array is a bit skewed to the right, and it appears the toggle to move them to the left/center aren\'t quite there yet.\n\nA minor update I would like is, to add a "normal spell/trap" icon, I think you can find it on the wiki if you look it up, as a blank template.',
-        },
-        {
-            author: 'Die Frauen at Jun 22, 2025',
-            question: 'Addendum (Disregard the alignment comment, or to rephrase, it works fine. I was under the impression it would align on its own, and put the level at the edges and it projected as though it were the 13th icon).\n\nI assume you can organize those manually, but for all intents and purposes it is perfectly functional!',
-            answer: 'Come to think of it, maybe the star editor is not intuitive enough to use, so I have updated it a bit more. Also the normal icon for Spell/Trap is now available.',
         },
         {
             author: 'Maya at May 23, 2025',

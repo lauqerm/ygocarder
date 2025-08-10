@@ -1,5 +1,17 @@
 [
     {
+        "version": "v2.3.24 (2025/08/09)",
+        "logList": [
+            {
+                "content": "Move Minimum Lines input into Paragraph Style button for better layout."
+            },
+            {
+                "content": "Add Justify Ratio input in Paragraph Style. This input is used to control the behavior of the last line of effect.",
+                "image": "https://i.imgur.com/V9RTU1o.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.23 (2025/08/06)",
         "logList": [
             {

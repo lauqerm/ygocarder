@@ -2,7 +2,7 @@ import { InputNumber } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import PowerSlider from 'react-input-slider';
-import { GuardedSlider } from 'src/component';
+import { GuardedSlider, SingleSliderContainer } from 'src/component';
 import { DefaultColorList, NameStyle } from 'src/model';
 import { useLanguage } from 'src/service';
 
@@ -116,20 +116,20 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                 x={x ?? 0}
                 y={y ?? 0}
                 onChange={({ x, y }) => setValue(cur => ({ ...cur, x, y }))} />
-            <div className="single-slider">
-                {language['input.name-style.slider.x-offset.label']}: <InputNumber
+            <SingleSliderContainer className="single-slider">
+                <span>{language['input.name-style.slider.x-offset.label']}:</span>
+                <InputNumber
                     size="small"
                     value={x}
                     onChange={value => setValue(cur => ({ ...cur, x: typeof value === 'number' ? value : parseInt(value ?? '0') }))}
                 />
-            </div>
-            <div className="single-slider">
-                {language['input.name-style.slider.y-offset.label']}: <InputNumber
+                <span>{language['input.name-style.slider.y-offset.label']}:</span>
+                <InputNumber
                     size="small"
                     value={y}
                     onChange={value => setValue(cur => ({ ...cur, y: typeof value === 'number' ? value : parseInt(value ?? '0') }))}
                 />
-            </div>
+            </SingleSliderContainer>
             <div className="single-slider">
                 {widthLabel}:&nbsp;<GuardedSlider
                     value={width}

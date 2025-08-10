@@ -194,6 +194,8 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 typeAbility,
                 effectMinLine: effectStyle.minLine,
                 pendulumEffectMinLine: pendulumStyle.minLine,
+                effectJustifyRatio: effectStyle.justifyRatio,
+                pendulumEffectJustifyRatio: pendulumStyle.justifyRatio,
             });
             footerInputGroupRef.current?.setValue({ atk, def, creator, password });
         }

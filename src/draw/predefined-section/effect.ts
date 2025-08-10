@@ -88,15 +88,18 @@ export const drawEffect = ({
         defaultSizeLevel?: number,
         globalScale: number,
         minLine?: number,
+        justifyRatio?: number,
     },
 }) => {
     const {
         defaultSizeLevel,
         forceRelaxCondenseLimit,
         globalScale = 1,
-        minLine: baseMinLine = 0,
+        minLine: baseMinLine,
+        justifyRatio: baseJustifyRatio,
     } = option ?? {};
     const minLine = typeof baseMinLine === 'number' ? baseMinLine : 0;
+    const justifyRatio = typeof baseJustifyRatio === 'number' ? baseJustifyRatio : 1;
     let sizeLevel = defaultSizeLevel ?? 0;
     if (!ctx || !content) return sizeLevel;
 
@@ -221,7 +224,7 @@ export const drawEffect = ({
                     isLast,
                 }) => {
                     if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
-                        const { line, alignment } = fullLineListOption.shift();
+                        const { line = '', alignment } = fullLineListOption.shift() ?? {};
                         const isLast = alignment === 'justify' ? false : true;
                         const xRatio = 1/1000 * condense(
                             median => {
@@ -238,7 +241,17 @@ export const drawEffect = ({
                                 return true;
                             },
                         );
-                        const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width, globalScale });
+                        const { tokenList, spaceWidth } = analyzeLine({
+                            ctx,
+                            line,
+                            xRatio,
+                            format,
+                            isLast,
+                            textData,
+                            width,
+                            globalScale,
+                            justifyRatio: 100,
+                        });
                         ctx.scale(xRatio, yRatio);
                         drawLine({
                             ctx,
@@ -298,7 +311,17 @@ export const drawEffect = ({
                         /** Normal line: Draw with the calculated median */
                         const xRatio = effectiveMedian / 1000;
                         const line = precalculatedLine;
-                        const { tokenList, spaceWidth } = analyzeLine({ ctx, line, xRatio, format, isLast, textData, width, globalScale });
+                        const { tokenList, spaceWidth } = analyzeLine({
+                            ctx,
+                            line,
+                            xRatio,
+                            format,
+                            isLast,
+                            textData,
+                            width,
+                            globalScale,
+                            justifyRatio,
+                        });
                         ctx.scale(xRatio, yRatio);
                         drawLine({
                             ctx,

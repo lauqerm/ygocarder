@@ -363,6 +363,7 @@ export const analyzeLine = ({
     isLast,
     textData,
     globalScale,
+    justifyRatio,
 }: {
     ctx: CanvasRenderingContext2D,
     line: string,
@@ -372,6 +373,7 @@ export const analyzeLine = ({
     isLast: boolean,
     textData: TextData,
     globalScale: number,
+    justifyRatio: number,
 }) => {
     const tokenList = tokenizeText(line);
     let totalContentWidth = 0;
@@ -412,8 +414,8 @@ export const analyzeLine = ({
     const expectedSpaceWidth = lineSpaceCount > 0 ? (width - totalContentWidth) / lineSpaceCount : 0;
     const spaceWidth = isLast
         ? format === 'tcg'
-            ? expectedSpaceWidth > 1.500 * globalScale ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 3.650 * globalScale ? 0 : expectedSpaceWidth
+            ? expectedSpaceWidth > 1.500 * globalScale * (justifyRatio / 100) ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > 3.650 * globalScale * (justifyRatio / 100) ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {

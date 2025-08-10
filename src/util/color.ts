@@ -1,5 +1,5 @@
 export const HexColorRegex = /^#[a-fA-F0-9]{3}([a-fA-F0-9]{3})?$/;
-export const hexToRGBA = (hex: string, withAlpha = true) => {
+export const hexToRgba = (hex: string, withAlpha = true) => {
     try {
         const pureHex = hex.replace('#', '');
         let rgbaList = [0, 0, 0, 1];
@@ -25,6 +25,15 @@ export const hexToRGBA = (hex: string, withAlpha = true) => {
     } catch (e) {
         return [0, 0, 0, 1].slice(0, withAlpha ? 4 : 3);
     }
+};
+
+function componentToHex(c?: number) {
+    if (typeof c !== 'number') return '00';
+    const hex = Math.max(0, Math.min(c, 255)).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+}
+export const rgbToHex = (rgb: number[]) => {
+  return '#' + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
 };
 
 /** Contrast formula from google \ :v / */

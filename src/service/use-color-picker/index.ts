@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { HexColorRegex, hexToRGBA } from 'src/util';
+import { HexColorRegex, hexToRgba } from 'src/util';
 
 export type UseColorPicker = {
     value?: string,
@@ -13,7 +13,7 @@ export const useColorPicker = ({
     const [internalValue, setInternalValue] = useState(() => {
         return {
             hex: HexColorRegex.test(value) ? value : '#000000',
-            rgb: hexToRGBA(value, false),
+            rgb: hexToRgba(value, false),
         };
     });
 
@@ -24,7 +24,7 @@ export const useColorPicker = ({
             setCurrentText(normalizedText);
             setInternalValue({
                 hex: normalizedText,
-                rgb: hexToRGBA(normalizedText, false),
+                rgb: hexToRgba(normalizedText, false),
             });
             onChange?.(normalizedText);
         }
@@ -36,7 +36,7 @@ export const useColorPicker = ({
         setCurrentText(value);
         setInternalValue({
             hex: HexColorRegex.test(value) ? value : '#000000',
-            rgb: hexToRGBA(value, false),
+            rgb: hexToRgba(value, false),
         });
     }, [value]);
 

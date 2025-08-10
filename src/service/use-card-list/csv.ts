@@ -138,6 +138,7 @@ const CsvStandardFieldList = [
     'Effect Style - Font Style',
     'Effect Style - Background',
     'Effect Style - Min Line',
+    'Effect Style - Justify Ratio',
     'Pendulum Size',
     'Pendulum Effect Style - Is Custom',
     'Pendulum Effect Style - Fill Color',
@@ -147,6 +148,7 @@ const CsvStandardFieldList = [
     'Pendulum Effect Style - Font Style',
     'Pendulum Effect Style - Background',
     'Pendulum Effect Style - Min Line',
+    'Pendulum Effect Style - Justify Ratio',
     'Other Style - Is Custom',
     'Other Style - Fill Color',
     'Other Style - Has Shadow',
@@ -394,6 +396,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Effect Style - Font Style', effectStyle.fontStyle);
         write('Effect Style - Background', effectStyle.background);
         write('Effect Style - Min Line', effectStyle.minLine);
+        write('Effect Style - Justify Ratio', effectStyle.justifyRatio);
         write('Pendulum Size', pendulumSize);
         write('Pendulum Effect Style - Is Custom', pendulumTextStyle[0]);
         write('Pendulum Effect Style - Fill Color', pendulumTextStyle[1]);
@@ -403,6 +406,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Pendulum Effect Style - Font Style', pendulumStyle.fontStyle);
         write('Pendulum Effect Style - Background', pendulumStyle.background);
         write('Pendulum Effect Style - Min Line', pendulumStyle.minLine);
+        write('Pendulum Effect Style - Justify Ratio', pendulumStyle.justifyRatio);
         write('Other Style - Is Custom', otherTextStyle[0]);
         write('Other Style - Fill Color', otherTextStyle[1]);
         write('Other Style - Has Shadow', otherTextStyle[2]);
@@ -573,7 +577,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const typeAbility = rawTypeAbility
                     ? rawTypeAbility.split('/')
                     : [reader('Type_1'), reader('Type_2'), reader('Type_3'), reader('Type_4')]
-                        .filter(entry => typeof entry === 'string' && entry !== '');
+                        .filter(entry => typeof entry === 'string' && entry !== '')
+                        .map(entry => typeof entry === 'string' ? entry : '');
 
                 const condenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant).toLowerCase() as CondenseType;
                 const effectUpSize = normalizeInt(reader('Effect Style - Upsize'), emptyCard.effectStyle.upSize);
@@ -584,6 +589,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const pendulumEffectBackground = (reader('Pendulum Effect Style - Background') ?? emptyCard.pendulumStyle.background).toLowerCase();
                 const effectMinLine = normalizeInt(reader('Effect Style - Min Line'), emptyCard.effectStyle.minLine);
                 const pendulumEffectMinLine = normalizeInt(reader('Pendulum Effect Style - Min Line'), emptyCard.pendulumStyle.minLine);
+                const effectJustifyRatio = normalizeInt(reader('Effect Style - Min Line'), emptyCard.effectStyle.justifyRatio);
+                const pendulumEffectJustifyRatio = normalizeInt(reader('Pendulum Effect Style - Min Line'), emptyCard.pendulumStyle.justifyRatio);
 
                 const emptyOpacity = getDefaultCardOpacity();
                 const opacity: CardOpacity = {
@@ -741,6 +748,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                         fontStyle: effectFontStyle,
                         background: effectBackground,
                         minLine: effectMinLine,
+                        justifyRatio: effectJustifyRatio,
                     },
                     effectTextStyle,
                     externalInfo,
@@ -779,6 +787,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                         fontStyle: pendulumEffectFontStyle, 
                         background: pendulumEffectBackground,
                         minLine: pendulumEffectMinLine,
+                        justifyRatio: pendulumEffectJustifyRatio,
                     },
                     pendulumTextStyle,
                     region,

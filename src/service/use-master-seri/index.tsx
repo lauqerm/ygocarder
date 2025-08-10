@@ -182,6 +182,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const pendulumEffectBackground = pendulumStyle.background;
     const effectMinLine = effectStyle.minLine;
     const pendulumEffectMinLine = pendulumStyle.minLine;
+    const effectJustifyRatio = effectStyle.justifyRatio;
+    const pendulumEffectJustifyRatio = pendulumStyle.justifyRatio;
     const bottomFrame = pendulumFrame === 'auto'
         ? isPendulum
             ? 'spell'
@@ -908,6 +910,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     defaultSizeLevel: DEFAULT_EFFECT_NORMAL_SIZE - normalizedUpSize,
                     globalScale,
                     minLine: effectMinLine,
+                    justifyRatio: effectJustifyRatio,
                 },
             });
             const normalizedIconFinish = iconFinish ?? 'normal';
@@ -940,6 +943,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         effectTextStyle,
         effectCanvasRef,
         effectMinLine,
+        effectJustifyRatio,
         format,
         frame,
         isPendulum,
@@ -1002,6 +1006,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     defaultSizeLevel: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE - normalizedUpSize,
                     globalScale,
                     minLine: pendulumEffectMinLine,
+                    justifyRatio: pendulumEffectJustifyRatio,
                 }
             });
         }
@@ -1019,6 +1024,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         pendulumStyle,
         pendulumTextStyle,
         pendulumEffectMinLine,
+        pendulumEffectJustifyRatio,
         furiganaHelper,
         resolvedPendulumEffectTextStyle,
     ]);

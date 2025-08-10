@@ -1,5 +1,5 @@
-import { Checkbox, InputNumber, Tooltip } from 'antd';
-import { Explanation, FormattingHelpDrawer, RadioTrain, StyledPopMarkdown } from 'src/component';
+import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
+import { Explanation, FormattingHelpDrawer, RadioTrain, SingleSliderContainer, StyledPopMarkdown } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
@@ -26,16 +26,6 @@ const PostPendulumFirstLineContainer = styled.div`
     .condense-input {
         flex: 1 1 auto;
     }
-    .line-input {
-        flex: 0 0 auto;
-        display: inline-grid;
-        grid-template-columns: var(--width-label) max-content max-content;
-        gap: var(--spacing-sm);
-        align-items: center;
-        .ant-input-number {
-            width: 65px;
-        }
-    }
     .formatting-help-button,
     .input-kanji-helper {
         flex: 0 0 auto;
@@ -55,12 +45,38 @@ const PostPendulumFirstLineContainer = styled.div`
 		}
 	}
 `;
+const AdvancedParagraphButton = styled.div`
+    display: inline-flex;
+    cursor: pointer;
+    box-shadow: var(--bs-input);
+    vertical-align: bottom;
+    box-shadow: var(--bs-button);
+    border-radius: var(--br-lg);
+    background-color: var(--main-level-4);
+    .button-label {
+        line-height: 2;
+        padding: var(--spacing-px) var(--spacing-xs);
+    }
+`;
+const AdvancedParagraphPanel = styled.div`
+    .line-input,
+    .justify-ratio-input {
+        padding: var(--spacing-xs);
+    }
+    .single-slider {
+        .ant-input-number {
+            width: 75px;
+        }
+    }
+`;
 
 export type PostPendulumInputGroupRef = {
     setValue: (value: {
         typeAbility?: string[],
         effectMinLine?: number,
         pendulumEffectMinLine?: number,
+        effectJustifyRatio?: number,
+        pendulumEffectJustifyRatio?: number,
     }) => void,
 }
 export type PostPendulumInputGroup = {} & Pick<CardTextInput, 'onTakePicker'>;
@@ -100,6 +116,12 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
     const typeAbilityInputRef = useRef<CardTextInputRef>(null);
     const [effectMinLine, setEffectMinLine] = useState(() => useCard.getState().card.effectStyle.minLine);
     const [pendulumEffectMinLine, setPendulumEffectMinLine] = useState(() => useCard.getState().card.pendulumStyle.minLine);
+    const [effectJustifyRatio, setEffectJustifyRatio] = useState(() => {
+        return useCard.getState().card.effectStyle.justifyRatio;
+    });
+    const [pendulumEffectJustifyRatio, setPendulumEffectJustifyRatio] = useState(() => {
+        return useCard.getState().card.pendulumStyle.justifyRatio;
+    });
 
     const changeTypeAbility = useMemo(() => {
         return getUpdater(
@@ -128,12 +150,20 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
     };
 
     useEffect(() => {
-        /** Changing min line force render effect, so we should do so sparingly */
+        /** Changing min line / justify ratio force render effect, so we should do so sparingly */
         let relevant = true;
         setTimeout(() => {
             if (relevant) setCard(currentCard => {
-                const newEffectStyle = { ...currentCard.effectStyle, minLine: effectMinLine };
-                const newPendulumEffectStyle = { ...currentCard.pendulumStyle, minLine: pendulumEffectMinLine };
+                const newEffectStyle = {
+                    ...currentCard.effectStyle,
+                    minLine: effectMinLine,
+                    justifyRatio: effectJustifyRatio,
+                };
+                const newPendulumEffectStyle = {
+                    ...currentCard.pendulumStyle,
+                    minLine: pendulumEffectMinLine,
+                    justifyRatio: pendulumEffectJustifyRatio,
+                };
 
                 return {
                     ...currentCard,
@@ -146,13 +176,19 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         return () => {
             relevant = false;
         };
-    }, [effectMinLine, pendulumEffectMinLine, setCard]);
+    }, [effectJustifyRatio, effectMinLine, pendulumEffectJustifyRatio, pendulumEffectMinLine, setCard]);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ typeAbility, effectMinLine, pendulumEffectMinLine }) => {
+        setValue: ({
+            typeAbility,
+            effectMinLine, pendulumEffectMinLine,
+            effectJustifyRatio, pendulumEffectJustifyRatio,
+        }) => {
             if (typeAbility) typeAbilityInputRef.current?.setValue(typeAbility.join(typeAbilitySeparator));
             if (typeof effectMinLine === 'number') setEffectMinLine(effectMinLine);
             if (typeof pendulumEffectMinLine === 'number') setPendulumEffectMinLine(pendulumEffectMinLine);
+            if (typeof effectJustifyRatio === 'number') setEffectJustifyRatio(effectJustifyRatio);
+            if (typeof pendulumEffectJustifyRatio === 'number') setPendulumEffectJustifyRatio(pendulumEffectJustifyRatio);
         }
     }));
 
@@ -198,27 +234,75 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
                     />
                 </span>
             </RadioTrain>
-            {showExtraDecorativeOption && <div className="line-input">
-                <div>
-                    {language['input.text-style.min-line.label']}
-                </div>
-                <InputNumber
-                    id="effect-line"
-                    value={effectMinLine}
-                    placeholder={language['input.text-style.min-line.effect.placeholder']}
-                    onChange={value => setEffectMinLine(typeof value === 'number' ? value : 0)}
-                    min={0}
-                    max={50}
-                />
-                <InputNumber
-                    id="pendulum-effect-line"
-                    value={pendulumEffectMinLine}
-                    placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
-                    onChange={value => setPendulumEffectMinLine(typeof value === 'number' ? value : 0)}
-                    min={0}
-                    max={50}
-                />
-            </div>}
+            {showExtraDecorativeOption && <Popover
+                overlayClassName="global-input-overlay global-style-picker-overlay"
+                content={<div className="overlay-event-absorber">
+                    <AdvancedParagraphPanel className="custom-style-picker">
+                        <h2>
+                            {language['input.text-style.min-line.label']}
+                        </h2>
+                        <div className="line-input">
+                            <SingleSliderContainer className="single-slider">
+                                <span>{language['input.text-style.min-line.effect.placeholder']}:</span>
+                                <InputNumber
+                                    id="effect-line"
+                                    size="small"
+                                    value={effectMinLine}
+                                    placeholder={language['input.text-style.min-line.effect.placeholder']}
+                                    onChange={value => setEffectMinLine(typeof value === 'number' ? value : 0)}
+                                    min={0}
+                                    max={50}
+                                />
+                                <span>{language['input.text-style.min-line.pendulum-effect.placeholder']}:</span>
+                                <InputNumber
+                                    id="pendulum-effect-line"
+                                    size="small"
+                                    value={pendulumEffectMinLine}
+                                    placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
+                                    onChange={value => setPendulumEffectMinLine(typeof value === 'number' ? value : 0)}
+                                    min={0}
+                                    max={50}
+                                />
+                            </SingleSliderContainer>
+                        </div>
+                        <h2>
+                            {language['input.text-style.justify-ratio.label']}
+                        </h2>
+                        <div className="justify-ratio-input">
+                            <SingleSliderContainer className="single-slider">
+                                <span>{language['input.text-style.min-line.effect.placeholder']}:</span>
+                                <InputNumber
+                                    id="effect-justify-ratio"
+                                    size="small"
+                                    value={effectJustifyRatio}
+                                    placeholder={language['input.text-style.min-line.effect.placeholder']}
+                                    onChange={value => setEffectJustifyRatio(typeof value === 'number' ? value : 0)}
+                                    min={0}
+                                    max={5000}
+                                    step={100}
+                                />
+                                <span>{language['input.text-style.min-line.pendulum-effect.placeholder']}:</span>
+                                <InputNumber
+                                    id="pendulum-effect-justify-ratio"
+                                    size="small"
+                                    value={pendulumEffectJustifyRatio}
+                                    placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
+                                    onChange={value => setPendulumEffectJustifyRatio(typeof value === 'number' ? value : 0)}
+                                    min={0}
+                                    max={5000}
+                                    step={100}
+                                />
+                            </SingleSliderContainer>
+                        </div>
+                    </AdvancedParagraphPanel>
+                </div>}
+            >
+                <AdvancedParagraphButton>
+                    <div className="button-label">
+                        {language['input.text-style.paragraph-style.label']}
+                    </div>
+                </AdvancedParagraphButton>
+            </Popover>}
         </PostPendulumFirstLineContainer>
     </>;
 });

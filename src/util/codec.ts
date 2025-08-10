@@ -66,6 +66,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         upSize: 'eus',
         background: 'ebg',
         minLine: 'eml',
+        justifyRatio: 'ejr',
     },
     pendulumStyle: {
         _newKey: 'ps',
@@ -73,6 +74,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         upSize: 'pus',
         background: 'pbg',
         minLine: 'pml',
+        justifyRatio: 'pjr',
     },
     nameStyle: {
         _newKey: 'ns',

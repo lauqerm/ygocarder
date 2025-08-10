@@ -229,5 +229,21 @@ export const ManagerDrawer = styled(Drawer)`
     }
 `;
 
+export const SingleSliderContainer = styled.div`
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-sm);
+    align-items: center;
+    color: var(--color);
+    text-shadow: var(--ts);
+    font-weight: 500;
+    .ant-input-number {
+        width: 55px;
+    }
+    .ant-slider {
+        margin: var(--spacing-xxs);
+    }
+`;
+
 export * from './color';
 export * from './copiable';

@@ -328,6 +328,8 @@
         "input.text-style.font-style.normal.label": "Thường",
         "input.text-style.min-line.effect.placeholder": "Hiệu ứng",
         "input.text-style.min-line.label": "Số dòng ít nhất",
+        "input.text-style.paragraph-style.label": "Thông số đoạn văn",
+        "input.text-style.justify-ratio.label": "Giới hạn căn đều (%)",
         "input.text-style.min-line.pendulum-effect.placeholder": "Hiệu ứng Pendulum",
         "input.text-style.section.effect.label": "Hiệu ứng thẻ",
         "input.text-style.section.other.label": "Vị trí đặc thù",

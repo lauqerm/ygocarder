@@ -71,7 +71,7 @@ export const splitEffect = (effect: string, isNormal = false) => {
             const paragraphResult = /(.*)(\n|$)/.exec(effectText);
             const lineReplacement = paragraphResult?.[0];
             const lineContent = paragraphResult?.[1];
-            if (lineReplacement) {
+            if (lineReplacement && lineContent) {
                 /** Restore all remaining nb line symbol back to their normal letters. Then split those paragraph into lines. */
                 lineList.push(...lineContent
                     .replaceAll(NB_LINE_OPEN, '[').replaceAll(NB_LINE_CLOSE, ']')
@@ -175,7 +175,7 @@ export const normalizeCardText = (
      * * `((()()))` => `()`
      * * `()()()` => `()()()`
      */
-    let textAfterNormalizeBlockWord = [];
+    let textAfterNormalizeBlockWord: string[] = [];
     let currentDepth = 0;
     for (const letter of textAfterProcessing) {
         if (letter === NB_WORD_OPEN) {

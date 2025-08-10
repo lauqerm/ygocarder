@@ -2,7 +2,7 @@ import { Input } from 'antd';
 import { CustomPicker, InjectedColorProps } from 'react-color';
 import { Saturation } from 'react-color/lib/components/common';
 import { UseColorPicker, useColorPicker } from 'src/service';
-import { getContrastColor } from 'src/util';
+import { getContrastColor, rgbToHex } from 'src/util';
 import styled from 'styled-components';
 import { ColorBlock } from '../atom';
 import { CloseOutlined } from '@ant-design/icons';
@@ -56,7 +56,7 @@ const HorizontalSketchColorList = [
 const HorizontalSketchPickerContainer = styled.div`
     position: relative;
     display: grid;
-    grid-template-columns: 3.5rem 5rem max-content 1fr;
+    grid-template-columns: 3.5rem 5rem 4rem max-content 1fr;
     gap: var(--spacing-sm);
     .color-input {
         .color-state {
@@ -76,10 +76,23 @@ const HorizontalSketchPickerContainer = styled.div`
         border-radius: var(--br);
         overflow: hidden;
         ${ColorBlock} {
-            height: 15px;
-            width: 15px;
+            height: 16px;
+            width: 16px;
             box-shadow: none;
             border-radius: 0;
+        }
+    }
+    .rgb-input {
+        display: grid;
+        grid-template-columns: 1rem 1fr;
+        column-gap: var(--spacing-xs);
+        font-size: var(--fs-sm);
+        input {
+            line-height: 1;
+            font-size: var(--fs-sm);
+        }
+        + .rgb-input {
+            margin-top: var(--spacing-xxs);
         }
     }
 `;
@@ -108,7 +121,7 @@ export const HorizontalSketchPicker = ({
                     size="sm"
                     Icon={CloseOutlined}
                     onClick={() => {
-                        onChange('');
+                        onChange?.('');
                     }}
                 />
             </div>
@@ -119,6 +132,19 @@ export const HorizontalSketchPicker = ({
                     setColor(e.target.value);
                 }}
             />
+        </div>
+        <div className="rgb-input-list">
+            {['R', 'G', 'B'].map((entry, index) => {
+                return <div key={entry} className="rgb-input">
+                    <span>{entry}</span>
+                    <Input size="small" value={noColor ? '' : color.rgb[index]} onChange={e => {
+                        const nextColor = [...color.rgb];
+                        nextColor[index] = parseInt(e.target.value);
+
+                        setColor(rgbToHex(nextColor));
+                    }} />
+                </div>;
+            })}
         </div>
         <div className="color-list">
             {HorizontalSketchColorList.map(({ hex, rgb }) => {
