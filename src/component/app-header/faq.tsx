@@ -41,7 +41,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '09/08/2025';
+        const currentReminder = '14/08/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,6 +68,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: '& symbol at Aug 14, 2025',
+            question: 'This symbole & isnt correct on display.\nSee photo Magie & Piège',
+            answer: 'Hi there, I have checked the letter on a real card and do not see any significant error, do you have any image for how the letter should be displayed?',
+            image: 'https://i.imgur.com/xZ9Pp9X.png'
+        },
         {
             author: 'Die Frauen at Aug 9, 2025',
             question: 'As for a suggestion related to the pevious query, this may be a bit too crazy, but since it\'s lodged together with the advanced/custom layout feature, do you think perhaps the foil could be split into 5 pieces the same as it? (all 4 corners and the text frame). If it may take too much effort or is not feasible I\'ll understand that.',
