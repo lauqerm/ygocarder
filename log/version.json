@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.25 (2025/08/26)",
+        "logList": [
+            {
+                "content": "Fix: Issues for effect with new lines in between."
+            }
+        ]
+    },
+    {
         "version": "v2.3.24 (2025/08/09)",
         "logList": [
             {
