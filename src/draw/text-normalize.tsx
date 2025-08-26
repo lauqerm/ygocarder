@@ -71,7 +71,7 @@ export const splitEffect = (effect: string, isNormal = false) => {
             const paragraphResult = /(.*)(\n|$)/.exec(effectText);
             const lineReplacement = paragraphResult?.[0];
             const lineContent = paragraphResult?.[1];
-            if (lineReplacement && lineContent) {
+            if (typeof lineReplacement === 'string' && typeof lineContent === 'string') {
                 /** Restore all remaining nb line symbol back to their normal letters. Then split those paragraph into lines. */
                 lineList.push(...lineContent
                     .replaceAll(NB_LINE_OPEN, '[').replaceAll(NB_LINE_CLOSE, ']')

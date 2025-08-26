@@ -2,6 +2,7 @@ import { Modal, notification, Tabs } from 'antd';
 import { FaqButtonLabel, QuoteContainer } from './styled';
 import { useNotification } from 'src/service';
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 export const FAD_BUTTON_ID = 'faq-button';
 
@@ -12,6 +13,16 @@ type Feedback = {
     image?: string,
 };
 
+const StyledQuoteContainer = styled(QuoteContainer)`
+    text-align: center;
+    blockquote,
+    .answer {
+        text-align: left;
+    }
+    img {
+        max-height: 400px;
+    }
+`;
 type Quote = {
     image?: string,
     author?: string,
@@ -24,14 +35,14 @@ const Quote = ({
     question,
     children,
 }: Quote) => {
-    return <QuoteContainer>
+    return <StyledQuoteContainer>
         <blockquote>
             {author && <label>{author}</label>}
             <div className="question">{question}</div>
         </blockquote>
         <div className="answer">{children}</div>
-        {image && <img className="image" src={image} alt="answer" />}
-    </QuoteContainer>;
+        {image && <img className="image" src={image} alt="answer preview" />}
+    </StyledQuoteContainer>;
 };
 
 export const QuestionAndFeedback = () => {
@@ -41,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '14/08/2025';
+        const currentReminder = '26/08/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -68,6 +79,17 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'ZorcNecropHades at Aug 26, 2025',
+            question: 'Hello, the token text cannot be displayed below. I did not have this problem before when I moved it to the bottom.',
+            answer: 'It should be fixed by now.'
+        },
+        {
+            author: 'Anonymous User at Aug 16, 2025',
+            question: 'Art Filter #9 seems not to be working with Pendulum frames',
+            answer: 'Hi there, I have checked this case and do not see any significant error (see image below), do you have any image to demonstrate the error?',
+            image: 'https://images2.imgbox.com/5b/1f/vp8d5wIa_o.png'
+        },
         {
             author: '& symbol at Aug 14, 2025',
             question: 'This symbole & isnt correct on display.\nSee photo Magie & Piège',
