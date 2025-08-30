@@ -244,10 +244,10 @@ export const useCardList = create<
             if (type === 'text') {
                 const normalizedValue = value.toLowerCase();
                 nextFilterFunctionMap[type] = cardList => {
-                    return cardList.filter(({ name, effect, pendulumEffect }) => {
+                    return cardList.filter(({ name, effect, pendulumEffect, isPendulum }) => {
                         return (normalizeCardName(name).toLowerCase()
                             + normalizeCardEffect(effect).toLowerCase()
-                            + normalizeCardEffect(pendulumEffect).toLowerCase()).includes(normalizedValue);
+                            + (isPendulum ? normalizeCardEffect(pendulumEffect).toLowerCase() : '')).includes(normalizedValue);
                     });
                 };
             }
