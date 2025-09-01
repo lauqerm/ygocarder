@@ -20,7 +20,7 @@ export const tokenizeText = (text: string, keepControlCharacter = false) => {
 
 export const getTextWorker = (
     ctx: CanvasRenderingContext2D,
-    fontData: FontData,
+    fontData: Omit<FontData, 'fontList'>,
     fontSizeData: FontSizeData,
     fontController: ReturnType<typeof createFontGetter>,
     globalScale: number,
@@ -39,7 +39,7 @@ export const getTextWorker = (
         numberFont = font,
         numberFontRatio = 1,
         furiganaFont,
-        vietnameseFont,
+        vietnameseFont = font,
         vietnameseFontRatio = 1,
     } = fontData;
 

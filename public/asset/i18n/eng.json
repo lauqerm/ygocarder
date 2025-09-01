@@ -109,6 +109,8 @@
         "guide.format.section-5.label": "Non-compressable text",
         "guide.format.section-6.content": "Wrap a line of text in {openTag} and {closeTag} to prevent the text from breaking down into multiple lines. The line is justified, which mean it will expand to fill as much space as possible, the lines does not affected by the compression ratio of the rest of the text.\nIf hotkeys are allowed, you can select the desired text and press {hotkey} or {hotkeyAlternative}.",
         "guide.format.section-6.label": "Non-breakable line (justified)",
+        "guide.format.section-7.content": "Wrap a line of text in {openTag} and {closeTag} will force renderer to use italic font (similar to Normal Monster).\nIf hotkeys are allowed, you can select the desired text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-7.label": "Italic text",
         "image-cropper.button.center-horizontal.tooltip": "Center horizontally",
         "image-cropper.button.center-vertical.tooltip": "Center vertically",
         "image-cropper.button.force-fit.tooltip": "Use whole image",

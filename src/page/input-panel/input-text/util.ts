@@ -1,4 +1,4 @@
-export const availableCommand = new Set(['1', '2', '3', '4', '5']);
+export const availableCommand = new Set(['1', '2', '3', '4', '5', 'i']);
 export const resolveHotkey = (
     value: string,
     key: string,
@@ -28,6 +28,7 @@ export const resolveHotkey = (
         case '3': wrappedText = `{${selectedText}|}`; break;
         case '4': wrappedText = `{${selectedText}||}`; cursorOffset = 3; break;
         case '5': wrappedText = `{{${selectedText}}}`; cursorOffset = 4; break;
+        case 'i': wrappedText = `<i>${selectedText}</i>`; cursorOffset = 7; break;
     }
     const joinedText = value.substring(0, selectionStart)
         + `${wrappedText}`

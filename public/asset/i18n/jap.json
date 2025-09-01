@@ -433,6 +433,8 @@
         "setting.option.resolution.warning": "May affect performance",
         "setting.option.sliding-type.label": "Preview sliding (Desktop only)",
         "setting.option.sliding-type.auto.label": "Auto",
+        "guide.format.section-7.content": "Wrap a line of text in {openTag} and {closeTag} will force renderer to use italic font (similar to Normal Monster).\nIf hotkeys are allowed, you can select the desired text and press {hotkey} or {hotkeyAlternative}.",
+        "guide.format.section-7.label": "Italic text",
         "setting.option.sliding-type.manual.label": "Manual drag"
     }
 }

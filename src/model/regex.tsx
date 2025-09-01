@@ -8,6 +8,13 @@ export const CapitalLetterRegex = new RegExp(CAPITAL_LETTER_SOURCE);
 export const SQUARE_BRACKET_SOURCE = '[\\[\\]【】]';
 export const SquareBracketLetterRegex = new RegExp(SQUARE_BRACKET_SOURCE);
 
+export const StylingTagList = ['i'];
+export const STYLING_TAG_SOURCE = `<(\\/?(${StylingTagList.join('|')}))( [^<]*|)>`;
+export const StylingTagRegex = new RegExp(STYLING_TAG_SOURCE);
+
+export const ITALIC_OPEN_TAG = '<i>';
+export const ITALIC_CLOSE_TAG = '</i>';
+
 /** 
  * Beside usual alphabet letter and number, we try to support accented letters and Japanese's version of alphabet too.
  * * Latin-1 Supplement block, without arithmetic symbol such as × and ÷
@@ -24,7 +31,6 @@ export const VIETNAMESE_DIACRITIC_LETTER = '[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐ�
 export const VietnameseDiacriticLetterRegex = new RegExp(VIETNAMESE_DIACRITIC_LETTER);
 
 export const FragmentSplitRegex = new RegExp(`({[^{}]+?}|${WHOLE_WORD_SOURCE}|.)`);
-// export const FragmentSplitRegex = new RegExp('({[^{}]+?}|.)');
 
 export const UNCOMPRESSED_SOURCE = '{{([^{}]+?)}}';
 

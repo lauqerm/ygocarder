@@ -4,12 +4,15 @@ import {
     DefaultFontData,
     DefaultFontSizeData,
     FragmentSplitRegex,
+    ITALIC_CLOSE_TAG,
+    ITALIC_OPEN_TAG,
     LETTER_GAP_RATIO,
     MAX_LINE_REVERSE_INDENT,
     NB_UNCOMPRESSED_END,
     NB_UNCOMPRESSED_START,
     NoSpaceRegex,
     NonCompressableRegex,
+    NormalFontData,
     NumberRegex,
     OCGAlphabetRegex,
     OCGNoOverheadGapRegex,
@@ -35,7 +38,7 @@ import { analyzeToken } from './text-analyze';
 import { TextDrawer, drawLetter, getLetterWidth } from './letter';
 import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
-import { scaleFontSizeData } from 'src/util';
+import { scaleFontSizeData, swapTextData } from 'src/util';
 
 /**
  * This is the heart and soul of drawer, please test this thoroughly for each change.
@@ -81,51 +84,16 @@ export const drawLine = ({
 }) => {
     const { drawHeadText = true } = option ?? {};
     const {
-        currentFont,
-        fontData,
         fontLevel,
     } = textData;
-    const fontSizeData = fontData.fontList[fontLevel];
-    const {
-        headTextFillStyle,
-        headTextBold = DefaultFontData.headTextBold,
-        headTextHeightRatio = DefaultFontData.headTextHeightRatio,
-        headTextOverflow = DefaultFontData.headTextOverflow,
-        headTextGapRatio = DefaultFontData.headTextGapRatio,
-        metricMethod,
-        fontStyle,
-        letterDeviationMap = {},
-        letterOffsetMap = {},
-    } = fontData;
+    const defaultFontData = textData.fontData;
     const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
-    const {
-        bulletOffset = scaledDefaultFontSizeData.bulletOffset,
-        bulletWidth,
-        capitalLetterRatio = scaledDefaultFontSizeData.capitalLetterRatio,
-        fontSize,
-        headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
-        iconSymbolWidth = bulletWidth,
-        largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
-        letterSpacing = scaledDefaultFontSizeData.letterSpacing,
-        ordinalFontOffsetY = scaledDefaultFontSizeData.ordinalFontOffsetY,
-        squareBracketRatio = scaledDefaultFontSizeData.squareBracketRatio,
-        wordLetterSpacing,
-        allRightSymbolOffset = scaledDefaultFontSizeData.allRightSymbolOffset,
-    } = fontSizeData;
-    const textWorker = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
-    const {
-        stopApplyFuriganaFont, applyFuriganaFont,
-        stopApplyLargerText, applyLargerText,
-        stopApplyNumberFont, applyNumberFont,
-        stopApplyOrdinalFont, applyOrdinalFont,
-        applyScale, reverseScale,
-        applySymbolFont, stopApplySymbolFont,
-        applyVietnameseFont, stopApplyVietnameseFont,
-        applyAsymmetricScale, resetScale,
-    } = textWorker;
+    let currentTextData = textData;
+    let currentFont = currentTextData.currentFont;
+    let currentFontData = currentTextData.fontData;
+    let fontSizeData = currentFontData.fontList[fontLevel];
+    let textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentFont, globalScale);
 
-    const letterSpacingRatio = 1 + letterSpacing / 2;
-    const baseline = trueBaseline / yRatio;
     let previousTokenGap = 0;
     let iconPositionList: { edge: number, size: number, baseline: number }[] = [];
     let previousTokenRebalanceOffset = 0;
@@ -135,6 +103,44 @@ export const drawLine = ({
     /** To prevent cascading calculation, we disconnect the relationship between fragments and tokens. We use all information to calculate an empty space for each token, then fragments of that token is drawn inside that empty space assuming they would fit. In other words, drawing fragments of a token DOES NOT interfere with the next token. That means in theory we can skip all fragments of a token to draw the next token right away.
      */
     for (let tokenCnt = 0, xRatio = baseXRatio; tokenCnt < tokenList.length; tokenCnt++) {
+        /** All the info here is not affected by injected dynamic fonts */
+        const {
+            bulletOffset = scaledDefaultFontSizeData.bulletOffset,
+            bulletWidth,
+            capitalLetterRatio = scaledDefaultFontSizeData.capitalLetterRatio,
+            fontSize,
+            headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
+            iconSymbolWidth = bulletWidth,
+            largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
+            letterSpacing = scaledDefaultFontSizeData.letterSpacing,
+            ordinalFontOffsetY = scaledDefaultFontSizeData.ordinalFontOffsetY,
+            squareBracketRatio = scaledDefaultFontSizeData.squareBracketRatio,
+            wordLetterSpacing,
+            allRightSymbolOffset = scaledDefaultFontSizeData.allRightSymbolOffset,
+        } = fontSizeData;
+        const letterSpacingRatio = 1 + letterSpacing / 2;
+        const baseline = trueBaseline / yRatio;
+        const {
+            headTextFillStyle,
+            headTextBold = DefaultFontData.headTextBold,
+            headTextHeightRatio = DefaultFontData.headTextHeightRatio,
+            headTextOverflow = DefaultFontData.headTextOverflow,
+            headTextGapRatio = DefaultFontData.headTextGapRatio,
+            metricMethod,
+            fontStyle,
+            letterDeviationMap = {},
+            letterOffsetMap = {},
+        } = currentFontData;
+        const {
+            stopApplyFuriganaFont, applyFuriganaFont,
+            stopApplyLargerText, applyLargerText,
+            stopApplyNumberFont, applyNumberFont,
+            stopApplyOrdinalFont, applyOrdinalFont,
+            applyScale, reverseScale,
+            applySymbolFont, stopApplySymbolFont,
+            applyVietnameseFont, stopApplyVietnameseFont,
+            applyAsymmetricScale, resetScale,
+        } = textWorker;
         const token = tokenList[tokenCnt];
         /** Turn on/off non-condenseable mode */
         if (token === NB_UNCOMPRESSED_START) {
@@ -145,6 +151,32 @@ export const drawLine = ({
         else if (token === NB_UNCOMPRESSED_END) {
             xRatio = baseXRatio;
             ctx.scale(xRatio, 1);
+            continue;
+        }
+        if (token === ITALIC_OPEN_TAG) {
+            const hasItalicFontData = !!(NormalFontData[defaultFontData?.variant ?? '']);
+            const italicFontData = hasItalicFontData
+                ? NormalFontData[defaultFontData.variant]
+                : defaultFontData;
+
+            currentTextData = swapTextData(textData, italicFontData);
+            currentFont = currentTextData.currentFont;
+            currentFontData = currentTextData.fontData;
+            fontSizeData = currentFontData.fontList[fontLevel];
+            textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentFont, globalScale);
+            ctx.font = currentFont
+                .setStyle('italic')
+                .getFont();
+            continue;
+        } else if (token === ITALIC_CLOSE_TAG) {
+            currentTextData = textData;
+            currentFont = currentTextData.currentFont;
+            currentFontData = currentTextData.fontData;
+            fontSizeData = currentFontData.fontList[fontLevel];
+            textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentFont, globalScale);
+            ctx.font = currentFont
+                .setStyle('')
+                .getFont();
             continue;
         }
         const gapRatio = LETTER_GAP_RATIO * xRatio;
@@ -180,7 +212,7 @@ export const drawLine = ({
         /** Again, first token indentation. */
         const indent = tokenCnt === 0
             ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)
-                + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0)
+            + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0)
             : 0;
         let fragmentEdge = tokenEdge + indent;
         let currentRightGap = previousTokenGap;
@@ -192,7 +224,7 @@ export const drawLine = ({
             const next2ndFragment = fragmentList[tokenCnt + 2] ?? next2ndToken;
 
             /** These fragments do not have any visual */
-            if (token === NB_UNCOMPRESSED_START || token === NB_UNCOMPRESSED_END) {}
+            if (token === NB_UNCOMPRESSED_START || token === NB_UNCOMPRESSED_END) { }
             /** We do not actually draw S/T Icon here, but we record its position and leave a suitable space for it. */
             else if (fragment === ST_ICON_SYMBOL) {
                 iconPositionList.push({ edge: fragmentEdge, size: iconSymbolWidth, baseline });

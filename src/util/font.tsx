@@ -72,3 +72,33 @@ export const injectDynamicFont = (fontData: FontData, dynamicFontOption: Paramet
         ]
     };
 };
+
+export const swapTextData = (
+    currentTextData: {
+        fontData: FontData;
+        fontLevel: number;
+        currentFont: FontGetter;
+    },
+    nextFontData: FontData,
+) => {
+    const {
+        fontData,
+        fontLevel,
+    } = currentTextData;
+    const nextCurrentFont = createFontGetter();
+    /** We use the font list of old font, avoiding merge font because it seems unnecessary, also avoiding redo dynamic font injection */
+    const combinedFontData: FontData = {
+        ...nextFontData,
+        fontList: [...fontData.fontList],
+    };
+    nextCurrentFont
+        .setSize(combinedFontData.fontList[fontLevel].fontSize)
+        .setFamily(combinedFontData.font)
+        .getFont();
+
+    return {
+        fontData: combinedFontData,
+        fontLevel,
+        currentFont: nextCurrentFont,
+    };
+};

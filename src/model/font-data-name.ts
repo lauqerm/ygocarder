@@ -20,6 +20,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             symbolFontRatio: 0.775,
             vietnameseFont: 'MatrixRegularSmallCaps',
             vietnameseFontRatio: 1,
+            variant: 'default-name',
             fontList: [{
                 bulletWidth: 64,
                 fontSize: 91.5,
@@ -173,6 +174,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             vietnameseFont: 'Arial',
             vietnameseFontRatio: 1,
             weight: 'bold',
+            variant: 'arial-name',
             fontList: [{
                 bulletWidth: 40.67,
                 fontSize: 61,
@@ -203,6 +205,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             symbolFontRatio: 0.775,
             vietnameseFont: '"Yu-Gi-Oh! DF Leisho 3"',
             vietnameseFontRatio: 1,
+            variant: 'ocg-name',
             fontList: [{
                 bulletWidth: 42.67,
                 fontSize: 64,

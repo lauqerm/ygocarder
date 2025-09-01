@@ -16,6 +16,7 @@ import {
     OCG_BULLET_SOURCE,
     OCG_KEYWORD_SOURCE,
     OCG_RUBY_SOURCE,
+    STYLING_TAG_SOURCE,
     UNCOMPRESSED_SOURCE,
     WHOLE_WORD_SOURCE,
     contextualDoubleQuoteRegex,
@@ -41,7 +42,7 @@ export const splitEffect = (effect: string, isNormal = false) => {
      * 
      * But this method has a caveat: For example if current line limit is 6, and the flavor text already take 5 lines. If user put the condition clause at line 6, it is indistinguishable from a normal paragraph, and therefore drawn with italic font. But if user put a new line between, it will force the draw function to increase the line limit into 7.
      * 
-     * To combat this, we perform a simple remove that additional new line, that means if conditional clause is present, two new lines in textare actually result only one new line. This does not create much hassle since user rarely notice this behavior.
+     * To combat this, we perform a simple remove that additional new line, that means if conditional clause is present, two new lines in text are actually result only one new line. This does not create much hassle since user rarely notice this behavior.
      * */
     const flavorConditionRegex = new RegExp(FLAVOR_CONDITION_SOURCE, 'm');
     const potentialFlavorConditionText = flavorConditionRegex.exec(effect)?.[1];
@@ -163,6 +164,7 @@ export const normalizeCardText = (
      * * Ordinal letters must always followed by a colon "：", and cannot stand at the end of a line.
     */
     const textAfterProcessing = textAfterDictionaryMatch
+        .replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_START_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)

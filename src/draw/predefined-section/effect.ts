@@ -218,15 +218,19 @@ export const drawEffect = ({
 
             let trueBaseline = trueBaselineStart + lineHeight;
             lineListWithRatio
-                .forEach(({
+                .map(({
                     line: precalculatedLine,
                     effectiveMedian,
                     isLast,
                 }) => {
+                    let xRatio = 1;
+                    let finalTokenList: string[] = [];
+                    let finalSpaceWidth = 0;
+                    let finalTextData = textData;
                     if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
                         const { line = '', alignment } = fullLineListOption.shift() ?? {};
                         const isLast = alignment === 'justify' ? false : true;
-                        const xRatio = 1/1000 * condense(
+                        xRatio = 1/1000 * condense(
                             median => {
                                 const { currentLineCount } = createLineList({
                                     ctx,
@@ -252,17 +256,8 @@ export const drawEffect = ({
                             globalScale,
                             justifyRatio: 100,
                         });
-                        ctx.scale(xRatio, yRatio);
-                        drawLine({
-                            ctx,
-                            tokenList,
-                            xRatio, yRatio,
-                            trueEdge, trueBaseline,
-                            spaceWidth,
-                            textData,
-                            format,
-                            globalScale,
-                        });
+                        finalTokenList = tokenList;
+                        finalSpaceWidth = spaceWidth;
                     } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
                         const flavorFontData = scaleFontData(EffectFontData[fontDataKey], globalScale);
                         const dynamicFlavorFontData = useDynamicSize
@@ -281,7 +276,7 @@ export const drawEffect = ({
                             fontLevel: dynamicSizeLevel,
                             currentFont: flavorTextCurrentFont,
                         };
-                        const xRatio = 1/1000 * condense(
+                        xRatio = 1/1000 * condense(
                             median => {
                                 const { currentLineCount } = createLineList({
                                     ctx,
@@ -297,19 +292,12 @@ export const drawEffect = ({
                             },
                         );
                         const tokenList = tokenizeText(effectFlavorCondition);
-                        ctx.scale(xRatio, yRatio);
-                        drawLine({
-                            ctx,
-                            tokenList,
-                            xRatio, yRatio,
-                            trueEdge, trueBaseline,
-                            textData: flavorTextData,
-                            format,
-                            globalScale,
-                        });
+                        finalTokenList = tokenList;
+                        finalSpaceWidth = 0;
+                        finalTextData = flavorTextData;
                     } else {
                         /** Normal line: Draw with the calculated median */
-                        const xRatio = effectiveMedian / 1000;
+                        xRatio = effectiveMedian / 1000;
                         const line = precalculatedLine;
                         const { tokenList, spaceWidth } = analyzeLine({
                             ctx,
@@ -322,6 +310,50 @@ export const drawEffect = ({
                             globalScale,
                             justifyRatio,
                         });
+                        finalTokenList = tokenList;
+                        finalSpaceWidth = spaceWidth;
+                    }
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                    return {
+                        xRatio,
+                        line: precalculatedLine,
+                        tokenList: finalTokenList,
+                        spaceWidth: finalSpaceWidth,
+                        textData: finalTextData,
+                    };
+                })
+                .forEach(({
+                    xRatio,
+                    tokenList,
+                    line: precalculatedLine,
+                    spaceWidth,
+                    textData,
+                }) => {
+                    if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
+                        ctx.scale(xRatio, yRatio);
+                        drawLine({
+                            ctx,
+                            tokenList,
+                            xRatio, yRatio,
+                            trueEdge, trueBaseline,
+                            spaceWidth,
+                            textData,
+                            format,
+                            globalScale,
+                        });
+                    } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
+                        ctx.scale(xRatio, yRatio);
+                        drawLine({
+                            ctx,
+                            tokenList,
+                            xRatio, yRatio,
+                            trueEdge, trueBaseline,
+                            textData,
+                            format,
+                            globalScale,
+                        });
+                    } else {
                         ctx.scale(xRatio, yRatio);
                         drawLine({
                             ctx,

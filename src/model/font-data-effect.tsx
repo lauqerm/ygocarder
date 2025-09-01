@@ -83,8 +83,9 @@ export type FontData = {
     ordinalFont: string,
     symbolFont: string,
     symbolFontRatio: number,
-    vietnameseFont: string,
-    vietnameseFontRatio: number,
+    variant: string,
+    vietnameseFont?: string,
+    vietnameseFontRatio?: number,
     weight?: 'bold',
 };
 export const DefaultFontData = {
@@ -122,6 +123,7 @@ export const DefaultTCGEffectFontData: FontData = {
     headTextHeightRatio: 0.750,
     fontStyle: 'tcg',
     fontList: [],
+    variant: 'default-tcg',
 };
 export const DefaultTCGNormalFontData: FontData = {
     ...DefaultEffectFontData,
@@ -131,13 +133,15 @@ export const DefaultTCGNormalFontData: FontData = {
     fontStyle: 'tcg',
     vietnameseFontRatio: 1.08,
     fontList: [],
+    variant: 'default-tcg-normal',
 };
 export const DefaultOCGEffectFontData: FontData = {
     ...DefaultEffectFontData,
     font: '"Yu-Gi-Oh! DF Leisho 3"',
     fontStyle: 'ocg',
-    metricMethod: 'compact',
+    metricMethod: 'compact' as MetricMethod,
     fontList: [],
+    variant: 'default-ocg',
 };
 
 /**
@@ -146,6 +150,7 @@ export const DefaultOCGEffectFontData: FontData = {
 export const NormalFontData: Record<string, FontData> = {
     'tcg': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg',
         fontList: [
             { bulletWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
@@ -159,6 +164,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-stat': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-stat',
         fontList: [
             { bulletWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 4, bulletOffset: 2 },
             { bulletWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 5 },
@@ -171,6 +177,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-type-stat': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-type-stat',
         fontList: [
             { bulletWidth: 40, fontSize: 44.2, lineHeight: 47.1, lineCount: 3, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
@@ -184,6 +191,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-type': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-type',
         fontList: [
             { bulletWidth: 40, fontSize: 41.2, lineHeight: 44.1, lineCount: 4, bulletOffset: 2 },
             { bulletWidth: 32, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
@@ -198,6 +206,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-pendulumLarge',
         fontList: [
             { bulletWidth: 38, fontSize: 36.8, lineHeight: 43.3, lineCount: 4, bulletOffset: 1 },
             { bulletWidth: 32, fontSize: 31.5, lineHeight: 35.6, lineCount: 5, bulletOffset: 1 },
@@ -211,6 +220,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge-stat': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-pendulumLarge-stat',
         fontList: [
             { bulletWidth: 41, fontSize: 39.5, lineHeight: 47.9, lineCount: 3, bulletOffset: 2 },
             { bulletWidth: 34, fontSize: 32.6, lineHeight: 36.0, lineCount: 4 },
@@ -223,6 +233,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge-type-stat': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-pendulumLarge-type-stat',
         fontList: [
             { bulletWidth: 40, fontSize: 44.4, lineHeight: 54.1, lineCount: 2, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 33.5, lineHeight: 37.5, lineCount: 3 },
@@ -236,6 +247,7 @@ export const NormalFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge-type': {
         ...DefaultTCGNormalFontData,
+        variant: 'tcg-pendulumLarge-type',
         fontList: [
             { bulletWidth: 40, fontSize: 38.9, lineHeight: 45.5, lineCount: 3, bulletOffset: 1 },
             { bulletWidth: 36, fontSize: 32.4, lineHeight: 36.9, lineCount: 4, bulletOffset: 1 },
@@ -255,6 +267,7 @@ export const DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE = 3;
 export const EffectFontData: Record<string, FontData> = {
     'tcg': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg',
         fontList: [
             { bulletWidth: 38, fontSize: 40.2, lineHeight: 42.1, lineCount: 5, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 33.2, lineHeight: 35.1, lineCount: 6 },
@@ -268,6 +281,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-stat': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-stat',
         fontList: [
             { bulletWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletOffset: 2 },
             { bulletWidth: 32, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
@@ -280,6 +294,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-type-stat': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-type-stat',
         fontList: [
             { bulletWidth: 40, fontSize: 45.2, lineHeight: 48.1, lineCount: 3, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 34.2, lineHeight: 36.5, lineCount: 4 },
@@ -293,6 +308,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-type': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-type',
         fontList: [
             { bulletWidth: 40, fontSize: 42.2, lineHeight: 43.9, lineCount: 4, bulletOffset: 2 },
             { bulletWidth: 32, fontSize: 33.2, lineHeight: 35.5, lineCount: 5 },
@@ -307,6 +323,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-pendulumLarge',
         fontList: [
             { bulletWidth: 38, fontSize: 37.6, lineHeight: 43.3, lineCount: 4, bulletOffset: 1 },
             { bulletWidth: 32, fontSize: 32.2, lineHeight: 35.6, lineCount: 5, bulletOffset: 1 },
@@ -320,6 +337,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge-stat': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-pendulumLarge-stat',
         fontList: [
             { bulletWidth: 41, fontSize: 40.2, lineHeight: 47.9, lineCount: 3, bulletOffset: 2 },
             { bulletWidth: 34, fontSize: 33.2, lineHeight: 36.0, lineCount: 4 },
@@ -332,6 +350,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge-type-stat': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-pendulumLarge-type-stat',
         fontList: [
             { bulletWidth: 40, fontSize: 45.2, lineHeight: 54.1, lineCount: 2, bulletOffset: 1 },
             { bulletWidth: 30, fontSize: 34.2, lineHeight: 37.5, lineCount: 3 },
@@ -345,6 +364,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'tcg-pendulumLarge-type': {
         ...DefaultTCGEffectFontData,
+        variant: 'tcg-pendulumLarge-type',
         fontList: [
             { bulletWidth: 40, fontSize: 39.8, lineHeight: 45.5, lineCount: 3, bulletOffset: 1 },
             { bulletWidth: 36, fontSize: 33.2, lineHeight: 36.9, lineCount: 4, bulletOffset: 1 },
@@ -359,6 +379,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg',
         fontList: [
             { bulletWidth: 38, fontSize: 43.2, lineHeight: 50.1, lineCount: 4, bulletOffset: 2, headTextFontRatio: 0.25 },
             { bulletWidth: 30, fontSize: 34.7, lineHeight: 40.1, lineCount: 5, bulletOffset: 1, headTextFontRatio: 0.3 },
@@ -369,6 +390,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-stat': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-stat',
         fontList: [
             { bulletWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
             { bulletWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletOffset: 2, headTextFontRatio: 0.25 },
@@ -378,6 +400,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-type-stat': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-type-stat',
         fontList: [
             { bulletWidth: 41, fontSize: 45.7, lineHeight: 49.8, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
             { bulletWidth: 32, fontSize: 34.7, lineHeight: 38.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
@@ -387,6 +410,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-type': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-type',
         fontList: [
             { bulletWidth: 34, fontSize: 38.7, lineHeight: 44.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },
             { bulletWidth: 30, fontSize: 32.7, lineHeight: 36.1, lineCount: 5, bulletOffset: 2, headTextFontRatio: 0.25 },
@@ -396,6 +420,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-pendulumLarge': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-pendulumLarge',
         fontList: [
             { bulletWidth: 39, fontSize: 45.2, lineHeight: 55.1, lineCount: 3, bulletOffset: 2, headTextFontRatio: 0.25 },
             { bulletWidth: 31, fontSize: 35.7, lineHeight: 44.1, lineCount: 4, bulletOffset: 1, headTextFontRatio: 0.3 },
@@ -406,6 +431,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-pendulumLarge-stat': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-pendulumLarge-stat',
         fontList: [
             { bulletWidth: 37, fontSize: 40.7, lineHeight: 48.1, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
             { bulletWidth: 30, fontSize: 32.7, lineHeight: 37.1, lineCount: 4, bulletOffset: 2, headTextFontRatio: 0.25 },
@@ -415,6 +441,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-pendulumLarge-type-stat': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-pendulumLarge-type-stat',
         fontList: [
             { bulletWidth: 41, fontSize: 45.7, lineHeight: 54.8, lineCount: 2, bulletOffset: 3, headTextFontRatio: 0.25 },
             { bulletWidth: 32, fontSize: 35.7, lineHeight: 40.1, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
@@ -424,6 +451,7 @@ export const EffectFontData: Record<string, FontData> = {
     },
     'ocg-pendulumLarge-type': {
         ...DefaultOCGEffectFontData,
+        variant: 'ocg-pendulumLarge-type',
         fontList: [
             { bulletWidth: 38, fontSize: 43.7, lineHeight: 49.8, lineCount: 3, bulletOffset: 3, headTextFontRatio: 0.25 },
             { bulletWidth: 31, fontSize: 34.7, lineHeight: 38.1, lineCount: 4, bulletOffset: 3, headTextFontRatio: 0.25 },

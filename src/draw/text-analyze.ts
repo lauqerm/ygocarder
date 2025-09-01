@@ -6,6 +6,8 @@ import {
     FontData,
     FragmentSplitRegex,
     GAP_PER_WIDTH_RATIO,
+    ITALIC_CLOSE_TAG,
+    ITALIC_OPEN_TAG,
     LETTER_GAP_RATIO,
     MAX_LINE_REVERSE_INDENT,
     NB_UNCOMPRESSED_END,
@@ -13,12 +15,14 @@ import {
     NON_BREAKABLE_SYMBOL_SOURCE,
     NoSpaceRegex,
     NonCompressableRegex,
+    NormalFontData,
     NumberRegex,
     OCGAlphabetRegex,
     OCGNoOverheadGapRegex,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
     START_OF_LINE_ALPHABET_OFFSET,
+    STYLING_TAG_SOURCE,
     ST_ICON_SYMBOL,
     SquareBracketLetterRegex,
     TCGSymbolLetterRegex,
@@ -27,7 +31,7 @@ import {
     WholeWordRegex,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
-import { createFontGetter, scaleFontSizeData } from 'src/util';
+import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
 import { getLetterWidth } from './letter';
 
 /** 
@@ -121,7 +125,10 @@ export const analyzeToken = ({
     let offsetable = false;
     let leftMostGap = 0;
 
-    const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
+    const isControlWord = new RegExp(STYLING_TAG_SOURCE, 'g').test(token);
+    const fragmentList = isControlWord
+        ? []
+        : token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
     for (let cnt = 0; cnt < fragmentList.length; cnt++) {
         const isLeftmostFragment = cnt === 0;
         const fragment = fragmentList[cnt];
@@ -379,6 +386,7 @@ export const analyzeLine = ({
     let totalContentWidth = 0;
     let lineSpaceCount = 0;
     let currentGap = 0;
+    let currentTextData = textData;
 
     for (let cnt = 0, xRatio = baseXRatio; cnt < tokenList.length; cnt++) {
         const token = tokenList[cnt];
@@ -392,6 +400,24 @@ export const analyzeLine = ({
             xRatio = baseXRatio;
             continue;
         }
+        if (token === ITALIC_OPEN_TAG) {
+            const hasItalicFontData = !!(NormalFontData[textData.fontData?.variant ?? '']);
+            const italicFontData = hasItalicFontData
+                ? NormalFontData[textData.fontData.variant]
+                : textData.fontData;
+
+            currentTextData = swapTextData(textData, italicFontData);
+            ctx.font = currentTextData.currentFont
+                .setStyle('italic')
+                .getFont();
+            continue;
+        } else if (token === ITALIC_CLOSE_TAG) {
+            currentTextData = textData;
+            ctx.font = currentTextData.currentFont
+                .setStyle('')
+                .getFont();
+            continue;
+        }
         const {
             spaceCount,
             totalWidth,
@@ -399,7 +425,7 @@ export const analyzeLine = ({
             leftGap,
             rightGap,
             leftMostLetter,
-        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData, format, globalScale });
+        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData: currentTextData, format, globalScale });
         /** Check `createLineList` function about first token indentation. */
         const indent = (
             (cnt === 0 && leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)

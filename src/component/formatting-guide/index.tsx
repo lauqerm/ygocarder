@@ -210,6 +210,27 @@ export const FormattingHelpDrawer = () => {
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
+                <h2>{language['guide.format.section-7.label']}</h2>
+                {language['guide.format.section-7.content'](
+                    <StyledCode key="open-tag">{'<i>'}</StyledCode>,
+                    <StyledCode key="close-tag">{'</i>'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl-I'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘-I'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-raw' }}
+                        alt={'non-breakable line raw'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-7-raw.jpg`}
+                        caption={language['guide.format.caption.input']}
+                    />
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-preview' }}
+                        alt={'non-breakable line preview'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-7-preview.jpg`}
+                        caption={language['guide.format.caption.output']}
+                    />
+                </StyledImageSection>
             </StyledContainer>
         </Drawer>
         <Button

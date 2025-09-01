@@ -8,6 +8,7 @@ export const tcgCreatorFontData: FontData = {
     ordinalFont: 'stone-serif-regular',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontStyle: 'tcg',
+    variant: 'tcg-password',
     fontList: [
         {
             offsetY: -1,
@@ -39,6 +40,7 @@ export const ocgCreatorFontData: FontData = {
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     metricMethod: 'creator',
     fontStyle: 'ocg',
+    variant: 'ocg-creator',
     fontList: [{
         bulletWidth: 18,
         fontSize: 19.0,
@@ -62,6 +64,7 @@ export const tcgPasswordFontData: FontData = {
     ordinalFont: 'stone-serif-regular',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontStyle: 'tcg',
+    variant: 'tcg-password',
     fontList: [
         {
             bulletWidth: 20.05,
@@ -94,6 +97,7 @@ export const ocgPasswordFontData: FontData = {
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontStyle: 'ocg',
     metricMethod: 'furigana',
+    variant: 'ocg-password',
     fontList: [
         {
             bulletWidth: 20.05,
@@ -129,6 +133,7 @@ export const tcgTypeAbilityFontData: FontData = {
     ordinalFont: 'YuGiOhITCStoneSerifBSc',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontStyle: 'tcg',
+    variant: 'tcg-type-ability',
     fontList: [
         {
             bulletWidth: 20.05,
@@ -173,6 +178,7 @@ export const ocgTypeAbilityFontData: FontData = {
     ordinalFont: '"DFKakuTaiHiStd-W4"',
     furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
     fontStyle: 'ocg',
+    variant: 'ocg-type-ability',
     fontList: [
         {
             bulletWidth: 20.05,
