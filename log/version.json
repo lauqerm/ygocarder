@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.3.26 (2025/09/01)",
+        "logList": [
+            {
+                "content": "Experimental syntax for italic text. Wrap your text in \"<i>\" and \"</i>\" to make it italic like the flavor text of Normal Monster. For more information click Syntax button.",
+                "image": "https://images2.imgbox.com/c3/1b/OFLOLdf9_o.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.25 (2025/08/26)",
         "logList": [
             {
