@@ -397,6 +397,7 @@
         "manager.batch.batch-download.clear.label": "Clear",
         "manager.batch.batch-download.export-option.with-id.label": "Set ID + Card Name",
         "manager.batch.batch-download.export-option.with-name.label": "Card Name",
+        "input.opacity.effect-box.tooltip": "Keep effect background, border, stat labels and finish whenever possible.",
         "manager.batch.batch-download.export-scheme.label": "Scheme",
         "manager.batch.batch-download.label": "Download All",
         "input.text-style.justify-ratio.label": "Justify Ratio (%)",
