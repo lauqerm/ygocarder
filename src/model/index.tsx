@@ -24,7 +24,7 @@ export const getDefaultCrop = () => ({
  * * Shorten codec
  * * Card thumb
  * * Legacy version
- * * Import / export
+ * * Import / export / template
  */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
@@ -247,9 +247,10 @@ export const OpacityList = [
     },
     {
         type: 'text' as const,
+        subType: 'effectBox' as const,
         label: 'Effect',
         labelKey: 'input.opacity.effect.label',
-        tooltipKey: null,
+        tooltipKey: 'input.opacity.effect-box.tooltip',
     },
 ];
 

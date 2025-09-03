@@ -20,11 +20,12 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         name: 'opnm',
         text: 'optx',
         boundless: 'opbl',
-        /** legacy */
-        artFrame: 'opaf',
         artBorder: 'opab',
+        effectBox: 'opeb',
         nameBorder: 'opnb',
         baseFill: 'opbf',
+        /** legacy */
+        artFrame: 'opaf',
     },
     finish: 'fn',
     otherFinish: 'of',

@@ -75,13 +75,10 @@ export const SolidLabel = styled.div`
     padding: var(--spacing-xxs) var(--spacing-xs);
     border-radius: var(--br);
     box-shadow: var(--bs-input);
-    .ant-checkbox-wrapper {
-        transform: translateY(-1px); // Alignment
-    }
 `;
 export const CombinedSliderContainer = styled.div`
     display: grid;
-    grid-template-columns: max-content 57px 39px 6px;
+    grid-template-columns: max-content 57px 36px 6px;
     &.inactive {
         .slider-label,
         .ant-slider,

@@ -198,7 +198,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
 
-    const { body = 100, boundless } = opacity;
+    const { body = 100, boundless, effectBox } = opacity;
     const requireShadow = !!(body < 50 || boundless);
     const lightFooter = checkLightFooter(bottomFrame);
     const {
@@ -293,6 +293,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
+                effectBox: keepEffectBox,
                 artBorder: keepArtBorder,
                 body: opacityBody,
                 boundless,
@@ -414,6 +415,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!isPendulum) {
                 if (!boundless) {
                     await drawNameBackground();
+                }
+                if (!boundless && (keepEffectBox || !hasBackground)) {
                     await drawEffectBackground();
                     await drawEffectBorder();
                     /** Foil DOES NOT contains shadow, so it relies on the shadow of the border below. */
@@ -495,7 +498,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     await drawPendulumBorder(false, 'normal');
                     await drawPendulumBorder(false, foil, true);
                     await drawBorderPendulumFinish();
-                } else {
+                } else if (keepEffectBox) {
                     await drawEffectBackground();
                     await drawEffectBorder();
                     await drawEffectBorderFoil();
@@ -519,7 +522,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
                     ? linkRating
                     : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
-                await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
+                if (keepEffectBox) await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
                 resetStyle();
             }
             await drawPredefinedMark({
@@ -646,16 +649,28 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const hasLink = showLinkRating;
         if (atk) {
             const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0);
-            drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
+            if (effectBox) drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5, globalScale);
         }
         if (def && (!showLinkRating || showDefAndLink)) {
             const offset = hasLink ? 168.75 : 0;
-            drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
+            if (effectBox) drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, def.trim(), 673.865 - offset, 1106.5, globalScale);
         }
         resetStyle();
-    }, [readyToDraw, globalScale, atk, def, showLinkRating, isMonster, showDefAndLink, resolvedStatTextStyle, statCanvasRef, statInEffect]);
+    }, [
+        readyToDraw,
+        globalScale,
+        effectBox,
+        atk,
+        def,
+        showLinkRating,
+        isMonster,
+        showDefAndLink,
+        resolvedStatTextStyle,
+        statCanvasRef,
+        statInEffect,
+    ]);
 
     /** DRAW SET ID */
     useEffect(() => {
@@ -669,7 +684,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             setId,
             {
                 globalScale,
-                isLink, isPendulum,
+                isLink,
+                isPendulum,
                 withShadow: requireShadow && !isPendulum,
                 format,
                 lightFooter: lightRightFooter,

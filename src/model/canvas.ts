@@ -91,6 +91,7 @@ export const getDefaultCardOpacity = () => ({
     baseFill: DEFAULT_BASE_FILL_COLOR,
     artBorder: true,
     nameBorder: true,
+    effectBox: true,
     boundless: false,
 });
 export type CardOpacity = ReturnType<typeof getDefaultCardOpacity>;
