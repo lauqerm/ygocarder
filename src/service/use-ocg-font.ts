@@ -39,6 +39,7 @@ export const useOCGFont = ({
             setStyleContent(`${process.env.PUBLIC_URL}/asset/ocg-font.css`);
             onBeforeLoad();
 
+            /** @todo Once these fonts are loaded, some letters previously appear ugly will inherit the font and looks much better, for example OCG-style ordinal number ① ② But right now it may not worth the trade off of including large fonts by default. */
             WebFont.load({
                 custom: {
                     families: [
