@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '01/09/2025';
+        const currentReminder = '05/09/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Numbers at Sep 04, 2025',
+            question: 'There\'s a weird glitch that happens when adding numbers. The spacing seems to be inconsistent depending on the content',
+            answer: 'Hi there, unfortunately this is by design, as the space between words are calculated so that the entire line fit the space perfectly, so depend on the text, it maybe longer or shorter than usual.\nHowever, if what you want is to align the effect numbers, you can achieve the result by using the following "<pre>" syntax.',
+            image: 'https://i.postimg.cc/GhbnM0qt/image.png',
+        },
         {
             author: 'Italic text at Aug 31, 2025',
             question: 'Adding a syntax option for Italic in order to make only specific part of the text italic',

@@ -19,6 +19,8 @@ import {
     NumberRegex,
     OCGAlphabetRegex,
     OCGNoOverheadGapRegex,
+    PRE_CLOSE_TAG,
+    PRE_OPEN_TAG,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
     START_OF_LINE_ALPHABET_OFFSET,
@@ -387,6 +389,7 @@ export const analyzeLine = ({
     let lineSpaceCount = 0;
     let currentGap = 0;
     let currentTextData = textData;
+    let preformatMode = false;
 
     for (let cnt = 0, xRatio = baseXRatio; cnt < tokenList.length; cnt++) {
         const token = tokenList[cnt];
@@ -418,6 +421,13 @@ export const analyzeLine = ({
                 .getFont();
             continue;
         }
+        if (token === PRE_OPEN_TAG) {
+            preformatMode = true;
+            continue;
+        } else if (token === PRE_CLOSE_TAG) {
+            preformatMode = false;
+            continue;
+        }
         const {
             spaceCount,
             totalWidth,
@@ -433,9 +443,12 @@ export const analyzeLine = ({
             (cnt === 0 && OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale * xRatio : 0)
         );
 
+        const actualSpaceCount = preformatMode
+            ? 0
+            : spaceCount;
         currentGap = rightGap * xRatio;
         totalContentWidth += totalWidth * xRatio + indent;
-        lineSpaceCount += spaceCount - (spaceAtEnd && nextToken === undefined ? 1 : 0);
+        lineSpaceCount += actualSpaceCount - (spaceAtEnd && nextToken === undefined ? 1 : 0);
     }
     const expectedSpaceWidth = lineSpaceCount > 0 ? (width - totalContentWidth) / lineSpaceCount : 0;
     const spaceWidth = isLast

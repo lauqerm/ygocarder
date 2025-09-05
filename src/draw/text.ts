@@ -16,6 +16,8 @@ import {
     NumberRegex,
     OCGAlphabetRegex,
     OCGNoOverheadGapRegex,
+    PRE_CLOSE_TAG,
+    PRE_OPEN_TAG,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
     START_OF_LINE_ALPHABET_OFFSET,
@@ -98,6 +100,7 @@ export const drawLine = ({
     let iconPositionList: { edge: number, size: number, baseline: number }[] = [];
     let previousTokenRebalanceOffset = 0;
     let tokenEdge = trueEdge;
+    let preformatMode = false;
 
     /** To reach a acceptable degree of calculation, we usually need to look ahead 1 or 2 next tokens, same with fragments. */
     /** To prevent cascading calculation, we disconnect the relationship between fragments and tokens. We use all information to calculate an empty space for each token, then fragments of that token is drawn inside that empty space assuming they would fit. In other words, drawing fragments of a token DOES NOT interfere with the next token. That means in theory we can skip all fragments of a token to draw the next token right away.
@@ -177,6 +180,15 @@ export const drawLine = ({
             ctx.font = currentFont
                 .setStyle('')
                 .getFont();
+            continue;
+        }
+        if (token === PRE_OPEN_TAG) {
+            preformatMode = true;
+            console.log('preformatMode on');
+            continue;
+        } else if (token === PRE_CLOSE_TAG) {
+            preformatMode = false;
+            console.log('preformatMode off');
             continue;
         }
         const gapRatio = LETTER_GAP_RATIO * xRatio;
@@ -575,7 +587,10 @@ export const drawLine = ({
         /** Make space for the next token, as we can see it does not involve any variables from the fragment drawing process. */
         previousTokenGap = tokenRightGap * xRatio;
         if (debug) drawMarker({ ctx, baseline, edge: tokenEdge, width: totalTokenWidth * xRatio, xRatio });
-        tokenEdge += totalTokenWidth * xRatio + spaceCount * spaceWidth + indent;
+        const actualSpaceCount = preformatMode
+            ? 0
+            : spaceCount;
+        tokenEdge += totalTokenWidth * xRatio + actualSpaceCount * spaceWidth + indent;
     }
 
     return {
