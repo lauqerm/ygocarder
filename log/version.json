@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.3.28 (2025/09/05)",
+        "logList": [
+            {
+                "content": "Experimental syntax for text with consistent space. Wrap your text in \"<pre>\" and \"</pre>\" to remove dynamic spacing of the text, for use-case like effect alignment.",
+                "image": "https://i.postimg.cc/GhbnM0qt/image.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.27 (2025/09/03)",
         "logList": [
             {
