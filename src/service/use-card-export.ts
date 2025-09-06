@@ -83,7 +83,9 @@ export const useCardExport = ({
         size: [number, number] = resolution,
     ) => {
         try {
-            const fetchedDataUrl = await fetch(getCardDataUrl(size));
+            const cardData = getCardDataUrl(size);
+            if (typeof cardData !== 'string') throw new Error('Failed to add card to batch');
+            const fetchedDataUrl = await fetch(cardData);
             const blob = await fetchedDataUrl.blob();
             if (isBatchDownloading) addToBatch(cardId, cardName, blob);
         } catch (e) {
@@ -95,11 +97,13 @@ export const useCardExport = ({
     const download = useCallback((size: [number, number] = resolution) => {
         try {
             const normalizedName = normalizeCardName(name);
+            const cardData = getCardDataUrl(size);
+            if (typeof cardData !== 'string') throw new Error('Failed to trigger automatic download');
             var link = document.createElement('a');
             link.download = normalizedName
                 ? `${normalizedName}.png`
                 : 'card.png';
-            link.href = getCardDataUrl(size);
+            link.href = cardData;
             link.click();
         } catch (e) {
             onDownloadError();
