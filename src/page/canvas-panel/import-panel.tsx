@@ -332,8 +332,8 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
         <Tooltip
             overlay={allowHotkey
                 ? <div className="center">
-                    <div>Ctrl-E / ⌘-E</div>
-                    <div>Ctrl-G / ⌘-G{language['prompt.import.merge.tooltip']}</div>
+                    <div>Ctrl+E / ⌘+E</div>
+                    <div>Ctrl+G / ⌘+G{language['prompt.import.merge.tooltip']}</div>
                 </div>
                 : null}
         >

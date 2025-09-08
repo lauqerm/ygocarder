@@ -1,4 +1,6 @@
 import {
+    BOLD_CLOSE_TAG,
+    BOLD_OPEN_TAG,
     BULLET_LETTER,
     CapitalLetterRegex,
     DefaultFontData,
@@ -179,6 +181,17 @@ export const drawLine = ({
             textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentFont, globalScale);
             ctx.font = currentFont
                 .setStyle('')
+                .getFont();
+            continue;
+        }
+        if (token === BOLD_OPEN_TAG) {
+            ctx.font = currentTextData.currentFont
+                .setWeight('bold')
+                .getFont();
+            continue;
+        } else if (token === BOLD_CLOSE_TAG) {
+            ctx.font = currentTextData.currentFont
+                .setWeight('')
                 .getFont();
             continue;
         }

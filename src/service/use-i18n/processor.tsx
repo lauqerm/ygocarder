@@ -168,6 +168,17 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
                 { openTag, closeTag, hotkey, hotkeyAlternative },
             );
         },
+        'guide.format.section-8.content': (
+            openTag: React.ReactNode,
+            closeTag: React.ReactNode,
+            hotkey: React.ReactNode,
+            hotkeyAlternative: React.ReactNode,
+        ) => {
+            return applyTemplateNode(
+                getDictionaryEntry('guide.format.section-8.content'),
+                { openTag, closeTag, hotkey, hotkeyAlternative },
+            );
+        },
         'input.name-style.emboss.color.alert': (
             colorTab: React.ReactNode,
         ) => {

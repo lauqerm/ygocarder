@@ -8,13 +8,16 @@ export const CapitalLetterRegex = new RegExp(CAPITAL_LETTER_SOURCE);
 export const SQUARE_BRACKET_SOURCE = '[\\[\\]【】]';
 export const SquareBracketLetterRegex = new RegExp(SQUARE_BRACKET_SOURCE);
 
-export const StylingTagList = ['i', 'pre'];
+export const StylingTagList = ['i', 'b', 'pre'];
 export const STYLING_TAG_SOURCE = `<(\\/?(${StylingTagList.join('|')}))( [^<]*|)>`;
 export const StylingTagRegex = new RegExp(STYLING_TAG_SOURCE);
 
 /** Use italic font like in Normal Monster */
 export const ITALIC_OPEN_TAG = '<i>';
 export const ITALIC_CLOSE_TAG = '</i>';
+
+export const BOLD_OPEN_TAG = '<b>';
+export const BOLD_CLOSE_TAG = '</b>';
 
 /** Ignore dynamic space and force draw character as is (still affected by text condensation) */
 export const PRE_OPEN_TAG = '<pre>';

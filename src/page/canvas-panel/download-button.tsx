@@ -132,7 +132,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     return <div className="save-button-container">
         <div id="save-button-waiting" />
         <StyledDownloadButton className="save-button" id="save-button-ready">
-            <Tooltip overlay={allowHotkey ? <>Ctrl-S / ⌘-S</> : null}>
+            <Tooltip overlay={allowHotkey ? <>Ctrl+S / ⌘+S</> : null}>
                 <div className="button-label">
                     <div className="label-content" onClick={() => download()}>
                         {isDownloading

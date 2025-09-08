@@ -71,7 +71,7 @@ const AppGlobalHotkeyMap = {
     EXPORT: ['ctrl+d', 'command+d'],
     IMPORT: ['ctrl+e', 'command+e'],
     MERGE: ['ctrl+g', 'command+g'],
-    VIEW: ['ctrl+b', 'command+b'],
+    VIEW: ['ctrl+y', 'command+y'],
     DOWNLOAD: ['ctrl+s', 'command+s'],
 };
 
@@ -663,7 +663,7 @@ function App() {
                                 </Tooltip>
                                 <Tooltip title={<div className="center">
                                     {language['button.full-size.label']}
-                                    {allowHotkey ? <><br />Ctrl-B / ⌘-B</> : null}
+                                    {allowHotkey ? <><br />Ctrl+Y / ⌘+Y</> : null}
                                 </div>}>
                                     <LightboxButton className="lightbox-button" onClick={() => displayLightbox()}>
                                         <ZoomInOutlined />

@@ -80,6 +80,17 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Jayden at Sep 08, 2025',
+            question: 'Not a bug, but a possible suggestion. For my own personal reasons, I would love the opportunity to add either a custom sigil/icon of my own design (link/image upload) that could replace the existing ones, and also, the possibility to paste those and existing sigil’s/icon’s into the effect text of the card. So that maybe I could do for example, “Add 1 (Icon) Quick-Play Spell from your Deck to your hand.”',
+            answer: 'This is a rather complex feature, but not impossible, maybe I could extend the preset feature for this. Let\'s see if I can look into it this weekend.',
+        },
+        {
+            author: 'Jayden at Sep 08, 2025',
+            question: 'I want to firstly express my most sincere gratitude for such an amazing card maker that makes custom cards appear so professional with no cost on the maker.\nAs for an issue, I have none other than a request / suggestion. Would it be possible to implement Bolded portion of text in the Effect Text? For those users that wish to express unique and more modernised redesigns to card effects.',
+            answer: 'I have added an experimental syntax for this case, you may try it now.',
+            image: 'https://i.postimg.cc/G3Qd2Ws9/image.png',
+        },
+        {
             author: 'Armando Giordano at Sep 06, 2025',
             question: 'Thank you for your quick response and for your astonishing work with the Carder. Yes, I am using an iPad and a phone, and, with both devices, when I click on the Download button, it just shows "Saving..." for a second, then no Download starts. I am now on a computer and it works great with left click and "Save as", though it would be nice to be able to use it on mobile.',
         },

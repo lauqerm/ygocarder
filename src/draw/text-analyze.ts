@@ -1,4 +1,6 @@
 import {
+    BOLD_CLOSE_TAG,
+    BOLD_OPEN_TAG,
     BULLET_LETTER,
     CapitalLetterRegex,
     DefaultFontData,
@@ -418,6 +420,17 @@ export const analyzeLine = ({
             currentTextData = textData;
             ctx.font = currentTextData.currentFont
                 .setStyle('')
+                .getFont();
+            continue;
+        }
+        if (token === BOLD_OPEN_TAG) {
+            ctx.font = currentTextData.currentFont
+                .setWeight('bold')
+                .getFont();
+            continue;
+        } else if (token === BOLD_CLOSE_TAG) {
+            ctx.font = currentTextData.currentFont
+                .setWeight('')
                 .getFont();
             continue;
         }

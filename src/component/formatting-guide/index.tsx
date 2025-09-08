@@ -90,8 +90,8 @@ export const FormattingHelpDrawer = () => {
                 {language['guide.format.section-1.content'](
                     <StyledCode key="open-tag">{'['}</StyledCode>,
                     <StyledCode key="close-tag">{']'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-1'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-1'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+1'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+1'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
@@ -111,8 +111,8 @@ export const FormattingHelpDrawer = () => {
                 {language['guide.format.section-6.content'](
                     <StyledCode key="open-tag">{'[['}</StyledCode>,
                     <StyledCode key="close-tag">{']]'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-Shift-1'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-Shift-1'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+Shift+1'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+Shift+1'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
@@ -132,8 +132,8 @@ export const FormattingHelpDrawer = () => {
                 {language['guide.format.section-2.content'](
                     <StyledCode key="open-tag">{'{'}</StyledCode>,
                     <StyledCode key="close-tag">{'}'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-2'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-2'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+2'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+2'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
@@ -152,8 +152,8 @@ export const FormattingHelpDrawer = () => {
                 <h2>{language['guide.format.section-3.label']}</h2>
                 {language['guide.format.section-3.content'](
                     <StyledCode key="separator">{'|'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-3'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-3'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+3'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+3'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
@@ -172,8 +172,8 @@ export const FormattingHelpDrawer = () => {
                 <h2>{language['guide.format.section-4.label']}</h2>
                 {language['guide.format.section-4.content'](
                     <StyledCode key="separator">{'||'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-4'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-4'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+4'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+4'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
@@ -193,8 +193,8 @@ export const FormattingHelpDrawer = () => {
                 {language['guide.format.section-5.content'](
                     <StyledCode key="open-tag">{'{{'}</StyledCode>,
                     <StyledCode key="close-tag">{'}}'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-5'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-5'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+5'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+5'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
@@ -214,20 +214,41 @@ export const FormattingHelpDrawer = () => {
                 {language['guide.format.section-7.content'](
                     <StyledCode key="open-tag">{'<i>'}</StyledCode>,
                     <StyledCode key="close-tag">{'</i>'}</StyledCode>,
-                    <StyledCode key="hotkey">{'Ctrl-I'}</StyledCode>,
-                    <StyledCode key="hokey-alternative">{'⌘-I'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+I'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+I'}</StyledCode>,
                 )}
                 <StyledImageSection className="panel-figure">
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
-                        alt={'non-breakable line raw'}
+                        alt={'italic text raw'}
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-7-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
-                        alt={'non-breakable line preview'}
+                        alt={'italic text preview'}
                         src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-7-preview.jpg`}
+                        caption={language['guide.format.caption.output']}
+                    />
+                </StyledImageSection>
+                <h2>{language['guide.format.section-8.label']}</h2>
+                {language['guide.format.section-8.content'](
+                    <StyledCode key="open-tag">{'<b>'}</StyledCode>,
+                    <StyledCode key="close-tag">{'</b>'}</StyledCode>,
+                    <StyledCode key="hotkey">{'Ctrl+B'}</StyledCode>,
+                    <StyledCode key="hokey-alternative">{'⌘+B'}</StyledCode>,
+                )}
+                <StyledImageSection className="panel-figure">
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-raw' }}
+                        alt={'bold text raw'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-8-raw.jpg`}
+                        caption={language['guide.format.caption.input']}
+                    />
+                    <ImageWithCaption
+                        containerProps={{ className: 'panel-box box-preview' }}
+                        alt={'bold text preview'}
+                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-8-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>

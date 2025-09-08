@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.3.29 (2025/09/08)",
+        "logList": [
+            {
+                "content": "Experimental syntax for bold text. Wrap your text in \"<b>\" and \"</b>\" to make it bolder. For more information click Syntax button.",
+                "image": "https://i.postimg.cc/G3Qd2Ws9/image.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.28 (2025/09/05)",
         "logList": [
             {

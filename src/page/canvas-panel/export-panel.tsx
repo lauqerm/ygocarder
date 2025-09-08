@@ -330,7 +330,7 @@ export const ExportPanel = forwardRef(({
                 </div>
             </StyledExportContainer>
         </Modal>
-        <Tooltip overlay={allowHotkey ? <>Ctrl-D / ⌘-D</> : null}>
+        <Tooltip overlay={allowHotkey ? <>Ctrl+D / ⌘+D</> : null}>
             <button className="primary-button export-button" onClick={() => {
                 onRequireExportData();
                 setVisible(true);
