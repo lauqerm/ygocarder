@@ -111,6 +111,8 @@
         "guide.format.section-6.label": "In nghiêng chẽ",
         "guide.format.section-7.content": "Bọc một đoạn văn bản trong cặp {openTag} và {closeTag} để dùng chữ in nghiêng tương tự Normal Monster.\nBạn có thể áp dụng cú pháp này bằng phím tắt {hotkey} hoặc {hotkeyAlternative}.",
         "guide.format.section-7.label": "Chữ in nghiêng",
+        "guide.format.section-8.content": "Bọc một đoạn văn bản trong cặp {openTag} và {closeTag} để dùng chữ in đậm.\nBạn có thể áp dụng cú pháp này bằng phím tắt {hotkey} hoặc {hotkeyAlternative}.",
+        "guide.format.section-8.label": "Chữ in đậm",
         "image-cropper.button.center-horizontal.tooltip": "Canh giữa chiều ngang",
         "image-cropper.button.center-vertical.tooltip": "Canh giữa chiều dọc",
         "image-cropper.button.force-fit.tooltip": "Dùng toàn bộ ảnh",
