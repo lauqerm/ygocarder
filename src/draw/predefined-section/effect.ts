@@ -344,6 +344,11 @@ export const drawEffect = ({
                         });
                     } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
                         ctx.scale(xRatio, yRatio);
+                        const { currentFont, fontData } = textData;
+                        ctx.font = currentFont
+                            .setSize(fontSize)
+                            .setFamily(fontData.font)
+                            .getFont();
                         drawLine({
                             ctx,
                             tokenList,

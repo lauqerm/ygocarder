@@ -197,11 +197,9 @@ export const drawLine = ({
         }
         if (token === PRE_OPEN_TAG) {
             preformatMode = true;
-            console.log('preformatMode on');
             continue;
         } else if (token === PRE_CLOSE_TAG) {
             preformatMode = false;
-            console.log('preformatMode off');
             continue;
         }
         const gapRatio = LETTER_GAP_RATIO * xRatio;
