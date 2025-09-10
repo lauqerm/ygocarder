@@ -80,6 +80,11 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Anonymous User at Sep 10, 2025',
+            question: 'Ko hiện các dòng chữ hiệu ứng của lá bài',
+            answer: 'Đã fix nha bạn.',
+        },
+        {
             author: 'Jayden at Sep 08, 2025',
             question: 'Not a bug, but a possible suggestion. For my own personal reasons, I would love the opportunity to add either a custom sigil/icon of my own design (link/image upload) that could replace the existing ones, and also, the possibility to paste those and existing sigil’s/icon’s into the effect text of the card. So that maybe I could do for example, “Add 1 (Icon) Quick-Play Spell from your Deck to your hand.”',
             answer: 'This is a rather complex feature, but not impossible, maybe I could extend the preset feature for this. Let\'s see if I can look into it this weekend.',

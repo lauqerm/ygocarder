@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.30 (2025/09/10)",
+        "logList": [
+            {
+                "content": "Fix: Dynamic font not working for effect with too many lines."
+            }
+        ]
+    },
+    {
         "version": "v2.3.29 (2025/09/08)",
         "logList": [
             {
