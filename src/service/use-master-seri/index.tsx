@@ -164,15 +164,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
-        typeAbility: {
-            name: 'typeAbility',
+        effect: {
+            name: 'effect',
             order: 6,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        pendulumEffect: {
+            name: 'pendulumEffect',
+            order: 7,
+            rerun: 0,
+            instructor: () => Promise.resolve(),
+        },
+        otherText: {
+            name: 'otherText',
+            order: 7,
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
         overlay: {
             name: 'overlay',
-            order: 7,
+            order: 9,
             rerun: 0,
             instructor: () => Promise.resolve(),
         },
@@ -711,52 +723,56 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = passwordCanvasRef.current?.getContext('2d');
-        if (!clearCanvas(ctx)) return;
 
-        const isNumberPassword = /^[0-9]*$/.test(password);
-        const mayOffset = isNumberPassword && isPendulum && isLink;
-        const willOffset = mayOffset;
-        const { rightEdge } = drawPasswordText({
-            ctx,
-            globalScale,
-            value: password,
-            lightFooter,
-            alignment: 'left',
-            edgeOffset: (willOffset ? 80 : 0) * globalScale,
-            format,
-            hasShadow: bottomFrame === 'zarc' || requireShadow,
-            textStyle: resolvedOtherEffectTextStyle,
-            fontLevel: !isNumberPassword ? 1 : 0
-        });
-        if (isFirstEdition) {
-            const willDraw = isPendulum
-                ? isNumberPassword ? true : false
-                : true;
-            const left = (isLegacyCard || !isNumberPassword) && !isPendulum
-                ? isLink ? 151 : 89
-                : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
-            const bottom = (isLegacyCard || !isNumberPassword) && !isPendulum
-                ? 871
-                : 1150.93;
-            const bottomOffset = (isLegacyCard || !isNumberPassword) && !isPendulum
-                ? 0
-                : isSpeedSkill ? -2 : -1;
+        drawingPipeline.current.otherText.rerun += 1;
+        drawingPipeline.current.otherText.instructor = async () => {
+            if (!clearCanvas(ctx)) return;
 
-            if (willDraw) draw1stEdition(
+            const isNumberPassword = /^[0-9]*$/.test(password);
+            const mayOffset = isNumberPassword && isPendulum && isLink;
+            const willOffset = mayOffset;
+            const { rightEdge } = await drawPasswordText({
                 ctx,
-                left,
-                bottom,
-                bottomOffset,
-                {
-                    stroke: false,
-                    globalScale,
-                    textStyle: {
-                        color: lightFooter ? '#ffffff' : '#000000',
-                        ...resolvedOtherEffectTextStyle,
-                    }
-                },
-            );
-        }
+                globalScale,
+                value: password,
+                lightFooter,
+                alignment: 'left',
+                edgeOffset: (willOffset ? 80 : 0) * globalScale,
+                format,
+                hasShadow: bottomFrame === 'zarc' || requireShadow,
+                textStyle: resolvedOtherEffectTextStyle,
+                fontLevel: !isNumberPassword ? 1 : 0
+            });
+            if (isFirstEdition) {
+                const willDraw = isPendulum
+                    ? isNumberPassword ? true : false
+                    : true;
+                const left = (isLegacyCard || !isNumberPassword) && !isPendulum
+                    ? isLink ? 151 : 89
+                    : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
+                const bottom = (isLegacyCard || !isNumberPassword) && !isPendulum
+                    ? 871
+                    : 1150.93;
+                const bottomOffset = (isLegacyCard || !isNumberPassword) && !isPendulum
+                    ? 0
+                    : isSpeedSkill ? -2 : -1;
+
+                if (willDraw) draw1stEdition(
+                    ctx,
+                    left,
+                    bottom,
+                    bottomOffset,
+                    {
+                        stroke: false,
+                        globalScale,
+                        textStyle: {
+                            color: lightFooter ? '#ffffff' : '#000000',
+                            ...resolvedOtherEffectTextStyle,
+                        }
+                    },
+                );
+            }
+        };
     }, [
         readyToDraw,
         globalScale,
@@ -789,7 +805,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 body: opacityBody,
                 boundless,
             } = normalizedOpacity;
-            const endOfCreatorText = drawCreatorText({
+            const endOfCreatorText = await drawCreatorText({
                 ctx: creatorCanvasRef.current?.getContext('2d'),
                 format,
                 value: creator,
@@ -895,8 +911,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const ctx = effectCanvasRef.current?.getContext('2d');
         const typeCtx = typeCanvasRef.current?.getContext('2d');
 
-        drawingPipeline.current.typeAbility.rerun += 1;
-        drawingPipeline.current.typeAbility.instructor = async () => {
+        drawingPipeline.current.effect.rerun += 1;
+        drawingPipeline.current.effect.instructor = async () => {
             if (!clearCanvas(ctx) || !clearCanvas(typeCtx)) return;
 
             const { condenseTolerant, upSize, fontStyle } = effectStyle ?? {};
@@ -905,7 +921,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const useItalic = customizeEffectStyle
                 ? (isNormal && fontStyle === 'auto') || (format === 'tcg' && fontStyle === 'italic')
                 : isNormal;
-            const effectIndexSize = drawEffect({
+            const effectIndexSize = await drawEffect({
                 ctx,
                 content: effect,
                 isNormal,
@@ -980,52 +996,55 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!readyToDraw) return;
         const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
 
-        if (!clearCanvas(ctx)) return;
-        if (isPendulum) {
-            const { upSize, fontStyle } = pendulumStyle ?? {};
-            const customPendulumStyle = pendulumTextStyle[0];
-            const normalizedUpSize = customPendulumStyle ? upSize : 0;
-            const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
-            const fontDataKey = `${format}-${pendulumSize}`;
-            const coordinateList = PendulumEffectCoordinateMap
-                [(withBlueScale && withRedScale) ? 'normal' : 'scaleless']
-                [pendulumSize];
-            /** Account for half scaleless frame */
-            const modifiedCoordinateList = (withBlueScale && withRedScale)
-                ? coordinateList
-                : coordinateList.map(({
-                    trueEdge, trueWidth, ...rest
-                }) => ({
-                    ...rest,
-                    trueEdge: trueEdge + (withBlueScale ? HALF_SCALE_WIDTH_OFFSET : 0),
-                    trueWidth: trueWidth
-                        - (withBlueScale ? HALF_SCALE_WIDTH_OFFSET : 0)
-                        - (withRedScale ? HALF_SCALE_WIDTH_OFFSET : 0),
-                }));
+        drawingPipeline.current.pendulumEffect.rerun += 1;
+        drawingPipeline.current.pendulumEffect.instructor = async () => {
+            if (!clearCanvas(ctx)) return;
+            if (isPendulum) {
+                const { upSize, fontStyle } = pendulumStyle ?? {};
+                const customPendulumStyle = pendulumTextStyle[0];
+                const normalizedUpSize = customPendulumStyle ? upSize : 0;
+                const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
+                const fontDataKey = `${format}-${pendulumSize}`;
+                const coordinateList = PendulumEffectCoordinateMap
+                    [(withBlueScale && withRedScale) ? 'normal' : 'scaleless']
+                    [pendulumSize];
+                /** Account for half scaleless frame */
+                const modifiedCoordinateList = (withBlueScale && withRedScale)
+                    ? coordinateList
+                    : coordinateList.map(({
+                        trueEdge, trueWidth, ...rest
+                    }) => ({
+                        ...rest,
+                        trueEdge: trueEdge + (withBlueScale ? HALF_SCALE_WIDTH_OFFSET : 0),
+                        trueWidth: trueWidth
+                            - (withBlueScale ? HALF_SCALE_WIDTH_OFFSET : 0)
+                            - (withRedScale ? HALF_SCALE_WIDTH_OFFSET : 0),
+                    }));
 
-            drawEffect({
-                ctx,
-                content: pendulumEffect,
-                isNormal: false,
-                useItalic: useItalic,
-                fontData: (useItalic
-                    ? PendulumNormalFontData
-                    : PendulumEffectFontData)[fontDataKey],
-                fontDataKey,
-                textStyle: resolvedPendulumEffectTextStyle,
-                sizeList: modifiedCoordinateList,
-                condenseTolerant,
-                format,
-                furiganaHelper,
-                option: {
-                    forceRelaxCondenseLimit: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
-                    defaultSizeLevel: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE - normalizedUpSize,
-                    globalScale,
-                    minLine: pendulumEffectMinLine,
-                    justifyRatio: pendulumEffectJustifyRatio,
-                }
-            });
-        }
+                await drawEffect({
+                    ctx,
+                    content: pendulumEffect,
+                    isNormal: false,
+                    useItalic: useItalic,
+                    fontData: (useItalic
+                        ? PendulumNormalFontData
+                        : PendulumEffectFontData)[fontDataKey],
+                    fontDataKey,
+                    textStyle: resolvedPendulumEffectTextStyle,
+                    sizeList: modifiedCoordinateList,
+                    condenseTolerant,
+                    format,
+                    furiganaHelper,
+                    option: {
+                        forceRelaxCondenseLimit: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
+                        defaultSizeLevel: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE - normalizedUpSize,
+                        globalScale,
+                        minLine: pendulumEffectMinLine,
+                        justifyRatio: pendulumEffectJustifyRatio,
+                    }
+                });
+            }
+        };
     }, [
         readyToDraw,
         globalScale,

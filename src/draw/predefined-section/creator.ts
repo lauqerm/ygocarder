@@ -7,7 +7,7 @@ import { normalizeCardText } from '../text-normalize';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
 
-export const drawCreatorText = ({
+export const drawCreatorText = async ({
     ctx,
     value,
     format,
@@ -74,6 +74,7 @@ export const drawCreatorText = ({
             currentFont: fontGetter,
         };
         let internalTrueWidth = 0;
+        const lineHeight = textData.fontData.fontList[textData.fontLevel].lineHeight;
         ctx.font = fontGetter.getFont();
         ctx.textAlign = 'left';
         internalEffectiveMedian = condense(
@@ -85,6 +86,7 @@ export const drawCreatorText = ({
                     format, textData: internalTextData,
                     globalScale,
                     width,
+                    lineHeight,
                 });
         
                 if (currentLineCount > 1) return false;
@@ -103,12 +105,13 @@ export const drawCreatorText = ({
     const yRatio = 1;
     ctx.scale(xRatio, yRatio);
     const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
-    const result = drawLine({
+    const result = await drawLine({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
         trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
         trueBaseline: trueBaseline + (fontSizeData.offsetY ?? scaledDefaultFontSizeData.offsetY) + baselineOffset * globalScale,
+        lineHeight: textData.fontData.fontList[textData.fontLevel].lineHeight,
         textData,
         format,
         globalScale,

@@ -57,7 +57,7 @@ export const getEffectFontAndCoordinate = ({
     };
 };
 
-export const drawEffect = ({
+export const drawEffect = async ({
     ctx,
     content,
     isNormal = false,
@@ -194,6 +194,7 @@ export const drawEffect = ({
                         additionalLineCount: 0,
                         format, textData,
                         width,
+                        lineHeight,
                         globalScale,
                     });
                     lineListWithRatio = currentLineList;
@@ -217,7 +218,7 @@ export const drawEffect = ({
             clearCanvas(ctx);
 
             let trueBaseline = trueBaselineStart + lineHeight;
-            lineListWithRatio
+            await Promise.allSettled(lineListWithRatio
                 .map(({
                     line: precalculatedLine,
                     effectiveMedian,
@@ -238,6 +239,7 @@ export const drawEffect = ({
                                     paragraphList: [line],
                                     format, textData,
                                     width,
+                                    lineHeight,
                                     globalScale,
                                 });
 
@@ -255,6 +257,7 @@ export const drawEffect = ({
                             width,
                             globalScale,
                             justifyRatio: 100,
+                            lineHeight,
                         });
                         finalTokenList = tokenList;
                         finalSpaceWidth = spaceWidth;
@@ -284,6 +287,7 @@ export const drawEffect = ({
                                     paragraphList: [effectFlavorCondition],
                                     format, textData: flavorTextData,
                                     width,
+                                    lineHeight,
                                     globalScale,
                                 });
 
@@ -309,6 +313,7 @@ export const drawEffect = ({
                             width,
                             globalScale,
                             justifyRatio,
+                            lineHeight,
                         });
                         finalTokenList = tokenList;
                         finalSpaceWidth = spaceWidth;
@@ -323,21 +328,23 @@ export const drawEffect = ({
                         textData: finalTextData,
                     };
                 })
-                .forEach(({
+                .map(async ({
                     xRatio,
                     tokenList,
                     line: precalculatedLine,
                     spaceWidth,
                     textData,
                 }) => {
+                    let result: ReturnType<typeof drawLine>;
                     if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
                         ctx.scale(xRatio, yRatio);
-                        drawLine({
+                        result = drawLine({
                             ctx,
                             tokenList,
                             xRatio, yRatio,
                             trueEdge, trueBaseline,
                             spaceWidth,
+                            lineHeight,
                             textData,
                             format,
                             globalScale,
@@ -349,23 +356,25 @@ export const drawEffect = ({
                             .setSize(fontSize)
                             .setFamily(fontData.font)
                             .getFont();
-                        drawLine({
+                        result = drawLine({
                             ctx,
                             tokenList,
                             xRatio, yRatio,
                             trueEdge, trueBaseline,
+                            lineHeight,
                             textData,
                             format,
                             globalScale,
                         });
                     } else {
                         ctx.scale(xRatio, yRatio);
-                        drawLine({
+                        result = drawLine({
                             ctx,
                             tokenList,
                             xRatio, yRatio,
                             trueEdge, trueBaseline,
                             spaceWidth,
+                            lineHeight,
                             textData,
                             format,
                             globalScale,
@@ -374,7 +383,8 @@ export const drawEffect = ({
 
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     trueBaseline += lineHeight;
-                });
+                    return await result;
+                }));
             break;
         }
         resetStyle();

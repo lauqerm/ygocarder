@@ -8,6 +8,7 @@ import {
     FontData,
     FragmentSplitRegex,
     GAP_PER_WIDTH_RATIO,
+    IMG_TAG_NAME,
     ITALIC_CLOSE_TAG,
     ITALIC_OPEN_TAG,
     LETTER_GAP_RATIO,
@@ -25,6 +26,7 @@ import {
     PRE_OPEN_TAG,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
+    RenderTagRegex,
     START_OF_LINE_ALPHABET_OFFSET,
     STYLING_TAG_SOURCE,
     ST_ICON_SYMBOL,
@@ -53,6 +55,7 @@ export const analyzeToken = ({
     xRatio,
     previousTokenGap = 0,
     letterSpacing: _letterSpacing,
+    lineHeight = 0,
     format,
     globalScale,
     textData,
@@ -64,6 +67,7 @@ export const analyzeToken = ({
     xRatio: number,
     previousTokenGap?: number,
     letterSpacing?: number,
+    lineHeight?: number,
     format: string,
     globalScale: number,
     // debug?: boolean,
@@ -128,6 +132,37 @@ export const analyzeToken = ({
     /** Whether or not it is affected by rebalance calculation */
     let offsetable = false;
     let leftMostGap = 0;
+
+    const renderTagMatchResult = token.match(RenderTagRegex);
+    if (renderTagMatchResult) {
+        const regex = /(?<=<.+?)(?<!>) ([\w-]+)(?:=["|'|”|“](.+?)["|'|”|“]|\b)(?!<)(?=.*?>)/gm;
+        const tagName = renderTagMatchResult[1];
+        if (tagName === IMG_TAG_NAME) {
+            currentRightGap = 0;
+            let matchResult: RegExpExecArray | null;
+            let width = lineHeight;
+            while ((matchResult = regex.exec(token)) !== null) {
+                // This is necessary to avoid infinite loops with zero-width matches
+                if (matchResult.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                const attributeKey = matchResult[1];
+                const attributeValue = matchResult[2];
+
+                if (attributeKey === 'width') width = parseInt(attributeValue);
+            }
+            totalWidth += width / xRatio;
+        }
+        return {
+            totalWidth,
+            spaceCount,
+            spaceAtEnd,
+            leftMostLetter,
+            rightGap: currentRightGap,
+            leftGap: leftMostGap,
+            offsetable,
+        };
+    }
 
     const isControlWord = new RegExp(STYLING_TAG_SOURCE, 'g').test(token);
     const fragmentList = isControlWord
@@ -369,6 +404,7 @@ export const analyzeLine = ({
     ctx,
     line,
     width,
+    lineHeight,
     xRatio: baseXRatio,
     format,
     isLast,
@@ -379,6 +415,7 @@ export const analyzeLine = ({
     ctx: CanvasRenderingContext2D,
     line: string,
     width: number,
+    lineHeight: number,
     xRatio: number,
     format: string,
     isLast: boolean,
@@ -448,7 +485,17 @@ export const analyzeLine = ({
             leftGap,
             rightGap,
             leftMostLetter,
-        } = analyzeToken({ ctx, token, nextToken, xRatio, previousTokenGap: currentGap / xRatio, textData: currentTextData, format, globalScale });
+        } = analyzeToken({
+            ctx,
+            token,
+            nextToken,
+            xRatio,
+            previousTokenGap: currentGap / xRatio,
+            textData: currentTextData,
+            format,
+            globalScale,
+            lineHeight,
+        });
         /** Check `createLineList` function about first token indentation. */
         const indent = (
             (cnt === 0 && leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)

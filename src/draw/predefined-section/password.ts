@@ -7,7 +7,7 @@ import { normalizeCardText } from '../text-normalize';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
 
-export const drawPasswordText = ({
+export const drawPasswordText = async ({
     ctx,
     globalScale,
     value,
@@ -65,6 +65,7 @@ export const drawPasswordText = ({
         currentFont: createFontGetter(),
     };
     let actualLineWidth = 0;
+    const lineHeight = textData.fontData.fontList[textData.fontLevel].lineHeight;
     let internalEffectiveMedian = 1000;
     let fontSizeData = fontData.fontList[0];
     for (let fontLevel = 0; fontLevel < fontData.fontList.length; fontLevel++) {
@@ -90,6 +91,7 @@ export const drawPasswordText = ({
                     paragraphList: [normalizedText],
                     format, textData: internalTextData,
                     width,
+                    lineHeight,
                     globalScale,
                 });
         
@@ -109,7 +111,7 @@ export const drawPasswordText = ({
     const yRatio = 1;
     ctx.scale(xRatio, yRatio);
     const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
-    const result = drawLine({
+    const result = await drawLine({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
@@ -117,6 +119,7 @@ export const drawPasswordText = ({
             ? trueEdge + edgeOffset
             : (trueEdge - edgeOffset - actualLineWidth * xRatio),
         trueBaseline: trueBaseline + (fontSizeData.offsetY ?? scaledDefaultFontSizeData.offsetY) + baselineOffset,
+        lineHeight,
         textData,
         format,
         globalScale,

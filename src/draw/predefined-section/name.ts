@@ -181,6 +181,7 @@ export const drawName = async (
     ctx.font = normalStyle;
     /** Calculate fitting ratio like normal */
     let actualLineWidth = 0;
+    const lineHeight = textData.fontData.fontList[textData.fontLevel].lineHeight;
     const internalEffectiveMedian = condense(
         median => {
             const { currentLineCount, currentLineList } = createLineList({
@@ -189,6 +190,7 @@ export const drawName = async (
                 paragraphList: [quoteConvertedValue],
                 format, textData,
                 width,
+                lineHeight,
                 globalScale,
             });
 
@@ -235,7 +237,7 @@ export const drawName = async (
         });
     }
     ctx.fillStyle = gradient ?? fillStyle;
-    const { tokenEdge } = drawLine({
+    const { tokenEdge } = await drawLine({
         ctx,
         tokenList,
         xRatio, yRatio,
@@ -309,12 +311,13 @@ export const drawName = async (
             useDefault: false,
         });
         ctx.globalCompositeOperation = 'destination-over';
-        drawLine({
+        await drawLine({
             ctx,
             tokenList,
             xRatio, yRatio,
             trueEdge: edge, trueBaseline,
             textData,
+            lineHeight,
             format,
             globalScale,
             option: { drawHeadText: false },
@@ -358,12 +361,13 @@ export const drawName = async (
     }
 
     /** Sixth iteration: Draw furigana, which is not affected by all other text style except furigana color. Again we draw it on base canvas for the same data loss reason. */
-    drawLine({
+    await drawLine({
         ctx,
         tokenList,
         xRatio, yRatio,
         trueEdge: edge, trueBaseline,
         textData,
+        lineHeight,
         format,
         globalScale,
         textDrawer: () => { },

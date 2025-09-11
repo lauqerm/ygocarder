@@ -12,6 +12,12 @@ export const StylingTagList = ['i', 'b', 'pre'];
 export const STYLING_TAG_SOURCE = `<(\\/?(${StylingTagList.join('|')}))( [^<]*|)>`;
 export const StylingTagRegex = new RegExp(STYLING_TAG_SOURCE);
 
+export const IMG_TAG_NAME = 'img';
+
+export const RenderTagList = [IMG_TAG_NAME];
+export const RENDER_TAG_SOURCE = `<(${RenderTagList.join('|')}).*?\\/>`;
+export const RenderTagRegex = new RegExp(RENDER_TAG_SOURCE);
+
 /** Use italic font like in Normal Monster */
 export const ITALIC_OPEN_TAG = '<i>';
 export const ITALIC_CLOSE_TAG = '</i>';
@@ -42,8 +48,8 @@ export const FragmentSplitRegex = new RegExp(`({[^{}]+?}|${WHOLE_WORD_SOURCE}|.)
 
 export const UNCOMPRESSED_SOURCE = '{{([^{}]+?)}}';
 
-export const NB_WORD_OPEN = '⦉';
-export const NB_WORD_CLOSE = '⦊';
+export const NB_WORD_OPEN = '⧚';
+export const NB_WORD_CLOSE = '⧛';
 export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
 export const NB_FULL_LINE_OPEN = '᚛';

@@ -16,6 +16,7 @@ import {
     OCG_BULLET_SOURCE,
     OCG_KEYWORD_SOURCE,
     OCG_RUBY_SOURCE,
+    RENDER_TAG_SOURCE,
     STYLING_TAG_SOURCE,
     UNCOMPRESSED_SOURCE,
     WHOLE_WORD_SOURCE,
@@ -164,6 +165,7 @@ export const normalizeCardText = (
      * * Ordinal letters must always followed by a colon "：", and cannot stand at the end of a line.
     */
     const textAfterProcessing = textAfterDictionaryMatch
+        .replaceAll(new RegExp(RENDER_TAG_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)

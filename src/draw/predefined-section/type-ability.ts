@@ -16,7 +16,7 @@ const sizeMap: Record<TypeAbilityCoordinateType, number> = {
     highPendulumNormal: 1,
     highPendulumSmaller: 0,
 };
-export const drawTypeAbilityText = ({
+export const drawTypeAbilityText = async ({
     ctx,
     value,
     format,
@@ -60,6 +60,7 @@ export const drawTypeAbilityText = ({
         currentFont: fontGetter,
     };
     let actualLineWidth = 0;
+    const lineHeight = textData.fontData.fontList[textData.fontLevel].lineHeight;
 
     ctx.font = fontGetter.getFont();
     ctx.textAlign = 'left';
@@ -72,6 +73,7 @@ export const drawTypeAbilityText = ({
                 paragraphList: [normalizedText],
                 format, textData,
                 width,
+                lineHeight,
                 globalScale,
             });
     
@@ -83,12 +85,13 @@ export const drawTypeAbilityText = ({
     const xRatio = internalEffectiveMedian / 1000;
     const yRatio = 1;
     ctx.scale(xRatio, yRatio);
-    const result = drawLine({
+    const result = await drawLine({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
         trueEdge: edgeAlignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
         trueBaseline,
+        lineHeight,
         textData,
         format,
         globalScale,
@@ -156,7 +159,7 @@ export const drawTypeAbility = async ({
         : '#000000';
     const normalizedStyle = { color: defaultFillStyle, ...textStyle };
     const resetStyle = setTextStyle({ ctx, ...normalizedStyle, globalScale });
-    const { iconPositionList, xRatio } = drawTypeAbilityText({
+    const { iconPositionList, xRatio } = await drawTypeAbilityText({
         ctx,
         format,
         size,
@@ -189,21 +192,23 @@ export const drawTypeAbility = async ({
                 canvas: iconFinishCanvas,
                 ctx: iconFinishCtx,
             } = createCanvas(CanvasWidth * globalScale, (baseline + iconWidth) * globalScale);
-            iconFinishCtx.drawImage(iconCanvas, 0, 0);
-            await loopIconFinish(
-                iconFinishCtx,
-                'art',
-                async (finishType) => {
-                    return await drawAsset(
-                        iconFinishCtx,
-                        `finish/finish-typeart-${finishType}.png`,
-                        (CanvasWidth - finishTypeCardWidth) / 2, iconHeight,
-                    );
-                },
-            );
-            iconCtx.globalCompositeOperation = 'source-in';
-            iconCtx.drawImage(iconFinishCanvas, 0, 0);
-            ctx.drawImage(iconCanvas, 0, 0);
+            if (iconFinishCtx && iconCtx) {
+                iconFinishCtx.drawImage(iconCanvas, 0, 0);
+                await loopIconFinish(
+                    iconFinishCtx,
+                    'art',
+                    async (finishType) => {
+                        return await drawAsset(
+                            iconFinishCtx,
+                            `finish/finish-typeart-${finishType}.png`,
+                            (CanvasWidth - finishTypeCardWidth) / 2, iconHeight,
+                        );
+                    },
+                );
+                iconCtx.globalCompositeOperation = 'source-in';
+                iconCtx.drawImage(iconFinishCanvas, 0, 0);
+                ctx.drawImage(iconCanvas, 0, 0);
+            }
         } else {
             ctx.drawImage(iconCanvas, 0, 0);
         }

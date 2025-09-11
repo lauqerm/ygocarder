@@ -6,6 +6,7 @@ import {
     DefaultFontData,
     DefaultFontSizeData,
     FragmentSplitRegex,
+    IMG_TAG_NAME,
     ITALIC_CLOSE_TAG,
     ITALIC_OPEN_TAG,
     LETTER_GAP_RATIO,
@@ -22,6 +23,7 @@ import {
     PRE_OPEN_TAG,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
+    RenderTagRegex,
     START_OF_LINE_ALPHABET_OFFSET,
     ST_ICON_SYMBOL,
     SquareBracketLetterRegex,
@@ -43,6 +45,7 @@ import { TextDrawer, drawLetter, getLetterWidth } from './letter';
 import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 import { scaleFontSizeData, swapTextData } from 'src/util';
+import { drawFromWithSize } from './image';
 
 /**
  * This is the heart and soul of drawer, please test this thoroughly for each change.
@@ -50,18 +53,19 @@ import { scaleFontSizeData, swapTextData } from 'src/util';
  * @summary Text hierachy
  *   * Letter: Individual (1) letter. E.g. "a", "1", "み", "装", "-", "①"
  *   * Fragment: Multiple letters with decorate control characters. E.g. "{無|む}", "Damage"
- *   * Token: Multiple fragments with group control characters (`NB_WORD_OPEN` and `NB_WORD_CLOSE`) or a whole word, splitted by space or other breakable letters. E.g. "⦉{相|あい}{手|て}⦊"
+ *   * Token: Multiple fragments with group control characters (`NB_WORD_OPEN` and `NB_WORD_CLOSE`) or a whole word, splitted by space or other breakable letters. E.g. "⧚{相|あい}{手|て}⧛"
  *   * Sentence: Sequence of tokens. E.g. "Cannot be destroyed by battle or card effects"
  *   * Paragraph: Consecutive sentences without new line characters ("\n").
  *   * Block: Whole text in a section.
  * 
  * Line: Line is a special unit, when a sentence hit the end of current text box, it wrap to new line without using the actual new line character. In this case the sentence is broke down into multiple lines. Line can be manully created with line control characters (`NB_LINE_OPEN`/`NB_FULL_LINE_OPEN` and `NB_LINE_CLOSE`/`NB_FULL_LINE_CLOSE`), or created from text split function.
  * **/
-export const drawLine = ({
+export const drawLine = async ({
     ctx,
     tokenList,
     trueEdge, trueBaseline,
     spaceWidth = 0,
+    lineHeight = 0,
     xRatio: baseXRatio, yRatio = 1,
     textData,
     format,
@@ -78,6 +82,7 @@ export const drawLine = ({
     trueEdge: number,
     trueBaseline: number,
     spaceWidth?: number,
+    lineHeight?: number,
     textData: TextData,
     textDrawer?: TextDrawer,
     globalScale: number,
@@ -202,6 +207,7 @@ export const drawLine = ({
             preformatMode = false;
             continue;
         }
+        
         const gapRatio = LETTER_GAP_RATIO * xRatio;
         const defaultGap = fontSize * gapRatio;
         const nextToken = tokenList[tokenCnt + 1];
@@ -213,6 +219,7 @@ export const drawLine = ({
             format,
             textData,
             globalScale,
+            lineHeight,
         };
         const drawLetterParameter = {
             ctx,
@@ -220,7 +227,7 @@ export const drawLine = ({
             xRatio,
             textDrawer,
         };
-        const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
+        let fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
         /** Analyze current token again, this will dictate the width of a token, no matter what is actually drawn. We expect to draw nothing but the calculation must stay correct. */
         const {
             leftMostLetter,
@@ -240,6 +247,48 @@ export const drawLine = ({
         let fragmentEdge = tokenEdge + indent;
         let currentRightGap = previousTokenGap;
 
+
+        const renderTagMatchResult = token.match(RenderTagRegex);
+        if (renderTagMatchResult) {
+            const regex = /(?<=<.+?)(?<!>) ([\w-]+)(?:=["|'|”|“](.+?)["|'|”|“]|\b)(?!<)(?=.*?>)/gm;
+            const tagName = renderTagMatchResult[1];
+            if (tagName === IMG_TAG_NAME) {
+                fragmentList = [];
+                currentRightGap = 0;
+                previousTokenRebalanceOffset = 0;
+                let matchResult: RegExpExecArray | null;
+                let src = '';
+                let width: number = lineHeight;
+                let height: number | undefined;
+                while ((matchResult = regex.exec(token)) !== null) {
+                    // This is necessary to avoid infinite loops with zero-width matches
+                    if (matchResult.index === regex.lastIndex) {
+                        regex.lastIndex++;
+                    }
+                    const attributeKey = matchResult[1];
+                    const attributeValue = matchResult[2];
+                    if (attributeKey === 'src') src = attributeValue;
+                    if (attributeKey === 'width') width = parseInt(attributeValue);
+                    if (attributeKey === 'height') height = parseInt(attributeValue);
+                }
+
+                resetScale();
+                if (src) {
+                    const isInternalSource = !src.startsWith('https');
+                    const lineHeightOffsetRatio = 0.8; // If it is 1, the image will touch the bottom of the line above
+                    await drawFromWithSize(
+                        ctx,
+                        src,
+                        fragmentEdge, trueBaseline - lineHeight * lineHeightOffsetRatio,
+                        width, height,
+                        undefined, undefined,
+                        undefined, undefined,
+                        { cache: isInternalSource, internalImage: isInternalSource }
+                    );
+                }
+                applyAsymmetricScale(xRatio, yRatio);
+            }
+        }
         /** Draw all the fragments of a token. */
         for (let fragmentCnt = 0; fragmentCnt < fragmentList.length; fragmentCnt++) {
             const fragment = fragmentList[fragmentCnt];

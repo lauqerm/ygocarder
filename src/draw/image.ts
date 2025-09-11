@@ -89,18 +89,50 @@ export const drawAsset = async (
     );
 };
 
+const normalizeDxy = (
+    image: HTMLImageElement,
+    dw?: number | ((image: HTMLImageElement) => number),
+    dh?: number | ((image: HTMLImageElement) => number),
+) => {
+    const { naturalWidth, naturalHeight } = image;
+    const baseDW = typeof dw === 'number' ? dw : dw?.(image);
+    const baseDH = typeof dh === 'number' ? dh : dh?.(image);
+    let actualDW = naturalWidth;
+    let actualDH = naturalHeight;
+
+    if (typeof baseDH !== 'number' && typeof baseDW === 'number') {
+        actualDW = baseDW;
+        actualDH = actualDW * naturalHeight / naturalWidth;
+    } else if (typeof baseDH === 'number' && typeof baseDW !== 'number') {
+        actualDW = actualDH * naturalWidth / naturalHeight;
+        actualDH = baseDH;
+    } else if (typeof baseDH === 'number' && typeof baseDW === 'number') {
+        actualDW = baseDW;
+        actualDH = baseDH;
+    }
+
+    return { actualDH, actualDW };
+};
 export const drawFromWithSize = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
     dx: number | ((image: HTMLImageElement) => number),
     dy: number | ((image: HTMLImageElement) => number),
-    dw: number | ((image: HTMLImageElement) => number),
-    dh: number | ((image: HTMLImageElement) => number),
+    dw?: number | ((image: HTMLImageElement) => number),
+    dh?: number | ((image: HTMLImageElement) => number),
     sx?: undefined | number | ((image: HTMLImageElement) => number),
     sy?: undefined | number | ((image: HTMLImageElement) => number),
     sw?: undefined | number | ((image: HTMLImageElement) => number),
     sh?: undefined | number | ((image: HTMLImageElement) => number),
+    option?: {
+        cache?: boolean,
+        internalImage?: boolean,
+    },
 ) => {
+    const {
+        cache = true,
+        internalImage = true,
+    } = option ?? {};
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
         /** Check `drawFrom` comment for disable reasons */
@@ -108,12 +140,11 @@ export const drawFromWithSize = async (
             const image = imageCacheMap[source].image;
             const actualDX = typeof dx === 'number' ? dx : dx(image);
             const actualDY = typeof dy === 'number' ? dy : dy(image);
-            const actualDW = typeof dw === 'number' ? dw : dw(image);
-            const actualDH = typeof dh === 'number' ? dh : dh(image);
             const actualSX = typeof sx === 'number' ? sx : sx?.(image);
             const actualSY = typeof sy === 'number' ? sy : sy?.(image);
             const actualSW = typeof sw === 'number' ? sw : sw?.(image);
             const actualSH = typeof sh === 'number' ? sh : sh?.(image);
+            const { actualDH, actualDW } = normalizeDxy(image, dw, dh);
 
             if (
                 typeof actualSX === 'number'
@@ -138,18 +169,19 @@ export const drawFromWithSize = async (
             ? imageCacheMap[source].image
             : new Image();
 
-        if (!imageCached) image.src = process.env.PUBLIC_URL + source;
+        if (!imageCached) image.src = internalImage
+            ? process.env.PUBLIC_URL + source
+            : source;
         image.addEventListener(
             'load',
             () => {
                 const actualDX = typeof dx === 'number' ? dx : dx(image);
                 const actualDY = typeof dy === 'number' ? dy : dy(image);
-                const actualDW = typeof dw === 'number' ? dw : dw(image);
-                const actualDH = typeof dh === 'number' ? dh : dh(image);
                 const actualSX = typeof sx === 'number' ? sx : sx?.(image);
                 const actualSY = typeof sy === 'number' ? sy : sy?.(image);
                 const actualSW = typeof sw === 'number' ? sw : sw?.(image);
                 const actualSH = typeof sh === 'number' ? sh : sh?.(image);
+                const { actualDH, actualDW } = normalizeDxy(image, dw, dh);
     
                 if (
                     typeof actualSX === 'number'
@@ -180,7 +212,7 @@ export const drawFromWithSize = async (
             { once: true },
         );
 
-        if (!imageCached) imageCacheMap[source] = {
+        if (cache && !imageCached) imageCacheMap[source] = {
             image: image,
             ready: false,
             error: false,
