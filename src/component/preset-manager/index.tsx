@@ -1,7 +1,7 @@
 import { GlobalMemory, useCard, useCarderDb, useGlobal, usePresetManager, WithLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { ManagerDrawer } from '../atom';
-import { PresetOption } from '../preset-option';
+import { ImagePresetOption, NameStylePresetOption } from '../preset-option';
 import { CanvasConst, FrameInfo, FrameInfoMap } from 'src/model';
 import styled from 'styled-components';
 import { LayoutPresetOption } from '../card-layout-preview';
@@ -10,6 +10,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Button, Modal, notification } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import { ImagePresetForm, ImagePresetFormRef } from './image-preset-form';
 
 const {
     width,
@@ -227,14 +228,14 @@ const PresetImportReviewModal = ({
 
                     return <tr key={key} className={mergeClass('import-action-row', verdict)}>
                         <td className="current-version">
-                            {currentContent && <PresetOption {...commonProps} presetContent={currentContent}>
+                            {currentContent && <NameStylePresetOption {...commonProps} presetContent={currentContent}>
                                 {currentContent.preset}
-                            </PresetOption>}
+                            </NameStylePresetOption>}
                         </td>
                         <td className="new-version">
-                            <PresetOption {...commonProps} presetContent={content}>
+                            <NameStylePresetOption {...commonProps} presetContent={content}>
                                 {content.preset}
-                            </PresetOption>
+                            </NameStylePresetOption>
                         </td>
                         <td className="action-list">
                             <div className="action-panel">
@@ -385,19 +386,27 @@ const PresetManagerContainer = styled(ManagerDrawer)`
     .ant-drawer-body {
         padding: var(--spacing);
     }
+    .preset-list {
+        margin-top: var(--spacing);
+        padding-top: var(--spacing);
+        border-top: var(--bw) solid var(--main-level-1);
+    }
+    .image-preset-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+    }
     .overlay-title {
         display: grid;
         grid-template-columns: 1fr max-content;
         line-height: 1;
     }
     .name-style-preset-list {
-        margin-top: var(--spacing);
         display: grid;
-        grid-template-columns: max-content max-content;
+        grid-template-columns: 1fr 1fr;
         gap: var(--spacing-sm);
     }
     .layout-preset-list {
-        margin-top: var(--spacing);
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
         gap: var(--spacing-sm);
@@ -410,6 +419,10 @@ const PresetManagerContainer = styled(ManagerDrawer)`
         .import-upload-input {
             display: none;
         }
+    }
+    label {
+        display: block;
+        grid-column: -1 / 1;
     }
 `;
 
@@ -442,14 +455,17 @@ export const PresetManager = ({
     const { db } = useCarderDb();
     const [nameStylePresetList, setNameStylePresetList] = useGlobal('nameStylePresetList');
     const [layoutPresetList, setLayoutPresetList] = useGlobal('layoutPresetList');
-    const [importData, setImportData] = useState<{ visible: boolean } & Pick<GlobalMemory, 'layoutPresetList' | 'nameStylePresetList'>>({
+    const [imagePresetList, setImagePresetList] = useGlobal('imagePresetList');
+    const [importData, setImportData] = useState<{ visible: boolean } & Pick<GlobalMemory, 'layoutPresetList' | 'nameStylePresetList' | 'imagePresetList'>>({
         visible: false,
         layoutPresetList: [],
         nameStylePresetList: [],
+        imagePresetList: [],
     });
     const frameInfo = FrameInfoMap[frame as keyof typeof FrameInfoMap];
     const [inputKey, setInputKey] = useState(0);
     const presetImportDirectInputRef = useRef<HTMLInputElement>(null);
+    const imagePresetFormRef = useRef<ImagePresetFormRef>(null);
     const directUploadId = 'preset-import-direct-upload';
 
     const getFileAndImport = (fileList?: FileList | null) => {
@@ -468,12 +484,14 @@ export const PresetManager = ({
                         const {
                             layoutPresetList,
                             nameStylePresetList,
-                        } = JSON.parse(result) as Pick<GlobalMemory, 'layoutPresetList' | 'nameStylePresetList'>;
+                            imagePresetList,
+                        } = JSON.parse(result) as Pick<GlobalMemory, 'layoutPresetList' | 'nameStylePresetList' | 'imagePresetList'>;
 
                         setImportData({
                             visible: true,
                             layoutPresetList,
                             nameStylePresetList,
+                            imagePresetList,
                         });
                     } catch (e) {
                         console.error(e);
@@ -550,9 +568,12 @@ export const PresetManager = ({
                 />
             </Button>
         </div>
-        <div className="name-style-preset-list">
+        <div className="preset-list name-style-preset-list">
+            <label>
+                {language['preset.instruction.name-style.label']}
+            </label>
             {nameStylePresetList.map(({ key, content }) => {
-                return <PresetOption key={key}
+                return <NameStylePresetOption key={key}
                     language={language}
                     frameInfo={frameInfo}
                     presetContent={content}
@@ -566,10 +587,13 @@ export const PresetManager = ({
                     }}
                 >
                     {content.preset}
-                </PresetOption>;
+                </NameStylePresetOption>;
             })}
         </div>
-        <div className="layout-preset-list">
+        <div className="preset-list layout-preset-list">
+            <label>
+                {language['preset.instruction.advanced-frame.label']}
+            </label>
             {layoutPresetList.map(({ content, key }) => {
                 const {
                     dyeList,
@@ -608,6 +632,68 @@ export const PresetManager = ({
                             await tx.done;
                         }
                         setLayoutPresetList(cur => cur.filter(({ key: currentKey }) => key !== currentKey));
+                    }}
+                />;
+            })}
+        </div>
+        <div className="preset-list image-preset-list">
+            <label>
+                {language['preset.instruction.image.label']}
+                &nbsp;
+                <ImagePresetForm
+                    ref={imagePresetFormRef}
+                    language={language}
+                    onSubmit={async value => {
+                        const key = uuid();
+                        if (db) {
+                            const tx = db.transaction('presetImageStore', 'readwrite');
+                            await db.put('presetImageStore', { key, content: JSON.stringify(value) });
+                            await tx.done;
+                        }
+                        setImagePresetList(cur => {
+                            return [
+                                ...cur,
+                                {
+                                    key,
+                                    content: { ...value },
+                                }
+                            ];
+                        });
+                    }}
+                    onEdit={async (key, value) => {
+                        if (db) {
+                            const tx = db.transaction('presetImageStore', 'readwrite');
+                            await db.put('presetImageStore', { key, content: JSON.stringify(value) });
+                            await tx.done;
+                        }
+                        setImagePresetList(cur => {
+                            return cur.map(entry => {
+                                if (entry.key === key) return {
+                                    key,
+                                    content: { ...value },
+                                };
+                                return entry;
+                            });
+                        });
+                    }}
+                />
+                <br />
+                {language['preset.instruction.image.head-up.label']}
+            </label>
+            {imagePresetList.map(({ key, content }) => {
+                return <ImagePresetOption key={key}
+                    language={language}
+                    imagePreset={content}
+                    onDelete={async () => {
+                        if (db) {
+                            const tx = db.transaction('presetImageStore', 'readwrite');
+                            await db.delete('presetImageStore', key);
+                            await tx.done;
+                        }
+                        setImagePresetList(cur => cur.filter(({ key: currentKey }) => key !== currentKey));
+                    }}
+                    onEdit={() => {
+                        imagePresetFormRef.current?.edit(key, content);
                     }}
                 />;
             })}

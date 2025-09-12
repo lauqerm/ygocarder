@@ -39,6 +39,7 @@ import {
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
 import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
 import { getLetterWidth } from './letter';
+import { useGlobalMemory } from 'src/service';
 
 /** 
  * Return information of a token.
@@ -85,6 +86,7 @@ export const analyzeToken = ({
         rightGap: 0,
         leftGap: 0,
     };
+    const imagePresetMap = useGlobalMemory.getState().memory.imagePresetMap;
     const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const letterSpacing = _letterSpacing ?? scaledDefaultFontSizeData.letterSpacing;
     const {
@@ -140,7 +142,8 @@ export const analyzeToken = ({
         if (tagName === IMG_TAG_NAME) {
             currentRightGap = 0;
             let matchResult: RegExpExecArray | null;
-            let width = lineHeight;
+            let width: number | undefined;
+            let src: string | undefined;
             while ((matchResult = regex.exec(token)) !== null) {
                 // This is necessary to avoid infinite loops with zero-width matches
                 if (matchResult.index === regex.lastIndex) {
@@ -150,8 +153,15 @@ export const analyzeToken = ({
                 const attributeValue = matchResult[2];
 
                 if (attributeKey === 'width') width = parseInt(attributeValue);
+                if (attributeKey === 'src') src = attributeValue;
             }
-            totalWidth += width / xRatio;
+            const preset = src ? imagePresetMap[src] : undefined;
+            const normalizedWidth = (typeof width === 'number'
+                ? width
+                : preset
+                    ? preset.width
+                    : undefined) ?? (lineHeight * 0.9);
+            totalWidth += normalizedWidth / xRatio;
         }
         return {
             totalWidth,

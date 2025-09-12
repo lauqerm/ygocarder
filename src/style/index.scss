@@ -38,6 +38,7 @@
         background-color: var(--sub-level-1);
     }
 
+    .ant-form-item-label > label,
     .ant-checkbox-wrapper {
         color: var(--color-vendor);
         text-shadow: var(--ts);
@@ -425,6 +426,9 @@ button.ant-btn {
     .ant-modal-footer {
         border-color: var(--sub-level-1);
         padding: var(--spacing-lg);
+        &:empty {
+            display: none;
+        }
     }
 }
 
@@ -458,6 +462,33 @@ button.ant-btn {
 
     .ant-tabs-ink-bar {
         background: var(--sub-slider);
+    }
+}
+
+.ant-collapse {
+    & > .ant-collapse-item > .ant-collapse-header {
+        padding: 0;
+        padding-left: 24px;
+        .ant-collapse-arrow {
+            top: 5px;
+            left: 0;
+        }
+    }
+    .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+        padding: var(--spacing-sm) 0 0 0;
+    }
+}
+
+.ant-form {
+    color: var(--color-vendor);
+    .ant-form-item {
+        margin-bottom: var(--spacing);
+        .ant-input-number {
+            width: unset;
+        }
+    }
+    .ant-form-item-has-error .ant-input {
+        background-color: var(--main-level-1);
     }
 }
 

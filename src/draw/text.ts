@@ -46,6 +46,7 @@ import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 import { scaleFontSizeData, swapTextData } from 'src/util';
 import { drawFromWithSize } from './image';
+import { useGlobalMemory } from 'src/service';
 
 /**
  * This is the heart and soul of drawer, please test this thoroughly for each change.
@@ -69,6 +70,7 @@ export const drawLine = async ({
     xRatio: baseXRatio, yRatio = 1,
     textData,
     format,
+    drawImage = true,
     textDrawer,
     debug = false,
     option,
@@ -85,12 +87,14 @@ export const drawLine = async ({
     lineHeight?: number,
     textData: TextData,
     textDrawer?: TextDrawer,
+    drawImage?: boolean,
     globalScale: number,
     option?: {
         drawHeadText?: boolean,
     },
     debug?: boolean,
 }) => {
+    const imagePresetMap = useGlobalMemory.getState().memory.imagePresetMap;
     const { drawHeadText = true } = option ?? {};
     const {
         fontLevel,
@@ -258,8 +262,10 @@ export const drawLine = async ({
                 previousTokenRebalanceOffset = 0;
                 let matchResult: RegExpExecArray | null;
                 let src = '';
-                let width: number = lineHeight;
+                let width: number | undefined;
                 let height: number | undefined;
+                let offsetX: number | undefined;
+                let offsetY: number | undefined;
                 while ((matchResult = regex.exec(token)) !== null) {
                     // This is necessary to avoid infinite loops with zero-width matches
                     if (matchResult.index === regex.lastIndex) {
@@ -267,20 +273,68 @@ export const drawLine = async ({
                     }
                     const attributeKey = matchResult[1];
                     const attributeValue = matchResult[2];
-                    if (attributeKey === 'src') src = attributeValue;
-                    if (attributeKey === 'width') width = parseInt(attributeValue);
-                    if (attributeKey === 'height') height = parseInt(attributeValue);
+                    switch (attributeKey) {
+                        case 'src': {
+                            src = attributeValue;
+                            break;
+                        }
+                        case 'width': {
+                            width = parseInt(attributeValue);
+                            break;
+                        }
+                        case 'height': {
+                            height = parseInt(attributeValue);
+                            break;
+                        }
+                        case 'offsetX': {
+                            offsetX = parseInt(attributeValue);
+                            break;
+                        }
+                        case 'offsetY': {
+                            offsetY = parseInt(attributeValue);
+                            break;
+                        }
+                    }
                 }
 
                 resetScale();
-                if (src) {
-                    const isInternalSource = !src.startsWith('https');
+                if (src && drawImage) {
+                    let normalizedWidth = typeof width === 'number'
+                        ? width
+                        : typeof height === 'number'
+                            ? undefined
+                            : lineHeight * 0.9;
+                    let normalizedSource = src;
+                    let isInternalSource = false;
+                    const preset = src ? imagePresetMap[src] : undefined;
+                    if (preset) {
+                        const {
+                            height: presetHeight, width: presetWidth,
+                            offsetX: presetOffsetX, offsetY: presetOffsetY,
+                            src,
+                        } = preset;
+                        normalizedSource = src;
+                        width = typeof width === 'number' ? width : presetWidth;
+                        height = typeof height === 'number' ? height : presetHeight;
+                        offsetY = typeof offsetY === 'number' ? offsetY : presetOffsetY;
+                        offsetX = typeof offsetX === 'number' ? offsetX : presetOffsetX;
+                    } else if (!src.startsWith('https')) {
+                        isInternalSource = true;
+                        normalizedSource = '/asset/image/'
+                            + src.startsWith('subfamily')
+                                ? `/subfamily/${src}`
+                                : src.startsWith('attr')
+                                    ? `/attribute/${src}`
+                                    : src
+                            + '.png';
+                    }
                     const lineHeightOffsetRatio = 0.8; // If it is 1, the image will touch the bottom of the line above
                     await drawFromWithSize(
                         ctx,
-                        src,
-                        fragmentEdge, trueBaseline - lineHeight * lineHeightOffsetRatio,
-                        width, height,
+                        normalizedSource,
+                        fragmentEdge + (offsetX ?? 0),
+                        trueBaseline + (offsetY ?? 0) - lineHeight * lineHeightOffsetRatio,
+                        normalizedWidth, height,
                         undefined, undefined,
                         undefined, undefined,
                         { cache: isInternalSource, internalImage: isInternalSource }

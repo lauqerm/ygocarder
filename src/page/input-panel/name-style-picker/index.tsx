@@ -14,7 +14,7 @@ import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import { getNameFontOptionList } from '../const';
-import { StyledDropdown, PopoverButton, StyledPatternOption, PresetOption } from 'src/component';
+import { StyledDropdown, PopoverButton, StyledPatternOption, NameStylePresetOption } from 'src/component';
 import {
     StyledPatternContainer,
     StyledPresetContainer,
@@ -584,7 +584,7 @@ export const NameStylePicker = forwardRef(({
                                         description={language['generic.empty.label']}
                                     />}
                                     {nameStylePresetList.map(({ key, content }) => {
-                                        return <PresetOption key={key}
+                                        return <NameStylePresetOption key={key}
                                             language={language}
                                             frameInfo={frameInfo}
                                             presetContent={content}
@@ -618,7 +618,7 @@ export const NameStylePicker = forwardRef(({
                                             }}
                                         >
                                             {content.preset}
-                                        </PresetOption>;
+                                        </NameStylePresetOption>;
                                     })}
                                 </StyledPresetContainer>
                             </div>}

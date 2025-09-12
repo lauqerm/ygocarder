@@ -20,15 +20,22 @@ export interface YgoCarderDb extends DBSchema {
             content: string,
         },
     },
+    presetImageStore: {
+        key: string,
+        value: {
+            key: string,
+            content: string,
+        },
+    },
 };
 
 export async function setupYgoCarderDb() {
     try {
         const db = await openDB<YgoCarderDb>(
             'YgoCarderDb',
-            3,
+            4,
             {
-                upgrade(db) {
+                upgrade(db, _oldVersion, newVersion) {
                     if (!db.objectStoreNames.contains('messageStore')) {
                         db.createObjectStore('messageStore', { keyPath: 'key' });
                     }
@@ -37,6 +44,11 @@ export async function setupYgoCarderDb() {
                     }
                     if (!db.objectStoreNames.contains('presetNameStyleStore')) {
                         db.createObjectStore('presetNameStyleStore', { keyPath: 'key' });
+                    }
+                    if (newVersion === 4) {
+                        if (!db.objectStoreNames.contains('presetImageStore')) {
+                            db.createObjectStore('presetImageStore', { keyPath: 'key' });
+                        }
                     }
                     console.info('YgoCarderDb ready');
                 },

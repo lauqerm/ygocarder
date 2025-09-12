@@ -8,6 +8,7 @@ import {
     CanvasConst,
     Card,
     getDefaultCard,
+    ImagePreset,
     NameStyle,
 } from './model';
 import {
@@ -245,6 +246,22 @@ function App() {
                     }
                     await layoutPresetTx.done;
                     useGlobalMemory.getState().updateGlobalMemory({ layoutPresetList });
+
+                    const imagePresetTx = db.transaction('presetImageStore', 'readonly');
+                    const imagePresetList: {
+                        key: string,
+                        content: ImagePreset,
+                    }[] = [];
+
+                    for await (const cursor of imagePresetTx.store) {
+                        const { content, key } = cursor.value;
+                        imagePresetList.push({
+                            key,
+                            content: JSON.parse(content) as ImagePreset,
+                        });
+                    }
+                    await imagePresetTx.done;
+                    useGlobalMemory.getState().updateGlobalMemory({ imagePresetList });
 
                     const nameStylePresetTx = db.transaction('presetNameStyleStore', 'readonly');
                     const nameStylePresetList: {

@@ -179,6 +179,14 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
                 { openTag, closeTag, hotkey, hotkeyAlternative },
             );
         },
+        'guide.format.section-9.content': (
+            openTag: React.ReactNode,
+        ) => {
+            return applyTemplateNode(
+                getDictionaryEntry('guide.format.section-9.content'),
+                { openTag },
+            );
+        },
         'input.name-style.emboss.color.alert': (
             colorTab: React.ReactNode,
         ) => {

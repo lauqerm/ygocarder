@@ -104,8 +104,8 @@ const normalizeDxy = (
         actualDW = baseDW;
         actualDH = actualDW * naturalHeight / naturalWidth;
     } else if (typeof baseDH === 'number' && typeof baseDW !== 'number') {
-        actualDW = actualDH * naturalWidth / naturalHeight;
         actualDH = baseDH;
+        actualDW = actualDH * naturalWidth / naturalHeight;
     } else if (typeof baseDH === 'number' && typeof baseDW === 'number') {
         actualDW = baseDW;
         actualDH = baseDH;

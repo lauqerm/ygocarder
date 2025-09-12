@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { createPresetNameStyle, Foil, FrameDyeList, NameStyle } from 'src/model';
+import { Foil, FrameDyeList, ImagePreset, NameStyle } from 'src/model';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -28,6 +28,11 @@ export type GlobalMemory = {
         key: string,
         content: Partial<NameStyle>,
     }[],
+    imagePresetList: {
+        key: string,
+        content: ImagePreset,
+    }[],
+    imagePresetMap: Record<string, ImagePreset>,
 };
 export type GlobalStore = {
     memory: GlobalMemory,
@@ -39,88 +44,22 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
         memory: {
             activeDropzone: 0,
             layoutPresetList: [],
-            nameStylePresetList: [
-                {
-                    key: 'abc',
-                    content: createPresetNameStyle({
-                        preset: 'animeGold',
-                        shadowColor: '#f8f8f8',
-                        shadowOffsetY: 3,
-                        shadowOffsetX: 2,
-                        shadowBlur: 2,
-                        hasShadow: true,
-                        lineColor: '#664444',
-                        lineWidth: 3,
-                        lineOffsetX: 1,
-                        lineOffsetY: 0,
-                        hasOutline: true,
-                        gradientAngle: 180,
-                        gradientColor: '0.000|#4ee317,0.220|#dbbe15,0.270|#d0920c,0.330|#b57f0b,0.380|#d0920c,0.450|#ffff6b,0.610|#ffffff,0.700|#ffffff,0.870|#45dd2d,1.000|#43da23',
-                        hasGradient: true,
-                    })
-                },
-                {
-                    key: 'cde',
-                    content: createPresetNameStyle({
-                        preset: 'promo',
-                        fillStyle: '#c7080b',
-                        shadowColor: '#333333',
-                        shadowOffsetY: 0,
-                        shadowOffsetX: 0,
-                        shadowBlur: 1,
-                        hasShadow: true,
-                        lineColor: '#8a1801',
-                        lineWidth: 3,
-                        lineOffsetX: 0,
-                        hasOutline: true,
-                        lineOffsetY: 0,
-                        font: 'OCG',
-                    })
-                },
-                {
-                    key: 'efg',
-                    content: createPresetNameStyle({
-                        preset: 'promo',
-                        fillStyle: '#080bc7',
-                        shadowColor: '#333333',
-                        shadowOffsetY: 0,
-                        shadowOffsetX: 0,
-                        shadowBlur: 1,
-                        hasShadow: true,
-                        lineColor: '#18018a',
-                        lineWidth: 3,
-                        lineOffsetX: 0,
-                        hasOutline: true,
-                        lineOffsetY: 0,
-                        font: 'OCG',
-                    })
-                },
-                {
-                    key: 'ghi',
-                    content: createPresetNameStyle({
-                        preset: 'animeGold',
-                        shadowColor: '#f8f8f8',
-                        shadowOffsetY: 3,
-                        shadowOffsetX: 2,
-                        shadowBlur: 2,
-                        hasShadow: true,
-                        lineColor: '#664444',
-                        lineWidth: 3,
-                        lineOffsetX: 1,
-                        lineOffsetY: 0,
-                        hasOutline: true,
-                        gradientAngle: 180,
-                        gradientColor: '0.000|#4e17e3,0.220|#db15be,0.270|#20cd09,0.330|#b57f0b,0.380|#d0920c,0.450|#f6bfff,0.610|#ffffff,0.700|#ffffff,0.870|#45dd2d,1.000|#43da23',
-                        hasGradient: true,
-                    })
-                },
-            ],
+            nameStylePresetList: [],
+            imagePresetList: [],
+            imagePresetMap: {},
         },
         updateGlobalMemory: transformerOrPayload => {
             set(currentStore => {
                 const newGlobalMemory = typeof transformerOrPayload === 'function'
                     ? transformerOrPayload(currentStore.memory)
                     : { ...currentStore.memory, ...transformerOrPayload };
+                if (currentStore.memory.imagePresetList !== newGlobalMemory.imagePresetList) {
+                    newGlobalMemory.imagePresetMap = newGlobalMemory.imagePresetList.reduce((acc, cur) => {
+                        /** If user use duplicated name, that is on them :v */
+                        acc[cur.content.name] = cur.content;
+                        return acc;
+                    }, {});
+                }
 
                 return {
                     memory: newGlobalMemory,
@@ -142,7 +81,7 @@ export const useGlobal = <Key extends keyof GlobalMemory>(key: Key) => {
         updateGlobalMemory,
     })));
 
-    const updateTargetNotification = useCallback(
+    const updateTargetMemory = useCallback(
         (value: GlobalMemory[Key] | ((currentSetting: GlobalMemory[Key]) => GlobalMemory[Key])) => {
             updateGlobalMemory(cur => {
                 return { ...cur, [key]: typeof value === 'function' ? value(cur[key]) : value };
@@ -151,5 +90,5 @@ export const useGlobal = <Key extends keyof GlobalMemory>(key: Key) => {
         [key, updateGlobalMemory],
     );
 
-    return [targetMemory, updateTargetNotification] as const;
+    return [targetMemory, updateTargetMemory] as const;
 };

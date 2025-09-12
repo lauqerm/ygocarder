@@ -243,6 +243,7 @@ export const drawName = async (
         xRatio, yRatio,
         trueEdge: edge, trueBaseline,
         textData,
+        lineHeight,
         format,
         globalScale,
         option: { drawHeadText: false },
@@ -321,6 +322,7 @@ export const drawName = async (
             format,
             globalScale,
             option: { drawHeadText: false },
+            drawImage: false,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.lineJoin = 'round';
                 ctx.strokeText(
@@ -370,6 +372,7 @@ export const drawName = async (
         lineHeight,
         format,
         globalScale,
+        drawImage: false,
         textDrawer: () => { },
     });
 

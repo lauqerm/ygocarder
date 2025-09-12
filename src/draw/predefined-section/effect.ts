@@ -218,7 +218,7 @@ export const drawEffect = async ({
             clearCanvas(ctx);
 
             let trueBaseline = trueBaselineStart + lineHeight;
-            await Promise.allSettled(lineListWithRatio
+            const lineDrawInfoList = lineListWithRatio
                 .map(({
                     line: precalculatedLine,
                     effectiveMedian,
@@ -327,64 +327,66 @@ export const drawEffect = async ({
                         spaceWidth: finalSpaceWidth,
                         textData: finalTextData,
                     };
-                })
-                .map(async ({
+                });
+
+            for (let lineDrawInfo of lineDrawInfoList) {
+                const {
                     xRatio,
                     tokenList,
                     line: precalculatedLine,
                     spaceWidth,
                     textData,
-                }) => {
-                    let result: ReturnType<typeof drawLine>;
-                    if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
-                        ctx.scale(xRatio, yRatio);
-                        result = drawLine({
-                            ctx,
-                            tokenList,
-                            xRatio, yRatio,
-                            trueEdge, trueBaseline,
-                            spaceWidth,
-                            lineHeight,
-                            textData,
-                            format,
-                            globalScale,
-                        });
-                    } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
-                        ctx.scale(xRatio, yRatio);
-                        const { currentFont, fontData } = textData;
-                        ctx.font = currentFont
-                            .setSize(fontSize)
-                            .setFamily(fontData.font)
-                            .getFont();
-                        result = drawLine({
-                            ctx,
-                            tokenList,
-                            xRatio, yRatio,
-                            trueEdge, trueBaseline,
-                            lineHeight,
-                            textData,
-                            format,
-                            globalScale,
-                        });
-                    } else {
-                        ctx.scale(xRatio, yRatio);
-                        result = drawLine({
-                            ctx,
-                            tokenList,
-                            xRatio, yRatio,
-                            trueEdge, trueBaseline,
-                            spaceWidth,
-                            lineHeight,
-                            textData,
-                            format,
-                            globalScale,
-                        });
-                    }
+                } = lineDrawInfo;
+                let result: ReturnType<typeof drawLine>;
+                if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
+                    ctx.scale(xRatio, yRatio);
+                    result = drawLine({
+                        ctx,
+                        tokenList,
+                        xRatio, yRatio,
+                        trueEdge, trueBaseline,
+                        spaceWidth,
+                        lineHeight,
+                        textData,
+                        format,
+                        globalScale,
+                    });
+                } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
+                    ctx.scale(xRatio, yRatio);
+                    const { currentFont, fontData } = textData;
+                    ctx.font = currentFont
+                        .setSize(fontSize)
+                        .setFamily(fontData.font)
+                        .getFont();
+                    result = drawLine({
+                        ctx,
+                        tokenList,
+                        xRatio, yRatio,
+                        trueEdge, trueBaseline,
+                        lineHeight,
+                        textData,
+                        format,
+                        globalScale,
+                    });
+                } else {
+                    ctx.scale(xRatio, yRatio);
+                    result = drawLine({
+                        ctx,
+                        tokenList,
+                        xRatio, yRatio,
+                        trueEdge, trueBaseline,
+                        spaceWidth,
+                        lineHeight,
+                        textData,
+                        format,
+                        globalScale,
+                    });
+                }
+                await result;
 
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    trueBaseline += lineHeight;
-                    return await result;
-                }));
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                trueBaseline += lineHeight;
+            }
             break;
         }
         resetStyle();

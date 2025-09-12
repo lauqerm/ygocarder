@@ -36,17 +36,6 @@ const StyledManagerSample = styled(Modal)`
     .ant-modal-close-x {
         display: none;
     }
-    .ant-collapse > .ant-collapse-item > .ant-collapse-header {
-        padding: 0;
-        padding-left: 24px;
-        .ant-collapse-arrow {
-            top: 5px;
-            left: 0;
-        }
-    }
-    .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-        padding: var(--spacing-sm) 0 0 0;
-    }
     .download-button {
         text-align: center;
         margin: var(--spacing-sm) 0;
@@ -364,7 +353,6 @@ export const ManagerSample = ({
                         </table>
                     </Panel>
                 </Collapse>
-                
             </div>
         </StyledManagerSample>
     </>;
