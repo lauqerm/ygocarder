@@ -358,6 +358,6 @@ export * from './frame';
 export * from './icon';
 export * from './link';
 export * from './name-preset';
-export * from './other';
+export * from './preset';
 export * from './pendulum';
 export * from './regex';

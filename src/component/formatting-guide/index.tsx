@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { BulbFilled, SettingFilled } from '@ant-design/icons';
 import { useLanguage } from 'src/service';
 import { CopiableCode, StyledCode } from '../atom';
-import './formatting-guide.scss';
-import { AttributeList, ExtraAttributeList, IconList, IconTypeAttributeMap, IconTypeMap, RegionMap } from 'src/model';
+import { IconTypeAttributeMap, IconTypeMap, IconTypeStMap, TotalAttributeIconPresetList } from 'src/model';
 import React from 'react';
+import './formatting-guide.scss';
 
 const { Panel } = Collapse;
 const StyledContainer = styled.div`
@@ -67,7 +67,7 @@ type ImagePathPreview = { path: string, imagePath: string };
 const ImagePathPreview = ({ path, imagePath }: ImagePathPreview) => {
     return <div className="special-path-item">
         <div className="image">
-            <img src={`${process.env.PUBLIC_URL}/asset/image/${imagePath}.png`} alt={path} />
+            <img src={`${process.env.PUBLIC_URL}/asset/image/${imagePath}`} alt={path} />
         </div>
         <div className="path">
             <CopiableCode data={path}>{path}</CopiableCode>
@@ -296,43 +296,39 @@ export const FormattingHelpDrawer = () => {
                     >
                         {[
                             <SpecialPathContainer key="subfamily-st">
-                                {[...(Object.values(IconTypeMap).filter(({ isOption }) => isOption === true).flatMap(({ value }) => {
-                                    const path = `subfamily-${value === 'st' ? 'icon-list' : value}`;
-                                    return <ImagePathPreview key={path} path={path} imagePath={`/subfamily/${path}`} />;
-                                }))]}
+                                {[
+                                    ...(Object.values(IconTypeMap)
+                                        .filter(({ isOption }) => isOption === true)
+                                        .flatMap(({ imagePresetSource, imagePresetPath }) => {
+                                            return <ImagePathPreview key={imagePresetPath} path={imagePresetPath} imagePath={imagePresetSource} />;
+                                        })),
+                                ]}
                             </SpecialPathContainer>,
                             <SpecialPathContainer key="subfamily-icon">
-                                {[...(IconList.filter(({ isOption }) => isOption === true).flatMap(({ value }) => {
-                                    const path = `subfamily-${value.toLowerCase()}`;
-                                    return <ImagePathPreview key={path} path={path} imagePath={`/subfamily/${path}`} />;
-                                }))]}
+                                {[
+                                    ...(Object.values(IconTypeStMap)
+                                        .filter(({ isOption }) => isOption === true)
+                                        .flatMap(({ imagePresetSource, imagePresetPath }) => {
+                                            return <ImagePathPreview key={imagePresetPath} path={imagePresetPath} imagePath={imagePresetSource} />;
+                                        })),
+                                ]}
                             </SpecialPathContainer>,
                             <SpecialPathContainer key="subfamily-attribute">
-                                {[...(Object.values(IconTypeAttributeMap).flatMap(({ value }) => {
-                                    const path = `subfamily-${value}`;
-                                    return <ImagePathPreview key={path} path={path} imagePath={`/subfamily/${path}`} />;
-                                }))]}
+                                {[
+                                    ...(Object.values(IconTypeAttributeMap)
+                                        .flatMap(({ imagePresetSource, imagePresetPath }) => {
+                                            return <ImagePathPreview key={imagePresetPath} path={imagePresetPath} imagePath={imagePresetSource} />;
+                                        })),
+                                ]}
                             </SpecialPathContainer>,
-                            ...(Object.values(RegionMap).flatMap((region) => {
-                                const regionName = region.fileKey;
-                                const hasExtraAttribute = ['ocg', 'tcg'].includes(regionName);
-                                return <SpecialPathContainer key={regionName} className="path-container">
-                                    {[
-                                        ...[...AttributeList]
-                                            .filter(({ isOption }) => isOption === true)
-                                            .flatMap(({ name }) => {
-                                                return { path: `attr-${regionName}-${name.toLowerCase()}` };
-                                            }),
-                                        ...[...(hasExtraAttribute ? ExtraAttributeList : [])]
-                                            .filter(({ isOption }) => isOption === true)
-                                            .flatMap(({ name }) => {
-                                                return { path: `attr-${regionName}-${name.toLowerCase()}` };
-                                            }),
-                                    ].map(({ path }) => {
-                                        return <ImagePathPreview key={path} path={path} imagePath={`/attribute/${path}`} />;
-                                    })}
-                                </SpecialPathContainer>;
-                            })),
+                            ...TotalAttributeIconPresetList
+                                .map((list, index) => {
+                                    return <SpecialPathContainer key={`region-${index}`} className="path-container">
+                                        {list.map(({ imagePresetPath, imagePresetSource }) => {
+                                            return <ImagePathPreview key={imagePresetPath} path={imagePresetPath} imagePath={imagePresetSource} />;
+                                        })}
+                                    </SpecialPathContainer>;
+                                }),
                         ]}
                     </Panel>
                 </Collapse>

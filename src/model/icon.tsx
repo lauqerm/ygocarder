@@ -255,6 +255,8 @@ export type IconTypeInfo = {
     isOption: boolean,
     isMixable: boolean,
     showIcon: boolean,
+    imagePresetPath: string,
+    imagePresetSource: string,
 }
 export const IconTypeMap: Record<string, IconTypeInfo> = {
     'auto': {
@@ -265,6 +267,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: false,
         isMixable: false,
         showIcon: false,
+        imagePresetPath: 'icon-',
+        imagePresetSource: '',
     },
     'custom': {
         value: 'custom',
@@ -274,6 +278,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: false,
         isMixable: false,
         showIcon: false,
+        imagePresetPath: 'icon-',
+        imagePresetSource: '',
     },
     'st': {
         value: 'st',
@@ -287,6 +293,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: false,
         showIcon: false,
+        imagePresetPath: 'icon-st',
+        imagePresetSource: 'subfamily/subfamily-icon-list.png',
     },
     'level': {
         value: 'level',
@@ -300,6 +308,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: false,
+        imagePresetPath: 'icon-level',
+        imagePresetSource: 'subfamily/subfamily-level.png',
     },
     'negative-level': {
         value: 'negative-level',
@@ -313,6 +323,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: false,
+        imagePresetPath: 'icon-negative-level',
+        imagePresetSource: 'subfamily/subfamily-negative-level.png',
     },
     'rank': {
         value: 'rank',
@@ -326,6 +338,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: false,
+        imagePresetPath: 'icon-rank',
+        imagePresetSource: 'subfamily/subfamily-rank.png',
     },
     'level-rank': {
         value: 'level-rank',
@@ -339,6 +353,8 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: false,
+        imagePresetPath: 'icon-level-rank',
+        imagePresetSource: 'subfamily/subfamily-level-rank.png',
     },
 };
 export const IconTypeList = Object.values(IconTypeMap);
@@ -356,6 +372,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-dark',
+        imagePresetSource: 'subfamily/subfamily-dark.png',
     },
     'earth': {
         value: 'earth',
@@ -369,6 +387,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-earth',
+        imagePresetSource: 'subfamily/subfamily-earth.png',
     },
     'fire': {
         value: 'fire',
@@ -382,6 +402,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-fire',
+        imagePresetSource: 'subfamily/subfamily-fire.png',
     },
     'light': {
         value: 'light',
@@ -395,6 +417,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-light',
+        imagePresetSource: 'subfamily/subfamily-light.png',
     },
     'water': {
         value: 'water',
@@ -408,6 +432,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-water',
+        imagePresetSource: 'subfamily/subfamily-water.png',
     },
     'wind': {
         value: 'wind',
@@ -421,6 +447,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-wind',
+        imagePresetSource: 'subfamily/subfamily-wind.png',
     },
     'divine': {
         value: 'divine',
@@ -434,6 +462,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-divine',
+        imagePresetSource: 'subfamily/subfamily-divine.png',
     },
     'spell': {
         value: 'spell',
@@ -447,6 +477,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-spell',
+        imagePresetSource: 'subfamily/subfamily-spell.png',
     },
     'trap': {
         value: 'trap',
@@ -460,6 +492,8 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-trap',
+        imagePresetSource: 'subfamily/subfamily-trap.png',
     },
 };
 export const IconTypeAttributeList = Object.values(IconTypeAttributeMap);
@@ -477,6 +511,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-continuous',
+        imagePresetSource: 'subfamily/subfamily-continuous-l.png',
     },
     'counter-l': {
         value: 'counter-l',
@@ -490,6 +526,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-counter',
+        imagePresetSource: 'subfamily/subfamily-counter-l.png',
     },
     'equip-l': {
         value: 'equip-l',
@@ -503,6 +541,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-equip',
+        imagePresetSource: 'subfamily/subfamily-equip-l.png',
     },
     'field-l': {
         value: 'field-l',
@@ -516,6 +556,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-field',
+        imagePresetSource: 'subfamily/subfamily-field-l.png',
     },
     'quick-play-l': {
         value: 'quick-play-l',
@@ -529,6 +571,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-quick-play',
+        imagePresetSource: 'subfamily/subfamily-quick-play-l.png',
     },
     'ritual-l': {
         value: 'ritual-l',
@@ -542,6 +586,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-ritual',
+        imagePresetSource: 'subfamily/subfamily-ritual-l.png',
     },
     'normal-l': {
         value: 'normal-l',
@@ -555,6 +601,8 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         isOption: true,
         isMixable: true,
         showIcon: true,
+        imagePresetPath: 'icon-normal',
+        imagePresetSource: 'subfamily/subfamily-normal-l.png',
     },
 };
 export const IconTypeStList = Object.values(IconTypeStMap);

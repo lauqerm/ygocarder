@@ -510,7 +510,7 @@ export const PresetManager = ({
 
     return <PresetManagerContainer
         footer={null}
-        width={343}
+        width={345}
         visible={visible}
         title={<div className="overlay-title">
             <span>{language['preset.manager.label']}</span>

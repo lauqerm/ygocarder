@@ -29,6 +29,7 @@ import {
     SquareBracketLetterRegex,
     TCGSymbolLetterRegex,
     TextData,
+    TotalImagePresetMap,
     VietnameseDiacriticLetterRegex,
     WholeWordRegex,
     getBulletSpacing,
@@ -320,15 +321,9 @@ export const drawLine = async ({
                         offsetX = typeof offsetX === 'number' ? offsetX : presetOffsetX;
                     } else if (!src.startsWith('https')) {
                         isInternalSource = true;
-                        normalizedSource = '/asset/image/'
-                            + src.startsWith('subfamily')
-                                ? `/subfamily/${src}`
-                                : src.startsWith('attr')
-                                    ? `/attribute/${src}`
-                                    : src
-                            + '.png';
+                        normalizedSource = '/asset/image/' + (TotalImagePresetMap[src] ?? `${src}.png`);
                     }
-                    const lineHeightOffsetRatio = 0.8; // If it is 1, the image will touch the bottom of the line above
+                    const lineHeightOffsetRatio = 0.75; // If it is 1, the image will touch the bottom of the line above
                     await drawFromWithSize(
                         ctx,
                         normalizedSource,

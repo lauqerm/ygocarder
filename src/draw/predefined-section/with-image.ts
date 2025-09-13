@@ -104,12 +104,13 @@ export const drawStarContent = async ({
             return await onStarDraw(coordinate);
         })
     );
+    if (!ctx) return;
     if (loopStarFinish) {
         const {
             canvas: starFinishCanvas,
             ctx: starFinishCtx,
         } = createCanvas(CanvasWidth, (baseline + starWidth));
-        starFinishCtx.drawImage(starCanvas, 0, 0);
+        starFinishCtx?.drawImage(starCanvas, 0, 0);
         await loopStarFinish(
             starFinishCtx,
             'art',
@@ -121,8 +122,10 @@ export const drawStarContent = async ({
                 );
             },
         );
-        starCtx.globalCompositeOperation = 'source-in';
-        starCtx.drawImage(starFinishCanvas, 0, 0);
+        if (starCtx) {
+            starCtx.globalCompositeOperation = 'source-in';
+            starCtx.drawImage(starFinishCanvas, 0, 0);
+        }
         ctx.drawImage(starCanvas, 0, 0);
     } else {
         ctx.drawImage(starCanvas, 0, 0);
