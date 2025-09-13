@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '06/09/2025-1';
+        const currentReminder = '10/09/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous User at Sep 10, 2025',
+            question: 'Ko hiện các dòng chữ hiệu ứng của lá bài',
+            answer: 'Đã fix nha bạn.',
+        },
         {
             author: 'Jayden at Sep 08, 2025',
             question: 'Not a bug, but a possible suggestion. For my own personal reasons, I would love the opportunity to add either a custom sigil/icon of my own design (link/image upload) that could replace the existing ones, and also, the possibility to paste those and existing sigil’s/icon’s into the effect text of the card. So that maybe I could do for example, “Add 1 (Icon) Quick-Play Spell from your Deck to your hand.”',

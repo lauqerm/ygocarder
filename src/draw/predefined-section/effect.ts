@@ -114,21 +114,22 @@ export const drawEffect = async ({
     const scaledFontData = scaleFontData(fontData, globalScale);
     const { fontList } = scaledFontData;
     const yRatio = 1;
+    const maxFontListLineLength = fontList[fontList.length - 1].lineCount;
     /**
      * We basically go through each font size, then iterating the content multiple time with different condense ratio until the text is both fit inside the max amount of lines AND the ratio is larger than the current limit threshold.
      * 
      * If it went through every single of our font list entries, dynamic entry will be activated. It will no longer care about accuracy and just do its best to cramp all the text together. Max font entry failed when either there are too many lines, or there are too many words that is pass the condense threshold.
      * */
     while (sizeLevel <= fontList.length && sizeLevel >= 0) {
-        const requireDynamicSize = sizeLevel === fontList.length
+        const requireDynamicSize = sizeLevel === fontList.length || lineList.length > maxFontListLineLength
             ? true
             : false;
         const appliedSizeLevel = Math.min(fontList.length - 1, sizeLevel);
         const tolerancePerSentence: Record<string, number> = requireDynamicSize
             ? {
-                '1': 1000,
-                '2': 1000,
-                '3': 1000,
+                '1': 600,
+                '2': 600,
+                '3': 600,
             }
             : (format === 'tcg'
                 ? forceRelaxCondenseLimit && appliedSizeLevel < forceRelaxCondenseLimit
@@ -204,7 +205,7 @@ export const drawEffect = async ({
                 },
                 200,
             );
-        effectiveLineCount = Math.max(minLine, lineListWithRatio.length);
+        effectiveLineCount = Math.max(lineList.length, Math.max(minLine, lineListWithRatio.length));
         // [START DRAWING]
         /** Usually effect only consist of 1 or 2 paragraphs, but in TCG they try to put each bullet clause in a new line, resulting many more. Still we don't know if having different tolerance based on amount of paragraph is correct or not, since it is very hard to survey the condensation of a real card. */
         const resetStyle = setTextStyle({ ctx, ...textStyle, globalScale });
@@ -214,6 +215,8 @@ export const drawEffect = async ({
             || minLine > lineCount
         ) {
             sizeLevel += 1; // If sizeLevel is larger than the length of font list, trigger dynamic size
+        } else if (useDynamicSize && effectiveMedian < tolerantValue) {
+            effectiveLineCount += 1; // Increase dynamic size if the font is too condensed
         } else {
             clearCanvas(ctx);
 
