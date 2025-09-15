@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '10/09/2025';
+        const currentReminder = '15/09/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Image disappeards at Sep 15, 2025',
+            question: 'Adding the width function removes the image, regardless of the width chosen (it works without it)',
+            answer: 'Hi there, your syntax is incorrect, you must put the width attribute between double quotes ("), like this: <img src="https://ms.yugipedia.com//5/59/Type-Cyberse-MADU.png" width="40" />.',
+        },
         {
             author: 'Anonymous User at Sep 10, 2025',
             question: 'Ko hiện các dòng chữ hiệu ứng của lá bài',
