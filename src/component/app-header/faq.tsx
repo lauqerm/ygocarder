@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '15/09/2025';
+        const currentReminder = '17/09/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Outline at Sep 17, 2025',
+            question: 'When placing an outline a location 0/0, the line is not aligned equally throughout the letter',
+            answer: 'Hi there, this is a known issue for Chrome on Windows, which currently I\'m unable to fix. You can see the same card display perfectly fine on Chrome on MacOS.',
+            image: 'https://i.postimg.cc/MZsjtS2k/Screenshot-2025-09-17-at-08-09-48.png',
+        },
         {
             author: 'Image disappeards at Sep 15, 2025',
             question: 'Adding the width function removes the image, regardless of the width chosen (it works without it)',
