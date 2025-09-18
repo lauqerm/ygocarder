@@ -53,7 +53,8 @@ export type PresetNameStyle = 'commonB' | 'commonW'
 | 'rare' | 'secretGradient' | 'secret' | 'platinum2' | 'ultra' | 'ultra2' | 'platinum' | 'gold'
 | 'animeRed' | 'animeSilver' | 'animeGold'
 | 'promo'
-| 'embossGold' | 'embossPlatinum';
+| 'embossGold' | 'embossPlatinum'
+| 'rainbowSecretRare';
 export const PresetNameStyleMap: Record<PresetNameStyle, {
     key: PresetNameStyle,
     label: string,
@@ -302,6 +303,21 @@ export const PresetNameStyleMap: Record<PresetNameStyle, {
             shadowColor: '#4d4d4d',
             shadowOffsetX: -1,
             shadowOffsetY: 1,
+        }),
+    },
+    rainbowSecretRare: {
+        key: 'rainbowSecretRare',
+        label: 'Rainbow Secret Rare',
+        image: 'asset/image/other/name-rainbow-secret-rare.png',
+        value: createPresetNameStyle({
+            hasOutline: true,
+            headTextFillStyle: '#000000',
+            lineColor: '#333333',
+            lineOffsetX: 0,
+            lineOffsetY: 0,
+            lineWidth: 6,
+            pattern: 'type2',
+            preset: 'rainbowSecretRare',
         }),
     },
 };

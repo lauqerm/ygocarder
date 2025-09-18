@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '17/09/2025';
+        const currentReminder = '18/09/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,16 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'OCG Proxy Secret Rare at Sep 18, 2025',
+            question: 'Is there a way to implement a Predefined or a pattern similar to the OCG Rainbow Secret Rare proxy text, please?',
+            answer: 'Hi there, I have added a new predefined preset for this case, you may try it now.',
+        },
+        {
+            author: 'Elttaest the Master of Duels at Sep 18, 2025',
+            question: 'Hi. Love your work, just wondering - with Elttaes, the Master of Duels and Dragon of Illumination, Sanctuary\'s Shield, shouldn\'t we have enough data to make Rush Duel cards in English as well? The font seems the same in both English and Japanese. And the card name seems the same used in TCG, although I can\'t really make out what the Japanese font is. Sorry again for this. Just curious. Thanks for your time',
+            answer: 'Hi there, you are right that both cards can be used as a template for Rush Duel cards, but the main problem before the template itself is that currently I don\'t have enough resources for such project right now, so I can\'t promise anything at this moment. I will keep this in mind and see if I can do it in the future.',
+        },
         {
             author: 'Outline at Sep 17, 2025',
             question: 'When placing an outline a location 0/0, the line is not aligned equally throughout the letter',
