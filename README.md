@@ -40,4 +40,10 @@ You may also contact me through [Reddit](https://www.reddit.com/user/lauqerm/), 
 
 ### How to run
 
-If you are already familiar with a React app, just install all the package with `npm install` and run it with `npm start`.
+If you are already familiar with a React app, you can run the app with the following steps:
+* Node version: 20 or higher.
+* Install all the package: `yarn install`
+* Set up variable (you usually only need to do it once):
+    * Windows: `set NODE_OPTIONS=--openssl-legacy-provider`
+    * Linux / MacOS: `export NODE_OPTIONS=--openssl-legacy-provider`
+* Run the app: `yarn start`
