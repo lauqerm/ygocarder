@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '26/09/2025';
+        const currentReminder = '01/10/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,16 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous User at Sep 28, 2025',
+            question: 'For some reason, the border changes depending on the card type even though it\'s set to Default',
+            answer: 'It seems like the card border is not loaded yet, so it exposes the underlying frame. I have replicate your card but does not see the same issue, does the problem still persist?',
+        },
+        {
+            author: 'mguesiten at Sep 28, 2025',
+            question: 'for the accented letter for example "é" or "à"',
+            answer: 'This is a known issue, unfortunately I haven\'t found any better font with correct accents display, sorry for the inconvenience.',
+        },
         {
             author: 'Anonymous User at Sep 26, 2025',
             question: 'hi m8. luv your work. i was thinking about two things. maybe 1 option for anime cards like in Vrains. another option to adjust the colour and saturation of the card frame. thks again for your work',
