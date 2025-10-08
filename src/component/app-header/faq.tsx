@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '01/10/2025';
+        const currentReminder = '08/10/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous User at Oct 08, 2025',
+            question: 'Missed you so much bro its been a month',
+            answer: 'Me too, me too.',
+        },
         {
             author: 'Anonymous User at Sep 28, 2025',
             question: 'For some reason, the border changes depending on the card type even though it\'s set to Default',
