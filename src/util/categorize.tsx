@@ -124,7 +124,7 @@ export const resolveNameStyle = ({
     foil: Foil,
 }) => {
     const isSpeedSkill = checkSpeedSkill({ frame });
-    let contextualFont = nameStyle.font;
+    let contextualFont = nameStyleType === 'auto' ? AUTO_FONT : nameStyle.font;
     if (contextualFont === AUTO_FONT && format === 'ocg') contextualFont = 'OCG';
     if (contextualFont === AUTO_FONT && format === 'tcg') contextualFont = 'Default';
     if (contextualFont === AUTO_FONT && isSpeedSkill && format === 'tcg') contextualFont = 'Arial';
@@ -146,13 +146,11 @@ export const resolveNameStyle = ({
     };
     if (nameStyleType === 'predefined') {
         const resultNameStyle = { ...PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value };
-        if (!PresetNameStyleMap[resultNameStyle.preset ?? 'commonB'].value.font) {
-            resultNameStyle.font = contextualFont;
-        }
 
         return {
             ...contextualColor,
             ...resultNameStyle,
+            font: resultNameStyle.font === AUTO_FONT ? contextualFont : resultNameStyle.font,
         };
     }
 

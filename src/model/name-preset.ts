@@ -46,6 +46,7 @@ export const createPresetNameStyle = (presetValue: Partial<NameStyle>): Partial<
     hasShadow: false,
     hasEmboss: false,
     pattern: 'none',
+    font: AUTO_FONT,
     ...presetValue
 });
 export type PresetNameStyle = 'commonB' | 'commonW'
