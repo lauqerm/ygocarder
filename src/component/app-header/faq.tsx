@@ -80,6 +80,11 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Anonymous User at Oct 11, 2025',
+            question: 'Elvennotes ~Homecoming Paralleism~\nElvennotes ~Reunion Tercet~\nElvennotes ~Maddening Rhapsodia~\nElvennotes ~Oracle Alicetea~\n\nHello,\nI noticed that these cards that will be released soon do not display the character "~" correctly. I hope you can do something about it. \n\nThanks \nLiger',
+            answer: 'I have updated the font, hopefully it looks better now.',
+        },
+        {
             author: 'Anonymous User at Oct 08, 2025',
             question: 'Missed you so much bro its been a month',
             answer: 'Me too, me too.',
@@ -126,17 +131,6 @@ export const QuestionAndFeedback = () => {
             answer: 'Đã fix nha bạn.',
         },
         {
-            author: 'Jayden at Sep 08, 2025',
-            question: 'Not a bug, but a possible suggestion. For my own personal reasons, I would love the opportunity to add either a custom sigil/icon of my own design (link/image upload) that could replace the existing ones, and also, the possibility to paste those and existing sigil’s/icon’s into the effect text of the card. So that maybe I could do for example, “Add 1 (Icon) Quick-Play Spell from your Deck to your hand.”',
-            answer: 'This is a rather complex feature, but not impossible, maybe I could extend the preset feature for this. Let\'s see if I can look into it this weekend.',
-        },
-        {
-            author: 'Jayden at Sep 08, 2025',
-            question: 'I want to firstly express my most sincere gratitude for such an amazing card maker that makes custom cards appear so professional with no cost on the maker.\nAs for an issue, I have none other than a request / suggestion. Would it be possible to implement Bolded portion of text in the Effect Text? For those users that wish to express unique and more modernised redesigns to card effects.',
-            answer: 'I have added an experimental syntax for this case, you may try it now.',
-            image: 'https://i.postimg.cc/G3Qd2Ws9/image.png',
-        },
-        {
             author: 'Armando Giordano at Sep 06, 2025',
             question: 'Thank you for your quick response and for your astonishing work with the Carder. Yes, I am using an iPad and a phone, and, with both devices, when I click on the Download button, it just shows "Saving..." for a second, then no Download starts. I am now on a computer and it works great with left click and "Save as", though it would be nice to be able to use it on mobile.',
         },
@@ -150,23 +144,6 @@ export const QuestionAndFeedback = () => {
             question: 'Hello! I am loving your work. I hope my issue is not because of ignorance, but it seems like it\'s not possible to download cards as images.',
             answer: 'Hi there, based on the report it seems that you are using an iPad. I don\'t have an iPad to test right now, but could you please provide me some more information?\n1. When you click the Download button, does anything happen? Does the app freeze or it just not doing anything?\n2. Is the problem just appear recently, or it never worked in the first place?',
             image: 'https://i.postimg.cc/Y2fjyvV2/image.png',
-        },
-        {
-            author: 'Numbers at Sep 04, 2025',
-            question: 'There\'s a weird glitch that happens when adding numbers. The spacing seems to be inconsistent depending on the content',
-            answer: 'Hi there, unfortunately this is by design, as the space between words are calculated so that the entire line fit the space perfectly, so depend on the text, it maybe longer or shorter than usual.\nHowever, if what you want is to align the effect numbers, you can achieve the result by using the following "<pre>" syntax.',
-            image: 'https://i.postimg.cc/GhbnM0qt/image.png',
-        },
-        {
-            author: 'Italic text at Aug 31, 2025',
-            question: 'Adding a syntax option for Italic in order to make only specific part of the text italic',
-            answer: 'I have added an experimental syntax for this case, you may try it now.',
-            image: 'https://images2.imgbox.com/c3/1b/OFLOLdf9_o.png',
-        },
-        {
-            author: 'ZorcNecropHades at Aug 26, 2025',
-            question: 'Hello, the token text cannot be displayed below. I did not have this problem before when I moved it to the bottom.',
-            answer: 'It should be fixed by now.',
         },
         {
             author: 'Anonymous User at Aug 16, 2025',
@@ -184,11 +161,6 @@ export const QuestionAndFeedback = () => {
             author: 'Die Frauen at Aug 9, 2025',
             question: 'As for a suggestion related to the pevious query, this may be a bit too crazy, but since it\'s lodged together with the advanced/custom layout feature, do you think perhaps the foil could be split into 5 pieces the same as it? (all 4 corners and the text frame). If it may take too much effort or is not feasible I\'ll understand that.',
             answer: 'I don\'t think this would be possible, as card foils are divided into multiple pieces for different places, so I couldn\'t split them the same way as card frames at all.',
-        },
-        {
-            author: 'Die Frauen at Aug 9, 2025',
-            question: 'For convenience\'s sake, I think it\'d be a bit more useful if the foil dye set also had a hue slider, or a toggle for the RGB values like the one in the name coloring tabs... for the less inclined to memorize the Hex values.',
-            answer: 'I have added rgb inputs for dye color picker.',
         },
         {
             author: 'Anonymous User at Aug 8, 2025',

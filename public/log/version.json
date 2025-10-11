@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.33 (2025/10/11)",
+        "logList": [
+            {
+                "content": "Fix: Minor font updates."
+            }
+        ]
+    },
+    {
         "version": "v2.3.32 (2025/09/18)",
         "logList": [
             {
