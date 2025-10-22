@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '08/10/2025';
+        const currentReminder = '22/10/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -80,7 +80,12 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
-            author: 'Anonymous User at Oct 11, 2025',
+            author: 'Problem at Oct 22, 2025',
+            question: 'Hi, just to let you know that there are new characters on the Magnet cards that I haven\'t inserted here. I think you should be aware of this. This character "±" is not displayed on the cards for example. \n\nKind regards\nLigerrFanArt',
+            answer: 'Hi there, thanks for the head-up, I have updated the letter "±" specifically, but will wait a bit before adding new one because the TCG might not use those characters at all.',
+        },
+        {
+            author: 'New Character Title at Oct 11, 2025',
             question: 'Elvennotes ~Homecoming Paralleism~\nElvennotes ~Reunion Tercet~\nElvennotes ~Maddening Rhapsodia~\nElvennotes ~Oracle Alicetea~\n\nHello,\nI noticed that these cards that will be released soon do not display the character "~" correctly. I hope you can do something about it. \n\nThanks \nLiger',
             answer: 'I have updated the font, hopefully it looks better now.',
         },

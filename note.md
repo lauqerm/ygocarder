@@ -21,3 +21,8 @@
 ### Known issues
 
 * A rather hard one that make card cropper sometimes return wrong crop information upon import. Re-import that same data will fix the issue. This must be a timing problem because the component re-render at the same time it receive imperative information, but currently we have no easy way to reproduce it, and thus unable to effectively fix it.
+
+### Setup
+* Set up variable (you usually only need to do it once):
+    * Windows: `set NODE_OPTIONS=--openssl-legacy-provider`
+    * Linux / MacOS: `export NODE_OPTIONS=--openssl-legacy-provider`
