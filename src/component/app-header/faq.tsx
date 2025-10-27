@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '27/10/2025';
+        const currentReminder = '27/10/2025-2';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous User at Oct 26, 2025',
+            question: 'Square brackets are not displayed properly in the card name.',
+            answer: 'I have updated the letters.',
+        },
         {
             author: 'I have assets to donate! at Oct 23, 2025',
             question: 'Konami\'s new Genesys card searcher initially had high-resolution renders of all cards. I snagged a few before they "fixed" it (now their images are low-res again...) and used them to correct all the card frames, bevels, level stars, text boxes, fonts, and even text colors. I\'m talking major corrections that took me hours since I\'m not very efficient in Photoshop.\nAt the very least, your current Spell and Synchro frames need updating. Not only are the colors off, but there\'s actually an artifactual defect running across the entire right edge that you inherited from 9558able\'s frames (it\'s actually on all of them, but most visible on the Spell frame).\nAs far as I can tell, my updated assets now produce the most accurate proxies anywhere. I would like to donate them! I don\'t see a way to email you, but please email me at *******88@gmail.com if you\'re interested.\nI can reply with specifics and send you some comparisons.',
