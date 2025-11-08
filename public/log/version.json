@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.3.34 (2025/11/08)",
+        "logList": [
+            {
+                "content": "Experimental support for advanced unicode letters in card text, allowing better display for wider range of letters",
+                "image": "https://i.postimg.cc/YS0r5NNS/image.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.33 (2025/10/11)",
         "logList": [
             {

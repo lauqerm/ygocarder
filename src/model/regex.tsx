@@ -44,7 +44,7 @@ export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE);
 export const VIETNAMESE_DIACRITIC_LETTER = '[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]';
 export const VietnameseDiacriticLetterRegex = new RegExp(VIETNAMESE_DIACRITIC_LETTER);
 
-export const FragmentSplitRegex = new RegExp(`({[^{}]+?}|${WHOLE_WORD_SOURCE}|.)`);
+export const FragmentSplitRegex = new RegExp(`(\\{[^\\{\\}]+?\\}|${WHOLE_WORD_SOURCE}|.)`, 'u');
 
 export const UNCOMPRESSED_SOURCE = '{{([^{}]+?)}}';
 

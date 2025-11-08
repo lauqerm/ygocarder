@@ -49,7 +49,7 @@ export const fillTextLeftWithSpacing = (
 
     const { stroke = false } = option ?? {};
     ctx.textAlign = 'left';
-    const charList = str.split('');
+    const charList = Array.from(str);
     let curLeft = edge;
 
     charList.forEach(char => {
@@ -75,7 +75,7 @@ export const fillTextRightWithSpacing = (
 
     const { stroke = false } = option ?? {};
     ctx.textAlign = 'right';
-    const charList = str.split('');
+    const charList = Array.from(str);
     let curRight = edge;
 
     charList.forEach((c, index) => {

@@ -13,10 +13,10 @@ export const drawScale = (
     const baseline = _baseline * globalScale;
     if (ctx && value) {
         const fontSize = _fontSize * globalScale;
-        ctx.font = `${fontSize}px MatrixBoldSmallCaps`;
+        ctx.font = `${fontSize}px MatrixBoldSmallCaps, Times New Roman`;
         ctx.textAlign = 'left';
 
-        const digitList = `${value}`.split('');
+        const digitList = Array.from(`${value}`);
 
         if (digitList.length === 1) {
             const digit = digitList[0];
@@ -229,7 +229,7 @@ export const drawSetId = (
     let spacing = 0.125;
     let offsetY = 0;
     let xOffset = 0;
-    ctx.font = `${withShadow ? 'bold' : ''} ${22 * globalScale}px stone-serif-regular`;
+    ctx.font = `${withShadow ? 'bold' : ''} ${22 * globalScale}px stone-serif-regular, Times New Roman`;
     if (format === 'ocg') {
         spacing = 0.145;
         offsetY = -1;

@@ -10,8 +10,8 @@ import { createFontGetter, scaleFontSizeData } from 'src/util';
 
 export const tokenizeText = (text: string, keepControlCharacter = false) => {
     const regex = keepControlCharacter
-        ? new RegExp(`([${BREAKABLE_LETTER}])|(${NB_WORD_OPEN}[\\w\\W]+?${NB_WORD_CLOSE})|(.+?)`)
-        : new RegExp(`([${BREAKABLE_LETTER}])|${NB_WORD_OPEN}([\\w\\W]+?)${NB_WORD_CLOSE}|(.+?)`);
+        ? new RegExp(`([${BREAKABLE_LETTER}])|(${NB_WORD_OPEN}[\\w\\W]+?${NB_WORD_CLOSE})|(.+?)`, 'u')
+        : new RegExp(`([${BREAKABLE_LETTER}])|${NB_WORD_OPEN}([\\w\\W]+?)${NB_WORD_CLOSE}|(.+?)`, 'u');
 
     return text
         .split(regex)
