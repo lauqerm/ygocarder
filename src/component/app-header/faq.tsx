@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '27/10/2025-2';
+        const currentReminder = '12/12/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,16 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'TheTonyB at Dec 12, 2025',
+            question: 'I noticed Korean and Portuguese are missing from Attributes languages. Can you add those? Specially portuguese which is my main language.\nCould you also add other language options to the "1st Edition"/"Limited Edition" text or allow for a custom text?\nThanks and keep up the great work!',
+            answer: 'Hi there, unfortunately I have no access to those language sprites, so I cannot add them at the moment (somehow Yugipedia does not have attributes in Portugese and Korean even though they have the rest of official supported languages).',
+        },
+        {
+            author: 'Anonymous User at Dec 04, 2025',
+            question: 'Hello! I\'ve noticed there\'s a problem with these 3 new cards :\nMagnet Warrior Σ－\nMagnet Warrior Σ＋\nMagnet Warrior Ω+\n\nI\'ve noticed that Konami is using new characters, and unfortunately, they\'re not displaying correctly for creating cards. Could you please fix this?\nThanks in advance.\nLigerrFanArt',
+            answer: 'Because those cards do not have an offical TCG version yet, so I will just import OCG font for this case.',
+        },
         {
             author: 'Anonymous User at Oct 26, 2025',
             question: 'Square brackets are not displayed properly in the card name.',
