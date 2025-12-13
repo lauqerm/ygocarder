@@ -63,12 +63,12 @@ export const checkLightFrame = (frame: string) => {
     return ['link'].includes(frame) || checkLightFooter(frame);
 };
 
-export const checkDiplayLinkRating = (displayMode: number, isLink: boolean) => {
+export const checkDiplayLinkRating = (displayMode: number, isLink: boolean | null) => {
     let showLinkRating = false;
     switch (displayMode) {
         case LINK_RATING_ALWAYS_SHOW: showLinkRating = true; break;
         case LINK_RATING_ALWAYS_HIDE: showLinkRating = false; break;
-        case LINK_RATING_ALWAYS_AUTO: showLinkRating = isLink; break;
+        case LINK_RATING_ALWAYS_AUTO: showLinkRating = isLink ?? false; break;
     }
 
     return showLinkRating;
@@ -85,7 +85,7 @@ export const resolveFrameStyle = (frameData: Record<string, string | undefined>,
         pendulumEffectBackground,
     } = frameData;
     const resolvedFrame = frame ?? 'effect';
-    const resolvedTopLeft = topLeftFrame === 'auto' ? resolvedFrame : topLeftFrame;
+    const resolvedTopLeft = (topLeftFrame === 'auto' ? resolvedFrame : topLeftFrame) ?? resolvedFrame;
     const resolvedTopRight = (topRightFrame === 'auto' ? resolvedTopLeft : topRightFrame) ?? resolvedFrame;
     const resolvedBottomLeft = (bottomLeftFrame === 'auto'
         ? (isPendulum ? 'spell' : resolvedTopLeft)

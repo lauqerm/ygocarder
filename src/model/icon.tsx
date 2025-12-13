@@ -1,6 +1,8 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { WithLanguage } from 'src/service';
 
+export const DEFAULT_EXTERNAL_ATTRIBUTE = 'https://i.postimg.cc/3w5ZQ2rt/attr-custom-void.png';
+export type AttributeType = 'auto' | 'custom';
 export const NO_ATTRIBUTE = 'NONE';
 export const AttributeList = [
     {
@@ -133,6 +135,12 @@ export const ExtraAttributeList = [
         isOption: true,
     },
 ];
+export const ExtraAttributeMap = ExtraAttributeList.reduce<Record<string, typeof ExtraAttributeList[0]>>((acc, cur) => {
+    const { name } = cur;
+    acc[name] = cur;
+
+    return acc;
+}, {});
 export const RegionMap: Record<string, { key: string, category: 'tcg' | 'ocg', fileKey: string }> = {
     'jp': { key: 'jp', category: 'ocg', fileKey: 'ocg' },
     'ch': { key: 'ch', category: 'ocg', fileKey: 'ch' },
@@ -274,7 +282,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         value: 'custom',
         labelKey: 'input.icon-type.custom.label',
         fullLabelKey: 'input.icon-type.custom.full.label',
-        icon: null,
+        icon: <SyncOutlined />,
         isOption: false,
         isMixable: false,
         showIcon: false,

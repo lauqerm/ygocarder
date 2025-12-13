@@ -12,7 +12,7 @@ import {
     LinkRotateList,
     NO_ICON,
 } from 'src/model';
-import { checkSpeedSkill, compressCardData, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
+import { compressCardData, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
 import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Checkbox, Popconfirm, Tooltip } from 'antd';
@@ -271,6 +271,7 @@ export const CardThumb = ({
         artSource,
         atk,
         attribute,
+        attributeType,
         background,
         backgroundCrop,
         backgroundData,
@@ -327,7 +328,6 @@ export const CardThumb = ({
     const normalizedCardIcon = normalizedCardIconType === 'st'
         ? subFamily
         : normalizedCardIconType;
-    const isSpeedSkill = checkSpeedSkill(card);
     const statInEffect = !!(atk || def || (isLink && linkMap.length));
     const joinedTypeAbility = typeAbility.join(' / ');
     const canvasCoordinate = getArtCanvasCoordinate(isPendulum, opacity);
@@ -438,12 +438,14 @@ export const CardThumb = ({
                 {normalizedCardName}
             </div>
             <div className="second-row truncate">
-                {isSpeedSkill || attribute === 'NONE'
-                    ? null
-                    : <img className="attribute-icon"
-                        src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
-                        alt="Icon"
-                    />}
+                {(attributeType === 'custom' && attribute.length > 0)
+                    ? <img className="attribute-icon" src={attribute} alt="Attribute" />
+                    : attribute === 'NONE'
+                        ? null
+                        : <img className="attribute-icon"
+                            src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
+                            alt="Attribute"
+                        />}
                 {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
                 {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img

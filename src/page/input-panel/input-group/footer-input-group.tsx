@@ -145,7 +145,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
                                     onChange={e => {
                                         if (e.target.checked) {
                                             changeLinkRating('');
-                                            linkRatingInputRef.current.setValue('');
+                                            linkRatingInputRef.current?.setValue('');
                                         }
                                     }}
                                 />

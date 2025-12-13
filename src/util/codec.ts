@@ -103,6 +103,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         shadowOffsetY: 'nssoy',
     },
     attribute: 'at',
+    attributeType: 'att',
     subFamily: 'sf',
     starList: 'stl',
     star: 'st',
@@ -359,6 +360,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (typeof migratedCard.isLimitedEdition === 'undefined') migratedCard.isLimitedEdition = false;
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
+    
+    if (migratedCard.attributeType == null) migratedCard.attributeType = 'custom';
 
     const defaultFlagList = getDefaultCardFlag();
     if (!Array.isArray(migratedCard.flag)) migratedCard.flag = defaultFlagList;

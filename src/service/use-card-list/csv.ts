@@ -1,5 +1,6 @@
 import { Crop } from 'react-image-crop';
 import {
+    AttributeType,
     BackgroundType,
     Card,
     CardFlag,
@@ -75,6 +76,7 @@ const CsvStandardFieldList = [
     'Is Using Full Art',
     'Region',
     /** Creative customize stuff */
+    'Attribute Type',
     'Star Type',
     'Star Alignment',
     'Card Icon Type',
@@ -231,6 +233,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             artSource,
             atk,
             attribute,
+            attributeType,
             background,
             backgroundCrop,
             backgroundFit,
@@ -298,6 +301,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Frame', frame);
         write('Name', name);
         write('Attribute', attribute);
+        write('Attribute Type', attributeType);
         write('Star', `${star}`);
         write('Spell/Trap Icon', subFamily);
         write('Art Link', art);
@@ -516,11 +520,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const rawFoil = (reader('Foil') ?? reader('Rarity') ?? 'normal').toLowerCase() as Foil;
                 const foil = FoilMap[rawFoil] ? rawFoil : 'normal';
 
+                const attributeType = (reader('Attribute Type')?.toLowerCase() ?? 'auto') as AttributeType;
                 const rawAttribute = reader('Attribute')?.toUpperCase();
-                const attribute = rawAttribute
+                const attribute = (rawAttribute || attributeType === 'custom')
                     ? rawAttribute === 'NONE'
                         ? NO_ATTRIBUTE
-                        : rawAttribute
+                        : rawAttribute ?? NO_ATTRIBUTE
                     : frame === 'spell'
                         ? 'SPELL'
                         : frame === 'trap'
@@ -734,6 +739,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     artSource: 'online',
                     atk,
                     attribute,
+                    attributeType,
                     background,
                     backgroundCrop,
                     backgroundFit,

@@ -1,12 +1,13 @@
 import { IconButton, RadioTrain } from 'src/component';
 import { useCard, useSetting, WithLanguage } from 'src/service';
-import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
-import { useMemo } from 'react';
+import { UpOutlined, BookOutlined, EditOutlined } from '@ant-design/icons';
+import { useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { getAttributeList, getExtraAttributeList } from '../const';
-import { RegionMap } from 'src/model';
+import { DEFAULT_EXTERNAL_ATTRIBUTE, ExtraAttributeMap, RegionMap } from 'src/model';
 import styled from 'styled-components';
 import { mergeClass } from 'src/util';
+import { CardTextInput, CardTextInputRef } from '../input-text';
 
 const AttributeRegionTrain = styled.div`
     align-self: flex-end;
@@ -18,15 +19,10 @@ const AttributeRegionTrain = styled.div`
         top: calc(var(--spacing-xxs) * -1);
         z-index: 1;
     }
-    &.container-block .attribute-region-picker {
-        position: relative;
-        right: 0;
-        top: 0;
-    }
     .ant-radio-button-wrapper {
-        font-size: var(--fs-sm);
+        font-size: var(--fs-xs);
         height: unset;
-        line-height: 1.25;
+        line-height: 1.1;
     }
 `;
 
@@ -39,6 +35,7 @@ export const AttributeInputGroup = ({
         format,
         region,
         attribute,
+        attributeType,
         getUpdater,
     } = useCard(useShallow(({
         card: {
@@ -46,6 +43,7 @@ export const AttributeInputGroup = ({
             region,
             isLink,
             attribute,
+            attributeType,
         },
         getUpdater,
     }) => ({
@@ -53,35 +51,24 @@ export const AttributeInputGroup = ({
         region,
         isLink,
         attribute,
+        attributeType,
         getUpdater,
     })));
+    const linkAttributeRef = useRef<CardTextInputRef>(null);
     const { setting, updateSetting } = useSetting();
     const { showCreativeOption, showExtraDecorativeOption, showExtraAttribute } = setting;
+    const [showLinkAttribute, setShowLinkAttribute] = useState(attributeType === 'custom');
 
     const changeAttribute = useMemo(() => getUpdater('attribute'), [getUpdater]);
+    const changeAttributeType = useMemo(() => getUpdater('attributeType'), [getUpdater]);
     const changeRegion = useMemo(() => getUpdater('region'), [getUpdater]);
 
     const attributeList = useMemo(() => getAttributeList(region, language, showCreativeOption), [region, language, showCreativeOption]);
     const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
 
     return <>
-        <RadioTrain
-            className="fill-input-train span-input-train attribute-input"
-            value={attribute}
-            onChange={changeAttribute}
-            optionList={attributeList}
-            suffix={!showExtraAttribute && showExtraDecorativeOption
-                ? <IconButton
-                    onClick={() => updateSetting({ showExtraAttribute: true })}
-                    Icon={DoubleRightOutlined}
-                    tooltipProps={{ overlay: language['button.more.label'] }}
-                />
-                : null}
-        >
-            <span>{language['input.attribute.label']}</span>
-        </RadioTrain>
         {showExtraDecorativeOption && <AttributeRegionTrain
-            className={mergeClass('attribute-region-container', showExtraAttribute ? 'container-block' : 'container-float')}
+            className={mergeClass('attribute-region-container')}
         >
             <RadioTrain
                 className="attribute-region-picker"
@@ -96,20 +83,74 @@ export const AttributeInputGroup = ({
                 onChange={changeRegion}
             />
         </AttributeRegionTrain>}
+        <RadioTrain
+            className="fill-input-train span-input-train attribute-input"
+            value={attribute}
+            onChange={value => {
+                changeAttribute(value);
+                changeAttributeType('auto');
+            }}
+            optionList={attributeList}
+            suffix={showExtraDecorativeOption
+                ? <div>
+                    <IconButton
+                        onClick={() => {
+                            setShowLinkAttribute(true);
+                            updateSetting({ showExtraAttribute: false });
+                            changeAttribute(linkAttributeRef.current?.getValue() ?? DEFAULT_EXTERNAL_ATTRIBUTE);
+                            changeAttributeType('custom');
+                        }}
+                        active={attributeType === 'custom'}
+                        Icon={EditOutlined}
+                        tooltipProps={{ overlay: language['input.attribute.type-custom'] }}
+                    />
+                    <IconButton
+                        onClick={() => {
+                            setShowLinkAttribute(false);
+                            updateSetting({ showExtraAttribute: true });
+                        }}
+                        active={!!(ExtraAttributeMap[attribute])}
+                        Icon={BookOutlined}
+                        tooltipProps={{ overlay: language['input.attribute.type-extra'] }}
+                    />
+                </div>
+                : null}
+        >
+            <span>{language['input.attribute.label']}</span>
+        </RadioTrain>
         {(showExtraDecorativeOption && showExtraAttribute) && <RadioTrain
             className="fill-input-train extra-attribute-input"
             value={attribute}
-            onChange={changeAttribute}
+            onChange={value => {
+                changeAttribute(value);
+                changeAttributeType('auto');
+            }}
             optionList={extraAttributeList}
-            suffix={showExtraDecorativeOption && showExtraAttribute
+            suffix={showExtraAttribute
                 ? <IconButton
                     onClick={() => updateSetting({ showExtraAttribute: false })}
-                    Icon={DoubleLeftOutlined}
+                    Icon={UpOutlined}
                     tooltipProps={{ overlay: language['button.less.label'] }}
                 />
-                : null}
+                : null
+            }
         >
             &nbsp;
         </RadioTrain>}
+        {showLinkAttribute && <div className="link-attribute-input">
+            <label className="standalone-addon ant-input-group-addon">&nbsp;</label>
+            <CardTextInput ref={linkAttributeRef}
+                placeholder={language['input.link.custom.placeholder']}
+                defaultValue={attributeType === 'custom' ? attribute : DEFAULT_EXTERNAL_ATTRIBUTE}
+                onChange={e => {
+                    if (attributeType === 'custom') changeAttribute(e.target.value);
+                }}
+            />
+            <IconButton
+                onClick={() => setShowLinkAttribute(false)}
+                Icon={UpOutlined}
+                tooltipProps={{ overlay: language['button.less.label'] }}
+            />
+        </div>}
     </>;
 };

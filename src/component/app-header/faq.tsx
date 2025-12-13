@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '12/12/2025';
+        const currentReminder = '13/12/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous User at Dec 13, 2025',
+            question: 'would it be possible to add the ability to upload custom attribute icons?',
+            answer: 'Right now I can only support using external link for attribute, so you can upload your custom attribute icon to an image hosting service (e.g., imgur) and use the link in the attribute input box.',
+            image: 'https://i.postimg.cc/cJMFW3M1/image.png',
+        },
         {
             author: 'TheTonyB at Dec 12, 2025',
             question: 'I noticed Korean and Portuguese are missing from Attributes languages. Can you add those? Specially portuguese which is my main language.\nCould you also add other language options to the "1st Edition"/"Limited Edition" text or allow for a custom text?\nThanks and keep up the great work!',

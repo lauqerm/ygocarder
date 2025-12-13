@@ -139,6 +139,7 @@ export const ygoCarderToCardMakerData = (
         password,
         creator,
         attribute,
+        attributeType,
         setId,
         pendulumEffect,
         pendulumScaleBlue,
@@ -157,7 +158,7 @@ export const ygoCarderToCardMakerData = (
     const normalizedEffect = normalizeCardEffect(effect);
     const normalizedPendulumEffect = normalizeCardEffect(pendulumEffect);
     const normalizedIcon = cardIconMap[subFamily];
-    const normalizedAttribute = attributeMap[attribute];
+    const normalizedAttribute = attributeType === 'auto' ? attributeMap[attribute] : attributeMap['LIGHT'];
     const normalizedFrame = frameMap[frame];
     const normalizedRarity = nameStyleType === 'predefined'
         ? rarityMap[

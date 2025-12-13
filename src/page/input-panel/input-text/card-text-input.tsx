@@ -6,6 +6,7 @@ import { useSetting } from 'src/service';
 
 export type CardTextInputRef = {
     setValue: (nextValue: string) => void,
+    getValue: () => string,
 };
 export type CardTextInput = {
     defaultValue: string,
@@ -14,7 +15,7 @@ export type CardTextInput = {
         setValue: (nextValue: string) => void;
     }) => void,
     onChange: (e: {target: { value: string }}) => void,
-} & Partial<InputProps>;
+} & Partial<Omit<InputProps, 'onChange'>>;
 export const CardTextInput = forwardRef<CardTextInputRef, CardTextInput>(({
     id,
     defaultValue,
@@ -52,6 +53,7 @@ export const CardTextInput = forwardRef<CardTextInputRef, CardTextInput>(({
     };
     useImperativeHandle(ref, () => ({
         setValue: externalSetValue,
+        getValue: () => immediateValue.current,
     }));
 
     return <Input

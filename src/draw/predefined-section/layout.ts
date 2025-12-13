@@ -13,8 +13,9 @@ import {
     PendulumSize,
     PendulumSizeMap,
     PendulumSizeMapException,
+    Card,
 } from 'src/model';
-import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
+import { drawAsset, drawAssetWithSize, drawFromWithSize, drawWithStyle } from '../image';
 import { createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
@@ -117,6 +118,7 @@ export const getLayoutDrawFunction = ({
     backgroundType,
     cardIcon,
     attribute,
+    attributeType,
     star,
     starList,
     foil,
@@ -156,7 +158,7 @@ export const getLayoutDrawFunction = ({
         caller?: (finishType: string) => Promise<any>,
     ) => Promise<void>,
     loopArtFinish: ReturnType<typeof getFinishIterator>,
-}) => {
+} & Pick<Card, 'attributeType'>) => {
     const ctx = canvas.getContext('2d');
     const {
         artBorder: keepArtBorder,
@@ -380,11 +382,23 @@ export const getLayoutDrawFunction = ({
                 canvas: attributeCanvas,
                 ctx: attributeCtx,
             } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
-            await drawAsset(
-                attributeCtx,
-                `attribute/attr-${RegionMap[region].fileKey}-${attribute.toLowerCase()}.png`,
-                attributeX, attributeY,
-            );
+            if (attributeType === 'custom') {
+                await drawFromWithSize(
+                    attributeCtx,
+                    attribute,
+                    attributeX, attributeY,
+                    attributeSize, attributeSize,
+                    undefined, undefined,
+                    undefined, undefined,
+                    { internalImage: false },
+                );
+            } else {
+                await drawAsset(
+                    attributeCtx,
+                    `attribute/attr-${RegionMap[region].fileKey}-${attribute.toLowerCase()}.png`,
+                    attributeX, attributeY,
+                );
+            }
             const attributeFinish = otherFinish[0] ?? 'normal';
             if (attributeFinish !== 'normal') {
                 const loopAttributeFinish = getFinishIterator([attributeFinish], ArtFinishMap);

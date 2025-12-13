@@ -23,6 +23,16 @@
         align-content: center;
         min-height: 32px; // Alignment
     }
+    .link-attribute-input {
+        display: flex;
+        align-items: center;
+        .ant-input-affix-wrapper {
+            flex: 0 1 auto;
+        }
+        .icon-button {
+            flex: 0 0 auto;
+        }
+    }
     .extra-attribute-input {
         .radio-train-input-group {
             flex: 0 1 auto;

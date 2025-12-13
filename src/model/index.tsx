@@ -1,7 +1,7 @@
 import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
 import { Foil, getDefaultDyeList, OtherFinish } from './foil-finish-dye';
 import { CondenseType } from './condense';
-import { NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
+import { AttributeType, NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
 import { getDefaultNameStyle, getDefaultTextStyle, NameStyle, NameStyleType } from './name-preset';
 import { v4 as uuid } from 'uuid';
 import { DEFAULT_PENDULUM_SIZE } from './pendulum';
@@ -44,6 +44,7 @@ export const getDefaultCard = () => ({
     nameStyleType: 'auto' as NameStyleType,
     nameStyle: getDefaultNameStyle() as Partial<NameStyle>,
     attribute: 'LIGHT',
+    attributeType: 'auto' as AttributeType,
     subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6 as number | string,
@@ -144,6 +145,7 @@ export const getEmptyCard = (): Card => ({
     nameStyleType: 'auto',
     nameStyle: getDefaultNameStyle(),
     attribute: NO_ATTRIBUTE,
+    attributeType: 'auto',
     subFamily: NO_ICON,
     cardIcon: 'auto',
     star: 6,
