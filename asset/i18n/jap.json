@@ -456,6 +456,8 @@
         "form.submit": "Submit",
         "form.dismiss": "Dismiss",
         "form.default": "Leave blank to use default",
+        "input.attribute.type-custom": "Use custom link",
+        "input.attribute.type-extra": "Use extra attributes",
         "setting.option.sliding-type.manual.label": "Manual drag"
     }
 }

@@ -1,9 +1,18 @@
 [
     {
+        "version": "v2.3.35 (2025/12/13)",
+        "logList": [
+            {
+                "content": "Experimental support for using custom attribute icon via external image link.",
+                "image": "https://i.postimg.cc/cJMFW3M1/image.png"
+            }
+        ]
+    },
+    {
         "version": "v2.3.34 (2025/11/08)",
         "logList": [
             {
-                "content": "Experimental support for advanced unicode letters in card text, allowing better display for wider range of letters",
+                "content": "Experimental support for advanced unicode letters in card text, allowing better display for wider range of letters.",
                 "image": "https://i.postimg.cc/YS0r5NNS/image.png"
             }
         ]
