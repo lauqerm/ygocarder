@@ -40,10 +40,17 @@ You may also contact me through [Reddit](https://www.reddit.com/user/lauqerm/), 
 
 ### How to run
 
+#### Prerequisites
+
+* [Node](https://nodejs.org/) version: 20+
+* [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+#### Local development
+
 If you are already familiar with a React app, you can run the app with the following steps:
-* Node version: 20 or higher.
-* Install all the package: `yarn install`
-* Set up variable (you usually only need to do it once):
-    * Windows: `set NODE_OPTIONS=--openssl-legacy-provider`
-    * Linux / MacOS: `export NODE_OPTIONS=--openssl-legacy-provider`
-* Run the app: `yarn start`
+* Install all the package: `yarn install` or `npm install`
+* Run the app: `yarn start` or `npm start`
+
+#### Using Docker
+
+Check [README.Docker.md](README.docker.md)
