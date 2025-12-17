@@ -40,16 +40,24 @@ You may also contact me through [Reddit](https://www.reddit.com/user/lauqerm/), 
 
 ### How to run
 
-#### Prerequisites
+### Environment
 
-* [Node](https://nodejs.org/) version: 20+
+If you want to deploy the app elsewhere, you will need to prepare your own `.env.production` file, which the following attributes:
+```env
+### Template file used for batch import function
+REACT_APP_TEMPLATE_FILE="https://drive.google.com/file/d/1c8SdS0n1UERomLKdlm28dSul5ojBfSiC/view?usp=sharing"
+```
+
+### Local development
+
+Prerequisites:
+* [Node](https://nodejs.org/) version: 20+ (I'm using v20.10.0)
 * [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-
-#### Local development
 
 If you are already familiar with a React app, you can run the app with the following steps:
 * Install all the package: `yarn install` or `npm install`
 * Run the app: `yarn start` or `npm start`
+* Build the app: `yarn build` or `npm run build`
 
 #### Using Docker
 

@@ -1,13 +1,27 @@
 services:
-  web:
-    build: .
+  app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.docker
+      - .env.production
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --openssl-legacy-provider
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     volumes:
      - .:/app
      - ./node_modules:/app/node_modules
     env_file:
-      - .env.production
+      - .env.docker
     environment:
       NODE_ENV: development
       NODE_OPTIONS: --openssl-legacy-provider

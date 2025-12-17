@@ -48,7 +48,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "build": "react-scripts build",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider; react-scripts build",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
     "deploy": "gh-pages -d build",
