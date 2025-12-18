@@ -52,7 +52,7 @@ REACT_APP_TEMPLATE_FILE="https://drive.google.com/file/d/1c8SdS0n1UERomLKdlm28dS
 
 Prerequisites:
 * [Node](https://nodejs.org/) version: 20+ (I'm using v20.10.0)
-* [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+* Package manager such as [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 If you are already familiar with a React app, you can run the app with the following steps:
 * Install all the package: `yarn install` or `npm install`

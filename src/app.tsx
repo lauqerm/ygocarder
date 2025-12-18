@@ -381,11 +381,17 @@ function App() {
     const sentryInitialized = useRef(false);
     const reportTarget = document.getElementById('sentry-bug-report');
     useEffect(() => {
-        if (reportTarget && language && sentryInitialized.current === false && Sentry.isInitialized() === false) {
+        const sentryDsn = process.env.REACT_APP_SENTRY_DSN;
+        if (reportTarget
+            && sentryDsn
+            && language
+            && sentryInitialized.current === false
+            && Sentry.isInitialized() === false
+        ) {
             sentryInitialized.current = true;
 
             Sentry.init({
-                dsn: 'https://32e20d849c5724b2e63eab9d0a57c165@o4508424630697984.ingest.us.sentry.io/4508424632401920',
+                dsn: sentryDsn,
                 integrations: [
                     Sentry.browserTracingIntegration(),
                     Sentry.replayIntegration(),
@@ -426,6 +432,9 @@ function App() {
                 replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
                 replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
             });
+        }
+        if (!sentryDsn && reportTarget) {
+            reportTarget.style.display = 'none';
         }
     }, [language, reportTarget]);
 

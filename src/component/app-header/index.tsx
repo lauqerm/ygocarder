@@ -106,6 +106,7 @@ export const AppHeader = () => {
                 </Radio.Group>
                 <Tooltip title="Check the FAQ Button => Feedbacks to see if your issue is already answered.">
                     <span
+                        id="sentry-bug-report"
                         className="bug-report"
                         onMouseOver={() => {
                             document.getElementById(FAD_BUTTON_ID)?.classList.add('js-highlight');
@@ -114,7 +115,7 @@ export const AppHeader = () => {
                             document.getElementById(FAD_BUTTON_ID)?.classList.remove('js-highlight');
                         }}
                     >
-                        <div id="sentry-bug-report">
+                        <div>
                             {language['contributor.bug-report.tooltip']}
                         </div>
                     </span>

@@ -1,6 +1,9 @@
 export const uploadToImgur = async (imgLink: string) => {
+    const imgurClientId = process.env.REACT_APP_IMGUR_CLIENT_ID;
+    if (!imgurClientId) throw new Error('No imgur client id found');
+
     const myHeaders = new Headers();
-    myHeaders.append('Authorization', `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`);
+    myHeaders.append('Authorization', `Client-ID ${imgurClientId}`);
 
     const formdata = new FormData();
     formdata.append('image', imgLink);

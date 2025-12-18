@@ -1,13 +1,14 @@
 # Stage: Production
 # Step 1: Build app
-FROM node:20.10.0 AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY package*.json ./
 # Leverage caching
 RUN npm install --frozen-lockfile
-COPY . ./
+COPY . .
 RUN export VERSION=$(npm run version)
-CMD ["npm", "run", "build"]
+RUN npm run build
+RUN npm prune --production
 # Step 2: Setup webserver
 # Use a built-in non-root user for security best practices, otherwise you may encounter permission denied errors
 FROM nginxinc/nginx-unprivileged AS production

@@ -2,11 +2,11 @@
 
 ### Prerequisites
 * [Docker](https://www.docker.com/get-started) version: 26+ (I'm using v26.1.1)
-* [Docker Compose](https://docs.docker.com/compose/install/) version: v2+ (I'm using v2.40.3-desktop.1)
+* [Docker Compose](https://docs.docker.com/compose/install/) version: 2+ (I'm using v2.40.3-desktop.1)
 
 ### Quick Start
 
-Manage your things easier with Docker Desktop.
+#### Create and manage your own image
 
 1. Clone the repository
     ```bash
@@ -14,12 +14,13 @@ Manage your things easier with Docker Desktop.
     cd ygocarder
     ```
 
-2. Development with Docker Compose
+2. Start developing
     ```bash
-    docker compose up app-dev --build
+    docker compose build app-dev
+    docker compose up app-dev
     ```
 
-Now you can access the app at <http://localhost:3000>
+Now you can access the app at <http://localhost:3000>.
 
 3. Production build and start serving
     ```bash
@@ -27,4 +28,8 @@ Now you can access the app at <http://localhost:3000>
     docker compose up app-prod
     ```
 
-Now you can access the app at <http://localhost:8080/ygocarder>
+Now you can access the app at <http://localhost:8080/ygocarder>.
+
+#### Using image from Docker Hub
+
+I have no plan to publish ygocarder's image on Docker Hub yet.
