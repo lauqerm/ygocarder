@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.3.36 (2025/12/18)",
+        "logList": [
+            {
+                "content": "Fix: Error when using custom attribute image that trigger browser's protect mechanism."
+            },
+            {
+                "content": "Experimental support for running / deploying the app with Docker."
+            }
+        ]
+    },
+    {
         "version": "v2.3.35 (2025/12/13)",
         "logList": [
             {

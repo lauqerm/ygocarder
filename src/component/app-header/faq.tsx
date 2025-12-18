@@ -82,7 +82,11 @@ export const QuestionAndFeedback = () => {
         {
             author: 'Blake at Dec 18, 2025',
             question: 'I can’t download the card with a new attribute.',
-            answer: 'Hi there, the app will now correctly show what is happening. In short, this is a security feature of your browser (not the app) that protect you from potential dangers of the image link, so you can only manually download the image.',
+        },
+        {
+            author: 'Blake at Dec 18, 2025',
+            question: 'It won’t let me upload the card with a custom attribute.',
+            answer: 'Hi there, the app will now correctly show what is happening. In short, this is a security feature of your browser (not the app) that protect you from potential dangers of the image link, so you must manually download the image.',
         },
         {
             author: 'TOVYA at Dec 13, 2025',

@@ -126,12 +126,16 @@ export const drawFromWithSize = async (
     sh?: undefined | number | ((image: HTMLImageElement) => number),
     option?: {
         cache?: boolean,
+        overwrite?: boolean,
         internalImage?: boolean,
+        crossorigin?: 'anonymous' | 'with-credential',
     },
 ) => {
     const {
         cache = true,
         internalImage = true,
+        overwrite = false,
+        crossorigin,
     } = option ?? {};
     if (!ctx || source === '') return new Promise<boolean>(resolve => resolve(false));
     return new Promise<boolean>(resolve => {
@@ -159,16 +163,21 @@ export const drawFromWithSize = async (
             setTimeout(() => resolve(true), 0);
             return;
         }
-        if (imageCacheMap[source]?.error) {
+        if (imageCacheMap[source]?.error && overwrite === false) {
             setTimeout(() => resolve(true), 0);
             return;
         }
 
-        const imageCached = imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
+        const imageCached = overwrite
+            ? false
+            : imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
         const image = imageCached
             ? imageCacheMap[source].image
             : new Image();
 
+        if (crossorigin) {
+            image.crossOrigin = crossorigin;
+        }
         if (!imageCached) image.src = internalImage
             ? process.env.PUBLIC_URL + source
             : source;
@@ -236,6 +245,50 @@ export const drawAssetWithSize: typeof drawFromWithSize = async (
         sx, sy,
         sw, sh,
     );
+};
+export const drawFromWithSizeAndFallback: typeof drawFromWithSize = async (...param) => {
+    const [
+        ctx,
+        source,
+        dx,
+        dy,
+        dw, dh,
+        sx, sy,
+        sw, sh,
+        option,
+    ] = [...param];
+    const result = await drawFromWithSize(
+        ctx,
+        source,
+        dx,
+        dy,
+        dw, dh,
+        sx, sy,
+        sw, sh,
+        option,
+    );
+
+    /**
+     * If we fail to get the image with `anonymous` crossorigin, try again with unknown crossorigin, a.k.a remove the attribute entirely.
+     * 
+     * Give up otherwise, remember images marked with `error` will never be queried again by this method. 
+     * */
+    if (result === false && option?.crossorigin === 'anonymous') {
+        const newOption = { ...option, overwrite: true };
+        delete newOption.crossorigin;
+
+        return await drawFromWithSize(
+            ctx,
+            source,
+            dx,
+            dy,
+            dw, dh,
+            sx, sy,
+            sw, sh,
+            newOption,
+        );
+    }
+    return result;
 };
 
 export const drawWithStyle = async (

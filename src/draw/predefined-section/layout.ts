@@ -15,7 +15,7 @@ import {
     PendulumSizeMapException,
     Card,
 } from 'src/model';
-import { drawAsset, drawAssetWithSize, drawFromWithSize, drawWithStyle } from '../image';
+import { drawAsset, drawAssetWithSize, drawFromWithSizeAndFallback, drawWithStyle } from '../image';
 import { createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
 import { CanvasTextStyle } from 'src/service';
@@ -383,14 +383,14 @@ export const getLayoutDrawFunction = ({
                 ctx: attributeCtx,
             } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
             if (attributeType === 'custom') {
-                await drawFromWithSize(
+                await drawFromWithSizeAndFallback(
                     attributeCtx,
                     attribute,
                     attributeX, attributeY,
                     attributeSize, attributeSize,
                     undefined, undefined,
                     undefined, undefined,
-                    { internalImage: false },
+                    { internalImage: false, crossorigin: 'anonymous' },
                 );
             } else {
                 await drawAsset(

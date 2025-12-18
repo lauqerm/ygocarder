@@ -31,6 +31,7 @@ import { changeCardFormat, useCard, useLanguage, useSetting } from '../../servic
 import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
     AttributeInputGroup,
+    AttributeInputGroupRef,
     CardIconInputGroup,
     EffectInputGroup,
     EffectInputGroupRef,
@@ -109,6 +110,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     }), [language]);
 
     const frameTrainRef = useRef<FrameTrainRef>(null);
+    const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
     const layoutPickerRef = useRef<OpacityPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
@@ -173,6 +175,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 art, artCrop, artData, artSource,
                 background, backgroundCrop, backgroundData, backgroundSource,
                 opacity,
+                attribute, attributeType,
                 setId,
                 pendulumEffect,
                 typeAbility,
@@ -186,6 +189,9 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             layoutPickerRef.current?.setValue({
                 ...opacity,
                 background, backgroundCrop, backgroundData, backgroundSource,
+            });
+            attributeInputGroupRef.current?.setValue({
+                attribute, attributeType,
             });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             pendulumInputGroupRef.current?.setValue({ pendulumEffect });
@@ -273,7 +279,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         </StyledNameSetIdInputContainer>
         <div className="main-info">
             <div className="main-info-first">
-                <AttributeInputGroup language={language} />
+                <AttributeInputGroup ref={attributeInputGroupRef} language={language} />
 
                 <PendulumInputGroup ref={pendulumInputGroupRef}
                     showCreativeOption={showCreativeOption}

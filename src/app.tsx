@@ -35,6 +35,7 @@ import {
     changeCardFormat,
     FramePreset,
     getLanguage,
+    RESET_CANVAS_BASE_COUNTER,
     retrieveSavedCard,
     useCard,
     useCarderDb,
@@ -126,6 +127,7 @@ function App() {
     const windowSlidable = !isMobile && !isTouchDevice();
     const [isInitializing, setInitializing] = useState(true);
     const [, setActiveDropzone] = useGlobal('activeDropzone');
+    const [resetCanvasCounter] = useGlobal('resetCanvasCounter');
     const [error, setError] = useState('');
     const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
     const { db, dbReady } = useCarderDb();
@@ -366,6 +368,13 @@ function App() {
     const [isTainted, setTainted] = useState(false);
 
     useEffect(() => {
+        if (resetCanvasCounter > RESET_CANVAS_BASE_COUNTER && isTainted) {
+            lightboxRef.current?.refresh();
+            setImageChangeCount(cnt => cnt + 1);
+        }
+    }, [isTainted, resetCanvasCounter]);
+
+    useEffect(() => {
         const documentClassList = document.body.classList;
 
         if (softMode) documentClassList.add('reduced-color-motion');
@@ -557,6 +566,10 @@ function App() {
         setManagerVisible(value);
     }, []);
 
+    const onExportSuccess = useCallback(() => {
+        setTainted(false);
+    }, []);
+
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
@@ -643,6 +656,8 @@ function App() {
                                     canvasMap={canvasMap}
                                     imageChangeCount={imageChangeCount}
                                     isTainted={isTainted}
+                                    onTainted={markTaintedImage}
+                                    onExportSucess={onExportSuccess}
                                     isInitializing={isInitializing}
                                     globalScale={globalScale}
                                     onDownloadError={alertDownloadError}
@@ -718,7 +733,8 @@ function App() {
                                         {/* <div className="canvas-guard-alert">Generating...</div> */}
                                     </div>
                                     <canvas id="frameCanvas"
-                                        key={(lightboxRef.current?.getCanvasKey() ?? 0)}
+                                        key={`${lightboxRef.current?.getCanvasKey() ?? 0} ${resetCanvasCounter}`}
+                                        className={`${(lightboxRef.current?.getCanvasKey() ?? 0)}`}
                                         ref={frameCanvasRef}
                                         width={CanvasWidth * globalScale}
                                         height={CanvasHeight * globalScale}

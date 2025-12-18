@@ -61,6 +61,15 @@ import { prepareStyle } from './prepare-style';
 import { LanguageDataDictionary } from '../use-i18n';
 import { notification } from 'antd';
 
+export type ExportCallbackParameter = {
+    isPendulum: boolean,
+    opacity: Partial<CardOpacity>,
+    pendulumSize: PendulumSize,
+    onError: (e: any) => void,
+    onSuccess: () => void,
+    isRelevant: () => boolean,
+};
+
 const {
     height: CanvasHeight,
     width: CanvasWidth,
@@ -525,7 +534,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ...resolvedStatTextStyle,
             });
 
+            try {
             await drawAttribute();
+            } catch (e) {
+                console.error('erorr', e);
+            }
             await drawAttributeFinish();
             await drawStar({ style: levelStyle, starAlignment });
             if (!boundless) await drawNameBorder();
@@ -1116,18 +1129,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
 
     const drawHistory = useRef<Record<string, number>>({});
-    const onExport = useCallback(async (_exportProps: {
-        isPendulum: boolean,
-        opacity: Partial<CardOpacity>,
-        pendulumSize: PendulumSize,
-        // isRelevant: () => boolean,
-    }) => {
-        // const {
-        //     isRelevant,
-        //     pendulumSize,
-        //     isPendulum = false,
-        //     opacity,
-        // } = exportProps;
+    const onExport = useCallback(async (exportProps: ExportCallbackParameter) => {
+        const {
+            //     isRelevant,
+            //     pendulumSize,
+            //     isPendulum = false,
+            //     opacity,
+            onError,
+            onSuccess,
+        } = exportProps;
         const exportCanvas = exportCanvasRef.current;
         const exportCtx = exportCanvas?.getContext('2d');
 
@@ -1157,20 +1167,28 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         description: language['error.draw.error.description'],
                     });
                 });
-            /** It is not worth to use promise all here, just let them go sequentially to avoid too much blob generating call. */
-            await generateLayer(frameCanvasRef, exportCtx, 0);
-            await generateLayer(nameCanvasRef, exportCtx, 0);
-            await generateLayer(cardIconCanvasRef, exportCtx, 0);
-            await generateLayer(pendulumScaleCanvasRef, exportCtx, 0);
-            await generateLayer(pendulumEffectCanvasRef, exportCtx, 0);
-            await generateLayer(typeCanvasRef, exportCtx, 0);
-            await generateLayer(effectCanvasRef, exportCtx, 0);
-            await generateLayer(statCanvasRef, exportCtx, 0);
-            await generateLayer(setIdCanvasRef, exportCtx, 0);
-            await generateLayer(passwordCanvasRef, exportCtx, 0);
-            await generateLayer(creatorCanvasRef, exportCtx, 0);
-            await generateLayer(stickerCanvasRef, exportCtx, 0);
-            await generateLayer(finishCanvasRef, exportCtx, 0);
+            /** It is not worth to use promise all here, just let them go sequentially to avoid too many blob generating calls. */
+            const layerRefList = [
+                frameCanvasRef,
+                nameCanvasRef,
+                cardIconCanvasRef,
+                pendulumScaleCanvasRef,
+                pendulumEffectCanvasRef,
+                typeCanvasRef,
+                effectCanvasRef,
+                statCanvasRef,
+                setIdCanvasRef,
+                passwordCanvasRef,
+                creatorCanvasRef,
+                stickerCanvasRef,
+                finishCanvasRef,
+            ];
+            let lastError: { count: number, error: any} = { count: -1, error: null };
+            for (let cnt = 0; cnt < layerRefList.length; cnt++) {
+                const result = await generateLayer(layerRefList[cnt], exportCtx, 0);
+                if (result.status === 'error') lastError = { count: cnt, error: result.data };
+            }
+            if (lastError.error) onError(lastError.error);
 
             lightboxRef.current?.draw(exportCanvas);
             previewCanvasRef.current?.getContext('2d')?.drawImage(
@@ -1184,6 +1202,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 CanvasWidth,
                 CanvasHeight,
             );
+            if (!lastError.error) onSuccess();
         }
     }, [
         language,

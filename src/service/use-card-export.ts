@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { compressCardData, insertUrlParam, normalizeCardName } from 'src/util';
 import { useCard } from './use-card';
-import { CardOpacity, PendulumSize } from 'src/model';
 import { useSetting } from './use-setting';
 import { notification } from 'antd';
 import { useLanguage } from './use-i18n';
 import { useBatchDownload } from './use-batch-download';
+import { ExportCallbackParameter } from './use-master-seri';
 
 export type UseCardExport = {
     isTainted: boolean,
@@ -15,15 +15,13 @@ export type UseCardExport = {
         currentPipeline: Promise<void>;
         pipelineRunning: boolean;
     }>,
-    onExport: (exportProps: {
-        isPendulum: boolean,
-        opacity: Partial<CardOpacity>,
-        pendulumSize: PendulumSize,
-        isRelevant: () => boolean,
-    }) => Promise<void>,
+    onExport: (
+        exportProps: Pick<ExportCallbackParameter, 'isPendulum' | 'isRelevant' | 'opacity' | 'pendulumSize'>,
+    ) => Promise<void>,
     onDownloadError: () => void,
     onDownloadComplete: () => void,
 };
+/** To ensure the best performance, all of this hook's paramter must be memozied. */
 export const useCardExport = ({
     isTainted,
     isInitializing,

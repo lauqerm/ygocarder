@@ -18,7 +18,9 @@ export type FramePreset = {
     },
     dyeList: FrameDyeList,
 };
+export const RESET_CANVAS_BASE_COUNTER = 0;
 export type GlobalMemory = {
+    resetCanvasCounter: number,
     activeDropzone: number,
     layoutPresetList: {
         key: string,
@@ -42,6 +44,7 @@ export type GlobalStore = {
 export const useGlobalMemory = create<GlobalStore>((set) => {
     return {
         memory: {
+            resetCanvasCounter: RESET_CANVAS_BASE_COUNTER,
             activeDropzone: 0,
             layoutPresetList: [],
             nameStylePresetList: [],

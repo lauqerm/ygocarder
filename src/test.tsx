@@ -68,18 +68,20 @@ export const Test = () => {
     }, [color, angle, verticalAngle]);
 
     useEffect(() => {
-        const ctx = canvasRef.current.getContext('2d');
+        const ctx = canvasRef.current?.getContext('2d');
 
         if (ctx) {
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#ff00ff';
             ctx.font = 'small-caps 90px MatrixBook';
             ctx.fillText('Example', 1, 87);
-            const result = applyEmboss({
-                inputCanvas: canvasRef.current,
-                lightAngleVec: angleVector,
-            });
-            if (result) canvasRef6.current?.getContext('2d').putImageData(result, 0, 0);
+            if (canvasRef.current) {
+                const result = applyEmboss({
+                    inputCanvas: canvasRef.current,
+                    lightAngleVec: angleVector,
+                });
+                if (result) canvasRef6.current?.getContext('2d').putImageData(result, 0, 0);
+            }
         }
     }, [color2, refreshCnt, angleVector]);
 

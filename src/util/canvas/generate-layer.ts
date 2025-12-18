@@ -4,27 +4,27 @@ export const generateLayer = (
     exportCtx: CanvasRenderingContext2D | null | undefined,
     delayQueue: number = 0,
 ) => {
-    return new Promise<boolean>(resolve => {
+    return new Promise<{ status: 'success' } | { status: 'error', data: any }>(resolve => {
         setTimeout(() => {
-            if (!canvasLayer.current || !exportCtx) resolve(false);
+            if (!canvasLayer.current || !exportCtx) resolve({ status: 'error', data: new Error('No export canvas') });
             else {
                 try {
                     canvasLayer.current.toBlob(blob => {
-                        if (!blob) resolve(false);
+                        if (!blob) resolve({ status: 'error', data: new Error('No layer blob') });
                         else {
                             const url = URL.createObjectURL(blob);
-                            if (!url) resolve(false);
+                            if (!url) resolve({ status: 'error', data: new Error('Empty layer') });
                             else {
                                 const layer = new Image();
                                 layer.src = url;
                                 layer.onload = () => {
                                     exportCtx.drawImage(layer, 0, 0);
                                     URL.revokeObjectURL(url);
-                                    resolve(true);
+                                    resolve({ status: 'success' });
                                 };
-                                layer.onerror = () => {
+                                layer.onerror = e => {
                                     URL.revokeObjectURL(url);
-                                    resolve(false);
+                                    resolve({ status: 'error', data: e });
                                 };
                             }
                         }
@@ -32,8 +32,8 @@ export const generateLayer = (
                 } catch (e) {
                     /** Draw directly into export canvas, which will tainted the export canvas afterward. */
                     exportCtx.drawImage(canvasLayer.current, 0, 0);
-                    console.error(e);
-                    resolve(false);
+                    console.error('generateLayer', canvasLayer.current.id, e);
+                    resolve({ status: 'error', data: e });
                 }
             }
         }, delayQueue * 25);

@@ -1,10 +1,10 @@
 import { IconButton, RadioTrain } from 'src/component';
-import { useCard, useSetting, WithLanguage } from 'src/service';
+import { useCard, useGlobal, useSetting, WithLanguage } from 'src/service';
 import { UpOutlined, BookOutlined, EditOutlined } from '@ant-design/icons';
-import { useMemo, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { getAttributeList, getExtraAttributeList } from '../const';
-import { DEFAULT_EXTERNAL_ATTRIBUTE, ExtraAttributeMap, RegionMap } from 'src/model';
+import { AttributeType, DEFAULT_EXTERNAL_ATTRIBUTE, ExtraAttributeMap, RegionMap } from 'src/model';
 import styled from 'styled-components';
 import { mergeClass } from 'src/util';
 import { CardTextInput, CardTextInputRef } from '../input-text';
@@ -26,11 +26,14 @@ const AttributeRegionTrain = styled.div`
     }
 `;
 
+export type AttributeInputGroupRef = {
+    setValue: (value: { attribute: string, attributeType: AttributeType }) => void,
+};
 export type AttributeInputGroup = {
 } & WithLanguage;
-export const AttributeInputGroup = ({
+export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeInputGroup>(({
     language,
-}: AttributeInputGroup) => {
+}, ref) => {
     const {
         format,
         region,
@@ -56,6 +59,7 @@ export const AttributeInputGroup = ({
     })));
     const linkAttributeRef = useRef<CardTextInputRef>(null);
     const { setting, updateSetting } = useSetting();
+    const [, setResetCanvasCounter] = useGlobal('resetCanvasCounter');
     const { showCreativeOption, showExtraDecorativeOption, showExtraAttribute } = setting;
     const [showLinkAttribute, setShowLinkAttribute] = useState(attributeType === 'custom');
 
@@ -65,6 +69,19 @@ export const AttributeInputGroup = ({
 
     const attributeList = useMemo(() => getAttributeList(region, language, showCreativeOption), [region, language, showCreativeOption]);
     const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
+
+    useImperativeHandle(ref, () => ({
+        setValue: ({ attribute, attributeType }) => {
+            if (!attribute) return;
+            if (attributeType === 'custom') {
+                setShowLinkAttribute(true);
+                updateSetting({ showExtraAttribute: false });
+                changeAttribute(attribute);
+                changeAttributeType('custom');
+                linkAttributeRef.current?.setValue(attribute);
+            }
+        },
+    }));
 
     return <>
         {showExtraDecorativeOption && <AttributeRegionTrain
@@ -89,6 +106,7 @@ export const AttributeInputGroup = ({
             onChange={value => {
                 changeAttribute(value);
                 changeAttributeType('auto');
+                setResetCanvasCounter(cnt => cnt + 1);
             }}
             optionList={attributeList}
             suffix={showExtraDecorativeOption
@@ -124,6 +142,7 @@ export const AttributeInputGroup = ({
             onChange={value => {
                 changeAttribute(value);
                 changeAttributeType('auto');
+                setResetCanvasCounter(cnt => cnt + 1);
             }}
             optionList={extraAttributeList}
             suffix={showExtraAttribute
@@ -143,7 +162,10 @@ export const AttributeInputGroup = ({
                 placeholder={language['input.link.custom.placeholder']}
                 defaultValue={attributeType === 'custom' ? attribute : DEFAULT_EXTERNAL_ATTRIBUTE}
                 onChange={e => {
-                    if (attributeType === 'custom') changeAttribute(e.target.value);
+                    if (attributeType === 'custom') {
+                        changeAttribute(e.target.value);
+                        setResetCanvasCounter(cnt => cnt + 1);
+                    }
                 }}
             />
             <IconButton
@@ -153,4 +175,4 @@ export const AttributeInputGroup = ({
             />
         </div>}
     </>;
-};
+});

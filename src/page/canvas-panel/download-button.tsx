@@ -1,7 +1,7 @@
 import { Button, Dropdown, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { MasterSeriesCanvas } from 'src/model';
-import { useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
+import { UseCardExport, useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
 import { GatewayOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -56,19 +56,22 @@ export type DownloadButtonRef = {
     isPipelineRunning: () => boolean,
 }
 export type DownloadButton = {
-    isTainted: boolean,
-    isInitializing: boolean,
     imageChangeCount: number,
     globalScale: number,
     canvasMap: MasterSeriesCanvas,
-    onDownloadError: () => void,
-};
+    onTainted: () => void,
+    onExportSucess: () => void,
+} & Pick<UseCardExport, 'isTainted'
+| 'isInitializing'
+| 'onDownloadError'>;
 export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     isTainted,
     isInitializing,
     imageChangeCount,
     globalScale,
     canvasMap,
+    onTainted,
+    onExportSucess,
     onDownloadError,
 }, ref) => {
     const language = useLanguage();
@@ -101,12 +104,23 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     const onDownloadComplete = useCallback(() => {
         setDownloading(false);
     }, []);
+    const onExportWithCallback = useCallback(async (param: Parameters<UseCardExport['onExport']>[0]) => {
+        return onExport({
+            ...param,
+            onError: e => {
+                if (!isTainted && String(e).includes('Tainted canvases')) {
+                    onTainted();
+                }
+            },
+            onSuccess: onExportSucess,
+        });
+    }, [isTainted, onExport, onExportSucess, onTainted]);
     const { onSave, isPipelineRunning } = useCardExport({
         isTainted,
         isInitializing,
         exportCanvasRef,
         exportRef,
-        onExport,
+        onExport: onExportWithCallback,
         onDownloadError,
         onDownloadComplete,
     });
