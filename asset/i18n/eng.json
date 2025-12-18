@@ -5,7 +5,7 @@
     "rawDictionary": {
         "alert.download.tainted-first-line": "Manual save by right click the card",
         "alert.download.tainted-second-line": "→ Choose \"Save image as...\"",
-        "alert.explaination.tainted.first-answer": "You are using an image host that lacks the necessary \"approval\" needed for the app to use it. Browsers see it as a potential security risk (even if it is not the case), and mark the card as \"tainted\".",
+        "alert.explaination.tainted.first-answer": "You are using an image host that lacks the necessary \"approval\" needed for the app to use it. Browsers see it as a potential security risk (even if it is not the case), and mark the card as \"tainted\". This is not related to the app.",
         "alert.explaination.tainted.first-question": "What is happening?",
         "alert.explaination.tainted.second-answer": "A \"tainted card\" prevents all sort of automatic save. From then on you must save the card manually by right click it → \"Save image as...\". It is implying that this action is fully of your consent.",
         "alert.explaination.tainted.second-question": "How does it affect me?",
@@ -409,7 +409,7 @@
         "preset.review-title.label": "Review Import",
         "prompt.download.tainted.message": "Could not save card, please manually save it by right click the card → Choose \"Save image as...\"",
         "prompt.export.message": "Save card data for later use",
-        "prompt.export.offline-warning.message": "Data too large, cannot copy directly.",
+        "prompt.export.offline-warning.message": "Data too large, you will lose some information if choose to copy it directly.",
         "prompt.import.alternative.label": "- or -",
         "prompt.import.imgur.description": "Invalid image or upload quota has been exceeded.",
         "prompt.import.imgur.error": "Card image could not be loaded",
