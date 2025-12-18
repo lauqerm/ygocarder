@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '13/12/2025';
+        const currentReminder = '18/12/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,16 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Blake at Dec 18, 2025',
+            question: 'I can’t download the card with a new attribute.',
+            answer: 'Hi there, the app will now correctly show what is happening. In short, this is a security feature of your browser (not the app) that protect you from potential dangers of the image link, so you can only manually download the image.',
+        },
+        {
+            author: 'TOVYA at Dec 13, 2025',
+            question: 'Chào bạn, bạn có thể thêm vào hướng dẫn cách chạy project này của bạn bằng Docker trong README.md không á?',
+            answer: 'Done nha.',
+        },
         {
             author: 'Anonymous User at Dec 13, 2025',
             question: 'would it be possible to add the ability to upload custom attribute icons?',

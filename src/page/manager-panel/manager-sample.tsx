@@ -74,6 +74,7 @@ export const ManagerSample = ({
     language,
 }: ManagerSample) => {
     const [visible, setVisible] = useState(false);
+    const templateFileLink = process.env.REACT_APP_TEMPLATE_FILE;
 
     return <>
         <StyledToggleButton className="manager-toggle-button" onClick={() => setVisible(true)}>
@@ -95,18 +96,18 @@ export const ManagerSample = ({
                     <br />
                     {language['manager.template.description.line-2']}
                 </div>
-                <div
+                {templateFileLink && <div
                     className="download-button"
                 >
                     <a
-                        href={process.env.REACT_APP_TEMPLATE_FILE}
+                        href={templateFileLink}
                         target="_blank"
                         rel="noreferrer"
                         download
                     >
                         <Button>{language['manager.template.download.label']}</Button>
                     </a>
-                </div>
+                </div>}
                 <Collapse ghost>
                     <Panel
                         key="sample-option"

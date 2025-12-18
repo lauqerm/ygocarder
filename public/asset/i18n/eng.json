@@ -5,7 +5,7 @@
     "rawDictionary": {
         "alert.download.tainted-first-line": "Manual save by right click the card",
         "alert.download.tainted-second-line": "→ Choose \"Save image as...\"",
-        "alert.explaination.tainted.first-answer": "You are using an image host that lacks the necessary \"approval\" needed for the app to use it. Browsers see it as a potential security risk (even if it is not the case), and mark the card as \"tainted\".",
+        "alert.explaination.tainted.first-answer": "You are using an image host that lacks the necessary \"approval\" needed for the app to use it. Browsers see it as a potential security risk (even if it is not the case), and mark the card as \"tainted\". This is not related to the app.",
         "alert.explaination.tainted.first-question": "What is happening?",
         "alert.explaination.tainted.second-answer": "A \"tainted card\" prevents all sort of automatic save. From then on you must save the card manually by right click it → \"Save image as...\". It is implying that this action is fully of your consent.",
         "alert.explaination.tainted.second-question": "How does it affect me?",

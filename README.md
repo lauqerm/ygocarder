@@ -40,19 +40,24 @@ You may also contact me through [Reddit](https://www.reddit.com/user/lauqerm/), 
 
 ### How to run
 
-### Environment
+#### Local development
+
+##### Preparation
 
 If you want to deploy the app elsewhere, you will need to prepare your own `.env.production` file, which the following attributes:
 ```env
 ### Template file used for batch import function
-REACT_APP_TEMPLATE_FILE="https://drive.google.com/file/d/1c8SdS0n1UERomLKdlm28dSul5ojBfSiC/view?usp=sharing"
+REACT_APP_TEMPLATE_FILE="https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view?usp=sharing"
+### Sentry DSN Link if you want to use the feedback function
+REACT_APP_SENTRY_DSN="https://32e20d849c5724b2e63eab9d0a57c165@o4508424630697984.ingest.us.sentry.io/xxxxxxxxxxxxxxxx"
 ```
-
-### Local development
+It's okay to leave the file empty, it will simply disable features related to them.
 
 Prerequisites:
 * [Node](https://nodejs.org/) version: 20+ (I'm using v20.10.0)
 * Package manager such as [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+##### Start working
 
 If you are already familiar with a React app, you can run the app with the following steps:
 * Install all the package: `yarn install` or `npm install`
