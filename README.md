@@ -66,4 +66,4 @@ If you are already familiar with a React app, you can run the app with the follo
 
 #### Using Docker
 
-Check [README.Docker.md](README.docker.md)
+Check [README.Docker.md](README.Docker.md)
