@@ -209,7 +209,7 @@ export const getEmptyCard = (): Card => ({
     def: '0',
     password: '',
     sticker: NO_STICKER,
-    firstEditionText: '1st Edition',
+    firstEditionText: '1<st> Edition',
     isFirstEdition: false,
     isSpeedCard: false,
     isLimitedEdition: false,
