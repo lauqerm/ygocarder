@@ -103,7 +103,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     def: '2000',
     password: '18199611',
     sticker: 'holo5',
-    firstEditionText: '1st Edition',
+    firstEditionText: '1<st> Edition',
     isFirstEdition: true,
     isSpeedCard: false,
     isLimitedEdition: false,
