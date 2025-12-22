@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage } from 'src/service';
 import { IconButton, RadioTrain } from 'src/component';
@@ -10,7 +10,8 @@ import { StickerButtonList } from '../const';
 import styled from 'styled-components';
 import { StyledInputLabelWithButton } from '../input-panel.styled';
 import { Checkbox, Dropdown, Menu, Tooltip } from 'antd';
-import { copyrightMap, FlagIndexMap } from 'src/model';
+import { Card, copyrightMap, editionList, FlagIndexMap } from 'src/model';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const StyledFooterInputContainer = styled.div`
     display: grid;
@@ -50,7 +51,14 @@ const StyledLinkRatingInputContainer = styled(StyledInputLabelWithButton)`
 `;
 
 export type FooterInputGroupRef = {
-    setValue: (value: { password?: string, creator?: string, atk?: string, def?: string, linkRating?: string }) => void,
+    setValue: (value: {
+        password?: string,
+        creator?: string,
+        atk?: string,
+        def?: string,
+        linkRating?: string,
+        firstEditionText?: string,
+    }) => void,
 };
 export type FooterInputGroup = {
     isMonster: boolean,
@@ -68,27 +76,35 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         autoLinkRating,
         showDefAndLink,
         linkRatingDisplayMode,
+        isLegacyCard,
         sticker,
         format,
+        isFirstEdition,
         getUpdater,
+        setCard,
     } = useCard(useShallow(({
-        card: { sticker, format, flag, isLink, linkRating, linkMap },
+        card: { isLegacyCard, sticker, format, flag, isLink, linkRating, linkMap, isFirstEdition, },
         getUpdater,
+        setCard,
     }) => ({
+        isLegacyCard,
         linkRating,
         autoLinkRating: linkMap.length,
         isLink,
         sticker,
         format,
+        isFirstEdition,
         showDefAndLink: flag[FlagIndexMap['showDefAndLink']] === 1,
         linkRatingDisplayMode: flag[FlagIndexMap['linkRating']],
         getUpdater,
+        setCard,
     })));
     const passwordInputRef = useRef<CardTextInputRef>(null);
     const creatorInputRef = useRef<CardTextInputRef>(null);
     const atkInputRef = useRef<CardTextInputRef>(null);
     const defInputRef = useRef<CardTextInputRef>(null);
     const linkRatingInputRef = useRef<CardTextInputRef>(null);
+    const firstEditionTextRef = useRef<CardTextInputRef>(null);
 
     const showAtkInput = true;
     const showLinkInput = checkDiplayLinkRating(linkRatingDisplayMode, isLink);
@@ -106,14 +122,44 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     const changePassword = useMemo(() => getUpdater('password', undefined, 'debounce'), [getUpdater]);
     const onStickerChange = useMemo(() => getUpdater('sticker'), [getUpdater]);
     const changeCreator = useMemo(() => getUpdater('creator', undefined, 'debounce'), [getUpdater]);
+    /** 
+     * * In legacy mode: All marks stay at the bottom left of the artwork, and are mutually exclusive in this state.
+     * * In modern mode, Limited Edition and 1st Edition text are exclusive at the right of password. Duel Terminal and Speed Duel text are exclusive at the bottom left of the artwork.
+     */
+    const onFirstEditionChange = useCallback((e: CheckboxChangeEvent) => setCard(currentCard => {
+        const nextValue = e.target.checked;
+        let updatedPart: Partial<Card>;
+
+        if (nextValue) {
+            if (isLegacyCard) {
+                updatedPart = {
+                    isDuelTerminalCard: false,
+                    isFirstEdition: true,
+                    isLimitedEdition: false,
+                    isSpeedCard: false,
+                };
+            } else {
+                updatedPart = {
+                    isFirstEdition: true,
+                    isLimitedEdition: false,
+                };
+            }
+        } else updatedPart = {
+            isFirstEdition: false,
+        };
+
+        return { ...currentCard, ...updatedPart };
+    }), [setCard, isLegacyCard]);
+    const changeFirstEditionText = useMemo(() => getUpdater('firstEditionText', undefined, 'debounce'), [getUpdater]);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ password, creator, atk, def, linkRating }) => {
+        setValue: ({ password, creator, atk, def, linkRating, firstEditionText }) => {
             if (typeof atk === 'string') atkInputRef.current?.setValue(atk);
             if (typeof def === 'string') defInputRef.current?.setValue(def);
             if (typeof password === 'string') passwordInputRef.current?.setValue(password);
             if (typeof creator === 'string') creatorInputRef.current?.setValue(creator);
             if (typeof linkRating === 'string') linkRatingInputRef.current?.setValue(linkRating);
+            if (typeof firstEditionText === 'string') firstEditionTextRef.current?.setValue(firstEditionText);
         }
     }));
 
@@ -180,7 +226,6 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
                 <div className="input-label">{language['input.copyright.label']}</div>
                 <Dropdown
-                    className="save-button-dropdown"
                     placement="topLeft"
                     arrow
                     overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
@@ -205,6 +250,45 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             </StyledInputLabelWithButton>}
             defaultValue={useCard.getState().card.creator}
             onChange={changeCreator}
+            onTakePicker={onTakePicker}
+        />
+        <CardTextInput ref={firstEditionTextRef}
+            id="firstEditionText"
+            className="first-edition-text"
+            addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
+                <div className="input-label">{language['input.1st-edition.label']}</div>
+                &nbsp;
+                <Checkbox
+                    className="input-1st"
+                    onChange={onFirstEditionChange}
+                    checked={isFirstEdition}
+                    tabIndex={0}
+                />
+                <Dropdown
+                    placement="topLeft"
+                    arrow
+                    overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
+                        {editionList.map(({ label, value }, index) => {
+                            return <Menu.Item key={`${index}`}
+                                onClick={() => {
+                                    firstEditionTextRef.current?.setValue(value);
+                                }}
+                            >
+                                {label}
+                            </Menu.Item>;
+                        })}
+                    </Menu>}
+                >
+                    <div>
+                        <IconButton
+                            onClick={() => {}}
+                            Icon={UnorderedListOutlined}
+                        />
+                    </div>
+                </Dropdown>
+            </StyledInputLabelWithButton>}
+            defaultValue={useCard.getState().card.firstEditionText}
+            onChange={changeFirstEditionText}
             onTakePicker={onTakePicker}
         />
         <CardCheckboxGroup />

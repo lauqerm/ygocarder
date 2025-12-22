@@ -25,6 +25,12 @@ const AttributeRegionTrain = styled.div`
         line-height: 1.1;
     }
 `;
+const AttributeOption = styled.div`
+    .icon-button {
+        margin-top: var(--spacing-xxs);
+        margin-bottom: var(--spacing-xxs);
+    }
+`;
 
 export type AttributeInputGroupRef = {
     setValue: (value: { attribute: string, attributeType: AttributeType }) => void,
@@ -110,7 +116,7 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
             }}
             optionList={attributeList}
             suffix={showExtraDecorativeOption
-                ? <div>
+                ? <AttributeOption>
                     <IconButton
                         onClick={() => {
                             setShowLinkAttribute(true);
@@ -131,7 +137,7 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
                         Icon={BookOutlined}
                         tooltipProps={{ overlay: language['input.attribute.type-extra'] }}
                     />
-                </div>
+                </AttributeOption>
                 : null}
         >
             <span>{language['input.attribute.label']}</span>

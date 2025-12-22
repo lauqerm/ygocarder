@@ -80,6 +80,21 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'A-Rex at Dec 22, 2025',
+            question: 'Me gustaría poder colocar 1a edición\nPero en su lugar aparece 1st Edition\nQuisiera poder poner manualmente eso.',
+        },
+        {
+            author: 'Ralph at Dec 22, 2025',
+            question: 'quisiera poner la marca 1a edición\npero en su lugar pone 1st edition\nme gustaría poder al menos colocarla manualmente.',
+            answer: 'I have implemented a customizable edition text with predefined options, you may try it now.',
+        },
+        {
+            author: 'Blake at Dec 21, 2025',
+            question: 'When are you going to be adding the overframe rare?',
+            answer: 'With Layout options the app is already able to create cards with extended art (see attached image), but I will need to tweak some behaviors so it looks more correct.\nGrandmaster Rare however is a different story, as it use an entirely different set of layers and I can only wait for talented artists to extract them.',
+            image: 'https://i.imgur.com/a6ZlmEg.png',
+        },
+        {
             author: 'Blake at Dec 18, 2025',
             question: 'I can’t download the card with a new attribute.',
         },

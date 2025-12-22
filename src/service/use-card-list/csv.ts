@@ -61,6 +61,7 @@ const CsvStandardFieldList = [
     'Link - Bottom Arrow',
     'Link - Bottom Right Arrow',
     /** More detailed stuffs */
+    'First Edition Text',
     'Is First Edition',
     'Is Speed Card',
     'Is Limited Edition',
@@ -242,15 +243,16 @@ export const cardListToCsv = (cardList: Card[]) => {
             cardIcon,
             creator,
             def,
+            dyeList,
             effect,
             effectStyle,
             effectTextStyle,
             externalInfo,
             finish,
+            firstEditionText,
             flag,
             foil,
             format,
-            region,
             frame,
             furiganaHelper,
             hasBackground,
@@ -279,17 +281,17 @@ export const cardListToCsv = (cardList: Card[]) => {
             pendulumSize,
             pendulumStyle,
             pendulumTextStyle,
+            region,
             rightFrame,
             setId,
             star,
             starAlignment,
+            starList,
             statTextStyle,
             sticker,
             subFamily,
-            starList,
             typeAbility,
             typeTextStyle,
-            dyeList,
         } = cardList[cnt];
         const stringifedExternalInfo = JSON.stringify(externalInfo);
         const stringifedFlag = flag.join('|');
@@ -327,6 +329,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Link - Bottom Arrow', linkMap.includes('8'));
         write('Link - Bottom Right Arrow', linkMap.includes('9'));
         write('Link Rating', linkRating);
+        write('First Edition Text', firstEditionText);
         write('Is First Edition', isFirstEdition);
         write('Is Speed Card', isSpeedCard);
         write('Is Limited Edition', isLimitedEdition);
@@ -554,6 +557,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const subFamily = (reader('Spell/Trap Icon') ?? reader('spell_type/trap_type') ?? emptyCard.subFamily).toUpperCase();
 
                 const edition = reader('Edition')?.toLowerCase();
+                const firstEditionText = reader('First Edition Text') ?? emptyCard.firstEditionText;
                 const isFirstEdition = normalizeBoolean(
                     reader('Is First Edition'),
                     edition ? edition === '1st edition' : emptyCard.isFirstEdition,
@@ -770,6 +774,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     hasBackground,
                     isDuelTerminalCard,
                     isFirstEdition,
+                    firstEditionText,
                     isLegacyCard,
                     isLimitedEdition,
                     isLink,

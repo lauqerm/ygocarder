@@ -54,7 +54,7 @@ const StyledCharPickerContainer = styled.div`
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
         button.ant-btn {
-            padding: 0 var(--spacing-xs);
+            padding: 0;
         }
         .handler,
         .ant-btn {

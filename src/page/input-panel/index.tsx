@@ -183,6 +183,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 atk, def,
                 creator, password,
                 effectStyle, pendulumStyle,
+                firstEditionText,
             } = card;
 
             imageInputGroupRef.current?.setValue({ art, artCrop, artData, artSource });
@@ -203,7 +204,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 effectJustifyRatio: effectStyle.justifyRatio,
                 pendulumEffectJustifyRatio: pendulumStyle.justifyRatio,
             });
-            footerInputGroupRef.current?.setValue({ atk, def, creator, password });
+            footerInputGroupRef.current?.setValue({ atk, def, creator, password, firstEditionText });
         }
     }));
 

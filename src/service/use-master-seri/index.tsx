@@ -139,6 +139,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         password, creator, sticker,
         isLegacyCard,
         isFirstEdition, isDuelTerminalCard, isSpeedCard, isLimitedEdition,
+        firstEditionText,
         furiganaHelper,
         flag,
     } = card;
@@ -775,6 +776,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
                 if (willDraw) draw1stEdition(
                     ctx,
+                    firstEditionText,
                     left,
                     bottom,
                     bottomOffset,
@@ -798,6 +800,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         lightFooter,
         format,
         requireShadow,
+        firstEditionText,
         isLink,
         isSpeedSkill,
         isPendulum,

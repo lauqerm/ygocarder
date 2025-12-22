@@ -13,7 +13,6 @@ const PostPendulumFirstLineContainer = styled.div`
     &.first-line,
     &.second-line {
         display: flex;
-        flex-wrap: wrap;
         gap: var(--spacing-sm);
         align-items: center;
         justify-content: right;
@@ -30,8 +29,15 @@ const PostPendulumFirstLineContainer = styled.div`
     .input-kanji-helper {
         flex: 0 0 auto;
     }
+    .input-kanji-helper {
+        span {
+            padding-right: 0;
+        }
+    }
     .formatting-help-button {
         grid-area: help-button;
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
         &:focus {
             box-shadow: 0 0 0 2px var(--focus);
         }
@@ -53,6 +59,7 @@ const AdvancedParagraphButton = styled.div`
     box-shadow: var(--bs-button);
     border-radius: var(--br-lg);
     background-color: var(--main-level-4);
+    flex: 0 0 auto;
     .button-label {
         line-height: 2;
         padding: var(--spacing-px) var(--spacing-xs);
@@ -222,22 +229,21 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
                 </Checkbox>
             </Tooltip>}
             <FormattingHelpDrawer />
-        </PostPendulumFirstLineContainer>
-        <PostPendulumFirstLineContainer className={`post-pendulum-input second-line variant-${format}`}>
-            <RadioTrain className="condense-input" value={`${condenseTolerant}`}
-                onChange={value => onCondenseTolerantChange(value as CondenseType)}
-                optionList={CondenseThresholdButtonList}
-            >
-                <span>
-                    {language['input.condense.label']} <Explanation
-                        content={<StyledPopMarkdown>{language['input.condense.tooltip']}</StyledPopMarkdown>}
-                    />
-                </span>
-            </RadioTrain>
             {showExtraDecorativeOption && <Popover
                 overlayClassName="global-input-overlay global-style-picker-overlay"
                 content={<div className="overlay-event-absorber">
                     <AdvancedParagraphPanel className="custom-style-picker">
+                        <h2>
+                            {language['input.condense.label']} <Explanation
+                                content={<StyledPopMarkdown>{language['input.condense.tooltip']}</StyledPopMarkdown>}
+                            />
+                        </h2>
+                        <div className="line-input">
+                            <RadioTrain className="condense-input" value={`${condenseTolerant}`}
+                                onChange={value => onCondenseTolerantChange(value as CondenseType)}
+                                optionList={CondenseThresholdButtonList}
+                            />
+                        </div>
                         <h2>
                             {language['input.text-style.min-line.label']}
                         </h2>
@@ -266,7 +272,11 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
                             </SingleSliderContainer>
                         </div>
                         <h2>
-                            {language['input.text-style.justify-ratio.label']}
+                            {language['input.text-style.justify-ratio.label']} <Explanation
+                                content={<StyledPopMarkdown>
+                                    {language['input.text-style.justify-ratio.tooltip']}
+                                </StyledPopMarkdown>}
+                            />
                         </h2>
                         <div className="justify-ratio-input">
                             <SingleSliderContainer className="single-slider">

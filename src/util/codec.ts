@@ -125,6 +125,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     def: 'def',
     password: 'pw',
     sticker: 'sti',
+    firstEditionText: 'fe',
     isFirstEdition: 'ife',
     isSpeedCard: 'isp',
     isDuelTerminalCard: 'idt',

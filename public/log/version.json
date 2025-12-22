@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.37 (2025/12/22)",
+        "logList": [
+            {
+                "content": "Experimental support for customizable \"1st edition\" text, with some predefined options for different languages."
+            }
+        ]
+    },
+    {
         "version": "v2.3.36 (2025/12/18)",
         "logList": [
             {

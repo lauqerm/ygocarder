@@ -1,5 +1,6 @@
 import { CanvasTextStyle } from 'src/service';
 import { fillTextLeftWithSpacing, fillTextRightWithSpacing, setTextStyle } from '../canvas-util';
+import { NB_WORD_CLOSE, NB_WORD_OPEN } from 'src/model';
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -75,6 +76,7 @@ export const drawScale = (
 
 export const draw1stEdition = (
     ctx: CanvasRenderingContext2D | null | undefined,
+    txt = '1<st> Edition',
     edge = 99,
     baseline = 1150.93,
     baselineOffset = 0,
@@ -94,6 +96,11 @@ export const draw1stEdition = (
         textStyle,
         globalScale,
     } = option ?? {};
+    const ltEscape = '\\<';
+    const gtEscape = '\\>';
+    const swappedText = txt.replaceAll(ltEscape, NB_WORD_OPEN).replaceAll(gtEscape, NB_WORD_CLOSE);
+    /** Currently we are using special treatment for ordinal indicator here, we may need to use a more generic solution in the future. */
+    const tokenList = swappedText.split(/(<|>|\d|ª|º)/g);
     const actualEdge = edge * globalScale;
     const actualBaseline = baseline * globalScale;
     const actualBaselineOffset = baselineOffset * globalScale;
@@ -104,22 +111,47 @@ export const draw1stEdition = (
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
     const superTextOffset = 7.4 * globalScale;
-    ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
+    const ordinalIndicatorOffset = -2 * globalScale;
 
     let left = actualEdge;
-    ctx.fillText('1', left, actualBaseline + actualBaselineOffset);
-    if (stroke) ctx.strokeText('1', left, actualBaseline);
-    left += ctx.measureText('1').width - 2 * globalScale;
-
-    ctx.font = `${17.78 * globalScale}px palatino-linotype-bold`;
-    ctx.fillText('st', left, actualBaseline - superTextOffset + actualBaselineOffset);
-    if (stroke) ctx.strokeText('st', left, actualBaseline - superTextOffset);
-    left += ctx.measureText('st').width;
-
-    ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
-    ctx.fillText(' Edition', left, actualBaseline + actualBaselineOffset);
-    if (stroke) ctx.strokeText(' Edition', left, actualBaseline);
-    resetStyle();
+    let superscriptMode = false;
+    for (let cnt = 0; cnt < tokenList.length; cnt++) {
+        const token = tokenList[cnt];
+        if (token === '') continue;
+        if (token === '<') {
+            superscriptMode = true;
+            continue;
+        }
+        if (token === '>') {
+            superscriptMode = false;
+            continue;
+        }
+        const restoredToken = token.replaceAll(NB_WORD_OPEN, '<').replaceAll(NB_WORD_CLOSE, '>');
+        if (superscriptMode) {
+            ctx.font = `${17.78 * globalScale}px palatino-linotype-bold`;
+            ctx.fillText(restoredToken, left, actualBaseline - superTextOffset + actualBaselineOffset);
+            if (stroke) ctx.strokeText(restoredToken, left, actualBaseline - superTextOffset);
+            left += ctx.measureText(restoredToken).width;
+        } else {
+            if (!isNaN(parseInt(restoredToken))) {
+                ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
+                ctx.fillText(restoredToken, left, actualBaseline + actualBaselineOffset);
+                if (stroke) ctx.strokeText(restoredToken, left, actualBaseline);
+                left += ctx.measureText(restoredToken).width - 2 * globalScale;
+            } else if (restoredToken === 'ª' || restoredToken === 'º') {
+                ctx.font = `${20.22 * globalScale}px Georgia`;
+                ctx.fillText(restoredToken, left, actualBaseline - ordinalIndicatorOffset + actualBaselineOffset);
+                if (stroke) ctx.strokeText(restoredToken, left, actualBaseline - ordinalIndicatorOffset);
+                left += ctx.measureText(restoredToken).width;
+            } else {
+                ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
+                ctx.fillText(restoredToken, left, actualBaseline + actualBaselineOffset);
+                if (stroke) ctx.strokeText(restoredToken, left, actualBaseline);
+                left += ctx.measureText(restoredToken).width;
+            }
+        }
+        resetStyle();
+    }
 };
 
 export const drawStatText = (

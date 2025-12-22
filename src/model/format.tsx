@@ -256,6 +256,15 @@ export const copyrightMap = {
     ],
 };
 
+export const editionList = [
+    { label: '1st Edition', value: '1<st> Edition' },
+    { label: '1ère Édition', value: '1<ère> Édition' },
+    { label: '1 . Auflage', value: '1 . Auflage' },
+    { label: '1ª Edizione', value: '1ª Edizione' },
+    { label: '1ª Edição', value: '1ª Edição' },
+    { label: '1ª Edición', value: '1ª Edición' },
+];
+
 export const passwordSentenceMap: Record<string, string> = {
     ocg: '※デッキ構築には使用できません。',
     tcg: 'This card cannot be in a Deck.',
