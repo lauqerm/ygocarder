@@ -251,7 +251,7 @@ export const NameStylePicker = forwardRef(({
                         trigger={['click']}
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
-                            <div className={'custom-style-picker'}>
+                            <div className={'input-popover'}>
                                 <div className="custom-style-text">
                                     <h3>
                                         {language['input.name-style.color.text.label']}
@@ -297,7 +297,7 @@ export const NameStylePicker = forwardRef(({
                         trigger={['click']}
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
-                            <div className={'custom-style-picker'}>
+                            <div className={'input-popover'}>
                                 <h3 className="custom-style-expand">
                                     <Checkbox value={'has-shadow'} checked={hasShadow} onChange={() => {
                                         setType('custom');
@@ -346,7 +346,7 @@ export const NameStylePicker = forwardRef(({
                         trigger={['click']}
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
-                            <div className={'custom-style-picker'}>
+                            <div className={'input-popover'}>
                                 <h3 className="custom-style-expand">
                                     <Checkbox value={'has-line'} checked={hasOutline} onChange={() => {
                                         setType('custom');
@@ -395,7 +395,7 @@ export const NameStylePicker = forwardRef(({
                         trigger={['click']}
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
-                            <div className={'custom-style-picker'}>
+                            <div className={'input-popover'}>
                                 <h3 className="custom-style-expand">
                                     <Checkbox value={'has-gradient'} checked={hasGradient} onChange={() => {
                                         setType('custom');
@@ -500,7 +500,7 @@ export const NameStylePicker = forwardRef(({
                         trigger={['click']}
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
-                            <div className="custom-style-picker">
+                            <div className="input-popover">
                                 <h3 className="custom-style-expand">
                                     <Checkbox value={'has-emboss'} checked={hasEmboss} onChange={() => {
                                         setType('custom');

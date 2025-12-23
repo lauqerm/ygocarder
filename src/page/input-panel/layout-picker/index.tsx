@@ -1,5 +1,5 @@
-import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { Checkbox, InputNumber, Popover } from 'antd';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import {
     BackgroundType,
@@ -9,6 +9,7 @@ import {
     OpacityList,
     getDefaultCardOpacity,
     DefaultColorList,
+    LayoutSettingList,
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
@@ -18,9 +19,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
 import './layout-picker.scss';
 
-const StyledBoundlessOverlay = styled.span`
-    white-space: pre-line;
-`;
 const StyledLayoutPickerContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -161,6 +159,20 @@ const StyledBaseFillPickerContainer = styled.div`
         }
     }
 `;
+const LayoutSettingContainer = styled.div`
+    max-width: 20rem;
+    padding: var(--spacing-sm);
+    small {
+        display: block;
+        line-height: var(--fs-lg);
+        &.tooltip-disable {
+            color: var(--color-dim);
+        }
+    }
+    .layout-setting-option + .layout-setting-option {
+        margin-top: var(--spacing-sm);
+    }
+`;
 
 export type LayoutPicker = {
     defaultValue: Partial<CardOpacity>,
@@ -270,22 +282,77 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     const noBackground = (background ?? '').length === 0
         && (backgroundInputRef.current?.hasImage() !== true);
     return <StyledLayoutPickerContainer className="card-opacity-slider-container">
-        <Tooltip
-            overlayClassName="long-tooltip-overlay"
-            title={<StyledBoundlessOverlay>
-                {language['input.opacity.boundless.tooltip']}
-            </StyledBoundlessOverlay>}
+        <Popover
+            overlayClassName="global-input-overlay global-style-picker-overlay"
+            content={<div className="overlay-event-absorber">
+                <LayoutSettingContainer className="input-popover">
+                    <div className="layout-setting-option">
+                        <Checkbox
+                            className="art-frame"
+                            onChange={value => {
+                                setOpacity(cur => ({
+                                    ...cur,
+                                    boundless: value.target.checked,
+                                }));
+                            }}
+                            checked={opacity.boundless}
+                        >
+                            {language['input.opacity.boundless.label']}
+                        </Checkbox>
+                        <br />
+                        <small>
+                            {language['input.opacity.boundless.tooltip']}
+                        </small>
+                    </div>
+                    <div className="layout-setting-option">
+                        <Checkbox
+                            className="art-frame"
+                            disabled={!opacity.boundless}
+                            onChange={value => {
+                                setOpacity(cur => ({
+                                    ...cur,
+                                    frameBorder: value.target.checked,
+                                    boundless: value.target.checked ? true : cur.boundless,
+                                }));
+                            }}
+                            checked={opacity.frameBorder}
+                        >
+                            {language['input.opacity.overframe.label']}
+                        </Checkbox>
+                        <br />
+                        <small className={!opacity.boundless ? 'tooltip-disable' : ''}>
+                            {language['input.opacity.overframe.tooltip']}
+                        </small>
+                    </div>
+                    {LayoutSettingList.map(({
+                        labelKey,
+                        subType,
+                        tooltipKey,
+                    }) => {
+                        const isActive = subType && opacity[subType];
+                        return <div key={subType} className="layout-setting-option">
+                            <Checkbox
+                                className="art-frame"
+                                onChange={e => setOpacity(cur => ({ ...cur, [subType]: e.target.checked }))}
+                                checked={isActive}
+                            >
+                                {language[labelKey]}
+                            </Checkbox>
+                            <br />
+                            <small>
+                                {language[tooltipKey]}
+                            </small>
+                        </div>;
+                    })}
+                </LayoutSettingContainer>
+            </div>}
         >
             <SolidLabel className="background-label">
-                <Checkbox
-                    className="art-frame"
-                    onChange={value => setOpacity(cur => ({ ...cur, boundless: value.target.checked }))}
-                    checked={opacity.boundless}
-                >
-                    &nbsp;{language['input.opacity.boundless.label']}
-                </Checkbox>
+                <div className="button-label">
+                    {language['input.opacity.setting.label']}
+                </div>
             </SolidLabel>
-        </Tooltip>
+        </Popover>
         <Popover
             visible={backgroundInputVisible}
             destroyTooltipOnHide={false}
@@ -299,7 +366,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             content={<div className="overlay-event-absorber">
                 <StyledBaseFillPickerContainer
                     className={[
-                        'custom-style-picker',
+                        'input-popover',
                         noBackground ? 'overlay-no-background-image' : ''
                     ].join(' ')}
                 >
@@ -339,6 +406,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                         className="background-type-picker"
                                         onChange={changeBackgroundType}
                                         optionList={getBackgroundTypeList({
+                                            strict: language['input.background-type.strict.label'],
                                             fit: language['input.background-type.fit.label'],
                                             full: language['input.background-type.full.label'],
                                             frame: language['input.background-type.frame.label'],
@@ -373,28 +441,14 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                 {language['input.background.label']}
             </SolidLabel>
         </Popover>
-        {OpacityList.map(({ labelKey, type, subType, tooltipKey }) => {
+        {OpacityList.map(({ labelKey, type }) => {
             if (type === 'pendulum' && !isPendulum) return null;
-            const activable = !!subType;
-            const isActive = subType && opacity[subType];
             return <CombinedSliderContainer key={type}
                 className={[
                     'card-opacity-slider',
-                    isActive ? '' : 'inactive',
                 ].join(' ')}
             >
                 <SolidLabel className="slider-label">
-                    {activable && <Tooltip
-                        title={tooltipKey
-                            ? language[tooltipKey] ?? null
-                            : null}
-                        overlayClassName="long-tooltip-overlay"
-                    >
-                        <Checkbox
-                            checked={isActive}
-                            onChange={e => subType && setOpacity(cur => ({ ...cur, [subType]: e.target.checked }))}
-                        />
-                    </Tooltip>}
                     {language[labelKey]}
                 </SolidLabel>
                 <InputNumber

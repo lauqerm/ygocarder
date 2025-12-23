@@ -1,5 +1,5 @@
 import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
-import { Explanation, FormattingHelpDrawer, RadioTrain, SingleSliderContainer, StyledPopMarkdown } from 'src/component';
+import { FormattingHelpDrawer, RadioTrain, SingleSliderContainer } from 'src/component';
 import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
@@ -66,9 +66,22 @@ const AdvancedParagraphButton = styled.div`
     }
 `;
 const AdvancedParagraphPanel = styled.div`
-    .line-input,
-    .justify-ratio-input {
-        padding: var(--spacing-xs);
+    max-width: 20rem;
+    padding: var(--spacing-sm);
+    .input-section {
+        h2 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        small {
+            display: block;
+            color: var(--color);
+            margin-top: var(--spacing-xs);
+            line-height: var(--fs-lg);
+        }
+        + .input-section {
+            margin-top: var(--spacing-sm);
+        }
     }
     .single-slider {
         .ant-input-number {
@@ -232,77 +245,81 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             {showExtraDecorativeOption && <Popover
                 overlayClassName="global-input-overlay global-style-picker-overlay"
                 content={<div className="overlay-event-absorber">
-                    <AdvancedParagraphPanel className="custom-style-picker">
-                        <h2>
-                            {language['input.condense.label']} <Explanation
-                                content={<StyledPopMarkdown>{language['input.condense.tooltip']}</StyledPopMarkdown>}
-                            />
-                        </h2>
-                        <div className="line-input">
-                            <RadioTrain className="condense-input" value={`${condenseTolerant}`}
-                                onChange={value => onCondenseTolerantChange(value as CondenseType)}
-                                optionList={CondenseThresholdButtonList}
-                            />
+                    <AdvancedParagraphPanel className="input-popover">
+                        <div className="input-section">
+                            <h2>
+                                {language['input.condense.label']}
+                                <br />
+                                <small>{language['input.condense.tooltip']}</small>
+                            </h2>
+                            <div className="line-input">
+                                <RadioTrain className="condense-input" value={`${condenseTolerant}`}
+                                    onChange={value => onCondenseTolerantChange(value as CondenseType)}
+                                    optionList={CondenseThresholdButtonList}
+                                />
+                            </div>
                         </div>
-                        <h2>
-                            {language['input.text-style.min-line.label']}
-                        </h2>
-                        <div className="line-input">
-                            <SingleSliderContainer className="single-slider">
-                                <span>{language['input.text-style.min-line.effect.placeholder']}:</span>
-                                <InputNumber
-                                    id="effect-line"
-                                    size="small"
-                                    value={effectMinLine}
-                                    placeholder={language['input.text-style.min-line.effect.placeholder']}
-                                    onChange={value => setEffectMinLine(typeof value === 'number' ? value : 0)}
-                                    min={0}
-                                    max={50}
-                                />
-                                <span>{language['input.text-style.min-line.pendulum-effect.placeholder']}:</span>
-                                <InputNumber
-                                    id="pendulum-effect-line"
-                                    size="small"
-                                    value={pendulumEffectMinLine}
-                                    placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
-                                    onChange={value => setPendulumEffectMinLine(typeof value === 'number' ? value : 0)}
-                                    min={0}
-                                    max={50}
-                                />
-                            </SingleSliderContainer>
+                        <div className="input-section">
+                            <h2>
+                                {language['input.text-style.min-line.label']}
+                            </h2>
+                            <div className="line-input">
+                                <SingleSliderContainer className="single-slider">
+                                    <span>{language['input.text-style.min-line.effect.placeholder']}:</span>
+                                    <InputNumber
+                                        id="effect-line"
+                                        size="small"
+                                        value={effectMinLine}
+                                        placeholder={language['input.text-style.min-line.effect.placeholder']}
+                                        onChange={value => setEffectMinLine(typeof value === 'number' ? value : 0)}
+                                        min={0}
+                                        max={50}
+                                    />
+                                    <span>{language['input.text-style.min-line.pendulum-effect.placeholder']}:</span>
+                                    <InputNumber
+                                        id="pendulum-effect-line"
+                                        size="small"
+                                        value={pendulumEffectMinLine}
+                                        placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
+                                        onChange={value => setPendulumEffectMinLine(typeof value === 'number' ? value : 0)}
+                                        min={0}
+                                        max={50}
+                                    />
+                                </SingleSliderContainer>
+                            </div>
                         </div>
-                        <h2>
-                            {language['input.text-style.justify-ratio.label']} <Explanation
-                                content={<StyledPopMarkdown>
-                                    {language['input.text-style.justify-ratio.tooltip']}
-                                </StyledPopMarkdown>}
-                            />
-                        </h2>
-                        <div className="justify-ratio-input">
-                            <SingleSliderContainer className="single-slider">
-                                <span>{language['input.text-style.min-line.effect.placeholder']}:</span>
-                                <InputNumber
-                                    id="effect-justify-ratio"
-                                    size="small"
-                                    value={effectJustifyRatio}
-                                    placeholder={language['input.text-style.min-line.effect.placeholder']}
-                                    onChange={value => setEffectJustifyRatio(typeof value === 'number' ? value : 0)}
-                                    min={0}
-                                    max={5000}
-                                    step={100}
-                                />
-                                <span>{language['input.text-style.min-line.pendulum-effect.placeholder']}:</span>
-                                <InputNumber
-                                    id="pendulum-effect-justify-ratio"
-                                    size="small"
-                                    value={pendulumEffectJustifyRatio}
-                                    placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
-                                    onChange={value => setPendulumEffectJustifyRatio(typeof value === 'number' ? value : 0)}
-                                    min={0}
-                                    max={5000}
-                                    step={100}
-                                />
-                            </SingleSliderContainer>
+                        <div className="input-section">
+                            <h2>
+                                {language['input.text-style.justify-ratio.label']}
+                                <br />
+                                <small>{language['input.text-style.justify-ratio.tooltip']}</small>
+                            </h2>
+                            <div className="justify-ratio-input">
+                                <SingleSliderContainer className="single-slider">
+                                    <span>{language['input.text-style.min-line.effect.placeholder']}:</span>
+                                    <InputNumber
+                                        id="effect-justify-ratio"
+                                        size="small"
+                                        value={effectJustifyRatio}
+                                        placeholder={language['input.text-style.min-line.effect.placeholder']}
+                                        onChange={value => setEffectJustifyRatio(typeof value === 'number' ? value : 0)}
+                                        min={0}
+                                        max={5000}
+                                        step={100}
+                                    />
+                                    <span>{language['input.text-style.min-line.pendulum-effect.placeholder']}:</span>
+                                    <InputNumber
+                                        id="pendulum-effect-justify-ratio"
+                                        size="small"
+                                        value={pendulumEffectJustifyRatio}
+                                        placeholder={language['input.text-style.min-line.pendulum-effect.placeholder']}
+                                        onChange={value => setPendulumEffectJustifyRatio(typeof value === 'number' ? value : 0)}
+                                        min={0}
+                                        max={5000}
+                                        step={100}
+                                    />
+                                </SingleSliderContainer>
+                            </div>
                         </div>
                     </AdvancedParagraphPanel>
                 </div>}

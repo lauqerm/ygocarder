@@ -351,6 +351,9 @@ button.ant-btn {
 .ant-checkbox + span {
     display: inline-block;
 }
+.ant-checkbox-disabled + span {
+    color: var(--color-dim);
+}
 
 .ant-modal {
     .ant-modal-header {

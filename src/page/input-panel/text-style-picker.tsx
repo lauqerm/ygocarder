@@ -43,7 +43,7 @@ const StyledTextStylePicker = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-px);
-    &.custom-style-picker {
+    &.input-popover {
         background-color: var(--sub-level-4); // Mimic border color
     }
     .style-section {
@@ -186,7 +186,7 @@ export const TextStylePicker = () => {
         // visible={true}
         overlayClassName="global-input-overlay global-style-picker-overlay"
         content={<div className="overlay-event-absorber">
-            <StyledTextStylePicker className="custom-style-picker">
+            <StyledTextStylePicker className="input-popover">
                 {styleList.map(({ info, value, extraValue }) => {
                     const { keyName, labelKey, extraKeyname } = info;
                     const [custom, fillStyle, hasShadow, shadow] = value;

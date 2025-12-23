@@ -22,6 +22,12 @@ const StyledImageCropper = styled(ImageCropper)`
         width: var(--cropper-width);
         text-align: center;
     }
+    .layout-picker-subpanel {
+        h2 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
 `;
 
 export type BackgroundInputGroupRef = {

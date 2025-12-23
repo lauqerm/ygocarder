@@ -321,6 +321,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 body: opacityBody,
                 boundless,
                 baseFill,
+                frameBorder,
             } = normalizedOpacity;
 
             /** Extremely weird bug in Chrome Mobile that make this frame draw twice and overlapping each other. The bug appear and disappear consistently with seemingly unrelated actions:
@@ -508,6 +509,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     artWidth,
                     ratio,
                 } = getArtCanvasCoordinate(isPendulum, opacity, 'full', pendulumSize);
+                console.log('boundless art', opacity, {
+                    artX,
+                    artY,
+                    artWidth,
+                    ratio,
+                });
+                if (frameBorder) await drawFrameBorder();
                 ctx.drawImage(
                     artOnCardCanvas,
                     globalScale * artX, globalScale * artY,
@@ -515,6 +523,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     globalScale * artX, globalScale * artY,
                     globalScale * artWidth, globalScale * artWidth / ratio,
                 );
+                if (!frameBorder) await drawFrameBorder();
                 /** Redraw various part here because the extended artwork may overlap with those */
                 if (isPendulum) {
                     await drawEffectBackground(true);
@@ -536,14 +545,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             });
 
             try {
-            await drawAttribute();
+                await drawAttribute();
             } catch (e) {
-                console.error('erorr', e);
+                console.error('drawAttribute error', e);
             }
             await drawAttributeFinish();
             await drawStar({ style: levelStyle, starAlignment });
-            if (!boundless) await drawNameBorder();
-            await drawFrameBorder();
+            if (!boundless) {
+                await drawNameBorder();
+                await drawFrameBorder();
+            }
             
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });

@@ -22,6 +22,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         boundless: 'opbl',
         artBorder: 'opab',
         effectBox: 'opeb',
+        frameBorder: 'opfb',
         nameBorder: 'opnb',
         baseFill: 'opbf',
         /** legacy */
@@ -324,6 +325,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
         migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
         delete (migratedCard.opacity as any).artFrame;
     }
+    if (typeof migratedCard.opacity.frameBorder !== 'boolean') migratedCard.opacity.frameBorder = false;
     migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
     delete (migratedCard.opacity as any).artFrame;
 

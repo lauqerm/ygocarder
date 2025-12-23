@@ -114,6 +114,7 @@
         "image-cropper.source.offline.tooltip": "オフライン",
         "image-cropper.source.online.tooltip": "リンク",
         "input.1st-edition.label": "Edition",
+        "input.opacity.setting.label": "特別な設定",
         "input.advanced-frame.dye": "染色",
         "input.advanced-frame.label": "高度なレイアウト",
         "input.advanced-frame.name.bottom-left": "左下",
@@ -142,9 +143,10 @@
         "input.attribute.wind": "風属性",
         "input.background-color.label": "カラー",
         "input.background-image.label": "イラスト",
-        "input.background-type.fit.label": "アートの境界にフィット",
+        "input.background-type.strict.label": "アートの境界にフィット",
+        "input.background-type.fit.label": "空いているスペースを埋める",
         "input.background-type.frame.label": "カードフレームを交換する",
-        "input.background-type.full.label": "カード全体に広がります。",
+        "input.background-type.full.label": "カード全体に広がります",
         "input.background-type.label": "カバータイプ。",
         "input.background.description": "透明なイラストを使用する場合は、カードの色と背景を設定してください。",
         "input.background.label": "背景",
@@ -458,7 +460,12 @@
         "form.dismiss": "Dismiss",
         "form.default": "Leave blank to use default",
         "input.attribute.type-custom": "Use custom link",
+        "input.opacity.art-border.label": "Keep art border",
+        "input.opacity.effect-box.label": "Best effort render",
+        "input.opacity.name-border.label": "Keep name border",
         "input.attribute.type-extra": "Use extra attributes",
+        "input.opacity.overframe.label": "Overframe render",
+        "input.opacity.overframe.tooltip": "Boundless artwork and custom background will render from card's edges instead of inside the card's borders.",
         "setting.option.sliding-type.manual.label": "Manual drag"
     }
 }

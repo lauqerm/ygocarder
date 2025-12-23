@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.38 (2025/12/23)",
+        "logList": [
+            {
+                "content": "Fix: Edition text does not display correctly on darker frames."
+            }
+        ]
+    },
+    {
         "version": "v2.3.37 (2025/12/22)",
         "logList": [
             {

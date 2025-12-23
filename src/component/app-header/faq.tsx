@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '22/12/2025';
+        const currentReminder = '23/12/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,16 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Blake at Dec 23, 2025',
+            question: 'Did you use boundless cause I’m trying to make the object the image go over the card.',
+            answer: 'Yeah boundless layout is the main option to use. But the hard thing here is that you need a transparent artwork to combine with it to make a proper overframe card, which the app cannot help.',
+        },
+        {
+            author: 'Ebrahim at Dec 23, 2025',
+            question: 'when I click on the xyz background template the 1st Edition text is in black not white and it\'s hard to see please fix immediately.',
+            answer: 'It\'s done, the text should display properly now.',
+        },
         {
             author: 'A-Rex at Dec 22, 2025',
             question: 'Me gustaría poder colocar 1a edición\nPero en su lugar aparece 1st Edition\nQuisiera poder poner manualmente eso.',

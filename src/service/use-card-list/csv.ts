@@ -87,6 +87,7 @@ const CsvStandardFieldList = [
     'Opacity - Text',
     'Opacity - Name',
     'Opacity - Base Fill',
+    'Opacity - Frame Border',
     'Opacity - Art Border',
     'Opacity - Name Border',
     'Opacity - Effect Box',
@@ -353,6 +354,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Opacity - Base Fill', opacity.baseFill);
         write('Opacity - Art Border', opacity.artBorder);
         write('Opacity - Effect Box', opacity.effectBox);
+        write('Opacity - Frame Border', opacity.frameBorder);
         write('Opacity - Name Border', opacity.nameBorder);
         write('Opacity - Boundless', opacity.boundless);
         write('Has Background', hasBackground);
@@ -606,6 +608,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const emptyOpacity = getDefaultCardOpacity();
                 const opacity: CardOpacity = {
                     artBorder: normalizeBoolean(reader('Opacity - Art Border'), emptyOpacity.artBorder),
+                    frameBorder: normalizeBoolean(reader('Opacity - Frame Border'), emptyOpacity.frameBorder),
                     baseFill: reader('Opacity - Base Fill') ?? emptyOpacity.baseFill,
                     body: normalizeInt(reader('Opacity - Body'), emptyOpacity.body),
                     boundless: normalizeBoolean(reader('Opacity - Boundless'), emptyOpacity.boundless),

@@ -4,7 +4,12 @@ export const getBackgroundTypeList = (dictionary?: {
     fit: string,
     full: string,
     frame: string,
+    strict: string,
 }) => [
+        {
+            value: 'strict' as const,
+            label: dictionary?.strict,
+        },
         {
             value: 'fit' as const,
             label: dictionary?.fit,
@@ -82,7 +87,7 @@ export const CanvasConst = {
     iconHeight: 44,
 };
 
-export const DEFAULT_BASE_FILL_COLOR = '#404040';
+export const DEFAULT_BASE_FILL_COLOR = '#ff0000'; //'#404040';
 export const getDefaultCardOpacity = () => ({
     body: 100,
     pendulum: 100,
@@ -92,11 +97,15 @@ export const getDefaultCardOpacity = () => ({
     artBorder: true,
     nameBorder: true,
     effectBox: true,
+    frameBorder: true,
     boundless: false,
 });
 export type CardOpacity = ReturnType<typeof getDefaultCardOpacity>;
 export type CardArtCanvasCoordinate = typeof CardArtCanvasCoordinateMap[keyof typeof CardArtCanvasCoordinateMap];
 export const CardArtCanvasCoordinateMap = {
+    /**
+     * NORMAL CARD FRAME
+     */
     normal: {
         artFinishX: 100,
         artFinishY: 219,
@@ -147,6 +156,10 @@ export const CardArtCanvasCoordinateMap = {
         artRatio: 1.236,
         type: 'pendulumSmall' as const,
     },
+
+    /**
+     * NORMAL CARD FRAME + PENDULUM EFFECT BOX EXTEND + EFFECT BOX EXTEND
+     */
     /** Normal distribution, with artwork extends under effect's box. */
     extendedCard: {
         artFinishX: 100,
@@ -193,12 +206,16 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 0.775,
         backgroundRatio: 0.775,
         artFrameWidth: 702,
-        artFrameHeight: 530,
+        artFrameHeight: 568,
         artFrameY: 213,
         artFrameX: 56,
         artRatio: 1.236,
         type: 'extendedPendulumSmall' as const,
     },
+
+    /**
+     * NORMAL CARD FRAME + PENDULUM EFFECT BOX EXTEND
+     */
     /** Pendulum distribution, with artwork extends under pendulum effect's box. It is actually the "default" mode of pendulum cards in practices. But most of the time the artwork only cut the visible image part because it is very hard to find the full image of a card unless an official source provide it. */
     truePendulum: {
         artFinishX: 56,
@@ -255,6 +272,10 @@ export const CardArtCanvasCoordinateMap = {
         artRatio: 1.325,
         type: 'truePendulumLarge' as const,
     },
+
+    /**
+     * FULL CARD FRAME
+     */
     /** Normal distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. */
     fullCard: {
         artFinishX: 100,
@@ -281,11 +302,83 @@ export const CardArtCanvasCoordinateMap = {
         ratio: 0.670,
         backgroundRatio: 0.670,
         artFrameWidth: 702,
-        artFrameHeight: 530,
+        artFrameHeight: 568,
         artFrameY: 213,
         artFrameX: 56,
         artRatio: 1.325,
         type: 'fullPendulum' as const,
+    },
+    /**
+     * Pendulum distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. Pendulum text box is smaller, result in a taller card image.
+     * It is only used for series 9 Pendulum cards, which is deprecated.*/
+    fullPendulumSmall: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 758,
+        artX: 28,
+        artY: 28,
+        ratio: 0.670,
+        backgroundRatio: 0.670,
+        artFrameWidth: 702,
+        artFrameHeight: 568,
+        artFrameY: 213,
+        artFrameX: 56,
+        artRatio: 1.236,
+        type: 'fullPendulumSmall' as const,
+    },
+
+    /**
+     * OVERBORDER CARD FRAME
+     */
+    /** Overframe distribution with image extends over the card border itself (touching card edges), this is the biggest possible size for card art. */
+    overframeCard: {
+        artFinishX: 100,
+        artFinishY: 219,
+        artWidth: 813,
+        artX: 0,
+        artY: 0,
+        ratio: 0.686,
+        backgroundRatio: 0.686,
+        artFrameWidth: 614,
+        artFrameHeight: 614,
+        artFrameY: 219,
+        artFrameX: 100,
+        artRatio: 1,
+        type: 'overframeCard' as const,
+    },
+    /** Overframe Pendulum distribution with image extends over the card border itself (touching card edges), this is the biggest possible size for card art. */
+    overframePendulum: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 813,
+        artX: 0,
+        artY: 0,
+        ratio: 0.686,
+        backgroundRatio: 0.686,
+        artFrameWidth: 702,
+        artFrameHeight: 530,
+        artFrameY: 213,
+        artFrameX: 56,
+        artRatio: 1.325,
+        type: 'overframePendulum' as const,
+    },
+    /**
+     * Pendulum distribution with artwork span the entire card over the frame, use boundless mode to show frame above it. Pendulum text box is smaller, result in a taller card image.
+     * It is only used for series 9 Pendulum cards, which is deprecated.*/
+    overframePendulumSmall: {
+        artFinishX: 56,
+        artFinishY: 213,
+        artWidth: 813,
+        artX: 0,
+        artY: 0,
+        ratio: 0.686,
+        backgroundRatio: 0.686,
+        artFrameWidth: 702,
+        artFrameHeight: 568,
+        artFrameY: 213,
+        artFrameX: 56,
+        artRatio: 1.325,
+        type: 'overframePendulumSmall' as const,
     },
 };
 export const getArtCanvasCoordinate = (
@@ -299,19 +392,35 @@ export const getArtCanvasCoordinate = (
         body,
         pendulum,
         text,
+        frameBorder,
     } = { ...getDefaultCardOpacity(), ...opacity };
-    const normalizedBoundless = backgroundType === 'fit'
+    const normalizedIsBoundless = backgroundType === 'fit'
         ? false
         : boundless;
+    const normalizedIsOverframe = normalizedIsBoundless
+        ? frameBorder
+        : false;
 
-    if (backgroundType === 'full') return CardArtCanvasCoordinateMap.fullCard;
+    if (backgroundType === 'full') {
+        return normalizedIsOverframe
+            ? CardArtCanvasCoordinateMap.overframeCard
+            : CardArtCanvasCoordinateMap.fullCard;
+    }
     let distributionMode: keyof typeof CardArtCanvasCoordinateMap = 'normal';
 
     /** The only different between boundless mode and transparent body is card art in boundless mode will be put higher than art frame */
-    if (normalizedBoundless || body < 100) {
+    if (normalizedIsBoundless || body < 100) {
         distributionMode = isPendulum
-            ? 'fullPendulum'
-            : 'fullCard';
+            ? normalizedIsOverframe
+                ? pendulumSize === 'small'
+                    ? 'overframePendulumSmall'
+                    : 'overframePendulum'
+                : pendulumSize === 'small'
+                    ? 'fullPendulumSmall'
+                    : 'fullPendulum'
+            : normalizedIsOverframe
+                ? 'overframeCard'
+                : 'fullCard';
     } else {
         if (isPendulum) {
             if (text < 100) {

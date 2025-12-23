@@ -228,33 +228,43 @@ export const getEmptyCard = (): Card => ({
     externalInfo: {},
 });
 
-export const OpacityList = [
+export const LayoutSettingList = [
     {
-        type: 'body' as const,
         subType: 'artBorder' as const,
-        label: 'Card',
-        labelKey: 'input.opacity.body.label',
+        labelKey: 'input.opacity.art-border.label',
         tooltipKey: 'input.opacity.art-border.tooltip',
     },
     {
-        type: 'name' as const,
         subType: 'nameBorder' as const,
+        labelKey: 'input.opacity.name-border.label',
+        tooltipKey: 'input.opacity.name-border.tooltip',
+    },
+    {
+        subType: 'effectBox' as const,
+        labelKey: 'input.opacity.effect-box.label',
+        tooltipKey: 'input.opacity.effect-box.tooltip',
+    },
+];
+export const OpacityList = [
+    {
+        type: 'body' as const,
+        label: 'Card',
+        labelKey: 'input.opacity.body.label',
+    },
+    {
+        type: 'name' as const,
         label: 'Name',
         labelKey: 'input.opacity.name.label',
-        tooltipKey: 'input.opacity.name-border.tooltip',
     },
     {
         type: 'pendulum' as const,
         label: 'Pendulum',
         labelKey: 'input.opacity.pendulum.label',
-        tooltipKey: null,
     },
     {
         type: 'text' as const,
-        subType: 'effectBox' as const,
         label: 'Effect',
         labelKey: 'input.opacity.effect.label',
-        tooltipKey: 'input.opacity.effect-box.tooltip',
     },
 ];
 

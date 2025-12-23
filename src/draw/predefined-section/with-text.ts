@@ -150,8 +150,8 @@ export const draw1stEdition = (
                 left += ctx.measureText(restoredToken).width;
             }
         }
-        resetStyle();
     }
+    resetStyle();
 };
 
 export const drawStatText = (

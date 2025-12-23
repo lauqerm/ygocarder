@@ -180,7 +180,9 @@ export const getLayoutDrawFunction = ({
         artFinishY,
         artWidth,
         artRatio,
+        type,
     } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
+    console.log('type', type);
     const {
         frameType,
         effectBoxOffsetY,
@@ -276,7 +278,7 @@ export const getLayoutDrawFunction = ({
 
             ctx.globalAlpha = opacityBody / 100;
             ctx.scale(globalScale, globalScale);
-            /** Leave empty space for card art */
+            /** Leave empty space for card art and pendulum effect */
             if (isPendulum) {
                 dyedTopFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
                 dyedBottomFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
