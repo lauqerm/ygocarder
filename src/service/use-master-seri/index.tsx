@@ -319,6 +319,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 effectBox: keepEffectBox,
                 artBorder: keepArtBorder,
                 body: opacityBody,
+                text: opacityEffect,
                 boundless,
                 baseFill,
                 frameBorder,
@@ -427,6 +428,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
             if (combinedArtCtx) await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
             if (backgroundCanvas && combinedArtCtx) await drawBackground(combinedArtCtx, hasArtBorder);
+            /** Fill effect background here, bascially create a sandwich: opaque effect background => artwork => transparent effect background. */
+            if (backgroundType === 'strict' && opacityEffect < 100 && combinedArtCtx) await drawEffectBackground({
+                externalCtx: combinedArtCtx,
+                blendWithBackground: false,
+                withPendulum: isPendulum,
+            });
             if (!boundless && combinedArtCtx) combinedArtCtx.drawImage(artOnCardCanvas, 0, 0);
 
             /** @summary Draw the overall layout */
@@ -436,13 +443,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             await drawCardBorder();
             await drawCardBorderFinish();
 
-            /** @summary Draw NON-PENDULUM card layout */
+            /** @summary Draw NON-PENDULUM non-boundless card layout */
             if (!isPendulum) {
                 if (!boundless) {
                     await drawNameBackground();
                 }
                 if (!boundless && (keepEffectBox || !hasBackground)) {
-                    await drawEffectBackground();
+                    await drawEffectBackground({});
                     await drawEffectBorder();
                     /** Foil DOES NOT contains shadow, so it relies on the shadow of the border below. */
                     await drawEffectBorderFoil();
@@ -452,7 +459,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawArtBorderFinish();
             }
 
-            /** @summary Draw PENDULUM-LIKE card layout. */
+            /** @summary Draw PENDULUM-LIKE non-boundless card layout. */
             if (isPendulum && !boundless) {
                 /** Since pendulum art boundary is wider, we cannot relies on the artwork under frame, instead we must draw the artwork again, this time with different size. */
                 const {
@@ -470,7 +477,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 );
 
                 await drawNameBackground();
-                await drawEffectBackground(true);
+                await drawEffectBackground({ withPendulum: true });
                 
                 /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
                 await drawPendulumScaleIcon();
@@ -526,13 +533,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 if (!frameBorder) await drawFrameBorder();
                 /** Redraw various part here because the extended artwork may overlap with those */
                 if (isPendulum) {
-                    await drawEffectBackground(true);
+                    await drawEffectBackground({ withPendulum: true });
                     await drawPendulumScaleIcon();
                     await drawPendulumBorder(false, 'normal');
                     await drawPendulumBorder(false, foil, true);
                     await drawBorderPendulumFinish();
                 } else if (keepEffectBox) {
-                    await drawEffectBackground();
+                    await drawEffectBackground({});
                     await drawEffectBorder();
                     await drawEffectBorderFoil();
                 }

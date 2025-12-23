@@ -103,6 +103,7 @@ const {
     attributeY,
     finishTypeCardWidth,
     stickerSize,
+    pendulumStructureHeight,
 } = CanvasConst;
 /** Various function used to draw the layout of a card is abstracted to this factory. */
 export const getLayoutDrawFunction = ({
@@ -174,7 +175,6 @@ export const getLayoutDrawFunction = ({
         artY,
         artFrameX,
         artFrameY,
-        artFrameHeight,
         artFrameWidth,
         artFinishX,
         artFinishY,
@@ -280,8 +280,8 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             /** Leave empty space for card art and pendulum effect */
             if (isPendulum) {
-                dyedTopFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
-                dyedBottomFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, artFrameHeight);
+                dyedTopFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, pendulumStructureHeight);
+                dyedBottomFrameCtx?.clearRect(artFrameX, artFrameY, artFrameWidth, pendulumStructureHeight);
             }
             /** Background replace frame */
             if (willReplaceFrame && dyedTopFrameCtx && dyedBottomFrameCtx) {
@@ -520,10 +520,10 @@ export const getLayoutDrawFunction = ({
             ctx.resetTransform();
         },
         /** Background is based on bottom frame. This function draws both background for pendulum part and normal effect part. */
-        drawEffectBackground: async (withPendulum = false) => {
-            if (!ctx) return;
+        drawEffectBackground: async ({ withPendulum = false, blendWithBackground = true, externalCtx = ctx }) => {
+            if (!externalCtx) return;
 
-            ctx.scale(globalScale, globalScale);
+            externalCtx.scale(globalScale, globalScale);
 
             const { ctx: effectBackgroundCtx, canvas: effectBackgroundCanvas } = createCanvas();
             if (withPendulum) {
@@ -543,8 +543,8 @@ export const getLayoutDrawFunction = ({
                 );
             }
             const dyedEffectBackgroundCanvas = dyeCanvas(effectBackgroundCanvas, dyeList[4]).canvas;
-            ctx.globalAlpha = opacityText / 100;
-            ctx.drawImage(dyedEffectBackgroundCanvas, 0, 0);
+            externalCtx.globalAlpha = (blendWithBackground ? opacityText : 100) / 100;
+            externalCtx.drawImage(dyedEffectBackgroundCanvas, 0, 0);
 
             if (withPendulum) {
                 const { ctx: pendulumEffectBackgroundCtx, canvas: pendulumEffectBackgroundCanvas } = createCanvas();
@@ -561,11 +561,11 @@ export const getLayoutDrawFunction = ({
                     pendulumBoxWidth, pendulumBoxHeight + exceptionPendulumBoxOffsetHeight,
                 );
                 const dyedPendulumEffectBackgroundCanvas = dyeCanvas(pendulumEffectBackgroundCanvas, dyeList[5]).canvas;
-                ctx.globalAlpha = opacityPendulum / 100;
-                ctx.drawImage(dyedPendulumEffectBackgroundCanvas, 0, 0);
+                externalCtx.globalAlpha = (blendWithBackground ? opacityPendulum : 100) / 100;
+                externalCtx.drawImage(dyedPendulumEffectBackgroundCanvas, 0, 0);
             }
-            ctx.globalAlpha = 1;
-            ctx.resetTransform();
+            externalCtx.globalAlpha = 1;
+            externalCtx.resetTransform();
         },
 
         /** @summary BORDER section */

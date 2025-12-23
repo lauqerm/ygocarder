@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '23/12/2025';
+        const currentReminder = '23/12/2025-2';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -82,7 +82,7 @@ export const QuestionAndFeedback = () => {
         {
             author: 'Blake at Dec 23, 2025',
             question: 'Did you use boundless cause I’m trying to make the object the image go over the card.',
-            answer: 'Yeah boundless layout is the main option to use. But the hard thing here is that you need a transparent artwork to combine with it to make a proper overframe card, which the app cannot help.',
+            answer: 'Yeah boundless layout is the main option to use. But the hard thing here is that you need a transparent artwork to combine with it to make a proper overframe card, which the app cannot help.\nIn any case I plan to readjust the option a bit for more clarity, and also add sample cards for easy demonstration.',
         },
         {
             author: 'Ebrahim at Dec 23, 2025',

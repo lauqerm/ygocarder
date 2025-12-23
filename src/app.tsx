@@ -835,6 +835,7 @@ function App() {
                     </div>
                     {isLoading === false && <CardInputPanel
                         ref={cardInputRef}
+                        applyCardData={treatNewCard}
                         artworkCanvas={artworkCanvasRef.current}
                         backgroundCanvas={backgroundCanvasRef.current}
                         onSourceLoaded={rerenderAllImage}

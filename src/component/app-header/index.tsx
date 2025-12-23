@@ -1,4 +1,4 @@
-import { GithubFilled, DatabaseFilled, AuditOutlined } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -12,6 +12,8 @@ import { StyledPopMarkdown } from '../atom';
 import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
 import { PresetManager } from '../preset-manager';
 import './app-header.scss';
+import { SampleCard, SampleCardRef } from './sample';
+import { useRef } from 'react';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -43,7 +45,10 @@ const StyledAppHeaderButtonContainer = styled.div`
     }
 `;
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
-export const AppHeader = () => {
+export type AppHeader = {} & Pick<SampleCard, 'applyCardData'>;
+export const AppHeader = ({
+    applyCardData,
+}: AppHeader) => {
     const {
         language,
         languageInfo,
@@ -86,6 +91,7 @@ export const AppHeader = () => {
         setVisible,
         visible,
     })));
+    const sampleCardRef = useRef<SampleCardRef>(null);
 
     return <div className="app-header">
         <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
@@ -202,6 +208,24 @@ export const AppHeader = () => {
                 </div>
             </StyledHeaderButtonContainer>
             <PresetManager language={language} />
+        </StyledAppHeaderButtonContainer>
+        <StyledAppHeaderButtonContainer className="sample-card">
+            <StyledHeaderButtonContainer
+                className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
+                onClick={() => {
+                    sampleCardRef.current?.open();
+                }}
+            >
+                <div className="button-label">
+                    <SnippetsFilled />
+                    <label>{language['sample.manager.label']}</label>
+                </div>
+            </StyledHeaderButtonContainer>
+            <SampleCard
+                ref={sampleCardRef}
+                language={language}
+                applyCardData={applyCardData}
+            />
         </StyledAppHeaderButtonContainer>
     </div>;
 };

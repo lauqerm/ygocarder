@@ -87,7 +87,7 @@ export const CanvasConst = {
     iconHeight: 44,
 };
 
-export const DEFAULT_BASE_FILL_COLOR = '#ff0000'; //'#404040';
+export const DEFAULT_BASE_FILL_COLOR = '#404040';
 export const getDefaultCardOpacity = () => ({
     body: 100,
     pendulum: 100,
@@ -387,14 +387,21 @@ export const getArtCanvasCoordinate = (
     backgroundType?: BackgroundType,
     pendulumSize?: PendulumSize,
 ) => {
+    const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
+    if (backgroundType === 'strict') {
+        normalizedOpacity.boundless = false;
+        normalizedOpacity.text = 100;
+        normalizedOpacity.pendulum = 100;
+    }
+    
     const {
         boundless,
         body,
         pendulum,
         text,
         frameBorder,
-    } = { ...getDefaultCardOpacity(), ...opacity };
-    const normalizedIsBoundless = backgroundType === 'fit'
+    } = normalizedOpacity;
+    const normalizedIsBoundless = backgroundType === 'fit' || backgroundType === 'strict'
         ? false
         : boundless;
     const normalizedIsOverframe = normalizedIsBoundless
