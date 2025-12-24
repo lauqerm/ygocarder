@@ -74,21 +74,30 @@ export const drawScale = (
     }
 };
 
-export const draw1stEdition = (
-    ctx: CanvasRenderingContext2D | null | undefined,
+export const draw1stEdition = ({
+    ctx,
     txt = '1<st> Edition',
     edge = 99,
     baseline = 1150.93,
     baselineOffset = 0,
-    option: {
-        stroke?: boolean,
-        textStyle?: CanvasTextStyle,
-        globalScale: number,
-    } = {
+    width = 185,
+    option = {
         globalScale: 1,
         stroke: false,
     },
-) => {
+}: {
+    ctx: CanvasRenderingContext2D | null | undefined,
+    txt?: string,
+    edge?: number,
+    width?: number,
+    baseline?: number,
+    baselineOffset?: number,
+    option?: {
+        stroke?: boolean,
+        textStyle?: CanvasTextStyle,
+        globalScale: number,
+    },
+}) => {
     if (!ctx) return;
 
     const {
@@ -112,9 +121,44 @@ export const draw1stEdition = (
     });
     const superTextOffset = 7.4 * globalScale;
     const ordinalIndicatorOffset = -2 * globalScale;
+    const availableWidth = width * globalScale;
 
     let left = actualEdge;
     let superscriptMode = false;
+    let contentWidth = 0;
+    for (let cnt = 0; cnt < tokenList.length; cnt++) {
+        const token = tokenList[cnt];
+        if (token === '') continue;
+        if (token === '<') {
+            superscriptMode = true;
+            continue;
+        }
+        if (token === '>') {
+            superscriptMode = false;
+            continue;
+        }
+        const restoredToken = token.replaceAll(NB_WORD_OPEN, '<').replaceAll(NB_WORD_CLOSE, '>');
+        if (superscriptMode) {
+            ctx.font = `${17.78 * globalScale}px palatino-linotype-bold`;
+            contentWidth += ctx.measureText(restoredToken).width;
+        } else {
+            if (!isNaN(parseInt(restoredToken))) {
+                ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
+                contentWidth += ctx.measureText(restoredToken).width - 2 * globalScale;
+            } else if (restoredToken === 'ª' || restoredToken === 'º') {
+                ctx.font = `${20.22 * globalScale}px Georgia`;
+                contentWidth += ctx.measureText(restoredToken).width;
+            } else {
+                ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
+                contentWidth += ctx.measureText(restoredToken).width;
+            }
+        }
+    }
+
+    const xRatio = Math.min(availableWidth / contentWidth, 1);
+    ctx.scale(xRatio, 1);
+    left = actualEdge / xRatio;
+    superscriptMode = false;
     for (let cnt = 0; cnt < tokenList.length; cnt++) {
         const token = tokenList[cnt];
         if (token === '') continue;
@@ -151,6 +195,7 @@ export const draw1stEdition = (
             }
         }
     }
+    ctx.resetTransform();
     resetStyle();
 };
 

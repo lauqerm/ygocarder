@@ -271,6 +271,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
                         {editionList.map(({ label, value }, index) => {
                             return <Menu.Item key={`${index}`}
                                 onClick={() => {
+                                    onFirstEditionChange({ target: { checked: true } } as CheckboxChangeEvent);
                                     firstEditionTextRef.current?.setValue(value);
                                 }}
                             >

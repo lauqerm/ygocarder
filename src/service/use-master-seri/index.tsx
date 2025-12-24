@@ -787,13 +787,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     ? 0
                     : isSpeedSkill ? -2 : -1;
 
-                if (willDraw) draw1stEdition(
+                if (willDraw) draw1stEdition({
                     ctx,
-                    firstEditionText,
-                    left,
-                    bottom,
-                    bottomOffset,
-                    {
+                    txt: firstEditionText,
+                    edge: left,
+                    baseline: bottom,
+                    baselineOffset: bottomOffset,
+                    option: {
                         stroke: false,
                         globalScale,
                         textStyle: {
@@ -801,7 +801,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                             ...resolvedOtherEffectTextStyle,
                         }
                     },
-                );
+                });
             }
         };
     }, [
