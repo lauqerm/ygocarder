@@ -28,7 +28,6 @@ import {
     RENDER_TAG_SOURCE,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
-    RenderTagRegex,
     PLACEHOLDER_CLOSE,
     PLACEHOLDER_OPEN,
     START_OF_LINE_ALPHABET_OFFSET,
@@ -226,10 +225,8 @@ export const analyzeToken = ({
         }
     }
 
-    const isControlWord = new RegExp(STYLING_TAG_SOURCE, 'g').test(token);
-    const fragmentList = isControlWord
-        ? []
-        : token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
+    const tokenWithoutControlWord = token.replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), '');
+    const fragmentList = tokenWithoutControlWord.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
     for (let cnt = 0; cnt < fragmentList.length; cnt++) {
         const isLeftmostFragment = cnt === 0;
         const fragment = fragmentList[cnt];
@@ -500,7 +497,6 @@ export const analyzeLine = ({
     memory?: DrawMemory,
 }) => {
     const tokenList = tokenizeText(line);
-    console.log('🚀 ~ analyzeLine ~ line:', line, tokenList);
     let totalContentWidth = 0;
     let lineSpaceCount = 0;
     let currentGap = 0;

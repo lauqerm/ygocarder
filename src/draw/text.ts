@@ -10,7 +10,6 @@ import {
     ITALIC_CLOSE_TAG,
     ITALIC_OPEN_TAG,
     ImageDrawMemory,
-    ImageMemory,
     LETTER_GAP_RATIO,
     MAX_LINE_REVERSE_INDENT,
     NB_UNCOMPRESSED_END,
@@ -26,7 +25,6 @@ import {
     RENDER_TAG_SOURCE,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
-    RenderTagRegex,
     PLACEHOLDER_CLOSE,
     PLACEHOLDER_OPEN,
     START_OF_LINE_ALPHABET_OFFSET,
@@ -56,6 +54,7 @@ import { drawMarker } from './canvas-util';
 import { scaleFontSizeData, swapTextData } from 'src/util';
 import { drawFromWithSize } from './image';
 import { useGlobalMemory } from 'src/service';
+import { normalizeCardText } from './text-normalize';
 
 /**
  * This is the heart and soul of drawer, please test this thoroughly for each change.
@@ -131,7 +130,6 @@ export const drawLine = async ({
     /** To reach a acceptable degree of calculation, we usually need to look ahead 1 or 2 next tokens, same with fragments. */
     /** To prevent cascading calculation, we disconnect the relationship between fragments and tokens. We use all information to calculate an empty space for each token, then fragments of that token is drawn inside that empty space assuming they would fit. In other words, drawing fragments of a token DOES NOT interfere with the next token. That means in theory we can skip all fragments of a token to draw the next token right away.
      */
-        console.log('🚀 ~ drawLine ~ tokenList:', tokenList, normalizedMemory);
     for (let tokenCnt = 0, xRatio = baseXRatio; tokenCnt < tokenList.length; tokenCnt++) {
         /** All the info here is not affected by injected dynamic fonts */
         const {
@@ -378,7 +376,6 @@ export const drawLine = async ({
         } = analyzeToken({
             token, nextToken, previousTokenGap: previousTokenGap / xRatio, memory: normalizedMemory, ...analyzeTokenParameter,
         });
-        console.log('🚀 ~ drawLine ~ fragmentList:', potentialTaggedToken, token, tokenList, fragmentList, totalTokenWidth, tagList);
 
         /** Again, first token indentation. */
         const indent = tokenCnt === 0
@@ -483,7 +480,6 @@ export const drawLine = async ({
                     applyAsymmetricScale(xRatio, yRatio);
                     currentRightGap = 0;
                     previousTokenRebalanceOffset = 0;
-                        console.log('🚀 ~ drawLine ~ width:', fragment, width, fragmentEdge, tagList[tagPosition]);
                 }
             }
             /** Fragment with overhead text. */
@@ -497,7 +493,6 @@ export const drawLine = async ({
                     memory: normalizedMemory,
                     ...analyzeTokenParameter,
                 });
-                    console.log('🚀 ~ drawLine ~ footText:', footText, footTextWidth, tokenizeText(footText));
 
                 /** Calculate letter width first before deciding the spacing. */
                 applyFuriganaFont();
@@ -562,12 +557,17 @@ export const drawLine = async ({
                 previousTokenRebalanceOffset = nextTokenRebalanceOffset;
 
                 /** Draw actual foot text here */
-                console.log('start foot text');
+                /**
+                 * In theory, our tokenize tactic should perform correctly for all the past cases, but we are currently unable to test it now, so we tried our best to keep the old behavior unchanged. @todo verify this later.
+                 */
+                const footTextTokenList = footText.includes('<')
+                    ? tokenizeText(normalizeCardText(footText, format, { multiline: false, furiganaHelper: false }))
+                    : tokenizeText(footText);
                 await drawLine({
                     ctx,
                     format,
                     textData,
-                    tokenList: [footText],
+                    tokenList: footTextTokenList,
                     trueBaseline: baseline,
                     lineHeight,
                     trueEdge: footTextFragmentEdge,
@@ -579,7 +579,6 @@ export const drawLine = async ({
                     debug: false,
                     memory: normalizedMemory,
                 });
-                console.log('finish foot text');
 
                 /** Head text may have different text style than foot text, so we store the current style before start drawing head text. */
                 const currentFillStyle = ctx.fillStyle;

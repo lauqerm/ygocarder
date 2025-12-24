@@ -110,7 +110,7 @@ export const normalizeCardText = (
 
     /** Normalize the text based on format, by swapping letters to their corresponding form. For example full-width captial A "Ａ" will become normal capital "A" after normalized. */
     let normalizedText = '';
-    let letterSwapMap = format === 'ocg'
+    const letterSwapMap = format === 'ocg'
         ? tcgToOCGLetterMap
         : ocgToTCGLetterMap;
     for (const letter of nonNullableText) {
@@ -165,8 +165,22 @@ export const normalizeCardText = (
      * * Ordinal letters must always followed by a colon "：", and cannot stand at the end of a line.
     */
     const textAfterProcessing = textAfterDictionaryMatch
-        .replaceAll(new RegExp(RENDER_TAG_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
-        .replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+        .replaceAll(new RegExp(RENDER_TAG_SOURCE, 'g'), m => {
+            /** Swapping TCG letters to OCG may accidentally destroy tag, so make sure that does not happens */
+            let reversedSwappedText = '';
+            for (const letter of m) {
+                reversedSwappedText += ocgToTCGLetterMap[letter] ?? letter;
+            }
+            return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
+        })
+        .replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), m => {
+            /** Swapping TCG letters to OCG may accidentally destroy tag, so make sure that does not happens */
+            let reversedSwappedText = '';
+            for (const letter of m) {
+                reversedSwappedText += ocgToTCGLetterMap[letter] ?? letter;
+            }
+            return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
+        })
         .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_START_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)

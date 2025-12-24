@@ -180,9 +180,7 @@ export const getLayoutDrawFunction = ({
         artFinishY,
         artWidth,
         artRatio,
-        type,
     } = getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize);
-    console.log('type', type);
     const {
         frameType,
         effectBoxOffsetY,

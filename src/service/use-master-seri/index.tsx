@@ -516,12 +516,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     artWidth,
                     ratio,
                 } = getArtCanvasCoordinate(isPendulum, opacity, 'full', pendulumSize);
-                console.log('boundless art', opacity, {
-                    artX,
-                    artY,
-                    artWidth,
-                    ratio,
-                });
+
                 if (frameBorder) await drawFrameBorder();
                 ctx.drawImage(
                     artOnCardCanvas,
