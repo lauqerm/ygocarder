@@ -5,6 +5,7 @@ import {
     CapitalLetterRegex,
     DefaultFontData,
     DefaultFontSizeData,
+    DrawMemory,
     FontData,
     FragmentSplitRegex,
     GAP_PER_WIDTH_RATIO,
@@ -24,19 +25,24 @@ import {
     OCGNoOverheadGapRegex,
     PRE_CLOSE_TAG,
     PRE_OPEN_TAG,
+    RENDER_TAG_SOURCE,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
     RenderTagRegex,
+    PLACEHOLDER_CLOSE,
+    PLACEHOLDER_OPEN,
     START_OF_LINE_ALPHABET_OFFSET,
     STYLING_TAG_SOURCE,
     ST_ICON_SYMBOL,
+    PlaceholderRegex,
     SquareBracketLetterRegex,
     TCGSymbolLetterRegex,
     TextData,
     VietnameseDiacriticLetterRegex,
     WholeWordRegex,
+    PLACEHOLDER_DELIMITER,
 } from 'src/model';
-import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth } from './text-util';
+import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth, splitPlaceholder } from './text-util';
 import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
 import { getLetterWidth } from './letter';
 import { useGlobalMemory } from 'src/service';
@@ -60,6 +66,7 @@ export const analyzeToken = ({
     format,
     globalScale,
     textData,
+    memory,
     // debug = false,
 }: {
     ctx: CanvasRenderingContext2D,
@@ -77,6 +84,7 @@ export const analyzeToken = ({
         fontLevel: number,
         currentFont: ReturnType<typeof createFontGetter>,
     },
+    memory?: DrawMemory,
 }) => {
     if (!ctx || !rawToken) return {
         totalWidth: 0,
@@ -86,6 +94,7 @@ export const analyzeToken = ({
         rightGap: 0,
         leftGap: 0,
     };
+    const imageMemory = memory?.image ?? {};
     const imagePresetMap = useGlobalMemory.getState().memory.imagePresetMap;
     const scaledDefaultFontSizeData = scaleFontSizeData(DefaultFontSizeData, globalScale);
     const letterSpacing = _letterSpacing ?? scaledDefaultFontSizeData.letterSpacing;
@@ -122,7 +131,8 @@ export const analyzeToken = ({
         applyNumberFont, stopApplyNumberFont,
         applyVietnameseFont, stopApplyVietnameseFont,
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
-    const token = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
+    let potentialTaggedToken = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
+    let token = potentialTaggedToken;
     const letterSpacingRatio = 1 + letterSpacing / 2;
     let leftMostLetter = '';
     let totalWidth = 0;
@@ -134,17 +144,22 @@ export const analyzeToken = ({
     /** Whether or not it is affected by rebalance calculation */
     let offsetable = false;
     let leftMostGap = 0;
+    const renderTagRegex = new RegExp(RENDER_TAG_SOURCE, 'g');
+    let renderTagMatchResult: RegExpMatchArray | null;
 
-    const renderTagMatchResult = token.match(RenderTagRegex);
-    if (renderTagMatchResult) {
+    while ((renderTagMatchResult = renderTagRegex.exec(potentialTaggedToken)) != null) {
         const regex = /(?<=<.+?)(?<!>) ([\w-]+)(?:=["|'|”|“](.+?)["|'|”|“]|\b)(?!<)(?=.*?>)/gm;
         const tagName = renderTagMatchResult[1];
         if (tagName === IMG_TAG_NAME) {
             currentRightGap = 0;
             let matchResult: RegExpExecArray | null;
             let width: number | undefined;
-            let src: string | undefined;
-            while ((matchResult = regex.exec(token)) !== null) {
+            let height: number | undefined;
+            let offsetX: number | undefined;
+            let offsetY: number | undefined;
+            let src = '';
+            let name: string | undefined;
+            while ((matchResult = regex.exec(renderTagMatchResult[0])) !== null) {
                 // This is necessary to avoid infinite loops with zero-width matches
                 if (matchResult.index === regex.lastIndex) {
                     regex.lastIndex++;
@@ -152,26 +167,63 @@ export const analyzeToken = ({
                 const attributeKey = matchResult[1];
                 const attributeValue = matchResult[2];
 
-                if (attributeKey === 'width') width = parseInt(attributeValue);
-                if (attributeKey === 'src') src = attributeValue;
+                switch (attributeKey) {
+                    case 'src': {
+                        src = attributeValue;
+                        break;
+                    }
+                    case 'width': {
+                        width = parseInt(attributeValue);
+                        break;
+                    }
+                    case 'height': {
+                        height = parseInt(attributeValue);
+                        break;
+                    }
+                    case 'offsetX': {
+                        offsetX = parseInt(attributeValue);
+                        break;
+                    }
+                    case 'offsetY': {
+                        offsetY = parseInt(attributeValue);
+                        break;
+                    }
+                    case 'name': {
+                        name = attributeValue;
+                        break;
+                    }
+                }
+            }
+            if (name) {
+                const memoizedImage = imageMemory[name];
+                if (memoizedImage) {
+                    src = memoizedImage.src;
+                    width = typeof width === 'number' ? width : memoizedImage.width;
+                    height = typeof height === 'number' ? height : memoizedImage.height;
+                    offsetX = typeof offsetX === 'number' ? offsetX : memoizedImage.offsetX;
+                    offsetY = typeof offsetY === 'number' ? offsetY : memoizedImage.offsetY;
+                } else {
+                    imageMemory[name] = {
+                        src,
+                        width,
+                        height,
+                        offsetX,
+                        offsetY,
+                    };
+                }
             }
             const preset = src ? imagePresetMap[src] : undefined;
+            const memoizedImage = name ? imageMemory[name] : undefined;
             const normalizedWidth = (typeof width === 'number'
                 ? width
                 : preset
                     ? preset.width
-                    : undefined) ?? (lineHeight * 0.9);
+                    : memoizedImage?.width
+                        ? memoizedImage?.width
+                        : undefined) ?? (lineHeight * 0.9);
             totalWidth += normalizedWidth / xRatio;
+            token = token.replace(renderTagMatchResult[0], `${PLACEHOLDER_OPEN}img${PLACEHOLDER_DELIMITER}0${PLACEHOLDER_CLOSE}`);
         }
-        return {
-            totalWidth,
-            spaceCount,
-            spaceAtEnd,
-            leftMostLetter,
-            rightGap: currentRightGap,
-            leftGap: leftMostGap,
-            offsetable,
-        };
     }
 
     const isControlWord = new RegExp(STYLING_TAG_SOURCE, 'g').test(token);
@@ -226,6 +278,18 @@ export const analyzeToken = ({
             totalWidth += fragmentWidth * letterSpacingRatio;
 
             spaceCount += 1;
+            if (isLeftmostFragment) {
+                leftMostGap = 0;
+                leftMostLetter = fragment[0];
+            }
+        }
+        /** Process placeholder, image placeholder is unscalable */
+        else if (PlaceholderRegex.test(fragment)) {
+            currentRightGap = 0;
+            const { width, content } = splitPlaceholder(fragment);
+            totalWidth += content === 'img'
+                ? width / xRatio
+                : width;
             if (isLeftmostFragment) {
                 leftMostGap = 0;
                 leftMostLetter = fragment[0];
@@ -421,6 +485,7 @@ export const analyzeLine = ({
     textData,
     globalScale,
     justifyRatio,
+    memory,
 }: {
     ctx: CanvasRenderingContext2D,
     line: string,
@@ -432,8 +497,10 @@ export const analyzeLine = ({
     textData: TextData,
     globalScale: number,
     justifyRatio: number,
+    memory?: DrawMemory,
 }) => {
     const tokenList = tokenizeText(line);
+    console.log('🚀 ~ analyzeLine ~ line:', line, tokenList);
     let totalContentWidth = 0;
     let lineSpaceCount = 0;
     let currentGap = 0;
@@ -505,6 +572,7 @@ export const analyzeLine = ({
             format,
             globalScale,
             lineHeight,
+            memory,
         });
         /** Check `createLineList` function about first token indentation. */
         const indent = (

@@ -5,6 +5,7 @@ import {
     TextData,
     NB_UNCOMPRESSED_END,
     NB_UNCOMPRESSED_START,
+    DrawMemory,
 } from 'src/model';
 import { tokenizeText } from './text-util';
 import { analyzeToken } from './text-analyze';
@@ -20,6 +21,7 @@ export const createLineList = ({
     format,
     textData,
     globalScale,
+    memory,
 }: {
     ctx: CanvasRenderingContext2D,
     median: number,
@@ -30,6 +32,7 @@ export const createLineList = ({
     format: string,
     textData: TextData,
     globalScale: number,
+    memory?: DrawMemory,
 }) => {
     const { fontData, fontLevel } = textData;
     const { letterSpacing } = fontData.fontList[fontLevel];
@@ -75,6 +78,7 @@ export const createLineList = ({
                 textData,
                 globalScale,
                 lineHeight,
+                memory,
             });
 
             /** First token of a line may have the head text overflow to the left of the paragraph. On one hand we ensure that the foot text of that token does not overflow, on the other hand we also ensure that the head text cannot overflow too far so it overlap with the section's border (if any).
@@ -111,6 +115,7 @@ export const createLineList = ({
                     textData,
                     globalScale,
                     lineHeight,
+                    memory,
                 });
                 /** Of course we also re-calculate overflow possibility. */
                 const indent = (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale / xRatio, leftGap) * -1 : 0)

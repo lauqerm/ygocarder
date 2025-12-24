@@ -5,6 +5,9 @@ import {
     FontSizeData,
     NB_WORD_CLOSE,
     NB_WORD_OPEN,
+    PLACEHOLDER_CLOSE,
+    PLACEHOLDER_DELIMITER,
+    PLACEHOLDER_OPEN,
 } from 'src/model';
 import { createFontGetter, scaleFontSizeData } from 'src/util';
 
@@ -307,4 +310,17 @@ export const getLostLeftWidth = (prevGap: number, curGap: number) => {
         : curGap >= 0
             ? Math.max(prevGap, curGap * -1) * -1
             : 0;
+};
+
+export const splitPlaceholder = (placeholder: string) => {
+    const [
+        content,
+        width,
+    ] = placeholder.replace(PLACEHOLDER_OPEN, '').replace(PLACEHOLDER_CLOSE, '').split(PLACEHOLDER_DELIMITER);
+    const parsedWidth = parseFloat(width);
+
+    return {
+        content,
+        width: isNaN(parsedWidth) ? 0 : parsedWidth,
+    };
 };

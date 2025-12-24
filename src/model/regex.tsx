@@ -29,6 +29,32 @@ export const BOLD_CLOSE_TAG = '</b>';
 export const PRE_OPEN_TAG = '<pre>';
 export const PRE_CLOSE_TAG = '</pre>';
 
+export const NB_WORD_OPEN = '⧚';
+export const NB_WORD_CLOSE = '⧛';
+export const NB_LINE_OPEN = '⟅';
+export const NB_LINE_CLOSE = '⟆';
+export const NB_FULL_LINE_OPEN = '᚛';
+export const NB_FULL_LINE_CLOSE = '᚜';
+export const NB_UNCOMPRESSED_START = '⟬';
+export const NB_UNCOMPRESSED_END = '⟭';
+export const PLACEHOLDER_OPEN = '⦇';
+export const PLACEHOLDER_CLOSE = '⦈';
+export const PLACEHOLDER_DELIMITER = ';';
+/** Remove all control characters */
+export const NormalizeTextRegex = new RegExp(`[${[
+    NB_FULL_LINE_CLOSE,
+    NB_FULL_LINE_OPEN,
+    NB_LINE_CLOSE,
+    NB_LINE_OPEN,
+    NB_UNCOMPRESSED_END,
+    NB_UNCOMPRESSED_START,
+    NB_WORD_CLOSE,
+    NB_WORD_OPEN,
+].join('')}]|(\\|[^}]+})`, 'g');
+
+export const PLACHOLDER_SOURCE = `${PLACEHOLDER_OPEN}[^${PLACEHOLDER_OPEN}${PLACEHOLDER_CLOSE}]*${PLACEHOLDER_CLOSE}$`;
+export const PlaceholderRegex = new RegExp(PLACHOLDER_SOURCE);
+
 /** 
  * Beside usual alphabet letter and number, we try to support accented letters and Japanese's version of alphabet too.
  * * Latin-1 Supplement block, without arithmetic symbol such as × and ÷
@@ -44,29 +70,9 @@ export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE);
 export const VIETNAMESE_DIACRITIC_LETTER = '[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]';
 export const VietnameseDiacriticLetterRegex = new RegExp(VIETNAMESE_DIACRITIC_LETTER);
 
-export const FragmentSplitRegex = new RegExp(`(\\{[^\\{\\}]+?\\}|${WHOLE_WORD_SOURCE}|.)`, 'u');
+export const FragmentSplitRegex = new RegExp(`(\\{[^\\{\\}]+?\\}|${WHOLE_WORD_SOURCE}|${PLACEHOLDER_OPEN}[^${PLACEHOLDER_OPEN}${PLACEHOLDER_CLOSE}]*${PLACEHOLDER_CLOSE}|.)`, 'u');
 
 export const UNCOMPRESSED_SOURCE = '{{([^{}]+?)}}';
-
-export const NB_WORD_OPEN = '⧚';
-export const NB_WORD_CLOSE = '⧛';
-export const NB_LINE_OPEN = '⟅';
-export const NB_LINE_CLOSE = '⟆';
-export const NB_FULL_LINE_OPEN = '᚛';
-export const NB_FULL_LINE_CLOSE = '᚜';
-export const NB_UNCOMPRESSED_START = '⟬';
-export const NB_UNCOMPRESSED_END = '⟭';
-/** Remove all control characters */
-export const NormalizeTextRegex = new RegExp(`[${[
-    NB_FULL_LINE_CLOSE,
-    NB_FULL_LINE_OPEN,
-    NB_LINE_CLOSE,
-    NB_LINE_OPEN,
-    NB_UNCOMPRESSED_END,
-    NB_UNCOMPRESSED_START,
-    NB_WORD_CLOSE,
-    NB_WORD_OPEN,
-].join('')}]|(\\|[^}]+})`, 'g');
 
 export const FULL_LINE_PLACEHOLDER = '⸦⸧';
 export const FLAVOR_LINE_PLACEHOLDER = '⸦⸦⸧⸧';

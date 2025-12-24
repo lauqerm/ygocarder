@@ -9,6 +9,8 @@ import {
     IMG_TAG_NAME,
     ITALIC_CLOSE_TAG,
     ITALIC_OPEN_TAG,
+    ImageDrawMemory,
+    ImageMemory,
     LETTER_GAP_RATIO,
     MAX_LINE_REVERSE_INDENT,
     NB_UNCOMPRESSED_END,
@@ -21,11 +23,15 @@ import {
     OCGNoOverheadGapRegex,
     PRE_CLOSE_TAG,
     PRE_OPEN_TAG,
+    RENDER_TAG_SOURCE,
     RUBY_BONUS_RATIO,
     RUBY_REGEX,
     RenderTagRegex,
+    PLACEHOLDER_CLOSE,
+    PLACEHOLDER_OPEN,
     START_OF_LINE_ALPHABET_OFFSET,
     ST_ICON_SYMBOL,
+    PlaceholderRegex,
     SquareBracketLetterRegex,
     TCGSymbolLetterRegex,
     TextData,
@@ -33,6 +39,7 @@ import {
     VietnameseDiacriticLetterRegex,
     WholeWordRegex,
     getBulletSpacing,
+    PLACEHOLDER_DELIMITER,
 } from 'src/model';
 import {
     drawBullet,
@@ -40,6 +47,7 @@ import {
     analyzeHeadText,
     getTextWorker,
     tokenizeText,
+    splitPlaceholder,
 } from './text-util';
 import { analyzeToken } from './text-analyze';
 import { TextDrawer, drawLetter, getLetterWidth } from './letter';
@@ -76,6 +84,7 @@ export const drawLine = async ({
     debug = false,
     option,
     globalScale,
+    memory,
 }: {
     ctx: CanvasRenderingContext2D,
     format: string,
@@ -94,7 +103,12 @@ export const drawLine = async ({
         drawHeadText?: boolean,
     },
     debug?: boolean,
+    memory?: {
+        image: Record<string, { src: string, width?: number, height?: number, offsetX?: number, offsetY?: number }>,
+    },
 }) => {
+    const normalizedMemory = memory ?? { image: {} };
+    const imageMemory = normalizedMemory?.image ?? {};
     const imagePresetMap = useGlobalMemory.getState().memory.imagePresetMap;
     const { drawHeadText = true } = option ?? {};
     const {
@@ -117,6 +131,7 @@ export const drawLine = async ({
     /** To reach a acceptable degree of calculation, we usually need to look ahead 1 or 2 next tokens, same with fragments. */
     /** To prevent cascading calculation, we disconnect the relationship between fragments and tokens. We use all information to calculate an empty space for each token, then fragments of that token is drawn inside that empty space assuming they would fit. In other words, drawing fragments of a token DOES NOT interfere with the next token. That means in theory we can skip all fragments of a token to draw the next token right away.
      */
+        console.log('🚀 ~ drawLine ~ tokenList:', tokenList, normalizedMemory);
     for (let tokenCnt = 0, xRatio = baseXRatio; tokenCnt < tokenList.length; tokenCnt++) {
         /** All the info here is not affected by injected dynamic fonts */
         const {
@@ -156,19 +171,19 @@ export const drawLine = async ({
             applyVietnameseFont, stopApplyVietnameseFont,
             applyAsymmetricScale, resetScale,
         } = textWorker;
-        const token = tokenList[tokenCnt];
-        /** Turn on/off non-condenseable mode */
-        if (token === NB_UNCOMPRESSED_START) {
+        const potentialTaggedToken = tokenList[tokenCnt];
+        /** Mode switch letter got processed first */
+        if (potentialTaggedToken === NB_UNCOMPRESSED_START) {
             xRatio = 1;
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             continue;
         }
-        else if (token === NB_UNCOMPRESSED_END) {
+        else if (potentialTaggedToken === NB_UNCOMPRESSED_END) {
             xRatio = baseXRatio;
             ctx.scale(xRatio, 1);
             continue;
         }
-        if (token === ITALIC_OPEN_TAG) {
+        if (potentialTaggedToken === ITALIC_OPEN_TAG) {
             const hasItalicFontData = !!(NormalFontData[defaultFontData?.variant ?? '']);
             const italicFontData = hasItalicFontData
                 ? NormalFontData[defaultFontData.variant]
@@ -183,7 +198,7 @@ export const drawLine = async ({
                 .setStyle('italic')
                 .getFont();
             continue;
-        } else if (token === ITALIC_CLOSE_TAG) {
+        } else if (potentialTaggedToken === ITALIC_CLOSE_TAG) {
             currentTextData = textData;
             currentFont = currentTextData.currentFont;
             currentFontData = currentTextData.fontData;
@@ -194,25 +209,26 @@ export const drawLine = async ({
                 .getFont();
             continue;
         }
-        if (token === BOLD_OPEN_TAG) {
+        if (potentialTaggedToken === BOLD_OPEN_TAG) {
             ctx.font = currentTextData.currentFont
                 .setWeight('bold')
                 .getFont();
             continue;
-        } else if (token === BOLD_CLOSE_TAG) {
+        } else if (potentialTaggedToken === BOLD_CLOSE_TAG) {
             ctx.font = currentTextData.currentFont
                 .setWeight('')
                 .getFont();
             continue;
         }
-        if (token === PRE_OPEN_TAG) {
+        if (potentialTaggedToken === PRE_OPEN_TAG) {
             preformatMode = true;
             continue;
-        } else if (token === PRE_CLOSE_TAG) {
+        } else if (potentialTaggedToken === PRE_CLOSE_TAG) {
             preformatMode = false;
             continue;
         }
-        
+
+        /** Start drawing things */
         const gapRatio = LETTER_GAP_RATIO * xRatio;
         const defaultGap = fontSize * gapRatio;
         const nextToken = tokenList[tokenCnt + 1];
@@ -232,34 +248,21 @@ export const drawLine = async ({
             xRatio,
             textDrawer,
         };
-        let fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
-        /** Analyze current token again, this will dictate the width of a token, no matter what is actually drawn. We expect to draw nothing but the calculation must stay correct. */
-        const {
-            leftMostLetter,
-            leftGap,
-            rightGap: tokenRightGap,
-            totalWidth: totalTokenWidth,
-            spaceCount,
-        } = analyzeToken({
-            token, nextToken, previousTokenGap: previousTokenGap / xRatio, ...analyzeTokenParameter,
-        });
 
-        /** Again, first token indentation. */
-        const indent = tokenCnt === 0
-            ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)
-            + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0)
-            : 0;
-        let fragmentEdge = tokenEdge + indent;
-        let currentRightGap = previousTokenGap;
-
-
-        const renderTagMatchResult = token.match(RenderTagRegex);
-        if (renderTagMatchResult) {
+        /** Remember renderable tags' information here, we will use it to draw later */
+        let token = potentialTaggedToken;
+        const tagList: ImageDrawMemory[] = [];
+        const renderTagRegex = new RegExp(RENDER_TAG_SOURCE, 'g');
+        let renderTagMatchResult: RegExpMatchArray | null;
+        let tagListPosition = 0;
+    
+        while ((renderTagMatchResult = renderTagRegex.exec(potentialTaggedToken)) != null) {
             const regex = /(?<=<.+?)(?<!>) ([\w-]+)(?:=["|'|”|“](.+?)["|'|”|“]|\b)(?!<)(?=.*?>)/gm;
             const tagName = renderTagMatchResult[1];
+            let placeholderWidth = 0;
             if (tagName === IMG_TAG_NAME) {
-                fragmentList = [];
-                currentRightGap = 0;
+                // fragmentList = [];
+                // currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
                 let matchResult: RegExpExecArray | null;
                 let src = '';
@@ -267,7 +270,8 @@ export const drawLine = async ({
                 let height: number | undefined;
                 let offsetX: number | undefined;
                 let offsetY: number | undefined;
-                while ((matchResult = regex.exec(token)) !== null) {
+                let name: string | undefined;
+                while ((matchResult = regex.exec(renderTagMatchResult[0])) !== null) {
                     // This is necessary to avoid infinite loops with zero-width matches
                     if (matchResult.index === regex.lastIndex) {
                         regex.lastIndex++;
@@ -295,10 +299,31 @@ export const drawLine = async ({
                             offsetY = parseInt(attributeValue);
                             break;
                         }
+                        case 'name': {
+                            name = attributeValue;
+                            break;
+                        }
+                    }
+                }
+                if (name) {
+                    const memoizedImage = imageMemory[name];
+                    if (memoizedImage) {
+                        src = memoizedImage.src;
+                        width = typeof width === 'number' ? width : memoizedImage.width;
+                        height = typeof height === 'number' ? height : memoizedImage.height;
+                        offsetX = typeof offsetX === 'number' ? offsetX : memoizedImage.offsetX;
+                        offsetY = typeof offsetY === 'number' ? offsetY : memoizedImage.offsetY;
+                    } else {
+                        imageMemory[name] = {
+                            src,
+                            width,
+                            height,
+                            offsetX,
+                            offsetY,
+                        };
                     }
                 }
 
-                resetScale();
                 if (src && drawImage) {
                     let normalizedWidth = typeof width === 'number'
                         ? width
@@ -323,21 +348,45 @@ export const drawLine = async ({
                         isInternalSource = true;
                         normalizedSource = '/asset/image/' + (TotalImagePresetMap[src] ?? `${src}.png`);
                     }
-                    const lineHeightOffsetRatio = 0.75; // If it is 1, the image will touch the bottom of the line above
-                    await drawFromWithSize(
-                        ctx,
-                        normalizedSource,
-                        fragmentEdge + (offsetX ?? 0),
-                        trueBaseline + (offsetY ?? 0) - lineHeight * lineHeightOffsetRatio,
-                        normalizedWidth, height,
-                        undefined, undefined,
-                        undefined, undefined,
-                        { cache: isInternalSource, internalImage: isInternalSource }
-                    );
+                    /** Image is unscalable */
+                    placeholderWidth = (normalizedWidth ?? 0) / xRatio;
+                    tagList[tagListPosition] = {
+                        type: 'img',
+                        isInternalSource,
+                        src: normalizedSource,
+                        offsetX, offsetY,
+                        width: normalizedWidth, height,
+                    };
                 }
-                applyAsymmetricScale(xRatio, yRatio);
             }
-        }
+            token = token.replace(
+                renderTagMatchResult[0],
+                `${PLACEHOLDER_OPEN}${tagListPosition}${PLACEHOLDER_DELIMITER}${placeholderWidth}${PLACEHOLDER_CLOSE}`,
+            );
+            tagListPosition += 1;
+        };
+
+        const trueFragmentList = potentialTaggedToken.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
+        const fragmentList = token.split(FragmentSplitRegex).filter(entry => entry != null && entry !== '');
+        /** Analyze current token again, this will dictate the width of a token, no matter what is actually drawn. We expect to draw nothing but the calculation must stay correct. */
+        const {
+            leftMostLetter,
+            leftGap,
+            rightGap: tokenRightGap,
+            totalWidth: totalTokenWidth,
+            spaceCount,
+        } = analyzeToken({
+            token, nextToken, previousTokenGap: previousTokenGap / xRatio, memory: normalizedMemory, ...analyzeTokenParameter,
+        });
+        console.log('🚀 ~ drawLine ~ fragmentList:', potentialTaggedToken, token, tokenList, fragmentList, totalTokenWidth, tagList);
+
+        /** Again, first token indentation. */
+        const indent = tokenCnt === 0
+            ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale, leftGap * xRatio) * -1 : 0)
+            + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0)
+            : 0;
+        let fragmentEdge = tokenEdge + indent;
+        let currentRightGap = previousTokenGap;
         /** Draw all the fragments of a token. */
         for (let fragmentCnt = 0; fragmentCnt < fragmentList.length; fragmentCnt++) {
             const fragment = fragmentList[fragmentCnt];
@@ -406,16 +455,49 @@ export const drawLine = async ({
                 currentRightGap = 0;
                 previousTokenRebalanceOffset = 0;
             }
+            /** Draw tagged entry */
+            else if (PlaceholderRegex.test(fragment)) {
+                const { content } = splitPlaceholder(fragment);
+                const tagPosition = parseInt(content);
+                if (!isNaN(tagPosition) && tagList[tagPosition]) {
+                    const {
+                        type,
+                        src,
+                        offsetX, offsetY,
+                        width, height,
+                        isInternalSource,
+                    } = tagList[tagPosition];
+                    const lineHeightOffsetRatio = 0.75; // If it is 1, the image will touch the bottom of the line above
+                    resetScale();
+                    await drawFromWithSize(
+                        ctx,
+                        src,
+                        fragmentEdge + (offsetX ?? 0),
+                        trueBaseline + (offsetY ?? 0) - lineHeight * lineHeightOffsetRatio,
+                        width, height,
+                        undefined, undefined,
+                        undefined, undefined,
+                        { cache: isInternalSource, internalImage: isInternalSource }
+                    );
+                    fragmentEdge += (type === 'img' && width ? width : 0);
+                    applyAsymmetricScale(xRatio, yRatio);
+                    currentRightGap = 0;
+                    previousTokenRebalanceOffset = 0;
+                        console.log('🚀 ~ drawLine ~ width:', fragment, width, fragmentEdge, tagList[tagPosition]);
+                }
+            }
             /** Fragment with overhead text. */
             else if (RUBY_REGEX.test(fragment)) {
-                const [footText, rubyType, headText = ''] = fragment.replaceAll(/{|}/g, '').split(/(\|+)/);
+                const [footText, rubyType, headText = ''] = trueFragmentList[fragmentCnt].replaceAll(/{|}/g, '').split(/(\|+)/);
                 const fitFootText = rubyType === '||';
                 /** We do not support nested overhead text. */
                 const { totalWidth: footTextWidth } = analyzeToken({
                     token: footText, nextToken: nextFragment,
                     previousTokenGap: 0,
+                    memory: normalizedMemory,
                     ...analyzeTokenParameter,
                 });
+                    console.log('🚀 ~ drawLine ~ footText:', footText, footTextWidth, tokenizeText(footText));
 
                 /** Calculate letter width first before deciding the spacing. */
                 applyFuriganaFont();
@@ -456,6 +538,7 @@ export const drawLine = async ({
                 } = analyzeToken({
                     token: nextFragment, nextToken: next2ndFragment,
                     previousTokenGap: rightGap / xRatio,
+                    memory: normalizedMemory,
                     ...analyzeTokenParameter,
                 });
                 const nextLeftGap = nextUncompressedLeftGap * xRatio;
@@ -479,12 +562,14 @@ export const drawLine = async ({
                 previousTokenRebalanceOffset = nextTokenRebalanceOffset;
 
                 /** Draw actual foot text here */
-                drawLine({
+                console.log('start foot text');
+                await drawLine({
                     ctx,
                     format,
                     textData,
-                    tokenList: tokenizeText(footText),
+                    tokenList: [footText],
                     trueBaseline: baseline,
+                    lineHeight,
                     trueEdge: footTextFragmentEdge,
                     xRatio,
                     yRatio,
@@ -492,7 +577,9 @@ export const drawLine = async ({
                     textDrawer,
                     globalScale,
                     debug: false,
+                    memory: normalizedMemory,
                 });
+                console.log('finish foot text');
 
                 /** Head text may have different text style than foot text, so we store the current style before start drawing head text. */
                 const currentFillStyle = ctx.fillStyle;

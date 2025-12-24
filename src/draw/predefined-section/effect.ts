@@ -9,6 +9,7 @@ import {
     NormalFontData,
     FULL_LINE_PLACEHOLDER,
     FLAVOR_LINE_PLACEHOLDER,
+    DrawMemory,
 } from '../../model';
 import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
@@ -167,6 +168,9 @@ export const drawEffect = async ({
             lineHeight,
             lineCount,
         } = fontSizeData;
+        const memory: DrawMemory = {
+            image: {},
+        };
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
@@ -197,6 +201,7 @@ export const drawEffect = async ({
                         width,
                         lineHeight,
                         globalScale,
+                        memory,
                     });
                     lineListWithRatio = currentLineList;
 
@@ -244,6 +249,7 @@ export const drawEffect = async ({
                                     width,
                                     lineHeight,
                                     globalScale,
+                                    memory,
                                 });
 
                                 if (currentLineCount > 1) return false;
@@ -261,6 +267,7 @@ export const drawEffect = async ({
                             globalScale,
                             justifyRatio: 100,
                             lineHeight,
+                            memory,
                         });
                         finalTokenList = tokenList;
                         finalSpaceWidth = spaceWidth;
@@ -292,6 +299,7 @@ export const drawEffect = async ({
                                     width,
                                     lineHeight,
                                     globalScale,
+                                    memory,
                                 });
 
                                 if (currentLineCount > 1) return false;
@@ -317,6 +325,7 @@ export const drawEffect = async ({
                             globalScale,
                             justifyRatio,
                             lineHeight,
+                            memory,
                         });
                         finalTokenList = tokenList;
                         finalSpaceWidth = spaceWidth;
@@ -353,6 +362,7 @@ export const drawEffect = async ({
                         textData,
                         format,
                         globalScale,
+                        memory,
                     });
                 } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
                     ctx.scale(xRatio, yRatio);
@@ -370,6 +380,7 @@ export const drawEffect = async ({
                         textData,
                         format,
                         globalScale,
+                        memory,
                     });
                 } else {
                     ctx.scale(xRatio, yRatio);
@@ -383,6 +394,7 @@ export const drawEffect = async ({
                         textData,
                         format,
                         globalScale,
+                        memory,
                     });
                 }
                 await result;
