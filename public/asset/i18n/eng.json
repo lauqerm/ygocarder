@@ -408,6 +408,7 @@
         "sample.manager.label": "Sample",
         "sample.manager.header.image.label": "Result",
         "sample.manager.header.description.label": "Description",
+        "sample.manager.creative-requires.label": "Advanced card making technique requires creative options to be enabled.",
         "preset.review-description": "You are going to import the following presets, you may review the detailed import process here.",
         "preset.review-table.action.discard.label": "Discard",
         "preset.review-table.action.import.label": "Import",

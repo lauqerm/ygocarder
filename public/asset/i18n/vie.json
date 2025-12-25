@@ -423,6 +423,7 @@
         "preset.manager.check.label": "[Kiểm tra mẫu đang có]",
         "preset.manager.label": "Mẫu",
         "sample.manager.label": "Ví dụ",
+        "sample.manager.creative-requires.label": "Các ví dụ này cần bật chức năng nâng cao.",
         "preset.review-description": "Các mẫu sau sẽ chuẩn bị được nhập vào dữ liệu hiện có, bạn có thể lựa chọn hành động với chúng.",
         "preset.review-table.action.discard.label": "Không dùng",
         "preset.review-table.action.import.label": "Sử dụng",

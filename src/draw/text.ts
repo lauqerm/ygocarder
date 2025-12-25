@@ -52,7 +52,7 @@ import { TextDrawer, drawLetter, getLetterWidth } from './letter';
 import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 import { scaleFontSizeData, swapTextData } from 'src/util';
-import { drawFromWithSize } from './image';
+import { drawFromWithSizeAndFallback } from './image';
 import { useGlobalMemory } from 'src/service';
 import { normalizeCardText } from './text-normalize';
 
@@ -466,7 +466,7 @@ export const drawLine = async ({
                     } = tagList[tagPosition];
                     const lineHeightOffsetRatio = 0.75; // If it is 1, the image will touch the bottom of the line above
                     resetScale();
-                    await drawFromWithSize(
+                    await drawFromWithSizeAndFallback(
                         ctx,
                         src,
                         fragmentEdge + (offsetX ?? 0),
@@ -474,7 +474,7 @@ export const drawLine = async ({
                         width, height,
                         undefined, undefined,
                         undefined, undefined,
-                        { cache: isInternalSource, internalImage: isInternalSource }
+                        { cache: isInternalSource, internalImage: isInternalSource, crossorigin: 'anonymous' }
                     );
                     fragmentEdge += (type === 'img' && width ? width : 0);
                     applyAsymmetricScale(xRatio, yRatio);

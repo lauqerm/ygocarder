@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '23/12/2025-2';
+        const currentReminder = '25/12/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Ebrahim at Dec 24, 2025',
+            question: 'An option to maybe reduce the size of the "Edition" section similarly the LIMITED EDITION tag.',
+            answer: 'It is a bit cumbersome so for now I will just limit the section\'s maximum width, the text should auto compress if it is too long.',
+        },
         {
             author: 'Blake at Dec 23, 2025',
             question: 'Did you use boundless cause I’m trying to make the object the image go over the card.',
