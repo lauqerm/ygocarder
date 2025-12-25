@@ -486,6 +486,10 @@ export const ocgKeywordDataList = [
         rubyForm: '{取|と}り{除|のぞ}い',
     },
     {
+        shortForm: '取り除き',
+        rubyForm: '{取|と}り{除|のぞ}き',
+    },
+    {
         shortForm: '除く',
         rubyForm: '{除|のぞ}く',
     },
@@ -810,6 +814,10 @@ export const ocgKeywordDataList = [
     {
         shortForm: '除外',
         rubyForm: '{除|じょ}{外|がい}',
+    },
+    {
+        shortForm: '同一',
+        rubyForm: '{同|どう}{一|いつ}',
     },
     {
         shortForm: '順',
