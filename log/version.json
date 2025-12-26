@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.40 (2025/12/27)",
+        "logList": [
+            {
+                "content": "Fix: Various font tweaks."
+            }
+        ]
+    },
+    {
         "version": "v2.3.39 (2025/12/25)",
         "logList": [
             {
