@@ -67,7 +67,11 @@ export const PlaceholderRegex = new RegExp(PLACHOLDER_SOURCE);
 export const WHOLE_WORD_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９À-ÖÙ-öù-ÿĀ-žƀ-ɏḀ-ỿ!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
 export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE);
 
-export const VIETNAMESE_DIACRITIC_LETTER = '[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]';
+/**
+ * We don't use full vietnamese diacritic here, because we will prioritize diacritic letters from other official languages such as Spanish, French and Italian. That means if our default font already support those diacritic letters, we don't need to specially handle them here.
+ * We still need to cover other diacritic letters as Vietnamese use some specific ones that does not get covered by our normal font.
+*/
+export const VIETNAMESE_DIACRITIC_LETTER = '[ĂĐƠăđơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺỀỀỂưăạảấầẩẫậắằẳẵặẹẻềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]';
 export const VietnameseDiacriticLetterRegex = new RegExp(VIETNAMESE_DIACRITIC_LETTER);
 
 export const FragmentSplitRegex = new RegExp(`(\\{[^\\{\\}]+?\\}|${WHOLE_WORD_SOURCE}|${PLACEHOLDER_OPEN}[^${PLACEHOLDER_OPEN}${PLACEHOLDER_CLOSE}]*${PLACEHOLDER_CLOSE}|.)`, 'u');

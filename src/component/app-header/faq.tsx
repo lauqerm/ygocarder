@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '25/12/2025';
+        const currentReminder = '27/12/2025';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at Dec 26, 2025',
+            question: 'There is an error with the vowel accent marks in Spanish (e.g., á, é, í, ó, ú). It appears that the font does not support the Spanish language, as the accented characters look completely different from the original font. Could you please fix the font for this language?',
+            answer: 'I have tweaked the font a bit, hopefully it looks better now.',
+        },
         {
             author: 'Ebrahim at Dec 24, 2025',
             question: 'An option to maybe reduce the size of the "Edition" section similarly the LIMITED EDITION tag.',
