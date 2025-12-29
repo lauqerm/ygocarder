@@ -141,14 +141,27 @@ export const ExtraAttributeMap = ExtraAttributeList.reduce<Record<string, typeof
 
     return acc;
 }, {});
+export const AttributeOffsetMap: Record<string, Record<string, { offsetX?: number }>> = {
+    pt: {
+        TRAP: {
+            offsetX: -11,
+        },
+    },
+    it: {
+        TRAP: {
+            offsetX: -4,
+        },
+    },
+};
 export const RegionMap: Record<string, { key: string, category: 'tcg' | 'ocg', fileKey: string }> = {
-    'jp': { key: 'jp', category: 'ocg', fileKey: 'ocg' },
-    'ch': { key: 'ch', category: 'ocg', fileKey: 'ch' },
-    'en': { key: 'en', category: 'tcg', fileKey: 'tcg' },
-    'fr': { key: 'fr', category: 'tcg', fileKey: 'fr' },
-    'de': { key: 'de', category: 'tcg', fileKey: 'de' },
-    'it': { key: 'it', category: 'tcg', fileKey: 'it' },
-    'sp': { key: 'sp', category: 'tcg', fileKey: 'sp' },
+    jp: { key: 'jp', category: 'ocg', fileKey: 'ocg' },
+    en: { key: 'en', category: 'tcg', fileKey: 'tcg' },
+    ch: { key: 'ch', category: 'ocg', fileKey: 'ch' },
+    de: { key: 'de', category: 'tcg', fileKey: 'de' },
+    fr: { key: 'fr', category: 'tcg', fileKey: 'fr' },
+    it: { key: 'it', category: 'tcg', fileKey: 'it' },
+    pt: { key: 'pt', category: 'tcg', fileKey: 'pt' },
+    sp: { key: 'sp', category: 'tcg', fileKey: 'sp' },
 };
 export const DefaultFormatAttribute: Record<string, string> = {
     tcg: RegionMap.en.key,

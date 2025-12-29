@@ -14,6 +14,7 @@ import {
     PendulumSizeMap,
     PendulumSizeMapException,
     Card,
+    AttributeOffsetMap,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawFromWithSizeAndFallback, drawWithStyle } from '../image';
 import { createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
@@ -393,10 +394,11 @@ export const getLayoutDrawFunction = ({
                     { internalImage: false, crossorigin: 'anonymous' },
                 );
             } else {
+                const offsetX = AttributeOffsetMap[region]?.[attribute]?.offsetX ?? 0;
                 await drawAsset(
                     attributeCtx,
                     `attribute/attr-${RegionMap[region].fileKey}-${attribute.toLowerCase()}.png`,
-                    attributeX, attributeY,
+                    attributeX + offsetX, attributeY,
                 );
             }
             const attributeFinish = otherFinish[0] ?? 'normal';
