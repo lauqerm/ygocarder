@@ -211,7 +211,7 @@ export const AppHeader = ({
         </StyledAppHeaderButtonContainer>
         <StyledAppHeaderButtonContainer className="sample-card">
             <StyledHeaderButtonContainer
-                className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
+                className={mergeClass('preset-sample-button-label')}
                 onClick={() => {
                     sampleCardRef.current?.open();
                 }}
