@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.41 (2025/12/29)",
+        "logList": [
+            {
+                "content": "Regional attributes for Portuguese."
+            }
+        ]
+    },
+    {
         "version": "v2.3.40 (2025/12/27)",
         "logList": [
             {
