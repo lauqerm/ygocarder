@@ -82,6 +82,8 @@ const CsvStandardFieldList = [
     'Star Alignment',
     'Card Icon Type',
     'Link Rating',
+    'Corner Text',
+    'Has Corner Text',
     'Opacity - Body',
     'Opacity - Pendulum',
     'Opacity - Text',
@@ -229,6 +231,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         const rowValue = Array(rowLength).map(() => '');
         const {
             art,
+            cornerText,
             artCrop,
             artFinish,
             artFit,
@@ -257,6 +260,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             frame,
             furiganaHelper,
             hasBackground,
+            hasCornerText,
             isDuelTerminalCard,
             isFirstEdition,
             isLegacyCard,
@@ -332,6 +336,8 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Link Rating', linkRating);
         write('First Edition Text', firstEditionText);
         write('Is First Edition', isFirstEdition);
+        write('Corner Text', cornerText);
+        write('Has Corner Text', hasCornerText);
         write('Is Speed Card', isSpeedCard);
         write('Is Limited Edition', isLimitedEdition);
         write('Is Duel Terminal Card', isDuelTerminalCard);
@@ -564,6 +570,11 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     reader('Is First Edition'),
                     edition ? edition === '1st edition' : emptyCard.isFirstEdition,
                 );
+                const cornerText = reader('Corner Text') ?? emptyCard.cornerText;
+                const hasCornerText = normalizeBoolean(
+                    reader('Has Corner Text'),
+                    edition ? edition === '1st edition' : emptyCard.hasCornerText,
+                );
                 const isDuelTerminalCard = normalizeBoolean(
                     reader('Is Duel Terminal Card'),
                     edition ? edition === 'duel terminal' : emptyCard.isDuelTerminalCard,
@@ -754,6 +765,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     backgroundType,
                     cardIcon,
                     condenseTolerant,
+                    cornerText,
                     creator,
                     def,
                     dyeList,
@@ -769,15 +781,16 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     effectTextStyle,
                     externalInfo,
                     finish,
+                    firstEditionText,
                     flag,
                     foil,
                     format,
                     frame,
                     furiganaHelper,
                     hasBackground,
+                    hasCornerText,
                     isDuelTerminalCard,
                     isFirstEdition,
-                    firstEditionText,
                     isLegacyCard,
                     isLimitedEdition,
                     isLink,

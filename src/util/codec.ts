@@ -128,6 +128,8 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     sticker: 'sti',
     firstEditionText: 'fe',
     isFirstEdition: 'ife',
+    cornerText: 'act',
+    hasCornerText: 'hct',
     isSpeedCard: 'isp',
     isDuelTerminalCard: 'idt',
     isLimitedEdition: 'ile',

@@ -438,6 +438,7 @@
         "preset.review-title.label": "Review Import",
         "sample.manager.header.image.label": "Result",
         "sample.manager.header.description.label": "Description",
+        "input.corner.label": "Corner Text",
         "sample.manager.creative-requires.label": "Advanced card making technique requires creative options to be enabled.",
         "preset.warning.label": "Your presets are saved locally, to use it elsewhere you must export and import it.",
         "prompt.remind.backup.label": "Remember to backup your data regularly. You have no way to recover your data once it has lost.",

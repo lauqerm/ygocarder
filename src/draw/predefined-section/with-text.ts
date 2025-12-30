@@ -74,7 +74,7 @@ export const drawScale = (
     }
 };
 
-export const draw1stEdition = ({
+export const drawOnFrameText = ({
     ctx,
     txt = '1<st> Edition',
     edge = 99,

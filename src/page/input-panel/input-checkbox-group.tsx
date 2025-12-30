@@ -75,6 +75,7 @@ export const CardCheckboxGroup = forwardRef<CardCheckboxGroupRef, CardCheckboxGr
                 };
             } else {
                 updatedPart = {
+                    hasCornerText: false,
                     isSpeedCard: false,
                     isDuelTerminalCard: true,
                 };
@@ -99,6 +100,7 @@ export const CardCheckboxGroup = forwardRef<CardCheckboxGroupRef, CardCheckboxGr
                 };
             } else {
                 updatedPart = {
+                    hasCornerText: false,
                     isDuelTerminalCard: false,
                     isSpeedCard: true,
                 };

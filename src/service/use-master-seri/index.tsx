@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     clearCanvas,
-    draw1stEdition,
+    drawOnFrameText,
     drawCreatorText,
     drawEffect,
     drawName,
@@ -139,6 +139,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         password, creator, sticker,
         isLegacyCard,
         isFirstEdition, isDuelTerminalCard, isSpeedCard, isLimitedEdition,
+        cornerText, hasCornerText,
         firstEditionText,
         furiganaHelper,
         flag,
@@ -749,7 +750,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedOtherEffectTextStyle,
     ]);
 
-    /** DRAW FIRST EDITION (1st Edition Text) NOTICE AND PASSWORD */
+    /** DRAW FIRST EDITION NOTICE (1st Edition Text), CORNER TEXT AND PASSWORD */
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = passwordCanvasRef.current?.getContext('2d');
@@ -773,21 +774,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 textStyle: resolvedOtherEffectTextStyle,
                 fontLevel: !isNumberPassword ? 1 : 0
             });
+            const editionTextUseTopPosition = (isLegacyCard || !isNumberPassword) && !isPendulum;
             if (isFirstEdition) {
                 const willDraw = isPendulum
                     ? isNumberPassword ? true : false
                     : true;
-                const left = (isLegacyCard || !isNumberPassword) && !isPendulum
+                const left = editionTextUseTopPosition
                     ? isLink ? 151 : 89
                     : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
-                const bottom = (isLegacyCard || !isNumberPassword) && !isPendulum
+                const bottom = editionTextUseTopPosition
                     ? 871
                     : 1150.93;
-                const bottomOffset = (isLegacyCard || !isNumberPassword) && !isPendulum
+                const bottomOffset = editionTextUseTopPosition
                     ? 0
                     : isSpeedSkill ? -2 : -1;
 
-                if (willDraw) draw1stEdition({
+                if (willDraw) drawOnFrameText({
                     ctx,
                     txt: firstEditionText,
                     edge: left,
@@ -803,22 +805,66 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     },
                 });
             }
+            if (hasCornerText) {
+                const left = !editionTextUseTopPosition
+                    ? isPendulum
+                        ? 65
+                        : isLink
+                            ? 151
+                            : 89
+                    : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
+                const bottom = !editionTextUseTopPosition
+                    ? 871
+                    : 1150.93;
+                const bottomOffset = !editionTextUseTopPosition
+                    ? isPendulum
+                        ? pendulumSize === 'small'
+                            ? -100
+                            : -140
+                        : 0
+                    : isSpeedSkill ? -2 : -1;
+                const width = !editionTextUseTopPosition
+                    ? isPendulum
+                        ? 683
+                        : 475
+                    : 185;
+
+                drawOnFrameText({
+                    ctx,
+                    txt: cornerText,
+                    edge: left,
+                    baseline: bottom,
+                    baselineOffset: bottomOffset,
+                    width,
+                    option: {
+                        stroke: false,
+                        globalScale,
+                        textStyle: {
+                            color: lightFooter ? '#ffffff' : '#000000',
+                            ...resolvedOtherEffectTextStyle,
+                        }
+                    },
+                });
+            }
         };
     }, [
         readyToDraw,
         globalScale,
+        bottomFrame,
+        cornerText,
+        firstEditionText,
+        format,
+        hasCornerText,
         isFirstEdition,
+        isLegacyCard,
+        isLink,
+        isPendulum,
+        isSpeedSkill,
+        lightFooter,
         password,
         passwordCanvasRef,
-        lightFooter,
-        format,
+        pendulumSize,
         requireShadow,
-        firstEditionText,
-        isLink,
-        isSpeedSkill,
-        isPendulum,
-        isLegacyCard,
-        bottomFrame,
         resolvedOtherEffectTextStyle,
     ]);
 

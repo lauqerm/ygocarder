@@ -58,6 +58,7 @@ export type FooterInputGroupRef = {
         def?: string,
         linkRating?: string,
         firstEditionText?: string,
+        cornerText?: string,
     }) => void,
 };
 export type FooterInputGroup = {
@@ -71,31 +72,43 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
 }, ref) => {
     const language = useLanguage();
     const {
+        autoLinkRating,
+        format,
+        hasCornerText,
+        isFirstEdition,
+        isLegacyCard,
         isLink,
         linkRating,
-        autoLinkRating,
-        showDefAndLink,
         linkRatingDisplayMode,
-        isLegacyCard,
+        showDefAndLink,
         sticker,
-        format,
-        isFirstEdition,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
-        card: { isLegacyCard, sticker, format, flag, isLink, linkRating, linkMap, isFirstEdition, },
+        card: {
+            isLegacyCard,
+            sticker,
+            format,
+            flag,
+            isLink,
+            linkRating,
+            linkMap,
+            isFirstEdition,
+            hasCornerText,
+        },
         getUpdater,
         setCard,
     }) => ({
-        isLegacyCard,
-        linkRating,
         autoLinkRating: linkMap.length,
-        isLink,
-        sticker,
         format,
+        hasCornerText,
         isFirstEdition,
-        showDefAndLink: flag[FlagIndexMap['showDefAndLink']] === 1,
+        isLegacyCard,
+        isLink,
+        linkRating,
         linkRatingDisplayMode: flag[FlagIndexMap['linkRating']],
+        showDefAndLink: flag[FlagIndexMap['showDefAndLink']] === 1,
+        sticker,
         getUpdater,
         setCard,
     })));
@@ -105,6 +118,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     const defInputRef = useRef<CardTextInputRef>(null);
     const linkRatingInputRef = useRef<CardTextInputRef>(null);
     const firstEditionTextRef = useRef<CardTextInputRef>(null);
+    const cornerTextRef = useRef<CardTextInputRef>(null);
 
     const showAtkInput = true;
     const showLinkInput = checkDiplayLinkRating(linkRatingDisplayMode, isLink);
@@ -123,8 +137,8 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     const onStickerChange = useMemo(() => getUpdater('sticker'), [getUpdater]);
     const changeCreator = useMemo(() => getUpdater('creator', undefined, 'debounce'), [getUpdater]);
     /** 
-     * * In legacy mode: All marks stay at the bottom left of the artwork, and are mutually exclusive in this state.
-     * * In modern mode, Limited Edition and 1st Edition text are exclusive at the right of password. Duel Terminal and Speed Duel text are exclusive at the bottom left of the artwork.
+     * * In legacy mode: All marks stay at the bottom left of the artwork, and are mutually exclusive in this state. Corner text is swapped to bottom of text effects.
+     * * In modern mode, Limited Edition and 1st Edition text are exclusive at the right of password. Duel Terminal and Speed Duel text are exclusive at the bottom left of the artwork. Corner text is placed correctly under the art.
      */
     const onFirstEditionChange = useCallback((e: CheckboxChangeEvent) => setCard(currentCard => {
         const nextValue = e.target.checked;
@@ -150,10 +164,33 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
 
         return { ...currentCard, ...updatedPart };
     }), [setCard, isLegacyCard]);
+    const onCornerTextChange = useCallback((e: CheckboxChangeEvent) => setCard(currentCard => {
+        const nextValue = e.target.checked;
+        let updatedPart: Partial<Card>;
+
+        if (nextValue) {
+            if (isLegacyCard) {
+                updatedPart = {
+                    hasCornerText: true,
+                };
+            } else {
+                updatedPart = {
+                    isSpeedCard: false,
+                    isDuelTerminalCard: false,
+                    hasCornerText: true,
+                };
+            }
+        } else updatedPart = {
+            hasCornerText: false,
+        };
+
+        return { ...currentCard, ...updatedPart };
+    }), [setCard, isLegacyCard]);
     const changeFirstEditionText = useMemo(() => getUpdater('firstEditionText', undefined, 'debounce'), [getUpdater]);
+    const changeCornerText = useMemo(() => getUpdater('cornerText', undefined, 'debounce'), [getUpdater]);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ password, creator, atk, def, linkRating, firstEditionText }) => {
+        setValue: ({ password, creator, atk, def, linkRating, firstEditionText, cornerText }) => {
             if (typeof atk === 'string') atkInputRef.current?.setValue(atk);
             if (typeof def === 'string') defInputRef.current?.setValue(def);
             if (typeof password === 'string') passwordInputRef.current?.setValue(password);
@@ -290,6 +327,23 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             </StyledInputLabelWithButton>}
             defaultValue={useCard.getState().card.firstEditionText}
             onChange={changeFirstEditionText}
+            onTakePicker={onTakePicker}
+        />
+        <CardTextInput ref={cornerTextRef}
+            id="cornerText"
+            className="corner-text"
+            addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
+                <div className="input-label">{language['input.corner.label']}</div>
+                &nbsp;
+                <Checkbox
+                    className="input-corner"
+                    onChange={onCornerTextChange}
+                    checked={hasCornerText}
+                    tabIndex={0}
+                />
+            </StyledInputLabelWithButton>}
+            defaultValue={useCard.getState().card.cornerText}
+            onChange={changeCornerText}
             onTakePicker={onTakePicker}
         />
         <CardCheckboxGroup />
