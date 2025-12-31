@@ -411,6 +411,7 @@
         "manager.title": "Trang quản lý",
         "preset.button.discard.label": "Hủy",
         "preset.button.import.label": "Nhập dữ liệu",
+        "input.corner.label": "Góc ảnh",
         "preset.form.image.add.label": "Thêm mẫu",
         "preset.form.image.height.label": "Chiều cao",
         "preset.form.image.name.label": "Tên (Đừng khởi đầu tên bằng cụm \"icon-\")",
