@@ -788,6 +788,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const bottomOffset = editionTextUseTopPosition
                     ? 0
                     : isSpeedSkill ? -2 : -1;
+                const width = editionTextUseTopPosition
+                    ? isPendulum
+                        ? 683
+                        : 475
+                    : creator.trim().length === 0
+                        ? 615
+                        : 185;
 
                 if (willDraw) drawOnFrameText({
                     ctx,
@@ -795,6 +802,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     edge: left,
                     baseline: bottom,
                     baselineOffset: bottomOffset,
+                    width,
                     option: {
                         stroke: false,
                         globalScale,
@@ -827,7 +835,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     ? isPendulum
                         ? 683
                         : 475
-                    : 185;
+                    : creator.trim().length === 0
+                        ? 615
+                        : 185;
 
                 drawOnFrameText({
                     ctx,
@@ -850,6 +860,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     }, [
         readyToDraw,
         globalScale,
+        creator,
         bottomFrame,
         cornerText,
         firstEditionText,

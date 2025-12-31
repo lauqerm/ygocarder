@@ -76,6 +76,8 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
     const attributeList = useMemo(() => getAttributeList(region, language, showCreativeOption), [region, language, showCreativeOption]);
     const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
 
+    const lastKnownCustomAttributeRef = useRef(DEFAULT_EXTERNAL_ATTRIBUTE);
+
     useImperativeHandle(ref, () => ({
         setValue: ({ attribute, attributeType }) => {
             if (!attribute) return;
@@ -121,7 +123,7 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
                         onClick={() => {
                             setShowLinkAttribute(true);
                             updateSetting({ showExtraAttribute: false });
-                            changeAttribute(linkAttributeRef.current?.getValue() ?? DEFAULT_EXTERNAL_ATTRIBUTE);
+                            changeAttribute(linkAttributeRef.current?.getValue() ?? lastKnownCustomAttributeRef.current);
                             changeAttributeType('custom');
                         }}
                         active={attributeType === 'custom'}
@@ -166,9 +168,10 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
             <label className="standalone-addon ant-input-group-addon">&nbsp;</label>
             <CardTextInput ref={linkAttributeRef}
                 placeholder={language['input.link.custom.placeholder']}
-                defaultValue={attributeType === 'custom' ? attribute : DEFAULT_EXTERNAL_ATTRIBUTE}
+                defaultValue={attributeType === 'custom' ? attribute : lastKnownCustomAttributeRef.current}
                 onChange={e => {
                     if (attributeType === 'custom') {
+                        lastKnownCustomAttributeRef.current = e.target.value;
                         changeAttribute(e.target.value);
                         setResetCanvasCounter(cnt => cnt + 1);
                     }

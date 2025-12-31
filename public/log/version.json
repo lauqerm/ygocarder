@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.3.42 (2025/12/31)",
+        "logList": [
+            {
+                "content": "Support for custom text below card art's corner."
+            },
+            {
+                "content": "Fix: Custom attribute get incorrectly resized and placed."
+            }
+        ]
+    },
+    {
         "version": "v2.3.41 (2025/12/29)",
         "logList": [
             {

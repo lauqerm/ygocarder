@@ -80,6 +80,16 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'TheTonyB at Dec 30, 2025',
+            question: 'Hey, Lauqerm! Thanks for adding the Portuguese atributes and custom edition text! (Korean coming soon? :))\n\nAnyway, I have another suggestion:\nSince there\'s already a legacy placement option in adition to regular placement of the edition text, what if we could have two different edition texts simultaneously, one in each position?\n\nI imagine this may be more complicated to implement, but it would open up more customization potential. I don\'t mind if this feature isn\'t added though. I can just edit the card in photoshop if I want both texts, this is more of a suggestion than a feature request.\n\nAs always, keep up the good work. Your card maker is absolutely GOATED.',
+            answer: 'I have received an asset donation for PT attributes; hopefully, there will be another one for KR soon.\nI have also added an option for text below the image\'s left corner. Choosing legacy display will simply switch the positions between it and the edition text.',
+        },
+        {
+            author: 'Anonymous at Dec 30, 2025',
+            question: 'I’d like to use the original attributes in Spanish, where the word extends beyond the limits of the sphere, but when I upload my custom attribute the icon gets compressed and flattened. I designed the attributes from the original Spanish cards in case you’d like to replace them. I’ve also noticed that the Effect Monster card color is a slightly darker shade than the original ones. Here is the link with the attribute icons and the different card frame types, in case you’d like to review it. Thank you, and congratulations—this is the best Card Maker I’ve tried: \nhttps://we.tl/t-niKReItUvF\n\n*If you would like me to modify the attributes to a specific resolution or dimensions, or help you with others languages you can write to me at giohesse7@gmail.com',
+            answer: 'Custom attribute will now respect the image\'s ratio when resizing so it no longer get stretched, I also tried some heuristic approach to ensure that it will be at correct position to avoid more complicated manual placement.\nFor the effect monster background though currently I must leave it as is, but thanks for your report.',
+        },
+        {
             author: 'Anonymous at Dec 26, 2025',
             question: 'There is an error with the vowel accent marks in Spanish (e.g., á, é, í, ó, ú). It appears that the font does not support the Spanish language, as the accented characters look completely different from the original font. Could you please fix the font for this language?',
             answer: 'I have tweaked the font a bit, hopefully it looks better now.',
