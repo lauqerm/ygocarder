@@ -462,3 +462,13 @@ export const EffectFontData: Record<string, FontData> = {
 };
 
 export type FontStyle = '' | 'italic' | 'small-caps';
+
+export const RegionSpaceWidthMap: Record<string, Record<string, number>> = {
+    tcg: {
+        default: 1.500,
+        pt: 2.825,
+    },
+    ocg: {
+        default: 3.650,
+    },
+};

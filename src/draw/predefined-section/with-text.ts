@@ -120,7 +120,7 @@ export const drawOnFrameText = ({
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
     const superTextOffset = 7.4 * globalScale;
-    const ordinalIndicatorOffset = -2 * globalScale;
+    const ordinalIndicatorOffset = 1 * globalScale;
     const availableWidth = width * globalScale;
 
     let left = actualEdge;
@@ -146,7 +146,7 @@ export const drawOnFrameText = ({
                 ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
                 contentWidth += ctx.measureText(restoredToken).width - 2 * globalScale;
             } else if (restoredToken === 'ª' || restoredToken === 'º') {
-                ctx.font = `${20.22 * globalScale}px Georgia`;
+                ctx.font = `${25.7 * globalScale}px palatino-linotype-bold`;
                 contentWidth += ctx.measureText(restoredToken).width;
             } else {
                 ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
@@ -183,7 +183,7 @@ export const drawOnFrameText = ({
                 if (stroke) ctx.strokeText(restoredToken, left, actualBaseline);
                 left += ctx.measureText(restoredToken).width - 2 * globalScale;
             } else if (restoredToken === 'ª' || restoredToken === 'º') {
-                ctx.font = `${20.22 * globalScale}px Georgia`;
+                ctx.font = `${25.7 * globalScale}px palatino-linotype-bold`;
                 ctx.fillText(restoredToken, left, actualBaseline - ordinalIndicatorOffset + actualBaselineOffset);
                 if (stroke) ctx.strokeText(restoredToken, left, actualBaseline - ordinalIndicatorOffset);
                 left += ctx.measureText(restoredToken).width;

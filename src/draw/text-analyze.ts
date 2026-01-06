@@ -40,6 +40,7 @@ import {
     VietnameseDiacriticLetterRegex,
     WholeWordRegex,
     PLACEHOLDER_DELIMITER,
+    RegionSpaceWidthMap,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth, splitPlaceholder } from './text-util';
 import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
@@ -482,6 +483,7 @@ export const analyzeLine = ({
     textData,
     globalScale,
     justifyRatio,
+    region,
     memory,
 }: {
     ctx: CanvasRenderingContext2D,
@@ -494,6 +496,7 @@ export const analyzeLine = ({
     textData: TextData,
     globalScale: number,
     justifyRatio: number,
+    region: string,
     memory?: DrawMemory,
 }) => {
     const tokenList = tokenizeText(line);
@@ -585,10 +588,11 @@ export const analyzeLine = ({
         lineSpaceCount += actualSpaceCount - (spaceAtEnd && nextToken === undefined ? 1 : 0);
     }
     const expectedSpaceWidth = lineSpaceCount > 0 ? (width - totalContentWidth) / lineSpaceCount : 0;
+    const spaceWidthRatio = RegionSpaceWidthMap[format]?.[region] ?? RegionSpaceWidthMap[format]?.['default'] ?? 1;
     const spaceWidth = isLast
         ? format === 'tcg'
-            ? expectedSpaceWidth > 1.500 * globalScale * (justifyRatio / 100) ? 0 : expectedSpaceWidth
-            : expectedSpaceWidth > 3.650 * globalScale * (justifyRatio / 100) ? 0 : expectedSpaceWidth
+            ? expectedSpaceWidth > spaceWidthRatio * globalScale * (justifyRatio / 100) ? 0 : expectedSpaceWidth
+            : expectedSpaceWidth > spaceWidthRatio * globalScale * (justifyRatio / 100) ? 0 : expectedSpaceWidth
         : expectedSpaceWidth;
 
     return {

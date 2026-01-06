@@ -66,6 +66,7 @@ export const drawEffect = async ({
     fontDataKey = 'tcg',
     fontData = EffectFontData[fontDataKey],
     textStyle,
+    region,
     sizeList = EffectCoordinateData['tcg-type'],
     condenseTolerant = 'strict',
     format,
@@ -81,6 +82,7 @@ export const drawEffect = async ({
     textStyle?: CanvasTextStyle,
     sizeList?: CoordinateData[],
     condenseTolerant?: CondenseType,
+    region: string,
     format: string,
     furiganaHelper: boolean,
     option?: {
@@ -267,6 +269,7 @@ export const drawEffect = async ({
                             globalScale,
                             justifyRatio: 100,
                             lineHeight,
+                            region,
                             memory,
                         });
                         finalTokenList = tokenList;
@@ -325,6 +328,7 @@ export const drawEffect = async ({
                             globalScale,
                             justifyRatio,
                             lineHeight,
+                            region,
                             memory,
                         });
                         finalTokenList = tokenList;

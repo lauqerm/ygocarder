@@ -243,7 +243,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             </Tooltip>}
             <FormattingHelpDrawer />
             {showExtraDecorativeOption && <Popover
-                overlayClassName="global-input-overlay global-style-picker-overlay"
+                overlayClassName="global-input-overlay global-style-picker-overlay paragraph-style"
                 content={<div className="overlay-event-absorber">
                     <AdvancedParagraphPanel className="input-popover">
                         <div className="input-section">

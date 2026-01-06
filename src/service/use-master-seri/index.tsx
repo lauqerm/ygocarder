@@ -781,7 +781,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     : true;
                 const left = editionTextUseTopPosition
                     ? isLink ? 151 : 89
-                    : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
+                    : Math.max(rightEdge / globalScale + 14.813, 154.2) - (format === 'ocg' ? 7 : 0);
                 const bottom = editionTextUseTopPosition
                     ? 871
                     : 1150.93;
@@ -812,7 +812,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         : isLink
                             ? 151
                             : 89
-                    : Math.max(rightEdge / globalScale + 14.813, 162.2) - (format === 'ocg' ? 7 : 0);
+                    : Math.max(rightEdge / globalScale + 14.813, 154.2) - (format === 'ocg' ? 7 : 0);
                 const bottom = !editionTextUseTopPosition
                     ? 871
                     : 1150.93;
@@ -1004,6 +1004,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 content: effect,
                 isNormal,
                 useItalic,
+                region,
                 condenseTolerant,
                 format,
                 furiganaHelper,
@@ -1055,6 +1056,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         effectMinLine,
         effectJustifyRatio,
         format,
+        region,
         frame,
         isPendulum,
         pendulumSize,
@@ -1108,6 +1110,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         ? PendulumNormalFontData
                         : PendulumEffectFontData)[fontDataKey],
                     fontDataKey,
+                    region,
                     textStyle: resolvedPendulumEffectTextStyle,
                     sizeList: modifiedCoordinateList,
                     condenseTolerant,
@@ -1128,6 +1131,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         globalScale,
         condenseTolerant,
         format,
+        region,
         isPendulum,
         withRedScale,
         withBlueScale,

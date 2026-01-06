@@ -80,6 +80,16 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Gio at Jan 05, 2026',
+            question: 'In Trap cards, the words for the card type are very close together because there isn’t enough spacing between the letters (this doesn’t happen in Spell cards). Also, the letter A is slightly taller than the other letters (I haven’t checked if this happens with other letters as well), and the words look a bit uneven.\nIn Monster cards, the line that is right above ATK and DEF is thicker than in the original cards.\nRegards!',
+            answer: '',
+        },
+        {
+            author: 'TheTonyB at Jan 04, 2026',
+            question: 'Hey, it\'s me again.\n\nSorry. I noticed the positioning of the edition text is off and the font is slightly wrong. \n\nWhen comparing to a real card, the edition text is too much to the right, it should be shifted to the left closer to the passcode.\n\nAbout the font being slightly off, It\'s more noticeable in the Italian, Portuguese and Spanish presets of the edition text. Compared to my real PT cards, the "ª" is wrong, it should be higher and be bold and underlined (it\'s not a problem with the text of the presets, it seems to be the font itself).\n\nLooking closer the font actually seems to be different from the real cards. It looks like the shapes of the letters is slightly different. As examples, the top stroke of the loop of the "d" in the real card seems to match the height of the gap betweeen the base of the "i" and the dot, the current font has that stroke matching the height of the base of the "i" right below the gap, making the "d" appear "taller". The shape of the serif of the "c" also looks diferent, but that\'s about what I could notice comparing this to the microscopic text on an actual TCG card\n\nAnd maybe, I\'m not so sure, but in the real cards the font looks slightly thicker too? I might be wrong about this though as it might be the lighting in my room.\n\nThanks in advance!',
+            answer: 'I have update the edition text offset and fix the ordinal letter "ª". As for the font itself, currently there is not much I could do right now as finding another font that matches perfectly is quite hard (at least from what I have access to), so I must leave it as is.',
+        },
+        {
             author: 'Anonymous at Dec 26, 2025',
             question: 'There is an error with the vowel accent marks in Spanish (e.g., á, é, í, ó, ú). It appears that the font does not support the Spanish language, as the accented characters look completely different from the original font. Could you please fix the font for this language?',
             answer: 'I have tweaked the font a bit, hopefully it looks better now.',
@@ -268,7 +278,7 @@ export const QuestionAndFeedback = () => {
         <FaqButtonLabel id={FAD_BUTTON_ID} $animating={animating} onClick={() => setVisible(cur => !cur)}>
             {'FAQ'}
         </FaqButtonLabel>
-        <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
+        <Modal width={600} visible={visible} onCancel={() => setVisible(false)} footer={null}>
             <Tabs>
                 <Tabs.TabPane key="feedback" tab="Feedbacks">
                     <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
