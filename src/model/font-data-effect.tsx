@@ -23,6 +23,7 @@ export type FontSizeData = {
     headTextSpacing?: number,
     iconSymbolWidth?: number,
     largeSymbolRatio?: number,
+    fontLetterOffsetMap?: Record<string, LetterOffset>,
     letterSpacing?: number,
     lineCount: number,
     lineHeight: number,
@@ -61,7 +62,9 @@ export type FontDeviation = {
 export type FontDeviationMap = {
     threshold: number,
     letterMap: Record<string, FontDeviation>,
-}
+};
+
+export type LetterOffset = { ratio: number, baseline: number, edge?: number, yRatio?: number };
 
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
 export type FontData = {
@@ -76,7 +79,7 @@ export type FontData = {
     headTextHeightRatio?: number,
     headTextOverflow?: 'normal' | 'condense',
     letterDeviationMap?: Record<string, FontDeviationMap>,
-    letterOffsetMap?: Record<string, { ratio: number, baseline: number, edge?: number, yRatio?: number }>,
+    letterOffsetMap?: Record<string, LetterOffset>,
     metricMethod?: MetricMethod,
     numberFont?: string,
     numberFontRatio?: number,

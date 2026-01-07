@@ -145,6 +145,7 @@ export const drawLine = async ({
             squareBracketRatio = scaledDefaultFontSizeData.squareBracketRatio,
             wordLetterSpacing,
             allRightSymbolOffset = scaledDefaultFontSizeData.allRightSymbolOffset,
+            fontLetterOffsetMap = {},
         } = fontSizeData;
         const letterSpacingRatio = 1 + letterSpacing / 2;
         const baseline = trueBaseline / yRatio;
@@ -651,18 +652,20 @@ export const drawLine = async ({
                     let currentLetter = remainFragment[0];
                     let nextRemainFragment = remainFragment.slice(1);
                     let actualLetterWidth = 0;
+                    let { edge } = fontLetterOffsetMap[currentLetter] ?? {};
+                    let offsetedPosition = currentPosition * (edge ?? 1);
                     const drawLetterofWordParameter = {
                         ...drawLetterParameter,
                         deviation: letterDeviationMap[`${globalScale}`],
                         letter: currentLetter,
-                        edge: currentPosition,
+                        edge: offsetedPosition,
                     };
                     if (SquareBracketLetterRegex.test(currentLetter)) {
                         applyScale(squareBracketRatio);
                         actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                         drawLetter({
                             ...drawLetterofWordParameter,
-                            edge: currentPosition / squareBracketRatio,
+                            edge: offsetedPosition / squareBracketRatio,
                             baseline: baseline / squareBracketRatio,
                         });
                         reverseScale(squareBracketRatio);
@@ -674,7 +677,7 @@ export const drawLine = async ({
                             : 0;
                         drawLetter({
                             ...drawLetterofWordParameter,
-                            edge: currentPosition / capitalLetterRatio + letterOffset,
+                            edge: offsetedPosition / capitalLetterRatio + letterOffset,
                             baseline: baseline / capitalLetterRatio
                         });
                         reverseScale(capitalLetterRatio);
