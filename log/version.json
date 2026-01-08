@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.43 (2026/01/06)",
+        "logList": [
+            {
+                "content": "More font tweaks for card type, edition text and more."
+            }
+        ]
+    },
+    {
         "version": "v2.3.42 (2025/12/31)",
         "logList": [
             {
