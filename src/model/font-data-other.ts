@@ -172,6 +172,21 @@ export const tcgTypeAbilityFontData: FontData = {
             },
         },
     ],
+    letterDeviationMap: {
+        '1': {
+            threshold: 0.0,
+            letterMap: {
+                A: { uniformBoxDescent: -0.5 },
+            }
+        },
+        '2': {
+            threshold: 0.0,
+            letterMap: {
+                a: { uniformBoxDescent: -0.33 },
+                A: { uniformBoxDescent: -0.5 },
+            }
+        },
+    },
 };
 export const ocgTypeAbilityFontData: FontData = {
     font: '"Yu-Gi-Oh! DF Leisho 3"',

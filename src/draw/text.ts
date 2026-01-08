@@ -652,7 +652,7 @@ export const drawLine = async ({
                     let currentLetter = remainFragment[0];
                     let nextRemainFragment = remainFragment.slice(1);
                     let actualLetterWidth = 0;
-                    let { edge } = fontLetterOffsetMap[currentLetter] ?? {};
+                    const { edge } = fontLetterOffsetMap[currentLetter] ?? {};
                     let offsetedPosition = currentPosition * (edge ?? 1);
                     const drawLetterofWordParameter = {
                         ...drawLetterParameter,

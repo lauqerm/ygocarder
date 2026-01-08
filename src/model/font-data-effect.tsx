@@ -78,7 +78,7 @@ export type FontData = {
     headTextGapRatio?: number,
     headTextHeightRatio?: number,
     headTextOverflow?: 'normal' | 'condense',
-    letterDeviationMap?: Record<string, FontDeviationMap>,
+    letterDeviationMap?: { [scale: string]: FontDeviationMap },
     letterOffsetMap?: Record<string, LetterOffset>,
     metricMethod?: MetricMethod,
     numberFont?: string,
