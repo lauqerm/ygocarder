@@ -168,7 +168,7 @@ export const tcgTypeAbilityFontData: FontData = {
             headTextFontRatio: 0.4,
             fontLetterOffsetMap: {
                 /** For Trap Card type, the letter T stick too close to the letter r */
-                'T': { ratio: 1, baseline: 1, edge: 0.996 },
+                // 'T': { ratio: 1, baseline: 1, edge: 0.996 },
             },
         },
     ],

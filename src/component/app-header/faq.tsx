@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '31/12/2025';
+        const currentReminder = '08/01/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -82,12 +82,12 @@ export const QuestionAndFeedback = () => {
         {
             author: 'Gio at Jan 05, 2026',
             question: 'In Trap cards, the words for the card type are very close together because there isn’t enough spacing between the letters (this doesn’t happen in Spell cards). Also, the letter A is slightly taller than the other letters (I haven’t checked if this happens with other letters as well), and the words look a bit uneven.\nIn Monster cards, the line that is right above ATK and DEF is thicker than in the original cards.\nRegards!',
-            answer: '',
+            answer: 'I have updated the font and spacing, as well as reduced the line thickness for ATK/DEF separator for a bit.',
         },
         {
             author: 'TheTonyB at Jan 04, 2026',
             question: 'Hey, it\'s me again.\n\nSorry. I noticed the positioning of the edition text is off and the font is slightly wrong. \n\nWhen comparing to a real card, the edition text is too much to the right, it should be shifted to the left closer to the passcode.\n\nAbout the font being slightly off, It\'s more noticeable in the Italian, Portuguese and Spanish presets of the edition text. Compared to my real PT cards, the "ª" is wrong, it should be higher and be bold and underlined (it\'s not a problem with the text of the presets, it seems to be the font itself).\n\nLooking closer the font actually seems to be different from the real cards. It looks like the shapes of the letters is slightly different. As examples, the top stroke of the loop of the "d" in the real card seems to match the height of the gap betweeen the base of the "i" and the dot, the current font has that stroke matching the height of the base of the "i" right below the gap, making the "d" appear "taller". The shape of the serif of the "c" also looks diferent, but that\'s about what I could notice comparing this to the microscopic text on an actual TCG card\n\nAnd maybe, I\'m not so sure, but in the real cards the font looks slightly thicker too? I might be wrong about this though as it might be the lighting in my room.\n\nThanks in advance!',
-            answer: 'I have update the edition text offset and fix the ordinal letter "ª". As for the font itself, currently there is not much I could do right now as finding another font that matches perfectly is quite hard (at least from what I have access to), so I must leave it as is.',
+            answer: 'I have updated the edition text offset and fix the ordinal letter "ª". As for the font itself, currently there is not much I could do right now as finding another font that matches perfectly is quite hard (at least from what I have access to), so I must leave it as is.',
         },
         {
             author: 'TheTonyB at Dec 30, 2025',
