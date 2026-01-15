@@ -302,6 +302,7 @@ function App() {
         if (isLanguageInitiating === false) WebFont.load({
             custom: {
                 families: [
+                    'ITC Stone Serif Std Semibold',
                     'Matrix-Bold',
                     'MatrixBoldSmallCaps',
                     'MatrixBook',

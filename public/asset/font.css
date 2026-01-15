@@ -21,6 +21,13 @@
     font-style: normal;
     font-display: swap;
 }
+/** Edition Text **/
+@font-face {
+    font-family: 'ITC Stone Serif Std Semibold';
+    src: url('./font/ITC Stone Serif Std Semibold.otf');
+    font-style: normal;
+    font-display: swap;
+}
 @font-face {
     font-family: 'SVN-Times New Roman Italic';
     src: url('./font/SVN-Times New Roman Italic.ttf');

@@ -120,7 +120,7 @@ export const drawOnFrameText = ({
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
     const superTextOffset = 7.4 * globalScale;
-    const ordinalIndicatorOffset = 1 * globalScale;
+    const ordinalIndicatorOffset = -1 * globalScale;
     const availableWidth = width * globalScale;
 
     let left = actualEdge;
@@ -139,17 +139,17 @@ export const drawOnFrameText = ({
         }
         const restoredToken = token.replaceAll(NB_WORD_OPEN, '<').replaceAll(NB_WORD_CLOSE, '>');
         if (superscriptMode) {
-            ctx.font = `${17.78 * globalScale}px palatino-linotype-bold`;
+            ctx.font = `${17.78 * globalScale}px "ITC Stone Serif Std Semibold"`;
             contentWidth += ctx.measureText(restoredToken).width;
         } else {
             if (!isNaN(parseInt(restoredToken))) {
-                ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
+                ctx.font = `${21.00 * globalScale}px "ITC Stone Serif Std Semibold"`;
                 contentWidth += ctx.measureText(restoredToken).width - 2 * globalScale;
             } else if (restoredToken === 'ª' || restoredToken === 'º') {
-                ctx.font = `${25.7 * globalScale}px palatino-linotype-bold`;
+                ctx.font = `${28 * globalScale}px palatino-linotype-bold`;
                 contentWidth += ctx.measureText(restoredToken).width;
             } else {
-                ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
+                ctx.font = `${21.00 * globalScale}px "ITC Stone Serif Std Semibold"`;
                 contentWidth += ctx.measureText(restoredToken).width;
             }
         }
@@ -172,23 +172,23 @@ export const drawOnFrameText = ({
         }
         const restoredToken = token.replaceAll(NB_WORD_OPEN, '<').replaceAll(NB_WORD_CLOSE, '>');
         if (superscriptMode) {
-            ctx.font = `${17.78 * globalScale}px palatino-linotype-bold`;
+            ctx.font = `${17.78 * globalScale}px "ITC Stone Serif Std Semibold"`;
             ctx.fillText(restoredToken, left, actualBaseline - superTextOffset + actualBaselineOffset);
             if (stroke) ctx.strokeText(restoredToken, left, actualBaseline - superTextOffset);
             left += ctx.measureText(restoredToken).width;
         } else {
             if (!isNaN(parseInt(restoredToken))) {
-                ctx.font = `${23.7 * globalScale}px palatino-linotype-bold`;
+                ctx.font = `${21.00 * globalScale}px "ITC Stone Serif Std Semibold"`;
                 ctx.fillText(restoredToken, left, actualBaseline + actualBaselineOffset);
                 if (stroke) ctx.strokeText(restoredToken, left, actualBaseline);
                 left += ctx.measureText(restoredToken).width - 2 * globalScale;
             } else if (restoredToken === 'ª' || restoredToken === 'º') {
-                ctx.font = `${25.7 * globalScale}px palatino-linotype-bold`;
+                ctx.font = `${28 * globalScale}px palatino-linotype-bold`;
                 ctx.fillText(restoredToken, left, actualBaseline - ordinalIndicatorOffset + actualBaselineOffset);
                 if (stroke) ctx.strokeText(restoredToken, left, actualBaseline - ordinalIndicatorOffset);
                 left += ctx.measureText(restoredToken).width;
             } else {
-                ctx.font = `${22.22 * globalScale}px palatino-linotype-bold`;
+                ctx.font = `${21.00 * globalScale}px "ITC Stone Serif Std Semibold"`;
                 ctx.fillText(restoredToken, left, actualBaseline + actualBaselineOffset);
                 if (stroke) ctx.strokeText(restoredToken, left, actualBaseline);
                 left += ctx.measureText(restoredToken).width;
