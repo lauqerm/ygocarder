@@ -20,7 +20,7 @@ const StyledFrameContainer = styled.div<{ $withPillar: boolean }>`
 `;
 const StyledFramePillar = styled.div`
     display: inline-block;
-    width: 10px;
+    width: 8px;
 `;
 export const FrameInfoBlock = ({
     id,
@@ -29,6 +29,7 @@ export const FrameInfoBlock = ({
     labelBackgroundColor,
     labelBackgroundColorList,
     className,
+    isOfficial,
     onClick,
 }: Omit<FrameInfo, 'name' | 'edition' | 'labelColor' | 'sortWeight'> & {
     id?: string,
@@ -49,11 +50,20 @@ export const FrameInfoBlock = ({
             ? <StyledFramePillar>
                 {labelBackgroundColorList.map(color => <div
                     key={color} 
-                    style={{ backgroundColor: color, height: `${100 / labelBackgroundColorList.length}%` }}
+                    style={{
+                        background: isOfficial ? 'unset' : 'var(--gradient-diagonal-stripe)',
+                        backgroundColor: color,
+                        height: `${100 / labelBackgroundColorList.length}%`,
+                    }}
                 />)}
             </StyledFramePillar>
             : labelBackgroundColor
-                ? <StyledFramePillar style={{ backgroundColor: labelBackgroundColor }} />
+                ? <StyledFramePillar
+                    style={{
+                        background: isOfficial ? 'unset' : 'var(--gradient-diagonal-stripe)',
+                        backgroundColor: labelBackgroundColor
+                    }}
+                />
                 : null}
         <label className="frame-info-block-label">{language[nameKey]}</label>
     </StyledFrameContainer>;

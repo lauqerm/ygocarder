@@ -11,6 +11,8 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
         max-width: 480px;
         .radio-train-input-group {
             gap: var(--spacing);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
         }
     }
     .radio-train.foil-radio {

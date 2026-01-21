@@ -242,6 +242,8 @@
         "input.icon-type.icon.label": "Ký hiệu",
         "input.icon-type.level-rank.full.label": "Level Rank",
         "input.icon-type.level-rank.label": "Level Rank",
+        "input.icon-type.grade.full.label": "Grade",
+        "input.icon-type.grade.label": "Grade",
         "input.icon-type.level.full.label": "Level",
         "input.icon-type.level.label": "Level",
         "input.icon-type.negative-level.full.label": "Level âm",
@@ -470,6 +472,8 @@
         "setting.option.sliding-type.auto.label": "Tự di chuyển",
         "setting.option.sliding-type.label": "Xem trước",
         "setting.option.sliding-type.manual.label": "Kéo thủ công",
+        "input.frame.unofficial.label": "Fanmade",
+        "input.frame.rebirth": "Rebirth",
         "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }

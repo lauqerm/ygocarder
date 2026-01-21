@@ -233,7 +233,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const changePendulumEffect = useMemo(() => getUpdater('pendulumEffect', undefined, 'debounce'), [getUpdater]);
 
     const pendulumSizeList = useMemo(() => getPendulumSizeList(language), [language]);
-    const frameList = useMemo(() => getFrameButtonList()
+    const frameList = useMemo(() => getFrameButtonList('both')
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),

@@ -81,15 +81,23 @@ export const ArtFinishButtonList = [
     })),
 ];
 
-export const getFrameButtonList = () => frameList.map(({ name, nameKey, labelBackgroundColor, labelBackgroundColorList, edition }) => ({
-    label: <FrameInfoBlock
-        labelBackgroundColor={labelBackgroundColor}
-        labelBackgroundColorList={labelBackgroundColorList}
-        nameKey={nameKey}
-    />,
-    value: name,
-    edition,
-}));
+export const getFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 'official') => frameList
+    .filter(({ isOfficial }) => origin === 'both'
+        ? true
+        : origin === 'official'
+            ? isOfficial
+            : !isOfficial,
+    )
+    .map(({ name, nameKey, labelBackgroundColor, labelBackgroundColorList, edition, isOfficial }) => ({
+        label: <FrameInfoBlock
+            labelBackgroundColor={labelBackgroundColor}
+            labelBackgroundColorList={labelBackgroundColorList}
+            nameKey={nameKey}
+            isOfficial={isOfficial}
+        />,
+        value: name,
+        edition,
+    }));
 
 export const getAttributeList = (region: string, dictionary: Record<string, string>, showCreativeOption: boolean) => AttributeList
     .map(({ name, nameKey, isCreative }) => ({

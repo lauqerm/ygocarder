@@ -1,12 +1,13 @@
 export type FrameInfo = {
     name: string,
     nameKey: string,
-    edition: 'normal' | 'extendend',
+    edition: 'normal' | 'extendend' | 'fanmade',
     labelColor: string,
     labelBackgroundColor?: string,
     labelBackgroundColorList?: string[],
     labelBackgroundImage?: string,
     sortWeight: number,
+    isOfficial: boolean,
 };
 export const FrameInfoMap: Record<string, FrameInfo> = {
     'normal': {
@@ -16,6 +17,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#c49c5e',
         sortWeight: 100,
+        isOfficial: true,
     },
     'effect': {
         name: 'effect',
@@ -24,6 +26,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#b96c49',
         sortWeight: 90,
+        isOfficial: true,
     },
     'fusion': {
         name: 'fusion',
@@ -32,6 +35,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#8948a4',
         sortWeight: 80,
+        isOfficial: true,
     },
     'synchro': {
         name: 'synchro',
@@ -40,6 +44,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#efefef',
         sortWeight: 70,
+        isOfficial: true,
     },
     'xyz': {
         name: 'xyz',
@@ -48,6 +53,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#000000',
         sortWeight: 60,
+        isOfficial: true,
     },
     'link': {
         name: 'link',
@@ -56,6 +62,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#0c8ac6',
         sortWeight: 50,
+        isOfficial: true,
     },
     'ritual': {
         name: 'ritual',
@@ -64,6 +71,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#5e85c9',
         sortWeight: 85,
+        isOfficial: true,
     },
     'spell': {
         name: 'spell',
@@ -72,6 +80,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#1b8f83',
         sortWeight: 30,
+        isOfficial: true,
     },
     'trap': {
         name: 'trap',
@@ -80,6 +89,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#c32a8c',
         sortWeight: 25,
+        isOfficial: true,
     },
     'token': {
         name: 'token',
@@ -88,6 +98,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#6f6c6b',
         sortWeight: 1,
+        isOfficial: true,
     },
     'dark-synchro': {
         name: 'dark-synchro',
@@ -96,6 +107,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#4d4543',
         sortWeight: 15,
+        isOfficial: true,
     },
     'obelisk': {
         name: 'obelisk',
@@ -104,6 +116,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#515eb0',
         sortWeight: 10,
+        isOfficial: true,
     },
     'osiris': {
         name: 'osiris',
@@ -112,6 +125,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#bd5044',
         sortWeight: 9,
+        isOfficial: true,
     },
     'ra': {
         name: 'ra',
@@ -120,6 +134,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#b9ad34',
         sortWeight: 8,
+        isOfficial: true,
     },
     'raviel': {
         name: 'raviel',
@@ -128,6 +143,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#313c5f',
         sortWeight: 7,
+        isOfficial: true,
     },
     'uria': {
         name: 'uria',
@@ -136,6 +152,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#623320',
         sortWeight: 6,
+        isOfficial: true,
     },
     'hamon': {
         name: 'hamon',
@@ -144,6 +161,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#534a19',
         sortWeight: 5,
+        isOfficial: true,
     },
     'lg-dragon': {
         name: 'lg-dragon',
@@ -152,6 +170,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#4e84a4',
         sortWeight: 3,
+        isOfficial: true,
     },
     'speed-skill': {
         name: 'speed-skill',
@@ -160,6 +179,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'extendend',
         labelBackgroundColor: '#199cd5',
         sortWeight: 2,
+        isOfficial: true,
     },
     'zarc': {
         name: 'zarc',
@@ -181,6 +201,16 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
             'rgba(0,0,0,1) 77%',
         ].join(', ')})`,
         sortWeight: 4,
+        isOfficial: true,
+    },
+    'rebirth': {
+        name: 'rebirth',
+        nameKey: 'input.frame.rebirth',
+        labelColor: '#000000',
+        edition: 'fanmade',
+        labelBackgroundColor: '#ff9e03',
+        sortWeight: 100,
+        isOfficial: false,
     },
 };
 export const frameList = Object.values(FrameInfoMap);

@@ -59,7 +59,7 @@ export const NameStylePicker = forwardRef(({
         setValue(cur => ({ ...cur, gradientAngle, gradientColor: stringifyPalette(palette) }));
         requestUpdateCustomStyle();
     }, [requestUpdateCustomStyle]);
-    const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
+    const reduceMotionColor = useSetting(state => state.setting.reduceMotionColor);
 
     const fontList = useMemo(() => getNameFontOptionList(language), [language]);
 
@@ -286,7 +286,7 @@ export const NameStylePicker = forwardRef(({
                     >
                         <PopoverButton
                             id={colorPickerButtonId}
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom}
                             className="picker-dropdown color-picker-dropdown"
                         >
@@ -335,7 +335,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottom"
                     >
                         <PopoverButton
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom && hasShadow}
                             className="picker-dropdown shadow-picker-dropdown"
                         >
@@ -384,7 +384,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottom"
                     >
                         <PopoverButton
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom && hasOutline}
                             className="picker-dropdown outline-picker-dropdown"
                         >
@@ -417,7 +417,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottom"
                     >
                         <PopoverButton
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom && hasGradient}
                             className="picker-dropdown gradient-picker-dropdown"
                         >
@@ -461,7 +461,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottomLeft"
                     >
                         <PopoverButton
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom && typeof pattern === 'string' && pattern !== 'none'}
                             className="picker-dropdown pattern-picker-dropdown"
                         >
@@ -489,7 +489,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottomLeft"
                     >
                         <PopoverButton
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom && font !== 'Auto'}
                             className="picker-dropdown font-picker-dropdown"
                         >
@@ -536,7 +536,7 @@ export const NameStylePicker = forwardRef(({
                         placement="bottomLeft"
                     >
                         <PopoverButton
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             $active={isStyleCustom && hasEmboss}
                             className="picker-dropdown emboss-picker-dropdown"
                         >

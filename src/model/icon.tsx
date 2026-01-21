@@ -377,6 +377,21 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         imagePresetPath: 'icon-level-rank',
         imagePresetSource: 'subfamily/subfamily-level-rank.png',
     },
+    'grade': {
+        value: 'grade',
+        labelKey: 'input.icon-type.grade.label',
+        fullLabelKey: 'input.icon-type.grade.full.label',
+        icon: <img
+            className="icon-image"
+            alt="grade-icon"
+            src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-grade.png`}
+        />,
+        isOption: true,
+        isMixable: true,
+        showIcon: false,
+        imagePresetPath: 'icon-grade',
+        imagePresetSource: 'subfamily/subfamily-grade.png',
+    },
 };
 export const IconTypeList = Object.values(IconTypeMap);
 

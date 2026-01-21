@@ -136,7 +136,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         starAlignment,
         getUpdater,
     })));
-    const reduceColorMotion = useSetting(state => state.setting.reduceMotionColor);
+    const reduceMotionColor = useSetting(state => state.setting.reduceMotionColor);
     const starPickerRef = useRef<StarPickerRef>(null);
 
     const changeCardIcon = useMemo(() => getUpdater('cardIcon'), [getUpdater]);
@@ -222,7 +222,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                         </div>}
                     >
                         <PopoverButtonInCardIconInput
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             className={showCreativeOption ? '' : 'disabled'}
                         >
                             {language['input.attribute.label']}
@@ -245,14 +245,14 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                         </div>}
                     >
                         <PopoverButtonInCardIconInput
-                            $softMode={reduceColorMotion}
+                            $softMode={reduceMotionColor}
                             className={showCreativeOption ? '' : 'disabled'}
                         >
                             {language['input.attribute.spell']}&nbsp;/&nbsp;{language['input.attribute.trap']}
                         </PopoverButtonInCardIconInput>
                     </Popover>
                     <PopoverButtonInCardIconInput
-                        $softMode={reduceColorMotion}
+                        $softMode={reduceMotionColor}
                         className={showCreativeOption ? '' : 'disabled'}
                         onClick={() => {
                             changeCardIcon('custom');

@@ -132,6 +132,7 @@ export const PopoverButton = styled.div<{ $active?: boolean, $softMode: boolean 
     box-shadow: var(--bs-button);
     color: var(--color-heavy);
     cursor: pointer;
+    font-size: var(--fs);
     ${({ $softMode, $active }) => {
         return $softMode
             ? `

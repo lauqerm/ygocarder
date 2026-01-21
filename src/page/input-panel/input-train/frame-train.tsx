@@ -1,11 +1,69 @@
-import { useCard, useSetting } from 'src/service';
+import { useCard, useLanguage, useSetting } from 'src/service';
 import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap } from 'src/model';
+import { FrameInfoMap, NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap } from 'src/model';
 import { TrainGridStyle } from './input-train.styled';
-import { RadioTrain } from 'src/component';
+import { PopoverButton, RadioTrain } from 'src/component';
+import { BookOutlined } from '@ant-design/icons'; 
+import { Popover, Tooltip } from 'antd';
+
+const StyledPopoverButton = styled(PopoverButton)<{ $inline?: boolean }>`
+    ${({ $inline }) => $inline ? 'margin-left: var(--spacing-xs);' : 'margin-top: var(--spacing);'}
+`;
+
+export type UnofficialFrameTrain = {
+    inline?: boolean,
+    changeFrame: (frameValue: string) => void,
+};
+export const UnofficialFrameTrain = ({ inline, changeFrame }: UnofficialFrameTrain) => {
+    const {
+        setting,
+    } = useSetting();
+    const { reduceMotionColor } = setting;
+    const language = useLanguage();
+    const frameList = useMemo(() => getFrameButtonList('unofficial'), []);
+    const {
+        frame,
+    } = useCard(useShallow(({
+        card,
+    }) => ({
+        frame: card.frame,
+    })));
+
+    return inline
+        ? <Popover
+            trigger={['click']}
+            overlayClassName="global-input-overlay"
+            content={<div className="overlay-event-absorber">
+                <StyledFrameTrain
+                    className="frame-radio"
+                    value={frame}
+                    onChange={changeFrame}
+                    optionList={frameList}
+                />
+            </div>}
+            placement="bottom"
+        >
+            <Tooltip title={language['input.frame.unofficial.label']}>
+                <StyledPopoverButton
+                    $softMode={reduceMotionColor}
+                    $inline={inline}
+                    $active={FrameInfoMap[frame]?.isOfficial === false}
+                    className="picker-dropdown color-picker-dropdown"
+                >
+                    <BookOutlined />
+                </StyledPopoverButton>
+            </Tooltip>
+        </Popover>
+        : <StyledFrameTrain
+            className="frame-radio"
+            value={frame}
+            onChange={changeFrame}
+            optionList={frameList}
+        />;
+};
 
 const StyledFrameTrain = styled(RadioTrain)`
 	${TrainGridStyle}
@@ -108,5 +166,11 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
         changeFrame,
     }));
 
-    return <StyledFrameTrain className="frame-radio" value={frame} onChange={changeFrame} optionList={frameList} />;
+    return <StyledFrameTrain
+        className="frame-radio"
+        value={frame}
+        onChange={changeFrame}
+        optionList={frameList}
+        suffix={showExtraDecorativeOption && <UnofficialFrameTrain inline changeFrame={changeFrame} />}
+    />;
 });
