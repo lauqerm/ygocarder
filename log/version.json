@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.3.45 (2026/01/22)",
+        "logList": [
+            {
+                "content": "Experimental support for fanmade Rebirth card (from NeoPhoenixKnight)."
+            }
+        ]
+    },
+    {
         "version": "v2.3.44 (2026/01/15)",
         "logList": [
             {
