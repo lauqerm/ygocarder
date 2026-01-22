@@ -119,6 +119,13 @@ html {
     // Size
     --width-label: 105px;
 
+    a {
+        color: var(--main-link);
+        &:hover {
+            color: var(--sub-link);
+        }
+    }
+
     h1 {
         color: var(--color-heavy);
         font-size: var(--fs-2xl);

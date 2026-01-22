@@ -12,15 +12,17 @@ const StyledExplanationIcon = styled(ExclamationCircleOutlined)`
 
 export type Explanation = {
     iconProps?: ExtractProps<typeof ExclamationCircleOutlined>,
+    icon?: typeof StyledExplanationIcon,
 } & ExtractProps<typeof Popover>;
 export const Explanation = ({
     overlayClassName,
     iconProps,
+    icon: Icon = StyledExplanationIcon,
     ...rest
 }: Explanation) => {
     const { className, ...restIconProps } = iconProps ?? {};
 
     return <Popover overlayClassName={['explanation-overlay', overlayClassName ?? ''].join(' ')} {...rest}>
-        <StyledExplanationIcon className={['explanation-icon', className ?? ''].join(' ')} {...restIconProps} />
+        <Icon className={['explanation-icon', className ?? ''].join(' ')} {...restIconProps} />
     </Popover>;
 };

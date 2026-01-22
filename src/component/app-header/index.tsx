@@ -1,4 +1,4 @@
-import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -11,9 +11,9 @@ import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
 import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
 import { PresetManager } from '../preset-manager';
-import './app-header.scss';
 import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
+import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -25,7 +25,15 @@ export const Affiliation = () => {
     </div>;
 };
 
-
+const AdditionalContributorIcon = styled(InfoCircleOutlined)`
+    font-size: var(--fs);
+    color: var(--color-heavy);
+    cursor: pointer;
+    display: inline-block;
+`;
+const AdditionalContributorContainer = styled(StyledPopMarkdown)`
+    font-size: var(--fs-sm);
+`;
 const StyledAppHeaderButtonContainer = styled.div`
     align-content: center;
     align-self: center;
@@ -178,6 +186,31 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/icycatelf"
                             target="_blank"
                             rel="noreferrer"><b>icycatelf</b></a>,
+                        <Explanation
+                            icon={AdditionalContributorIcon}
+                            content={<AdditionalContributorContainer className="additional-contributors">
+                                <ul className="template-creator">
+                                    <li>
+                                        <a
+                                            href="https://www.deviantart.com/neophoenixknight/art/Rebirth-Monsters-686893186"
+                                            target="_blank"
+                                            rel="noreferrer"><b>NeoPhoenixKnight</b></a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://www.facebook.com/100006320592457/"
+                                            target="_blank"
+                                            rel="noreferrer"><b>Trí Dũng Song Toàn</b></a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://www.facebook.com/61577932176567/"
+                                            target="_blank"
+                                            rel="noreferrer"><b>Trần Quang Anh</b></a>
+                                    </li>
+                                </ul>
+                            </AdditionalContributorContainer>}
+                        />
                     )}
                 </span>
             </div>

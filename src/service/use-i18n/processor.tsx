@@ -73,10 +73,11 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
             artist2: React.ReactNode,
             artist3: React.ReactNode,
             artist4: React.ReactNode,
+            other: React.ReactNode,
         ) => {
             return applyTemplateNode(
                 getDictionaryEntry('contributor.template-maker'),
-                { artist1, artist2, artist3, artist4 },
+                { artist1, artist2, artist3, artist4, other },
             );
         },
         'converter.header.warning.label': (

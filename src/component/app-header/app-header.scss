@@ -64,12 +64,6 @@
         b {
             font-size: var(--fs-sm);
         }
-        a {
-            color: var(--main-link);
-            &:hover {
-                color: var(--sub-link);
-            }
-        }
         > * {
             white-space: nowrap;
             text-overflow: ellipsis;
