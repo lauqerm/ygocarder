@@ -224,7 +224,7 @@ export const CardLayoutPreview = ({
             style={{
                 boxShadow: `0 0 0 2px ${HexColorRegex.test(dyeList[DyeIndexMap.foil])
                     ? dyeList[DyeIndexMap.foil]
-                    : FoilMap[foil].color} inset`
+                    : FoilMap[foil]?.color} inset`
             }}
         >
             {language['input.foil.label']}

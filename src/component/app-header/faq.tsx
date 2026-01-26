@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '08/01/2026';
+        const currentReminder = '26/01/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at Jan 25, 2026',
+            question: 'I was thinking it would be nice to have the Rainbow border similar to the Prismatic SR OCG Proxies and the Maximum Gold Premium Rare ones',
+            answer: 'I would love to do that, unfortunately I have no access to the frame assets needed.',
+        },
         {
             author: 'Gio at Jan 05, 2026',
             question: 'In Trap cards, the words for the card type are very close together because there isn’t enough spacing between the letters (this doesn’t happen in Spell cards). Also, the letter A is slightly taller than the other letters (I haven’t checked if this happens with other letters as well), and the words look a bit uneven.\nIn Monster cards, the line that is right above ATK and DEF is thicker than in the original cards.\nRegards!',
