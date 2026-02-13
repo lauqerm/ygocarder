@@ -116,7 +116,7 @@ export type ExportPanelRef = {
 };
 export type ExportPanel = {
     tainted: boolean,
-    artworkCanvas: HTMLCanvasElement | null,
+    artworkCanvas?: HTMLCanvasElement | null,
     onRequireExportData: () => void,
     onRequireDownload: () => void,
     onClose: () => void,

@@ -1,41 +1,13 @@
 import { Button, Dropdown, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import { MasterSeriesCanvas } from 'src/model';
-import { UseCardExport, useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
+import { UseCardExport, useCardExport, useLanguage, useSetting } from 'src/service';
 import { GatewayOutlined } from '@ant-design/icons';
-import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { forceRefocus } from 'src/util';
 import { ResolutionPicker } from 'src/component';
+import styled from 'styled-components';
+import { ResolutionButton } from './download-button.styled';
 
-export const ResolutionButton = styled.div`
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-xs) var(--spacing);
-    border-left: var(--bw) solid var(--sub-secondary);
-    border-radius: 0 var(--br-lg) var(--br-lg) 0;
-    color: var(--color);
-    cursor: pointer;
-    .anticon {
-        font-size: var(--fs-2xl);
-        margin-left: 0;
-    }
-    .resolution-overlay {
-        position: absolute;
-        left: 50%;
-        bottom: 3px; // Alignment
-        font-size: var(--fs-xs);
-        text-align: center;
-        transform: translateX(-50%);
-    }
-    .resolution-icon {
-        transform: translateY(-5px); // Alignment
-    }
-`;
 const StyledDownloadButton = styled(Button)`
     padding: 0;
     .button-label {
@@ -52,27 +24,22 @@ const StyledDownloadButton = styled(Button)`
     }
 `;
 export type DownloadButtonRef = {
-    download: () => void,
+    download: (size?: [number, number]) => void,
     isPipelineRunning: () => boolean,
-}
-export type DownloadButton = {
-    imageChangeCount: number,
-    globalScale: number,
-    canvasMap: MasterSeriesCanvas,
-    onTainted: () => void,
-    onExportSucess: () => void,
+};
+export type UnconnectedDownloadButton = {
+    onExport: (param: Parameters<UseCardExport['onExport']>[0]) => Promise<void>,
+    exportCanvasRef: React.RefObject<HTMLCanvasElement>,
 } & Pick<UseCardExport, 'isTainted'
 | 'isInitializing'
 | 'onDownloadError'>;
-export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
+/** To ensure the best performance, all of this hook's paramter must be memozied. */
+export const UnconnectedDownloadButton = forwardRef<DownloadButtonRef, UnconnectedDownloadButton>(({
     isTainted,
+    onExport,
     isInitializing,
-    imageChangeCount,
-    globalScale,
-    canvasMap,
-    onTainted,
-    onExportSucess,
     onDownloadError,
+    exportCanvasRef,
 }, ref) => {
     const language = useLanguage();
     const {
@@ -83,19 +50,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     }) => ({
         allowHotkey, resolution,
     })));
-    const { onExport } = useMasterSeriDrawer(
-        true,
-        canvasMap,
-        {
-            imageChangeCount,
-            isInitializing,
-            language,
-            globalScale,
-        },
-    );
-    const {
-        exportCanvasRef,
-    } = canvasMap;
+
     const exportRef = useRef({
         currentPipeline: Promise.resolve(),
         pipelineRunning: false,
@@ -104,27 +59,15 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     const onDownloadComplete = useCallback(() => {
         setDownloading(false);
     }, []);
-    const onExportWithCallback = useCallback(async (param: Parameters<UseCardExport['onExport']>[0]) => {
-        return onExport({
-            ...param,
-            onError: e => {
-                if (!isTainted && String(e).includes('Tainted canvases')) {
-                    onTainted();
-                }
-            },
-            onSuccess: onExportSucess,
-        });
-    }, [isTainted, onExport, onExportSucess, onTainted]);
     const { onSave, isPipelineRunning } = useCardExport({
         isTainted,
         isInitializing,
         exportCanvasRef,
         exportRef,
-        onExport: onExportWithCallback,
+        onExport,
         onDownloadError,
         onDownloadComplete,
     });
-
     const download = (size?: [number, number]) => {
         if (isDownloading) return;
         if (isTainted) {
@@ -137,6 +80,7 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
         onSave(size);
         return;
     };
+
     useImperativeHandle(ref, () => ({
         download,
         isPipelineRunning,

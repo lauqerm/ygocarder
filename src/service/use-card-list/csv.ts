@@ -32,6 +32,7 @@ import { v4 as uuid } from 'uuid';
 
 const CsvStandardFieldList = [
     /** Extremely common stuff for most users */
+    'Series',
     'Format',
     'Frame',
     'Name',
@@ -231,7 +232,6 @@ export const cardListToCsv = (cardList: Card[]) => {
         const rowValue = Array(rowLength).map(() => '');
         const {
             art,
-            cornerText,
             artCrop,
             artFinish,
             artFit,
@@ -245,6 +245,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             backgroundSource,
             backgroundType,
             cardIcon,
+            cornerText,
             creator,
             def,
             dyeList,
@@ -288,6 +289,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             pendulumTextStyle,
             region,
             rightFrame,
+            series,
             setId,
             star,
             starAlignment,
@@ -303,6 +305,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         const stringifedDyeList = dyeList.join('|');
         const stringifedSubFamilyList = starList.join('|');
 
+        write('Series', series);
         write('Format', format);
         write('Region', region);
         write('Frame', frame);
@@ -555,6 +558,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const effect = reader('Effect') ?? '';
                 const finish = reader('Card Finish')?.split(/,| /).filter(entry => entry !== '') ?? [] as string[];
                 const format = (reader('Format') ?? emptyCard.format).toLowerCase();
+                const series = (reader('Series') ?? emptyCard.format).toLowerCase();
                 const region = (reader('Region') ?? emptyCard.region).toLowerCase();
                 const furiganaHelper = normalizeBoolean(reader('Use Furigana Helper'), emptyCard.furiganaHelper);
                 const name = reader('Name') ?? '';
@@ -822,10 +826,11 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumTextStyle,
                     region,
                     rightFrame,
+                    series,
                     setId,
                     star,
-                    starList,
                     starAlignment,
+                    starList,
                     statTextStyle,
                     sticker,
                     subFamily,

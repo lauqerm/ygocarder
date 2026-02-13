@@ -298,6 +298,7 @@ export const CardThumb = ({
         typeAbility,
         effectStyle,
         pendulumStyle,
+        series,
     } = card;
     const {
         topLeftFrame,

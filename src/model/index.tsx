@@ -8,6 +8,8 @@ import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
 import { LanguageDataDictionary } from 'src/service';
 
+export type CardSeries = 'master' | 'rush';
+
 export const getDefaultCrop = () => ({
     x: 0,
     y: 4,
@@ -28,6 +30,7 @@ export const getDefaultCrop = () => ({
  */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
+    series: 'master',
     version: 2,
     format: 'tcg',
     region: 'en',
@@ -131,6 +134,7 @@ export const getDefaultInternalCard = () => ({
 });
 
 export const getEmptyCard = (): Card => ({
+    series: 'master',
     version: 3,
     format: 'tcg',
     region: 'en',

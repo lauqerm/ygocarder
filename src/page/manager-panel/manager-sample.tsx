@@ -123,6 +123,17 @@ export const ManagerSample = ({
                                 </tr>
                                 {[
                                     {
+                                        field: 'Series',
+                                        value: <div>
+                                            {[
+                                                'master',
+                                                'rush',
+                                            ].map(value => {
+                                                return <CopiableCode key={value} data={value}>{value}</CopiableCode>;
+                                            })}
+                                        </div>
+                                    },
+                                    {
                                         field: 'Format',
                                         value: <div>
                                             {[

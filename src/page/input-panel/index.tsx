@@ -62,8 +62,8 @@ export type CardInputPanelRef = {
     isLoading: () => boolean,
 };
 export type CardInputPanel = {
-    artworkCanvas: ImageInputGroup['receivingCanvas'],
-    backgroundCanvas: ImageInputGroup['receivingCanvas'],
+    artworkCanvas?: ImageInputGroup['receivingCanvas'],
+    backgroundCanvas?: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData'>;
 export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     applyCardData,

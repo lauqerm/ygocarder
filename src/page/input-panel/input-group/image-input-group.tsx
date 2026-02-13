@@ -154,7 +154,7 @@ export type ImageInputGroupRef = {
 export type ImageInputGroup = {
     showExtraDecorativeOption: boolean,
     showCreativeOption: boolean,
-    receivingCanvas: HTMLCanvasElement | null,
+    receivingCanvas?: HTMLCanvasElement | null,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
     onTainted: ImageCropper['onTainted'],
     onSourceLoaded: ImageCropper['onSourceLoaded'],

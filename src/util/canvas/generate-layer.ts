@@ -1,15 +1,15 @@
 /** Delay queue and relevant checker is used for potential performance improvement, but currently performance is not making a hard impact to the app. */
 export const generateLayer = (
-    canvasLayer: React.RefObject<HTMLCanvasElement>,
+    canvasLayer: React.RefObject<HTMLCanvasElement> | undefined,
     exportCtx: CanvasRenderingContext2D | null | undefined,
     delayQueue: number = 0,
 ) => {
     return new Promise<{ status: 'success' } | { status: 'error', data: any }>(resolve => {
         setTimeout(() => {
-            if (!canvasLayer.current || !exportCtx) resolve({ status: 'error', data: new Error('No export canvas') });
+            if (!canvasLayer?.current || !exportCtx) resolve({ status: 'error', data: new Error('No export canvas') });
             else {
                 try {
-                    canvasLayer.current.toBlob(blob => {
+                    canvasLayer?.current.toBlob(blob => {
                         if (!blob) resolve({ status: 'error', data: new Error('No layer blob') });
                         else {
                             const url = URL.createObjectURL(blob);

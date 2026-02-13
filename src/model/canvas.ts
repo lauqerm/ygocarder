@@ -54,6 +54,13 @@ export type MasterSeriesCanvas = {
         draw: (exportCanvas: HTMLCanvasElement) => void,
     }>,
 };
+export type SeriesCanvasInfo = {
+    type: 'master',
+    canvasMap: MasterSeriesCanvas,
+} | {
+    type: 'rush',
+    canvasMap: MasterSeriesCanvas,
+};
 
 /** Some coordination data must be rounded into nearest integer so it does not create those janky ghost pixels. */
 export const CanvasConst = {

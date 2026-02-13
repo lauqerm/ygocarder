@@ -135,8 +135,8 @@ export const getLayoutDrawFunction = ({
     loopArtFinish,
 }: {
     canvas: HTMLCanvasElement,
-    artworkCanvas: HTMLCanvasElement | null,
-    backgroundCanvas: HTMLCanvasElement | null,
+    artworkCanvas?: HTMLCanvasElement | null,
+    backgroundCanvas?: HTMLCanvasElement | null,
     globalScale: number,
     region: string,
     frame: string, leftFrame: string, pendulumFrame: string, rightFrame: string, pendulumRightFrame: string,

@@ -58,7 +58,7 @@ import {
 } from 'src/util';
 import { useCard } from '../use-card';
 import { prepareStyle } from './prepare-style';
-import { LanguageDataDictionary } from '../use-i18n';
+import { useLanguage } from '../use-i18n';
 import { notification } from 'antd';
 
 export type ExportCallbackParameter = {
@@ -82,7 +82,6 @@ const {
 type DrawerProp = {
     imageChangeCount: number,
     isInitializing: boolean,
-    language: LanguageDataDictionary,
     globalScale: number,
 };
 type DrawingPipeline = {
@@ -98,6 +97,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const {
         card,
     } = useCard();
+    const language = useLanguage();
     const {
         exportCanvasRef,
         artworkCanvasRef,
@@ -295,7 +295,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const {
         isInitializing,
         imageChangeCount,
-        language,
         globalScale,
     } = props;
     const readyToDraw = active && isInitializing === false;
@@ -309,11 +308,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!readyToDraw) return;
         drawingPipeline.current.frame.rerun += 1;
         drawingPipeline.current.frame.instructor = async () => {
-            const ctx = frameCanvasRef.current?.getContext('2d');
-            const artworkCanvas = artworkCanvasRef.current;
-            const backgroundCanvas = backgroundCanvasRef.current;
+            const ctx = frameCanvasRef?.current?.getContext('2d');
+            const artworkCanvas = artworkCanvasRef?.current;
+            const backgroundCanvas = backgroundCanvasRef?.current;
 
-            if (!clearCanvas(ctx) || !frameCanvasRef.current) return;
+            if (!clearCanvas(ctx) || !frameCanvasRef?.current) return;
 
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
@@ -631,7 +630,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW PENDULUM SCALE */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = pendulumScaleCanvasRef.current?.getContext('2d');
+        const ctx = pendulumScaleCanvasRef?.current?.getContext('2d');
 
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
@@ -646,12 +645,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!readyToDraw) return;
         drawingPipeline.current.name.rerun += 1;
         drawingPipeline.current.name.instructor = async () => {
-            const ctx = nameCanvasRef.current?.getContext('2d');
+            const ctx = nameCanvasRef?.current?.getContext('2d');
 
-            if (!clearCanvas(ctx) || !nameCanvasRef.current) return;
+            if (!clearCanvas(ctx) || !nameCanvasRef?.current) return;
 
             await drawName(
-                nameCanvasRef.current,
+                nameCanvasRef?.current,
                 ctx,
                 name,
                 format === 'tcg' ? 60 : 68, 116,
@@ -680,7 +679,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW STAT (ATK / DEF) */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = statCanvasRef.current?.getContext('2d');
+        const ctx = statCanvasRef?.current?.getContext('2d');
 
         if (!clearCanvas(ctx) || !statInEffect) return;
 
@@ -718,7 +717,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW SET ID */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = setIdCanvasRef.current?.getContext('2d');
+        const ctx = setIdCanvasRef?.current?.getContext('2d');
 
         if (!clearCanvas(ctx)) return;
 
@@ -753,7 +752,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW FIRST EDITION NOTICE (1st Edition Text), CORNER TEXT AND PASSWORD */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = passwordCanvasRef.current?.getContext('2d');
+        const ctx = passwordCanvasRef?.current?.getContext('2d');
 
         drawingPipeline.current.otherText.rerun += 1;
         drawingPipeline.current.otherText.instructor = async () => {
@@ -883,7 +882,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     useEffect(() => {
         if (!readyToDraw) return;
 
-        const ctx = creatorCanvasRef.current?.getContext('2d');
+        const ctx = creatorCanvasRef?.current?.getContext('2d');
 
         drawingPipeline.current.creator.rerun += 1;
         drawingPipeline.current.creator.instructor = async () => {
@@ -895,7 +894,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 boundless,
             } = normalizedOpacity;
             const endOfCreatorText = await drawCreatorText({
-                ctx: creatorCanvasRef.current?.getContext('2d'),
+                ctx: creatorCanvasRef?.current?.getContext('2d'),
                 format,
                 value: creator,
                 alignment: 'right',
@@ -908,9 +907,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const compactThreshold = (format === 'tcg' ? 390 : 350) * globalScale;
             const compactOffset = (format === 'tcg' ? 30 : 40) * globalScale;
 
-            if (isLimitedEdition && creatorCanvasRef.current) {
+            if (isLimitedEdition && creatorCanvasRef?.current) {
                 await drawLimitedEditionMark({
-                    canvas: creatorCanvasRef.current,
+                    canvas: creatorCanvasRef?.current,
                     ctx,
                     globalScale,
                     type: (lightFooter && !isPendulum) ? 'white' : 'black',
@@ -949,7 +948,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         drawingPipeline.current.sticker.rerun += 1;
         drawingPipeline.current.sticker.instructor = async () => {
-            const ctx = stickerCanvasRef.current?.getContext('2d');
+            const ctx = stickerCanvasRef?.current?.getContext('2d');
             if (!clearCanvas(ctx)) return;
             const {
                 canvas: stickerCanvas,
@@ -997,8 +996,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     useEffect(() => {
         if (!readyToDraw) return;
 
-        const ctx = effectCanvasRef.current?.getContext('2d');
-        const typeCtx = typeCanvasRef.current?.getContext('2d');
+        const ctx = effectCanvasRef?.current?.getContext('2d');
+        const typeCtx = typeCanvasRef?.current?.getContext('2d');
 
         drawingPipeline.current.effect.rerun += 1;
         drawingPipeline.current.effect.instructor = async () => {
@@ -1085,7 +1084,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW PENDULUM EFFECT */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = pendulumEffectCanvasRef.current?.getContext('2d');
+        const ctx = pendulumEffectCanvasRef?.current?.getContext('2d');
 
         drawingPipeline.current.pendulumEffect.rerun += 1;
         drawingPipeline.current.pendulumEffect.instructor = async () => {
@@ -1160,7 +1159,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     /** DRAW TOTAL OVERLAY */
     useEffect(() => {
         if (!readyToDraw) return;
-        const ctx = finishCanvasRef.current?.getContext('2d');
+        const ctx = finishCanvasRef?.current?.getContext('2d');
 
         drawingPipeline.current.overlay.rerun += 1;
         drawingPipeline.current.overlay.instructor = async () => {
@@ -1215,7 +1214,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             onError,
             onSuccess,
         } = exportProps;
-        const exportCanvas = exportCanvasRef.current;
+        const exportCanvas = exportCanvasRef?.current;
         const exportCtx = exportCanvas?.getContext('2d');
 
         if (exportCanvas && exportCtx) {
@@ -1267,8 +1266,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             }
             if (lastError.error) onError(lastError.error);
 
-            lightboxRef.current?.draw(exportCanvas);
-            previewCanvasRef.current?.getContext('2d')?.drawImage(
+            lightboxRef?.current?.draw(exportCanvas);
+            previewCanvasRef?.current?.getContext('2d')?.drawImage(
                 exportCanvas,
                 0,
                 0,
