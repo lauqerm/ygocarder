@@ -56,6 +56,7 @@ import {
     StyledNameSetIdInputContainer,
 } from './input-panel.styled';
 import './input-panel.scss';
+import { InputRichText } from './input-rich-text';
 
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
@@ -218,6 +219,8 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         />
         <br />
         <Affiliation />
+
+        <InputRichText />
 
         <div className="card-overlay-input">
             <StyledFormatRadioTrain className="format-radio" value={format} onChange={changeFormat} optionList={FormatButtonList}>

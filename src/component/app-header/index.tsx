@@ -237,7 +237,7 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/slackermagician"
                             target="_blank"
                             rel="noreferrer"><b>SlackerMagician</b></a>,
-                        <Explanation
+                        <Explanation key="other-artist"
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">

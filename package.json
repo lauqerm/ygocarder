@@ -27,6 +27,7 @@
     "react-input-slider": "^6.0.0",
     "react-linear-gradient-picker": "3.0.1",
     "react-moveable": "0.56.0",
+    "react-quill": "^2.0.0",
     "react-scripts": "4.0.1",
     "react-virtualized-auto-sizer": "^1.0.25",
     "react-window": "^1.8.11",
