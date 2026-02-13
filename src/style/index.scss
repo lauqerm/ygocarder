@@ -168,6 +168,12 @@ ul.ant-dropdown-menu {
     }
 }
 
+.ant-dropdown-show-arrow.ant-dropdown-placement-bottomLeft {
+    .ant-dropdown-arrow {
+        border-top-color: var(--sub-level-1);
+        border-left-color: var(--sub-level-1);
+    }
+}
 .ant-dropdown-show-arrow.ant-dropdown-placement-topLeft {
     .ant-dropdown-arrow {
         border-right-color: var(--sub-level-1);

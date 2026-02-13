@@ -48,7 +48,7 @@
         "contributor.disclaimer.line-5": "If you want to modify card layers, or use it in any public project, please contact {author1} or {author2} directly.",
         "contributor.disclaimer.line-6": "This app is completely free to use, I do not charge any kind of fee, require donation or serve any ads in this site.",
         "contributor.gui.label": "GUI",
-        "contributor.template-maker": "Template: {artist1}, {artist2}, {artist3}, {artist4} and others {other}",
+        "contributor.template-maker": "Template: {artist1}, {artist2}, {artist3} and others {other}",
         "converter.cancel.label": "Cancel",
         "converter.header.in-progress.label": "Running, please do not close this tab...",
         "converter.header.information.label": "Converter will try its best, but this does not guarantee full conversion between two types of data.",

@@ -8,7 +8,19 @@ import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
 import { LanguageDataDictionary } from 'src/service';
 
-export type CardSeries = 'master' | 'rush';
+export type CardSeries = keyof typeof CardSeriesMetadata;
+export const CardSeriesMetadata = {
+    master: {
+        value: 'master' as const,
+        label: 'Master',
+        imagePath: 'yugioh-master',
+    },
+    rush: {
+        value: 'rush' as const,
+        label: 'Rush',
+        imagePath: 'yugioh-rush',
+    },
+};
 
 export const getDefaultCrop = () => ({
     x: 0,

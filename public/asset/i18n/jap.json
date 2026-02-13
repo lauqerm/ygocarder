@@ -47,7 +47,7 @@
         "contributor.disclaimer.line-5": "カードレイヤーを修正したり、公開プロジェクトで使用したい場合は、{author1}または{author2}に直接ご連絡ください。",
         "contributor.disclaimer.line-6": "このアプリは完全に無料で使用できます。いかなる料金の請求、寄付の要求、広告の配信も行いません。",
         "contributor.gui.label": "GUI",
-        "contributor.template-maker": "テンプレート: {artist1}, {artist2}, {artist3}, {artist4} {other}",
+        "contributor.template-maker": "テンプレート: {artist1}, {artist2}, {artist3} {other}",
         "converter.cancel.label": "閉じる",
         "converter.header.in-progress.label": "実行中、このタブを開いたままにしておいてください",
         "converter.header.information.label": "最善を尽くしますが、２つのタイプのデータ間の完全な変換を約束するものではありません",

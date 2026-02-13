@@ -1,10 +1,16 @@
-import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
+import {
+    GithubFilled,
+    DatabaseFilled,
+    AuditOutlined,
+    SnippetsFilled,
+    QuestionCircleOutlined,
+} from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
-import { useCardList, useI18N, useLanguage, usePresetManager } from 'src/service';
-import { Radio, Tooltip } from 'antd';
-import { StyledHeaderButtonContainer } from '../icon-button';
+import { useCard, useCardList, useI18N, useLanguage, usePresetManager } from 'src/service';
+import { Dropdown, Menu, Radio, Tooltip } from 'antd';
+import { IconButton, StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
 import { VersionLogButton } from './version-log';
@@ -14,6 +20,7 @@ import { PresetManager } from '../preset-manager';
 import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
 import './app-header.scss';
+import { CardSeriesMetadata } from 'src/model';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -25,7 +32,7 @@ export const Affiliation = () => {
     </div>;
 };
 
-const AdditionalContributorIcon = styled(InfoCircleOutlined)`
+const AdditionalContributorIcon = styled(QuestionCircleOutlined)`
     font-size: var(--fs);
     color: var(--color-heavy);
     cursor: pointer;
@@ -41,6 +48,7 @@ const StyledAppHeaderButtonContainer = styled.div`
     padding-left: var(--spacing);
     margin-left: var(--spacing);
     height: 100%;
+    text-align: center;
     .button-label {
         position: relative;
     }
@@ -100,24 +108,71 @@ export const AppHeader = ({
         visible,
     })));
     const sampleCardRef = useRef<SampleCardRef>(null);
+    const {
+        series,
+        setCard,
+    } = useCard(useShallow(({
+        card,
+        setCard,
+    }) => ({
+        series: card.series,
+        setCard,
+    })));
 
     return <div className="app-header">
-        <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
-        <div className="app-description">
-            <div className="header-language">
-                <h1>Yugioh Carder</h1>
-                <Radio.Group value={languageInfo.codeName} size="small" className="language-option">
-                    {Object.values(languageMetadataMap)
-                        .filter(({ active }) => active)
-                        .map(({ codeName, name }) => {
-                            return <Radio.Button key={codeName}
-                                value={codeName}
-                                onChange={e => changeLanguage(e.target.value)}
+        <div className="app-series">
+            <div className="series-option-container">
+                <Radio.Group value={series} size="small" className="series-option">
+                    {Object.values(CardSeriesMetadata)
+                        .map(({ value, imagePath }) => {
+                            return <Radio.Button key={value}
+                                value={value}
+                                onChange={e => setCard(card => {
+                                    const nextCard = { ...card };
+                                    nextCard.series = e.target.value;
+
+                                    return nextCard;
+                                })}
                             >
-                                {name}
+                                <img src={`${process.env.PUBLIC_URL}/asset/image/series/${imagePath}.png`} alt={imagePath} />
                             </Radio.Button>;
                         })}
                 </Radio.Group>
+            </div>
+            
+        </div>
+        <div className="app-description">
+            <div className="app-primary-header">
+                <h1>
+                    <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} className="app-logo" />
+                    Yugioh Carder
+                </h1>
+                <Dropdown
+                    placement="bottomLeft"
+                    arrow
+                    overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
+                        {Object
+                            .values(languageMetadataMap)
+                            .filter(({ active }) => active)
+                            .map(({ codeName, name }) => {
+                                return <Menu.Item key={`${codeName}`}
+                                    onClick={() => {
+                                        changeLanguage(codeName);
+                                    }}
+                                >
+                                    {name}
+                                </Menu.Item>;
+                            })}
+                    </Menu>}
+                >
+                    <div>
+                        <IconButton
+                            onClick={() => {}}
+                        >
+                            {languageInfo.name}
+                        </IconButton>
+                    </div>
+                </Dropdown>
                 <Tooltip title="Check the FAQ Button => Feedbacks to see if your issue is already answered.">
                     <span
                         id="sentry-bug-report"
@@ -182,14 +237,16 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/slackermagician"
                             target="_blank"
                             rel="noreferrer"><b>SlackerMagician</b></a>,
-                        <a key="artist-4"
-                            href="https://www.deviantart.com/icycatelf"
-                            target="_blank"
-                            rel="noreferrer"><b>icycatelf</b></a>,
                         <Explanation
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">
+                                    <li>
+                                        <a
+                                            href="https://www.deviantart.com/icycatelf"
+                                            target="_blank"
+                                            rel="noreferrer"><b>icycatelf</b></a>,
+                                    </li>
                                     <li>
                                         <a
                                             href="https://www.deviantart.com/neophoenixknight/art/Rebirth-Monsters-686893186"
@@ -215,51 +272,53 @@ export const AppHeader = ({
                 </span>
             </div>
         </div>
-        <StyledAppHeaderButtonContainer className="app-setting">
-            <SettingButton />
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="card-manager">
-            <StyledHeaderButtonContainer
-                className={mergeClass('manager-button-label', visible ? 'manager-active' : '')}
-                onClick={() => toggleVisible()}
-            >
-                <div className="button-label">
-                    <DatabaseFilled />
-                    <label>{language['manager.icon.title']}</label>
-                    {(isListDirty && cardList.length > 1) && <div className="manager-notice">*</div>}
-                </div>
-            </StyledHeaderButtonContainer>
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="preset-manager">
-            <StyledHeaderButtonContainer
-                className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
-                onClick={() => setPresetManagerVisible()}
-            >
-                <div className="button-label">
-                    <AuditOutlined />
-                    <label>{language['preset.manager.label']}</label>
-                </div>
-            </StyledHeaderButtonContainer>
-            <PresetManager language={language} />
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="sample-card">
-            <StyledHeaderButtonContainer
-                className={mergeClass('preset-sample-button-label')}
-                onClick={() => {
-                    sampleCardRef.current?.open();
-                }}
-            >
-                <div className="button-label">
-                    <SnippetsFilled />
-                    <label>{language['sample.manager.label']}</label>
-                </div>
-            </StyledHeaderButtonContainer>
-            <SampleCard
-                ref={sampleCardRef}
-                language={language}
-                applyCardData={applyCardData}
-            />
-        </StyledAppHeaderButtonContainer>
+        <div className="app-tool">
+            <StyledAppHeaderButtonContainer className="app-setting">
+                <SettingButton />
+            </StyledAppHeaderButtonContainer>
+            <StyledAppHeaderButtonContainer className="card-manager">
+                <StyledHeaderButtonContainer
+                    className={mergeClass('manager-button-label', visible ? 'manager-active' : '')}
+                    onClick={() => toggleVisible()}
+                >
+                    <div className="button-label">
+                        <DatabaseFilled />
+                        <label>{language['manager.icon.title']}</label>
+                        {(isListDirty && cardList.length > 1) && <div className="manager-notice">*</div>}
+                    </div>
+                </StyledHeaderButtonContainer>
+            </StyledAppHeaderButtonContainer>
+            <StyledAppHeaderButtonContainer className="preset-manager">
+                <StyledHeaderButtonContainer
+                    className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
+                    onClick={() => setPresetManagerVisible()}
+                >
+                    <div className="button-label">
+                        <AuditOutlined />
+                        <label>{language['preset.manager.label']}</label>
+                    </div>
+                </StyledHeaderButtonContainer>
+                <PresetManager language={language} />
+            </StyledAppHeaderButtonContainer>
+            <StyledAppHeaderButtonContainer className="sample-card">
+                <StyledHeaderButtonContainer
+                    className={mergeClass('preset-sample-button-label')}
+                    onClick={() => {
+                        sampleCardRef.current?.open();
+                    }}
+                >
+                    <div className="button-label">
+                        <SnippetsFilled />
+                        <label>{language['sample.manager.label']}</label>
+                    </div>
+                </StyledHeaderButtonContainer>
+                <SampleCard
+                    ref={sampleCardRef}
+                    language={language}
+                    applyCardData={applyCardData}
+                />
+            </StyledAppHeaderButtonContainer>
+        </div>
     </div>;
 };
 

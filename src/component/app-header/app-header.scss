@@ -1,16 +1,49 @@
 .app-header {
+    --tool-size: 65px;
+    --max-tool: 4;
+    --min-tool: 2;
     display: inline-grid;
-    grid-template-columns: max-content 1fr max-content max-content max-content max-content;
+    grid-template-columns:
+        min-content
+        minmax(245px, 1fr)
+        minmax(calc(var(--tool-size) * var(--min-tool)), calc(var(--tool-size) * var(--max-tool)));
     margin-bottom: var(--spacing-sm);
     background-color: var(--main-level-3);
-    padding: 3px; // Alignment
     padding-right: var(--spacing);
     border-radius: var(--br);
     box-shadow: var(--bs-block);
-    img {
-        margin: 3px 0; // Alignment
+    overflow: hidden;
+    .app-series {
+        .series-option {
+            border-right: var(--bw) solid var(--main-level-1);
+            &.ant-radio-group-small .ant-radio-button-wrapper {
+                width: 100%;
+                height: unset;
+                min-height: unset;
+                line-height: 0;
+                border: none;
+                border-radius: none;
+                &::before {
+                    display: none;
+                }
+            }
+            &.ant-radio-group.ant-radio-group-outline .ant-radio-button-wrapper:hover {
+                background-color: var(--sub-primary);
+            }
+            &.ant-radio-group.ant-radio-group-outline .ant-radio-button-wrapper-checked {
+                background-color: var(--main-primary);
+            }
+            img {
+                margin: 0;
+                max-height: 24px;
+            }
+        }
     }
-    .header-language {
+    .app-tool {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(var(--tool-size), 1fr));
+    }
+    .app-primary-header {
         display: inline-flex;
         flex-wrap: wrap;
         column-gap: var(--spacing-sm);
@@ -36,11 +69,15 @@
                 display: block;
             }
         }
+        .icon-button {
+            border: var(--bw) solid var(--sub-level-1);
+            padding: 0 var(--spacing-xs);
+            box-shadow: none;
+        }
     }
     .app-description {
-        border-left: var(--bw) dashed #b1b1b1;
+        padding: 3px; // Alignment
         padding-left: var(--spacing);
-        margin-left: var(--spacing-xs);
         h1 {
             font-family: MatrixBoldSmallCaps;
             margin: 0;
@@ -53,6 +90,11 @@
             small {
                 font-size: var(--fs-xl);
             }
+        }
+        .app-logo {
+            height: 20px;
+            margin-left: -3px; // Alignment
+            margin-right: 3px; // Alignment
         }
     }
     .app-contribution {
@@ -69,6 +111,9 @@
             text-overflow: ellipsis;
             overflow: hidden;
             min-width: 0;
+        }
+        .template-creator {
+            white-space: normal;
         }
     }
     .preset-manager-active,
