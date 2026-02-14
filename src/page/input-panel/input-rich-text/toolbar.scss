@@ -1,0 +1,32 @@
+/** Quill manipulate HTML, not virtual DOM, so we cannot use styled components */
+.quill-custom-toolbar {
+    &.ql-toolbar {
+        .html-tooltip {
+            display: inline-block;
+            position: relative;
+            button {
+                width: unset;
+                float: unset;
+            }
+            .html-tooltip-container {
+                display: inline-block;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);
+                padding: var(--spacing-xs);
+            }
+            .html-tooltip-content {
+                padding: var(--spacing-xs);
+            }
+            .html-tooltip-arrow {
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-top: 8px solid var(--sub-level-1);
+                border-bottom: 0;
+            }
+        }
+    }
+}
