@@ -147,7 +147,7 @@ const DEFAULT_SHADOW_BLUR = 0;
 const DEFAULT_SHADOW_COLOR = '#000000';
 const DEFAULT_SHADOW_OFFSET_X = 0;
 const DEFAULT_SHADOW_OFFSET_Y = 0;
-const DEFAULT_TEXT_COLOR = '#000000';
+const DEFAULT_TEXT_COLOR = '#221F1F';
 
 export const setTextStyle = ({
     ctx,

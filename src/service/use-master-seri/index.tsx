@@ -222,7 +222,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const isMonster = checkMonster(card);
     const isSpeedSkill = checkSpeedSkill(card);
 
-    const { body = 100, boundless, effectBox } = opacity;
+    const { body = 100, boundless } = opacity;
     const requireShadow = !!(body < 50 || boundless);
     const lightFooter = checkLightFooter(bottomFrame);
     const {
@@ -564,7 +564,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
                     ? linkRating
                     : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
-                if (keepEffectBox) await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
+                await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
                 resetStyle();
             }
             await drawPredefinedMark({
@@ -677,7 +677,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         nameStyleType,
     ]);
 
-    /** DRAW STAT (ATK / DEF) */
+    /** DRAW STAT (ATK / DEF / LINK RATING) */
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = statCanvasRef.current?.getContext('2d');
@@ -692,19 +692,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const hasLink = showLinkRating;
         if (atk) {
             const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0);
-            if (effectBox) drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
+            drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5, globalScale);
         }
         if (def && (!showLinkRating || showDefAndLink)) {
             const offset = hasLink ? 168.75 : 0;
-            if (effectBox) drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
+            drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, def.trim(), 673.865 - offset, 1106.5, globalScale);
         }
         resetStyle();
     }, [
         readyToDraw,
         globalScale,
-        effectBox,
         atk,
         def,
         showLinkRating,

@@ -314,7 +314,7 @@ export const drawSetId = (
     }
     const resetTextStyle = setTextStyle({
         ctx,
-        color: (lightFooter && !isPendulum) ? '#ffffff' : '#000000',
+        color: (lightFooter && !isPendulum) ? '#ffffff' : '#221F1F',
         shadowColor: withShadow
             ? lightFooter ? '#000000' : '#ffffff'
             : '#000000',

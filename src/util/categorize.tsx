@@ -141,8 +141,8 @@ export const resolveNameStyle = ({
 
     /** Predefined name style has dynamic font based on format unless explictly stated */
     let contextualColor = {
-        fillStyle: lightHeader ? '#ffffff' : '#000000',
-        headTextFillStyle: lightHeader ? '#ffffff' : '#000000',
+        fillStyle: lightHeader ? '#ffffff' : '#221F1F',
+        headTextFillStyle: lightHeader ? '#ffffff' : '#221F1F',
     };
     if (nameStyleType === 'predefined') {
         const resultNameStyle = { ...PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value };

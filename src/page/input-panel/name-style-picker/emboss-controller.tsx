@@ -8,7 +8,7 @@ import { SyncOutlined } from '@ant-design/icons';
 import { LanguageDataDictionary } from 'src/service';
 import { getDefaultNameStyle } from 'src/model';
 
-const MaterialColor = styled.div<{ $color: string }>`
+const MaterialColor = styled.div<{ $color?: string }>`
     border: var(--bw) solid var(--sub-level-2);
     display: inline-block;
     width: 2rem;
