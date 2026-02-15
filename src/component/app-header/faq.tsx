@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '26/01/2026';
+        const currentReminder = '15/02/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'LigerrFanArt at Feb 14, 2026',
+            question: 'Hi,\nWhen I disable “best effort render” to get the rainbow effect on my card, it disables ATK / and DEF / in your menu.\nWould it be possible to add a new section next to Foil, with a Rainbow version alongside Gold and Platinum — unless you’re already working on that?\nI had to manually add ATK / and DEF / in Photoshop myself.\n\nThx\nLigerrFanArt',
+            answer: 'Now best effort render option will no longer affect ATK / DEF texts (always display as long as there are values).\nFor rainbow foil unfortunately I am entirely dependent on the assets I can find, and currently I have no access to the frame assets needed for it.',
+        },
         {
             author: 'Anonymous at Jan 25, 2026',
             question: 'I was thinking it would be nice to have the Rainbow border similar to the Prismatic SR OCG Proxies and the Maximum Gold Premium Rare ones',
@@ -170,24 +175,9 @@ export const QuestionAndFeedback = () => {
             answer: 'Because those cards do not have an offical TCG version yet, so I will just import OCG font for this case.',
         },
         {
-            author: 'Anonymous User at Oct 26, 2025',
-            question: 'Square brackets are not displayed properly in the card name.',
-            answer: 'I have updated the letters.',
-        },
-        {
             author: 'I have assets to donate! at Oct 23, 2025',
             question: 'Konami\'s new Genesys card searcher initially had high-resolution renders of all cards. I snagged a few before they "fixed" it (now their images are low-res again...) and used them to correct all the card frames, bevels, level stars, text boxes, fonts, and even text colors. I\'m talking major corrections that took me hours since I\'m not very efficient in Photoshop.\nAt the very least, your current Spell and Synchro frames need updating. Not only are the colors off, but there\'s actually an artifactual defect running across the entire right edge that you inherited from 9558able\'s frames (it\'s actually on all of them, but most visible on the Spell frame).\nAs far as I can tell, my updated assets now produce the most accurate proxies anywhere. I would like to donate them! I don\'t see a way to email you, but please email me at *******88@gmail.com if you\'re interested.\nI can reply with specifics and send you some comparisons.',
             answer: 'Hi there, thanks for your generosity. I have already emailed you at Oct 24, hopefully I can make some good use out of it.',
-        },
-        {
-            author: 'Problem at Oct 22, 2025',
-            question: 'Hi, just to let you know that there are new characters on the Magnet cards that I haven\'t inserted here. I think you should be aware of this. This character "±" is not displayed on the cards for example. \n\nKind regards\nLigerrFanArt',
-            answer: 'Hi there, thanks for the head-up, I have updated the letter "±" specifically, but will wait a bit before adding new one because the TCG might not use those characters at all.',
-        },
-        {
-            author: 'New Character Title at Oct 11, 2025',
-            question: 'Elvennotes ~Homecoming Paralleism~\nElvennotes ~Reunion Tercet~\nElvennotes ~Maddening Rhapsodia~\nElvennotes ~Oracle Alicetea~\n\nHello,\nI noticed that these cards that will be released soon do not display the character "~" correctly. I hope you can do something about it. \n\nThanks \nLiger',
-            answer: 'I have updated the font, hopefully it looks better now.',
         },
         {
             author: 'Anonymous User at Oct 08, 2025',
@@ -200,40 +190,14 @@ export const QuestionAndFeedback = () => {
             answer: 'It seems like the card border is not loaded yet, so it exposes the underlying frame. I have replicate your card but does not see the same issue, does the problem still persist?',
         },
         {
-            author: 'mguesiten at Sep 28, 2025',
-            question: 'for the accented letter for example "é" or "à"',
-            answer: 'This is a known issue, unfortunately I haven\'t found any better font with correct accents display, sorry for the inconvenience.',
-        },
-        {
             author: 'Anonymous User at Sep 26, 2025',
             question: 'hi m8. luv your work. i was thinking about two things. maybe 1 option for anime cards like in Vrains. another option to adjust the colour and saturation of the card frame. thks again for your work',
             answer: 'Hi there, currently I do not have time needed for new templates, but for the color option, have you checking out the Advanced Layout option? If will allow you to change current frame\'s color at will, which seem suitable for your use-case.'
         },
         {
-            author: 'OCG Proxy Secret Rare at Sep 18, 2025',
-            question: 'Is there a way to implement a Predefined or a pattern similar to the OCG Rainbow Secret Rare proxy text, please?',
-            answer: 'Hi there, I have added a new predefined preset for this case, you may try it now.',
-        },
-        {
             author: 'Elttaest the Master of Duels at Sep 18, 2025',
             question: 'Hi. Love your work, just wondering - with Elttaes, the Master of Duels and Dragon of Illumination, Sanctuary\'s Shield, shouldn\'t we have enough data to make Rush Duel cards in English as well? The font seems the same in both English and Japanese. And the card name seems the same used in TCG, although I can\'t really make out what the Japanese font is. Sorry again for this. Just curious. Thanks for your time',
             answer: 'Hi there, you are right that both cards can be used as a template for Rush Duel cards, but the main problem before the template itself is that currently I don\'t have enough resources for such project right now, so I can\'t promise anything at this moment. I will keep this in mind and see if I can do it in the future.',
-        },
-        {
-            author: 'Outline at Sep 17, 2025',
-            question: 'When placing an outline a location 0/0, the line is not aligned equally throughout the letter',
-            answer: 'Hi there, this is a known issue for Chrome on Windows, which currently I\'m unable to fix. You can see the same card display perfectly fine on Chrome on MacOS.',
-            image: 'https://i.postimg.cc/MZsjtS2k/Screenshot-2025-09-17-at-08-09-48.png',
-        },
-        {
-            author: 'Image disappeards at Sep 15, 2025',
-            question: 'Adding the width function removes the image, regardless of the width chosen (it works without it)',
-            answer: 'Hi there, your syntax is incorrect, you must put the width attribute between double quotes ("), like this: <img src="https://ms.yugipedia.com//5/59/Type-Cyberse-MADU.png" width="40" />.',
-        },
-        {
-            author: 'Anonymous User at Sep 10, 2025',
-            question: 'Ko hiện các dòng chữ hiệu ứng của lá bài',
-            answer: 'Đã fix nha bạn.',
         },
         {
             author: 'Armando Giordano at Sep 06, 2025',
@@ -249,33 +213,6 @@ export const QuestionAndFeedback = () => {
             question: 'Hello! I am loving your work. I hope my issue is not because of ignorance, but it seems like it\'s not possible to download cards as images.',
             answer: 'Hi there, based on the report it seems that you are using an iPad. I don\'t have an iPad to test right now, but could you please provide me some more information?\n1. When you click the Download button, does anything happen? Does the app freeze or it just not doing anything?\n2. Is the problem just appear recently, or it never worked in the first place?',
             image: 'https://i.postimg.cc/Y2fjyvV2/image.png',
-        },
-        {
-            author: 'Anonymous User at Aug 16, 2025',
-            question: 'Art Filter #9 seems not to be working with Pendulum frames',
-            answer: 'Hi there, I have checked this case and do not see any significant error (see image below), do you have any image to demonstrate the error?',
-            image: 'https://images2.imgbox.com/5b/1f/vp8d5wIa_o.png',
-        },
-        {
-            author: '& symbol at Aug 14, 2025',
-            question: 'This symbole & isnt correct on display.\nSee photo Magie & Piège',
-            answer: 'Hi there, I have checked the letter on a real card and do not see any significant error, do you have any image for how the letter should be displayed?',
-            image: 'https://i.imgur.com/xZ9Pp9X.png',
-        },
-        {
-            author: 'Die Frauen at Aug 9, 2025',
-            question: 'As for a suggestion related to the pevious query, this may be a bit too crazy, but since it\'s lodged together with the advanced/custom layout feature, do you think perhaps the foil could be split into 5 pieces the same as it? (all 4 corners and the text frame). If it may take too much effort or is not feasible I\'ll understand that.',
-            answer: 'I don\'t think this would be possible, as card foils are divided into multiple pieces for different places, so I couldn\'t split them the same way as card frames at all.',
-        },
-        {
-            author: 'Anonymous User at Aug 8, 2025',
-            question: 'There should be an effect text formatting option to justify text while making it respect the rest of the text\'s compression ratio, like actual cards do.',
-            answer: 'I cannot support a new syntax right now, but if your use-case is just wanting the last line of effect / pendulum effect to be justfiy-aligned, you can use the newly implemented Justify Ratio in Paragraph Style button.',
-        },
-        {
-            author: 'the ¡ symbol is to long (for spanish card names) at Aug 5, 2025',
-            question: 'hi, i was trying to create a card using the ¡ symbol in the name, but its too long, not like the ! in the screenshot. for exaple: if u try to write the name \'Caza del Cielo Movilizar - ¡Atacar!\' you can see the symbol ¡ is too long compared to the pics of the same card in spanish. i hope you can fix that and ty for the web:3',
-            answer: 'I have updated the ratio, hopefully it looks better now.',
         },
         {
             author: 'Rush Duel at Jun 22, 2025',
