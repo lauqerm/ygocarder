@@ -92,9 +92,10 @@ export const createCondenser = (minThreshold = 0, maxThreshold = MAX_CONDENSER_T
 
 export const condense = (
     worker: (currentMedian: number) => boolean,
+    maxThreshold = MAX_CONDENSER_THRESHOLD,
     minThreshold = 100,
 ) => {
-    let effectiveMedian = MAX_CONDENSER_THRESHOLD;
+    let effectiveMedian = maxThreshold;
     const condenser = createCondenser();
     while (condenser.getIterateCount() >= 0) {
         if (condenser.getIterateCount() <= 0) {
@@ -111,7 +112,7 @@ export const condense = (
                 condenser.searchDown();
             } else {
                 /** Return immediately if max threshold is enough to satisfy the driver */
-                if (condenser.getMedian() === MAX_CONDENSER_THRESHOLD) break;
+                if (condenser.getMedian() === maxThreshold) break;
                 else effectiveMedian = condenser.reverseSearch();
             }
         }
@@ -120,7 +121,7 @@ export const condense = (
     /**
      * Ensure worker does not run with undesirable threshold (it may have side effect depend on the current ratio, for example, scale canvas). So we run worker with the final median one last time to make sure any side effects from it is affected by the ratio we gonna return.
      */
-    const forcedMedian = Math.max(minThreshold, Math.min(effectiveMedian, MAX_CONDENSER_THRESHOLD));
+    const forcedMedian = Math.max(minThreshold, Math.min(effectiveMedian, maxThreshold));
     if (forcedMedian !== effectiveMedian) worker(forcedMedian);
     return forcedMedian;
 };

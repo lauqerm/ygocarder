@@ -41,6 +41,8 @@ import {
     WholeWordRegex,
     PLACEHOLDER_DELIMITER,
     RegionSpaceWidthMap,
+    FIT_RUBY_DELIMITER,
+    RubyDelimiterRegex,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth, splitPlaceholder } from './text-util';
 import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
@@ -221,8 +223,7 @@ export const analyzeToken = ({
                     : memoizedImage?.width
                         ? memoizedImage?.width
                         : undefined) ?? (lineHeight * 0.9);
-            totalWidth += normalizedWidth / xRatio;
-            token = token.replace(renderTagMatchResult[0], `${PLACEHOLDER_OPEN}img${PLACEHOLDER_DELIMITER}0${PLACEHOLDER_CLOSE}`);
+            token = token.replace(renderTagMatchResult[0], `${PLACEHOLDER_OPEN}img${PLACEHOLDER_DELIMITER}${normalizedWidth}${PLACEHOLDER_CLOSE}`);
         }
     }
 
@@ -295,8 +296,10 @@ export const analyzeToken = ({
         }
         /** Process ruby syntax */
         else if (RUBY_REGEX.test(fragment)) {
-            const [footText, rubyType, headText = ''] = fragment.replaceAll(/{|}/g, '').split(/(\|+)/);
-            const fitFootText = rubyType === '||';
+            const [footText, rubyType, headText = ''] = fragment
+                .replaceAll(/{|}/g, '')
+                .split(RubyDelimiterRegex);
+            const fitFootText = rubyType === FIT_RUBY_DELIMITER;
             /** Calculate foot text's width */
             const {
                 totalWidth: footTextWidth,

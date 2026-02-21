@@ -100,22 +100,27 @@ const StyledCharPickerContainer = styled.div`
 `;
 
 /** The dragging experience is not good. Currently turn it off for now and glue it into effect's textarea. */
-export type CharPicker = {
-    targetId: string,
-    onPick?: (value: string, letter: string) => void,
-}
-export const CharPicker = ({
-    targetId = '',
-    onPick = () => {},
-}: CharPicker) => {
+export type CharPicker = ({
+    id: string,
+    setValue: (value: string, letter: string) => void,
+}) | ({
+    insert: (value: string) => void,
+});
+export const CharPicker = (props: CharPicker) => {
     const language = useLanguage();
     // const [target, setTarget] = useState<HTMLElement | null>(null);
     const internalOnPick = (letter: string) => {
-        const inputTarget = document.getElementById(targetId) as HTMLTextAreaElement;
-        if (inputTarget) {
-            const { value } = insertAtCursor(inputTarget, letter);
+        if ('id' in props) {
+            const { id, setValue } = props;
+            const inputTarget = document.getElementById(id) as HTMLTextAreaElement;
+            if (inputTarget) {
+                const { value } = insertAtCursor(inputTarget, letter);
 
-            onPick(value, letter);
+                setValue(value, letter);
+            }
+        } else {
+            const { insert } = props;
+            if (insert) insert(letter);
         }
     };
 

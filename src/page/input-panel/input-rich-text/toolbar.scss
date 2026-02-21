@@ -1,22 +1,155 @@
 /** Quill manipulate HTML, not virtual DOM, so we cannot use styled components */
-.quill-custom-toolbar {
+.quill-custom-toolbar.ql-snow {
+    .ql-hidden {
+        display: none;
+    }
     &.ql-toolbar {
+        button {
+            padding: 0;
+            width: 24px; // Alignment
+            color: var(--color);
+            line-height: 0;
+            > svg {
+                padding: var(--spacing-xxs);
+            }
+            .ql-stroke {
+                stroke: var(--color);
+            }
+            &.ql-active {
+                color: var(--color);
+                .anticon {
+                    color: var(--color);
+                }
+                .ql-stroke {
+                    stroke: var(--color);
+                }
+            }
+            &:hover {
+                background-color: var(--sub-level-4);
+                color: var(--color);
+                .ql-stroke {
+                    stroke: var(--color);
+                }
+            }
+        }
+        strong {
+            float: left;
+            width: 3rem;
+            height: 24px; // Alignment
+            line-height: 24px;
+            border-left: var(--bw-lg) solid var(--sub-level-2);
+            padding-left: var(--spacing-xs);
+            font-weight: normal;
+            &:empty {
+                width: 0;
+                padding-left: 0;
+            }
+        }
+        .mode-switch {
+            float: right;
+            display: inline-flex;
+            gap: var(--spacing-xs);
+            line-height: 16px;
+            padding: var(--spacing-xxs);
+            margin: var(--spacing-xxs);
+            .ant-switch {
+                background-color: rgba(0, 0, 0, 0.25);
+                &.ant-switch-checked {
+                    background-color: #1890ff; // Sync with antd switch
+                }
+            }
+            button {
+                height: unset;
+            }
+        }
+        .ruby-input-group {
+            width: 10rem;
+            .input-group {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: var(--spacing-xs);
+                margin-bottom: var(--spacing-xs);
+            }
+        }
+        .image-input-group {
+            width: calc(90px * 3 + var(--spacing-xs) * 2);
+            .input-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: var(--spacing-xs);
+                margin-bottom: var(--spacing-xs);
+                .ant-input-affix-wrapper {
+                    grid-column: 1 / -1;
+                }
+                .ant-input-number {
+                    width: unset;
+                }
+                .ant-input-affix-wrapper-disabled,
+                .ant-input-number-disabled {
+                    display: none;
+                }
+                .memoized-image-preview {
+                    height: calc(24px * 2 + var(--spacing-xs)); // Alignment
+                    text-align: center;
+                    img {
+                        max-width: 90px;
+                        max-height: calc(24px * 2 + var(--spacing-xs));
+                    }
+                }
+                .memoized-image-information {
+                    grid-column: span 2;
+                    line-height: 1.4;
+                    font-size: var(--fs-sm);
+                }
+                .memoized-image-picker {
+                    grid-column: 1 / -1;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: var(--spacing-xxs);
+                    .image-preset {
+                        padding: var(--spacing-xxs);
+                        border: none;
+                        flex: 0 0 25px;
+                        border-radius: var(--br-lg);
+                        height: 25px;
+                        img {
+                            max-width: 21px;
+                            max-height: 21px;
+                        }
+                    }
+                }
+            }
+        }
         .html-tooltip {
             display: inline-block;
             position: relative;
-            button {
-                width: unset;
-                float: unset;
+            .input-footer {
+                text-align: right;
             }
             .html-tooltip-container {
                 display: inline-block;
                 position: absolute;
                 left: 50%;
-                transform: translateX(-50%) translateY(-50%);
+                transform: translateX(-50%) translateY(-100%);
                 padding: var(--spacing-xs);
+                z-index: 101;
             }
             .html-tooltip-content {
                 padding: var(--spacing-xs);
+                background-color: var(--main-level-3);
+                border: var(--bw) solid var(--sub-level-1);
+                border-radius: var(--br);
+                box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+                button {
+                    width: unset;
+                    float: unset;
+                    padding: 0px 7px; // antd default button padding
+                    background-color: var(--main-level-4);
+                    border: var(--bw) solid var(--sub-level-4);
+                    &:hover {
+                        background-color: var(--sub-level-4);
+                    }
+                }
             }
             .html-tooltip-arrow {
                 width: 0;
@@ -26,7 +159,98 @@
                 border-left: 8px solid transparent;
                 border-top: 8px solid var(--sub-level-1);
                 border-bottom: 0;
+                left: 50%;
+                position: relative;
+                transform: translateX(-50%);
             }
+        }
+    }
+}
+.quill-input {
+    background-color: var(--main-level-1);
+    box-shadow: var(--bs-input);
+    border-radius: var(--br);
+    .ql-snow.ql-toolbar {
+        border-radius: var(--br) var(--br) 0 0;
+        border: var(--bw) solid var(--sub-level-1);
+        border-bottom: none;
+        background-color: var(--main-level-4);
+        padding: 0;
+        line-height: 0;
+    }
+    .quill {
+        .ql-container {
+            border: none;
+            border-radius: 0 0 var(--br) var(--br);
+        }
+        .ql-editor {
+            padding: 4px 11px; // antd
+            img {
+                position: relative;
+                vertical-align: top;
+            }
+        }
+    }
+    .ql-editor {
+        font-size: 14px;
+        border: 1px solid var(--main-level-1);
+        word {
+            display: inline-block;
+        }
+        fitrt {
+            text-indent: 0px;
+            line-height: normal;
+            text-emphasis: none;
+        }
+        ruby {
+            padding-top: 14px;
+        }
+        ruby > rt,
+        ruby > fitrt {
+            font-size: 60%;
+            letter-spacing: 0.5px;
+        }
+        ruby > fitrt {
+            display: ruby-text;
+            text-align: start;
+            background-color: var(--sub-level-5);
+            padding: var(--spacing-xxs);
+            margin-bottom: var(--spacing-px);
+            border-radius: var(--br);
+        }
+        fitline,
+        line {
+            display: block;
+            background-color: var(--sub-level-5);
+            border-left: var(--bw-xl) solid var(--sub-level-2);
+            padding: var(--spacing-xxs) var(--spacing-xs);
+            border-radius: var(--br);
+            margin-top: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+            line-height: 16px;
+        }
+        fitline {
+            border-right: var(--bw-xl) solid var(--sub-level-2);
+        }
+        q,
+        word {
+            padding: var(--spacing-xxs) var(--spacing-xs);
+            border-radius: var(--br);
+        }
+        word {
+            background-color: var(--sub-level-5);
+            line-height: 16px;
+        }
+        q {
+            background-color: var(--sub-level-4);
+            border-bottom: var(--bw) solid var(--sub-level-2);
+            &::before,
+            &::after {
+                content: none;
+            }
+        }
+        &:hover {
+            border-color: var(--sub-active);
         }
     }
 }

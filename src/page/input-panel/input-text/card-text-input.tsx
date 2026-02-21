@@ -3,6 +3,7 @@ import { Input } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { InputProps } from 'antd/lib/input';
 import { useSetting } from 'src/service';
+import { CharPicker } from '../char-picker';
 
 export type CardTextInputRef = {
     setValue: (nextValue: string) => void,
@@ -10,10 +11,7 @@ export type CardTextInputRef = {
 };
 export type CardTextInput = {
     defaultValue: string,
-    onTakePicker?: (ref: {
-        id: string, 
-        setValue: (nextValue: string) => void;
-    }) => void,
+    onTakePicker?: (ref: CharPicker) => void,
     onChange: (e: {target: { value: string }}) => void,
 } & Partial<Omit<InputProps, 'onChange'>>;
 export const CardTextInput = forwardRef<CardTextInputRef, CardTextInput>(({

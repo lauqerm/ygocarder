@@ -198,6 +198,7 @@ export const drawName = async (
             actualLineWidth = currentLineList[0].actualLineWidth;
             return true;
         },
+        990,
     );
     const xRatio = internalEffectiveMedian / 1000;
     const yRatio = 1;

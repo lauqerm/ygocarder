@@ -1,11 +1,11 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
-import { CardTextArea, CardTextAreaRef } from '../input-text';
+import { CardTextAreaRef, MixedCardTextInput } from '../input-text';
 import { useCard } from 'src/service';
 
 export type EffectInputGroupRef = {
     setValue: (value: string) => void,
 };
-export type EffectInputGroup = {} & Pick<CardTextArea, 'onTakePicker'>;
+export type EffectInputGroup = {} & Pick<MixedCardTextInput, 'onTakePicker'>;
 export const EffectInputGroup = forwardRef<EffectInputGroupRef, EffectInputGroup>(({
     onTakePicker,
 }, ref) => {
@@ -28,7 +28,7 @@ export const EffectInputGroup = forwardRef<EffectInputGroupRef, EffectInputGroup
         }
     }));
 
-    return <CardTextArea ref={effectInputRef}
+    return <MixedCardTextInput ref={effectInputRef}
         id="effect"
         allowHotkey
         defaultValue={useCard.getState().card.effect}

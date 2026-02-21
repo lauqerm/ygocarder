@@ -29,8 +29,15 @@ export const BOLD_CLOSE_TAG = '</b>';
 export const PRE_OPEN_TAG = '<pre>';
 export const PRE_CLOSE_TAG = '</pre>';
 
+export const RUBY_DELIMITER = '¦';
+export const FIT_RUBY_DELIMITER = `${RUBY_DELIMITER}${RUBY_DELIMITER}`;
+export const RubyDelimiterRegex = new RegExp(`(${RUBY_DELIMITER}+)`);
 export const NB_WORD_OPEN = '⧚';
 export const NB_WORD_CLOSE = '⧛';
+/** Only apply for text after normalized */
+export const ForceWordANRegex = new RegExp(`(${NB_WORD_OPEN}{[^${RUBY_DELIMITER}{}]+?}${NB_WORD_CLOSE})`, 'g');
+/** Only apply for text after normalized */
+export const RubyWordANRegex = new RegExp(`(${NB_WORD_OPEN}{[^{}]+?}${NB_WORD_CLOSE})`, 'g');
 export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
 export const NB_FULL_LINE_OPEN = '᚛';

@@ -38,6 +38,8 @@ import {
     WholeWordRegex,
     getBulletSpacing,
     PLACEHOLDER_DELIMITER,
+    FIT_RUBY_DELIMITER,
+    RubyDelimiterRegex,
 } from 'src/model';
 import {
     drawBullet,
@@ -324,11 +326,6 @@ export const drawLine = async ({
                 }
 
                 if (src && drawImage) {
-                    let normalizedWidth = typeof width === 'number'
-                        ? width
-                        : typeof height === 'number'
-                            ? undefined
-                            : lineHeight * 0.9;
                     let normalizedSource = src;
                     let isInternalSource = false;
                     const preset = src ? imagePresetMap[src] : undefined;
@@ -347,6 +344,14 @@ export const drawLine = async ({
                         isInternalSource = true;
                         normalizedSource = '/asset/image/' + (TotalImagePresetMap[src] ?? `${src}.png`);
                     }
+                    const memoizedImage = name ? imageMemory[name] : undefined;
+                    const normalizedWidth = (typeof width === 'number'
+                        ? width
+                        : preset
+                            ? preset.width
+                            : memoizedImage?.width
+                                ? memoizedImage?.width
+                                : undefined) ?? (lineHeight * 0.9);
                     /** Image is unscalable */
                     placeholderWidth = (normalizedWidth ?? 0) / xRatio;
                     tagList[tagListPosition] = {
@@ -477,7 +482,7 @@ export const drawLine = async ({
                         undefined, undefined,
                         { cache: isInternalSource, internalImage: isInternalSource, crossorigin: 'anonymous' }
                     );
-                    fragmentEdge += (type === 'img' && width ? width : 0);
+                    fragmentEdge += (type === 'img' && width ? width : lineHeight * 0.9);
                     applyAsymmetricScale(xRatio, yRatio);
                     currentRightGap = 0;
                     previousTokenRebalanceOffset = 0;
@@ -485,8 +490,10 @@ export const drawLine = async ({
             }
             /** Fragment with overhead text. */
             else if (RUBY_REGEX.test(fragment)) {
-                const [footText, rubyType, headText = ''] = trueFragmentList[fragmentCnt].replaceAll(/{|}/g, '').split(/(\|+)/);
-                const fitFootText = rubyType === '||';
+                const [footText, rubyType, headText = ''] = trueFragmentList[fragmentCnt]
+                    .replaceAll(/{|}/g, '')
+                    .split(RubyDelimiterRegex);
+                const fitFootText = rubyType === FIT_RUBY_DELIMITER;
                 /** We do not support nested overhead text. */
                 const { totalWidth: footTextWidth } = analyzeToken({
                     token: footText, nextToken: nextFragment,

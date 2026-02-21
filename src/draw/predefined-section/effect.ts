@@ -210,6 +210,7 @@ export const drawEffect = async ({
                     if (currentLineCount > lineCount) return false;
                     return true;
                 },
+                undefined,
                 200,
             );
         effectiveLineCount = Math.max(lineList.length, Math.max(minLine, lineListWithRatio.length));
@@ -257,6 +258,7 @@ export const drawEffect = async ({
                                 if (currentLineCount > 1) return false;
                                 return true;
                             },
+                            990,
                         );
                         const { tokenList, spaceWidth } = analyzeLine({
                             ctx,
@@ -308,6 +310,7 @@ export const drawEffect = async ({
                                 if (currentLineCount > 1) return false;
                                 return true;
                             },
+                            990,
                         );
                         const tokenList = tokenizeText(effectFlavorCondition);
                         finalTokenList = tokenList;

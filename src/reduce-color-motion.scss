@@ -74,6 +74,10 @@
             }
         }
     }
+    .quill-custom-toolbar.ql-snow.ql-toolbar .mode-switch .ant-switch.ant-switch-checked,
+    .ant-switch.ant-switch-checked {
+        background-color: var(--sub-primary);
+    }
     .radio-train.format-radio {
         .ant-radio-button-wrapper-checked {
             &.ocg-button {
@@ -111,6 +115,22 @@
             color: var(--main-blue-scale);
             &:hover {
                 color: var(--sub-blue-scale);
+            }
+        }
+    }
+    .quill-custom-toolbar {
+        &.ql-toolbar {
+            button {
+                &.ql-active {
+                    background-color: var(--sub-active);
+                    color: var(--color);
+                    .anticon {
+                        color: var(--color);
+                    }
+                    .ql-stroke {
+                        stroke: var(--color);
+                    }
+                }
             }
         }
     }

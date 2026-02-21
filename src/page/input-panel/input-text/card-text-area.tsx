@@ -2,6 +2,7 @@ import { availableCommand, placeCursorInInput, resolveHotkey } from './util';
 import { Input } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { TextAreaProps } from 'antd/lib/input';
+import { CharPicker } from '../char-picker';
 
 const { TextArea } = Input;
 export type CardTextAreaRef = {
@@ -14,10 +15,7 @@ export type CardTextAreaRef = {
 export type CardTextArea = {
     allowHotkey?: boolean,
     defaultValue: string,
-    onTakePicker?: (ref: {
-        id: string, 
-        setValue: (nextValue: string) => void;
-    }) => void,
+    onTakePicker?: (ref: CharPicker) => void,
     onChange: (e: { target: { value: string } }) => void,
 } & Partial<TextAreaProps>;
 export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({

@@ -56,7 +56,6 @@ import {
     StyledNameSetIdInputContainer,
 } from './input-panel.styled';
 import './input-panel.scss';
-import { InputRichText } from './input-rich-text';
 
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
@@ -121,12 +120,10 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     const postPendulumInputGroupRef = useRef<PostPendulumInputGroupRef>(null);
     const footerInputGroupRef = useRef<FooterInputGroupRef>(null);
 
-    const [pickerTarget, setPickerTarget] = useState<{
-        id: string,
-        setValue: (nextValue: string) => void,
-    }>({
+    const [pickerTarget, setPickerTarget] = useState<CharPicker>({
         id: '',
         setValue: () => {},
+        insert: undefined,
     });
 
     const changeFormat = (formatValue: string | number) => {
@@ -220,8 +217,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         <br />
         <Affiliation />
 
-        <InputRichText />
-
         <div className="card-overlay-input">
             <StyledFormatRadioTrain className="format-radio" value={format} onChange={changeFormat} optionList={FormatButtonList}>
                 <span>{language['input.format.label']}</span>
@@ -229,6 +224,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
                 <span>{language['input.foil.label']}</span>
             </RadioTrain>
+
             {showExtraDecorativeOption && <CheckboxTrain
                 className="finish-checkbox"
                 value={finish}
@@ -305,10 +301,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                             {language['input.effect.label']}
                         </StandaloneLabel>
                         {showCreativeOption ? <TextStylePicker /> : <div />}
-                        <CharPicker
-                            targetId={pickerTarget.id}
-                            onPick={pickerTarget.setValue}
-                        />
+                        <CharPicker {...pickerTarget} />
                     </div>
                     <EffectInputGroup ref={effectInputGroupRef} onTakePicker={setPickerTarget} />
                 </div>

@@ -17,6 +17,7 @@ import {
     OCG_KEYWORD_SOURCE,
     OCG_RUBY_SOURCE,
     RENDER_TAG_SOURCE,
+    RUBY_DELIMITER,
     STYLING_TAG_SOURCE,
     UNCOMPRESSED_SOURCE,
     WHOLE_WORD_SOURCE,
@@ -96,17 +97,28 @@ export const splitEffect = (effect: string, isNormal = false) => {
     };
 };
 
+const delimitRuby = (word: string) => {
+    return word.replaceAll(/((?<!\\)\|)/g, RUBY_DELIMITER);
+};
 export const normalizeCardText = (
     text: string,
     format: string,
-    option?: { multiline?: boolean, furiganaHelper?: boolean, dictionaryType?: 'rubyForm' | 'rubyFormName' },
+    option?: {
+        multiline?: boolean,
+        furiganaHelper?: boolean,
+        dictionaryType?: 'rubyForm' | 'rubyFormName',
+        skip?: Array<'quote-conversion' | 'encase-word'>,
+    },
 ) => {
     const {
         multiline = true,
         furiganaHelper = true,
         dictionaryType = 'rubyForm',
+        skip = [],
     } = option ?? {};
     const nonNullableText = text ?? '';
+    const skipQuoteConversion = skip.includes('quote-conversion');
+    const skipEncaseWord = skip.includes('encase-word');
 
     /** Normalize the text based on format, by swapping letters to their corresponding form. For example full-width captial A "Ａ" will become normal capital "A" after normalized. */
     let normalizedText = '';
@@ -129,25 +141,31 @@ export const normalizeCardText = (
         : textAfterJoinRow;
 
     /** Various contextual swaps */
-    const textAfterSwapLetter = textAfterSplitBlockRow
-        .replace(/(^|[-\u2014\s(["])'/g, '$1\u2018')        /** Turn straight single quote ' into contextual curly quote ‘ */
-        .replace(/'/g, '\u2019')                            /** Close open curly quote ’ */
-        .replace(contextualDoubleQuoteRegex, '$1\u201c')  /** Turn straight double quote " into contextual curly double quote “ */
-        .replace(/"/g, '\u201d')                            /** Close open curly double quote ” */
-        .replace(/--/g, '\u2014')                           /** Turn double dash "--" into em-dash "—" */
-        .replace(/● /g, '●')                                /** Remove direct whitespace after bullet, bullet have their own fixed space that we will draw later */
+    const contextutalSwapList = [
+        { active: !skipQuoteConversion, search: /(^|[-\u2014\s(["])'/g, replacement: '$1\u2018' },        /** Turn straight single quote ' into contextual curly quote ‘ */
+        { active: !skipQuoteConversion, search: /'/g, replacement: '\u2019' },                            /** Close open curly quote ’ */
+        { active: !skipQuoteConversion, search: contextualDoubleQuoteRegex, replacement: '$1\u201c' },    /** Turn straight double quote " into contextual curly double quote “ */
+        { active: !skipQuoteConversion, search: /"/g, replacement: '\u201d' },                            /** Close open curly double quote ” */
+        { active: true, search: /--/g, replacement: '\u2014' },                           /** Turn double dash "--" into em-dash "—" */
+        { active: true, search: /● /g, replacement: '●' },                                /** Remove direct whitespace after bullet, bullet have their own fixed space that we will draw later */
         /** Convert ordinal shorthand syntax, for example "(15)" will become "⑮", used in OCG effect */
-        .replace(/(\([０-９0-9]{1,2}\))/g, m => {
+        { active: true, search: /(\([０-９0-9]{1,2}\))/g, replacement: (m: string) => {
             const correspondingCircleSymbol = ocgNumberCircleMap[m];
 
             return correspondingCircleSymbol ?? m;
-        });
+        }},
+    ];
+    const textAfterSwapLetter = contextutalSwapList.reduce((currentText, { active, search, replacement }) => {
+        if (!active) return currentText;
+        if (typeof replacement === 'string') return currentText.replace(search, replacement);
+        return currentText.replace(search, replacement);
+    }, textAfterSplitBlockRow);
 
     const textAfterDetectBlockWord = textAfterSwapLetter
         /** Convert non-compressable syntax into internal control characters */
         .replaceAll(new RegExp(UNCOMPRESSED_SOURCE, 'g'), m => m.replaceAll('{{', NB_UNCOMPRESSED_START).replaceAll('}}', NB_UNCOMPRESSED_END))
         /** Convert ruby syntax into internal control characters */
-        .replaceAll(new RegExp(OCG_RUBY_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`);
+        .replaceAll(new RegExp(OCG_RUBY_SOURCE, 'g'), m => `${NB_WORD_OPEN}${delimitRuby(m)}${NB_WORD_CLOSE}`);
 
     /** Apply dictionary */
     const textAfterDictionaryMatch = format === 'tcg' || furiganaHelper === false
@@ -156,7 +174,7 @@ export const normalizeCardText = (
             .replaceAll(new RegExp(OCG_KEYWORD_SOURCE, 'g'), m => {
                 const keywordSubtitue = ocgKeywordDataMap[m][dictionaryType] ?? ocgKeywordDataMap[m].rubyForm;
 
-                return `${NB_WORD_OPEN}${keywordSubtitue}${NB_WORD_CLOSE}`;
+                return `${NB_WORD_OPEN}${delimitRuby(keywordSubtitue)}${NB_WORD_CLOSE}`;
             });
     /** Analyze various typography rules in OCG card (mainly Kinsoku Shorit)
      * * Some letters cannot stand at the start of the line, so they form a block with the token before them.
@@ -164,28 +182,30 @@ export const normalizeCardText = (
      * * Some letters cannot be splitted into two lines, so they form a block with both tokens around them.
      * * Ordinal letters must always followed by a colon "：", and cannot stand at the end of a line.
     */
-    const textAfterProcessing = textAfterDictionaryMatch
-        .replaceAll(new RegExp(RENDER_TAG_SOURCE, 'g'), m => {
-            /** Swapping TCG letters to OCG may accidentally destroy tag, so make sure that does not happens */
-            let reversedSwappedText = '';
-            for (const letter of m) {
-                reversedSwappedText += ocgToTCGLetterMap[letter] ?? letter;
-            }
-            return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
-        })
-        .replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), m => {
-            /** Swapping TCG letters to OCG may accidentally destroy tag, so make sure that does not happens */
-            let reversedSwappedText = '';
-            for (const letter of m) {
-                reversedSwappedText += ocgToTCGLetterMap[letter] ?? letter;
-            }
-            return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
-        })
-        .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
-        .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
-        .replaceAll(new RegExp(NOT_START_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
-        .replaceAll(new RegExp(NOT_SPLIT_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
-        .replaceAll(new RegExp(OCG_BULLET_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`);
+    const textAfterProcessing = skipEncaseWord
+        ? textAfterDictionaryMatch
+        : textAfterDictionaryMatch
+            .replaceAll(new RegExp(RENDER_TAG_SOURCE, 'g'), m => {
+                /** Swapping TCG letters to OCG may accidentally destroy tag, so make sure that does not happens */
+                let reversedSwappedText = '';
+                for (const letter of m) {
+                    reversedSwappedText += ocgToTCGLetterMap[letter] ?? letter;
+                }
+                return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
+            })
+            .replaceAll(new RegExp(STYLING_TAG_SOURCE, 'g'), m => {
+                /** Swapping TCG letters to OCG may accidentally destroy tag, so make sure that does not happens */
+                let reversedSwappedText = '';
+                for (const letter of m) {
+                    reversedSwappedText += ocgToTCGLetterMap[letter] ?? letter;
+                }
+                return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
+            })
+            .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+            .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+            .replaceAll(new RegExp(NOT_START_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+            .replaceAll(new RegExp(NOT_SPLIT_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+            .replaceAll(new RegExp(OCG_BULLET_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`);
 
     /** Eliminate overlapping group control characters, we perform a simple algorithm to reduce various overlapping forms into non-overlapping ones.
      * * `((()))` => `()`

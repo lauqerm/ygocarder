@@ -64,8 +64,12 @@
         box-shadow: var(--bs-input);
     }
 
-    .ant-input-affix-wrapper,
-    .ant-input-number,
+    .ant-input-affix-wrapper-disabled:hover {
+        border-color: var(--sub-level-1);
+    }
+
+    .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled),
+    .ant-input-number:not(.ant-input-number-disabled),
     .ant-input {
         &:hover {
             border-color: var(--sub-active);

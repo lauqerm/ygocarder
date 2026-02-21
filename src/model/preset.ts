@@ -51,3 +51,7 @@ export const TotalImagePresetMap = {
     ...TotalAttributeIconPresetMap,
     ...TotalIconTypePresetMap
 };
+export const ReverseTotalImagePresetMap = Object.entries(TotalImagePresetMap).reduce((acc, [key, value]) => {
+    acc[`${process.env.PUBLIC_URL}/asset/image/${value}`] = key;
+    return acc;
+}, {} as Record<string, string>);

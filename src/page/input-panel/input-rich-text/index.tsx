@@ -1,109 +1,281 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
-import { DeltaStatic } from 'quill';
-import { Quill } from 'react-quill';
-import Parchement from 'parchment';
-import { Delta as DeltaType } from 'quill';
+import { Quill, } from 'react-quill';
+import { DeltaOperation, Delta as DeltaType } from 'quill';
+import ParchmentType from 'parchment';
 import { unstable_batchedUpdates } from 'react-dom';
+import { carderToHtml, htmlToCarder } from './helper';
+import { WORD_HANDLER, QUOTE_HANDLER, RUBY_HANDLER, RT_HANDLER, FITRT_HANDLER } from './rich-text-inline';
+import { LINE_HANDLER, FITLINE_HANDLER } from './rich-text-block';
+import { IMAGE_HANDLER, ImageMemory, ImageModifierModal, ImageModifierModalRef, MAX_IMAGE_DIMENSION } from './rich-text-image';
+import { InputRichTextToolbar, InputRichTextToolbarRef } from './input-toolbar';
 import 'react-quill/dist/quill.snow.css';
-import { Popover } from 'antd';
-import styled from 'styled-components';
-import './toolbar.scss';
+import { mergeClass } from 'src/util';
+import { CharPicker } from '../char-picker';
 
 const Delta: typeof DeltaType = Quill.import('delta');
-const ToolbarContainer = styled.div`
-    &.ql-toolbar {
-        .html-tooltip {
-            button {
-                width: unset;
-            }
-        }
-    }
-`;
+const Parchment: typeof ParchmentType = Quill.import('parchment');
 
-const defaultToolbar = [
-    ['bold', 'italic'],
-    ['image'],
-    ['clean']
-];
 const allowedFormatList = [
     'bold', 'italic',
+    LINE_HANDLER,
+    FITLINE_HANDLER,
+    QUOTE_HANDLER,
+    RUBY_HANDLER,
+    RT_HANDLER,
+    FITRT_HANDLER,
+    WORD_HANDLER,
     'image',
 ];
-/*
- * Custom toolbar component including insertStar button and dropdowns
- */
-const CustomButton = () => <span className="octicon octicon-star">IMG</span>;
-const CustomToolbar = () => (
-    <div id="toolbar" className="quill-custom-toolbar">
-        <button className="ql-bold"></button>
-        <button className="ql-italic"></button>
-        <div className="html-tooltip">
-            <button>IMG2</button>
-            <div className="html-tooltip-container">
-                <div className="html-tooltip-content">
-                    <button className="ql-insertImage">
-                        <CustomButton />
-                    </button>
-                    <br />
-                    <button className="ql-insertImage">
-                        <CustomButton />
-                    </button>
-                </div>
-                <div className="html-tooltip-arrow" />
-            </div>
-        </div>
-    </div>
-);
 
-const Image = Quill.import('formats/image');
-
-class ImageBlot extends Image {
-  static create(value) {
-    console.log('🚀 ~ ImageBlot ~ create ~ value:', value);
-    const node = super.create(value);
-    if (typeof value === 'string') {
-      node.setAttribute('src', this.sanitize(value));
-      node.setAttribute('alt', this.sanitize(value).split('/').reverse()[0]);
-    }
-    return node;
-  }
-}
-
-Quill.register(ImageBlot);
-
-export const InputRichText = () => {
+export type InputRichTextRef = {
+    getPickerRef: () => null | {
+        insert: (letter: string) => void,
+    },
+    setValue: (nextValue: string) => void,
+    getValue: () => ({
+        html: string,
+        delta: { ops?: DeltaOperation[] },
+    }),
+};
+export type InputRichText = {
+    id: string,
+    className?: string,
+    format: string,
+    furiganaHelper: boolean,
+    defaultValue: string,
+    onChange: (carder: string, html: string, delta: { ops?: DeltaOperation[] }) => void,
+    onChangeMode: () => void,
+    onTakePicker?: (ref: CharPicker) => void,
+};
+export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
+    id,
+    className,
+    format,
+    furiganaHelper,
+    defaultValue,
+    onChange,
+    onChangeMode,
+    onTakePicker,
+}, ref) => {
+    const quillToolbarRef = useRef<InputRichTextToolbarRef>(null);
+    const imageModifierModalRef = useRef<ImageModifierModalRef>(null);
+    const immediateCarderValue = useRef('');
+    const immediateHtmlValue = useRef('');
+    const immediateDeltaValue = useRef(new Delta());
     const reactQuillRef = useRef<ReactQuill>(null);
-    const [value, setValue] = useState('test');
+    const [value, setValue] = useState(carderToHtml(defaultValue, format, furiganaHelper));
 
-    const imageHandler = useCallback(() => {
-        if (!reactQuillRef.current) return;
+    const getToolbarById = useCallback((toolbarId: string) => document.getElementById(`${id}-${toolbarId}`) as HTMLInputElement | null, [id]);
+    const insertRubyHandler = useCallback(() => {
+        const reactQuill = reactQuillRef.current?.getEditor();
+        if (!reactQuill) return;
 
-        const editor = reactQuillRef.current.getEditor();
-        const range = editor.getSelection();
-        const value = prompt('Please enter the image URL');
-        console.log('🚀 ~ InputRichText ~ range:', range, value);
+        const range = reactQuill.getSelection();
+        if (!range) return;
 
-        if (value && range) {
-            editor.insertEmbed(range.index, 'image', value, 'user');
+        const { index: cursorPosition, length } = range;
+        console.log('🚀 ~ InputRichText ~ range:', range);
+        if (typeof cursorPosition !== 'number') return;
+
+        const head = getToolbarById('ruby-head')?.value;
+        const foot = getToolbarById('ruby-foot')?.value;
+        if (range.length === 0) {
+            if (foot && head) {
+                reactQuill.insertText(
+                    cursorPosition,
+                    foot,
+                    { [RUBY_HANDLER]: true },
+                    'user'
+                );
+                reactQuill.insertText(
+                    cursorPosition + foot.length,
+                    head,
+                    { [RUBY_HANDLER]: true, [RT_HANDLER]: true },
+                    'user'
+                );
+                reactQuill.setSelection(cursorPosition + foot.length + head.length + 1, 0);
+            }
+        } else {
+            const selectedOpList = reactQuill.getContents(cursorPosition, length);
+            /** We pretty much only allow raw text for ruby */
+            const {
+                validAttribute,
+                validInsert,
+            } = selectedOpList.reduce((acc, cur) => {
+                return {
+                    validInsert: acc.validInsert && typeof cur.insert === 'string',
+                    validAttribute: acc.validAttribute && !(
+                        cur.attributes?.[RUBY_HANDLER]
+                        || cur.attributes?.[RT_HANDLER]
+                        || cur.attributes?.[FITRT_HANDLER]
+                        || cur.attributes?.[WORD_HANDLER]
+                        || cur.attributes?.[QUOTE_HANDLER]
+                    ),
+                };
+            }, { validInsert: true, validAttribute: true });
+
+            if (!validAttribute || !validInsert || !head) return;
+            reactQuill.formatText(cursorPosition, length, { [RUBY_HANDLER]: true }, 'user');
+            reactQuill.insertText(
+                cursorPosition + length,
+                head,
+                { [RUBY_HANDLER]: true, [RT_HANDLER]: true },
+                'user'
+            );
+            reactQuill.setSelection(cursorPosition + length + head.length + 1, 0);
         }
-    }, []);
+        quillToolbarRef.current?.resetRubyInput();
+    }, [getToolbarById]);
     const insertImageHandler = useCallback(() => {
-        console.log('insertImageHandler called');
+        const reactQuill = reactQuillRef.current?.getEditor();
+        if (!reactQuill) return;
+
+        const cursorPosition = reactQuill.getSelection()?.index;
+        if (typeof cursorPosition !== 'number') return;
+        const name = getToolbarById('image-name')?.value;
+        let src = getToolbarById('image-url')?.value;
+        let width = getToolbarById('image-width')?.value;
+        let height = getToolbarById('image-height')?.value;
+        let offsetx = getToolbarById('image-offset-x')?.value;
+        let offsety = getToolbarById('image-offset-y')?.value;
+
+        if (name) {
+            const memoizedImage = ImageMemory.get(id, name);
+            if (memoizedImage) {
+                src = src || memoizedImage.src;
+                width = width || memoizedImage.width;
+                height = height || memoizedImage.height;
+                offsetx = offsetx || memoizedImage.offsetx;
+                offsety = offsety || memoizedImage.offsety;
+            } else ImageMemory.set(id, name, { src, width, height, offsetx, offsety, name });
+        }
+        reactQuill.insertEmbed(
+            cursorPosition,
+            'image',
+            { src, width, height, offsetx, offsety, name },
+            'user'
+        );
+        reactQuill.setSelection(cursorPosition + 1, 0);
+        quillToolbarRef.current?.resetImageInput();
+    }, [getToolbarById, id]);
+    const imageMatcher = useCallback((node: HTMLImageElement) => {
+        const src = node.getAttribute('src') ?? undefined;
+        if (src && src.startsWith('data:image')) return new Delta();
+        const normalizedImageNumericAttribute = (attr: string) => {
+            const value = node.getAttribute(`data-${attr}`) ?? node.getAttribute(`${attr}`) ?? undefined;
+            if (!value) return undefined;
+
+            const parsedValue = parseInt(value);
+            return !isNaN(parsedValue) ? `${Math.min(MAX_IMAGE_DIMENSION, parsedValue)}` : '0';
+        };
+        const name = node.getAttribute('data-name') ?? node.getAttribute('name');
+        const width = normalizedImageNumericAttribute('width');
+        const height = normalizedImageNumericAttribute('height');
+        const offsetx = normalizedImageNumericAttribute('offsetx');
+        const offsety = normalizedImageNumericAttribute('offsety');
+
+        if (name && !ImageMemory.get(id, name)) ImageMemory.set(id, name, { src, width, height, offsetx, offsety, name });
+        return new Delta().insert({ image: { src, width, height, offsetx, offsety, name, set: id } });
+    }, [id]);
+
+    const quoteHandler = useCallback(() => {
+        const reactQuill = reactQuillRef.current?.getEditor();
+        if (!reactQuill) return;
+
+        const range = reactQuill.getSelection();
+        if (range == null || range.length === 0) return;
+
+        const formats = reactQuill.getFormat(range);
+        if (!formats[QUOTE_HANDLER]) reactQuill.formatText(range.index, range.length, QUOTE_HANDLER, true);
+        else reactQuill.formatText(range.index, range.length, QUOTE_HANDLER, false);
     }, []);
-    const imageMatcher = useCallback((node: HTMLElement, delta: DeltaStatic) => {
-        console.log('🚀 ~ InputRichText ~ node, delta:', node, delta);
-        return delta.compose(new Delta([
-            { insert: { image: node.getAttribute('src') || '' }, attributes: { offsetY: -4, alt: 'alter', offsetX: '5' } },
-        ]));
+    const wordHandler = useCallback(() => {
+        const reactQuill = reactQuillRef.current?.getEditor();
+        if (!reactQuill) return;
+
+        const range = reactQuill.getSelection();
+        if (range == null || range.length === 0) return;
+
+        const formats = reactQuill.getFormat(range);
+        if (!formats[WORD_HANDLER]) reactQuill.formatText(range.index, range.length, WORD_HANDLER, true);
+        else reactQuill.formatText(range.index, range.length, WORD_HANDLER, false);
     }, []);
+
+    useEffect(() => {
+        const reactQuill = reactQuillRef.current?.getEditor();
+        if (reactQuill) {
+            reactQuill.on('selection-change', function (range) {
+                if (range) {
+                    const formats = reactQuill.getFormat(range);
+                    const quoteButton = document.querySelector(`#${id}-toolbar .ql-${QUOTE_HANDLER}`);
+                    const wordButton = document.querySelector(`#${id}-toolbar .ql-${WORD_HANDLER}`);
+                    const fitBlockquoteButton = document.querySelector(`#${id}-toolbar .ql-${FITLINE_HANDLER}`);
+
+                    if (formats[QUOTE_HANDLER]) {
+                        quoteButton?.classList.add('ql-active');
+                        wordButton?.classList.remove('ql-active');
+                        fitBlockquoteButton?.classList.remove('ql-active');
+                    } else if (formats[WORD_HANDLER]) {
+                        wordButton?.classList.add('ql-active');
+                        quoteButton?.classList.remove('ql-active');
+                        fitBlockquoteButton?.classList.remove('ql-active');
+                    } else if (formats[FITLINE_HANDLER]) {
+                        fitBlockquoteButton?.classList.add('ql-active');
+                        wordButton?.classList.remove('ql-active');
+                        quoteButton?.classList.remove('ql-active');
+                    }
+                }
+            });
+
+            const editorDom = reactQuill.root;
+            editorDom.addEventListener('click', ev => {
+                if (ev.target && (ev.target as HTMLElement).tagName === 'IMG') {
+                    const node = ev.target as HTMLImageElement;
+                    imageModifierModalRef.current?.open(
+                        node as HTMLImageElement,
+                        imageData => {
+                            const blot = Parchment.find(node);
+                            if (!blot) return;
+                            blot.replaceWith('image', imageData);
+                            reactQuill.update();
+
+                            const src = imageData['src'];
+                            const set = imageData['set'];
+                            const name = imageData['name'];
+                            const width = imageData['width'];
+                            const height = imageData['height'];
+                            const offsetx = imageData['offsetx'];
+                            const offsety = imageData['offsety'];
+                            if (name) ImageMemory.set(id, name, { src, width, height, offsetx, offsety, name, set });
+                            reactQuill.setContents(
+                                new Delta(reactQuill.getContents().map(op => {
+                                    if (op.insert && op.insert.image) {
+                                        const opImageName = op.insert.image?.name;
+                                        if (typeof opImageName === 'string' && opImageName === name) {
+                                            return { ...op, insert: { image: imageData } };
+                                        }
+                                        return op;
+                                    }
+                                    return op;
+                                })),
+                                'silent',
+                            );
+                        }
+                    );
+                }
+            });
+        }
+    }, [id]);
 
     const module = useMemo(() => ({
         toolbar: {
-            container: '#toolbar',
+            container: `#${id}-toolbar`,
             handlers: {
-                image: imageHandler,
-                insertImage: insertImageHandler,
+                [IMAGE_HANDLER]: insertImageHandler,
+                [RUBY_HANDLER]: insertRubyHandler,
+                [QUOTE_HANDLER]: quoteHandler,
+                [WORD_HANDLER]: wordHandler,
             },
         },
         clipboard: {
@@ -111,24 +283,112 @@ export const InputRichText = () => {
                 ['IMG', imageMatcher],
             ]
         }
-    }), [imageHandler, imageMatcher]);
+    }), [
+        id,
+        imageMatcher,
+        insertImageHandler,
+        insertRubyHandler,
+        quoteHandler,
+        wordHandler,
+    ]);
 
-    return <div>
-        <CustomToolbar />
+    useEffect(() => {
+        let relevant = true;
+        setTimeout(() => {
+            if (relevant && immediateHtmlValue.current === value) onChange(
+                immediateCarderValue.current,
+                value,
+                immediateDeltaValue.current,
+            );
+        }, 250);
+
+        return () => {
+            relevant = false;
+        };
+    /** No need to depend on onChange here */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
+
+    const getPickerRef = () => ({
+        insert: (letter: string) => {
+            const reactQuill = reactQuillRef.current?.getEditor();
+
+            if (reactQuill) {
+                var selection = reactQuill.getSelection(true);
+                reactQuill.insertText(selection.index, letter);
+            }
+        }
+    });
+    useImperativeHandle(ref, () => ({
+        getPickerRef,
+        getValue: () => {
+            return {
+                html: immediateHtmlValue.current,
+                delta: immediateDeltaValue.current,
+            };
+        },
+        setValue: value => {
+            setValue(value);
+        },
+    }));
+
+    return <div className={mergeClass('quill-input', className)}>
+        <InputRichTextToolbar
+            ref={quillToolbarRef}
+            id={id}
+            getContentRange={() => {
+                return reactQuillRef.current?.getEditor().getSelection();
+            }}
+            onMemoizedImageInsert={imageData => {
+                const reactQuill = reactQuillRef.current?.getEditor();
+                if (!reactQuill) return;
+
+                const cursorPosition = reactQuill.getSelection()?.index;
+                if (typeof cursorPosition !== 'number') return;
+
+                reactQuill.insertEmbed(
+                    cursorPosition,
+                    'image',
+                    imageData,
+                    'user'
+                );
+                reactQuill.setSelection(cursorPosition + 1, 0);
+                quillToolbarRef.current?.resetImageInput();
+            }}
+            onChangeMode={onChangeMode}
+        />
         <ReactQuill
             ref={reactQuillRef}
+            id={id}
             theme="snow"
             value={value}
             formats={allowedFormatList}
+            onFocus={() => onTakePicker?.(getPickerRef())}
             onChange={(value, _delta, _source, editor) => {
                 unstable_batchedUpdates(() => {
                     const valueAsDelta = editor.getContents();
-                    console.log('🚀 ~ InputRichText ~ valueAsDelta:', valueAsDelta);
 
                     setValue(value);
+                    immediateDeltaValue.current = valueAsDelta;
+                    immediateHtmlValue.current = value;
+                    immediateCarderValue.current = htmlToCarder(valueAsDelta);
+
+                    const editorElement = document.querySelector('.ql-editor') as HTMLElement | null;
+                    if (editorElement) {
+                        /**
+                         * Force reflow because the weird line height shift when ruby tags are present
+                         * https://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes */
+                        editorElement.style.display = 'inline-block';
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const offset = editorElement.offsetHeight; // no need to store this anywhere, the reference is enough
+                        editorElement.style.display= '';
+                    }
                 });
             }}
             modules={module}
         />
+        <ImageModifierModal
+            ref={imageModifierModalRef}
+        />
     </div>;
-};
+});
