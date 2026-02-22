@@ -24,6 +24,13 @@
                     stroke: var(--color);
                 }
             }
+            &:focus {
+                background-color: var(--sub-level-4);
+                color: var(--color);
+                .ql-stroke {
+                    stroke: var(--color);
+                }
+            }
             &:hover {
                 background-color: var(--sub-level-4);
                 color: var(--color);
@@ -194,6 +201,9 @@
     .ql-editor {
         font-size: 14px;
         border: 1px solid var(--main-level-1);
+        img {
+            cursor: pointer;
+        }
         word {
             display: inline-block;
         }

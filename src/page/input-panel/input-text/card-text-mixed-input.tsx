@@ -37,17 +37,20 @@ export type MixedCardTextInputRef = {
     setValue: (nextValue: string) => void,
     getPickerRef: () => null | CharPicker,
 };
-export type MixedCardTextInput = CardTextArea;
+export type MixedCardTextInput = CardTextArea & {
+    getDefaultValue?: () => string,
+};
 export const MixedCardTextInput = forwardRef<MixedCardTextInputRef, MixedCardTextInput>(({
     id,
     className,
     defaultValue,
     onTakePicker,
+    onChange,
+    getDefaultValue = () => defaultValue ?? '',
     ...rest
 }, ref) => {
     const commonProps = {
         className,
-        defaultValue,
         onTakePicker,
     };
     const [inputId] = useState(() => id ?? uuid());
@@ -69,7 +72,7 @@ export const MixedCardTextInput = forwardRef<MixedCardTextInputRef, MixedCardTex
 
     useImperativeHandle(ref, () => ({
         setValue: value => type === 'html'
-            ? rawInputRef.current?.setValue(value)
+            ? richInputRef.current?.setValue(value)
             : rawInputRef.current?.setValue(value),
         getPickerRef: () => (type === 'html'
             ? richInputRef.current?.getPickerRef()
@@ -91,6 +94,8 @@ export const MixedCardTextInput = forwardRef<MixedCardTextInputRef, MixedCardTex
             <CardTextArea
                 ref={rawInputRef}
                 id={id}
+                onChange={onChange}
+                defaultValue={getDefaultValue()}
                 {...commonProps}
                 {...rest}
             />
@@ -101,8 +106,11 @@ export const MixedCardTextInput = forwardRef<MixedCardTextInputRef, MixedCardTex
             id={inputId}
             format={format}
             furiganaHelper={furiganaHelper}
+            defaultValue={getDefaultValue()}
             // defaultValue={'Effect\n[2+<img src="https://i.postimg.cc/NFQSRSzT/effect-monster.png" offsetY="-4" /> with <b>different names</b>]\n{{Fiend/<b>Link</b>/<i>Effect</i>}} / You cannot {Summon||Special} <img name="monster" src="https://i.postimg.cc/RZ0mk6G3/monster.png" offsetY="-4" />, except <img src="icon-fire" /><img name="monster" />. You can only use each of the following effects of "Promethean Princess, Bestower of Flames" once per turn. During your {MP|Main Phase}: You can {Summon||Special} 1 <img src="icon-fire" /><img name="monster" /> from your {<img name="gy" src="https://i.postimg.cc/Pr4159Hv/gy.png" />.} If a <img name="monster" /> is Special Summoned to your opponent\'s field, while this card is in your <img name="gy" /> (except during the {Damage Step}): You can target 1 <img src="icon-fire" /><img name="monster" /> you control and 1 <img name="monster" /> your opponent controls; destroy them, and if you do, {Summon||Special} this card.\n[[ATK: 2700 / Link-3]]\n[Left / Bottom / Right] - PHNI-EN052 | <i>Speed Duel</i>'}
-            onChange={(carder, html, delta) => console.log('onchange', carder, html, delta)}
+            onChange={carder => {
+                onChange?.({ target: { value: carder } });
+            }}
             onChangeMode={() => setType('raw')}
         />}
     </MixedCardTextContainer>;

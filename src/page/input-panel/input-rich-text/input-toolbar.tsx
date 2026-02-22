@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Button, Input, InputNumber, Switch, Tooltip } from 'antd';
+import { Button, Input, InputNumber, Radio, Switch, Tooltip } from 'antd';
 import {
     FileImageOutlined,
     PicCenterOutlined,
@@ -91,11 +91,11 @@ export const InputRichTextToolbar = forwardRef<InputRichTextToolbarRef, InputRic
 
     useImperativeHandle(ref, () => ({
         resetImageInput: () => {
-            setRubyKey(cur => cur + 1);
+            setImageKey(cur => cur + 1);
             setShowImageTooltip(false);
         },
         resetRubyInput: () => {
-            setImageKey(cur => cur + 1);
+            setRubyKey(cur => cur + 1);
             setShowRubyTooltip(false);
         },
     }));
@@ -134,7 +134,8 @@ export const InputRichTextToolbar = forwardRef<InputRichTextToolbarRef, InputRic
                     const rubyFootInputContainer = (document.querySelector(`#${id}-toolbar .ruby-input-group .ruby-foot-input`) as HTMLElement | null);
                     if (range && range.length > 0) rubyFootInputContainer?.classList.add('ql-hidden');
                     else rubyFootInputContainer?.classList.remove('ql-hidden');
-                    setTimeout(() => document.getElementById(`${id}-ruby-head`)?.focus(), 250);
+                    /** Not sure if we want auto focus yet, this will break the focus of the editor */
+                    // setTimeout(() => document.getElementById(`${id}-ruby-head`)?.focus(), 250);
                 }}
             >
                 {WordIcon}
@@ -156,6 +157,10 @@ export const InputRichTextToolbar = forwardRef<InputRichTextToolbarRef, InputRic
                             className="ruby-foot-input"
                             {...commonInputProps}
                         />
+                        <Radio.Group key={`${rubyKey}-${id}-ruby-width`} defaultValue="normal">
+                            <Radio value="normal" id={`${id}-ruby-width-normal`}>Normal</Radio>
+                            <Radio value="fit" id={`${id}-ruby-width-fit`}>Fit</Radio>
+                        </Radio.Group>
                     </div>
                     <div className="input-footer">
                         <Button
@@ -173,7 +178,8 @@ export const InputRichTextToolbar = forwardRef<InputRichTextToolbarRef, InputRic
         <div id={`${id}-toolbar-image`} className="html-tooltip">
             <button onClick={() => {
                 setShowImageTooltip(true);
-                setTimeout(() => document.getElementById(`${id}-image-url`)?.focus(), 250);
+                /** Not sure if we want auto focus yet, this will break the focus of the editor */
+                // setTimeout(() => document.getElementById(`${id}-image-url`)?.focus(), 250);
             }}>
                 <FileImageOutlined />
             </button>

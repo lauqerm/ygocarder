@@ -264,6 +264,9 @@ div.ant-slider {
 }
 
 .ant-radio-group.ant-radio-group-outline {
+    .ant-radio-wrapper {
+        color: var(--color);
+    }
     .ant-radio-button-wrapper:hover {
         color: var(--main-active);
 

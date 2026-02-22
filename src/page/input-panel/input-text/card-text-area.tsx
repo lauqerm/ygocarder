@@ -14,14 +14,14 @@ export type CardTextAreaRef = {
 };
 export type CardTextArea = {
     allowHotkey?: boolean,
-    defaultValue: string,
+    defaultValue?: string,
     onTakePicker?: (ref: CharPicker) => void,
     onChange: (e: { target: { value: string } }) => void,
 } & Partial<TextAreaProps>;
 export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
     id,
     allowHotkey,
-    defaultValue,
+    defaultValue = '',
     onTakePicker,
     onChange,
     onKeyDown,

@@ -57,6 +57,9 @@
             #card-effect {
                 min-height: 13rem;
             }
+            .effect-input .ql-editor {
+                min-height: 169px; // Alignment with 8 rows of TextArea
+            }
         }
         .main-info-second {
             flex: 0 0 var(--cropper-width);

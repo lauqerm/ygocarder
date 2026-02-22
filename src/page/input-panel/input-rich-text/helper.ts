@@ -28,7 +28,7 @@ export const carderToHtml = (value: string, format: string, furiganaHelper: bool
     const fitLineOpenTag = `<${FITLINE_HANDLER}>`;
     const fitLineCloseTag = `</${FITLINE_HANDLER}>`;
     const convertedValue = normalizeCardText(
-        value,
+        value + '\n',
         format,
         { furiganaHelper, skip: ['encase-word', 'quote-conversion'] },
     );
@@ -54,7 +54,7 @@ export const carderToHtml = (value: string, format: string, furiganaHelper: bool
                 });
         })
         .join('');
-    console.log('🚀 ~ InputRichText ~ valueAsHtml:', convertedValue, '\n====\n', valueAsHtml);
+    // console.info('Debug carderToHtml:', value, '\n=====\n', convertedValue, '\n=====\n', valueAsHtml);
     return sanitizeHtml(valueAsHtml, {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', LINE_HANDLER, FITLINE_HANDLER, FITRT_HANDLER, WORD_HANDLER]),
         allowedAttributes: {
@@ -83,7 +83,6 @@ export const htmlToCarder = (delta: { ops?: DeltaOperation[] }) => {
         const {
             line, fitline,
         } = attribute ?? {};
-        console.log(lineContent, attribute, i);
         // Can return false to exit loop early
         let carderLine = '';
         let isInQuote = false;

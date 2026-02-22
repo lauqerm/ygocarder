@@ -30,8 +30,9 @@ export const EffectInputGroup = forwardRef<EffectInputGroupRef, EffectInputGroup
 
     return <MixedCardTextInput ref={effectInputRef}
         id="effect"
+        className="effect-input"
         allowHotkey
-        defaultValue={useCard.getState().card.effect}
+        getDefaultValue={() => useCard.getState().card.effect}
         onChange={changeEffect}
         onTakePicker={onTakePicker}
         autoSize={{

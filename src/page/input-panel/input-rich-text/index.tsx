@@ -34,6 +34,7 @@ export type InputRichTextRef = {
     },
     setValue: (nextValue: string) => void,
     getValue: () => ({
+        carder: string,
         html: string,
         delta: { ops?: DeltaOperation[] },
     }),
@@ -75,11 +76,11 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
         if (!range) return;
 
         const { index: cursorPosition, length } = range;
-        console.log('🚀 ~ InputRichText ~ range:', range);
         if (typeof cursorPosition !== 'number') return;
 
         const head = getToolbarById('ruby-head')?.value;
         const foot = getToolbarById('ruby-foot')?.value;
+        const widthNormal = getToolbarById('ruby-width-normal')?.checked;
         if (range.length === 0) {
             if (foot && head) {
                 reactQuill.insertText(
@@ -91,7 +92,7 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
                 reactQuill.insertText(
                     cursorPosition + foot.length,
                     head,
-                    { [RUBY_HANDLER]: true, [RT_HANDLER]: true },
+                    { [RUBY_HANDLER]: true, [widthNormal ? RT_HANDLER : FITRT_HANDLER]: true },
                     'user'
                 );
                 reactQuill.setSelection(cursorPosition + foot.length + head.length + 1, 0);
@@ -120,7 +121,7 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
             reactQuill.insertText(
                 cursorPosition + length,
                 head,
-                { [RUBY_HANDLER]: true, [RT_HANDLER]: true },
+                { [RUBY_HANDLER]: true, [widthNormal ? RT_HANDLER : FITRT_HANDLER]: true },
                 'user'
             );
             reactQuill.setSelection(cursorPosition + length + head.length + 1, 0);
@@ -150,6 +151,7 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
                 offsety = offsety || memoizedImage.offsety;
             } else ImageMemory.set(id, name, { src, width, height, offsetx, offsety, name });
         }
+        if (!src && !name) return;
         reactQuill.insertEmbed(
             cursorPosition,
             'image',
@@ -176,6 +178,7 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
         const offsety = normalizedImageNumericAttribute('offsety');
 
         if (name && !ImageMemory.get(id, name)) ImageMemory.set(id, name, { src, width, height, offsetx, offsety, name });
+        if (!src && !name) return new Delta();
         return new Delta().insert({ image: { src, width, height, offsetx, offsety, name, set: id } });
     }, [id]);
 
@@ -323,12 +326,13 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
         getPickerRef,
         getValue: () => {
             return {
+                carder: immediateCarderValue.current,
                 html: immediateHtmlValue.current,
                 delta: immediateDeltaValue.current,
             };
         },
         setValue: value => {
-            setValue(value);
+            setValue(carderToHtml(value, format, furiganaHelper));
         },
     }));
 

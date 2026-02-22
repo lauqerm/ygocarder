@@ -1,6 +1,6 @@
 import { Checkbox, Input, Popover } from 'antd';
 import { InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } from 'src/component';
-import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
+import { CardTextAreaRef, CardTextInput, MixedCardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
@@ -130,6 +130,9 @@ const StyledPendulumInputContainer = styled.div`
         }
         .ant-checkbox-wrapper + .ant-checkbox-wrapper {
             margin-left: 0;
+        }
+        .pendulum-effect-input .ql-editor {
+            min-height: 89.5px; // Alignment with 4 rows of TextArea
         }
     }
 `;
@@ -420,8 +423,9 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             <div className="joined-row">
                 {/** Explicit label does not looks too good */}
                 {/* <StandaloneLabel className="standalone-label">Pendulum Effect</StandaloneLabel> */}
-                <CardTextArea ref={pendulumEffectInputRef}
+                <MixedCardTextInput ref={pendulumEffectInputRef}
                     id="pendulum-effect"
+                    className="pendulum-effect-input"
                     allowHotkey
                     defaultValue={useCard.getState().card.pendulumEffect}
                     onChange={changePendulumEffect}
