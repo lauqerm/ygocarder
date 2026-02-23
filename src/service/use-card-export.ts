@@ -158,14 +158,20 @@ export const useCardExport = ({
                 localStorage.setItem('card-data', JSON.stringify(currentCard));
                 localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
             } catch (e) {
-                /** Ensure it does not fire repeatedly */
-                const key = 'fail-to-set-storage-notification';
-                notification.close(key);
-                notification.error({
-                    key,
-                    message: language['error.card-max-size.message'],
-                    description: language['error.card-max-size.description'],
-                });
+                try {
+                    const { artData, backgroundData, ...shortenedCard } = currentCard;
+                    localStorage.setItem('card-data', JSON.stringify(shortenedCard));
+                    localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+                } catch (e) {
+                    /** Ensure it does not fire repeatedly */
+                    const key = 'fail-to-set-storage-notification';
+                    notification.close(key);
+                    notification.info({
+                        key,
+                        message: language['error.card-max-size.message'],
+                        description: language['error.card-max-size.description'],
+                    });
+                }
             }
 
             /**
