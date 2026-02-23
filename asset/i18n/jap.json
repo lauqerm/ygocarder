@@ -403,7 +403,7 @@
         "input.icon-type.slot.use-12.label": "Maximum 12 stars",
         "input.name-style.emboss.alert": "Emboss effect will override some text features",
         "input.name-style.emboss.color.alert": "Change color in the {colorTab} button.",
-        "input.opacity.effect-box.tooltip": "Keep effect background, border, and finish whenever possible.",
+        "input.opacity.effect-box.tooltip": "Keep effect background, border, stat labels and finish whenever possible.",
         "input.text-style.justify-ratio.label": "Justify Ratio (%)",
         "input.text-style.justify-ratio.tooltip": "The higher it is, the easier it is for the last line of effect to change from left alignment to justified alignment.",
         "manager.batch.batch-download.all.label": "Select All",

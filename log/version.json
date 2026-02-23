@@ -1,16 +1,5 @@
 [
     {
-        "version": "v2.3.46 (2026/02/15)",
-        "logList": [
-            {
-                "content": "Fix: Best effort render option now no longer affect ATK / DEF / Link rating texts."
-            },
-            {
-                "content": "Various tweaks on font colors."
-            }
-        ]
-    },
-    {
         "version": "v2.3.45 (2026/01/22)",
         "logList": [
             {
