@@ -39,6 +39,8 @@ const CsvStandardFieldList = [
     'Star',
     'Spell/Trap Icon',
     'Art Link',
+    'Art Data',
+    'Art Source',
     'Type Ability',
     'Effect',
     'Set Id',
@@ -96,6 +98,8 @@ const CsvStandardFieldList = [
     'Opacity - Boundless',
     'Has Background',
     'Background Link',
+    'Background Data',
+    'Background Source',
     'Is Using Full Background',
     'Background Type',
     'Background Crop - X (%)',
@@ -233,6 +237,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             art,
             cornerText,
             artCrop,
+            artData,
             artFinish,
             artFit,
             artSource,
@@ -241,6 +246,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             attributeType,
             background,
             backgroundCrop,
+            backgroundData,
             backgroundFit,
             backgroundSource,
             backgroundType,
@@ -312,6 +318,8 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Star', `${star}`);
         write('Spell/Trap Icon', subFamily);
         write('Art Link', art);
+        write('Art Data', artData);
+        write('Art Source', artSource);
         write('Type Ability', typeAbility.join('/'));
         write('Effect', effect);
         write('Set Id', setId);
@@ -365,6 +373,8 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Opacity - Boundless', opacity.boundless);
         write('Has Background', hasBackground);
         write('Background Link', background);
+        write('Background Data', backgroundData);
+        write('Background Source', backgroundSource);
         write('Is Using Full Background', backgroundFit);
         write('Background Type', backgroundType);
         write('Background Crop - X (%)', backgroundCrop.x);
@@ -440,9 +450,10 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Flag', stringifedFlag);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
-        if (artSource === 'offline' || (hasBackground && backgroundSource === 'offline')) {
-            error = 'offline-data';
-        }
+        /** Testing the limit here, we no longer check offline data */
+        // if (artSource === 'offline' || (hasBackground && backgroundSource === 'offline')) {
+        //     error = 'offline-data';
+        // }
 
         valueList.push(rowValue.map(normalizeCsvData).join(','));
     }
@@ -632,6 +643,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
 
                 const emptyArtCrop = getDefaultCrop();
                 const art = reader('Art Link') ?? emptyCard.art;
+                const artData = reader('Art Data') ?? emptyCard.artData;
+                const artSource = reader('Art Source') ?? emptyCard.artSource;
                 const artFit = normalizeBoolean(reader('Is Using Full Art'), emptyCard.artFit);
                 const artCrop: Crop = {
                     aspect: getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize).ratio,
@@ -645,6 +658,8 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const emptyBackgroundCrop = getDefaultCrop();
                 const hasBackground = normalizeBoolean(reader('Has Background'), emptyCard.hasBackground);
                 const background = reader('Background Link') ?? emptyCard.background;
+                const backgroundData = reader('Background Data') ?? emptyCard.backgroundData;
+                const backgroundSource = reader('Background Source') ?? emptyCard.backgroundSource;
                 const backgroundType = (reader('Background Type') ?? emptyCard.backgroundType).toLowerCase() as BackgroundType;
                 const backgroundFit = normalizeBoolean(reader('Is Using Full Background'), emptyCard.backgroundFit);
                 const backgroundCrop: Crop = {
@@ -751,17 +766,19 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     id: uuid(),
                     ...emptyCard,
                     art,
+                    artData,
                     artCrop,
                     artFinish,
+                    artSource,
                     artFit,
-                    artSource: 'online',
                     atk,
                     attribute,
                     attributeType,
                     background,
+                    backgroundData,
                     backgroundCrop,
                     backgroundFit,
-                    backgroundSource: 'online',
+                    backgroundSource,
                     backgroundType,
                     cardIcon,
                     condenseTolerant,
