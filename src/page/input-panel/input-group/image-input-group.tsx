@@ -263,7 +263,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         onSourceLoaded={onSourceLoaded}
         onForceFitChange={changeArtFit}
         onMaxSizeExceeded={size => {
-            notification.error({
+            notification.info({
                 description: language['error.max-size.description'](size),
                 message: language['error.max-size.message'],
             });

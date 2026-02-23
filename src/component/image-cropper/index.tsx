@@ -195,23 +195,22 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         if (!targetFile) return;
         const maxFileSize = 4;
 
-        if (targetFile.size < maxFileSize * 1024 * 1024) {
-            setLoading(true);
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-                if (typeof reader.result === 'string') {
-                    setCrossOrigin('anonymous');
-                    setInternalSource(reader.result);
-                    setSourceType('offline');
-                    setInputMode('offline');
-                    onSourceChange('offline', reader.result);
-                    setLoading(false);
-                }
-            });
-            reader.readAsDataURL(targetFile);
-        } else {
+        if (targetFile.size >= maxFileSize * 1024 * 1024) {
             onMaxSizeExceeded(maxFileSize);
         }
+        setLoading(true);
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            if (typeof reader.result === 'string') {
+                setCrossOrigin('anonymous');
+                setInternalSource(reader.result);
+                setSourceType('offline');
+                setInputMode('offline');
+                onSourceChange('offline', reader.result);
+                setLoading(false);
+            }
+        });
+        reader.readAsDataURL(targetFile);
     };
 
     const pendingCrop = useRef({

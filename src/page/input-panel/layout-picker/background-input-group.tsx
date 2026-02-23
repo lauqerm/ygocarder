@@ -132,7 +132,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         onSourceLoaded={onSourceLoaded}
         onForceFitChange={changeBackgroundFit}
         onMaxSizeExceeded={size => {
-            notification.error({
+            notification.info({
                 description: language['error.max-size.description'](size),
                 message: language['error.max-size.message'],
             });
