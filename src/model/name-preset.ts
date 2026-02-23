@@ -3,8 +3,8 @@ export type NameStyle = ReturnType<typeof getDefaultNameStyle>;
 export const AUTO_FONT = 'Auto';
 export const getDefaultNameStyle = () => ({
     font: AUTO_FONT,
-    fillStyle: '#000000',
-    headTextFillStyle: '#000000',
+    fillStyle: '#221F1F',
+    headTextFillStyle: '#221F1F',
     shadowColor: '#000000',
     shadowOffsetY: 0,
     shadowOffsetX: 0,
@@ -35,7 +35,7 @@ export type TextStyle = [
 ];
 export const getDefaultTextStyle = (): TextStyle => [
     false,
-    '#000000',
+    '#221F1F',
     false,
     '#000000',
 ];

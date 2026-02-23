@@ -156,7 +156,7 @@ export const drawTypeAbility = async ({
     /** Special treatment for speed skill */
     const defaultFillStyle = checkLightFrame(frame) && !checkSpeedSkill({ frame }) && size === 'large'
         ? '#ffffff'
-        : '#000000';
+        : '#221F1F';
     const normalizedStyle = { color: defaultFillStyle, ...textStyle };
     const resetStyle = setTextStyle({ ctx, ...normalizedStyle, globalScale });
     const { iconPositionList, xRatio } = await drawTypeAbilityText({

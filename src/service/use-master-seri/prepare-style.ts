@@ -29,7 +29,7 @@ export const prepareStyle = ({
     statTextStyle: TextStyle,
     typeTextStyle: TextStyle,
 }) => {
-    const levelColor = { color: lightHeader ? '#ffffff' : '#000000' };
+    const levelColor = { color: lightHeader ? '#ffffff' : '#221F1F' };
     const levelStyle = requireShadow
         ? {
             blur: 2,
