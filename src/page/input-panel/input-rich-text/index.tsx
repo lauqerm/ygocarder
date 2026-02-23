@@ -9,9 +9,9 @@ import { WORD_HANDLER, QUOTE_HANDLER, RUBY_HANDLER, RT_HANDLER, FITRT_HANDLER } 
 import { LINE_HANDLER, FITLINE_HANDLER } from './rich-text-block';
 import { IMAGE_HANDLER, ImageMemory, ImageModifierModal, ImageModifierModalRef, MAX_IMAGE_DIMENSION } from './rich-text-image';
 import { InputRichTextToolbar, InputRichTextToolbarRef } from './input-toolbar';
-import 'react-quill/dist/quill.snow.css';
 import { mergeClass } from 'src/util';
 import { CharPicker } from '../char-picker';
+import 'react-quill/dist/quill.snow.css';
 
 const Delta: typeof DeltaType = Quill.import('delta');
 const Parchment: typeof ParchmentType = Quill.import('parchment');
