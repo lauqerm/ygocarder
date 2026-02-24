@@ -96,7 +96,7 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         nameKey: 'input.frame.token',
         labelColor: '#ffffff',
         edition: 'normal',
-        labelBackgroundColor: '#6f6c6b',
+        labelBackgroundColor: '#666c74',
         sortWeight: 1,
         isOfficial: true,
     },
