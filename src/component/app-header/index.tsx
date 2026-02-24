@@ -182,14 +182,17 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/slackermagician"
                             target="_blank"
                             rel="noreferrer"><b>SlackerMagician</b></a>,
-                        <a key="artist-4"
-                            href="https://www.deviantart.com/icycatelf"
-                            target="_blank"
-                            rel="noreferrer"><b>icycatelf</b></a>,
+                        <b>gecko-chan</b>,
                         <Explanation
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">
+                                    <li>
+                                        <a
+                                            href="https://www.deviantart.com/icycatelf"
+                                            target="_blank"
+                                            rel="noreferrer"><b>icycatelf</b></a>
+                                    </li>
                                     <li>
                                         <a
                                             href="https://www.deviantart.com/neophoenixknight/art/Rebirth-Monsters-686893186"

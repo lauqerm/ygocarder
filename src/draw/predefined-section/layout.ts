@@ -587,7 +587,7 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/frame-border-${frameBorderType}.png`, 0, 0);
-            if (isPendulum) await drawAsset(ctx, 'frame/frame-border-pendulum.png', 0, 0);
+            if (isPendulum && !isXyz) await drawAsset(ctx, 'frame/frame-border-pendulum.png', 0, 0);
             ctx.resetTransform();
             return;
         },
