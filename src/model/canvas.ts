@@ -64,7 +64,7 @@ export const CanvasConst = {
     /** Pure structure is visible frame on the card, the frame of that structure has a bit padding for shadow around it. */
     topToPendulumStructureFrame: 185,
     topToArtFrame: 213,
-    pendulumStructureHeight: 912,
+    pendulumStructureHeight: 910,
     pendulumIconFrameWidth: 813,
     pendulumIconFrameHeight: 100,
     pendulumFrameWidth: 753,
@@ -80,7 +80,7 @@ export const CanvasConst = {
     stickerSize: 52,
     attributeSize: 77,
     attributeY: 55,
-    attributeX: 678,
+    attributeX: 679,
     stickerX: 739.1438,
     stickerY: 1110.938,
     iconWidth: 43,
