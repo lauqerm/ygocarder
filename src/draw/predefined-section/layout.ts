@@ -193,7 +193,7 @@ export const getLayoutDrawFunction = ({
     const artBorder = opacityBody > 0 ? true : keepArtBorder;
     const artBoxY = 170, artBoxX = 60;
     const effectBoxY = 860, effectBoxX = 35;
-    const backgroundEffectBoxY = effectBoxY + 25, backgroundEffectBoxX = effectBoxX + 19;
+    const backgroundEffectBoxY = effectBoxY + 24, backgroundEffectBoxX = effectBoxX + 19;
     const backgroundEffectBoxWidth = 705, backgroundEffectBoxHeight = 231;
 
     const hasFoil = foil !== 'normal';
