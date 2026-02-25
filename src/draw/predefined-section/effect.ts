@@ -313,6 +313,10 @@ export const drawEffect = async ({
                         finalTokenList = tokenList;
                         finalSpaceWidth = 0;
                         finalTextData = flavorTextData;
+                        ctx.font = flavorTextCurrentFont
+                            .setSize(dynamicFontData.fontList[dynamicSizeLevel].fontSize)
+                            .setFamily(dynamicFontData.font)
+                            .getFont();
                     } else {
                         /** Normal line: Draw with the calculated median */
                         xRatio = effectiveMedian / 1000;
@@ -354,6 +358,11 @@ export const drawEffect = async ({
                     textData,
                 } = lineDrawInfo;
                 let result: ReturnType<typeof drawLine>;
+                const { currentFont, fontData } = textData;
+                ctx.font = currentFont
+                    .setSize(fontSize)
+                    .setFamily(fontData.font)
+                    .getFont();
                 if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
                     ctx.scale(xRatio, yRatio);
                     result = drawLine({
@@ -370,11 +379,6 @@ export const drawEffect = async ({
                     });
                 } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
                     ctx.scale(xRatio, yRatio);
-                    const { currentFont, fontData } = textData;
-                    ctx.font = currentFont
-                        .setSize(fontSize)
-                        .setFamily(fontData.font)
-                        .getFont();
                     result = drawLine({
                         ctx,
                         tokenList,
