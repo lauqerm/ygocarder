@@ -104,25 +104,25 @@ export const InputRichTextToolbar = forwardRef<InputRichTextToolbarRef, InputRic
     return <div id={`${id}-toolbar`} className="quill-custom-toolbar">
         <button className="ql-bold"></button>
         <button className="ql-italic"></button>
-        <strong>Line</strong>
+        <strong></strong>
         <button className={`ql-${LINE_HANDLER}`}>
-            <Tooltip title="Left alignment">
+            <Tooltip title="Line: Left alignment">
                 {BlockIcon}
             </Tooltip>
         </button>
         <button className={`ql-${FITLINE_HANDLER}`}>
-            <Tooltip title="Justify alignment">
+            <Tooltip title="Line: Justify alignment">
                 {FitBlockIcon}
             </Tooltip>
         </button>
-        <strong>Word</strong>
+        <strong></strong>
         <button className={`ql-${WORD_HANDLER}`}>
-            <Tooltip title="Compressable">
+            <Tooltip title="Word: Compressable">
                 <PicLeftOutlined />
             </Tooltip>
         </button>
         <button className={`ql-${QUOTE_HANDLER}`}>
-            <Tooltip title="Non-compressable">
+            <Tooltip title="Word: Non-compressable">
                 <PicCenterOutlined />
             </Tooltip>
         </button>

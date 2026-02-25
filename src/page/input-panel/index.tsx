@@ -104,11 +104,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
     const isMonster = checkMonster({ frame });
     const [stylePickerResetCount, setStylePickerResetCount] = useState(0);
-    const foilButtonList = useMemo(() => getFoilButtonList({
-        normal: language['input.foil.normal.label'],
-        gold: language['input.foil.gold.label'],
-        platinum: language['input.foil.platinum.label'],
-    }), [language]);
+    const foilButtonList = useMemo(() => getFoilButtonList(language), [language]);
 
     const frameTrainRef = useRef<FrameTrainRef>(null);
     const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);

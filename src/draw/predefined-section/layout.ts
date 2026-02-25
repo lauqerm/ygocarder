@@ -193,7 +193,7 @@ export const getLayoutDrawFunction = ({
     const artBorder = opacityBody > 0 ? true : keepArtBorder;
     const artBoxY = 170, artBoxX = 60;
     const effectBoxY = 860, effectBoxX = 35;
-    const backgroundEffectBoxY = effectBoxY + 25, backgroundEffectBoxX = effectBoxX + 19;
+    const backgroundEffectBoxY = effectBoxY + 24, backgroundEffectBoxX = effectBoxX + 19;
     const backgroundEffectBoxWidth = 705, backgroundEffectBoxHeight = 231;
 
     const hasFoil = foil !== 'normal';
@@ -587,6 +587,7 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/frame-border-${frameBorderType}.png`, 0, 0);
+            if (isPendulum && !isXyz) await drawAsset(ctx, 'frame/frame-border-pendulum.png', 0, 0);
             ctx.resetTransform();
             return;
         },
@@ -626,10 +627,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                + `-${usedFoil}`
-                + '-artless'
-                + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
-                + '.png',
+                    + `-${usedFoil}`
+                    + '-artless'
+                    + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
+                    + '.png',
                 30, topToPendulumStructureFrame,
                 pendulumFrameWidth / 2, pendulumFrameHeight,
                 0, 0,
@@ -638,10 +639,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                + `-${usedFoil}`
-                + '-artless'
-                + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
-                + '.png',
+                    + `-${usedFoil}`
+                    + '-artless'
+                    + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
+                    + '.png',
                 30 + pendulumFrameWidth / 2, topToPendulumStructureFrame,
                 pendulumFrameWidth / 2, pendulumFrameHeight,
                 pendulumFrameWidth / 2, 0,
@@ -663,8 +664,8 @@ export const getLayoutDrawFunction = ({
                     await drawAsset(
                         pendulumBorderFoilCtx,
                         `frame-pendulum/border-pendulum-${pendulumSize}`
-                        + `-${usedFoil}`
-                        + '.png',
+                            + `-${usedFoil}`
+                            + '.png',
                         30, topToPendulumStructureFrame,
                     );
                     const { canvas: dyedPendulumBorderFoilCanvas } = dyeCanvas(pendulumBorderFoilCanvas, dyeList[6]);
@@ -673,8 +674,8 @@ export const getLayoutDrawFunction = ({
                     await drawAsset(
                         pendulumBorderCtx,
                         `frame-pendulum/border-pendulum-${pendulumSize}`
-                        + `-${foilType}`
-                        + '.png',
+                            + `-${foilType}`
+                            + '.png',
                         30, topToPendulumStructureFrame,
                     );
                 }
@@ -766,7 +767,7 @@ export const getLayoutDrawFunction = ({
         drawAttributeFinish: async () => {
             if (attribute !== NO_ATTRIBUTE && ctx) {
                 ctx.scale(globalScale, globalScale);
-                await loopFinish(ctx, 'attribute', async type => drawAsset(ctx, `finish/finish-${type}-attribute.png`, 678, 55));
+                await loopFinish(ctx, 'attribute', async type => drawAsset(ctx, `finish/finish-${type}-attribute.png`, attributeX, attributeY));
                 ctx.resetTransform();
             }
         },

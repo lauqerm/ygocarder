@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.4.0 (2026/02/25)",
+        "logList": [
+            {
+                "content": "Fix: Incorrect font for Normal monsters with name condition."
+            },
+            {
+                "content": "Various updates on card frames (color, bevel and shadow)."
+            }
+        ]
+    },
+    {
         "version": "v2.3.46 (2026/02/15)",
         "logList": [
             {

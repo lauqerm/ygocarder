@@ -483,7 +483,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawPendulumScaleIcon();
                 /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
                 await drawPendulumBorder(hasArtBorder, 'normal');
-                await drawPendulumBorder(hasArtBorder, foil, true);
+                if (foil !== 'normal') await drawPendulumBorder(hasArtBorder, foil, true);
                 await drawPendulumArtBorderFinish();
                 if (hasArtBorder) await drawBorderPendulumFinish();
             }
@@ -505,7 +505,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 } else if (isPendulum) {
                     if (hasArtBorder) {
                         await drawPendulumBorder(hasArtBorder, 'normal');
-                        await drawPendulumBorder(hasArtBorder, foil, true);
+                        if (foil !== 'normal') await drawPendulumBorder(hasArtBorder, foil, true);
                     }
                     await drawPendulumArtBorderFinish();
                 }
@@ -531,7 +531,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     await drawEffectBackground({ withPendulum: true });
                     await drawPendulumScaleIcon();
                     await drawPendulumBorder(false, 'normal');
-                    await drawPendulumBorder(false, foil, true);
+                    if (foil !== 'normal') await drawPendulumBorder(false, foil, true);
                     await drawBorderPendulumFinish();
                 } else if (keepEffectBox) {
                     await drawEffectBackground({});
