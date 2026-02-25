@@ -14,7 +14,7 @@ const MixedCardTextContainer = styled.div`
         border-radius: var(--br) var(--br) 0 0;
         .toolbar {
             background-color: var(--main-level-4);
-            height: 24px; // Align with rich text toolbar
+            height: 26px; // Align with rich text toolbar
             border-radius: var(--br) var(--br) 0 0;
             border-right: var(--bw) solid var(--sub-level-1);
             border-left: var(--bw) solid var(--sub-level-1);

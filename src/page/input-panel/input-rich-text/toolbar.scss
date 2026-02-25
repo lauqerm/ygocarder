@@ -4,10 +4,14 @@
         display: none;
     }
     &.ql-toolbar {
+        font-family:
+            -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+            "Droid Sans", "Helvetica Neue", sans-serif;
         button {
             padding: 0;
             width: 24px; // Alignment
             color: var(--color);
+            background-color: var(--main-level-4);
             line-height: 0;
             > svg {
                 padding: var(--spacing-xxs);
@@ -47,6 +51,7 @@
             border-left: var(--bw-lg) solid var(--sub-level-2);
             padding-left: var(--spacing-xs);
             font-weight: normal;
+            user-select: none;
             &:empty {
                 width: 0;
                 padding-left: 0;
@@ -146,7 +151,10 @@
                 background-color: var(--main-level-3);
                 border: var(--bw) solid var(--sub-level-1);
                 border-radius: var(--br);
-                box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+                box-shadow:
+                    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+                    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+                    0 9px 28px 8px rgba(0, 0, 0, 0.05);
                 button {
                     width: unset;
                     float: unset;
@@ -181,7 +189,7 @@
         border-radius: var(--br) var(--br) 0 0;
         border: var(--bw) solid var(--sub-level-1);
         border-bottom: none;
-        background-color: var(--main-level-4);
+        background-color: var(--main-level-3);
         padding: 0;
         line-height: 0;
     }
