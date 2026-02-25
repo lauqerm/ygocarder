@@ -19,8 +19,8 @@ import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
 import { PresetManager } from '../preset-manager';
 import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
-import './app-header.scss';
 import { CardSeriesMetadata } from 'src/model';
+import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -233,19 +233,22 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
                             target="_blank"
                             rel="noreferrer"><b>9558able</b></a>,
-                        <a key="artist-3"
-                            href="https://www.deviantart.com/slackermagician"
-                            target="_blank"
-                            rel="noreferrer"><b>SlackerMagician</b></a>,
-                        <Explanation key="other-artist"
+                        <b>gecko-chan</b>,
+                        <Explanation
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">
                                     <li>
+                                        <a key="artist-3"
+                                            href="https://www.deviantart.com/slackermagician"
+                                            target="_blank"
+                                            rel="noreferrer"><b>SlackerMagician</b></a>
+                                    </li>
+                                    <li>
                                         <a
                                             href="https://www.deviantart.com/icycatelf"
                                             target="_blank"
-                                            rel="noreferrer"><b>icycatelf</b></a>,
+                                            rel="noreferrer"><b>icycatelf</b></a>
                                     </li>
                                     <li>
                                         <a

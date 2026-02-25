@@ -1,3 +1,6 @@
+import { CloseCircleOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+
 type FinishInstruction = { opacity?: number, blendMode?: GlobalCompositeOperation };
 const type3CommonInstruction: FinishInstruction[] = [{ blendMode: 'overlay', opacity: 1 }];
 const type8CommonInstruction: FinishInstruction[] = [
@@ -273,21 +276,49 @@ export type FoilDictionary = {
     normal: string,
     gold: string,
     platinum: string,
+    rainbow: string,
 };
+const FoilPreview = styled.div`
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: var(--br);
+    margin: 7px 0;
+`;
 export const FoilMap = {
     normal: {
         name: 'normal' as const,
         color: '#747b95',
+        preview: <CloseCircleOutlined />,
         isOption: false,
     },
     gold: {
         name: 'gold' as const,
         color: '#cfa65f',
+        preview: <FoilPreview style={{ backgroundColor: '#cfa65f' }} />,
         isOption: true,
     },
     platinum: {
         name: 'platinum' as const,
         color: '#b1b1b1',
+        preview: <FoilPreview style={{ backgroundColor: '#b1b1b1' }} />,
+        isOption: true,
+    },
+    rainbow: {
+        name: 'rainbow' as const,
+        color: '#f3a486',
+        preview: <FoilPreview style={{ background: `linear-gradient(
+            135deg,
+            rgba(255, 80, 80, 1) 0%,
+            rgba(255, 194, 40, 1) 10%,
+            rgba(248, 255, 73, 1) 30%,
+            rgba(119, 255, 114, 1) 40%,
+            rgba(103, 255, 255, 1) 50%,
+            rgba(87, 241, 255, 1) 70%,
+            rgba(68, 167, 255, 1) 80%,
+            rgba(226, 52, 255, 1) 90%,
+            rgba(255, 80, 80, 1) 100%
+        )` }} />,
         isOption: true,
     },
 };
@@ -304,6 +335,10 @@ export const getFoilList = (dictionary?: FoilDictionary) => [
         label: dictionary?.platinum,
         ...FoilMap.platinum,
     },
+    // {
+    //     label: dictionary?.rainbow,
+    //     ...FoilMap.rainbow,
+    // },
 ];
 export type Foil = ReturnType<typeof getFoilList>[0]['name'];
 

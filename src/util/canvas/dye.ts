@@ -14,6 +14,10 @@ export const dyeCanvas = (baseCanvas: HTMLCanvasElement, color: string, width = 
 
     const { ctx: overlayContext, canvas: overlayCanvas } = createCanvas(width, height);
 
+    if (!overlayContext) return {
+        canvas: baseCanvas,
+        ctx: baseCanvas.getContext('2d'),
+    };
     /** Draw the target image with grayscale */
     overlayContext.filter = 'grayscale(1)';
     overlayContext.drawImage(baseCanvas, 0, 0);

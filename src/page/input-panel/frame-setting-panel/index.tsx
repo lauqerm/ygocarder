@@ -131,11 +131,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const [focus, setFocus] = useState(0);
     const [activeLayout, setActiveLayout] = useState('frame');
     const frameLayoutMainId = 'frame-layout-main';
-    const foilButtonList = useMemo(() => getFoilButtonList({
-        normal: language['input.foil.normal.label'],
-        gold: language['input.foil.gold.label'],
-        platinum: language['input.foil.platinum.label'],
-    }), [language]);
+    const foilButtonList = useMemo(() => getFoilButtonList(language), [language]);
 
     useEffect(() => {
         /** Avoid confusion */
