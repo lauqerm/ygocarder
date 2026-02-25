@@ -10,7 +10,6 @@ import {
     NO_ICON,
     ArtFinishMap,
     FinishMap,
-    FoilDictionary,
     NO_STICKER,
     PendulumSizeMap,
     OtherFinishTypeMap,
@@ -21,6 +20,7 @@ import {
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import { LanguageDataDictionary } from 'src/service';
 
 export const FormatButtonList = [
     {
@@ -41,9 +41,16 @@ export const FormatButtonList = [
     },
 ];
 
-export const getFoilButtonList = (dictionary: FoilDictionary) => {
-    return getFoilList(dictionary).map(({ color, name, label }) => ({
-        label: name === 'normal' ? <CloseCircleOutlined /> : label,
+export const getFoilButtonList = (language: LanguageDataDictionary) => {
+    return getFoilList({
+        normal: language['input.foil.normal.label'],
+        gold: language['input.foil.gold.label'],
+        platinum: language['input.foil.platinum.label'],
+        rainbow: language['input.foil.rainbow.label'],
+    }).map(({ color, name, label, preview }) => ({
+        label: <Tooltip title={label}>
+            {preview}
+        </Tooltip>,
         value: name,
         props: {
             style: {
