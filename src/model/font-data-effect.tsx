@@ -475,3 +475,5 @@ export const RegionSpaceWidthMap: Record<string, Record<string, number>> = {
         default: 3.650,
     },
 };
+
+export const DEFAULT_TEXT_COLOR = '#010101';

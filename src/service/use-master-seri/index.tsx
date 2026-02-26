@@ -636,10 +636,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
             const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
-            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale);
-            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale);
+            const scaleColor = resolvedPendulumEffectTextStyle.color;
+            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale, scaleColor);
+            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale, scaleColor);
         }
-    }, [readyToDraw, globalScale, isPendulum, pendulumSize, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
+    }, [
+        readyToDraw,
+        globalScale,
+        isPendulum,
+        pendulumSize,
+        pendulumScaleBlue,
+        pendulumScaleRed,
+        pendulumScaleCanvasRef,
+        resolvedPendulumEffectTextStyle,
+    ]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -654,7 +664,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 nameCanvasRef.current,
                 ctx,
                 name,
-                format === 'tcg' ? 60 : 68, 116,
+                format === 'tcg' ? 63 : 68, 116,
                 attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),

@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
 import { LanguageDataDictionary } from 'src/service';
+import { DEFAULT_TEXT_COLOR } from './font-data-effect';
 
 export const getDefaultCrop = () => ({
     x: 0,
@@ -276,7 +277,7 @@ export const DefaultColorList = [
     '#4D4D4D', '#999999', '#FFFFFF', '#FF7F7F', '#FFD27F', '#FFFF7F',
     '#7FFF7F', '#7FBF7F', '#7FFFFF', '#7F7FFF', '#BF7FBF', '#FF7FFF',
 
-    '#221F1F', '#808080', '#cccccc', '#FF0000', '#FFA500', '#FFFF00',
+    DEFAULT_TEXT_COLOR, '#808080', '#cccccc', '#FF0000', '#FFA500', '#FFFF00',
     '#00FF00', '#008000', '#00FFFF', '#0000FF', '#800080', '#FF00FF',
 
     '#000000', '#666666', '#B3B3B3', '#7F0000', '#7F5200', '#7F7F00',

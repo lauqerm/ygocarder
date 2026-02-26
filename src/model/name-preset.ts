@@ -1,10 +1,12 @@
+import { DEFAULT_TEXT_COLOR } from './font-data-effect';
+
 export type NameStyleType = 'auto' | 'custom' | 'predefined';
 export type NameStyle = ReturnType<typeof getDefaultNameStyle>;
 export const AUTO_FONT = 'Auto';
 export const getDefaultNameStyle = () => ({
     font: AUTO_FONT,
-    fillStyle: '#221F1F',
-    headTextFillStyle: '#221F1F',
+    fillStyle: DEFAULT_TEXT_COLOR,
+    headTextFillStyle: DEFAULT_TEXT_COLOR,
     shadowColor: '#000000',
     shadowOffsetY: 0,
     shadowOffsetX: 0,
@@ -35,7 +37,7 @@ export type TextStyle = [
 ];
 export const getDefaultTextStyle = (): TextStyle => [
     false,
-    '#221F1F',
+    DEFAULT_TEXT_COLOR,
     false,
     '#000000',
 ];

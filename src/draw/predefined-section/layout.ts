@@ -200,9 +200,7 @@ export const getLayoutDrawFunction = ({
     const frameBorderType = isXyz || isSpeedSkill
         ? frame
         : 'normal';
-    const nameBorderTypeList = frame === 'synchro'
-        ? ['normal', 'xyz', 'xyz', 'xyz', 'xyz'] /** This produce more accurate effect */
-        : [frameBorderType];
+    const nameBorderTypeList = [frameBorderType];
     const applyArtFinish = !boundless && artBorder;
 
     const resolvedLayoutStyle = resolveFrameStyle(
