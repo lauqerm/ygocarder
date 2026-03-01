@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '27/02/2026';
+        const currentReminder = '01/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -80,7 +80,17 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
-            author: 'TheTonyB at Feb 23, 2026',
+            author: 'MaSaHo at March 01, 2026',
+            question: 'Is there a plan to update the foil border? I mean, adding the rainbow pattern of the new Overframe cards, as well as the assets from the Grand Master version?',
+            answer: 'I would love to but right now I am entirely depend on other artists to provide the assets for those first, so I cannot give a clear ETA on that.',
+        },
+        {
+            author: 'Yugiohfann at March 01, 2026',
+            question: 'Hello,Can you fix the issue with the letter "i" in the card name box? When entering a card name with multiple characters, the letter "i" often appears higher or lower than the other letters in the box.\nFor example, in "Fiendsmith\'s Sequence", the letter "i" is taller than the other letters. Or in "Fiendsmith\'s Rextremendere," the letter "i" is lower than other letters.\nThanks.',
+            answer: 'What resolution are you using (813x1185 or 1626x2370)? I will try my best but my ability to support on mobile is quite limited.',
+        },
+        {
+            author: 'LigerrFanArt at Feb 24, 2026',
             question: 'Hello,\nI noticed a formatting issue with italic text in the effect box (Normal Monster text).\nWhen a line starts directly with a parenthesis, for example:\n"(This card is always treated as an "Archfiend" card.)"\nthe italic formatting does not activate properly.\nTo make the italics work, I have to manually add a space before the "(" at the beginning of the line. However, adding this space causes the text to shift\nslightly and the font size to shrink, as the entire text box appears to be recalculated and resized.\nIt seems like the issue may be related to how the parser handles lines beginning with a parenthesis.\nJust reporting it in case it helps improve the tool.\nThanks for your work!\n\nLigerrFanArt',
             answer: 'I have fixed the issue T.T',
         },

@@ -13,7 +13,7 @@ import {
 } from './model';
 import {
     forceRefocus,
-    isMobileDevice,
+    IS_MOBILE,
     isTouchDevice,
     mergeClass,
 } from './util';
@@ -123,8 +123,7 @@ function App() {
         initiate,
         loadDefaultLanguage,
     })));
-    const isMobile = isMobileDevice();
-    const windowSlidable = !isMobile && !isTouchDevice();
+    const windowSlidable = !IS_MOBILE && !isTouchDevice();
     const [isInitializing, setInitializing] = useState(true);
     const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [resetCanvasCounter] = useGlobal('resetCanvasCounter');
@@ -605,7 +604,7 @@ function App() {
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
                         }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
-                    height: isMobile ? '-webkit-fill-available' : '100vh',
+                    height: IS_MOBILE ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasHeight * globalScale}px`,
                         '--card-width': `${CanvasWidth * globalScale}px`,

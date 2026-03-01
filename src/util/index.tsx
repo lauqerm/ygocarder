@@ -11,6 +11,7 @@ export const isMobileDevice = () => {
         || (window as any).opera);
     return check;
 };
+export const IS_MOBILE = isMobileDevice();
 
 export const isTouchDevice = () => {
     return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
