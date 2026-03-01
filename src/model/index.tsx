@@ -33,6 +33,7 @@ export const getDefaultCard = () => ({
     format: 'tcg',
     region: 'en',
     frame: 'fusion',
+    legacyTemplate: false,
     leftFrame: 'auto',
     rightFrame: 'auto',
     pendulumRightFrame: 'auto',
@@ -137,6 +138,7 @@ export const getEmptyCard = (): Card => ({
     region: 'en',
     /** Why we split frame and left frame here? Because there is more nuance to the card other than individual frames, for example name bevel, border bevel, effect bevel etc..., so "frame" here is a kind of "main frame" that dictates all those nuance, why the actual card background is constructed from those 4 corner frames. */
     frame: 'effect',
+    legacyTemplate: false,
     leftFrame: 'auto',
     rightFrame: 'auto',
     pendulumRightFrame: 'auto',

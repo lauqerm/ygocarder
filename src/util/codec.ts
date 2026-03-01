@@ -8,6 +8,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     version: 've',
     format: 'fm',
     region: 'rg',
+    legacyTemplate: 'lt',
     frame: 'fr',
     rightFrame: 'rf',
     leftFrame: 'lf',

@@ -174,6 +174,7 @@ const CsvStandardFieldList = [
     'Dye List',
     'Star List',
     'Flag',
+    'Legacy Template',
     'External Info (JSON)',
 ] as const;
 const CsvFieldList = [
@@ -275,6 +276,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             isPendulum,
             isSpeedCard,
             leftFrame,
+            legacyTemplate,
             linkMap,
             linkRating,
             name,
@@ -448,6 +450,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Dye List', stringifedDyeList);
         write('Star List', stringifedSubFamilyList);
         write('Flag', stringifedFlag);
+        write('Legacy Template', legacyTemplate);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
 
         /** Testing the limit here, we no longer check offline data */
@@ -567,6 +570,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const finish = reader('Card Finish')?.split(/,| /).filter(entry => entry !== '') ?? [] as string[];
                 const format = (reader('Format') ?? emptyCard.format).toLowerCase();
                 const region = (reader('Region') ?? emptyCard.region).toLowerCase();
+                const legacyTemplate = normalizeBoolean(reader('Legacy Template'), emptyCard.legacyTemplate);
                 const furiganaHelper = normalizeBoolean(reader('Use Furigana Helper'), emptyCard.furiganaHelper);
                 const name = reader('Name') ?? '';
                 const password = reader('Password') ?? '';
@@ -814,6 +818,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     isPendulum,
                     isSpeedCard,
                     leftFrame,
+                    legacyTemplate,
                     linkMap,
                     linkRating,
                     name,
