@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.4.2 (2026/03/01)",
+        "logList": [
+            {
+                "content": "Support switch to use legacy layers for card frames. Comparison below (left is new and right is legacy):",
+                "image": "https://i.postimg.cc/Nf9242k0/comparison-resized.png"
+            }
+        ]
+    },
+    {
         "version": "v2.4.1 (2026/02/27)",
         "logList": [
             {
