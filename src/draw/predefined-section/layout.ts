@@ -628,6 +628,7 @@ export const getLayoutDrawFunction = ({
             const usedFoil = validDyeColor && willDye && foilType === 'normal' ? 'platinum' : foilType;
             /** We create a new canvas for easier manipulation. */
             const { canvas: pendulumBorderCanvas, ctx: pendulumBorderCtx } = createCanvas();
+            const halfPendulumWidth = Math.round(pendulumFrameWidth / 2);
             await drawAssetWithSize(
                 pendulumBorderCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
@@ -636,9 +637,9 @@ export const getLayoutDrawFunction = ({
                     + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
                     + '.png',
                 30, topToPendulumStructureFrame,
-                pendulumFrameWidth / 2, pendulumFrameHeight,
+                halfPendulumWidth, pendulumFrameHeight,
                 0, 0,
-                pendulumFrameWidth / 2, pendulumFrameHeight,
+                halfPendulumWidth, pendulumFrameHeight,
             );
             await drawAssetWithSize(
                 pendulumBorderCtx,
@@ -647,10 +648,10 @@ export const getLayoutDrawFunction = ({
                     + '-artless'
                     + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
                     + '.png',
-                30 + pendulumFrameWidth / 2, topToPendulumStructureFrame,
-                pendulumFrameWidth / 2, pendulumFrameHeight,
-                pendulumFrameWidth / 2, 0,
-                pendulumFrameWidth / 2, pendulumFrameHeight,
+                30 + halfPendulumWidth, topToPendulumStructureFrame,
+                pendulumFrameWidth - halfPendulumWidth, pendulumFrameHeight,
+                halfPendulumWidth, 0,
+                pendulumFrameWidth - halfPendulumWidth, pendulumFrameHeight,
             );
             if (willDye && validDyeColor) {
                 const { canvas: dyedCardBorderFoilCanvas } = dyeCanvas(pendulumBorderCanvas, dyeList[6]);
