@@ -120,6 +120,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     } = canvasMap;
     const {
         format, region,
+        legacyTemplate,
         hasBackground, backgroundType,
         frame,
         foil, finish, artFinish, otherFinish, opacity,
@@ -387,6 +388,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 artworkCanvas, backgroundCanvas,
                 globalScale,
                 region,
+                legacyTemplate,
                 frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
                 dyeList,
                 effectBackground, pendulumEffectBackground,
@@ -591,7 +593,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         finish,
         foil,
         format,
-        region,
         frame,
         frameCanvasRef,
         hasBackground,
@@ -602,6 +603,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isSpeedSkill,
         isXyz,
         leftFrame,
+        legacyTemplate,
         levelStyle,
         lightFooter,
         linkMap,
@@ -614,13 +616,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         pendulumFrame,
         pendulumRightFrame,
         pendulumSize,
+        region,
         resolvedOtherEffectTextStyle,
         resolvedStatTextStyle,
         rightFrame,
         showLinkRating,
         star,
-        starList,
         starAlignment,
+        starList,
         statInEffect,
         withBlueScale,
         withRedScale,
@@ -635,10 +638,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
             const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
-            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale);
-            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale);
+            const scaleColor = resolvedPendulumEffectTextStyle.color;
+            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale, scaleColor);
+            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale, scaleColor);
         }
-    }, [readyToDraw, globalScale, isPendulum, pendulumSize, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
+    }, [
+        readyToDraw,
+        globalScale,
+        isPendulum,
+        pendulumSize,
+        pendulumScaleBlue,
+        pendulumScaleRed,
+        pendulumScaleCanvasRef,
+        resolvedPendulumEffectTextStyle,
+    ]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -653,7 +666,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 nameCanvasRef?.current,
                 ctx,
                 name,
-                format === 'tcg' ? 60 : 68, 116,
+                format === 'tcg' ? 63 : 68, 116,
                 attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),

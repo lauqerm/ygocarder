@@ -233,7 +233,7 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
                             target="_blank"
                             rel="noreferrer"><b>9558able</b></a>,
-                        <b>gecko-chan</b>,
+                        <b key="artist-3">gecko-chan</b>,
                         <Explanation
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">

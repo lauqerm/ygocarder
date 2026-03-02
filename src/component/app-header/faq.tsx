@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '15/02/2026';
+        const currentReminder = '02/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,36 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Yugiohfann at March 02, 2026',
+            question: 'I use 813x1185 resolution, can you adjust the height of the letter "i" so that it\'s the same height as the other letters in the name box? Thank you.',
+            answer: 'I have updated the font a bit, if this does not improve your issue I\'m sorry I cannot do much more to help.',
+        },
+        {
+            author: 'MaSaHo at March 01, 2026',
+            question: 'Is there a plan to update the foil border? I mean, adding the rainbow pattern of the new Overframe cards, as well as the assets from the Grand Master version?',
+            answer: 'I would love to but right now I am entirely depend on other artists to provide the assets for those first, so I cannot give a clear ETA on that.',
+        },
+        {
+            author: 'LigerrFanArt at Feb 24, 2026',
+            question: 'Hello,\nI noticed a formatting issue with italic text in the effect box (Normal Monster text).\nWhen a line starts directly with a parenthesis, for example:\n"(This card is always treated as an "Archfiend" card.)"\nthe italic formatting does not activate properly.\nTo make the italics work, I have to manually add a space before the "(" at the beginning of the line. However, adding this space causes the text to shift\nslightly and the font size to shrink, as the entire text box appears to be recalculated and resized.\nIt seems like the issue may be related to how the parser handles lines beginning with a parenthesis.\nJust reporting it in case it helps improve the tool.\nThanks for your work!\n\nLigerrFanArt',
+            answer: 'I have fixed the issue T.T',
+        },
+        {
+            author: 'TheTonyB at Feb 23, 2026',
+            question: 'Spell/Trap icon finishes not working with high-res cards.',
+            answer: 'I have fixed the issue.',
+        },
+        {
+            author: 'El Kebabini at Feb 17, 2026',
+            question: 'The german Attribute for Dark Finsternis is wrong. It\'s too condensed.',
+            answer: 'I am sorry but that is the only one that I have access to, I will update it if I can but right now it\'s really hard to get access to attributes for other languages.',
+        },
+        {
+            author: 'Long at Feb 16, 2026',
+            question: 'Why did you change the font color? The default text used to be black, but now it’s gray, and I don’t think this change was necessary.',
+            answer: 'I am experimenting with a new color based on high-res official proxy from Konami site, so it may get further adjusted to fit the nature of the app. But you can always change it to pure black in Effect > Text Style. Sorry for the inconvenience.',
+        },
         {
             author: 'LigerrFanArt at Feb 14, 2026',
             question: 'Hi,\nWhen I disable “best effort render” to get the rainbow effect on my card, it disables ATK / and DEF / in your menu.\nWould it be possible to add a new section next to Foil, with a Rainbow version alongside Gold and Platinum — unless you’re already working on that?\nI had to manually add ATK / and DEF / in Photoshop myself.\n\nThx\nLigerrFanArt',

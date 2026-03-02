@@ -40,7 +40,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                     threshold: 0.94,
                     letterMap: {
                         I: { uniformBoxDescent: 1 },
-                        i: { uniformBoxDescent: 1 },
+                        i: { uniformBoxDescent: 1, uniformBoxDescentMobile: 0 },
                         Ì: { uniformBoxDescent: 1 },
                         Í: { uniformBoxDescent: 1 },
                         Î: { uniformBoxDescent: 1 },
@@ -100,7 +100,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                     threshold: 0,
                     letterMap: {
                         I: { uniformBoxDescent: 1 },
-                        i: { uniformBoxDescent: 1 },
+                        i: { uniformBoxDescent: 1, uniformBoxDescentMobile: 2 },
                         Ì: { uniformBoxDescent: 1 },
                         Í: { uniformBoxDescent: 1 },
                         Î: { uniformBoxDescent: 1 },

@@ -643,6 +643,39 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
 };
 export const IconTypeStList = Object.values(IconTypeStMap);
 
+export const IconWithGlowMap = {
+    'rank': 'rank',
+    'ritual': 'ritual',
+    'ritual-l': 'ritual-l',
+    'spell': 'spell',
+    'trap': 'trap',
+    'water': 'water',
+    'wind': 'wind',
+    'continuous': 'continuous',
+    'continuous-l': 'continuous-l',
+    'counter': 'counter',
+    'counter-l': 'counter-l',
+    'dark': 'dark',
+    'divine': 'divine',
+    'earth': 'earth',
+    'equip': 'equip',
+    'equip-l': 'equip-l',
+    'field': 'field',
+    'field-l': 'field-l',
+    'fire': 'fire',
+    'glow': 'glow',
+    'grade': 'grade',
+    'icon-list': 'icon-list',
+    'level': 'level',
+    'level-rank': 'level-rank',
+    'light': 'light',
+    'negative-level': 'negative-level',
+    'normal': 'normal',
+    'normal-l': 'normal-l',
+    'quick-play': 'quick-play',
+    'quick-play-l.png': 'quick-play-l.png',
+};
+
 export const TotalIconTypeMap = {
     ...IconTypeMap,
     ...IconTypeAttributeMap,

@@ -1,6 +1,6 @@
 import { CanvasTextStyle } from 'src/service';
 import { fillTextLeftWithSpacing, fillTextRightWithSpacing, setTextStyle } from '../canvas-util';
-import { NB_WORD_CLOSE, NB_WORD_OPEN } from 'src/model';
+import { DEFAULT_TEXT_COLOR, NB_WORD_CLOSE, NB_WORD_OPEN } from 'src/model';
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -9,6 +9,7 @@ export const drawScale = (
     _baseline: number,
     _fontSize: number,
     globalScale: number,
+    color = DEFAULT_TEXT_COLOR,
 ) => {
     const edge = _edge * globalScale;
     const baseline = _baseline * globalScale;
@@ -16,6 +17,7 @@ export const drawScale = (
         const fontSize = _fontSize * globalScale;
         ctx.font = `${fontSize}px MatrixBoldSmallCaps, Times New Roman`;
         ctx.textAlign = 'left';
+        ctx.fillStyle = color;
 
         const digitList = Array.from(`${value}`);
 
@@ -250,11 +252,11 @@ export const drawStat = (
         const tokenizedText = `${value}`.split('?');
 
         let totalWidth = tokenizedText.reduce((prev, curr, index) => {
-            ctx.font = `${36.18 * globalScale}px MatrixBoldSmallCaps`;
+            ctx.font = `${37 * globalScale}px MatrixBoldSmallCaps`;
             let nextWidth = prev + ctx.measureText(curr).width;
 
             if (index < tokenizedText.length - 1) {
-                ctx.font = `${36.18 * globalScale}px matrix`;
+                ctx.font = `${37 * globalScale}px matrix`;
                 nextWidth += ctx.measureText('?').width;
             }
 
@@ -268,7 +270,7 @@ export const drawStat = (
             tokenizedText.reduce((prev, _, index, arr) => {
                 const curText = arr[arr.length - 1 - index];
                 let nextEdge = prev;
-                ctx.font = `${36.18 * globalScale}px MatrixBoldSmallCaps`;
+                ctx.font = `${37 * globalScale}px MatrixBoldSmallCaps`;
                 nextEdge -= ctx.measureText(curText).width * condenseRatio;
                 ctx.fillText(curText, nextEdge / condenseRatio, numberOffset + baseline);
 
@@ -314,7 +316,7 @@ export const drawSetId = (
     }
     const resetTextStyle = setTextStyle({
         ctx,
-        color: (lightFooter && !isPendulum) ? '#ffffff' : '#221F1F',
+        color: (lightFooter && !isPendulum) ? '#ffffff' : DEFAULT_TEXT_COLOR,
         shadowColor: withShadow
             ? lightFooter ? '#000000' : '#ffffff'
             : '#000000',

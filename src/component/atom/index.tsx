@@ -75,6 +75,17 @@ export const SolidLabel = styled.div`
     padding: var(--spacing-xxs) var(--spacing-xs);
     border-radius: var(--br);
     box-shadow: var(--bs-input);
+    .button-label {
+        position: relative;
+        display: flex;
+        .ant-checkbox-wrapper {
+            display: inline-flex;
+            align-items: center;
+            .ant-checkbox {
+                transform: translateY(1px); // Alignment, but why?
+            }
+        }
+    }
 `;
 export const CombinedSliderContainer = styled.div`
     display: grid;

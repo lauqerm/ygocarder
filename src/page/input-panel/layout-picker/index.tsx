@@ -1,5 +1,5 @@
-import { Checkbox, InputNumber, Popover } from 'antd';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CompactPicker } from 'react-color';
 import {
     BackgroundType,
@@ -205,6 +205,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         getUpdater,
         hasBackground,
         isPendulum,
+        legacyTemplate,
         setCard,
     } = useCard(useShallow(({
         card: {
@@ -214,6 +215,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             backgroundType,
             hasBackground,
             isPendulum,
+            legacyTemplate,
         },
         setCard,
         getUpdater,
@@ -225,6 +227,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         getUpdater,
         hasBackground,
         isPendulum,
+        legacyTemplate,
         setCard,
     })));
     const [backgroundInputVisible, setBackgroundInputVisible] = useState(true);
@@ -233,6 +236,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     const backgroundInputRef = useRef<BackgroundInputGroupRef>(null);
 
     const changeBackgroundType = useMemo(() => getUpdater('backgroundType'), [getUpdater]);
+    const changeLegacyTemplate = useMemo(() => getUpdater('legacyTemplate'), [getUpdater]);
     const changeHasBackground = useCallback((e: any) => setCard(currentCard => {
         const nextValue = e.target.checked;
 
@@ -282,6 +286,14 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
     const noBackground = (background ?? '').length === 0
         && (backgroundInputRef.current?.hasImage() !== true);
     return <StyledLayoutPickerContainer className="card-opacity-slider-container">
+        <Tooltip title={language['input.opacity.legacy.tooltip']}>
+            <SolidLabel className="background-label" onClick={() => changeLegacyTemplate(cur => !cur.legacyTemplate)}>
+                <div className="button-label">
+                    <Checkbox checked={legacyTemplate} />
+                    &nbsp;{language['input.opacity.legacy.label']}
+                </div>
+            </SolidLabel>
+        </Tooltip>
         <Popover
             overlayClassName="global-input-overlay global-style-picker-overlay"
             content={<div className="overlay-event-absorber">

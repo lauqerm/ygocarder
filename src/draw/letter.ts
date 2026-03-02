@@ -19,6 +19,7 @@ import {
     TCGOffsetMap,
     nonBreakableSymbolRegex,
 } from 'src/model';
+import { IS_MOBILE } from 'src/util';
 
 /**
  * Return the width of a letter. This function return true width of a scalable letter, but will return the inverse-scaled width of a non-scalable letter (based on the `xRatio` property). For example:
@@ -199,6 +200,7 @@ export const drawLetter = ({
     } = deviation ?? {};
     const {
         uniformBoxDescent,
+        uniformBoxDescentMobile,
     } = letterMap[letter] ?? {};
 
     const letterWidth = metric.width * xRatio;
@@ -215,12 +217,15 @@ export const drawLetter = ({
     const boundingOffset = (letterWidth - scaledBoundingWidth) / 2;
     const externalOffset = scaledBoundingWidth * offsetRatio;
     let uniformYScale = 1;
+    let boxDescentValue = IS_MOBILE
+        ? uniformBoxDescentMobile ?? uniformBoxDescent
+        : uniformBoxDescent;
     let boxDescentCompensate = 0;
-    if (typeof uniformBoxDescent === 'number' && xRatio >= threshold) {
+    if (typeof boxDescentValue === 'number' && xRatio >= threshold) {
         const { actualBoundingBoxDescent, actualBoundingBoxAscent } = ctx.measureText(letter);
 
         /** Need to carefully survey if we over-compensate in edge case. */
-        boxDescentCompensate = uniformBoxDescent - actualBoundingBoxDescent;
+        boxDescentCompensate = boxDescentValue - actualBoundingBoxDescent;
 
         const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
         uniformYScale = (actualLetterHeight + boxDescentCompensate * 2) / actualLetterHeight;

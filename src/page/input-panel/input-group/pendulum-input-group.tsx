@@ -91,6 +91,9 @@ const StyledPendulumInputContainer = styled.div`
             /** Alignment **/
             line-height: 32px;
             align-items: center;
+            .ant-checkbox {
+                transform: translateY(-1px); // Alignment, but why?
+            }
         }
     }
     .joined-row {
