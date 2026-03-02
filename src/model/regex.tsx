@@ -29,15 +29,21 @@ export const BOLD_CLOSE_TAG = '</b>';
 export const PRE_OPEN_TAG = '<pre>';
 export const PRE_CLOSE_TAG = '</pre>';
 
+/** What is this? A weird solution for a weird problem. Ruby tag selection in HTML is bugged as hell. You literally cannot select the letter at the right side of a ruby-annotated text without also selecting the ruby text or the entire ruby part (because HTML treating it as a whole word). So we need to put a separator at the end of each ruby tag to mitigate the problem. */
+export const RUBY_SEPARATOR = ' ';
 export const RUBY_DELIMITER = '¦';
 export const FIT_RUBY_DELIMITER = `${RUBY_DELIMITER}${RUBY_DELIMITER}`;
 export const RubyDelimiterRegex = new RegExp(`(${RUBY_DELIMITER}+)`);
+export const RubyWithoutHeadRegex = new RegExp('{[^{}|]+?}', 'g');
+
 export const NB_WORD_OPEN = '⧚';
 export const NB_WORD_CLOSE = '⧛';
-/** Only apply for text after normalized */
-export const ForceWordANRegex = new RegExp(`(${NB_WORD_OPEN}{[^${RUBY_DELIMITER}{}]+?}${NB_WORD_CLOSE})`, 'g');
-/** Only apply for text after normalized */
-export const RubyWordANRegex = new RegExp(`(${NB_WORD_OPEN}{[^{}]+?}${NB_WORD_CLOSE})`, 'g');
+
+/** Only apply for text after normalized (hence AN in name) */
+export const SingleForceWordANRegex = new RegExp(`(${NB_WORD_OPEN}{[^${NB_WORD_CLOSE}{}]+?}${NB_WORD_CLOSE})`, 'g');
+export const ForceWordANRegex = new RegExp(`(${NB_WORD_OPEN}{[^${NB_WORD_CLOSE}]+?}${NB_WORD_CLOSE})`, 'g');
+export const RubyWordANRegex = new RegExp('({[^{}]+?})', 'g');
+
 export const NB_LINE_OPEN = '⟅';
 export const NB_LINE_CLOSE = '⟆';
 export const NB_FULL_LINE_OPEN = '᚛';

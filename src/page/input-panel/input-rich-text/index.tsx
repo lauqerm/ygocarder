@@ -12,6 +12,7 @@ import { InputRichTextToolbar, InputRichTextToolbarRef } from './input-toolbar';
 import { mergeClass } from 'src/util';
 import { CharPicker } from '../char-picker';
 import 'react-quill/dist/quill.snow.css';
+import { RUBY_SEPARATOR } from 'src/model';
 
 const Delta: typeof DeltaType = Quill.import('delta');
 const Parchment: typeof ParchmentType = Quill.import('parchment');
@@ -95,6 +96,13 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
                     { [RUBY_HANDLER]: true, [widthNormal ? RT_HANDLER : FITRT_HANDLER]: true },
                     'user'
                 );
+                reactQuill.insertText(
+                    cursorPosition + foot.length + head.length,
+                    RUBY_SEPARATOR,
+                    { [RUBY_HANDLER]: true },
+                    'user'
+                );
+                /** 1 extra space for the separator */
                 reactQuill.setSelection(cursorPosition + foot.length + head.length + 1, 0);
             }
         } else {
@@ -117,13 +125,25 @@ export const InputRichText = forwardRef<InputRichTextRef, InputRichText>(({
             }, { validInsert: true, validAttribute: true });
 
             if (!validAttribute || !validInsert || !head) return;
-            reactQuill.formatText(cursorPosition, length, { [RUBY_HANDLER]: true }, 'user');
+            reactQuill.formatText(
+                cursorPosition,
+                length,
+                { [RUBY_HANDLER]: true },
+                'user',
+            );
             reactQuill.insertText(
                 cursorPosition + length,
                 head,
                 { [RUBY_HANDLER]: true, [widthNormal ? RT_HANDLER : FITRT_HANDLER]: true },
-                'user'
+                'user',
             );
+            reactQuill.insertText(
+                cursorPosition + length + head.length,
+                RUBY_SEPARATOR,
+                { [RUBY_HANDLER]: true },
+                'user',
+            );
+            /** 1 extra space for the separator */
             reactQuill.setSelection(cursorPosition + length + head.length + 1, 0);
         }
         quillToolbarRef.current?.resetRubyInput();

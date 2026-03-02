@@ -27,6 +27,9 @@
                 .ql-stroke {
                     stroke: var(--color);
                 }
+                &:hover {
+                    background-color: var(--sub-active);
+                }
             }
             &:focus {
                 background-color: var(--sub-level-4);
