@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '01/03/2026';
+        const currentReminder = '02/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -80,14 +80,14 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Yugiohfann at March 02, 2026',
+            question: 'I use 813x1185 resolution, can you adjust the height of the letter "i" so that it\'s the same height as the other letters in the name box? Thank you.',
+            answer: 'I have updated the font a bit, if this does not improve your issue I\'m sorry I cannot do much more to help.',
+        },
+        {
             author: 'MaSaHo at March 01, 2026',
             question: 'Is there a plan to update the foil border? I mean, adding the rainbow pattern of the new Overframe cards, as well as the assets from the Grand Master version?',
             answer: 'I would love to but right now I am entirely depend on other artists to provide the assets for those first, so I cannot give a clear ETA on that.',
-        },
-        {
-            author: 'Yugiohfann at March 01, 2026',
-            question: 'Hello,Can you fix the issue with the letter "i" in the card name box? When entering a card name with multiple characters, the letter "i" often appears higher or lower than the other letters in the box.\nFor example, in "Fiendsmith\'s Sequence", the letter "i" is taller than the other letters. Or in "Fiendsmith\'s Rextremendere," the letter "i" is lower than other letters.\nThanks.',
-            answer: 'What resolution are you using (813x1185 or 1626x2370)? I will try my best but my ability to support on mobile is quite limited.',
         },
         {
             author: 'LigerrFanArt at Feb 24, 2026',
