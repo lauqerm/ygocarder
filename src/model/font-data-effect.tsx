@@ -57,8 +57,11 @@ export const DefaultFontSizeData = {
  * So for now we can only hardcode a list of problematic letters with their correpsonding treatment. This is just baffling.
  */
 export type FontDeviation = {
+    baseLetter: string,
     uniformBoxDescent?: number,
     uniformBoxDescentMobile?: number,
+    uniformBoxAscent?: number,
+    uniformBoxAscentMobile?: number,
 };
 export type FontDeviationMap = {
     threshold: number,

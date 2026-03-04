@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontDebugger } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -219,6 +219,20 @@ export const drawName = async (
         )
         : undefined;
 
+
+    fontDebugger.test(
+        { globalScale, xRatio },
+        {
+            scale: globalScale,
+            xRatio,
+            setup: debugCtx => {
+                debugCtx.font = normalStyle;
+                debugCtx.resetTransform();
+                debugCtx.scale(xRatio, yRatio);
+                console.log('normal', normalStyle);
+            },
+        },
+    );
     /**
      * First iteration: Draw the name with color and gradient. We explicitly draw on base canvas here to avoid data loss from putImageData / drawImage method.
      * 

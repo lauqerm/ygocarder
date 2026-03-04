@@ -12,6 +12,7 @@ import {
     NameStyle,
 } from './model';
 import {
+    DebugCanvas,
     forceRefocus,
     IS_MOBILE,
     isTouchDevice,
@@ -78,6 +79,7 @@ const AppGlobalHotkeyMap = {
 };
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const { height: DebugCanvasHeight, width: DebugCanvasWidth } = DebugCanvas;
 function App() {
     const {
         allowHotkey,
@@ -710,6 +712,8 @@ function App() {
                                         <ZoomInOutlined />
                                     </LightboxButton>
                                 </Tooltip>
+                                <div id="debug-monitor" />
+                                <canvas id="debug-canvas" width={DebugCanvasWidth} height={DebugCanvasHeight} />
                                 {/** Preview canvas is used to display a presentable card for user, in contrast of the actual rendered card below.
                                  * The reason is because when the card become bigger, we must resize it down to display it fully, which lead to a blurry or too sharp image. Canvas resizing is better than css resizing, so we use a separate smaller canvas to preview, but forward all user-action through it so user can still copy the card as full-size.
                                  */}

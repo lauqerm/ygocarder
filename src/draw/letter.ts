@@ -19,7 +19,7 @@ import {
     TCGOffsetMap,
     nonBreakableSymbolRegex,
 } from 'src/model';
-import { IS_MOBILE } from 'src/util';
+import { fontDebugger, IS_MOBILE } from 'src/util';
 
 /**
  * Return the width of a letter. This function return true width of a scalable letter, but will return the inverse-scaled width of a non-scalable letter (based on the `xRatio` property). For example:
@@ -59,6 +59,7 @@ export const getLetterWidth = ({
         boundWidth: 0,
     };
 
+    
     const boxSpacingRatioMap = fontStyle === 'tcg'
         ? TCGBoxSpacingRatioMap
         : OCGBoxSpacingRatioMap;
@@ -201,7 +202,15 @@ export const drawLetter = ({
     const {
         uniformBoxDescent,
         uniformBoxDescentMobile,
+        uniformBoxAscent,
+        uniformBoxAscentMobile,
+        baseLetter,
     } = letterMap[letter] ?? {};
+    const {
+        height: actualLetterHeight,
+        actualAscent,
+        actualDescent,
+    } = fontDebugger.get(baseLetter) ?? {};
 
     const letterWidth = metric.width * xRatio;
     const scaledBoundingWidth = boundWidth ? boundWidth * xRatio : letterWidth;
@@ -217,25 +226,37 @@ export const drawLetter = ({
     const boundingOffset = (letterWidth - scaledBoundingWidth) / 2;
     const externalOffset = scaledBoundingWidth * offsetRatio;
     let uniformYScale = 1;
-    let boxDescentValue = IS_MOBILE
-        ? uniformBoxDescentMobile ?? uniformBoxDescent
-        : uniformBoxDescent;
+    // let boxDescentValue = IS_MOBILE
+    //     ? uniformBoxDescentMobile ?? uniformBoxDescent
+    //     : uniformBoxDescent;
+    // let boxAscentValue = IS_MOBILE
+    //     ? uniformBoxAscentMobile ?? uniformBoxAscent
+    //     : uniformBoxAscent;
+    let boxDescentValue = actualDescent;
+    let boxAscentValue = actualAscent;
     let boxDescentCompensate = 0;
-    if (typeof boxDescentValue === 'number' && xRatio >= threshold) {
+    let boxAscentCompensate = 0;
+    if ((typeof actualDescent === 'number' || typeof actualAscent === 'number')
+        && typeof actualLetterHeight === 'number'
+        && actualLetterHeight > 0
+        && xRatio >= threshold
+    ) {
         const { actualBoundingBoxDescent, actualBoundingBoxAscent } = ctx.measureText(letter);
 
         /** Need to carefully survey if we over-compensate in edge case. */
-        boxDescentCompensate = boxDescentValue - actualBoundingBoxDescent;
+        boxDescentCompensate = typeof actualDescent === 'number' ? actualDescent : 0;
+        boxAscentCompensate = typeof actualAscent === 'number' ? actualAscent : 0;
 
-        const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
-        uniformYScale = (actualLetterHeight + boxDescentCompensate * 2) / actualLetterHeight;
+        // const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
+        uniformYScale = (actualLetterHeight + boxDescentCompensate + boxAscentCompensate) / actualLetterHeight;
+        console.log(letter, actualLetterHeight, boxDescentValue, boxAscentValue);
     }
     ctx.scale(1, uniformYScale);
     worker({
         ctx,
         letter,
         scaledEdge: edge / xRatio - boundingOffset - externalOffset,
-        scaledBaseline: (baseline + boxDescentCompensate) / uniformYScale,
+        scaledBaseline: Math.round((baseline + boxDescentCompensate + boxAscentCompensate) / uniformYScale),
     });
     ctx.scale(1, 1 / uniformYScale);
 };
