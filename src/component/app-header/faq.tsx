@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '03/03/2026';
+        const currentReminder = '05/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,16 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'RedSupernovaDragon at March 04, 2026',
+            question: 'Hello again, about the "i"/"I" issue, I tried to write the whole alphabet (upper and lower case) in the name box and I have to report the same issue for "E" and "N", at least from pc version.',
+            answer: 'Now this is really getting out of hand 😭. I have issued another fix for this.',
+        },
+        {
+            author: 'RedSupernovaDragon at March 03, 2026',
+            question: 'Hello! First off, thank you very much for this cardmaker, I\'m new to custom cards but this  carder has already become my favourite.\nI\'m using the site on pc, and noticed that when you open the "Paragraph Style" section, its width does not stay fixed like the other settings, but it slides to the right until it eventually stops. I was wondering if you could fix this by making it static, since it\'s kind of difficult to select the things you want while they\'re moving.\nThank you again for your work!',
+            answer: 'The paragraph panel should have fixed width now.',
+        },
         {
             author: 'Yugiohfann at March 03, 2026',
             question: 'Thank you so much for fixing the "i" letter for me, but it seems the issue has been fixed in the Android version, and the PC version still has the "i" letter sometimes positioned higher and sometimes lower 😭😭.',

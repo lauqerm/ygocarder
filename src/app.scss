@@ -197,7 +197,9 @@ hr {
     overflow: auto;
 }
 #debug-canvas {
-    top: 300px;
+    // top: 200px;
+    top: 0;
+    visibility: hidden;
 }
 .manager_visible {
     .app-container {

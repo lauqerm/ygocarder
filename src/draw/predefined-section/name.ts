@@ -221,7 +221,7 @@ export const drawName = async (
 
 
     fontDebugger.test(
-        { globalScale, xRatio },
+        { globalScale, xRatio, normalStyle },
         {
             scale: globalScale,
             xRatio,
@@ -229,7 +229,6 @@ export const drawName = async (
                 debugCtx.font = normalStyle;
                 debugCtx.resetTransform();
                 debugCtx.scale(xRatio, yRatio);
-                console.log('normal', normalStyle);
             },
         },
     );

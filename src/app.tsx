@@ -712,8 +712,14 @@ function App() {
                                         <ZoomInOutlined />
                                     </LightboxButton>
                                 </Tooltip>
-                                <div id="debug-monitor" />
-                                <canvas id="debug-canvas" width={DebugCanvasWidth} height={DebugCanvasHeight} />
+                                {/** <div id="debug-monitor" /> */}
+                                {/** This canvas should reset everytime globalScale change so `getCanvasFontDebugger` works. */}
+                                <canvas
+                                    key={globalScale + 'scale'}
+                                    id="debug-canvas"
+                                    width={DebugCanvasWidth}
+                                    height={DebugCanvasHeight}
+                                />
                                 {/** Preview canvas is used to display a presentable card for user, in contrast of the actual rendered card below.
                                  * The reason is because when the card become bigger, we must resize it down to display it fully, which lead to a blurry or too sharp image. Canvas resizing is better than css resizing, so we use a separate smaller canvas to preview, but forward all user-action through it so user can still copy the card as full-size.
                                  */}

@@ -184,6 +184,7 @@ export const AppHeader = ({
                             rel="noreferrer"><b>SlackerMagician</b></a>,
                         <b key="artist-4">gecko-chan</b>,
                         <Explanation
+                            key="artist-5"
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">
