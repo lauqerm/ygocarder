@@ -717,7 +717,7 @@ function App() {
                                 <canvas
                                     key={globalScale + 'scale'}
                                     id="debug-canvas"
-                                    width={DebugCanvasWidth}
+                                    width={DebugCanvasWidth * globalScale}
                                     height={DebugCanvasHeight}
                                 />
                                 {/** Preview canvas is used to display a presentable card for user, in contrast of the actual rendered card below.

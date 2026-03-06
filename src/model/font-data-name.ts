@@ -39,6 +39,9 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                 'default': {
                     threshold: 0,
                     letterMap: {
+                        '1': { baseLetter: 'M' },
+                        '2': { baseLetter: 'M' },
+
                         I: { baseLetter: 'I' },
                         i: { baseLetter: 'i' },
                         Ì: { baseLetter: 'I' },

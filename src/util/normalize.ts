@@ -37,8 +37,8 @@ export const toDebugMonitor = ({ content, mode }: { content?: string, mode?: 'ad
 };
 
 export const DebugCanvas = {
-    height: 150,
-    width: 600,
+    height: 100,
+    width: 550,
 };
 /**
  * Our brute force solution for problem described in FontDeviation type.
@@ -80,33 +80,43 @@ export const getCanvasFontDebugger = () => {
             const ctx = target?.getContext('2d');
             const appliedScale = scale ?? 1;
             const appliedXRatio = xRatio ?? 1;
-            const debug = false;
+            const debug = true;
             if (target && ctx) {
                 ctx.clearRect(0, 0, target.width, target.height);
                 result = {};
                 if (setup) setup(ctx);
-                ctx.fillStyle = '#000000';
-                ctx.fillText('mienMIEN', 10, 100);
-                const checkpointByScaleMap: Record<string, { letter: string, y: number, type: 'anchor' | 'subject' }[]> = {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('mienMIEN12', 0, 95);
+                const checkpointByScaleMap: Record<string, {
+                    letter: string,
+                    y: number,
+                    anchor?: string,
+                    compensateTop?: boolean,
+                    compensateBottom?: boolean,
+                }[]> = {
                     '1': [
-                        { letter: 'm', y: Math.round(45 * appliedXRatio), type: 'anchor' },
-                        { letter: 'i', y: Math.round(62 * appliedXRatio), type: 'subject' },
-                        { letter: 'e', y: Math.round(81 * appliedXRatio), type: 'subject' },
-                        { letter: 'n', y: Math.round(110 * appliedXRatio), type: 'subject' },
-                        { letter: 'M', y: Math.round(146 * appliedXRatio), type: 'anchor' },
-                        { letter: 'I', y: Math.round(198 * appliedXRatio), type: 'subject' },
-                        { letter: 'E', y: Math.round(218 * appliedXRatio), type: 'subject' },
-                        { letter: 'N', y: Math.round(250 * appliedXRatio), type: 'subject' },
+                        { letter: 'm', y: Math.round(34 * appliedXRatio) },
+                        { letter: 'i', y: Math.round(52 * appliedXRatio), anchor: 'm' },
+                        { letter: 'e', y: Math.round(71 * appliedXRatio), anchor: 'm' },
+                        { letter: 'n', y: Math.round(100 * appliedXRatio), anchor: 'm' },
+                        { letter: 'M', y: Math.round(136 * appliedXRatio) },
+                        { letter: 'I', y: Math.round(188 * appliedXRatio), anchor: 'M' },
+                        { letter: 'E', y: Math.round(208 * appliedXRatio), anchor: 'M' },
+                        { letter: 'N', y: Math.round(240 * appliedXRatio), anchor: 'M' },
+                        { letter: '1', y: Math.round(289 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '2', y: Math.round(316 * appliedXRatio), anchor: 'M', compensateTop: false },
                     ],
                     '2': [
-                        { letter: 'm', y: Math.round(80 * appliedXRatio), type: 'anchor' },
-                        { letter: 'i', y: Math.round(115 * appliedXRatio), type: 'subject' },
-                        { letter: 'e', y: Math.round(153 * appliedXRatio), type: 'subject' },
-                        { letter: 'n', y: Math.round(210 * appliedXRatio), type: 'subject' },
-                        { letter: 'M', y: Math.round(347 * appliedXRatio), type: 'anchor' },
-                        { letter: 'I', y: Math.round(386 * appliedXRatio), type: 'subject' },
-                        { letter: 'E', y: Math.round(425 * appliedXRatio), type: 'subject' },
-                        { letter: 'N', y: Math.round(491 * appliedXRatio), type: 'subject' },
+                        { letter: 'm', y: Math.round(70 * appliedXRatio) },
+                        { letter: 'i', y: Math.round(105 * appliedXRatio), anchor: 'm' },
+                        { letter: 'e', y: Math.round(143 * appliedXRatio), anchor: 'm' },
+                        { letter: 'n', y: Math.round(200 * appliedXRatio), anchor: 'm' },
+                        { letter: 'M', y: Math.round(337 * appliedXRatio) },
+                        { letter: 'I', y: Math.round(376 * appliedXRatio), anchor: 'M' },
+                        { letter: 'E', y: Math.round(415 * appliedXRatio), anchor: 'M' },
+                        { letter: 'N', y: Math.round(481 * appliedXRatio), anchor: 'M' },
+                        { letter: '1', y: Math.round(576 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '2', y: Math.round(633 * appliedXRatio), anchor: 'M', compensateTop: false },
                     ],
                 };
                 const checkpointList = checkpointByScaleMap[appliedScale];
@@ -115,13 +125,14 @@ export const getCanvasFontDebugger = () => {
                 if (checkpointList) {
                     const imageData = ctx.getImageData(0, 0, DebugCanvas.width, DebugCanvas.height);
                     const layerData = imageData.data;
-                    let anchorAscent = -1;
-                    let anchorDescent = -1;
+                    let anchorMap: Record<string, { ascent: number, descent: number }> = {};
                     for (let cnt = 0; cnt < checkpointList.length; cnt++) {
                         const {
-                            type,
+                            anchor,
                             letter,
                             y,
+                            compensateBottom = true,
+                            compensateTop = true,
                         } = checkpointList[cnt];
                         let trueAscent = -1;
                         let trueDescent = -1;
@@ -131,7 +142,11 @@ export const getCanvasFontDebugger = () => {
                             const pixel = (xPos * imageData.width + y) * 4;
                             const opacity = layerData[pixel + 3];
                             if (opacity > opacityConfidence && trueAscent === -1) {
-                                if (debug) layerData[pixel] = 255;
+                                if (debug) {
+                                    layerData[pixel] = 255;
+                                    layerData[pixel + 1] = 0;
+                                    layerData[pixel + 2] = 0;
+                                }
                                 trueAscent = xPos;
                                 break;
                             }
@@ -140,18 +155,29 @@ export const getCanvasFontDebugger = () => {
                             const pixel = (xPos * imageData.width + y) * 4;
                             const opacity = layerData[pixel + 3];
                             if (opacity > opacityConfidence && trueDescent === -1) {
-                                if (debug) layerData[pixel] = 255;
+                                if (debug) {
+                                    layerData[pixel] = 255;
+                                    layerData[pixel + 1] = 0;
+                                    layerData[pixel + 2] = 0;
+                                }
                                 trueDescent = xPos;
                                 break;
                             }
                         }
-                        if (type === 'anchor') {
-                            anchorAscent = trueAscent;
-                            anchorDescent = trueDescent;
+                        if (typeof anchor !== 'string') {
+                            anchorMap[letter] = {
+                                ascent: trueAscent,
+                                descent: trueDescent,
+                            };
                         } else {
+                            const { ascent: anchorAscent, descent: anchorDescent } = anchorMap[anchor];
                             result[letter] = {
-                                ascentCompensate: anchorAscent === -1 ? 0 : trueAscent - anchorAscent,
-                                descentCompensate: anchorDescent === -1 ? 0 : anchorDescent - trueDescent,
+                                ascentCompensate: typeof anchorAscent === 'number' && compensateTop
+                                    ? trueAscent - anchorAscent
+                                    : 0,
+                                descentCompensate: typeof anchorDescent === 'number' && compensateBottom
+                                    ? anchorDescent - trueDescent
+                                    : 0,
                                 height: trueDescent - trueAscent,
                                 anchorAscent,
                                 anchorDescent,
