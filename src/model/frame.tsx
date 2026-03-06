@@ -28,6 +28,15 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         sortWeight: 90,
         isOfficial: true,
     },
+    'ritual': {
+        name: 'ritual',
+        nameKey: 'input.frame.ritual',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#5e85c9',
+        sortWeight: 85,
+        isOfficial: true,
+    },
     'fusion': {
         name: 'fusion',
         nameKey: 'input.frame.fusion',
@@ -62,15 +71,6 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#0c8ac6',
         sortWeight: 50,
-        isOfficial: true,
-    },
-    'ritual': {
-        name: 'ritual',
-        nameKey: 'input.frame.ritual',
-        labelColor: '#ffffff',
-        edition: 'normal',
-        labelBackgroundColor: '#5e85c9',
-        sortWeight: 85,
         isOfficial: true,
     },
     'spell': {
