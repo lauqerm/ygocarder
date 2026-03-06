@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^12.6.0",
     "@types/typedarray-pool": "^1.1.5",
     "antd": "4.9.4",
+    "caniuse-lite": "^1.0.30001777",
     "copy-to-clipboard": "^3.3.3",
     "distance-transform": "^1.0.2",
     "idb": "^8.0.3",
