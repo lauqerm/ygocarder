@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '07/03/2026';
+        const currentReminder = '09/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Seamornf at March 09, 2026',
+            question: 'Hi! Love the work. I found that because traps in portuguese have the longest name of any attribute currently, the last "A" is getting the shadow from the name border.',
+            answer: 'I have updated the issue, thanks for your report.',
+        },
         {
             author: 'RedSupernovaDragon at March 07, 2026',
             question: 'Well, it\'s really unlucky for the name box to have those shrinking issues that you cannot fix at the moment. At least the problem was noticed.\nAside from this issue, there is a (very) small UI update you could make: in the frame panel, "Ritual" is currently placed after "Link"; a better position would be between "Effect" and "Fusion", since\n1) Rituals are Main Deck monsters;\n2) they were introduced early along with Fusions;\n3) this "R, F, S, X" order is the most natural, and it\'s found in some cards like the Firewall upgrades..',

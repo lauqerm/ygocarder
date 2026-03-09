@@ -549,6 +549,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ...resolvedStatTextStyle,
             });
 
+            if (!boundless) {
+                await drawNameBorder();
+                await drawFrameBorder();
+            }
             try {
                 await drawAttribute();
             } catch (e) {
@@ -556,10 +560,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             }
             await drawAttributeFinish();
             await drawStar({ style: levelStyle, starAlignment });
-            if (!boundless) {
-                await drawNameBorder();
-                await drawFrameBorder();
-            }
             
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
