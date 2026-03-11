@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '09/03/2026';
+        const currentReminder = '11/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'MaSaHo',
+            question: 'I recently noticed that Yu-Gi-Oh cards have had several small reformulations throughout the life of the game, which they call “Series”, and your model is equivalent to Series 10 (the current one). Do you have plans to add the older series layouts at some point in the future?',
+            answer: 'Hi there, unfortunately that will require access to old series templates as well as a list of changes made over time, which I currently do not have. The app can only support a few limited options (for example, "small" and "large" pendulum frames, or the old position for the "1st Edition" text), but that is about it.',
+        },
         {
             author: 'Seamornf at March 09, 2026',
             question: 'Hi! Love the work. I found that because traps in portuguese have the longest name of any attribute currently, the last "A" is getting the shadow from the name border.',
