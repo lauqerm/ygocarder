@@ -9,7 +9,7 @@ export const PendulumSizeMap = {
         pendulumBoxY: 738,
         pendulumBoxWidth: 705,
         pendulumBoxHeight: 95,
-        pendulumBoxOffsetY: 50,
+        pendulumBoxOffsetY: 49,
         numberBlueX: 84.4,
         numberRedX: 728.0,
         numberY: 816,

@@ -178,9 +178,28 @@ hr {
 #app {
     width: 100%;
     min-height: 100vh;
-    padding: var(--spacing) 0;
+    padding: var(--spacing-xs) 0;
     overflow-y: scroll;
     position: relative;
+}
+#debug-canvas,
+#debug-monitor {
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+}
+#debug-monitor {
+    background-color: var(--main-level-1);
+    color: var(--color);
+    width: 100%;
+    height: 200px;
+    top: 100px;
+    overflow: auto;
+}
+#debug-canvas {
+    // top: 200px;
+    top: 0;
+    visibility: hidden;
 }
 .manager_visible {
     .app-container {

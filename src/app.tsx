@@ -13,6 +13,7 @@ import {
     SeriesCanvasInfo,
 } from './model';
 import {
+    DebugCanvas,
     forceRefocus,
     IS_MOBILE,
     isTouchDevice,
@@ -78,6 +79,7 @@ const AppGlobalHotkeyMap = {
 };
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const { height: DebugCanvasHeight, width: DebugCanvasWidth } = DebugCanvas;
 function App() {
     const {
         allowHotkey,
@@ -674,6 +676,14 @@ function App() {
                                         <ZoomInOutlined />
                                     </LightboxButton>
                                 </Tooltip>
+                                {/** <div id="debug-monitor" /> */}
+                                {/** This canvas should reset everytime globalScale change so `getCanvasFontDebugger` works. */}
+                                <canvas
+                                    key={globalScale + 'scale'}
+                                    id="debug-canvas"
+                                    width={DebugCanvasWidth * globalScale}
+                                    height={DebugCanvasHeight}
+                                />
                             </CardCanvas>
                         </div>
                         {windowSlidable && <Moveable

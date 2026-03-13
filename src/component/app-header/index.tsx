@@ -235,6 +235,7 @@ export const AppHeader = ({
                             rel="noreferrer"><b>9558able</b></a>,
                         <b key="artist-3">gecko-chan</b>,
                         <Explanation
+                            key="artist-5"
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">
