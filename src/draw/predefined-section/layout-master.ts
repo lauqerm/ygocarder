@@ -24,7 +24,7 @@ import { CanvasTextStyle } from 'src/service';
 import { getFinishIterator } from '../canvas-util';
 import { applyAlphaMask, MaskPromise } from './mask';
 
-export const baseDrawLinkArrowMap = async (
+export const baseDrawMasterLinkArrowMap = async (
     ctx: CanvasRenderingContext2D,
     globalScale: number,
     linkMap: string[],
@@ -51,7 +51,7 @@ export const baseDrawLinkArrowMap = async (
     );
     ctx.resetTransform();
 };
-export const baseDrawLinkMapFoil = async (
+export const baseDrawRushLinkMapFoil = async (
     ctx: CanvasRenderingContext2D,
     globalScale: number,
     foil: string,
@@ -108,7 +108,7 @@ const {
     pendulumStructureHeight,
 } = CanvasConst;
 /** Various function used to draw the layout of a card is abstracted to this factory. */
-export const getLayoutDrawFunction = ({
+export const getMasterLayoutDrawFunction = ({
     canvas,
     artworkCanvas,
     backgroundCanvas,

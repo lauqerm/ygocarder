@@ -127,12 +127,15 @@ export const AppHeader = ({
                         .map(({ value, imagePath }) => {
                             return <Radio.Button key={value}
                                 value={value}
-                                onChange={e => setCard(card => {
-                                    const nextCard = { ...card };
-                                    nextCard.series = e.target.value;
+                                onChange={e => {
+                                    return setCard(card => {
+                                        const nextCard = { ...card };
+                                        nextCard.series = e.target.value;
+                                    console.log('🚀 ~ AppHeader ~ nextCard:', nextCard);
 
-                                    return nextCard;
-                                })}
+                                        return nextCard;
+                                    });
+                                }}
                             >
                                 <img src={`${process.env.PUBLIC_URL}/asset/image/series/${imagePath}.png`} alt={imagePath} />
                             </Radio.Button>;

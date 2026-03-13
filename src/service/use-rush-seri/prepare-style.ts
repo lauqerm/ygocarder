@@ -1,16 +1,7 @@
 import { DEFAULT_TEXT_COLOR, TextStyle } from 'src/model';
+import { CanvasTextStyle } from '../use-master-seri';
 
-export type CanvasTextStyle = {
-    x?: number,
-    y?: number,
-    blur?: number,
-    color?: string,
-    shadowColor?: string,
-    lineWidth?: number,
-    lineColor?: string,
-};
-
-export const prepareMasterStyle = ({
+export const prepareRushStyle = ({
     // lightFooter,
     lightHeader,
     requireShadow,

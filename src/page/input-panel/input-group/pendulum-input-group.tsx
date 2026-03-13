@@ -6,7 +6,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap } from 'src/model';
 import { CaretDownOutlined, ApartmentOutlined } from '@ant-design/icons';
-import { getFrameButtonList, getPendulumSizeList } from '../const';
+import { getMasterFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
 import { CardLayoutPreview, FrameBehaviorSettingPanel, FramelayoutSettingPanel, FrameLayoutSettingPanel } from '../frame-setting-panel';
@@ -148,6 +148,7 @@ export type PendulumInputGroup = {
     softMode: boolean,
     showCreativeOption: boolean,
     showExtraDecorativeOption: boolean,
+    onGetFrameButtonList?: typeof getMasterFrameButtonList,
 }
     & Pick<CardTextInput, 'onTakePicker'>
     & Pick<FramelayoutSettingPanel, 'onFrameChange'>;
@@ -157,6 +158,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     showExtraDecorativeOption,
     onTakePicker,
     onFrameChange,
+    onGetFrameButtonList = getMasterFrameButtonList,
 }, ref) => {
     const language = useLanguage();
     const {
@@ -240,11 +242,11 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const changePendulumEffect = useMemo(() => getUpdater('pendulumEffect', undefined, 'debounce'), [getUpdater]);
 
     const pendulumSizeList = useMemo(() => getPendulumSizeList(language), [language]);
-    const frameList = useMemo(() => getFrameButtonList('both')
+    const frameList = useMemo(() => onGetFrameButtonList('both')
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),
-        [showExtraDecorativeOption],
+        [onGetFrameButtonList, showExtraDecorativeOption],
     );
 
     useImperativeHandle(ref, () => ({

@@ -71,7 +71,7 @@ export const carderToHtml = (value: string, format: string, furiganaHelper: bool
                 .replaceAll(NB_WORD_OPEN, '').replaceAll(NB_WORD_CLOSE, '');
         })
         .join('');
-    console.info('Debug carderToHtml:', value, '\n=====\n', convertedValue, '\n=====\n', valueAsHtml);
+    // console.info('Debug carderToHtml:', value, '\n=====\n', convertedValue, '\n=====\n', valueAsHtml);
     return sanitizeHtml(valueAsHtml, {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', LINE_HANDLER, FITLINE_HANDLER, FITRT_HANDLER, WORD_HANDLER]),
         allowedAttributes: {

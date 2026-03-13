@@ -14,14 +14,14 @@ import {
     drawTypeAbility,
     getEffectFontAndCoordinate,
     drawAsset,
-    getMasterLayoutDrawFunction,
+    getRushLayoutDrawFunction,
     drawLinkRatingText,
     drawPredefinedMark,
     setTextStyle,
     drawPasswordText,
     drawLimitedEditionMark,
-    baseDrawMasterLinkArrowMap,
-    baseDrawMasterLinkMapFoil,
+    baseDrawRushLinkArrowMap,
+    baseDrawRushLinkMapFoil,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -33,13 +33,11 @@ import {
     PendulumEffectCoordinateMap,
     FinishMap,
     ArtFinishMap,
-    CardOpacity,
     DEFAULT_BASE_FILL_COLOR,
     DEFAULT_EFFECT_NORMAL_SIZE,
     DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
     PendulumNormalFontData,
     PendulumSizeMap,
-    PendulumSize,
     HALF_SCALE_WIDTH_OFFSET,
 } from 'src/model';
 import {
@@ -57,18 +55,10 @@ import {
     resolveNameStyle,
 } from 'src/util';
 import { useCard } from '../use-card';
-import { prepareMasterStyle } from './prepare-style';
+import { prepareRushStyle } from './prepare-style';
 import { useLanguage } from '../use-i18n';
 import { notification } from 'antd';
-
-export type ExportCallbackParameter = {
-    isPendulum: boolean,
-    opacity: Partial<CardOpacity>,
-    pendulumSize: PendulumSize,
-    onError: (e: any) => void,
-    onSuccess: () => void,
-    isRelevant: () => boolean,
-};
+import { ExportCallbackParameter } from '../use-master-seri';
 
 const {
     height: CanvasHeight,
@@ -93,7 +83,7 @@ type DrawingPipeline = {
 /**
  * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline` instead of immediately draw their part, these operations will be iterated sequentially by another effect when export.
  */
-export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanvas, props: DrawerProp) => {
+export const useRushSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanvas, props: DrawerProp) => {
     const {
         card,
     } = useCard();
@@ -250,7 +240,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedTypeTextStyle,
         resolvedOtherEffectTextStyle,
     } = useMemo(() => {
-        return prepareMasterStyle({
+        return prepareRushStyle({
             lightFooter,
             lightHeader,
             requireShadow,
@@ -383,7 +373,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawFrameBackgroundFinish,
                 drawOverlayFinish,
                 drawCardBorderFinish,
-            } = getMasterLayoutDrawFunction({
+            } = getRushLayoutDrawFunction({
                 canvas: frameCanvasRef.current,
                 artworkCanvas, backgroundCanvas,
                 globalScale,
@@ -1185,8 +1175,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     boundless,
                 } = normalizedOpacity;
                 const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-                await baseDrawMasterLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
-                await baseDrawMasterLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
+                await baseDrawRushLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
+                await baseDrawRushLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
             }
 
             ctx.scale(globalScale, globalScale);

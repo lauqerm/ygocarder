@@ -52,6 +52,7 @@ import {
     StyledNameSetIdInputContainer,
     CardInputPanelRef,
     CardInputPanel,
+    getRushFrameButtonList,
 } from '../input-panel';
 import { useShallow } from 'zustand/react/shallow';
 import './input-panel-rush.scss';
@@ -251,6 +252,7 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
             onSTFrameChange={typeAbility => postPendulumInputGroupRef.current?.setValue({ typeAbility })}
             onPasswordChange={password => footerInputGroupRef.current?.setValue({ password })}
             onStatChange={(atk, def, linkRating) => footerInputGroupRef.current?.setValue({ atk, def, linkRating })}
+            onGetFrameButtonList={getRushFrameButtonList}
         />
 
         <StyledNameSetIdInputContainer className="name-style-id-input">
@@ -278,6 +280,7 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
                     softMode={reduceMotionColor}
                     onTakePicker={setPickerTarget}
                     onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
+                    onGetFrameButtonList={getRushFrameButtonList}
                 />
 
                 <PostPendulumInputGroup ref={postPendulumInputGroupRef} onTakePicker={setPickerTarget} />
@@ -293,11 +296,11 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
                     <EffectInputGroup ref={effectInputGroupRef} onTakePicker={setPickerTarget} />
                 </div>
 
-                {/* <FooterInputGroup ref={footerInputGroupRef}
+                <FooterInputGroup ref={footerInputGroupRef}
                     isMonster={isMonster}
                     showCreativeOption={showCreativeOption}
                     onTakePicker={setPickerTarget}
-                /> */}
+                />
             </div>
             <div className="main-info-second">
                 <ImageInputGroup ref={imageInputGroupRef}

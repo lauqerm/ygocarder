@@ -1,6 +1,6 @@
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
-import { getFrameButtonList } from '../const';
+import { getMasterFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { FrameInfoMap, NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap } from 'src/model';
@@ -16,14 +16,19 @@ const StyledPopoverButton = styled(PopoverButton)<{ $inline?: boolean }>`
 export type UnofficialFrameTrain = {
     inline?: boolean,
     changeFrame: (frameValue: string) => void,
+    onGetFrameButtonList?: typeof getMasterFrameButtonList,
 };
-export const UnofficialFrameTrain = ({ inline, changeFrame }: UnofficialFrameTrain) => {
+export const UnofficialFrameTrain = ({
+    inline,
+    changeFrame,
+    onGetFrameButtonList = getMasterFrameButtonList,
+}: UnofficialFrameTrain) => {
     const {
         setting,
     } = useSetting();
     const { reduceMotionColor } = setting;
     const language = useLanguage();
-    const frameList = useMemo(() => getFrameButtonList('unofficial'), []);
+    const frameList = useMemo(() => onGetFrameButtonList('unofficial'), [onGetFrameButtonList]);
     const {
         frame,
     } = useCard(useShallow(({
@@ -76,21 +81,23 @@ export type FrameTrain = {
     onSTFrameChange: (value: string[]) => void,
     onPasswordChange: (value: string) => void,
     onStatChange: (atk: string, def: string, linkRating: string) => void,
+    onGetFrameButtonList?: typeof getMasterFrameButtonList,
 };
 export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
     onSTFrameChange,
     onPasswordChange,
     onStatChange,
+    onGetFrameButtonList = getMasterFrameButtonList,
 }, ref) => {
     const {
         setting,
     } = useSetting();
     const { showExtraDecorativeOption } = setting;
-    const frameList = useMemo(() => getFrameButtonList()
+    const frameList = useMemo(() => onGetFrameButtonList()
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),
-        [showExtraDecorativeOption],
+        [onGetFrameButtonList, showExtraDecorativeOption],
     );
 
     const {

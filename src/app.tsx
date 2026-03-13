@@ -539,6 +539,7 @@ function App() {
     const CardInputPanel = series === 'rush'
         ? RushCardInputPanel
         : MasterCardInputPanel;
+    console.log('🚀 ~ App ~ series:', series, canvasInfo?.type);
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
