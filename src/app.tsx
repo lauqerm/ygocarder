@@ -21,9 +21,7 @@ import {
 } from './util';
 import {
     BatchConverter,
-    CardInputPanel,
     CardInputPanelRef,
-    CardManagerPanel,
     MasterDownloadButton,
     DownloadButtonRef,
     ExportPanel,
@@ -33,6 +31,12 @@ import {
     ResolutionButton,
     CardCanvasRef,
     MasterCardCanvas,
+    RushCardInputPanel,
+    MasterCardInputPanel,
+    CardInputPanel,
+    CardManagerPanel,
+    RushCardCanvas,
+    RushDownloadButton,
 } from './page';
 import WebFont from 'webfontloader';
 import {
@@ -530,8 +534,11 @@ function App() {
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
     const CardCanvas = series === 'rush'
-        ? MasterCardCanvas
+        ? RushCardCanvas
         : MasterCardCanvas;
+    const CardInputPanel = series === 'rush'
+        ? RushCardInputPanel
+        : MasterCardInputPanel;
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
@@ -614,6 +621,16 @@ function App() {
                                 </div>
                                 <BatchConverter language={language} />
                                 {canvasInfo?.type === 'master' && <MasterDownloadButton ref={downloadButtonRef}
+                                    canvasMap={canvasInfo.canvasMap}
+                                    imageChangeCount={imageChangeCount}
+                                    isTainted={isTainted}
+                                    onTainted={markTaintedImage}
+                                    onExportSucess={onExportSuccess}
+                                    isInitializing={isInitializing}
+                                    globalScale={globalScale}
+                                    onDownloadError={alertDownloadError}
+                                />}
+                                {canvasInfo?.type === 'rush' && <RushDownloadButton ref={downloadButtonRef}
                                     canvasMap={canvasInfo.canvasMap}
                                     imageChangeCount={imageChangeCount}
                                     isTainted={isTainted}

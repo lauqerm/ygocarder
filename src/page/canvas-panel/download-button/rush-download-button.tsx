@@ -3,7 +3,7 @@ import { MasterSeriesCanvas } from 'src/model';
 import { UseCardExport, useMasterSeriDrawer } from 'src/service';
 import { UnconnectedDownloadButton, DownloadButtonRef } from './unconnected-download-button';
 
-export type MasterDownloadButton = {
+export type RushDownloadButton = {
     imageChangeCount: number,
     globalScale: number,
     canvasMap: MasterSeriesCanvas,
@@ -12,7 +12,7 @@ export type MasterDownloadButton = {
 } & Pick<UseCardExport, 'isTainted'
 | 'isInitializing'
 | 'onDownloadError'>;
-export const MasterDownloadButton = forwardRef<DownloadButtonRef, MasterDownloadButton>(({
+export const RushDownloadButton = forwardRef<DownloadButtonRef, RushDownloadButton>(({
     isTainted,
     isInitializing,
     imageChangeCount,

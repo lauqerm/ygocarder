@@ -54,12 +54,34 @@ export type MasterSeriesCanvas = {
         draw: (exportCanvas: HTMLCanvasElement) => void,
     }>,
 };
+export type RushSeriesCanvas = {
+    artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
+    backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
+    exportCanvasRef: React.RefObject<HTMLCanvasElement>,
+    frameCanvasRef: React.RefObject<HTMLCanvasElement>,
+    cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,
+    pendulumScaleCanvasRef: React.RefObject<HTMLCanvasElement>,
+    pendulumEffectCanvasRef: React.RefObject<HTMLCanvasElement>,
+    typeCanvasRef: React.RefObject<HTMLCanvasElement>,
+    effectCanvasRef: React.RefObject<HTMLCanvasElement>,
+    nameCanvasRef: React.RefObject<HTMLCanvasElement>,
+    statCanvasRef: React.RefObject<HTMLCanvasElement>,
+    setIdCanvasRef: React.RefObject<HTMLCanvasElement>,
+    passwordCanvasRef: React.RefObject<HTMLCanvasElement>,
+    creatorCanvasRef: React.RefObject<HTMLCanvasElement>,
+    stickerCanvasRef: React.RefObject<HTMLCanvasElement>,
+    finishCanvasRef: React.RefObject<HTMLCanvasElement>,
+    previewCanvasRef: React.RefObject<HTMLCanvasElement>,
+    lightboxRef: React.RefObject<{
+        draw: (exportCanvas: HTMLCanvasElement) => void,
+    }>,
+};
 export type SeriesCanvasInfo = {
     type: 'master',
     canvasMap: MasterSeriesCanvas,
 } | {
     type: 'rush',
-    canvasMap: MasterSeriesCanvas,
+    canvasMap: RushSeriesCanvas,
 };
 
 /** Some coordination data must be rounded into nearest integer so it does not create those janky ghost pixels. */

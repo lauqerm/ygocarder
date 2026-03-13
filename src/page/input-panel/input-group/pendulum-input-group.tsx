@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
 import { CardLayoutPreview, FrameBehaviorSettingPanel, FramelayoutSettingPanel, FrameLayoutSettingPanel } from '../frame-setting-panel';
 import { FlagPresentationList } from '../../common';
+import './pendulum-input-group.scss';
 
 const {
     width,
