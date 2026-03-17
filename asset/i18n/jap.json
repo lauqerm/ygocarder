@@ -408,6 +408,7 @@
         "input.flag.link-rating-behavior.hide": "Always hidden",
         "input.flag.link-rating-behavior.show": "Always show",
         "input.flag.mix-def-link": "Display both DEF and Link Rating",
+        "input.flag.hide-deactivated-link": "Hide deactivated Link markers",
         "input.frame.rebirth": "Rebirth",
         "input.frame.unofficial.label": "Fanmade",
         "input.icon-type.slot.use-12.label": "Maximum 12 stars",

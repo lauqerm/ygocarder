@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.4.5 (2026/03/17)",
+        "logList": [
+            {
+                "content": "Feat: Advanced layout option now support hide deactivated link markers."
+            }
+        ]
+    },
+    {
         "version": "v2.4.4 (2026/03/09)",
         "logList": [
             {

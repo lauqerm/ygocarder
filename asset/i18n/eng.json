@@ -192,6 +192,7 @@
         "input.flag.link-rating-behavior.hide": "Always hidden",
         "input.flag.link-rating-behavior.show": "Always show",
         "input.flag.mix-def-link": "Display both DEF and Link Rating",
+        "input.flag.hide-deactivated-link": "Hide deactivated Link markers",
         "input.foil.gold.label": "Gold",
         "input.foil.label": "Foil",
         "input.foil.normal.label": "Normal",
