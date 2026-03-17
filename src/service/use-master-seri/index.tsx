@@ -278,6 +278,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const [
         showDefAndLinkFlag,
         linkRatingDisplayMode,
+        hideDeactivatedLinkMarker,
     ] = flag;
 
     /** One special case where we do not show link rating */
@@ -1174,6 +1175,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     ]);
 
     /** DRAW TOTAL OVERLAY */
+        console.log('🚀 ~ useMasterSeriDrawer ~ hideDeactivatedLinkMarker:', hideDeactivatedLinkMarker);
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = finishCanvasRef.current?.getContext('2d');
@@ -1194,11 +1196,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 if (linkArrowCtx) {
                     await baseDrawLinkArrowMap(linkArrowCtx, 1, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
                     await baseDrawLinkMapFoil(linkArrowCtx, 1, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
-                    // const cut = [0, 3, 4];
-                    // for (let cnt = 0; cnt < cut.length; cnt++) {
-                    //     const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][cut[cnt]];
-                    //     linkArrowCtx.clearRect(target.left, target.top, target.width, target.height);
-                    // }
+                    const deactivatedMarkerList = hideDeactivatedLinkMarker
+                        ? ['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(entry => !linkMap.includes(entry))
+                        : [];
+                    console.log('🚀 ~ useMasterSeriDrawer ~ linkMap:', hideDeactivatedLinkMarker, linkMap, deactivatedMarkerList);
+                    for (let cnt = 0; cnt < deactivatedMarkerList.length; cnt++) {
+                        const targetIndex = parseInt(deactivatedMarkerList[cnt]);
+                        const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][targetIndex - 1];
+                        if (target) linkArrowCtx.clearRect(target.left, target.top, target.width, target.height);
+                    }
                     ctx.scale(globalScale, globalScale);
                     ctx.drawImage(linkArrowCanvas, 0, 0);
                     ctx.scale(1 / globalScale, 1/ globalScale);
@@ -1228,6 +1234,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         foil,
         resolvedStatTextStyle,
         statInEffect,
+        hideDeactivatedLinkMarker,
         frameCanvasRef,
     ]);
 
