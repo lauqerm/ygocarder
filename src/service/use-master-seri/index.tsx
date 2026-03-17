@@ -1175,7 +1175,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     ]);
 
     /** DRAW TOTAL OVERLAY */
-        console.log('🚀 ~ useMasterSeriDrawer ~ hideDeactivatedLinkMarker:', hideDeactivatedLinkMarker);
     useEffect(() => {
         if (!readyToDraw) return;
         const ctx = finishCanvasRef.current?.getContext('2d');
@@ -1199,7 +1198,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     const deactivatedMarkerList = hideDeactivatedLinkMarker
                         ? ['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(entry => !linkMap.includes(entry))
                         : [];
-                    console.log('🚀 ~ useMasterSeriDrawer ~ linkMap:', hideDeactivatedLinkMarker, linkMap, deactivatedMarkerList);
                     for (let cnt = 0; cnt < deactivatedMarkerList.length; cnt++) {
                         const targetIndex = parseInt(deactivatedMarkerList[cnt]);
                         const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][targetIndex - 1];
