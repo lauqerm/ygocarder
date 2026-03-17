@@ -41,6 +41,7 @@ import {
     PendulumSizeMap,
     PendulumSize,
     HALF_SCALE_WIDTH_OFFSET,
+    ArrowPositionMap,
 } from 'src/model';
 import {
     checkDiplayLinkRating,
@@ -772,8 +773,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!clearCanvas(ctx)) return;
 
             const isNumberPassword = /^[0-9]*$/.test(password);
-            const mayOffset = isNumberPassword && isPendulum && isLink;
-            const willOffset = mayOffset;
+            const willOffset = isNumberPassword && isPendulum && isLink;
             const { rightEdge } = await drawPasswordText({
                 ctx,
                 globalScale,
@@ -788,7 +788,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             });
             const editionTextUseTopPosition = (isLegacyCard || !isNumberPassword) && !isPendulum;
             if (isFirstEdition) {
-                const willDraw = isPendulum
+                const willDrawFirstEdition = isPendulum
                     ? isNumberPassword ? true : false
                     : true;
                 const left = editionTextUseTopPosition
@@ -804,11 +804,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     ? isPendulum
                         ? 683
                         : 475
-                    : creator.trim().length === 0
-                        ? 615
-                        : 185;
+                    : (isLink && isPendulum)
+                        ? 130
+                        : creator.trim().length === 0
+                            ? 615
+                            : 185;
 
-                if (willDraw) drawOnFrameText({
+                if (willDrawFirstEdition) drawOnFrameText({
                     ctx,
                     txt: firstEditionText,
                     edge: left,
@@ -911,6 +913,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 format,
                 value: creator,
                 alignment: 'right',
+                edgeOffset: (isLink && isPendulum) ? -20 : 0,
+                widthOffset: ((isLink && isPendulum) ? -120 : 0) * globalScale,
                 baselineOffset: isSpeedSkill ? -2 : 0,
                 hasShadow: requireShadow,
                 lightFooter: lightRightFooter,
@@ -1186,8 +1190,19 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     boundless,
                 } = normalizedOpacity;
                 const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-                await baseDrawLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
-                await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
+                const { ctx: linkArrowCtx, canvas: linkArrowCanvas } = createCanvas(CanvasWidth, CanvasHeight);
+                if (linkArrowCtx) {
+                    await baseDrawLinkArrowMap(linkArrowCtx, 1, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
+                    await baseDrawLinkMapFoil(linkArrowCtx, 1, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
+                    // const cut = [0, 3, 4];
+                    // for (let cnt = 0; cnt < cut.length; cnt++) {
+                    //     const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][cut[cnt]];
+                    //     linkArrowCtx.clearRect(target.left, target.top, target.width, target.height);
+                    // }
+                    ctx.scale(globalScale, globalScale);
+                    ctx.drawImage(linkArrowCanvas, 0, 0);
+                    ctx.scale(1 / globalScale, 1/ globalScale);
+                }
             }
 
             ctx.scale(globalScale, globalScale);
