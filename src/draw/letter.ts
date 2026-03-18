@@ -229,9 +229,14 @@ export const drawLetter = ({
         && actualLetterHeight > 0
         && xRatio >= threshold
     ) {
+        const compensateThreshold = 2;
         /** Need to carefully survey if we over-compensate in edge case. */
-        normalizedDescentCompensate = typeof descentCompensate === 'number' ? descentCompensate : 0;
-        normalizedAscentCompensate = typeof ascentCompensate === 'number' ? ascentCompensate : 0;
+        normalizedDescentCompensate = typeof descentCompensate === 'number' && Math.abs(descentCompensate) <= compensateThreshold
+            ? descentCompensate
+            : 0;
+        normalizedAscentCompensate = typeof ascentCompensate === 'number' && Math.abs(ascentCompensate) <= compensateThreshold
+            ? ascentCompensate
+            : 0;
 
         // const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
         compensateYScale = (actualLetterHeight + normalizedDescentCompensate + normalizedAscentCompensate) / actualLetterHeight;

@@ -85,52 +85,69 @@ export const getCanvasFontDebugger = () => {
                 ctx.clearRect(0, 0, target.width, target.height);
                 result = {};
                 if (setup) setup(ctx);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillText('mienMIEN12', 0, 95);
+                ctx.fillStyle = '#000000';
+                ctx.fillText('mienMIEN120OQoq', 0, 95);
                 const checkpointByScaleMap: Record<string, {
                     letter: string,
-                    y: number,
+                    x: number,
                     anchor?: string,
                     compensateTop?: boolean,
                     compensateBottom?: boolean,
                 }[]> = {
                     '1': [
-                        { letter: 'm', y: Math.round(34 * appliedXRatio) },
-                        { letter: 'i', y: Math.round(52 * appliedXRatio), anchor: 'm' },
-                        { letter: 'e', y: Math.round(71 * appliedXRatio), anchor: 'm' },
-                        { letter: 'n', y: Math.round(100 * appliedXRatio), anchor: 'm' },
-                        { letter: 'M', y: Math.round(136 * appliedXRatio) },
-                        { letter: 'I', y: Math.round(188 * appliedXRatio), anchor: 'M' },
-                        { letter: 'E', y: Math.round(208 * appliedXRatio), anchor: 'M' },
-                        { letter: 'N', y: Math.round(240 * appliedXRatio), anchor: 'M' },
-                        { letter: '1', y: Math.round(289 * appliedXRatio), anchor: 'M', compensateTop: false },
-                        { letter: '2', y: Math.round(316 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: 'm', x: Math.round(34 * appliedXRatio) },
+                        { letter: 'i', x: Math.round(52 * appliedXRatio), anchor: 'm' },
+                        { letter: 'e', x: Math.round(71 * appliedXRatio), anchor: 'm' },
+                        { letter: 'n', x: Math.round(100 * appliedXRatio), anchor: 'm' },
+                        { letter: 'M', x: Math.round(136 * appliedXRatio) },
+                        { letter: 'I', x: Math.round(188 * appliedXRatio), anchor: 'M' },
+                        { letter: 'E', x: Math.round(208 * appliedXRatio), anchor: 'M' },
+                        { letter: 'N', x: Math.round(240 * appliedXRatio), anchor: 'M' },
+                        { letter: '1', x: Math.round(290 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '2', x: Math.round(326 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '0', x: Math.round(360 * appliedXRatio), anchor: 'M' },
+                        { letter: 'O', x: Math.round(398 * appliedXRatio), anchor: 'M' },
+                        { letter: 'Q', x: Math.round(440 * appliedXRatio), anchor: 'M' },
+                        { letter: 'o', x: Math.round(481 * appliedXRatio), anchor: 'm' },
+                        { letter: 'q', x: Math.round(519 * appliedXRatio), anchor: 'm' },
                     ],
                     '2': [
-                        { letter: 'm', y: Math.round(70 * appliedXRatio) },
-                        { letter: 'i', y: Math.round(105 * appliedXRatio), anchor: 'm' },
-                        { letter: 'e', y: Math.round(143 * appliedXRatio), anchor: 'm' },
-                        { letter: 'n', y: Math.round(200 * appliedXRatio), anchor: 'm' },
-                        { letter: 'M', y: Math.round(337 * appliedXRatio) },
-                        { letter: 'I', y: Math.round(376 * appliedXRatio), anchor: 'M' },
-                        { letter: 'E', y: Math.round(415 * appliedXRatio), anchor: 'M' },
-                        { letter: 'N', y: Math.round(481 * appliedXRatio), anchor: 'M' },
-                        { letter: '1', y: Math.round(576 * appliedXRatio), anchor: 'M', compensateTop: false },
-                        { letter: '2', y: Math.round(633 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: 'm', x: Math.round(70 * appliedXRatio) },
+                        { letter: 'i', x: Math.round(105 * appliedXRatio), anchor: 'm' },
+                        { letter: 'e', x: Math.round(143 * appliedXRatio), anchor: 'm' },
+                        { letter: 'n', x: Math.round(200 * appliedXRatio), anchor: 'm' },
+                        { letter: 'M', x: Math.round(337 * appliedXRatio) },
+                        { letter: 'I', x: Math.round(376 * appliedXRatio), anchor: 'M' },
+                        { letter: 'E', x: Math.round(415 * appliedXRatio), anchor: 'M' },
+                        { letter: 'N', x: Math.round(481 * appliedXRatio), anchor: 'M' },
+                        { letter: '1', x: Math.round(585 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '2', x: Math.round(654 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '0', x: Math.round(721 * appliedXRatio), anchor: 'M' },
+                        { letter: 'O', x: Math.round(798 * appliedXRatio), anchor: 'M' },
+                        { letter: 'Q', x: Math.round(883 * appliedXRatio), anchor: 'M' },
+                        { letter: 'o', x: Math.round(966 * appliedXRatio), anchor: 'm' },
+                        { letter: 'q', x: Math.round(1036 * appliedXRatio), anchor: 'm' },
                     ],
                 };
                 const checkpointList = checkpointByScaleMap[appliedScale];
 
                 ctx.resetTransform();
                 if (checkpointList) {
-                    const imageData = ctx.getImageData(0, 0, DebugCanvas.width, DebugCanvas.height);
+                    const imageData = ctx.getImageData(0, 0, DebugCanvas.width * appliedScale, DebugCanvas.height);
                     const layerData = imageData.data;
+                    const paintSamplePixel = (pixel: number, positive: boolean) => {
+                        if (!debug) return;
+                        layerData[pixel] = positive ? 255 : 0;
+                        layerData[pixel + 1] = 0;
+                        layerData[pixel + 2] = !positive ? 255 : 0;
+                        layerData[pixel + 3] = 255;
+                    };
                     let anchorMap: Record<string, { ascent: number, descent: number }> = {};
                     for (let cnt = 0; cnt < checkpointList.length; cnt++) {
                         const {
                             anchor,
                             letter,
-                            y,
+                            x,
                             compensateBottom = true,
                             compensateTop = true,
                         } = checkpointList[cnt];
@@ -138,31 +155,55 @@ export const getCanvasFontDebugger = () => {
                         let trueDescent = -1;
                         /** We do not count pixel that are too transparent to see. */
                         const opacityConfidence = 90;
-                        for (let xPos = 0; xPos < DebugCanvas.height; xPos++) {
-                            const pixel = (xPos * imageData.width + y) * 4;
-                            const opacity = layerData[pixel + 3];
-                            if (opacity > opacityConfidence && trueAscent === -1) {
-                                if (debug) {
-                                    layerData[pixel] = 255;
-                                    layerData[pixel + 1] = 0;
-                                    layerData[pixel + 2] = 0;
-                                }
-                                trueAscent = xPos;
-                                break;
+                        for (let yPos = 0; yPos < DebugCanvas.height; yPos++) {
+                            const firstSamplePixel = (yPos * imageData.width + x) * 4;
+                            const firstSampleOpacity = layerData[firstSamplePixel + 3];
+                            let firstSample = -1;
+                            if (firstSampleOpacity > opacityConfidence && trueAscent === -1) {
+                                firstSample = yPos;
                             }
+                            paintSamplePixel(firstSamplePixel, firstSampleOpacity > opacityConfidence && trueAscent === -1);
+                            const secondSamplePixel = (yPos * imageData.width + x + 1) * 4;
+                            const secondSampleOpacity = layerData[secondSamplePixel + 3];
+                            let secondSample = -1;
+                            if (secondSampleOpacity > opacityConfidence && trueAscent === -1) {
+                                secondSample = yPos + 1;
+                            }
+                            paintSamplePixel(secondSamplePixel, secondSampleOpacity > opacityConfidence && trueAscent === -1);
+                            const thirdSamplePixel = (yPos * imageData.width + x + 2) * 4;
+                            const thirdSampleOpacity = layerData[thirdSamplePixel + 3];
+                            let thirdSample = -1;
+                            if (thirdSampleOpacity > opacityConfidence && trueAscent === -1) {
+                                thirdSample = yPos + 2;
+                            }
+                            paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueAscent === -1);
+                            trueAscent = Math.max(firstSample, secondSample, thirdSample);
+                            if (trueAscent !== -1) break;
                         }
-                        for (let xPos = DebugCanvas.height - 1; xPos >= 0; xPos--) {
-                            const pixel = (xPos * imageData.width + y) * 4;
-                            const opacity = layerData[pixel + 3];
-                            if (opacity > opacityConfidence && trueDescent === -1) {
-                                if (debug) {
-                                    layerData[pixel] = 255;
-                                    layerData[pixel + 1] = 0;
-                                    layerData[pixel + 2] = 0;
-                                }
-                                trueDescent = xPos;
-                                break;
+                        for (let yPos = DebugCanvas.height - 1; yPos >= 0; yPos--) {
+                            const firstSamplePixel = (yPos * imageData.width + x) * 4;
+                            const firstSampleOpacity = layerData[firstSamplePixel + 3];
+                            let firstSample = -1;
+                            if (firstSampleOpacity > opacityConfidence && trueDescent === -1) {
+                                firstSample = yPos;
                             }
+                            paintSamplePixel(firstSamplePixel, firstSampleOpacity > opacityConfidence && trueDescent === -1);
+                            const secondSamplePixel = (yPos * imageData.width + x + 1) * 4;
+                            const secondSampleOpacity = layerData[secondSamplePixel + 3];
+                            let secondSample = -1;
+                            if (secondSampleOpacity > opacityConfidence && trueDescent === -1) {
+                                secondSample = yPos + 1;
+                            }
+                            paintSamplePixel(secondSamplePixel, secondSampleOpacity > opacityConfidence && trueDescent === -1);
+                            const thirdSamplePixel = (yPos * imageData.width + x + 2) * 4;
+                            const thirdSampleOpacity = layerData[thirdSamplePixel + 3];
+                            let thirdSample = -1;
+                            if (thirdSampleOpacity > opacityConfidence && trueDescent === -1) {
+                                thirdSample = yPos + 2;
+                            }
+                            paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueDescent === -1);
+                            trueDescent = Math.max(firstSample, secondSample, thirdSample);
+                            if (trueDescent !== -1) break;
                         }
                         if (typeof anchor !== 'string') {
                             anchorMap[letter] = {
