@@ -135,7 +135,7 @@
 			padding: var(--spacing-xxs);
 			border-radius: var(--br);
 
-			+.image-option {
+			+ .image-option {
 				margin-top: var(--spacing-xs);
 			}
 
@@ -144,6 +144,8 @@
 			}
 		}
 
+		.flip-horizontally-option,
+		.flip-vertically-option,
 		.force-fit-option {
 			&.option-active {
 				background-color: var(--main-level-3);
@@ -155,7 +157,7 @@
 			}
 		}
 
-		.alignment-center-option>.anticon {
+		.alignment-center-option > .anticon {
 			transform: rotate(90deg);
 		}
 	}

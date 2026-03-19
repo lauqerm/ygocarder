@@ -11,7 +11,7 @@ import {
 } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList, getOtherFinishList } from '../const';
-import { getArtCanvasCoordinate, OtherFinish, OtherFinishTypeMap } from 'src/model';
+import { getArtCanvasCoordinate, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
 import styled from 'styled-components';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { notification, Popover } from 'antd';
@@ -174,7 +174,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         linkMap,
         isPendulum, pendulumSize,
         isLink,
-        art, artCrop, artData, artSource, artFit,
+        art, artCrop, artData, artSource, artFit, artStyle,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
@@ -184,7 +184,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             linkMap,
             isPendulum, pendulumSize,
             isLink,
-            art, artCrop, artData, artSource, artFit,
+            art, artCrop, artData, artSource, artFit, artStyle,
         },
         getUpdater,
         setCard,
@@ -194,7 +194,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         linkMap,
         isPendulum, pendulumSize,
         isLink,
-        art, artCrop, artData, artSource, artFit,
+        art, artCrop, artData, artSource, artFit, artStyle,
         getUpdater,
         setCard,
     })));
@@ -213,6 +213,12 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         return {
             ...currentCard,
             artFit: status,
+        };
+    }), [setCard]);
+    const changeArtStyle = useCallback((style: ImageStyle) => setCard(currentCard => {
+        return {
+            ...currentCard,
+            artStyle: { ...currentCard.artStyle, ...style },
         };
     }), [setCard]);
     const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
@@ -252,6 +258,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         defaultInternalSource={artData}
         defaultCropInfo={artCrop}
         forceFit={artFit}
+        imageStyle={artStyle}
         receivingCanvas={receivingCanvas}
         onSourceChange={(type, data) => {
             changeArtSource(type);
@@ -262,6 +269,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
         onForceFitChange={changeArtFit}
+        onImageStyleChange={changeArtStyle}
         onMaxSizeExceeded={size => {
             notification.info({
                 description: language['error.max-size.description'](size),

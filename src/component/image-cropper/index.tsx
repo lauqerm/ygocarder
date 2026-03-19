@@ -1,12 +1,13 @@
 import { Empty, Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
-import { DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, ArrowUpOutlined, DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import { useGlobal, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import { DropZone } from '../atom';
+import { ImageStyle } from 'src/model';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
 
@@ -133,6 +134,8 @@ export type ImageCropper = {
     beforeCropper?: React.ReactNode,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     ratio: number,
+    imageStyle: ImageStyle,
+    onImageStyleChange: (style: ImageStyle) => void,
     onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
     onSourceLoaded?: (crossorigin?: string) => void,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => void,
@@ -153,6 +156,8 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     beforeCropper,
     defaultCropInfo,
     ratio,
+    imageStyle,
+    onImageStyleChange,
     onSourceLoaded = () => { },
     onSourceChange = () => { },
     onCropChange = () => { },
@@ -359,6 +364,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             }
             receivingCanvas.width = drawWidth;
             receivingCanvas.height = drawHeight;
+            const { flipX, flipY } = imageStyle;
+            const scaleX = flipX ? -1 : 1;
+            const scaleY = flipY ? -1 : 1;
+            ctx.scale(scaleX, scaleY);
             ctx.drawImage(
                 image,
                 0,
@@ -367,12 +376,17 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 naturalHeight,
                 0,
                 0,
-                drawWidth,
-                drawHeight,
+                scaleX * drawWidth,
+                scaleY * drawHeight,
             );
+            ctx.scale(scaleX, scaleY);
         } else {
             receivingCanvas.width = (drawWidth ?? 0);
             receivingCanvas.height = (drawHeight ?? 0);
+            const { flipX, flipY } = imageStyle;
+            const scaleX = flipX ? -1 : 1;
+            const scaleY = flipY ? -1 : 1;
+            ctx.scale(scaleX, scaleY);
             ctx.drawImage(
                 image,
                 drawCoordinateX,
@@ -381,9 +395,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 drawHeight,
                 0,
                 0,
-                drawWidth,
-                drawHeight,
+                scaleX * drawWidth,
+                scaleY * drawHeight,
             );
+            ctx.scale(scaleX, scaleY);
         }
         if (sourceType === 'offline' && (internalSource ?? '').length <= 0) { }
         else if (ratio === completedCrop.aspect) {
@@ -393,7 +408,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             setCrop(cur => ({ ...cur, current: fitCropData }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [completedCrop, receivingCanvas, redrawSignal, forceFit]);
+    }, [completedCrop, receivingCanvas, redrawSignal, forceFit, imageStyle]);
 
     useEffect(() => {
         setInteracted(false);
@@ -551,6 +566,34 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 </DropZone>
                 {isLoading && <Loading.FullView />}
                 {(hasImage && !error) && <div className="card-image-option">
+                    <Tooltip
+                        placement="left"
+                        overlay={language['image-cropper.button.flip-horizontal.tooltip']}
+                    >
+                        <div
+                            className={mergeClass('image-option flip-horizontally-option', imageStyle.flipX ? 'option-active' : '')}
+                            onClick={() => {
+                                setInteracted(true);
+                                onImageStyleChange({ flipX: !imageStyle.flipX, flipY: imageStyle.flipY });
+                            }}
+                        >
+                            <ArrowRightOutlined />
+                        </div>
+                    </Tooltip>
+                    <Tooltip
+                        placement="left"
+                        overlay={language['image-cropper.button.flip-vertical.tooltip']}
+                    >
+                        <div
+                            className={mergeClass('image-option flip-vertically-option', imageStyle.flipY ? 'option-active' : '')}
+                            onClick={() => {
+                                setInteracted(true);
+                                onImageStyleChange({ flipX: imageStyle.flipX, flipY: !imageStyle.flipY });
+                            }}
+                        >
+                            <ArrowUpOutlined />
+                        </div>
+                    </Tooltip>
                     <Tooltip
                         placement="left"
                         overlay={forceFit

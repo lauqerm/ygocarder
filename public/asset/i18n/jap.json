@@ -473,6 +473,8 @@
         "sample.manager.creative-requires.label": "Advanced card making technique requires creative options to be enabled.",
         "sample.manager.header.description.label": "Description",
         "sample.manager.header.image.label": "Result",
+        "image-cropper.button.flip-horizontal.tooltip": "Flip horizontally",
+        "image-cropper.button.flip-vertical.tooltip": "Flip vertically",
         "sample.manager.label": "Sample",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "service.decode.partial.message": "Partial export mode",

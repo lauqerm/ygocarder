@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '18/03/2026';
+        const currentReminder = '19/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at March 19, 2026',
+            question: 'I am not sure if this is even feasible, but I think it\'d be mighty convenient if there was a feature that allowed you to display the submitted card art mirrored in the card display, to save the bother of mirroring it beforehand.',
+            answer: 'Hi, now card artwork / background will allow you to flip the image horizontally / vertically.',
+            image: 'https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png',
+        },
         {
             author: 'RedSupernovaDragon at March 17, 2026',
             question: 'Hello again, I have some news that could help you in fixing the "name box shrinking issue". I tried to see if it was a common problem on similar sites; I typed the whole alphabet and the numbers on YGOPro and found out that it does not have such a defect: letters in the name box shrink normally, keeping their ratio and heights. As your site is objectively superior to YGOpro in terms of card making, image quality and UI, I was wondering if you could try something more to fix the issue, particularly on pc but mobile version would be nice too.\nNamely, you could do 3 things:\n1. Taking inspiration by how YGOpro managed to code the compression. To be clear, this is *not* an incitation to plagiarism, just a small comparison; maybe DevTools can show you how they coded that specific feature, so you can see if there is any substantial difference in the lines. IDK, but there must be a reason why their carder displays the right text at any length.\n2. You could simply try a different font file. I assume you uploaded fonts on this site, perhaps the rendering problem is due to the otf / ttf / whatever file itself.\n3. Finally, you could focus on mastering the manipulation of curved strokes, what is currently difficult for you. You managed to fix basically every other letter, at least on PC; on mobile there are still some issues even with E and I, but that may be related to my browser.\n\nI regard this issue as much more fundamental than it seems, since it affects basically every card with a (not so) long name created with your site.\nThere has to be a solution, otherwise it would be really sad to keep this defect. I think that details like this matter, even more than other features. A realistic proxy can have some defects that are not visibile at first glance; those defects do not include a letter O that goes Over the top in the name box, which is one of the first things you read on a card.\n\nI tried to give some suggestions, hoping that my words didn\'t sound too bad or out of place. And I also hope that this problem will be solved sooner or later.\nLooking forward to the next updates!',

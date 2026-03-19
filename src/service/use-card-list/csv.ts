@@ -16,6 +16,7 @@ import {
     getDefaultCardOpacity,
     getDefaultCrop,
     getDefaultDyeList,
+    getDefaultImageStyle,
     getDefaultNameStyle,
     getDefaultTextStyle,
     getEmptyCard,
@@ -110,6 +111,8 @@ const CsvStandardFieldList = [
     'Condense Rate',
     'Use Furigana Helper',
     /** Extremely intricate stuff, user usually should not bother with these */
+    'Art Style',
+    'Background Style',
     'Name Style Type',
     'Name Style - Font',
     'Name Style - Fill Style',
@@ -236,12 +239,12 @@ export const cardListToCsv = (cardList: Card[]) => {
         const rowValue = Array(rowLength).map(() => '');
         const {
             art,
-            cornerText,
             artCrop,
             artData,
             artFinish,
             artFit,
             artSource,
+            artStyle,
             atk,
             attribute,
             attributeType,
@@ -250,8 +253,10 @@ export const cardListToCsv = (cardList: Card[]) => {
             backgroundData,
             backgroundFit,
             backgroundSource,
+            backgroundStyle,
             backgroundType,
             cardIcon,
+            cornerText,
             creator,
             def,
             dyeList,
@@ -360,6 +365,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Art Crop - Width (%)', artCrop.width);
         write('Art Crop - Height (%)', artCrop.height);
         write('Is Using Full Art', artFit);
+        write('Art Style', JSON.stringify(artStyle));
         write('Star Type', typeof star === 'number' && star >= 0 && star <= 13 ? 'number' : 'text');
         write('Star Alignment', starAlignment);
         write('Card Icon Type', cardIcon);
@@ -378,6 +384,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Background Data', backgroundData);
         write('Background Source', backgroundSource);
         write('Is Using Full Background', backgroundFit);
+        write('Background Style', JSON.stringify(backgroundStyle));
         write('Background Type', backgroundType);
         write('Background Crop - X (%)', backgroundCrop.x);
         write('Background Crop - Y (%)', backgroundCrop.y);
@@ -658,6 +665,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     y: normalizeFloat(reader('Art Crop - Y (%)'), emptyArtCrop.y),
                     unit: '%',
                 };
+                let artStyle = getDefaultImageStyle();
+                try {
+                    artStyle = JSON.parse(reader('Art Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
 
                 const emptyBackgroundCrop = getDefaultCrop();
                 const hasBackground = normalizeBoolean(reader('Has Background'), emptyCard.hasBackground);
@@ -674,6 +687,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     y: normalizeFloat(reader('Background Crop - Y (%)'), emptyBackgroundCrop.y),
                     unit: '%',
                 };
+                let backgroundStyle = getDefaultImageStyle();
+                try {
+                    backgroundStyle = JSON.parse(reader('Background Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
 
                 const emptyNameStyle = getDefaultNameStyle();
                 const nameStyleType = (reader('Name Style Type') ?? emptyCard.nameStyleType).toLowerCase() as NameStyleType;
@@ -775,6 +794,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     artFinish,
                     artSource,
                     artFit,
+                    artStyle,
                     atk,
                     attribute,
                     attributeType,
@@ -782,6 +802,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     backgroundData,
                     backgroundCrop,
                     backgroundFit,
+                    backgroundStyle,
                     backgroundSource,
                     backgroundType,
                     cardIcon,

@@ -8,6 +8,7 @@ import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
 import { LanguageDataDictionary } from 'src/service';
 import { DEFAULT_TEXT_COLOR } from './font-data-effect';
+import { getDefaultImageStyle } from './image';
 
 export const getDefaultCrop = () => ({
     x: 0,
@@ -55,12 +56,14 @@ export const getDefaultCard = () => ({
     art: 'https://i.imgur.com/h5kXZeC.png',
     artData: '',
     artFit: false,
+    artStyle: getDefaultImageStyle(),
     artSource: 'online',
     artCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
     hasBackground: false,
     background: '',
     backgroundData: '',
     backgroundFit: false,
+    backgroundStyle: getDefaultImageStyle(),
     backgroundSource: 'online',
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
@@ -161,6 +164,7 @@ export const getEmptyCard = (): Card => ({
     artData: '',
     artSource: 'online',
     artFit: false,
+    artStyle: getDefaultImageStyle(),
     artCrop: {
         x: 0,
         y: 4,
@@ -173,6 +177,7 @@ export const getEmptyCard = (): Card => ({
     background: '',
     backgroundData: '',
     backgroundFit: false,
+    backgroundStyle: getDefaultImageStyle(),
     backgroundSource: 'online',
     backgroundType: 'fit',
     backgroundCrop: {
@@ -378,6 +383,7 @@ export * from './font-data-pendulum-effect';
 export * from './format';
 export * from './frame';
 export * from './icon';
+export * from './image';
 export * from './link';
 export * from './name-preset';
 export * from './pendulum';

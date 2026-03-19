@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard } from '../model';
+import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard, getDefaultImageStyle } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -34,6 +34,11 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     art: 'ar',
     artData: 'ad',
     artFit: 'af',
+    artStyle: {
+        _newKey: 'ast',
+        flipX: 'asfx',
+        flipY: 'asfy',
+    },
     artSource: 'as',
     artFinish: 'afn',
     artCrop: {
@@ -48,6 +53,11 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     hasBackground: 'hbg',
     background: 'bg',
     backgroundFit: 'bf',
+    backgroundStyle: {
+        _newKey: 'bst',
+        flipX: 'bsfx',
+        flipY: 'bsfy',
+    },
     backgroundData: 'bgd',
     backgroundSource: 'bgs',
     backgroundType: 'bgt',
@@ -323,6 +333,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if ((migratedCard.artData ?? '') === '') migratedCard.artData = '';
     if ((migratedCard.artSource ?? '') === '') migratedCard.artSource = 'online';
     if (migratedCard.artFit == null) migratedCard.artFit = false;
+    migratedCard.artStyle = { ...getDefaultImageStyle(), ...migratedCard.artStyle };
 
     if (typeof (migratedCard.opacity as any).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
         migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
@@ -336,6 +347,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
     if ((migratedCard.backgroundSource ?? '') === '') migratedCard.backgroundSource = 'online';
     if (migratedCard.backgroundFit == null) migratedCard.backgroundFit = false;
+    migratedCard.backgroundStyle = { ...getDefaultImageStyle(), ...migratedCard.backgroundStyle };
     if (migratedCard.hasBackground == null
         && (migratedCard.background || migratedCard.backgroundData || migratedCard.opacity.baseFill)
     ) {
