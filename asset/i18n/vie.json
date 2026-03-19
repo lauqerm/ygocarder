@@ -123,6 +123,8 @@
         "image-cropper.button.center-horizontal.tooltip": "Canh giữa chiều ngang",
         "image-cropper.button.center-vertical.tooltip": "Canh giữa chiều dọc",
         "image-cropper.button.force-fit.tooltip": "Dùng toàn bộ ảnh",
+        "image-cropper.button.flip-horizontal.tooltip": "Lật ảnh chiều ngang",
+        "image-cropper.button.flip-vertical.tooltip": "Lật ảnh chiều dọc",
         "image-cropper.button.use-crop.tooltip": "Cho phép cắt ảnh",
         "image-cropper.download": "Tải xuống ảnh hiện tại",
         "image-cropper.drop.tooltip": "Thả ảnh vào đây",

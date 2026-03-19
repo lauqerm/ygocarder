@@ -119,6 +119,8 @@
         "image-cropper.button.center-horizontal.tooltip": "Center horizontally",
         "image-cropper.button.center-vertical.tooltip": "Center vertically",
         "image-cropper.button.force-fit.tooltip": "Use whole image",
+        "image-cropper.button.flip-horizontal.tooltip": "Flip horizontally",
+        "image-cropper.button.flip-vertical.tooltip": "Flip vertically",
         "image-cropper.button.use-crop.tooltip": "Allow cropping",
         "image-cropper.download": "Download cropped image",
         "image-cropper.drop.tooltip": "Drop image here",

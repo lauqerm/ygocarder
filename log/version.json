@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.4.6 (2026/03/19)",
+        "logList": [
+            {
+                "content": "Feat: Allow flip card artwork / background horizontally / vertically.",
+                "image": "https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png"
+            }
+        ]
+    },
+    {
         "version": "v2.4.5 (2026/03/17)",
         "logList": [
             {
