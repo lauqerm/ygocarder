@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '20/03/2026';
+        const currentReminder = '20/03/2026-1';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -81,8 +81,12 @@ export const QuestionAndFeedback = () => {
     const feedbackList: Feedback[] = [
         {
             author: 'Yugiohfann at March 20, 2026',
+            question: 'Hello again Lauqerm\nI forgot to mention that the letter "q" also has a similar height issue compared to other letters like the letter "n" while it is in a long card\'s name 😅😅😅',
+        },
+        {
+            author: 'Yugiohfann at March 20, 2026',
             question: 'Hello again Lauqerm, \nThank you for fixing the height issue of the letter "i" before, but now the issue is back with the letter "n" while it is shifted further down the line compared to the other letters in some long card\'s name such as "Gandora-G the Dragon of Destruction", "Dark Magician the Magician of Black Magic", "Dark Magician Girl the Magician\'s Apprentice".... 😭😭😭',
-            answer: 'My bad, I have updated the caliberation rule for the letter 😭.'
+            answer: 'My bad, I have updated the caliberation rule for the letter (again) 😭😭.'
         },
         {
             author: 'Anonymous at March 19, 2026',
