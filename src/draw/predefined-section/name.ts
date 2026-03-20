@@ -394,4 +394,9 @@ export const drawName = async (
     ctx.fillStyle = defaultTextStyle.fillStyle;
     ctx.lineJoin = 'miter';
     ctx.globalCompositeOperation = 'source-over';
+    // ctx.globalAlpha = 0.5;
+    // ctx.fillStyle = 'rgba(255, 255, 255)';
+    // ctx.fillRect(0, trueBaseline, 813, 1);
+    // ctx.fillRect(0, (trueBaseline - 35 * globalScale), 813, 1);
+    // ctx.globalAlpha = 1;
 };
