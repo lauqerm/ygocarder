@@ -240,7 +240,7 @@ export const drawLimitedEditionMark = async ({
     textStyle?: CanvasTextStyle,
 }) => {
     const coordinate: [number, number, number, number] = !isLegacyCard || isPendulum
-        ? isLink
+        ? (isLink && isPendulum)
             ? [220, 1123, 150 - widthOffset / globalScale, 37]
             : [145, 1123, 240 - widthOffset / globalScale, 37]
         : isLink
