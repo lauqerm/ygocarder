@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '20/03/2026-1';
+        const currentReminder = '27/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Lukas at March 27, 2026',
+            question: 'Thanks to the new Utopia overframe card I noticed that the attributes of both spells/ traps aren\'t aligned like the monsters attributes. Is that intentional or an error? (I reported before without the screenshot, sorry).',
+            answer: 'Hi there, I\'m not sure I fully understand your feedback, as all attributes (both monsters and spells/traps) appear to be aligned the same way from what I can see. Compared to the Utopia Overframe card, the attribute is slightly larger and misaligned however, which I have already made some updates to it.'
+        },
         {
             author: 'Yugiohfann at March 20, 2026',
             question: 'Hello again Lauqerm\nI forgot to mention that the letter "q" also has a similar height issue compared to other letters like the letter "n" while it is in a long card\'s name 😅😅😅',

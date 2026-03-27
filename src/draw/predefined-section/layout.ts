@@ -412,10 +412,11 @@ export const getLayoutDrawFunction = ({
                     ? 'tcg'
                     : RegionMap[region].fileKey;
 
-                await drawAsset(
+                await drawAssetWithSize(
                     attributeCtx,
                     `attribute/attr-${attributeName}-${attribute.toLowerCase()}.png`,
                     attributeX + offsetX, attributeY,
+                    undefined, attributeSize,
                 );
             }
             const attributeFinish = otherFinish[0] ?? 'normal';
