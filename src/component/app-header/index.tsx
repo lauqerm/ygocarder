@@ -182,7 +182,10 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/slackermagician"
                             target="_blank"
                             rel="noreferrer"><b>SlackerMagician</b></a>,
-                        <b key="artist-4">gecko-chan</b>,
+                        <a key="artist-4"
+                            href="https://www.deviantart.com/geckoygo"
+                            target="_blank"
+                            rel="noreferrer"><b>GeckoYGO</b></a>,
                         <Explanation
                             key="artist-5"
                             icon={AdditionalContributorIcon}
