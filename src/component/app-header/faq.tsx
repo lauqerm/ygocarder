@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '06/04/2026';
+        const currentReminder = '06/04/2026-1';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 05, 2026',
+            question: 'OCG Series 1 and 2 only button from change setting.',
+            answer: 'Sorry, I do not have access to the template for older series.'
+        },
         {
             author: 'Anonymous at April 05, 2026',
             question: 'Any reason in particular why the Condense tet in the paragraph style tab isn\'t saved or at least defaulted like almost everything else is? It\'s pretty convenient as a feature, or rather I\'ve yet to encounter the use case where less condensation is better.\n\nWhat isn\'t convenient however is how you have to toggle it each time when your load your save file.',
