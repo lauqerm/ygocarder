@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontDebugger } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontDebugger, normalizeCardName } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -105,6 +105,7 @@ export const drawName = async (
     const edge = _edge * globalScale;
     const trueBaseline = _trueBaseline * globalScale;
     const width = _width * globalScale;
+    const normalizedName = normalizeCardName(value);
 
     if (!(ctx && value)) return;
     const {
@@ -284,10 +285,12 @@ export const drawName = async (
             await drawAsset(patternContext, `background/background-name-${frame}.png`, 0, 0);
             patternContext.globalCompositeOperation = patternBlendMode;
             patternContext.resetTransform();
+            /** The first letter of card name may reach outside of the card edge (for example letter J), so we skew the pattern image if needed. */
+            const offset = ctx.measureText(normalizedName).actualBoundingBoxLeft;
             await drawAssetWithSize(
                 patternContext, `finish-name/${patternImage}.png`,
-                edge, trueBaseline - maxAscent,
-                width,
+                edge - offset, trueBaseline - maxAscent,
+                width + offset,
                 maxAscent + maxDescent,
             );
             ctx.globalCompositeOperation = 'source-in';

@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '27/03/2026';
+        const currentReminder = '06/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 05, 2026',
+            question: 'Any reason in particular why the Condense tet in the paragraph style tab isn\'t saved or at least defaulted like almost everything else is? It\'s pretty convenient as a feature, or rather I\'ve yet to encounter the use case where less condensation is better.\n\nWhat isn\'t convenient however is how you have to toggle it each time when your load your save file.',
+            answer: 'Hi there, I\'m not sure if I fully understand your problem. Do you mean the condense option is not saved when you export the card? From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page. If you could provide the steps to reproduce the issue (and explain what you expect to happen), it would help me resolve the problem.'
+        },
         {
             author: 'Lukas at March 27, 2026',
             question: 'Thanks to the new Utopia overframe card I noticed that the attributes of both spells/ traps aren\'t aligned like the monsters attributes. Is that intentional or an error? (I reported before without the screenshot, sorry).',
