@@ -626,7 +626,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                         .filter(entry => typeof entry === 'string' && entry !== '')
                         .map(entry => typeof entry === 'string' ? entry : '');
 
-                const condenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant).toLowerCase() as CondenseType;
+                const baseCondenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant) as CondenseType;
+                /** Fix syntax issue by mistake when exporting card data */
+                const condenseTolerant = (baseCondenseTolerant as string) === 'verystrict'
+                    ? 'veryStrict'
+                    : (baseCondenseTolerant as string) === 'veryloose'
+                        ? 'veryLoose'
+                        : baseCondenseTolerant;
                 const effectUpSize = normalizeInt(reader('Effect Style - Upsize'), emptyCard.effectStyle.upSize);
                 const pendulumEffectUpSize = normalizeInt(reader('Pendulum Effect Style - Upsize'), emptyCard.pendulumStyle.upSize);
                 const effectFontStyle = (reader('Effect Style - Font Style') ?? emptyCard.effectStyle.fontStyle).toLowerCase();

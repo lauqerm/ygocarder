@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '06/04/2026-1';
+        const currentReminder = '09/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,20 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: '"From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page."\n\nI don\'t know what to say. It simply is not stored as a saved toggle feature whenever I import the card list. It\'s a very minor thing and a peeve at worst. I cannot say it\'s exclusively a me thing, but if you say it should work that way, then it just doesn\'t do it for me.',
+            answer: 'I see. I have tried apply a fix for this, hopefully this will resolve the issue. But if it still persists, could you send me a part of your card list as well? (not the whole thing, just the first few lines are enough). It will help me a lot to investigate the problem. Thanks for your help.'
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'I\'m an Arab and love Yu-Gi-Oh, but your card maker doesn\'t support the Arabic language and I really want to make Arabic Yu-Gi-Oh cards becuz my friends can\'t understand english to read the cards I maker',
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'If I wasn\'t clear before, the Arabic text is supposed to look like this\n أهلا، انا اتحدث العربية\nInstead it looks like this\nة ي ب ر ل أ  ث د ح ت ا، أ ل ه ا \nPlease fix this\n(Btw the translation is "Hello, I speak Arabic")',
+            answer: 'I will try my best. But I don\'t know Arabic and its writing system so it may take sometime 😭. Thanks for your patience.'
+        },
         {
             author: 'Anonymous at April 05, 2026',
             question: 'OCG Series 1 and 2 only button from change setting.',

@@ -279,6 +279,9 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
         ...getEmptyCard().effectStyle,
         ...migratedCard.effectStyle,
     };
+    /** Fix syntax issue by mistake when exporting card data */
+    if ((migratedCard.effectStyle?.condenseTolerant as string) === 'verystrict') migratedCard.effectStyle.condenseTolerant = 'veryStrict';
+    if ((migratedCard.effectStyle?.condenseTolerant as string) === 'veryloose') migratedCard.effectStyle.condenseTolerant = 'veryLoose';
 
     if (migratedCard.pendulumStyle == null) {
         migratedCard.pendulumStyle = {
