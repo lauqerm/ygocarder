@@ -4,7 +4,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { Checkbox, Popover, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { RadioTrain } from '../input-train';
-import { ExportFormatList, getSlindingTypeList, ResolutionList, ResolutionMap } from 'src/model';
+import { ExportFormatList, getSlindingTypeList, getWritingModeList, ResolutionList, ResolutionMap } from 'src/model';
 import { ResolutionLabel, StyledPopMarkdown } from '../atom';
 
 const rotate = keyframes`
@@ -67,6 +67,7 @@ export const SettingButton = () => {
         showCreativeOption,
         showExtraDecorativeOption,
         slidingType,
+        writingMode,
     } = setting;
 
     return <StyledSettingButtonContainer className="setting-button" $softMode={reduceMotionColor}>
@@ -148,6 +149,16 @@ export const SettingButton = () => {
                         optionList={getSlindingTypeList(language)}
                         onChange={value => {
                             updateSetting({ slidingType: value });
+                        }}
+                    />
+                </div>
+                <div>
+                    <div className="list-option">{language['setting.option.writing-mode.label']}</div>
+                    <RadioTrain
+                        value={writingMode}
+                        optionList={getWritingModeList(language)}
+                        onChange={value => {
+                            updateSetting({ writingMode: value });
                         }}
                     />
                 </div>

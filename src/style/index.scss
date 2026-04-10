@@ -498,3 +498,10 @@ button.ant-btn {
 .global-overlay {
     max-width: 90%;
 }
+
+.writing-mode_rtl {
+    .ant-input-affix-wrapper-textarea-with-clear-btn .ant-input-clear-icon {
+        left: 8px;
+        right: unset;
+    }
+}

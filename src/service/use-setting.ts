@@ -13,6 +13,7 @@ export type Setting = {
     showExtraAttribute: boolean,
     showExtraDecorativeOption: boolean,
     slidingType: SlindingType,
+    writingMode: 'rtl' | 'ltr',
 };
 export type SettingStore = {
     setting: Setting,
@@ -31,6 +32,7 @@ export const useSetting = create<SettingStore>((set) => {
         showExtraAttribute,
         showExtraDecorativeOption,
         slidingType,
+        writingMode,
     } = ((): Record<string, any> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
@@ -60,6 +62,7 @@ export const useSetting = create<SettingStore>((set) => {
             showExtraAttribute: typeof showExtraAttribute === 'boolean' ? showExtraAttribute : true,
             showExtraDecorativeOption: typeof showExtraDecorativeOption === 'boolean' ? showExtraDecorativeOption : true,
             mirrorPendulumScale: typeof mirrorPendulumScale === 'boolean' ? mirrorPendulumScale : false,
+            writingMode: writingMode === 'rtl' ? 'rtl' : 'ltr',
         },
         updateSetting: transformerOrPayload => {
             set(currentStore => {
@@ -76,3 +79,10 @@ export const useSetting = create<SettingStore>((set) => {
         }
     };
 });
+
+export const useWritingDirection = () => {
+    const writingDirection = useSetting(store => store.setting.writingMode);
+
+    return writingDirection;
+};
+export const getWritingDirection = () => useSetting.getState().setting.writingMode;

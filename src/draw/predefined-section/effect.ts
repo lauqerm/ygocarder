@@ -376,6 +376,7 @@ export const drawEffect = async ({
                         format,
                         globalScale,
                         memory,
+                        width,
                     });
                 } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
                     ctx.scale(xRatio, yRatio);
@@ -389,6 +390,7 @@ export const drawEffect = async ({
                         format,
                         globalScale,
                         memory,
+                        width,
                     });
                 } else {
                     ctx.scale(xRatio, yRatio);
@@ -403,6 +405,7 @@ export const drawEffect = async ({
                         format,
                         globalScale,
                         memory,
+                        width,
                     });
                 }
                 await result;

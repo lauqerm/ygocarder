@@ -181,7 +181,9 @@ export const normalizeCardText = (
             }
             return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
         })
-        .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+        .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'gu'), m => {
+            return `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`;
+        })
         .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_START_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
         .replaceAll(new RegExp(NOT_SPLIT_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)

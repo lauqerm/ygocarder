@@ -38,6 +38,7 @@ import {
     WholeWordRegex,
     getBulletSpacing,
     PLACEHOLDER_DELIMITER,
+    ArabicWordRegex,
 } from 'src/model';
 import {
     drawBullet,
@@ -53,7 +54,7 @@ import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 import { scaleFontSizeData, swapTextData } from 'src/util';
 import { drawFromWithSizeAndFallback } from './image';
-import { useGlobalMemory } from 'src/service';
+import { useGlobalMemory, getWritingDirection } from 'src/service';
 import { normalizeCardText } from './text-normalize';
 
 /**
@@ -84,6 +85,7 @@ export const drawLine = async ({
     option,
     globalScale,
     memory,
+    width = 0,
 }: {
     ctx: CanvasRenderingContext2D,
     format: string,
@@ -98,6 +100,7 @@ export const drawLine = async ({
     textDrawer?: TextDrawer,
     drawImage?: boolean,
     globalScale: number,
+    width?: number,
     option?: {
         drawHeadText?: boolean,
     },
@@ -106,6 +109,8 @@ export const drawLine = async ({
         image: Record<string, { src: string, width?: number, height?: number, offsetX?: number, offsetY?: number }>,
     },
 }) => {
+    console.log('🚀 ~ drawLine ~ tokenList:', tokenList);
+    const direction = getWritingDirection();
     const normalizedMemory = memory ?? { image: {} };
     const imageMemory = normalizedMemory?.image ?? {};
     const imagePresetMap = useGlobalMemory.getState().memory.imagePresetMap;
@@ -124,13 +129,19 @@ export const drawLine = async ({
     let previousTokenGap = 0;
     let iconPositionList: { edge: number, size: number, baseline: number }[] = [];
     let previousTokenRebalanceOffset = 0;
-    let tokenEdge = trueEdge;
+    let tokenEdge = width !== 0 && direction === 'rtl'
+        ? trueEdge + width
+        : trueEdge;
     let preformatMode = false;
 
     /** To reach a acceptable degree of calculation, we usually need to look ahead 1 or 2 next tokens, same with fragments. */
     /** To prevent cascading calculation, we disconnect the relationship between fragments and tokens. We use all information to calculate an empty space for each token, then fragments of that token is drawn inside that empty space assuming they would fit. In other words, drawing fragments of a token DOES NOT interfere with the next token. That means in theory we can skip all fragments of a token to draw the next token right away.
      */
-    for (let tokenCnt = 0, xRatio = baseXRatio; tokenCnt < tokenList.length; tokenCnt++) {
+    for (
+        let tokenCnt = direction === 'rtl' ? tokenList.length - 1 : 0, xRatio = baseXRatio;
+        direction === 'rtl' ? tokenCnt >= 0 : tokenCnt < tokenList.length;
+        direction === 'rtl' ? tokenCnt-- : tokenCnt++
+    ) {
         /** All the info here is not affected by injected dynamic fonts */
         const {
             bulletOffset = scaledDefaultFontSizeData.bulletOffset,
@@ -644,67 +655,70 @@ export const drawLine = async ({
                 const rightGap = leftGap;
                 const lostLeftWidth = getLostLeftWidth(currentRightGap, leftGap);
                 fragmentEdge -= lostLeftWidth;
-
                 /** Read the comment in `analyzeToken` function, we repeat exactly the treatment there, the different is we actually draw the letter along the way. */
-                let remainFragment = fragment;
                 let currentPosition = fragmentEdge;
-                while (remainFragment !== '') {
-                    let currentLetter = remainFragment[0];
-                    let nextRemainFragment = remainFragment.slice(1);
-                    let actualLetterWidth = 0;
-                    const { edge } = fontLetterOffsetMap[currentLetter] ?? {};
-                    let offsetedPosition = currentPosition * (edge ?? 1);
-                    const drawLetterofWordParameter = {
-                        ...drawLetterParameter,
-                        deviation: letterDeviationMap['default'],
-                        letter: currentLetter,
-                        edge: offsetedPosition,
-                    };
-                    if (SquareBracketLetterRegex.test(currentLetter)) {
-                        applyScale(squareBracketRatio);
-                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        drawLetter({
-                            ...drawLetterofWordParameter,
-                            edge: offsetedPosition / squareBracketRatio,
-                            baseline: baseline / squareBracketRatio,
-                        });
-                        reverseScale(squareBracketRatio);
-                    } else if (CapitalLetterRegex.test(currentLetter)) {
-                        applyScale(capitalLetterRatio);
-                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        const letterOffset = (actualLetterWidth > ctx.measureText(currentLetter).width * capitalLetterRatio)
-                            ? Math.round(actualLetterWidth * (1 - capitalLetterRatio)) / 2
-                            : 0;
-                        drawLetter({
-                            ...drawLetterofWordParameter,
-                            edge: offsetedPosition / capitalLetterRatio + letterOffset,
-                            baseline: baseline / capitalLetterRatio
-                        });
-                        reverseScale(capitalLetterRatio);
-                    } else if (VietnameseDiacriticLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
-                        applyVietnameseFont();
-                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        drawLetter(drawLetterofWordParameter);
-                        stopApplyVietnameseFont();
-                    } else if (NumberRegex.test(currentLetter)) {
-                        applyNumberFont();
-                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        drawLetter(drawLetterofWordParameter);
-                        stopApplyNumberFont();
-                    } else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
-                        const { fontSize } = applySymbolFont(letterOffsetMap[currentLetter]?.ratio);
-                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        drawLetter({
-                            ...drawLetterofWordParameter,
-                            baseline: drawLetterofWordParameter.baseline + fontSize * (letterOffsetMap[fragment]?.baseline ?? 0),
-                        });
-                        stopApplySymbolFont();
-                    } else {
-                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                        drawLetter(drawLetterofWordParameter);
+                if (ArabicWordRegex.test(fragment)) {
+                    ctx.fillText(fragment, currentPosition / xRatio, drawLetterParameter.baseline);
+                } else {
+                    let remainFragment = fragment;
+                    while (remainFragment !== '') {
+                        let currentLetter = remainFragment[0];
+                        let nextRemainFragment = remainFragment.slice(1);
+                        let actualLetterWidth = 0;
+                        const { edge } = fontLetterOffsetMap[currentLetter] ?? {};
+                        let offsetedPosition = currentPosition * (edge ?? 1);
+                        const drawLetterofWordParameter = {
+                            ...drawLetterParameter,
+                            deviation: letterDeviationMap['default'],
+                            letter: currentLetter,
+                            edge: offsetedPosition,
+                        };
+                        if (SquareBracketLetterRegex.test(currentLetter)) {
+                            applyScale(squareBracketRatio);
+                            actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                            drawLetter({
+                                ...drawLetterofWordParameter,
+                                edge: offsetedPosition / squareBracketRatio,
+                                baseline: baseline / squareBracketRatio,
+                            });
+                            reverseScale(squareBracketRatio);
+                        } else if (CapitalLetterRegex.test(currentLetter)) {
+                            applyScale(capitalLetterRatio);
+                            actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                            const letterOffset = (actualLetterWidth > ctx.measureText(currentLetter).width * capitalLetterRatio)
+                                ? Math.round(actualLetterWidth * (1 - capitalLetterRatio)) / 2
+                                : 0;
+                            drawLetter({
+                                ...drawLetterofWordParameter,
+                                edge: offsetedPosition / capitalLetterRatio + letterOffset,
+                                baseline: baseline / capitalLetterRatio
+                            });
+                            reverseScale(capitalLetterRatio);
+                        } else if (VietnameseDiacriticLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                            applyVietnameseFont();
+                            actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                            drawLetter(drawLetterofWordParameter);
+                            stopApplyVietnameseFont();
+                        } else if (NumberRegex.test(currentLetter)) {
+                            applyNumberFont();
+                            actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                            drawLetter(drawLetterofWordParameter);
+                            stopApplyNumberFont();
+                        } else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                            const { fontSize } = applySymbolFont(letterOffsetMap[currentLetter]?.ratio);
+                            actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                            drawLetter({
+                                ...drawLetterofWordParameter,
+                                baseline: drawLetterofWordParameter.baseline + fontSize * (letterOffsetMap[fragment]?.baseline ?? 0),
+                            });
+                            stopApplySymbolFont();
+                        } else {
+                            actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                            drawLetter(drawLetterofWordParameter);
+                        }
+                        currentPosition += actualLetterWidth * xRatio;
+                        remainFragment = nextRemainFragment;
                     }
-                    currentPosition += actualLetterWidth * xRatio;
-                    remainFragment = nextRemainFragment;
                 }
 
                 fragmentEdge = currentPosition;
@@ -788,7 +802,7 @@ export const drawLine = async ({
         const actualSpaceCount = preformatMode
             ? 0
             : spaceCount;
-        tokenEdge += totalTokenWidth * xRatio + actualSpaceCount * spaceWidth + indent;
+        tokenEdge -= (totalTokenWidth * xRatio + actualSpaceCount * spaceWidth + indent);
     }
 
     return {

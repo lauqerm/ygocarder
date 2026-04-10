@@ -481,6 +481,9 @@
         "setting.option.resolution.warning": "May affect performance",
         "setting.option.sliding-type.auto.label": "Auto",
         "setting.option.sliding-type.label": "Preview sliding (Desktop only)",
-        "setting.option.sliding-type.manual.label": "Manual drag"
+        "setting.option.sliding-type.manual.label": "Manual drag",
+        "setting.option.writing-mode.label": "Writing mode",
+        "setting.option.writing-mode.ltr.label": "Left-to-Right",
+        "setting.option.writing-mode.rtl.label": "Right-to-Left"
     }
 }

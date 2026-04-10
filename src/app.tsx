@@ -87,18 +87,21 @@ function App() {
         globalScale,
         resolution,
         slidingType,
+        writingMode,
     } = useSetting(useShallow(({ setting: {
         allowHotkey,
         reduceMotionColor,
         globalScale,
         resolution,
         slidingType,
+        writingMode,
     } }) => ({
         softMode: reduceMotionColor,
         allowHotkey,
         globalScale,
         resolution,
         slidingType,
+        writingMode,
     })));
     const {
         isInitiating: isLanguageInitiating,
@@ -602,7 +605,7 @@ function App() {
                         }
                     }
                 }}
-                className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
+                className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'} writing-mode_${writingMode}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
                         }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
