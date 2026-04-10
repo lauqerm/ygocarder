@@ -233,7 +233,9 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                         ṋ: { baseLetter: 'n' },
                         ꞥ: { baseLetter: 'n' },
                         ᵰ: { baseLetter: 'n' },
-                        ᶇ:  { baseLetter: 'n' },
+                        ᶇ: { baseLetter: 'n' },
+
+                        G: { baseLetter: 'G' },
                     },
                 },
             },

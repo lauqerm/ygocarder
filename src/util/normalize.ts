@@ -38,7 +38,7 @@ export const toDebugMonitor = ({ content, mode }: { content?: string, mode?: 'ad
 
 export const DebugCanvas = {
     height: 100,
-    width: 550,
+    width: 600,
 };
 /**
  * Our brute force solution for problem described in FontDeviation type.
@@ -86,7 +86,7 @@ export const getCanvasFontDebugger = () => {
                 result = {};
                 if (setup) setup(ctx);
                 ctx.fillStyle = '#000000';
-                ctx.fillText('mienMIEN120OQoq', 0, 95);
+                ctx.fillText('mienMIEN120OQoqG', 0, 95);
                 const checkpointByScaleMap: Record<string, {
                     letter: string,
                     x: number,
@@ -110,6 +110,7 @@ export const getCanvasFontDebugger = () => {
                         { letter: 'Q', x: Math.round(443 * appliedXRatio), anchor: 'M', compensateBottom: false },
                         { letter: 'o', x: Math.round(483 * appliedXRatio), anchor: 'm' },
                         { letter: 'q', x: Math.round(521 * appliedXRatio), anchor: 'm', compensateBottom: false },
+                        { letter: 'G', x: Math.round(565 * appliedXRatio), anchor: 'M' },
                     ],
                     '2': [
                         { letter: 'm', x: Math.round(70 * appliedXRatio) },
@@ -127,6 +128,7 @@ export const getCanvasFontDebugger = () => {
                         { letter: 'Q', x: Math.round(888 * appliedXRatio), anchor: 'M', compensateBottom: false },
                         { letter: 'o', x: Math.round(969 * appliedXRatio), anchor: 'm' },
                         { letter: 'q', x: Math.round(1043 * appliedXRatio), anchor: 'm', compensateBottom: false },
+                        { letter: 'G', x: Math.round(1128 * appliedXRatio), anchor: 'M' },
                     ],
                 };
                 const checkpointList = checkpointByScaleMap[appliedScale];
