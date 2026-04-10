@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '09/04/2026';
+        const currentReminder = '10/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'Hello, its me again.\nThe same issue is back with G letter again Lauqerm, please fix it 😭😭😭',
+            answer: 'Oh man 😭.'
+        },
         {
             author: 'Anonymous at April 09, 2026',
             question: '"From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page."\n\nI don\'t know what to say. It simply is not stored as a saved toggle feature whenever I import the card list. It\'s a very minor thing and a peeve at worst. I cannot say it\'s exclusively a me thing, but if you say it should work that way, then it just doesn\'t do it for me.',
