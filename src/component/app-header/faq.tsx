@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '10/04/2026';
+        const currentReminder = '11/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'The S and G letter now are lower than other letters Lauqerm, i tried on Slifer the Sky Dragon, its same as the N letter issue before you fixed for me 😭😭😭',
+            answer: 'Can you provide some images / screenshots to help me visualize the issue better? It\'s pretty weird because I never adjust the letter S so it very unlikely that it bugged out right now when it is not before.'
+        },
         {
             author: 'Anonymous at April 09, 2026',
             question: 'Hello, its me again.\nThe same issue is back with G letter again Lauqerm, please fix it 😭😭😭',
