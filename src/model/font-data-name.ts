@@ -20,6 +20,7 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
             symbolFontRatio: 0.775,
             vietnameseFont: 'MatrixRegularSmallCaps',
             vietnameseFontRatio: 1,
+            arabicFontRatio: 0.75,
             variant: 'default-name',
             fontList: [{
                 bulletWidth: 64,

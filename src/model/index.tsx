@@ -368,18 +368,6 @@ export const getSlindingTypeList = (language: LanguageDataDictionary) => [
     },
 ];
 
-export type WritingMode = ReturnType<typeof getWritingModeList>[0]['value'];
-export const getWritingModeList = (language: LanguageDataDictionary) => [
-    {
-        value: 'ltr' as const,
-        label: language['setting.option.writing-mode.ltr.label'],
-    },
-    {
-        value: 'rtl' as const,
-        label: language['setting.option.writing-mode.rtl.label'],
-    },
-];
-
 export * from './canvas';
 export * from './compatible-card';
 export * from './condense';

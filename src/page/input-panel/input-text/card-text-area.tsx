@@ -2,7 +2,6 @@ import { availableCommand, placeCursorInInput, resolveHotkey } from './util';
 import { Input } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { TextAreaProps } from 'antd/lib/input';
-import { useWritingDirection } from 'src/service';
 
 const { TextArea } = Input;
 export type CardTextAreaRef = {
@@ -31,7 +30,6 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
     className,
     ...rest
 }, ref) => {
-    const writingDirection = useWritingDirection();
     const immediateValue = useRef(defaultValue);
     const [value, setValue] = useState(defaultValue);
     const [cursorData, setCursorData] = useState({ id: '', placement: -1 });
@@ -62,7 +60,7 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
     }));
 
     return <TextArea
-        dir={writingDirection}
+        dir="auto"
         id={id}
         autoComplete="off"
         onFocus={() => id && onTakePicker?.({ id, setValue: externalSetValue })}

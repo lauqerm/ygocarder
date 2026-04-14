@@ -20,6 +20,7 @@ import {
     STYLING_TAG_SOURCE,
     UNCOMPRESSED_SOURCE,
     WHOLE_WORD_SOURCE,
+    WritingDirection,
     contextualDoubleQuoteRegex,
     ocgKeywordDataMap,
     ocgNumberCircleMap,
@@ -99,12 +100,18 @@ export const splitEffect = (effect: string, isNormal = false) => {
 export const normalizeCardText = (
     text: string,
     format: string,
-    option?: { multiline?: boolean, furiganaHelper?: boolean, dictionaryType?: 'rubyForm' | 'rubyFormName' },
+    option?: {
+        multiline?: boolean,
+        furiganaHelper?: boolean,
+        dictionaryType?: 'rubyForm' | 'rubyFormName',
+        direction?: WritingDirection,
+    },
 ) => {
     const {
         multiline = true,
         furiganaHelper = true,
         dictionaryType = 'rubyForm',
+        direction = 'ltr',
     } = option ?? {};
     const nonNullableText = text ?? '';
 
@@ -130,10 +137,22 @@ export const normalizeCardText = (
 
     /** Various contextual swaps */
     const textAfterSwapLetter = textAfterSplitBlockRow
-        .replace(/(^|[-\u2014\s(["])'/g, '$1\u2018')        /** Turn straight single quote ' into contextual curly quote ‘ */
-        .replace(/'/g, '\u2019')                            /** Close open curly quote ’ */
-        .replace(contextualDoubleQuoteRegex, '$1\u201c')  /** Turn straight double quote " into contextual curly double quote “ */
-        .replace(/"/g, '\u201d')                            /** Close open curly double quote ” */
+        .replace(
+            /(^|[-\u2014\s(["])'/g,
+            direction === 'rtl' ? '$1\u2019' : '$1\u2018',
+        )   /** Turn straight single quote ' into contextual curly quote ‘ */
+        .replace(
+            /'/g,
+            direction === 'rtl' ? '\u2018' : '\u2019',
+        )   /** Close open curly quote ’ */
+        .replace(
+            contextualDoubleQuoteRegex,
+            direction === 'rtl' ? '$1\u201d' : '$1\u201c',
+        )   /** Turn straight double quote " into contextual curly double quote “ */
+        .replace(
+            /"/g,
+            direction === 'rtl' ? '\u201c' : '\u201d',
+        )   /** Close open curly double quote ” */
         .replace(/--/g, '\u2014')                           /** Turn double dash "--" into em-dash "—" */
         .replace(/● /g, '●')                                /** Remove direct whitespace after bullet, bullet have their own fixed space that we will draw later */
         /** Convert ordinal shorthand syntax, for example "(15)" will become "⑮", used in OCG effect */

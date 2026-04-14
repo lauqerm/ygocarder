@@ -1,9 +1,9 @@
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData, createCanvas } from 'src/util';
 import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType, CanvasConst, DEFAULT_TEXT_COLOR } from 'src/model';
-import { tokenizeText } from '../text-util';
-import { drawLine } from '../text';
-import { createLineList } from '../line';
+import { getWritingDirection, tokenizeText } from '../text-util';
+import { drawLine } from '../line';
+import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { CanvasTextStyle } from 'src/service';
@@ -42,6 +42,7 @@ export const drawTypeAbilityText = async ({
         TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'],
         globalScale,
     );
+    const direction = getWritingDirection(value);
     const scaledBaseFontData = scaleFontData(getTypeAbilityFontData()[format], globalScale);
     const fontData = {
         ...scaledBaseFontData,
@@ -95,6 +96,8 @@ export const drawTypeAbilityText = async ({
         textData,
         format,
         globalScale,
+        option: { direction },
+        width: actualLineWidth * xRatio,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline);
         },

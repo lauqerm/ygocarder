@@ -480,9 +480,6 @@
         "setting.option.sliding-type.manual.label": "Kéo thủ công",
         "input.frame.unofficial.label": "Fanmade",
         "input.frame.rebirth": "Rebirth",
-        "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn",
-        "setting.option.writing-mode.label": "Phương pháp viết",
-        "setting.option.writing-mode.ltr.label": "Trái sang phải",
-        "setting.option.writing-mode.rtl.label": "Phải sang trái"
+        "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }

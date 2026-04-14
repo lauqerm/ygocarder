@@ -480,9 +480,6 @@
         "form.submit": "Submit",
         "form.dismiss": "Dismiss",
         "form.default": "Leave blank to use default",
-        "setting.option.soft-mode.label": "Reduce Color and Motion",
-        "setting.option.writing-mode.label": "Writing mode",
-        "setting.option.writing-mode.ltr.label": "Left-to-Right",
-        "setting.option.writing-mode.rtl.label": "Right-to-Left"
+        "setting.option.soft-mode.label": "Reduce Color and Motion"
     }
 }

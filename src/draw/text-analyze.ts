@@ -41,6 +41,7 @@ import {
     WholeWordRegex,
     PLACEHOLDER_DELIMITER,
     RegionSpaceWidthMap,
+    ArabicWordRegex,
 } from 'src/model';
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth, splitPlaceholder } from './text-util';
 import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
@@ -115,20 +116,21 @@ export const analyzeToken = ({
         bulletWidth,
         capitalLetterRatio,
         fontSize,
+        headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
         iconSymbolWidth = bulletWidth,
         largeSymbolRatio = scaledDefaultFontSizeData.largeSymbolRatio,
-        headTextSpacing = scaledDefaultFontSizeData.headTextSpacing,
         squareBracketRatio,
         wordLetterSpacing,
     } = fontSizeData;
     const defaultGap = fontSize * LETTER_GAP_RATIO;
     const {
-        applyScale, reverseScale,
-        applyLargerText, stopApplyLargerText,
+        applyArabicFont, stopApplyArabicFont,
         applyFuriganaFont, stopApplyFuriganaFont,
-        applyOrdinalFont, stopApplyOrdinalFont,
-        applySymbolFont, stopApplySymbolFont,
+        applyLargerText, stopApplyLargerText,
         applyNumberFont, stopApplyNumberFont,
+        applyOrdinalFont, stopApplyOrdinalFont,
+        applyScale, reverseScale,
+        applySymbolFont, stopApplySymbolFont,
         applyVietnameseFont, stopApplyVietnameseFont,
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
     let potentialTaggedToken = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
@@ -355,47 +357,53 @@ export const analyzeToken = ({
              * * Split the current word into two part: The first letter and the rest of the word.
              * * Calculate the width of a letter, then calculate the width of the remaining word.
              * * By subtract them, we will have the actual width of a letter, when put into the word and affected by contextual kerning.
-             */
-            while (remainFragment !== '') {
-                let currentLetter = remainFragment[0];
-                let nextRemainFragment = remainFragment.slice(1);
-                let actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                /** Square brackets ("[" and "]") may have different scaling */
-                if (SquareBracketLetterRegex.test(currentLetter)) {
-                    applyScale(squareBracketRatio);
-                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                    reverseScale(squareBracketRatio);
+            */
+            if (ArabicWordRegex.test(fragment)) {
+                applyArabicFont();
+                fragmentWidth += ctx.measureText(fragment).width;
+                stopApplyArabicFont();
+            } else {
+                while (remainFragment !== '') {
+                    let currentLetter = remainFragment[0];
+                    let nextRemainFragment = remainFragment.slice(1);
+                    let actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    /** Square brackets ("[" and "]") may have different scaling */
+                    if (SquareBracketLetterRegex.test(currentLetter)) {
+                        applyScale(squareBracketRatio);
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                        reverseScale(squareBracketRatio);
+                    }
+                    /** Captial letters may have different scaling */
+                    else if (CapitalLetterRegex.test(currentLetter)) {
+                        applyScale(capitalLetterRatio);
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                        reverseScale(capitalLetterRatio);
+                    }
+                    /** Vietnamese letter use different font, for the sake of simplicity, we use a widely supported Times New Roman font instead of a more specific one. */
+                    else if (VietnameseDiacriticLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                        applyVietnameseFont();
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                        stopApplyVietnameseFont();
+                    }
+                    /** Number letters may use different font, for the sake of simplicity, we assume that the font does not affect (too much) to the letter's width. In short, we assume that the letter "8" in font X have the same width with the letter "8" in font Y, just different shape. */
+                    else if (NumberRegex.test(currentLetter)) {
+                        applyNumberFont();
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                        stopApplyNumberFont();
+                    }
+                    /** Special symbol in TCG card ("Evil☆Twin") may use different font, again we assume the letter have similar size. */
+                    else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
+                        applySymbolFont(letterOffsetMap[currentLetter]?.ratio);
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                        stopApplySymbolFont();
+                    }
+                    /** No special treatment for the usual letters */
+                    else {
+                        actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
+                    }
+                    fragmentWidth += actualLetterWidth;
+                    remainFragment = nextRemainFragment;
                 }
-                /** Captial letters may have different scaling */
-                else if (CapitalLetterRegex.test(currentLetter)) {
-                    applyScale(capitalLetterRatio);
-                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                    reverseScale(capitalLetterRatio);
-                }
-                /** Vietnamese letter use different font, for the sake of simplicity, we use a widely supported Times New Roman font instead of a more specific one. */
-                else if (VietnameseDiacriticLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
-                    applyVietnameseFont();
-                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                    stopApplyVietnameseFont();
-                }
-                /** Number letters may use different font, for the sake of simplicity, we assume that the font does not affect (too much) to the letter's width. In short, we assume that the letter "8" in font X have the same width with the letter "8" in font Y, just different shape. */
-                else if (NumberRegex.test(currentLetter)) {
-                    applyNumberFont();
-                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                    stopApplyNumberFont();
-                }
-                /** Special symbol in TCG card ("Evil☆Twin") may use different font, again we assume the letter have similar size. */
-                else if (TCGSymbolLetterRegex.test(currentLetter) && fontStyle === 'tcg') {
-                    applySymbolFont(letterOffsetMap[currentLetter]?.ratio);
-                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                    stopApplySymbolFont();
-                }
-                /** No special treatment for the usual letters */
-                else {
-                    actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
-                }
-                fragmentWidth += actualLetterWidth;
-                remainFragment = nextRemainFragment;
             }
 
             const leftGap = Math.max(defaultGap, fragmentWidth / GAP_PER_WIDTH_RATIO);

@@ -64,10 +64,10 @@ export const PlaceholderRegex = new RegExp(PLACHOLDER_SOURCE);
  * 
  * Multiple letter that is not used in normal word but have appear in YGO card is also included such as ∞.
  */
-export const WHOLE_WORD_SOURCE = '[\\p{L}#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９À-ÖÙ-öù-ÿĀ-žƀ-ɏḀ-ỿ!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
+export const WHOLE_WORD_SOURCE = '[،-٩#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９À-ÖÙ-öù-ÿĀ-žƀ-ɏḀ-ỿ!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
 export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE, 'u');
 
-export const ARABIC_WORD_REGEX = '\\p{Script=Arabic}+';
+export const ARABIC_WORD_REGEX = '[،-٩]+';
 export const ArabicWordRegex = new RegExp(ARABIC_WORD_REGEX, 'u');
 
 /**

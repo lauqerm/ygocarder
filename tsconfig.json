@@ -17,12 +17,15 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": false,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "typeRoots": ["./type", "node_modules/@types"]
+    "typeRoots": [
+      "./type",
+      "node_modules/@types"
+    ]
   },
   "include": [
     "src"
