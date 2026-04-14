@@ -13,11 +13,11 @@ import {
 } from '../../model';
 import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
-import { createLineList } from '../line';
-import { drawLine } from '../text';
+import { createLineList } from '../line-list';
+import { drawLine } from '../line';
 import { analyzeLine } from '../text-analyze';
 import { normalizeCardText, splitEffect } from '../text-normalize';
-import { tokenizeText } from '../text-util';
+import { tokenizeText, getWritingDirection } from '../text-util';
 
 /** Sections inside effect box (stats and type) will affect the amount of line and applicable font size use for the text. */
 export const getEffectFontAndCoordinate = ({
@@ -106,7 +106,8 @@ export const drawEffect = async ({
     let sizeLevel = defaultSizeLevel ?? 0;
     if (!ctx || !content) return sizeLevel;
 
-    const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper });
+    const direction = getWritingDirection(content);
+    const normalizedContent = normalizeCardText(content.trim(), format, { furiganaHelper, direction });
     const {
         lineList,
         fullLineListOption,
@@ -376,6 +377,8 @@ export const drawEffect = async ({
                         format,
                         globalScale,
                         memory,
+                        width,
+                        option: { direction },
                     });
                 } else if (precalculatedLine === FLAVOR_LINE_PLACEHOLDER) {
                     ctx.scale(xRatio, yRatio);
@@ -389,6 +392,8 @@ export const drawEffect = async ({
                         format,
                         globalScale,
                         memory,
+                        width,
+                        option: { direction },
                     });
                 } else {
                     ctx.scale(xRatio, yRatio);
@@ -403,6 +408,8 @@ export const drawEffect = async ({
                         format,
                         globalScale,
                         memory,
+                        width,
+                        option: { direction },
                     });
                 }
                 await result;

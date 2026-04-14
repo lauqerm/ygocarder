@@ -1,8 +1,8 @@
 import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/model';
 import { condense, createFontGetter, scaleCoordinateData, scaleFontData, scaleFontSizeData } from 'src/util';
 import { tokenizeText } from '../text-util';
-import { drawLine } from '../text';
-import { createLineList } from '../line';
+import { drawLine } from '../line';
+import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';

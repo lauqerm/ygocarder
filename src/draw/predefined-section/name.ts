@@ -7,10 +7,10 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontDebugger, normalizeCardName } from 'src/util';
-import { tokenizeText } from '../text-util';
-import { drawLine } from '../text';
-import { createLineList } from '../line';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontMeasurer, normalizeCardName } from 'src/util';
+import { getWritingDirection, tokenizeText } from '../text-util';
+import { drawLine } from '../line';
+import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { setTextStyle } from '../canvas-util';
@@ -104,8 +104,10 @@ export const drawName = async (
     const { isSpeedSkill, format, frame, furiganaHelper, globalScale } = option;
     const edge = _edge * globalScale;
     const trueBaseline = _trueBaseline * globalScale;
+    const direction = getWritingDirection(value);
     const width = _width * globalScale;
     const normalizedName = normalizeCardName(value);
+    const debug = false;
 
     if (!(ctx && value)) return;
     const {
@@ -151,7 +153,7 @@ export const drawName = async (
     const quoteConvertedValue = normalizeCardText(
         value,
         format,
-        { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName' },
+        { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName', direction },
     );
 
     /** Calculate the bounding box that contains all card name's graphic, and passing it to gradient calculator. Beware - gradient does not apply to head text. */
@@ -221,7 +223,7 @@ export const drawName = async (
         : undefined;
 
 
-    fontDebugger.test(
+    fontMeasurer.test(
         { globalScale, xRatio, normalStyle },
         {
             scale: globalScale,
@@ -260,11 +262,13 @@ export const drawName = async (
         lineHeight,
         format,
         globalScale,
-        option: { drawHeadText: false },
+        option: { drawHeadText: false, direction },
+        width: actualLineWidth * xRatio,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
         },
+        debug,
     });
     resetEmbossStroke();
 
@@ -337,7 +341,8 @@ export const drawName = async (
             lineHeight,
             format,
             globalScale,
-            option: { drawHeadText: false },
+            option: { drawHeadText: false, direction },
+            width: actualLineWidth * xRatio,
             drawImage: false,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.lineJoin = 'round';
@@ -347,6 +352,7 @@ export const drawName = async (
                     scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
                 );
             },
+            debug,
         });
         ctx.lineJoin = 'miter';
         ctx.globalCompositeOperation = 'source-over';
@@ -389,7 +395,10 @@ export const drawName = async (
         format,
         globalScale,
         drawImage: false,
+        option: { direction },
+        width: actualLineWidth * xRatio,
         textDrawer: () => { },
+        debug,
     });
 
     const defaultTextStyle = getDefaultNameStyle();

@@ -65,6 +65,7 @@ export const NameSetInputGroup = forwardRef<NameSetInputGroupRef, NameSetInputGr
 
     return <StyledNameInputContainer className="name-id-input">
         <CardTextInput ref={nameInputRef}
+            dir="auto"
             id="name"
             defaultValue={name}
             addonBefore={<Tooltip title={language['input.name.tooltip']}>

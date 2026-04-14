@@ -237,4 +237,4 @@ export const getCanvasFontDebugger = () => {
         }
     };
 };
-export const fontDebugger = getCanvasFontDebugger();
+export const fontMeasurer = getCanvasFontDebugger();
