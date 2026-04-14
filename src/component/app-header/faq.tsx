@@ -79,11 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
-        // {
-        //     author: 'Anonymous at April 14, 2026',
-        //     question: 'Hey it\'s me again, i see that the issue wasnt fixed, ik if the issue lasts more than 2 weeks then you are unable to fix it, but pls reconsider.\nheres a screenshot for reference',
-        //     answer: 'I have update the formatting in card name and effects to adapt with Arabic, you may try it now.'
-        // },
+        {
+            author: 'Anonymous at April 14, 2026',
+            question: 'Hey it\'s me again, i see that the issue wasnt fixed, ik if the issue lasts more than 2 weeks then you are unable to fix it, but pls reconsider.\nheres a screenshot for reference',
+            answer: 'I have update the formatting in card name and effects to adapt with Arabic, you may try it now.'
+        },
         {
             author: 'Anonymous at April 12, 2026',
             question: 'Hi Lauqerm, have you fix the issue of G and S leeters😭😭 i think the height issue cameback maybe came from the shrinkage of the attribute icons in the name box 🤔🤔',
