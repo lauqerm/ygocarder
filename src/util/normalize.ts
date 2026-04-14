@@ -110,7 +110,7 @@ export const getCanvasFontDebugger = () => {
                         { letter: 'Q', x: Math.round(443 * appliedXRatio), anchor: 'M', compensateBottom: false },
                         { letter: 'o', x: Math.round(483 * appliedXRatio), anchor: 'm' },
                         { letter: 'q', x: Math.round(521 * appliedXRatio), anchor: 'm', compensateBottom: false },
-                        { letter: 'G', x: Math.round(565 * appliedXRatio), anchor: 'M' },
+                        { letter: 'G', x: Math.round(566 * appliedXRatio), anchor: 'M' },
                     ],
                     '2': [
                         { letter: 'm', x: Math.round(70 * appliedXRatio) },
@@ -128,7 +128,7 @@ export const getCanvasFontDebugger = () => {
                         { letter: 'Q', x: Math.round(888 * appliedXRatio), anchor: 'M', compensateBottom: false },
                         { letter: 'o', x: Math.round(969 * appliedXRatio), anchor: 'm' },
                         { letter: 'q', x: Math.round(1043 * appliedXRatio), anchor: 'm', compensateBottom: false },
-                        { letter: 'G', x: Math.round(1128 * appliedXRatio), anchor: 'M' },
+                        { letter: 'G', x: Math.round(1126 * appliedXRatio), anchor: 'M' },
                     ],
                 };
                 const checkpointList = checkpointByScaleMap[appliedScale];
@@ -215,12 +215,12 @@ export const getCanvasFontDebugger = () => {
                         } else {
                             const { ascent: anchorAscent, descent: anchorDescent } = anchorMap[anchor];
                             result[letter] = {
-                                ascentCompensate: typeof anchorAscent === 'number' && compensateTop
+                                ascentCompensate: (typeof anchorAscent === 'number' && compensateTop
                                     ? trueAscent - anchorAscent
-                                    : 0,
-                                descentCompensate: typeof anchorDescent === 'number' && compensateBottom
+                                    : 0) * 1,
+                                descentCompensate: (typeof anchorDescent === 'number' && compensateBottom
                                     ? anchorDescent - trueDescent
-                                    : 0,
+                                    : 0) * 1,
                                 height: trueDescent - trueAscent,
                                 anchorAscent,
                                 anchorDescent,
