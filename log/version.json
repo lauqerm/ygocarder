@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.4.7 (2026/04/14)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for Arabic.",
+                "image": "https://i.postimg.cc/fLdCG8wv/download.png"
+            }
+        ]
+    },
+    {
         "version": "v2.4.6 (2026/03/19)",
         "logList": [
             {
