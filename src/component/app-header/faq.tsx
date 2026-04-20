@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '14/04/2026';
+        const currentReminder = '18/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 18, 2026',
+            question: 'I want to remove the pendulum effect frame, as it\'s already available on the overframe card',
+            answer: 'Do you want to be able to remove the effect background as well? I may give it a try.',
+        },
         {
             author: 'Anonymous at April 14, 2026',
             question: 'Hey it\'s me again, i see that the issue wasnt fixed, ik if the issue lasts more than 2 weeks then you are unable to fix it, but pls reconsider.\nheres a screenshot for reference',
