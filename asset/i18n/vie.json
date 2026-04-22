@@ -480,6 +480,7 @@
         "setting.option.sliding-type.manual.label": "Kéo thủ công",
         "input.frame.unofficial.label": "Fanmade",
         "input.frame.rebirth": "Rebirth",
+        "image-cropper.not-found-info": "Không có ảnh.",
         "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }

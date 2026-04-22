@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.4.8 (2026/04/22)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for customizable foil.",
+                "image": "https://i.postimg.cc/Y0YSrK13/image-mh.png"
+            }
+        ]
+    },
+    {
         "version": "v2.4.7 (2026/04/14)",
         "logList": [
             {
