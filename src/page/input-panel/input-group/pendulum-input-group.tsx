@@ -3,7 +3,7 @@ import { InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } fro
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap } from 'src/model';
 import { CaretDownOutlined, ApartmentOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
@@ -138,7 +138,13 @@ const StyledPendulumInputContainer = styled.div`
 `;
 
 export type PendulumInputGroupRef = {
-    setValue: (value: { pendulumEffect?: string }) => void,
+    setValue: (value: {
+        pendulumEffect?: string,
+        overlay?: string,
+        overlayData?: string,
+        overlaySource?: string,
+        overlayCrop?: Partial<ReactCrop.Crop>,
+    }) => void,
 }
 export type PendulumInputGroup = {
     softMode: boolean,
@@ -146,13 +152,17 @@ export type PendulumInputGroup = {
     showExtraDecorativeOption: boolean,
 }
     & Pick<CardTextInput, 'onTakePicker'>
-    & Pick<FramelayoutSettingPanel, 'onFrameChange'>;
+    & Pick<FramelayoutSettingPanel, 'receivingCanvas' | 'onFrameChange' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
 export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInputGroup>(({
     softMode,
     showCreativeOption,
     showExtraDecorativeOption,
+    receivingCanvas,
     onTakePicker,
     onFrameChange,
+    onCropChange,
+    onTainted,
+    onSourceLoaded,
 }, ref) => {
     const language = useLanguage();
     const {
@@ -215,7 +225,8 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const containerRef = useRef<HTMLDivElement>(null);
     const bottomFrameOptionGridRef = useRef<BottomFrameOptionGridRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
-    const [frameDropdownVisible, setFrameDropdownVisibleVisible] = useState(false);
+    const [frameDropdownVisible, setFrameDropdownVisible] = useState(true);
+    const [frameDropdownHidden, setFrameDropdownHidden] = useState(true);
     const changeToPendulum = (e: any) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
         /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it looks closer to real card */
@@ -240,8 +251,17 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),
-        [showExtraDecorativeOption],
+    [showExtraDecorativeOption],
     );
+    
+    useEffect(() => {
+        /** Force render, otherwise we will miss the image */
+        setFrameDropdownVisible(false);
+        /** Avoid consecutive render here, so the popover does not "flashing" when close */
+        setTimeout(() => {
+            setFrameDropdownHidden(false);
+        }, 250);
+    }, []);
 
     useImperativeHandle(ref, () => ({
         setValue: ({ pendulumEffect }) => {
@@ -282,18 +302,26 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             <div className="pendulum-option-container">
                 {showCreativeOption && <Popover
                     visible={frameDropdownVisible}
-                    onVisibleChange={setFrameDropdownVisibleVisible}
+                    onVisibleChange={setFrameDropdownVisible}
                     trigger={['click']}
                     placement="bottom"
-                    overlayClassName="pendulum-frame-picker-overlay"
+                    overlayClassName={[
+                        'pendulum-frame-picker-overlay layout-picker-overlay',
+                        frameDropdownVisible ? 'picker-visible' : '',
+                        frameDropdownHidden ? 'picker-hidden' : '',
+                    ].join(' ')}
                     content={<div className="overlay-event-absorber">
                         <FrameLayoutSettingPanel ref={bottomFrameOptionGridRef}
                             isPendulum={isPendulum}
                             frameList={frameList}
                             pendulumFrame={pendulumFrame}
+                            onTainted={onTainted}
+                            onCropChange={onCropChange}
+                            onSourceLoaded={onSourceLoaded}
+                            receivingCanvas={receivingCanvas}
                             onFrameChange={onFrameChange}
                             onCancel={() => {
-                                setFrameDropdownVisibleVisible(false);
+                                setFrameDropdownVisible(false);
                                 containerRef.current?.focus();
                             }}
                         />
@@ -305,7 +333,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         tabIndex={0}
                         onKeyDown={e => {
                             if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
-                                setFrameDropdownVisibleVisible(true);
+                                setFrameDropdownVisible(true);
                                 /** Popover takes time to mount / become visible */
                                 setTimeout(() => {
                                     bottomFrameOptionGridRef.current?.focus();

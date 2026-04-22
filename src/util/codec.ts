@@ -1,6 +1,6 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard, getDefaultImageStyle } from '../model';
+import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard, getDefaultImageStyle, getDefaultOverlayCrop } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 
@@ -69,6 +69,24 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         height: 'bgh',
         unit: 'bgu',
         aspect: 'bga',
+    },
+    overlay: 'ovg',
+    overlayFit: 'ovf',
+    overlayStyle: {
+        _newKey: 'ovst',
+        flipX: 'ovsfx',
+        flipY: 'ovsfy',
+    },
+    overlayData: 'ovgd',
+    overlaySource: 'ovgs',
+    overlayCrop: {
+        _newKey: 'ovgc',
+        x: 'ovgx',
+        y: 'ovgy',
+        width: 'ovgw',
+        height: 'ovgh',
+        unit: 'ovgu',
+        aspect: 'ovga',
     },
     name: 'na',
     nameStyleType: 'nst',
@@ -359,6 +377,16 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     migratedCard.backgroundCrop = {
         ...getDefaultCrop(),
         ...migratedCard.backgroundCrop,
+    };
+
+    if ((migratedCard.overlay ?? '') === '') migratedCard.overlay = '';
+    if ((migratedCard.overlayData ?? '') === '') migratedCard.overlayData = '';
+    if ((migratedCard.overlaySource ?? '') === '') migratedCard.overlaySource = 'online';
+    if (migratedCard.overlayFit == null) migratedCard.overlayFit = true;
+    migratedCard.overlayStyle = { ...getDefaultImageStyle(), ...migratedCard.overlayStyle };
+    migratedCard.overlayCrop = {
+        ...getDefaultOverlayCrop(),
+        ...migratedCard.overlayCrop,
     };
 
     if (migratedCard.isLink == null && migratedCard.frame === 'link') {

@@ -3,6 +3,7 @@ import {
     AttributeType,
     BackgroundType,
     Card,
+    CardArtCanvasCoordinateMap,
     CardFlag,
     CardOpacity,
     CondenseType,
@@ -18,6 +19,7 @@ import {
     getDefaultDyeList,
     getDefaultImageStyle,
     getDefaultNameStyle,
+    getDefaultOverlayCrop,
     getDefaultTextStyle,
     getEmptyCard,
     InternalCard,
@@ -171,6 +173,15 @@ const CsvStandardFieldList = [
     'Other Finish - Background',
     'Other Finish - Icon',
     'Other Finish - Sticker',
+    'Overlay Link',
+    'Overlay Data',
+    'Overlay Source',
+    'Is Using Full Overlay',
+    'Overlay Style',
+    'Overlay Crop - X (%)',
+    'Overlay Crop - Y (%)',
+    'Overlay Crop - Width (%)',
+    'Overlay Crop - Height (%)',
     'Left Frame',
     'Right Frame',
     'Bottom Right Frame',
@@ -290,6 +301,12 @@ export const cardListToCsv = (cardList: Card[]) => {
             opacity,
             otherFinish,
             otherTextStyle,
+            overlay,
+            overlayCrop,
+            overlayData,
+            overlayFit,
+            overlaySource,
+            overlayStyle,
             password,
             pendulumEffect,
             pendulumFrame,
@@ -451,6 +468,15 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Finish - Icon', otherFinish[1]);
         write('Other Finish - Sticker', otherFinish[2]);
         write('Other Finish - Background', otherFinish[3]);
+        write('Overlay Link', overlay);
+        write('Overlay Data', overlayData);
+        write('Overlay Source', overlaySource);
+        write('Is Using Full Overlay', overlayFit);
+        write('Overlay Style', JSON.stringify(overlayStyle));
+        write('Overlay Crop - X (%)', overlayCrop.x);
+        write('Overlay Crop - Y (%)', overlayCrop.y);
+        write('Overlay Crop - Width (%)', overlayCrop.width);
+        write('Overlay Crop - Height (%)', overlayCrop.height);
         write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
@@ -700,6 +726,26 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     console.error('csvToCardList', e);
                 }
 
+                const emptyOverlayCrop = getDefaultOverlayCrop();
+                const overlay = reader('Overlay Link') ?? emptyCard.overlay;
+                const overlayData = reader('Overlay Data') ?? emptyCard.overlayData;
+                const overlaySource = reader('Overlay Source') ?? emptyCard.overlaySource;
+                const overlayFit = normalizeBoolean(reader('Is Using Full Overlay'), emptyCard.overlayFit);
+                const overlayCrop: Crop = {
+                    aspect: CardArtCanvasCoordinateMap.overframeCard.ratio,
+                    height: normalizeFloat(reader('Overlay Crop - Height (%)'), emptyOverlayCrop.height),
+                    width: normalizeFloat(reader('Overlay Crop - Width (%)'), emptyOverlayCrop.width),
+                    x: normalizeFloat(reader('Overlay Crop - X (%)'), emptyOverlayCrop.x),
+                    y: normalizeFloat(reader('Overlay Crop - Y (%)'), emptyOverlayCrop.y),
+                    unit: '%',
+                };
+                let overlayStyle = getDefaultImageStyle();
+                try {
+                    overlayStyle = JSON.parse(reader('Overlay Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
+
                 const emptyNameStyle = getDefaultNameStyle();
                 const nameStyleType = (reader('Name Style Type') ?? emptyCard.nameStyleType).toLowerCase() as NameStyleType;
                 const nameStyle: NameStyle = {
@@ -854,6 +900,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     opacity,
                     otherFinish: [finishAttribute, finishIcon, finishSticker, finishBackground] as OtherFinish,
                     otherTextStyle,
+                    overlay,
+                    overlayCrop,
+                    overlayData,
+                    overlayFit,
+                    overlaySource,
+                    overlayStyle,
                     password,
                     pendulumEffect,
                     pendulumFrame,

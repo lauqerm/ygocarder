@@ -29,6 +29,11 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
         .radio-train-input-group {
             gap: 0;
         }
+        .ant-radio-button-wrapper {
+            &:hover {
+                outline: none;
+            }
+        }
     }
     .ant-checkbox-wrapper {
         color: var(--color-heavy);

@@ -1,15 +1,16 @@
 import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage } from 'src/service';
+import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage, useSetting } from 'src/service';
 import { getFoilButtonList, getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
-import { CardLayoutPreview, FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
+import { CardLayoutPreview, FrameInfoBlock, HorizontalSketchPicker, ImageCropper, RadioTrain, StandaloneLabel } from 'src/component';
 import styled from 'styled-components';
 import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 import { FramePresetPanel } from './frame-preset-panel';
 import { v4 as uuid } from 'uuid';
+import { FoilInputGroup, FoilInputGroupRef } from './foil-input-group';
 
 const {
     width,
@@ -65,6 +66,18 @@ const FrameLayoutContainer = styled.div`
         padding-top: var(--spacing-sm);
         border-top: var(--bw) solid var(--sub-level-3);
     }
+    .custom-foil-group {
+        padding-top: var(--spacing-2xl);
+        .card-image-source-input {
+            width: 280px;
+            padding-right: var(--spacing-sm);
+        }
+    }
+    .custom-foil-group-hidden {
+        visibility: hidden;
+        position: absolute;
+        width: 0;
+    }
 `;
 
 type FramelayoutSettingPanelRef = {
@@ -76,8 +89,12 @@ export type FramelayoutSettingPanel = {
     frameList: ReturnType<typeof getFrameButtonList>,
     onFrameChange: (frame: string) => void,
     onCancel: () => void,
-};
+} & Pick<ImageCropper, 'receivingCanvas' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
 export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, FramelayoutSettingPanel>(({
+    receivingCanvas,
+    onSourceLoaded,
+    onTainted,
+    onCropChange,
     frameList,
     onFrameChange,
     onCancel,
@@ -119,6 +136,13 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         setCard,
         getUpdater,
     })));
+    const {
+        globalScale,
+    } = useSetting(useShallow(({ setting: {
+        globalScale,
+    } }) => ({
+        globalScale,
+    })));
     const [, setLayoutPresetList] = useGlobal('layoutPresetList');
     const recentCustomPendulumFrame = useRef({
         topLeftFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
@@ -132,6 +156,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const [activeLayout, setActiveLayout] = useState('frame');
     const frameLayoutMainId = 'frame-layout-main';
     const foilButtonList = useMemo(() => getFoilButtonList(language), [language]);
+    const foilInputRef = useRef<FoilInputGroupRef>(null);
 
     useEffect(() => {
         /** Avoid confusion */
@@ -298,26 +323,46 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                         changeLayout(e.target.checked ? 'auto' : (recentCustomPendulumFrame.current[activeLayout] ?? 'auto'));
                     }}
                 >{language['input.frame.auto']}</Checkbox>}
-                {activeLayout === 'foil'
-                    ? <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
-                        <span>{language['input.foil.label']}</span>
-                    </RadioTrain>
-                    : <RadioTrain
-                        className="frame-radio"
-                        value={activeFrame}
-                        onChange={value => {
-                            if (activeLayout === 'frame') onFrameChange(value);
-                            else changeLayout(value);
-                        }}
-                        optionList={frameList}
-                    />}
+                {activeLayout !== 'foil' && <RadioTrain
+                    className="frame-radio"
+                    value={activeFrame}
+                    onChange={value => {
+                        if (activeLayout === 'frame') onFrameChange(value);
+                        else changeLayout(value);
+                    }}
+                    optionList={frameList}
+                />}
+                {/** Must mount foil overlay even to make sure it display correctly */}
+                <div
+                    className={mergeClass('custom-foil-group', activeLayout !== 'foil' ? 'custom-foil-group-hidden' : '')}
+                    style={{
+                        ...({
+                            '--card-height': `${height * globalScale}px`,
+                            '--card-width': `${width * globalScale}px`,
+                            '--global-scale': `${globalScale}`,
+                            '--cropper-width': `${200}px`,
+                        }),
+                    } as React.CSSProperties}
+                >
+                    <FoilInputGroup
+                        ref={foilInputRef}
+                        receivingCanvas={receivingCanvas}
+                        onSourceLoaded={onSourceLoaded}
+                        onTainted={onTainted}
+                        onCropChange={onCropChange}
+                    >
+                        <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
+                            <span>{language['input.foil.label']}</span>
+                        </RadioTrain>
+                    </FoilInputGroup>
+                </div>
                 {typeof dyeColor === 'number' && <HorizontalSketchPicker
                     value={dyeList[dyeColor]}
                     onChange={color => {
                         if (color !== dyeList[dyeColor]) changeDye(color, activeLayout);
                     }}
                 >
-                    {language['input.advanced-frame.dye']}
+                    <StandaloneLabel $fixedSize={false}>{language['input.advanced-frame.dye']}</StandaloneLabel>
                 </HorizontalSketchPicker>}
             </StyledPendulumFrameContainer>
         </div>

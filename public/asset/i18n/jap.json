@@ -481,6 +481,7 @@
         "setting.option.resolution.warning": "May affect performance",
         "setting.option.sliding-type.auto.label": "Auto",
         "setting.option.sliding-type.label": "Preview sliding (Desktop only)",
+        "image-cropper.not-found-info": "No image.",
         "setting.option.sliding-type.manual.label": "Manual drag"
     }
 }

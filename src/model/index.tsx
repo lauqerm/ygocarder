@@ -18,6 +18,14 @@ export const getDefaultCrop = () => ({
     unit: '%' as '%' | 'px',
     aspect: 1,
 });
+export const getDefaultOverlayCrop = () => ({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+    unit: '%' as '%' | 'px',
+    aspect: 0.686,
+});
 
 /**
  * Check following things when adding new attributes:
@@ -67,6 +75,12 @@ export const getDefaultCard = () => ({
     backgroundSource: 'online',
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
+    overlay: '',
+    overlayData: '',
+    overlayFit: true,
+    overlayStyle: getDefaultImageStyle(),
+    overlaySource: 'online',
+    overlayCrop: getDefaultOverlayCrop() as Partial<ReactCrop.Crop>,
     linkMap: [
         '1',
         '3',
@@ -187,6 +201,19 @@ export const getEmptyCard = (): Card => ({
         height: 89.5,
         unit: '%',
         aspect: 1,
+    },
+    overlay: '',
+    overlayData: '',
+    overlayFit: true,
+    overlayStyle: getDefaultImageStyle(),
+    overlaySource: 'online',
+    overlayCrop: {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        unit: '%',
+        aspect: 0.686,
     },
     linkMap: [],
     linkRating: '',

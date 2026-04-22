@@ -41,7 +41,9 @@ export const drawFrom = async (
             ? imageCacheMap[source].image
             : new Image();
 
-        if (!imageCached) image.src = process.env.PUBLIC_URL + source;
+        if (!imageCached) image.src = source.startsWith('http')
+            ? source
+            : process.env.PUBLIC_URL + source;
         image.addEventListener(
             'load',
             () => {

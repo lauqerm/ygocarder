@@ -90,7 +90,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),
-        [showExtraDecorativeOption],
+    [showExtraDecorativeOption],
     );
 
     const {

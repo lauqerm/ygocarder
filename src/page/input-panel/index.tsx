@@ -64,11 +64,13 @@ export type CardInputPanelRef = {
 export type CardInputPanel = {
     artworkCanvas: ImageInputGroup['receivingCanvas'],
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
+    foilCanvas: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData'>;
 export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     applyCardData,
     artworkCanvas,
     backgroundCanvas,
+    foilCanvas,
     onCropChange,
     onTainted,
     onSourceLoaded,
@@ -116,10 +118,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     const postPendulumInputGroupRef = useRef<PostPendulumInputGroupRef>(null);
     const footerInputGroupRef = useRef<FooterInputGroupRef>(null);
 
-    const [pickerTarget, setPickerTarget] = useState<{
-        id: string,
-        setValue: (nextValue: string) => void,
-    }>({
+    const [pickerTarget, setPickerTarget] = useState<{ id: string, setValue: (nextValue: string) => void }>({
         id: '',
         setValue: () => {},
     });
@@ -171,6 +170,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 name,
                 art, artCrop, artData, artSource,
                 background, backgroundCrop, backgroundData, backgroundSource,
+                overlay, overlayCrop, overlayData, overlaySource,
                 opacity,
                 attribute, attributeType,
                 setId,
@@ -193,7 +193,10 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 attribute, attributeType,
             });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
-            pendulumInputGroupRef.current?.setValue({ pendulumEffect });
+            pendulumInputGroupRef.current?.setValue({
+                pendulumEffect,
+                overlay, overlayCrop, overlayData, overlaySource,
+            });
             effectInputGroupRef.current?.setValue(effect);
             postPendulumInputGroupRef.current?.setValue({
                 typeAbility,
@@ -286,6 +289,10 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                     showCreativeOption={showCreativeOption}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     softMode={reduceMotionColor}
+                    receivingCanvas={foilCanvas}
+                    onTainted={onTainted}
+                    onSourceLoaded={onSourceLoaded}
+                    onCropChange={onCropChange}
                     onTakePicker={setPickerTarget}
                     onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
                 />

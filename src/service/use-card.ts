@@ -122,14 +122,15 @@ export const retrieveSavedCard = (): InternalCard => {
              */
             const { card: decodedCard } = decodeCard(urlCardData);
             const card = migrateCardData(decodedCard);
-            const { artSource, backgroundSource } = card;
-            if (artSource === 'online' && backgroundSource === 'online') {
+            const { artSource, backgroundSource, overlaySource } = card;
+            if (artSource === 'online' && backgroundSource === 'online' && overlaySource === 'online') {
                 return decodeCard(urlCardData).card;
             }
 
             const combinedCard = { ...card };
             if (artSource === 'offline') combinedCard.artData = localCardData?.artData ?? '';
             if (backgroundSource === 'offline') combinedCard.backgroundData = localCardData?.backgroundData ?? '';
+            if (overlaySource === 'offline') combinedCard.overlayData = localCardData?.overlayData ?? '';
 
             return combinedCard;
         } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {

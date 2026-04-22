@@ -6,23 +6,23 @@ export const getBackgroundTypeList = (dictionary?: {
     frame: string,
     strict: string,
 }) => [
-        {
-            value: 'strict' as const,
-            label: dictionary?.strict,
-        },
-        {
-            value: 'fit' as const,
-            label: dictionary?.fit,
-        },
-        {
-            value: 'full' as const,
-            label: dictionary?.full,
-        },
-        {
-            value: 'frame' as const,
-            label: dictionary?.frame,
-        },
-    ];
+    {
+        value: 'strict' as const,
+        label: dictionary?.strict,
+    },
+    {
+        value: 'fit' as const,
+        label: dictionary?.fit,
+    },
+    {
+        value: 'full' as const,
+        label: dictionary?.full,
+    },
+    {
+        value: 'frame' as const,
+        label: dictionary?.frame,
+    },
+];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];
 
 /**
@@ -35,6 +35,7 @@ export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'
 export type MasterSeriesCanvas = {
     artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
+    overlayCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportCanvasRef: React.RefObject<HTMLCanvasElement>,
     frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,

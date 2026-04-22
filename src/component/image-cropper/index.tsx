@@ -1,7 +1,7 @@
 import { Empty, Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
-import { ArrowRightOutlined, ArrowUpOutlined, DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import { useGlobal, useLanguage } from 'src/service';
@@ -135,6 +135,7 @@ export type ImageCropper = {
     defaultCropInfo: Partial<ReactCrop.Crop>,
     ratio: number,
     imageStyle: ImageStyle,
+    isNotFoundAnError?: boolean,
     onImageStyleChange: (style: ImageStyle) => void,
     onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
     onSourceLoaded?: (crossorigin?: string) => void,
@@ -157,6 +158,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     defaultCropInfo,
     ratio,
     imageStyle,
+    isNotFoundAnError = true,
     onImageStyleChange,
     onSourceLoaded = () => { },
     onSourceChange = () => { },
@@ -461,7 +463,8 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 <div className="card-image-source-input-container">
                     <div className="card-image-source-input-title">
                         <span className="field-title">
-                            {title} <IconButton
+                            {title}
+                            <IconButton
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
                                 tooltipProps={{
@@ -470,6 +473,21 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                         : language['image-cropper.no-download']
                                 }}
                                 onClick={() => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)}
+                            />
+                            <IconButton
+                                Icon={CloseOutlined}
+                                tooltipProps={{
+                                    overlay: language['generic.reset.tooltip']
+                                }}
+                                onClick={() => {
+                                    if (sourceType === 'offline') {
+                                        setInternalSource('');
+                                        onSourceChange('offline', '');
+                                    } else {
+                                        setExternalSource('');
+                                        onSourceChange('online', '');
+                                    }
+                                }}
                             />
                         </span>
                         <Radio.Group
@@ -654,7 +672,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                     </Tooltip>}
                 </div>}
                 {((!hasImage || (error && crossorigin === undefined)) && !isLoading) && <Empty
-                    description={language['image-cropper.not-found-warning']}
+                    description={isNotFoundAnError
+                        ? language['image-cropper.not-found-warning']
+                        : language['image-cropper.not-found-info']}
                     image={null}
                 />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}

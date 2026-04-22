@@ -140,6 +140,7 @@ function App() {
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
+    const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
     const exportCanvasRef = useRef<HTMLCanvasElement>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
     const frameCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -159,6 +160,7 @@ function App() {
     const [canvasMap] = useState({
         artworkCanvasRef,
         backgroundCanvasRef,
+        overlayCanvasRef,
         exportCanvasRef,
         frameCanvasRef,
         cardIconCanvasRef,
@@ -605,7 +607,7 @@ function App() {
                 className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
-                        }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                    }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: IS_MOBILE ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasHeight * globalScale}px`,
@@ -815,6 +817,9 @@ function App() {
                                     <canvas className="crop-canvas"
                                         ref={backgroundCanvasRef}
                                     />
+                                    <canvas className="crop-canvas"
+                                        ref={overlayCanvasRef}
+                                    />
                                 </CardCanvasGroupContainer>
                             </CardPreviewContainer>
                         </div>
@@ -848,6 +853,7 @@ function App() {
                         applyCardData={treatNewCard}
                         artworkCanvas={artworkCanvasRef.current}
                         backgroundCanvas={backgroundCanvasRef.current}
+                        foilCanvas={overlayCanvasRef.current}
                         onSourceLoaded={rerenderAllImage}
                         onCropChange={rerenderCardImage}
                         onTainted={markTaintedImage}

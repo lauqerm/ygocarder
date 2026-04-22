@@ -6,7 +6,13 @@ const {
     width: cardWidth,
     height: cardHeight,
 } = CanvasConst;
-export const dyeCanvas = (baseCanvas: HTMLCanvasElement, color: string, width = cardWidth, height = cardHeight) => {
+export const dyeCanvas = (
+    baseCanvas: HTMLCanvasElement,
+    color: string,
+    width = cardWidth,
+    height = cardHeight,
+    additionalFilter = '',
+) => {
     if (!HexColorRegex.test(color)) return {
         canvas: baseCanvas,
         ctx: baseCanvas.getContext('2d'),
@@ -19,7 +25,7 @@ export const dyeCanvas = (baseCanvas: HTMLCanvasElement, color: string, width = 
         ctx: baseCanvas.getContext('2d'),
     };
     /** Draw the target image with grayscale */
-    overlayContext.filter = 'grayscale(1)';
+    overlayContext.filter = ['grayscale(1)', additionalFilter].join(' ');
     overlayContext.drawImage(baseCanvas, 0, 0);
     overlayContext.filter = 'none';
 

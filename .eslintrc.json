@@ -31,7 +31,7 @@
         ],
         "no-redeclare": "off",
         "@typescript-eslint/no-redeclare": "off",
-        "indent": "off",
+        "indent": ["error", 4],
         "@typescript-eslint/indent": "off",
         "quotes": [
             "error",
