@@ -96,11 +96,11 @@ const compareSemver = (a: string, b: string): boolean => {
     const [majorB, minorB, patchB] = String(b).split('.').map(Number);
     
     if (majorA !== majorB) {
-      return majorA > majorB;
+        return majorA > majorB;
     }
     
     if (minorA !== minorB) {
-      return minorA > minorB;
+        return minorA > minorB;
     }
     
     return patchA > patchB;
