@@ -6,20 +6,13 @@ export const getDefaultOtherMakerCard = () => ({
     type: 'Warrior/Effect',
     icon: 'Quick-play',
     effect: 'Card Effect',
-    atk: '0',
-    def: '0',
+    atk: 0 as string | number,
+    def: 0 as string | number,
     serial: '1234567890',
     copyright: '©',
     attribute: 'Light',
     id: 'ABCD-XY000',
-    pendulum: {
-        enabled: false,
-        effect: '',
-        blue: '0',
-        red: '0',
-        boxSize: 'Normal',
-        boxSizeEnabled: true,
-    },
+    pendulum: getDefaultPendulumOtherMakerCard() as PendulumOtherMakerCard | undefined,
     variant: 'Normal',
     link: {
         topLeft: false,
@@ -36,13 +29,22 @@ export const getDefaultOtherMakerCard = () => ({
     rarity: 'secret',
     image: '',
 });
+export type PendulumOtherMakerCard = ReturnType<typeof getDefaultPendulumOtherMakerCard>;
+export const getDefaultPendulumOtherMakerCard = () => ({
+    enabled: false,
+    effect: '',
+    blue: '0',
+    red: '0',
+    boxSize: 'Normal',
+    boxSizeEnabled: true,
+});
 
 export type YgoproDeckCardImage = ReturnType<typeof getDefaultYgoproDeckCardImage>;
 export const getDefaultYgoproDeckCardImage = () => ({
-    id: 46986414,
-    image_url: 'https://images.ygoprodeck.com/images/cards/46986414.jpg',
-    image_url_small: 'https://images.ygoprodeck.com/images/cards_small/46986414.jpg',
-    image_url_cropped: 'https://images.ygoprodeck.com/images/cards_cropped/46986414.jpg'
+    'id': 27288416,
+    'image_url': 'https://images.ygoprodeck.com/images/cards/27288416.jpg',
+    'image_url_small': 'https://images.ygoprodeck.com/images/cards_small/27288416.jpg',
+    'image_url_cropped': 'https://images.ygoprodeck.com/images/cards_cropped/27288416.jpg',
 });
 
 export type YgoproDeckCardSet = ReturnType<typeof getDefaultYgoproDeckCardSet>;
@@ -96,7 +98,7 @@ export const getDefaultYgoproDeckCard = () => ({
     attribute: 'DARK',
     archetype: 'Dark Magician',
     ygoprodeck_url: 'https://ygoprodeck.com/card/dark-magician-4003',
-    card_sets: [] as YgoproDeckCardSet[],
+    card_sets: [] as YgoproDeckCardSet[] | undefined,
     card_images: [] as YgoproDeckCardImage[],
     card_prices: [
         {

@@ -9,6 +9,7 @@ import {
     PLACEHOLDER_CLOSE,
     PLACEHOLDER_DELIMITER,
     PLACEHOLDER_OPEN,
+    WritingDirection,
 } from 'src/model';
 import { createFontGetter, scaleFontSizeData } from 'src/util';
 
@@ -339,7 +340,7 @@ export const splitPlaceholder = (placeholder: string) => {
     };
 };
 
-export const getWritingDirection = (text: string) => {
+export const getWritingDirection = (text: string): WritingDirection => {
     return ArabicWordRegex.test(text) ? 'rtl' : 'ltr';
 };
 

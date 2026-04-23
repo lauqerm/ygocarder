@@ -8,6 +8,8 @@ import {
     PresetNameStyleMap,
     getDefaultNameStyle,
     PendulumSize,
+    getDefaultPendulumOtherMakerCard,
+    getDefaultCard,
 } from 'src/model';
 import { normalizeCardEffect, normalizeCardName } from './normalize';
 import { isImageData } from './other';
@@ -230,100 +232,113 @@ export const ygoCarderToCardMakerData = (
 };
 
 export const cardMakerToYgoCarderData = (card: OtherMakerCard): { result: Card, isPartial: boolean } => {
-    const {
-        name,
-        atk,
-        def,
-        attribute,
-        effect,
-        boxSize,
-        copyright,
-        icon,
-        id,
-        image,
-        layout,
-        level,
-        link,
-        pendulum,
-        rarity,
-        serial,
-        type,
-        variant,
-        version,
-    } = card;
-    const { red, blue, boxSize: pendulumBoxSize, boxSizeEnabled, effect: pendulumEffect, enabled } = pendulum;
-    const normalizedIcon = reverseCardIconMap[icon];
-    const normalizedAttribute = reverseAttributeMap[attribute];
-    const normalizedFrame = reverseFrameMap[layout];
-    const useImageData = isImageData(image);
-    const levelAsNumber = parseInt(level);
-    const normalizedRarity = rarity ? reverseRarityMap[rarity.toLowerCase()] : undefined;
-
-    let isPartial = normalizedIcon === undefined
-        || normalizedAttribute === undefined
-        || normalizedFrame === undefined
-        || normalizedRarity === undefined;
-    const {
-        finish,
-        artFinish,
-        text,
-    } = normalizedRarity ?? {};
-    const namePreset = text ? PresetNameStyleMap[text as PresetNameStyle] : null;
-    const baseCard = getEmptyCard();
-    const result: Card = {
-        ...baseCard,
-        finish: finish ?? [],
-        name,
-        nameStyleType: text ? 'predefined' : 'auto',
-        nameStyle: namePreset
-            ? namePreset.value
-            : getDefaultNameStyle(),
-        atk,
-        def,
-        attribute: normalizedAttribute ?? NO_ATTRIBUTE,
-        effect,
-        creator: copyright,
-        subFamily: normalizedIcon ?? NO_ICON,
-        setId: id,
-        frame: normalizedFrame ?? 'normal',
-        star: `${levelAsNumber}` === level && levelAsNumber <= 13 ? levelAsNumber : level,
-        typeAbility: type.split('/').map(entry => entry.trim()),
-        art: useImageData ? '' : image,
-        artFit: true,
-        artData: useImageData ? image : '',
-        artSource: useImageData ? 'offline' : 'online',
-        artFinish: artFinish ?? 'normal',
-        isLink: normalizedFrame === 'link' && link != null,
-        linkMap: [
-            link?.topLeft === true ? '1' : null,
-            link?.topCenter === true ? '2' : null,
-            link?.topRight === true ? '3' : null,
-            link?.middleLeft === true ? '4' : null,
-            link?.middleRight === true ? '6' : null,
-            link?.bottomLeft === true ? '7' : null,
-            link?.bottomCenter === true ? '8' : null,
-            link?.bottomRight === true ? '9' : null,
-        ].filter(entry => typeof entry === 'string'),
-        isPendulum: enabled,
-        pendulumScaleBlue: blue,
-        pendulumScaleRed: red,
-        pendulumEffect: pendulumEffect,
-        pendulumSize: reverseBoxSizeMap[pendulumBoxSize],
-        password: serial,
-        externalInfo: {
-            version,
-            variant,
+    try {
+        const {
+            name,
+            atk,
+            def,
+            attribute,
+            effect,
             boxSize,
+            copyright,
+            icon,
+            id,
+            image,
+            layout,
+            level,
+            link,
+            pendulum,
             rarity,
-            pendulum: {
-                boxSize: pendulumBoxSize,
-                boxSizeEnabled,
-            },
-        }
-    };
+            serial,
+            type,
+            variant,
+            version,
+        } = card;
+        const {
+            red, blue,
+            boxSize: pendulumBoxSize,
+            boxSizeEnabled,
+            effect: pendulumEffect,
+            enabled,
+        } = pendulum ?? getDefaultPendulumOtherMakerCard();
+        const normalizedIcon = reverseCardIconMap[icon];
+        const normalizedAttribute = reverseAttributeMap[attribute];
+        const normalizedFrame = reverseFrameMap[layout];
+        const useImageData = isImageData(image);
+        const levelAsNumber = parseInt(level);
+        const normalizedRarity = rarity ? reverseRarityMap[rarity.toLowerCase()] : undefined;
 
-    return {
-        isPartial,
-        result,
-    };
+        let isPartial = normalizedIcon === undefined
+            || normalizedAttribute === undefined
+            || normalizedFrame === undefined
+            || normalizedRarity === undefined;
+        const {
+            finish,
+            artFinish,
+            text,
+        } = normalizedRarity ?? {};
+        const namePreset = text ? PresetNameStyleMap[text as PresetNameStyle] : null;
+        const baseCard = getEmptyCard();
+        const result: Card = {
+            ...baseCard,
+            finish: finish ?? [],
+            name,
+            nameStyleType: text ? 'predefined' : 'auto',
+            nameStyle: namePreset
+                ? namePreset.value
+                : getDefaultNameStyle(),
+            atk: typeof atk === 'number' ? `${atk}` : atk,
+            def: typeof def === 'number' ? `${def}` : def,
+            attribute: normalizedAttribute ?? NO_ATTRIBUTE,
+            effect,
+            creator: copyright,
+            subFamily: normalizedIcon ?? NO_ICON,
+            setId: id,
+            frame: normalizedFrame ?? 'normal',
+            star: `${levelAsNumber}` === level && levelAsNumber <= 13 ? levelAsNumber : level,
+            typeAbility: type.split('/').map(entry => entry.trim()),
+            art: useImageData ? '' : image,
+            artFit: true,
+            artData: useImageData ? image : '',
+            artSource: useImageData ? 'offline' : 'online',
+            artFinish: artFinish ?? 'normal',
+            isLink: normalizedFrame === 'link' && link != null,
+            linkMap: [
+                link?.topLeft === true ? '1' : null,
+                link?.topCenter === true ? '2' : null,
+                link?.topRight === true ? '3' : null,
+                link?.middleLeft === true ? '4' : null,
+                link?.middleRight === true ? '6' : null,
+                link?.bottomLeft === true ? '7' : null,
+                link?.bottomCenter === true ? '8' : null,
+                link?.bottomRight === true ? '9' : null,
+            ].filter(entry => typeof entry === 'string'),
+            isPendulum: enabled,
+            pendulumScaleBlue: blue,
+            pendulumScaleRed: red,
+            pendulumEffect: pendulumEffect,
+            pendulumSize: reverseBoxSizeMap[pendulumBoxSize],
+            password: serial,
+            externalInfo: {
+                version,
+                variant,
+                boxSize,
+                rarity,
+                pendulum: {
+                    boxSize: pendulumBoxSize,
+                    boxSizeEnabled,
+                },
+            }
+        };
+
+        return {
+            isPartial,
+            result,
+        };
+    } catch (e) {
+        return {
+            isPartial: true,
+            result: getDefaultCard(),
+        };
+    }
 };
