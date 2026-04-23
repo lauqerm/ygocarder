@@ -4,6 +4,7 @@
   "version": "2.4.8",
   "private": true,
   "dependencies": {
+    "@sentry/cli": "^2",
     "@sentry/react": "^8.42.0",
     "@sentry/webpack-plugin": "^2.22.7",
     "@testing-library/jest-dom": "^5.11.6",
@@ -49,7 +50,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "build": "react-scripts --openssl-legacy-provider build && yarn sentry:sourcemaps",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
     "deploy": "gh-pages -d build",
@@ -57,7 +58,8 @@
     "lint": "eslint --fix --ext .ts,.tsx .",
     "predeploy": "npm run build",
     "start": "react-scripts --openssl-legacy-provider start",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org lauqerm --project ygo-carder ./build && sentry-cli sourcemaps upload --org lauqerm --project ygo-carder ./build"
   },
   "eslintConfig": {
     "extends": [
