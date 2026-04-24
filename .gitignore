@@ -43,3 +43,5 @@ yarn-error.log*
 .env.production
 # Sentry Config File
 .sentryclirc
+
+test.html

@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '18/04/2026';
+        const currentReminder = '24/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Ryan at April 24, 2026',
+            question: 'Importing a Spell Card (haven\'t tried on Traps) don\'t auto attach the Spell Attribute and show ATK/DEF like a Monster card.',
+            answer: 'Thanks for your report, I have fixed the issue.',
+        },
         {
             author: 'Anonymous at April 18, 2026',
             question: 'I want to remove the pendulum effect frame, as it\'s already available on the overframe card',

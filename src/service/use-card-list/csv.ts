@@ -178,6 +178,7 @@ const CsvStandardFieldList = [
     'Overlay Source',
     'Is Using Full Overlay',
     'Overlay Style',
+    'Overlay Type',
     'Overlay Crop - X (%)',
     'Overlay Crop - Y (%)',
     'Overlay Crop - Width (%)',
@@ -307,6 +308,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             overlayFit,
             overlaySource,
             overlayStyle,
+            overlayType,
             password,
             pendulumEffect,
             pendulumFrame,
@@ -473,6 +475,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Overlay Source', overlaySource);
         write('Is Using Full Overlay', overlayFit);
         write('Overlay Style', JSON.stringify(overlayStyle));
+        write('Overlay Type', overlayType);
         write('Overlay Crop - X (%)', overlayCrop.x);
         write('Overlay Crop - Y (%)', overlayCrop.y);
         write('Overlay Crop - Width (%)', overlayCrop.width);
@@ -731,6 +734,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const overlayData = reader('Overlay Data') ?? emptyCard.overlayData;
                 const overlaySource = reader('Overlay Source') ?? emptyCard.overlaySource;
                 const overlayFit = normalizeBoolean(reader('Is Using Full Overlay'), emptyCard.overlayFit);
+                const overlayType = (reader('Overlay Type') ?? emptyCard.overlayType).toLowerCase();
                 const overlayCrop: Crop = {
                     aspect: CardArtCanvasCoordinateMap.overframeCard.ratio,
                     height: normalizeFloat(reader('Overlay Crop - Height (%)'), emptyOverlayCrop.height),
@@ -906,6 +910,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     overlayFit,
                     overlaySource,
                     overlayStyle,
+                    overlayType,
                     password,
                     pendulumEffect,
                     pendulumFrame,

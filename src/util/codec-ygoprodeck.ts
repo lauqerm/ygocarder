@@ -181,15 +181,20 @@ export const ygoproDeckToYgoCarderData = (card: YgoproDeckCard): { result: Card,
             ? pend_desc.replaceAll(/^''|''$/g, '')
             : '';
         const cardImage = card_images[0].image_url_cropped;
+        const hasStat = !['spell', 'trap', 'skill'].includes(frameType);
 
         const baseCard = getEmptyCard();
         const result: Card = {
             ...baseCard,
             name,
-            atk: (atk < 0 || atk == null) ? '?' : `${atk}`,
-            def: def
-                ? (def < 0 || def == null) ? '?' : `${def}`
-                : '0',
+            atk: hasStat
+                ? (atk < 0 || atk == null) ? '?' : `${atk}`
+                : '',
+            def: hasStat
+                ? def
+                    ? (def < 0 || def == null) ? '?' : `${def}`
+                    : '0'
+                : '',
             attribute: normalizedAttribute ?? NO_ATTRIBUTE,
             effect: formattedMonsterEffect,
             subFamily: normalizedIcon ?? NO_ICON,

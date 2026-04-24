@@ -56,7 +56,7 @@
     "deploy": "gh-pages -d build",
     "eject": "react-scripts eject",
     "lint": "eslint --fix --ext .ts,.tsx .",
-    "predeploy": "npm run build",
+    "predeploy": "yarn run build",
     "start": "react-scripts --openssl-legacy-provider start",
     "test": "react-scripts test",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org lauqerm --project ygo-carder ./build && sentry-cli sourcemaps upload --org lauqerm --project ygo-carder ./build"

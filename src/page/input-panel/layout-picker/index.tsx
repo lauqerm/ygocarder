@@ -10,15 +10,20 @@ import {
     getDefaultCardOpacity,
     DefaultColorList,
     LayoutSettingList,
+    CanvasConst,
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
 import { CombinedSliderContainer, GuardedSlider, ImageCropper, RadioTrain, SolidLabel } from 'src/component';
-import { useCard, useLanguage } from 'src/service';
+import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
 import './layout-picker.scss';
 
+const {
+    width,
+    height,
+} = CanvasConst;
 const StyledLayoutPickerContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -230,6 +235,13 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         legacyTemplate,
         setCard,
     })));
+    const {
+        globalScale,
+    } = useSetting(useShallow(({ setting: {
+        globalScale,
+    } }) => ({
+        globalScale,
+    })));
     const [backgroundInputVisible, setBackgroundInputVisible] = useState(true);
     const [backgroundInputHidden, setBackgroundInputHidden] = useState(true);
     const [opacity, setOpacity] = useState(() => ({ ...getDefaultCardOpacity(), ...defaultValue }));
@@ -392,7 +404,17 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         <br />
                         <i>{language['input.background.description']}</i>
                     </h3>
-                    <div className={`background-picker ${hasBackground ? '' : 'overlay-no-background'}`}>
+                    <div
+                        className={`background-picker ${hasBackground ? '' : 'overlay-no-background'}`}
+                        style={{
+                            ...({
+                                '--card-height': `${height * globalScale}px`,
+                                '--card-width': `${width * globalScale}px`,
+                                '--global-scale': `${globalScale}`,
+                                '--cropper-width': `${300}px`,
+                            }),
+                        } as React.CSSProperties}
+                    >
                         <BackgroundInputGroup
                             ref={backgroundInputRef}
                             receivingCanvas={receivingCanvas}

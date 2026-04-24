@@ -6,11 +6,11 @@ import { getFoilButtonList, getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
 import { CardLayoutPreview, FrameInfoBlock, HorizontalSketchPicker, ImageCropper, RadioTrain, StandaloneLabel } from 'src/component';
 import styled from 'styled-components';
-import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultDyeList } from 'src/model';
+import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultCard, getDefaultDyeList, getOverlayCompositeList, OverlayComposite } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
 import { FramePresetPanel } from './frame-preset-panel';
 import { v4 as uuid } from 'uuid';
-import { FoilInputGroup, FoilInputGroupRef } from './foil-input-group';
+import { OverlayInputGroup, OverlayInputGroupRef } from './overlay-input-group';
 
 const {
     width,
@@ -66,17 +66,56 @@ const FrameLayoutContainer = styled.div`
         padding-top: var(--spacing-sm);
         border-top: var(--bw) solid var(--sub-level-3);
     }
-    .custom-foil-group {
+    .radio-train.overlay-radio {
+        display: grid;
+        margin-top: var(--spacing-sm);
+        .ant-radio-button-wrapper {
+            font-size: var(--fs);
+            min-width: unset;
+        }
+        .standalone-addon {
+            border: none;
+            padding-bottom: var(--spacing-xxs);
+        }
+        .radio-train-input-group {
+            gap: 0;
+        }
+        .ant-radio-button-wrapper {
+            &:hover {
+                outline: none;
+            }
+        }
+    }
+    .part-radio {
+        .radio-train-input-group {
+            grid-template-columns: 1fr;
+        }
+    }
+    .foil-radio {
+        grid-template-columns: var(--width-label) 1fr;
+        .radio-train-input-group {
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        }
+    }
+    .custom-overlay-group {
         padding-top: var(--spacing-2xl);
         .card-image-source-input {
             width: 280px;
             padding-right: var(--spacing-sm);
         }
     }
-    .custom-foil-group-hidden {
+    .custom-overlay-group-hidden {
         visibility: hidden;
         position: absolute;
         width: 0;
+        .custom-overlay-part-group {
+            display: none;
+        }
+    }
+    .custom-overlay-part-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
     }
 `;
 
@@ -104,6 +143,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const {
         isPendulum,
         foil,
+        overlayType, overlaySource, overlay, overlayData,
         frame,
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
@@ -115,6 +155,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         card: {
             isPendulum,
             foil,
+            overlayType, overlaySource, overlay, overlayData,
             frame,
             leftFrame, rightFrame,
             pendulumFrame, pendulumRightFrame,
@@ -127,6 +168,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     }) => ({
         isPendulum,
         foil,
+        overlayType, overlaySource, overlay, overlayData,
         frame,
         leftFrame, rightFrame,
         pendulumFrame, pendulumRightFrame,
@@ -155,8 +197,9 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const [focus, setFocus] = useState(0);
     const [activeLayout, setActiveLayout] = useState('frame');
     const frameLayoutMainId = 'frame-layout-main';
+    const overlayInputRef = useRef<OverlayInputGroupRef>(null);
     const foilButtonList = useMemo(() => getFoilButtonList(language), [language]);
-    const foilInputRef = useRef<FoilInputGroupRef>(null);
+    const overlayCompositeList = useMemo(() => getOverlayCompositeList(language), [language]);
 
     useEffect(() => {
         /** Avoid confusion */
@@ -168,6 +211,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     }));
 
     const changeFoil = useMemo(() => getUpdater('foil'), [getUpdater]);
+    const changeOverlayType = useMemo(() => getUpdater('overlayType'), [getUpdater]);
     const changeBottomLeftFrame = useMemo(() => getUpdater('pendulumFrame'), [getUpdater]);
     const changeBottomRightFrame = useMemo(() => getUpdater('pendulumRightFrame'), [getUpdater]);
     const changeTopLeftFrame = useMemo(() => getUpdater('leftFrame'), [getUpdater]);
@@ -211,6 +255,17 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         if (activeLayout === 'effectBackground') changeEffectBackground(layoutValue);
         if (activeLayout === 'pendulumEffectBackground') changePendulumEffectBackground(layoutValue);
     };
+    const overlayList = overlayType.split('|');
+    const borderOverlay = overlayList.find(entry => entry.includes('border,'));
+    const frameOverlay = overlayList.find(entry => entry.includes('frame,'));
+    const borderOverlayType: OverlayComposite = (borderOverlay?.split(',')?.[1] as OverlayComposite | undefined) ?? 'source-in';
+    const frameOverlayType: OverlayComposite = (frameOverlay?.split(',')?.[1] as OverlayComposite | undefined) ?? 'none';
+    const changeBorderOverlay = (composite: OverlayComposite) => {
+        changeOverlayType(`border,${composite}|${frameOverlay}`);
+    };
+    const changeFrameOverlay = (composite: OverlayComposite) => {
+        changeOverlayType(`${borderOverlay}|frame,${composite}`);
+    };
 
     const layoutState = {
         frame,
@@ -224,6 +279,8 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const activeFrame = layoutState[activeLayout];
     const resolvedLayoutStyle = resolveFrameStyle(layoutState, isPendulum);
     const dyeColor = DyeIndexMap[activeLayout];
+    const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
+        || (overlaySource === 'offline' && overlayData.trim() !== '');
     return <FrameLayoutContainer>
         <div className="visual-preview-container">
             <label>{language['input.advanced-frame.main.label']}</label>
@@ -259,6 +316,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                         changeEffectBackground('auto');
                         changePendulumEffectBackground('auto');
                         changeFoil('normal');
+                        changeOverlayType(getDefaultCard().overlayType);
                         changeDyeList(getDefaultDyeList());
                     }}
                 >
@@ -334,7 +392,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 />}
                 {/** Must mount foil overlay even to make sure it display correctly */}
                 <div
-                    className={mergeClass('custom-foil-group', activeLayout !== 'foil' ? 'custom-foil-group-hidden' : '')}
+                    className={mergeClass('custom-overlay-group', activeLayout !== 'foil' ? 'custom-overlay-group-hidden' : '')}
                     style={{
                         ...({
                             '--card-height': `${height * globalScale}px`,
@@ -344,17 +402,25 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                         }),
                     } as React.CSSProperties}
                 >
-                    <FoilInputGroup
-                        ref={foilInputRef}
+                    <OverlayInputGroup
+                        ref={overlayInputRef}
                         receivingCanvas={receivingCanvas}
                         onSourceLoaded={onSourceLoaded}
                         onTainted={onTainted}
                         onCropChange={onCropChange}
                     >
-                        <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
+                        <RadioTrain className="overlay-radio foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
                             <span>{language['input.foil.label']}</span>
                         </RadioTrain>
-                    </FoilInputGroup>
+                        {hasOverlay && <div className="custom-overlay-part-group">
+                            <RadioTrain className="overlay-radio part-radio" value={borderOverlayType} onChange={changeBorderOverlay} optionList={overlayCompositeList}>
+                                <span>{language['input.advanced-frame.overlay-blend.border.label']}</span>
+                            </RadioTrain>
+                            <RadioTrain className="overlay-radio part-radio" value={frameOverlayType} onChange={changeFrameOverlay} optionList={overlayCompositeList}>
+                                <span>{language['input.advanced-frame.overlay-blend.frame.label']}</span>
+                            </RadioTrain>
+                        </div>}
+                    </OverlayInputGroup>
                 </div>
                 {typeof dyeColor === 'number' && <HorizontalSketchPicker
                     value={dyeList[dyeColor]}

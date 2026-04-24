@@ -21,6 +21,8 @@ import {
     PresetNameStyleMap,
     StickerList,
     TotalIconTypeMap,
+    getOverlayCompositeList,
+    getOverlayTargetList,
 } from 'src/model';
 import { FileTextOutlined } from '@ant-design/icons';
 import { CopiableCode, StyledMono } from 'src/component';
@@ -298,6 +300,24 @@ export const ManagerSample = ({
                                         value: <div>
                                             {Object.values(ArtFinishMap)
                                                 .map(({ value }) => <CopiableCode key={value} data={value}>{value}</CopiableCode>)}
+                                        </div>
+                                    },
+                                    {
+                                        field: 'Overlay Type',
+                                        value: <div>
+                                            <div>{language['manager.template.description.overlay']}</div>
+                                            <ul>
+                                                {getOverlayTargetList(language)
+                                                    .map(({ value: target }) => {
+                                                        return <li key={target}>
+                                                            {getOverlayCompositeList(language)
+                                                                .map(({ value: composite }) => {
+                                                                    const combinedValue = `${target},${composite}`;
+                                                                    return <CopiableCode key={combinedValue} data={combinedValue}>{combinedValue}</CopiableCode>;
+                                                                })}
+                                                        </li>;
+                                                    })}
+                                            </ul>
                                         </div>
                                     },
                                     {

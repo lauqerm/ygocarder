@@ -30,7 +30,7 @@ const StyledImageCropper = styled(ImageCropper)`
     }
 `;
 
-export type FoilInputGroupRef = {
+export type OverlayInputGroupRef = {
     hasImage: () => boolean,
     setValue: (value: {
         overlay?: string,
@@ -40,11 +40,11 @@ export type FoilInputGroupRef = {
     }) => void,
     isLoading: () => boolean,
 };
-export type FoilInputGroup = {
+export type OverlayInputGroup = {
     children?: React.ReactNode,
     onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
 } & Pick<ImageCropper, 'receivingCanvas' | 'onTainted' | 'onSourceLoaded'>;
-export const FoilInputGroup = forwardRef<FoilInputGroupRef, FoilInputGroup>(({
+export const OverlayInputGroup = forwardRef<OverlayInputGroupRef, OverlayInputGroup>(({
     children,
     receivingCanvas,
     onSourceLoaded,

@@ -3,6 +3,7 @@ import { JSONUncrush } from '../3rd';
 import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard, getDefaultImageStyle, getDefaultOverlayCrop } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
+import { HexColorRegex } from './color';
 
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
@@ -72,6 +73,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     },
     overlay: 'ovg',
     overlayFit: 'ovf',
+    overlayType: 'ovt',
     overlayStyle: {
         _newKey: 'ovst',
         flipX: 'ovsfx',
@@ -431,6 +433,8 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
             return entry;
         }) as FrameDyeList;
     }
+    /** In older version, we always apply dye to gold / platinum foil, and turn non-foil into platinum foil, this is no longer the case in newer version as we can dye non-foil as well */
+    if (HexColorRegex.test(migratedCard.dyeList[6]) && migratedCard.foil === 'normal') migratedCard.foil = 'platinum';
 
     if (migratedCard.version === 0 || migratedCard.version === 1) {
         migratedCard.version = 2;

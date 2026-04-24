@@ -24,7 +24,7 @@ export const getDefaultOverlayCrop = () => ({
     width: 100,
     height: 100,
     unit: '%' as '%' | 'px',
-    aspect: 0.686,
+    aspect: 0.685,
 });
 
 /**
@@ -78,6 +78,7 @@ export const getDefaultCard = () => ({
     overlay: '',
     overlayData: '',
     overlayFit: true,
+    overlayType: 'border,source-in|frame,none',
     overlayStyle: getDefaultImageStyle(),
     overlaySource: 'online',
     overlayCrop: getDefaultOverlayCrop() as Partial<ReactCrop.Crop>,
@@ -205,6 +206,7 @@ export const getEmptyCard = (): Card => ({
     overlay: '',
     overlayData: '',
     overlayFit: true,
+    overlayType: 'border,source-in|frame,none',
     overlayStyle: getDefaultImageStyle(),
     overlaySource: 'online',
     overlayCrop: {
@@ -213,7 +215,7 @@ export const getEmptyCard = (): Card => ({
         width: 100,
         height: 100,
         unit: '%',
-        aspect: 0.686,
+        aspect: 0.685,
     },
     linkMap: [],
     linkRating: '',
