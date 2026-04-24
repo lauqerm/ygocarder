@@ -1,5 +1,17 @@
 [
     {
+        "version": "v2.4.9 (2026/04/22)",
+        "logList": [
+            {
+                "content": "Fix: compatible issue when import Spell/Trap from ygoprodeck"
+            },
+            {
+                "content": "Feat: Experimental support separate customizable foil blending for both border and frame, as well as more blending options.",
+                "image": "https://i.postimg.cc/Fz3wgcSx/image.png"
+            }
+        ]
+    },
+    {
         "version": "v2.4.8 (2026/04/22)",
         "logList": [
             {
