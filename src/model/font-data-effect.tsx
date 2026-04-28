@@ -73,6 +73,7 @@ export type LetterOffset = { ratio: number, baseline: number, edge?: number, yRa
 export type MetricMethod = 'name' | 'standard' | 'compact' | 'creator' | 'furigana';
 export type FontData = {
     alphabetFont: string,
+    arabicFontRatio?: number,
     font: string,
     fontList: FontSizeData[],
     fontStyle: string,

@@ -1,9 +1,10 @@
 {
   "name": "ygocarder",
   "homepage": "http://lauqerm.github.io/ygocarder",
-  "version": "2.4.4",
+  "version": "2.4.10",
   "private": true,
   "dependencies": {
+    "@sentry/cli": "^2",
     "@sentry/react": "^8.42.0",
     "@sentry/webpack-plugin": "^2.22.7",
     "@testing-library/jest-dom": "^5.11.6",
@@ -11,7 +12,7 @@
     "@testing-library/user-event": "^12.6.0",
     "@types/typedarray-pool": "^1.1.5",
     "antd": "4.9.4",
-    "caniuse-lite": "^1.0.30001777",
+    "caniuse-lite": "^1.0.30001785",
     "copy-to-clipboard": "^3.3.3",
     "distance-transform": "^1.0.2",
     "idb": "^8.0.3",
@@ -37,7 +38,7 @@
     "source-map-explorer": "^2.5.3",
     "styled-components": "^6.1.11",
     "three": "^0.145.0",
-    "typescript": "4.2.0-dev.20201211",
+    "typescript": "^6.0.2",
     "uuid": "^9.0.0",
     "web-vitals": "^0.2.4",
     "webfontloader": "^1.6.28",
@@ -51,15 +52,16 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "build": "react-scripts --openssl-legacy-provider build && yarn sentry:sourcemaps",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
     "deploy": "gh-pages -d build",
     "eject": "react-scripts eject",
     "lint": "eslint --fix --ext .ts,.tsx .",
-    "predeploy": "npm run build",
+    "predeploy": "yarn run build",
     "start": "react-scripts --openssl-legacy-provider start",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org lauqerm --project ygo-carder ./build && sentry-cli sourcemaps upload --org lauqerm --project ygo-carder ./build"
   },
   "eslintConfig": {
     "extends": [

@@ -77,8 +77,11 @@ export const PlaceholderRegex = new RegExp(PLACHOLDER_SOURCE);
  * 
  * Multiple letter that is not used in normal word but have appear in YGO card is also included such as ∞.
  */
-export const WHOLE_WORD_SOURCE = '[#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９À-ÖÙ-öù-ÿĀ-žƀ-ɏḀ-ỿ!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
-export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE);
+export const WHOLE_WORD_SOURCE = '[،-٩#@∞a-zａ-ｚA-ZＡ-Ｚ0-9０-９À-ÖÙ-öù-ÿĀ-žƀ-ɏḀ-ỿ!！+×＃#@∞‘“’”:;\\[\\]\\(\\)【】\\.,]+';
+export const WholeWordRegex = new RegExp(WHOLE_WORD_SOURCE, 'u');
+
+export const ARABIC_WORD_REGEX = '[،-٩]+';
+export const ArabicWordRegex = new RegExp(ARABIC_WORD_REGEX, 'u');
 
 /**
  * We don't use full vietnamese diacritic here, because we will prioritize diacritic letters from other official languages such as Spanish, French and Italian. That means if our default font already support those diacritic letters, we don't need to specially handle them here.

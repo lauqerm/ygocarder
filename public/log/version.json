@@ -1,5 +1,61 @@
 [
     {
+        "version": "v2.4.10 (2026/04/28)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for user-defined card icon (stars).",
+                "image": "https://i.postimg.cc/Jz489HS0/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.9 (2026/04/22)",
+        "logList": [
+            {
+                "content": "Fix: compatible issue when import Spell/Trap from ygoprodeck"
+            },
+            {
+                "content": "Feat: Experimental support separate customizable foil blending for both border and frame, as well as more blending options.",
+                "image": "https://i.postimg.cc/Fz3wgcSx/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.8 (2026/04/22)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for customizable foil.",
+                "image": "https://i.postimg.cc/Y0YSrK13/image-mh.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.7 (2026/04/14)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for Arabic.",
+                "image": "https://i.postimg.cc/fLdCG8wv/download.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.6 (2026/03/19)",
+        "logList": [
+            {
+                "content": "Feat: Allow flip card artwork / background horizontally / vertically.",
+                "image": "https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.5 (2026/03/17)",
+        "logList": [
+            {
+                "content": "Feat: Advanced layout option now support hide deactivated link markers."
+            }
+        ]
+    },
+    {
         "version": "v2.4.4 (2026/03/09)",
         "logList": [
             {

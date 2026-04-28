@@ -1,4 +1,5 @@
 import {
+    ArabicWordRegex,
     BREAKABLE_LETTER,
     DefaultFontSizeData,
     FontData,
@@ -8,6 +9,7 @@ import {
     PLACEHOLDER_CLOSE,
     PLACEHOLDER_DELIMITER,
     PLACEHOLDER_OPEN,
+    WritingDirection,
 } from 'src/model';
 import { createFontGetter, scaleFontSizeData } from 'src/util';
 
@@ -35,13 +37,14 @@ export const getTextWorker = (
         headTextFontRatio = scaledDefaultFontSizeData.headTextFontRatio,
     } = fontSizeData;
     const {
+        arabicFontRatio = 1,
         font,
+        furiganaFont,
+        numberFont = font,
+        numberFontRatio = 1,
         ordinalFont,
         symbolFont,
         symbolFontRatio,
-        numberFont = font,
-        numberFontRatio = 1,
-        furiganaFont,
         vietnameseFont = font,
         vietnameseFontRatio = 1,
     } = fontData;
@@ -67,6 +70,17 @@ export const getTextWorker = (
         ctx.font = fontController
             .setFamily(vietnameseFontMemory.family)
             .setSize(vietnameseFontMemory.size)
+            .getFont();
+    };
+
+    let arabicFontMemory = fontController.getFontInfo();
+    const applyArabicFont = () => {
+        arabicFontMemory = fontController.getFontInfo();
+        ctx.font = fontController.setSize(fontSize * arabicFontRatio).getFont();
+    };
+    const stopApplyArabicFont = () => {
+        ctx.font = fontController
+            .setSize(arabicFontMemory.size)
             .getFont();
     };
 
@@ -123,8 +137,8 @@ export const getTextWorker = (
         ctx.scale(xScale, yScale);
     };
 
-    const reverseScale = (scaleValue = 1) => {
-        ctx.scale(1 / scaleValue, 1 / scaleValue);
+    const reverseScale = (xScale = 1, yScale = xScale) => {
+        ctx.scale(1 / xScale, 1 / yScale);
     };
 
     let largerTextFontMemory = fontController.getFontInfo();
@@ -143,6 +157,7 @@ export const getTextWorker = (
         applyOrdinalFont, stopApplyOrdinalFont,
         applySymbolFont, stopApplySymbolFont,
         applyVietnameseFont, stopApplyVietnameseFont,
+        applyArabicFont, stopApplyArabicFont,
 
         applyAsymmetricScale,
         applyScale,
@@ -324,3 +339,123 @@ export const splitPlaceholder = (placeholder: string) => {
         width: isNaN(parsedWidth) ? 0 : parsedWidth,
     };
 };
+
+export const getWritingDirection = (text: string): WritingDirection => {
+    return ArabicWordRegex.test(text) ? 'rtl' : 'ltr';
+};
+
+export const bidirectionArrange = (tokenList: string[], debug = false) => {
+    const resultTokenList: string[] = [];
+    /** Reverse pairing letter (quotations, brackets, etc.) to adapt with LTR (English) words in the middle of RTL text. Canvas' direction already take care of such case in RTL words. */
+    const reverseWord = (word: string) => {
+        const { body, head, tail } = splitStringTrails(word);
+
+        return [
+            tail.split('').reverse().join(''),
+            body,
+            head.split('').reverse().join(''),
+        ].join('');
+    };
+    /** Reverse LTR words (English) if needed, because even in RTL text, English and other LTR words are still written in their native order. */
+    let begin = false;
+    let joinWord = '';
+    for (let tokenCnt = 0; tokenCnt < tokenList.length; tokenCnt++) {
+        if (/\s+/.test(tokenList[tokenCnt])) {
+            if (begin) {
+                joinWord += tokenList[tokenCnt];
+            } else {
+                resultTokenList.push(tokenList[tokenCnt]);
+            }
+        } else if (!ArabicWordRegex.test(tokenList[tokenCnt]) && !/^[0-9]+$/.test(tokenList[tokenCnt])) {
+            begin = true;
+            joinWord += tokenList[tokenCnt];
+        } else {
+            if (begin) {
+                resultTokenList.push(reverseWord(joinWord));
+                joinWord = '';
+                begin = false;
+            }
+            resultTokenList.push(tokenList[tokenCnt]);
+        }
+    }
+    if (begin) {
+        resultTokenList.push(reverseWord(joinWord));
+        joinWord = '';
+        begin = false;
+    }
+    if (debug) console.info('bidirectionArrange', tokenList, resultTokenList);
+
+    return resultTokenList;
+};
+
+function splitStringTrails(text: string) {
+    const n = text.length;
+    if (n === 0) return { head: '', body: '', tail: '' };
+
+    const pairs: Record<string, string> = {
+        '(': ')',
+        '[': ']',
+        '{': '}',
+        '‘': '’',
+        '“': '”',
+    };
+    const closers = new Set(Object.values(pairs));
+    const standardQuotes = new Set(['"', '\'']);
+    
+    const protectedIndices = new Set<number>();
+    const stack: { char: string; index: number }[] = [];
+
+    // Pass 1: Identify protected pairs (Brackets and Quotes)
+    for (let i = 0; i < n; i++) {
+        const char = text[i];
+
+        if (pairs[char]) {
+        // Opening bracket/curly quote
+        stack.push({ char, index: i });
+        } else if (closers.has(char)) {
+        // Closing bracket/curly quote
+        const last = stack[stack.length - 1];
+        if (last && pairs[last.char] === char) {
+            protectedIndices.add(last.index);
+            protectedIndices.add(i);
+            stack.pop();
+        }
+        } else if (standardQuotes.has(char)) {
+        // Handle standard quotes with greedy forward matching
+        const last = stack[stack.length - 1];
+        if (last && last.char === char) {
+            protectedIndices.add(last.index);
+            protectedIndices.add(i);
+            stack.pop();
+        } else {
+            stack.push({ char, index: i });
+        }
+        }
+    }
+
+    const isTrailChar = (index: number): boolean => {
+        const char = text[index];
+        const isWhitespace = /\s/.test(char);
+        const isSpecial = pairs[char] !== undefined || closers.has(char) || standardQuotes.has(char);
+        const isLone = isSpecial && !protectedIndices.has(index);
+        return isWhitespace || isLone;
+    };
+
+    // Step 2: Find Head
+    let headEnd = 0;
+    while (headEnd < n && isTrailChar(headEnd)) {
+        headEnd++;
+    }
+
+    // Step 3: Find Tail (starting from the end)
+    let tailStart = n;
+    while (tailStart > headEnd && isTrailChar(tailStart - 1)) {
+        tailStart--;
+    }
+
+    return {
+        head: text.slice(0, headEnd),
+        body: text.slice(headEnd, tailStart),
+        tail: text.slice(tailStart),
+    };
+}

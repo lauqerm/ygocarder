@@ -116,6 +116,14 @@ const StyledCardThumb = styled.div`
             box-shadow: var(--bs-1);
             position: relative;
             z-index: 1;
+            .card-art-component-container {
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
         }
         .card-art {
             display: inline-block;
@@ -269,6 +277,7 @@ export const CardThumb = ({
         artData,
         artFit,
         artSource,
+        artStyle,
         atk,
         attribute,
         attributeType,
@@ -277,27 +286,31 @@ export const CardThumb = ({
         backgroundData,
         backgroundFit,
         backgroundSource,
+        backgroundStyle,
         backgroundType,
         cardIcon,
         def,
+        effectStyle,
         format,
         frame,
-        leftFrame, rightFrame,
         hasBackground,
         isLink,
         isPendulum,
+        leftFrame, rightFrame,
         linkMap,
         name,
         opacity,
         pendulumFrame, pendulumRightFrame,
         pendulumScaleBlue,
         pendulumScaleRed,
+        pendulumStyle,
         setId,
         star,
+        iconImage,
+        iconImageData,
+        iconImageSource,
         subFamily,
         typeAbility,
-        effectStyle,
-        pendulumStyle,
         series,
     } = card;
     const {
@@ -336,6 +349,15 @@ export const CardThumb = ({
         artFrameHeight,
         artFrameWidth,
     } = canvasCoordinate;
+    /** This will not account for icon cropping, but right now I don't think it is worth it to hook this component into main data hook. */
+    const starSrc = (cardIcon === 'user-defined'
+        ? iconImageSource === 'online' && iconImage
+            ? iconImage
+            : iconImageSource === 'offline' && iconImageData
+                ? iconImageData
+                : undefined
+        : undefined)
+        ?? `${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom' ? 'icon-list' : normalizedCardIcon).toLowerCase()}.png`;
 
     return <StyledCardThumb
         className={mergeClass(
@@ -387,25 +409,39 @@ export const CardThumb = ({
                     backgroundColor: DEFAULT_BASE_FILL_COLOR,
                 }}
             >
-                {hasBackground && <DelayedImage
-                    className="background-art"
-                    artLink={normalizedBackgroundArt}
-                    name={normalizedCardName + ' - background'}
-                    fit={backgroundFit}
-                    crop={backgroundCrop}
-                    canvasCoordinate={getArtCanvasCoordinate(isPendulum, {
-                        ...opacity,
-                        boundless: backgroundType === 'fit' ? false : true,
-                    })}
-                />}
-                <DelayedImage
-                    className="foreground-art"
-                    artLink={normalizedCardArt}
-                    name={normalizedCardName}
-                    fit={artFit}
-                    crop={artCrop}
-                    canvasCoordinate={canvasCoordinate}
-                />
+                <div
+                    className="card-art-component-container"
+                    style={{
+                        transform: `scale(${backgroundStyle.flipX ? -1 : 1}, ${backgroundStyle.flipY ? -1 : 1})`,
+                    }}
+                >
+                    {hasBackground && <DelayedImage
+                        className="background-art"
+                        artLink={normalizedBackgroundArt}
+                        name={normalizedCardName + ' - background'}
+                        fit={backgroundFit}
+                        crop={backgroundCrop}
+                        canvasCoordinate={getArtCanvasCoordinate(isPendulum, {
+                            ...opacity,
+                            boundless: backgroundType === 'fit' ? false : true,
+                        })}
+                    />}
+                </div>
+                <div
+                    className="card-art-component-container"
+                    style={{
+                        transform: `scale(${artStyle.flipX ? -1 : 1}, ${artStyle.flipY ? -1 : 1})`,
+                    }}
+                >
+                    <DelayedImage
+                        className="foreground-art"
+                        artLink={normalizedCardArt}
+                        name={normalizedCardName}
+                        fit={artFit}
+                        crop={artCrop}
+                        canvasCoordinate={canvasCoordinate}
+                    />
+                </div>
             </a>
             {isLink && [...Array(9)].map((_, index) => {
                 if (index === 4) return null;
@@ -451,9 +487,7 @@ export const CardThumb = ({
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
                 {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
-                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom'
-                        ? 'icon-list'
-                        : normalizedCardIcon).toLowerCase()}.png`}
+                    src={starSrc}
                     alt="Icon"
                 />}
                 {(normalizedCardIcon !== NO_ICON
@@ -560,9 +594,10 @@ const calculateThumbArtStyle = (
         left: croppedLeft,
         width: thumbImageWidth,
         height: fit ? thumbImageHeight : undefined,
-        transform: `translateX(${- thumbArtXGap * THUMB_TO_CARD_RATIO
-            }px) translateY(${- thumbArtYGap * THUMB_TO_CARD_RATIO
-            }px)`,
+        transform: [
+            `translateX(${-thumbArtXGap * THUMB_TO_CARD_RATIO}px)`,
+            `translateY(${-thumbArtYGap * THUMB_TO_CARD_RATIO}px)`,
+        ].join(' '),
     };
 };
 /** The image should not load instantly to avoid stagnant request when user scroll through their card list. Also to prevent sudden image change when cropper reconciliate. */

@@ -11,7 +11,7 @@ import {
 } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList, getOtherFinishList } from '../const';
-import { getArtCanvasCoordinate, OtherFinish, OtherFinishTypeMap } from 'src/model';
+import { getArtCanvasCoordinate, ImageSourceType, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
 import styled from 'styled-components';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { notification, Popover } from 'antd';
@@ -154,8 +154,8 @@ export type ImageInputGroupRef = {
 export type ImageInputGroup = {
     showExtraDecorativeOption: boolean,
     showCreativeOption: boolean,
-    receivingCanvas?: HTMLCanvasElement | null,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
+    receivingCanvas: HTMLCanvasElement | null,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType) => void,
     onTainted: ImageCropper['onTainted'],
     onSourceLoaded: ImageCropper['onSourceLoaded'],
 };
@@ -174,7 +174,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         linkMap,
         isPendulum, pendulumSize,
         isLink,
-        art, artCrop, artData, artSource, artFit,
+        art, artCrop, artData, artSource, artFit, artStyle,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
@@ -184,7 +184,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             linkMap,
             isPendulum, pendulumSize,
             isLink,
-            art, artCrop, artData, artSource, artFit,
+            art, artCrop, artData, artSource, artFit, artStyle,
         },
         getUpdater,
         setCard,
@@ -194,7 +194,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         linkMap,
         isPendulum, pendulumSize,
         isLink,
-        art, artCrop, artData, artSource, artFit,
+        art, artCrop, artData, artSource, artFit, artStyle,
         getUpdater,
         setCard,
     })));
@@ -215,10 +215,16 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
             artFit: status,
         };
     }), [setCard]);
+    const changeArtStyle = useCallback((style: ImageStyle) => setCard(currentCard => {
+        return {
+            ...currentCard,
+            artStyle: { ...currentCard.artStyle, ...style },
+        };
+    }), [setCard]);
     const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
     const changeArtFinish = useMemo(() => getUpdater('artFinish'), [getUpdater]);
     const changeOtherFinish = useMemo(() => getUpdater('otherFinish'), [getUpdater]);
-    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
+    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(
             curr => ({
@@ -252,6 +258,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         defaultInternalSource={artData}
         defaultCropInfo={artCrop}
         forceFit={artFit}
+        imageStyle={artStyle}
         receivingCanvas={receivingCanvas}
         onSourceChange={(type, data) => {
             changeArtSource(type);
@@ -262,6 +269,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
         onForceFitChange={changeArtFit}
+        onImageStyleChange={changeArtStyle}
         onMaxSizeExceeded={size => {
             notification.info({
                 description: language['error.max-size.description'](size),

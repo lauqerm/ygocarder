@@ -6,15 +6,17 @@ import {
     YgoproDeckCard,
     getDefaultYgoproDeckCard,
     copyrightMap,
+    getDefaultCard,
 } from 'src/model';
 import { checkExtraDeckMonster } from './categorize';
+import { captureException } from './other';
 
 export const checkYgoproDeckCard = (object: Record<string, any>): object is YgoproDeckCard => {
     try {
         /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
         return 'id' in object
             && 'frameType' in object
-            && 'card_sets' in object;
+            && 'ygoprodeck_url' in object;
     } catch (e) {
         console.error(e);
         return false;
@@ -138,86 +140,101 @@ export const ygoCarderToYgoproDeckData = (
 };
 
 export const ygoproDeckToYgoCarderData = (card: YgoproDeckCard): { result: Card, isPartial: boolean } => {
-    const {
-        atk,
-        attribute,
-        card_images,
-        card_sets,
-        def,
-        desc,
-        frameType,
-        id,
-        level,
-        monster_desc,
-        name,
-        pend_desc,
-        race,
-        scale,
-        typeline,
-        linkval,
-        linkmarkers,
-    } = card;
-    const normalizedIcon = reverseCardIconMap[race];
-    const normalizedAttribute = reverseAttributeMap[attribute];
-    const [normalizedFrame, subFrame] = reverseFrameMap[frameType].split('_');
+    try {
+        const {
+            atk,
+            attribute,
+            card_images,
+            card_sets,
+            def,
+            desc,
+            frameType,
+            id,
+            level,
+            monster_desc,
+            name,
+            pend_desc,
+            race,
+            scale,
+            typeline,
+            linkval,
+            linkmarkers,
+        } = card;
+        const normalizedIcon = reverseCardIconMap[race];
+        const normalizedAttribute = reverseAttributeMap[attribute];
+        const [normalizedFrame, subFrame] = reverseFrameMap[frameType].split('_');
 
-    /** Normal description is wrapped inside a double single quotes, we have no use for it here. */
-    const normalizedMonsterEffect = (monster_desc ? monster_desc.replaceAll(/^''|''$/g, '') : undefined)
-        ?? (desc ? desc.replaceAll(/^''|''$/g, '') : '');
-    /** Try to being clever */
-    const splittedMonsterEffect = normalizedMonsterEffect.split('\n');
-    const formattedMonsterEffect = (checkExtraDeckMonster({
-        frame: normalizedFrame ?? 'normal'
-    }) && splittedMonsterEffect.length > 1)
-        ? [
-            `[${splittedMonsterEffect[0].replaceAll('\r', '')}]`,
-            ...splittedMonsterEffect.slice(1),
-        ].join('\n')
-        : normalizedMonsterEffect;
-    const normalizedPendulumEffect = pend_desc
-        ? pend_desc.replaceAll(/^''|''$/g, '')
-        : '';
-    const cardImage = card_images[0].image_url_cropped;
+        /** Normal description is wrapped inside a double single quotes, we have no use for it here. */
+        const normalizedMonsterEffect = (monster_desc ? monster_desc.replaceAll(/^''|''$/g, '') : undefined)
+            ?? (desc ? desc.replaceAll(/^''|''$/g, '') : '');
+        /** Try to being clever */
+        const splittedMonsterEffect = normalizedMonsterEffect.split('\n');
+        const formattedMonsterEffect = (checkExtraDeckMonster({
+            frame: normalizedFrame ?? 'normal'
+        }) && splittedMonsterEffect.length > 1)
+            ? [
+                `[${splittedMonsterEffect[0].replaceAll('\r', '')}]`,
+                ...splittedMonsterEffect.slice(1),
+            ].join('\n')
+            : normalizedMonsterEffect;
+        const normalizedPendulumEffect = pend_desc
+            ? pend_desc.replaceAll(/^''|''$/g, '')
+            : '';
+        const cardImage = card_images[0].image_url_cropped;
+        const hasStat = !['spell', 'trap', 'skill'].includes(frameType);
 
-    const baseCard = getEmptyCard();
-    const result: Card = {
-        ...baseCard,
-        name,
-        atk: (atk < 0 || atk == null) ? '?' : `${atk}`,
-        def: def
-            ? (def < 0 || def == null) ? '?' : `${def}`
-            : '0',
-        attribute: normalizedAttribute ?? NO_ATTRIBUTE,
-        effect: formattedMonsterEffect,
-        subFamily: normalizedIcon ?? NO_ICON,
-        setId: card_sets[card_sets.length - 1]?.set_code ?? '',
-        frame: normalizedFrame ?? 'normal',
-        star: frameType === 'link' && linkval ? linkval : level,
-        typeAbility: typeline
-            ? typeline
-            : frameType === 'spell'
-                ? ['Spell Card']
-                : frameType === 'trap'
-                    ? ['Trap Card']
-                    : [],
-        art: cardImage,
-        artSource: 'online',
-        artCrop: {
-            ...baseCard.artCrop,
-            y: 0,
-        },
-        isLink: normalizedFrame === 'link' && Array.isArray(linkmarkers),
-        linkMap: (linkmarkers ?? []).map(marker => reverseLinkMap[marker]),
-        isPendulum: subFrame === 'pendulum',
-        pendulumScaleBlue: scale == null ? '0' : `${scale}`,
-        pendulumScaleRed: scale == null ? '0' : `${scale}`,
-        pendulumEffect: normalizedPendulumEffect,
-        password: `${id}`.padStart(8, '0'),
-        creator: copyrightMap.tcg[0],
-    };
+        const baseCard = getEmptyCard();
+        const result: Card = {
+            ...baseCard,
+            name,
+            atk: hasStat
+                ? (atk < 0 || atk == null) ? '?' : `${atk}`
+                : '',
+            def: hasStat
+                ? def
+                    ? (def < 0 || def == null) ? '?' : `${def}`
+                    : '0'
+                : '',
+            attribute: normalizedAttribute ?? NO_ATTRIBUTE,
+            effect: formattedMonsterEffect,
+            subFamily: normalizedIcon ?? NO_ICON,
+            setId: card_sets
+                ? card_sets[card_sets.length - 1]?.set_code ?? ''
+                : '',
+            frame: normalizedFrame ?? 'normal',
+            star: frameType === 'link' && linkval ? linkval : level,
+            typeAbility: typeline
+                ? typeline
+                : frameType === 'spell'
+                    ? ['Spell Card']
+                    : frameType === 'trap'
+                        ? ['Trap Card']
+                        : [],
+            art: cardImage,
+            artSource: 'online',
+            artCrop: {
+                ...baseCard.artCrop,
+                y: 0,
+            },
+            isLink: normalizedFrame === 'link' && Array.isArray(linkmarkers),
+            linkMap: (linkmarkers ?? []).map(marker => reverseLinkMap[marker]),
+            isPendulum: subFrame === 'pendulum',
+            pendulumScaleBlue: scale == null ? '0' : `${scale}`,
+            pendulumScaleRed: scale == null ? '0' : `${scale}`,
+            pendulumEffect: normalizedPendulumEffect,
+            password: `${id}`.padStart(8, '0'),
+            creator: copyrightMap.tcg[0],
+        };
 
-    return {
-        isPartial: false,
-        result,
-    };
+        return {
+            isPartial: false,
+            result,
+        };
+    } catch (e) {
+        captureException(e);
+        return {
+            isPartial: true,
+            result: getDefaultCard(),
+        };
+    }
 };

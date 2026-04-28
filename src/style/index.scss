@@ -397,6 +397,13 @@ button.ant-btn {
             display: none;
         }
     }
+    &.global-modal-hidden {
+        visibility: hidden !important;
+        transition: all 0s !important;
+        * {
+            transition: all 0s !important;
+        }
+    }
 }
 
 .ant-drawer {
@@ -510,4 +517,11 @@ button.ant-btn {
 
 .global-overlay {
     max-width: 90%;
+}
+
+.writing-mode_rtl {
+    .ant-input-affix-wrapper-textarea-with-clear-btn .ant-input-clear-icon {
+        left: 8px;
+        right: unset;
+    }
 }

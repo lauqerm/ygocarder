@@ -1,12 +1,13 @@
 import { Empty, Input, Radio, Tooltip } from 'antd';
 import React, { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import ReactCrop from 'react-image-crop';
-import { DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, ArrowUpOutlined, CloseOutlined, DownloadOutlined, FullscreenOutlined, VerticalAlignMiddleOutlined } from '@ant-design/icons';
 import { Loading } from '../loading';
 import { IconButton } from '../icon-button';
 import { useGlobal, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import { DropZone } from '../atom';
+import { ImageSourceType, ImageStyle } from 'src/model';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
 
@@ -117,7 +118,8 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 export type ImageCropperRef = {
     isLoading: () => boolean,
     hasImage: () => boolean,
-    forceSource: (type: 'online' | 'offline', artLinkOrData: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+    forceSource: (type: ImageSourceType, artLinkOrData: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+    getSource: () => ({ type: ImageSourceType, image: string, imageData: string, crop: Partial<ReactCrop.Crop> }),
 }
 export type ImageCropper = {
     title?: React.ReactNode,
@@ -133,9 +135,12 @@ export type ImageCropper = {
     beforeCropper?: React.ReactNode,
     defaultCropInfo: Partial<ReactCrop.Crop>,
     ratio: number,
-    onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
-    onSourceLoaded?: (crossorigin?: string) => void,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => void,
+    imageStyle: ImageStyle,
+    isNotFoundAnError?: boolean,
+    onImageStyleChange: (style: ImageStyle) => void,
+    onSourceChange?: (sourceType: ImageSourceType, source: string, byUser?: boolean) => void,
+    onSourceLoaded?: (crossorigin?: string, byUser?: boolean) => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => void,
     onTainted: () => void,
     onMaxSizeExceeded: (size: number) => void,
     onForceFitChange?: (status: boolean) => void,
@@ -153,6 +158,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     beforeCropper,
     defaultCropInfo,
     ratio,
+    imageStyle,
+    isNotFoundAnError = true,
+    onImageStyleChange,
     onSourceLoaded = () => { },
     onSourceChange = () => { },
     onCropChange = () => { },
@@ -170,8 +178,8 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [redrawSignal, setRedrawSignal] = useState(0);
-    const [sourceType, setSourceType] = useState<'offline' | 'online'>(normalizedDefaultSource);
-    const [inputMode, setInputMode] = useState<'offline' | 'online'>(normalizedDefaultSource);
+    const [sourceType, setSourceType] = useState<ImageSourceType>(normalizedDefaultSource);
+    const [inputMode, setInputMode] = useState<ImageSourceType>(normalizedDefaultSource);
     const [internalSource, setInternalSource] = useState(defaultInternalSource);
     const [isLoading, setLoading] = useState(false);
     const [activeDropzone, setActiveDropzone] = useGlobal('activeDropzone');
@@ -206,7 +214,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 setInternalSource(reader.result);
                 setSourceType('offline');
                 setInputMode('offline');
-                onSourceChange('offline', reader.result);
+                onSourceChange('offline', reader.result, interacted);
                 setLoading(false);
             }
         });
@@ -220,7 +228,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const onLoad = useCallback((img: HTMLImageElement) => {
         setLoading(false);
         setError(null);
-        onSourceLoaded(crossorigin);
+        onSourceLoaded(crossorigin, interacted);
         imgRef.current = img;
         /** @todo Check if we really need timeout delay here */
         if (img.src === pendingCrop.current.source && pendingCrop.current.crop) {
@@ -251,7 +259,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 setMigrated(true);
             }, 250);
         }
-    }, [crossorigin, onSourceLoaded, ratio]);
+    }, [crossorigin, interacted, onSourceLoaded, ratio]);
 
     const applyOnlineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
@@ -260,7 +268,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         setLoading(true);
         setSourceType('online');
         setInputMode('online');
-        onSourceChange('online', source);
+        onSourceChange('online', source, interacted);
         setExternalSource(source);
     };
 
@@ -359,6 +367,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             }
             receivingCanvas.width = drawWidth;
             receivingCanvas.height = drawHeight;
+            const { flipX, flipY } = imageStyle;
+            const scaleX = flipX ? -1 : 1;
+            const scaleY = flipY ? -1 : 1;
+            ctx.scale(scaleX, scaleY);
             ctx.drawImage(
                 image,
                 0,
@@ -367,12 +379,17 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 naturalHeight,
                 0,
                 0,
-                drawWidth,
-                drawHeight,
+                scaleX * drawWidth,
+                scaleY * drawHeight,
             );
+            ctx.scale(scaleX, scaleY);
         } else {
             receivingCanvas.width = (drawWidth ?? 0);
             receivingCanvas.height = (drawHeight ?? 0);
+            const { flipX, flipY } = imageStyle;
+            const scaleX = flipX ? -1 : 1;
+            const scaleY = flipY ? -1 : 1;
+            ctx.scale(scaleX, scaleY);
             ctx.drawImage(
                 image,
                 drawCoordinateX,
@@ -381,9 +398,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 drawHeight,
                 0,
                 0,
-                drawWidth,
-                drawHeight,
+                scaleX * drawWidth,
+                scaleY * drawHeight,
             );
+            ctx.scale(scaleX, scaleY);
         }
         if (sourceType === 'offline' && (internalSource ?? '').length <= 0) { }
         else if (ratio === completedCrop.aspect) {
@@ -393,7 +411,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
             setCrop(cur => ({ ...cur, current: fitCropData }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [completedCrop, receivingCanvas, redrawSignal, forceFit]);
+    }, [completedCrop, receivingCanvas, redrawSignal, forceFit, imageStyle]);
 
     useEffect(() => {
         setInteracted(false);
@@ -414,14 +432,22 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         isLoading: () => isLoading,
         hasImage: () => (typeof internalSource === 'string' && internalSource.length > 0 && sourceType === 'offline')
             || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'online'),
-        forceSource: (type: 'online' | 'offline', source, cropInfo) => {
+        getSource: () => {
+            return {
+                type: sourceType,
+                crop: crop.current,
+                image: sourceType === 'online' ? externalSource : '',
+                imageData: sourceType === 'offline' ? internalSource : '',
+            };
+        },
+        forceSource: (type: ImageSourceType, source, cropInfo) => {
             const currentSource = sourceType === 'offline' ? internalSource : externalSource;
             setInteracted(false);
             if (currentSource !== source) {
                 setLoading(true);
                 setSourceType(type);
                 setInputMode(type);
-                onSourceChange(type, source);
+                onSourceChange(type, source, interacted);
                 if (type === 'offline') {
                     setInternalSource(source);
                 } else setExternalSource(source);
@@ -443,10 +469,19 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     return (
         <div className={mergeClass('card-image-cropper', className)}>
             <div className="card-image-source-input">
-                <div className="card-image-source-input-container">
+                <div
+                    className="card-image-source-input-container"
+                    onKeyDown={() => {
+                        setInteracted(true);
+                    }}
+                    onClick={() => {
+                        setInteracted(true);
+                    }}
+                >
                     <div className="card-image-source-input-title">
                         <span className="field-title">
-                            {title} <IconButton
+                            {title}
+                            <IconButton
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
                                 tooltipProps={{
@@ -455,6 +490,21 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                         : language['image-cropper.no-download']
                                 }}
                                 onClick={() => (isDownloadable && receivingCanvas) && generateDownload(receivingCanvas, completedCrop)}
+                            />
+                            <IconButton
+                                Icon={CloseOutlined}
+                                tooltipProps={{
+                                    overlay: language['generic.reset.tooltip']
+                                }}
+                                onClick={() => {
+                                    if (sourceType === 'offline') {
+                                        setInternalSource('');
+                                        onSourceChange('offline', '', interacted);
+                                    } else {
+                                        setExternalSource('');
+                                        onSourceChange('online', '', interacted);
+                                    }
+                                }}
                             />
                         </span>
                         <Radio.Group
@@ -469,9 +519,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                     setSourceType(value);
                                     if (value === 'offline') {
                                         setCrossOrigin('anonymous');
-                                        onSourceChange('offline', internalSource);
+                                        onSourceChange('offline', internalSource, interacted);
                                     } else {
-                                        onSourceChange('online', externalSource);
+                                        onSourceChange('online', externalSource, interacted);
                                     }
                                     // setLoading(true);
                                 }
@@ -553,6 +603,34 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 {(hasImage && !error) && <div className="card-image-option">
                     <Tooltip
                         placement="left"
+                        overlay={language['image-cropper.button.flip-horizontal.tooltip']}
+                    >
+                        <div
+                            className={mergeClass('image-option flip-horizontally-option', imageStyle.flipX ? 'option-active' : '')}
+                            onClick={() => {
+                                setInteracted(true);
+                                onImageStyleChange({ flipX: !imageStyle.flipX, flipY: imageStyle.flipY });
+                            }}
+                        >
+                            <ArrowRightOutlined />
+                        </div>
+                    </Tooltip>
+                    <Tooltip
+                        placement="left"
+                        overlay={language['image-cropper.button.flip-vertical.tooltip']}
+                    >
+                        <div
+                            className={mergeClass('image-option flip-vertically-option', imageStyle.flipY ? 'option-active' : '')}
+                            onClick={() => {
+                                setInteracted(true);
+                                onImageStyleChange({ flipX: imageStyle.flipX, flipY: !imageStyle.flipY });
+                            }}
+                        >
+                            <ArrowUpOutlined />
+                        </div>
+                    </Tooltip>
+                    <Tooltip
+                        placement="left"
                         overlay={forceFit
                             ? language['image-cropper.button.use-crop.tooltip']
                             : language['image-cropper.button.force-fit.tooltip']}
@@ -611,7 +689,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                     </Tooltip>}
                 </div>}
                 {((!hasImage || (error && crossorigin === undefined)) && !isLoading) && <Empty
-                    description={language['image-cropper.not-found-warning']}
+                    description={isNotFoundAnError
+                        ? language['image-cropper.not-found-warning']
+                        : language['image-cropper.not-found-info']}
                     image={null}
                 />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
@@ -649,7 +729,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
                             ctx?.clearRect(0, 0, width, height);
                             if (completedCrop) onCropChange(completedCrop, sourceType, interacted);
-                            onSourceLoaded(crossorigin);
+                            onSourceLoaded(crossorigin, interacted);
                             setLoading(false);
                             setError('Image not found');
                         } else {

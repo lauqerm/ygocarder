@@ -1,6 +1,5 @@
 import { Tooltip } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
-import { ExtractProps } from 'src/type';
 import styled from 'styled-components';
 import React from 'react';
 
@@ -47,8 +46,8 @@ export type IconButton = {
     active?: boolean,
     children?: React.ReactNode,
     onClick?: () => void,
-    iconProps?: ExtractProps<typeof SyncOutlined>,
-    tooltipProps?: ExtractProps<typeof Tooltip>,
+    iconProps?: React.ComponentProps<typeof SyncOutlined>,
+    tooltipProps?: React.ComponentProps<typeof Tooltip>,
     containerProps?: React.HTMLAttributes<HTMLSpanElement>,
 }
 export const IconButton = ({

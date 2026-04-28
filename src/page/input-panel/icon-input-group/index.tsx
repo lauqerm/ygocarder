@@ -1,14 +1,15 @@
 import { Button, Input, Popover } from 'antd';
 import { PopoverButton, RadioTrain, StyledDropdown } from 'src/component';
-import { useCard, useLanguage, useSetting, WithLanguage } from 'src/service';
+import { useCard, useCardCanvas, useLanguage, useSetting, WithLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { CaretDownOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { StarButtonList, getSTIconButtonList } from '../const';
 import { getCardIconFromFrame } from 'src/util';
 import styled from 'styled-components';
 import { IconTypeAttributeList, IconTypeList, IconTypeStList, TotalIconTypeMap } from 'src/model';
-import { StarPicker, StarPickerRef, StarTypeSelector, StyledIconDropdown } from '../star-picker';
+import { IconPicker, IconPickerRef, IconTypePicker, StyledIconDropdown } from './icon-picker';
+import { IconImageInput, IconImageInputRef } from './icon-image-input';
 
 const TypeWithIconContainer = styled.div`
     .icon-image {
@@ -43,12 +44,15 @@ const CustomStarContainer = styled.div`
         border-radius: var(--br);
         .star-preview-entry {
             margin-right: var(--spacing-xs);
+            width: 22px; // Alignment
+            height: 22px; // Alignment
             .icon-image {
                 max-width: 22px; // Alignment
                 max-height: 22px; // Alignment
             }
             .anticon-close-circle {
                 font-size: var(--fs-xl);
+                margin-top: 1px; // Alignment
             }
             &:last-child {
                 margin-right: 0;
@@ -101,12 +105,15 @@ const CardIconAlignmentPicker = ({
     />;
 };
 
-export type CardIconInputGroupRef = {}
-export type CardIconInputGroup = {
+export type IconInputGroupRef = Pick<IconImageInputRef, 'isLoading' | 'setValue'>;
+export type IconInputGroup = {
     showCreativeOption: boolean,
-};
-export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInputGroup>(({
+} & Pick<IconImageInput, 'receivingCanvas' | 'onSourceLoaded' | 'onTainted'>;
+export const IconInputGroup = forwardRef<IconInputGroupRef, IconInputGroup>(({
     showCreativeOption,
+    receivingCanvas,
+    onTainted,
+    onSourceLoaded,
 }, ref) => {
     const language = useLanguage();
     const {
@@ -137,15 +144,39 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         getUpdater,
     })));
     const reduceMotionColor = useSetting(state => state.setting.reduceMotionColor);
-    const starPickerRef = useRef<StarPickerRef>(null);
+    const iconPickerRef = useRef<IconPickerRef>(null);
+    const iconImageInputInDropdownRef = useRef<IconImageInputRef>(null);
+    const iconImageInputInModalRef = useRef<IconImageInputRef>(null);
+    const { cardIconImage } = useCardCanvas(useShallow(({
+        canvasDataMap,
+    }) => ({
+        cardIconImage: canvasDataMap.iconImage,
+    })));
 
     const changeCardIcon = useMemo(() => getUpdater('cardIcon'), [getUpdater]);
     const changeSubFamily = useMemo(() => getUpdater('subFamily'), [getUpdater]);
     const changeStar = useMemo(() => getUpdater('star'), [getUpdater]);
     const changeStarAlignment = useMemo(() => getUpdater('starAlignment'), [getUpdater]);
 
-    useImperativeHandle(ref, () => ({}));
+    useImperativeHandle(ref, () => ({
+        setValue: ({ iconImage, iconImageCrop, iconImageData, iconImageSource }) => {
+            iconImageInputInDropdownRef.current?.setValue({ iconImage, iconImageCrop, iconImageData, iconImageSource });
+            iconImageInputInModalRef.current?.setValue({ iconImage, iconImageCrop, iconImageData, iconImageSource });
+        },
+        isLoading: () => {
+            return (iconImageInputInDropdownRef.current?.isLoading() ?? false)
+                || (iconImageInputInModalRef.current?.isLoading() ?? false);
+        },
+    }));
 
+    const onUserChange: NonNullable<IconImageInput['onUserChange']> = useCallback(() => {
+        changeCardIcon('user-defined');
+    }, [changeCardIcon]);
+    const triggerCustomIcon = () => {
+        changeCardIcon('custom');
+        iconPickerRef.current?.changeStatus('open');
+        iconImageInputInModalRef.current?.syncValue();
+    };
     const autoIconType = getCardIconFromFrame(frame);
     const iconTypeData = cardIcon === 'auto'
         ? TotalIconTypeMap[autoIconType === 'none' ? 'auto' : autoIconType]
@@ -165,15 +196,29 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
     const IconDropdown = <Popover key="icon-type-picker"
         trigger={['click']}
         overlayClassName="global-input-overlay"
-        content={<StarTypeSelector
+        content={<IconTypePicker
             language={language}
             activeCardIcon={cardIcon}
             onChange={value => {
-                changeCardIcon(value);
-                if (value === 'custom') starPickerRef.current?.changeStatus('open');
+                if (value === 'custom') {
+                    triggerCustomIcon();
+                } else {
+                    changeCardIcon(value);
+                }
             }}
-        />}
-        placement="bottomRight"
+        >
+            <IconImageInput
+                ref={iconImageInputInDropdownRef}
+                receivingCanvas={receivingCanvas}
+                onTainted={onTainted}
+                onUserChange={onUserChange}
+                onSourceLoaded={onSourceLoaded}
+            />
+        </IconTypePicker>}
+        onVisibleChange={visible => {
+            if (visible) iconImageInputInDropdownRef.current?.syncValue();
+        }}
+        placement="bottom"
     >
         <span
             className={`card-icon-dropdown ${cardIcon === 'auto' ? '' : 'active'} ${showCreativeOption ? '' : 'disabled'}`}
@@ -185,7 +230,18 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
         ? IconDropdown
         : IconDropdownLabel;
     return <>
-        <StarPicker ref={starPickerRef} language={language} />
+        <IconPicker
+            ref={iconPickerRef}
+            language={language}
+        >
+            <IconImageInput
+                ref={iconImageInputInModalRef}
+                receivingCanvas={receivingCanvas}
+                onTainted={onTainted}
+                onUserChange={onUserChange}
+                onSourceLoaded={onSourceLoaded}
+            />
+        </IconPicker>
         {cardIcon === 'auto' && autoIconType === 'none'
             ? showCreativeOption
                 ? <>
@@ -254,10 +310,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                     <PopoverButtonInCardIconInput
                         $softMode={reduceMotionColor}
                         className={showCreativeOption ? '' : 'disabled'}
-                        onClick={() => {
-                            changeCardIcon('custom');
-                            starPickerRef.current?.changeStatus('open');
-                        }}
+                        onClick={triggerCustomIcon}
                     >
                         {language['input.icon-type.custom.label']}
                     </PopoverButtonInCardIconInput>
@@ -274,7 +327,11 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                             {starList.length > 0
                                 ? <div className="custom-star-preview">
                                     {starList.map((entry, index) => {
-                                        const iconEntry = TotalIconTypeMap[entry];
+                                        const iconEntry = entry === 'user-defined' && cardIconImage
+                                            ? {
+                                                icon: <img className="icon-image" src={cardIconImage} alt={'User-defined icon'} />
+                                            }
+                                            : TotalIconTypeMap[entry];
 
                                         return <span key={`${entry}-${index}`} className="star-preview-entry">
                                             {iconEntry ? iconEntry.icon : <CloseCircleOutlined />}
@@ -284,10 +341,7 @@ export const CardIconInputGroup = forwardRef<CardIconInputGroupRef, CardIconInpu
                                 : null}
                             <Button
                                 size="small" 
-                                onClick={() => {
-                                    changeCardIcon('custom');
-                                    starPickerRef.current?.changeStatus('open');
-                                }}
+                                onClick={triggerCustomIcon}
                             >{language['generic.edit.label']}</Button>
                         </div>
                     </CustomStarContainer>

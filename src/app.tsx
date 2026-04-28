@@ -9,6 +9,7 @@ import {
     Card,
     getDefaultCard,
     ImagePreset,
+    ImageSourceType,
     NameStyle,
     SeriesCanvasInfo,
 } from './model';
@@ -46,6 +47,7 @@ import {
     RESET_CANVAS_BASE_COUNTER,
     retrieveSavedCard,
     useCard,
+    useCardCanvas,
     useCarderDb,
     useCardList,
     useGlobal,
@@ -134,7 +136,7 @@ function App() {
     const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [resetCanvasCounter] = useGlobal('resetCanvasCounter');
     const [error, setError] = useState('');
-    const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
+    const [sourceType, setSourceType] = useState<ImageSourceType>('online');
     const { db, dbReady } = useCarderDb();
     const [managerVisible, setManagerVisible] = useState(false);
     const slidingWindowRef = useRef<HTMLDivElement>(null);
@@ -152,6 +154,16 @@ function App() {
     const importPanelRef = useRef<ImportPanelRef>(null);
 
     const [imageChangeCount, setImageChangeCount] = useState(0);
+    const {
+        updateCanvasRenderCount,
+        updateCanvasData,
+    } = useCardCanvas(useShallow(({
+        updateCanvasRenderCount,
+        updateCanvasData,
+    }) => ({
+        updateCanvasRenderCount,
+        updateCanvasData,
+    })));
 
     useEffect(() => {
         /** Each time a drag over event is fired, we keep the heartbeat, and stop it if there is no heartbeat after a while. */
@@ -519,6 +531,20 @@ function App() {
         setSourceType(sourceType);
     }, []);
 
+    const {
+        iconImageCrop, iconImageSource,
+    } = useCard(useShallow(({
+        card: {
+            iconImageCrop, iconImageSource,
+        },
+    }) => ({
+        iconImageCrop, iconImageSource,
+    })));
+
+    useEffect(() => {
+        rerenderCardImage(iconImageCrop, iconImageSource);
+    }, [rerenderCardImage, iconImageCrop, iconImageSource, updateCanvasRenderCount]);
+
     const markTaintedImage = useCallback(() => {
         setImageChangeCount(cnt => cnt + 1);
         setTainted(true);
@@ -530,7 +556,8 @@ function App() {
 
     const onExportSuccess = useCallback(() => {
         setTainted(false);
-    }, []);
+        updateCanvasData(['iconImage']);
+    }, [updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
     const CardCanvas = series === 'rush'
@@ -572,7 +599,7 @@ function App() {
                 className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
-                        }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                    }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: IS_MOBILE ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasHeight * globalScale}px`,
@@ -734,6 +761,8 @@ function App() {
                         applyCardData={treatNewCard}
                         artworkCanvas={canvasInfo?.canvasMap.artworkCanvasRef.current}
                         backgroundCanvas={canvasInfo?.canvasMap.backgroundCanvasRef.current}
+                        overlayCanvas={canvasInfo?.canvasMap.overlayCanvasRef.current}
+                        iconImageCanvas={canvasInfo?.canvasMap.iconImageCanvasRef.current}
                         onSourceLoaded={rerenderAllImage}
                         onCropChange={rerenderCardImage}
                         onTainted={markTaintedImage}

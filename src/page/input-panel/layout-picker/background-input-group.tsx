@@ -2,7 +2,7 @@ import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'r
 import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
-import { getArtCanvasCoordinate } from 'src/model';
+import { getArtCanvasCoordinate, ImageSourceType, ImageStyle } from 'src/model';
 import styled from 'styled-components';
 import { notification } from 'antd';
 
@@ -42,7 +42,7 @@ export type BackgroundInputGroupRef = {
 };
 export type BackgroundInputGroup = {
     children?: React.ReactNode,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType) => void,
 } & Pick<ImageCropper, 'backgroundColor' | 'receivingCanvas' | 'onTainted' | 'onSourceLoaded'>;
 export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, BackgroundInputGroup>(({
     backgroundColor,
@@ -54,21 +54,21 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
 }, ref) => {
     const language = useLanguage();
     const {
-        background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
+        background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit, backgroundStyle,
         isPendulum, pendulumSize,
         opacity,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
         card: {
-            background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
+            background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit, backgroundStyle,
             isPendulum, pendulumSize,
             opacity,
         },
         getUpdater,
         setCard,
     }) => ({
-        background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit,
+        background, backgroundCrop, backgroundType, backgroundData, backgroundSource, backgroundFit, backgroundStyle,
         isPendulum, pendulumSize,
         opacity,
         getUpdater,
@@ -85,7 +85,13 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
             backgroundFit: status,
         };
     }), [setCard]);
-    const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
+    const changeBackgroundStyle = useCallback((style: ImageStyle) => setCard(currentCard => {
+        return {
+            ...currentCard,
+            backgroundStyle: { ...currentCard.backgroundStyle, ...style },
+        };
+    }), [setCard]);
+    const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(
             curr => ({
@@ -122,6 +128,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         defaultCropInfo={backgroundCrop}
         receivingCanvas={receivingCanvas}
         forceFit={backgroundFit}
+        imageStyle={backgroundStyle}
         onSourceChange={(type, data) => {
             changeBackgroundSource(type);
             if (type === 'offline') changeBackgroundData(data);
@@ -131,6 +138,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
         onTainted={onTainted}
         onSourceLoaded={onSourceLoaded}
         onForceFitChange={changeBackgroundFit}
+        onImageStyleChange={changeBackgroundStyle}
         onMaxSizeExceeded={size => {
             notification.info({
                 description: language['error.max-size.description'](size),

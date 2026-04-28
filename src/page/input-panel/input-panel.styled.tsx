@@ -15,21 +15,6 @@ export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
             grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
         }
     }
-    .radio-train.foil-radio {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: var(--spacing-px); // Alignment
-        .ant-radio-button-wrapper {
-            font-size: var(--fs);
-        }
-        .standalone-addon {
-            border: none;
-            padding-bottom: var(--spacing-xxs);
-        }
-        .radio-train-input-group {
-            gap: 0;
-        }
-    }
     .ant-checkbox-wrapper {
         color: var(--color-heavy);
     }

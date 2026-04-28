@@ -3,6 +3,7 @@ import {
     AttributeType,
     BackgroundType,
     Card,
+    CardArtCanvasCoordinateMap,
     CardFlag,
     CardOpacity,
     CondenseType,
@@ -16,9 +17,13 @@ import {
     getDefaultCardOpacity,
     getDefaultCrop,
     getDefaultDyeList,
+    getDefaultIconCrop,
+    getDefaultImageStyle,
     getDefaultNameStyle,
+    getDefaultOverlayCrop,
     getDefaultTextStyle,
     getEmptyCard,
+    ImageSourceType,
     InternalCard,
     MAX_STAR_LENGTH,
     NameStyle,
@@ -111,6 +116,8 @@ const CsvStandardFieldList = [
     'Condense Rate',
     'Use Furigana Helper',
     /** Extremely intricate stuff, user usually should not bother with these */
+    'Art Style',
+    'Background Style',
     'Name Style Type',
     'Name Style - Font',
     'Name Style - Fill Style',
@@ -169,6 +176,25 @@ const CsvStandardFieldList = [
     'Other Finish - Background',
     'Other Finish - Icon',
     'Other Finish - Sticker',
+    'Overlay Link',
+    'Overlay Data',
+    'Overlay Source',
+    'Is Using Full Overlay',
+    'Overlay Style',
+    'Overlay Type',
+    'Overlay Crop - X (%)',
+    'Overlay Crop - Y (%)',
+    'Overlay Crop - Width (%)',
+    'Overlay Crop - Height (%)',
+    'Icon Link',
+    'Icon Data',
+    'Icon Source',
+    'Is Using Full Icon Image',
+    'Icon Style',
+    'Icon Crop - X (%)',
+    'Icon Crop - Y (%)',
+    'Icon Crop - Width (%)',
+    'Icon Crop - Height (%)',
     'Left Frame',
     'Right Frame',
     'Bottom Right Frame',
@@ -242,6 +268,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             artFinish,
             artFit,
             artSource,
+            artStyle,
             atk,
             attribute,
             attributeType,
@@ -250,6 +277,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             backgroundData,
             backgroundFit,
             backgroundSource,
+            backgroundStyle,
             backgroundType,
             cardIcon,
             cornerText,
@@ -286,6 +314,13 @@ export const cardListToCsv = (cardList: Card[]) => {
             opacity,
             otherFinish,
             otherTextStyle,
+            overlay,
+            overlayCrop,
+            overlayData,
+            overlayFit,
+            overlaySource,
+            overlayStyle,
+            overlayType,
             password,
             pendulumEffect,
             pendulumFrame,
@@ -301,6 +336,12 @@ export const cardListToCsv = (cardList: Card[]) => {
             setId,
             star,
             starAlignment,
+            iconImage,
+            iconImageCrop,
+            iconImageData,
+            iconImageFit,
+            iconImageSource,
+            iconImageStyle,
             starList,
             statTextStyle,
             sticker,
@@ -363,6 +404,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Art Crop - Width (%)', artCrop.width);
         write('Art Crop - Height (%)', artCrop.height);
         write('Is Using Full Art', artFit);
+        write('Art Style', JSON.stringify(artStyle));
         write('Star Type', typeof star === 'number' && star >= 0 && star <= 13 ? 'number' : 'text');
         write('Star Alignment', starAlignment);
         write('Card Icon Type', cardIcon);
@@ -381,6 +423,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Background Data', backgroundData);
         write('Background Source', backgroundSource);
         write('Is Using Full Background', backgroundFit);
+        write('Background Style', JSON.stringify(backgroundStyle));
         write('Background Type', backgroundType);
         write('Background Crop - X (%)', backgroundCrop.x);
         write('Background Crop - Y (%)', backgroundCrop.y);
@@ -447,6 +490,25 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Other Finish - Icon', otherFinish[1]);
         write('Other Finish - Sticker', otherFinish[2]);
         write('Other Finish - Background', otherFinish[3]);
+        write('Overlay Link', overlay);
+        write('Overlay Data', overlayData);
+        write('Overlay Source', overlaySource);
+        write('Is Using Full Overlay', overlayFit);
+        write('Overlay Style', JSON.stringify(overlayStyle));
+        write('Overlay Type', overlayType);
+        write('Overlay Crop - X (%)', overlayCrop.x);
+        write('Overlay Crop - Y (%)', overlayCrop.y);
+        write('Overlay Crop - Width (%)', overlayCrop.width);
+        write('Overlay Crop - Height (%)', overlayCrop.height);
+        write('Icon Link', iconImage);
+        write('Icon Data', iconImageData);
+        write('Icon Source', iconImageSource);
+        write('Is Using Full Icon Image', iconImageFit);
+        write('Icon Style', JSON.stringify(iconImageStyle));
+        write('Icon Crop - X (%)', iconImageCrop.x);
+        write('Icon Crop - Y (%)', iconImageCrop.y);
+        write('Icon Crop - Width (%)', iconImageCrop.width);
+        write('Icon Crop - Height (%)', iconImageCrop.height);
         write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
@@ -623,7 +685,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                         .filter(entry => typeof entry === 'string' && entry !== '')
                         .map(entry => typeof entry === 'string' ? entry : '');
 
-                const condenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant).toLowerCase() as CondenseType;
+                const baseCondenseTolerant = (reader('Condense Rate') ?? emptyCard.effectStyle.condenseTolerant) as CondenseType;
+                /** Fix syntax issue by mistake when exporting card data */
+                const condenseTolerant = (baseCondenseTolerant as string) === 'verystrict'
+                    ? 'veryStrict'
+                    : (baseCondenseTolerant as string) === 'veryloose'
+                        ? 'veryLoose'
+                        : baseCondenseTolerant;
                 const effectUpSize = normalizeInt(reader('Effect Style - Upsize'), emptyCard.effectStyle.upSize);
                 const pendulumEffectUpSize = normalizeInt(reader('Pendulum Effect Style - Upsize'), emptyCard.pendulumStyle.upSize);
                 const effectFontStyle = (reader('Effect Style - Font Style') ?? emptyCard.effectStyle.fontStyle).toLowerCase();
@@ -652,7 +720,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const emptyArtCrop = getDefaultCrop();
                 const art = reader('Art Link') ?? emptyCard.art;
                 const artData = reader('Art Data') ?? emptyCard.artData;
-                const artSource = reader('Art Source') ?? emptyCard.artSource;
+                const artSource = (reader('Art Source') ?? emptyCard.artSource) as ImageSourceType;
                 const artFit = normalizeBoolean(reader('Is Using Full Art'), emptyCard.artFit);
                 const artCrop: Crop = {
                     aspect: getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize).ratio,
@@ -662,12 +730,18 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     y: normalizeFloat(reader('Art Crop - Y (%)'), emptyArtCrop.y),
                     unit: '%',
                 };
+                let artStyle = getDefaultImageStyle();
+                try {
+                    artStyle = JSON.parse(reader('Art Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
 
                 const emptyBackgroundCrop = getDefaultCrop();
                 const hasBackground = normalizeBoolean(reader('Has Background'), emptyCard.hasBackground);
                 const background = reader('Background Link') ?? emptyCard.background;
                 const backgroundData = reader('Background Data') ?? emptyCard.backgroundData;
-                const backgroundSource = reader('Background Source') ?? emptyCard.backgroundSource;
+                const backgroundSource = (reader('Background Source') ?? emptyCard.backgroundSource) as ImageSourceType;
                 const backgroundType = (reader('Background Type') ?? emptyCard.backgroundType).toLowerCase() as BackgroundType;
                 const backgroundFit = normalizeBoolean(reader('Is Using Full Background'), emptyCard.backgroundFit);
                 const backgroundCrop: Crop = {
@@ -678,6 +752,53 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     y: normalizeFloat(reader('Background Crop - Y (%)'), emptyBackgroundCrop.y),
                     unit: '%',
                 };
+                let backgroundStyle = getDefaultImageStyle();
+                try {
+                    backgroundStyle = JSON.parse(reader('Background Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
+
+                const emptyOverlayCrop = getDefaultOverlayCrop();
+                const overlay = reader('Overlay Link') ?? emptyCard.overlay;
+                const overlayData = reader('Overlay Data') ?? emptyCard.overlayData;
+                const overlaySource = (reader('Overlay Source') ?? emptyCard.overlaySource) as ImageSourceType;
+                const overlayFit = normalizeBoolean(reader('Is Using Full Overlay'), emptyCard.overlayFit);
+                const overlayType = (reader('Overlay Type') ?? emptyCard.overlayType).toLowerCase();
+                const overlayCrop: Crop = {
+                    aspect: CardArtCanvasCoordinateMap.overframeCard.ratio,
+                    height: normalizeFloat(reader('Overlay Crop - Height (%)'), emptyOverlayCrop.height),
+                    width: normalizeFloat(reader('Overlay Crop - Width (%)'), emptyOverlayCrop.width),
+                    x: normalizeFloat(reader('Overlay Crop - X (%)'), emptyOverlayCrop.x),
+                    y: normalizeFloat(reader('Overlay Crop - Y (%)'), emptyOverlayCrop.y),
+                    unit: '%',
+                };
+                let overlayStyle = getDefaultImageStyle();
+                try {
+                    overlayStyle = JSON.parse(reader('Overlay Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
+
+                const emptyIconImageCrop = getDefaultIconCrop();
+                const iconImage = reader('Icon Link') ?? emptyCard.iconImage;
+                const iconImageData = reader('Icon Data') ?? emptyCard.iconImageData;
+                const iconImageSource = (reader('Icon Source') ?? emptyCard.iconImageSource) as ImageSourceType;
+                const iconImageFit = normalizeBoolean(reader('Is Using Full Icon Image'), emptyCard.iconImageFit);
+                const iconImageCrop: Crop = {
+                    aspect: 1,
+                    height: normalizeFloat(reader('Icon Crop - Height (%)'), emptyIconImageCrop.height),
+                    width: normalizeFloat(reader('Icon Crop - Width (%)'), emptyIconImageCrop.width),
+                    x: normalizeFloat(reader('Icon Crop - X (%)'), emptyIconImageCrop.x),
+                    y: normalizeFloat(reader('Icon Crop - Y (%)'), emptyIconImageCrop.y),
+                    unit: '%',
+                };
+                let iconImageStyle = getDefaultImageStyle();
+                try {
+                    iconImageStyle = JSON.parse(reader('Icon Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
 
                 const emptyNameStyle = getDefaultNameStyle();
                 const nameStyleType = (reader('Name Style Type') ?? emptyCard.nameStyleType).toLowerCase() as NameStyleType;
@@ -779,6 +900,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     artFinish,
                     artSource,
                     artFit,
+                    artStyle,
                     atk,
                     attribute,
                     attributeType,
@@ -786,6 +908,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     backgroundData,
                     backgroundCrop,
                     backgroundFit,
+                    backgroundStyle,
                     backgroundSource,
                     backgroundType,
                     cardIcon,
@@ -831,6 +954,19 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     opacity,
                     otherFinish: [finishAttribute, finishIcon, finishSticker, finishBackground] as OtherFinish,
                     otherTextStyle,
+                    overlay,
+                    overlayCrop,
+                    overlayData,
+                    overlayFit,
+                    overlaySource,
+                    overlayStyle,
+                    overlayType,
+                    iconImage,
+                    iconImageCrop,
+                    iconImageData,
+                    iconImageFit,
+                    iconImageSource,
+                    iconImageStyle,
                     password,
                     pendulumEffect,
                     pendulumFrame,

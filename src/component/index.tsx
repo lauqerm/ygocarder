@@ -8,7 +8,7 @@ export const GuardedSlider = (props: React.ComponentProps<typeof Slider>) => {
     </ErrorBoundary>;
 };
 
-export const StandaloneLabel = styled.div`
+export const StandaloneLabel = styled.div<{ $fixedSize?: boolean }>`
     font-weight: 500;
     border-color: transparent;
     background-color: transparent;
@@ -16,13 +16,19 @@ export const StandaloneLabel = styled.div`
     text-shadow: var(--ts);
     user-select: none;
     display: inline-block;
-    height: 32px;
-    width: var(--width-label);
-    line-height: 30px;
     position: relative;
-    min-width: var(--width-label);
     text-align: right;
     padding-right: var(--spacing-antd);
+    ${({ $fixedSize = true }) => {
+        return $fixedSize
+            ? `
+                height: 32px;
+                width: var(--width-label);
+                line-height: 30px;
+                min-width: var(--width-label);
+            `
+            : '';
+    }}
 `;
 
 export const StyledDropdownOption = styled.div`

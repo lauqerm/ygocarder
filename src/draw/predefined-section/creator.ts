@@ -1,8 +1,8 @@
 import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/model';
 import { condense, createFontGetter, scaleCoordinateData, scaleFontData, scaleFontSizeData } from 'src/util';
 import { tokenizeText } from '../text-util';
-import { drawLine } from '../text';
-import { createLineList } from '../line';
+import { drawLine } from '../line';
+import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { clearCanvas, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
@@ -12,6 +12,8 @@ export const drawCreatorText = async ({
     value,
     format,
     alignment,
+    widthOffset = 0,
+    edgeOffset = 0,
     baselineOffset = 0,
     lightFooter,
     hasShadow,
@@ -22,6 +24,8 @@ export const drawCreatorText = async ({
     value: string,
     format: string,
     alignment: 'left' | 'right',
+    widthOffset?: number,
+    edgeOffset?: number,
     baselineOffset?: number,
     lightFooter: boolean,
     hasShadow?: boolean,
@@ -48,6 +52,7 @@ export const drawCreatorText = async ({
         CreatorCoordinateMap[format] ?? CreatorCoordinateMap['tcg'],
         globalScale,
     );
+    const normalizedWidth = width + widthOffset;
     const fontData = scaleFontData(CreatorFontData[format], globalScale);
     const { font } = fontData;
     const normalizedText = normalizeCardText(value, format, { multiline: false, furiganaHelper: false });
@@ -85,7 +90,7 @@ export const drawCreatorText = async ({
                     paragraphList: [normalizedText],
                     format, textData: internalTextData,
                     globalScale,
-                    width,
+                    width: normalizedWidth,
                     lineHeight,
                 });
         
@@ -109,7 +114,7 @@ export const drawCreatorText = async ({
         ctx,
         tokenList: tokenizeText(normalizedText),
         xRatio, yRatio,
-        trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio),
+        trueEdge: alignment === 'left' ? trueEdge : (trueEdge - actualLineWidth * xRatio) + edgeOffset * globalScale,
         trueBaseline: trueBaseline + (fontSizeData.offsetY ?? scaledDefaultFontSizeData.offsetY) + baselineOffset * globalScale,
         lineHeight: textData.fontData.fontList[textData.fontLevel].lineHeight,
         textData,

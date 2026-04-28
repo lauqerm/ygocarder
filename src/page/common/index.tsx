@@ -15,6 +15,17 @@ export const FlagPresentationList = [
         </>,
     },
     {
+        ...FlagInfoList[2],
+        valueDisplay: (language: LanguageDataDictionary, _value: number) => language['input.flag.hide-deactivated-link'],
+        sampleDisplay: (language: LanguageDataDictionary) => <>
+            {language['input.flag.hide-deactivated-link']}:
+            <ul>
+                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.true']}</li>
+                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.false']}</li>
+            </ul>
+        </>,
+    },
+    {
         ...FlagInfoList[1],
         valueDisplay: (language: LanguageDataDictionary, value: number) => <>
             {language['input.flag.link-rating-behavior']}: {language[value === 1

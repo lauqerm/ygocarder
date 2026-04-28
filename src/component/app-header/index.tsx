@@ -236,7 +236,14 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
                             target="_blank"
                             rel="noreferrer"><b>9558able</b></a>,
-                        <b key="artist-3">gecko-chan</b>,
+                        <a key="artist-3"
+                            href="https://www.deviantart.com/slackermagician"
+                            target="_blank"
+                            rel="noreferrer"><b>SlackerMagician</b></a>,
+                        <a key="artist-4"
+                            href="https://www.deviantart.com/geckoygo"
+                            target="_blank"
+                            rel="noreferrer"><b>GeckoYGO</b></a>,
                         <Explanation
                             key="artist-5"
                             icon={AdditionalContributorIcon}

@@ -58,6 +58,7 @@ export const CardTextArea = forwardRef<CardTextAreaRef, CardTextArea>(({
     }));
 
     return <TextArea
+        dir="auto"
         id={id}
         autoComplete="off"
         onFocus={() => id && onTakePicker?.({ id, setValue: externalSetValue })}

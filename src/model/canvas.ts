@@ -1,3 +1,4 @@
+import { LanguageDataDictionary } from 'src/service';
 import { PendulumSize } from './pendulum';
 
 export const getBackgroundTypeList = (dictionary?: {
@@ -6,24 +7,59 @@ export const getBackgroundTypeList = (dictionary?: {
     frame: string,
     strict: string,
 }) => [
-        {
-            value: 'strict' as const,
-            label: dictionary?.strict,
-        },
-        {
-            value: 'fit' as const,
-            label: dictionary?.fit,
-        },
-        {
-            value: 'full' as const,
-            label: dictionary?.full,
-        },
-        {
-            value: 'frame' as const,
-            label: dictionary?.frame,
-        },
-    ];
+    {
+        value: 'strict' as const,
+        label: dictionary?.strict,
+    },
+    {
+        value: 'fit' as const,
+        label: dictionary?.fit,
+    },
+    {
+        value: 'full' as const,
+        label: dictionary?.full,
+    },
+    {
+        value: 'frame' as const,
+        label: dictionary?.frame,
+    },
+];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];
+
+export const getOverlayCompositeList = (dictionary: LanguageDataDictionary) => [
+    {
+        value: 'none' as const,
+        label: dictionary['input.advanced-frame.overlay-blend-type.none.label'],
+    },
+    {
+        value: 'source-in' as const,
+        label: dictionary['input.advanced-frame.overlay-blend-type.source-in.label'],
+    },
+    {
+        value: 'overlay' as const,
+        label: dictionary['input.advanced-frame.overlay-blend-type.overlay.label'],
+    },
+    {
+        value: 'color' as const,
+        label: dictionary['input.advanced-frame.overlay-blend-type.color.label'],
+    },
+    {
+        value: 'multiply' as const,
+        label: dictionary['input.advanced-frame.overlay-blend-type.multiply.label'],
+    },
+];
+export type OverlayComposite = ReturnType<typeof getOverlayCompositeList>[0]['value'];
+export const getOverlayTargetList = (dictionary: LanguageDataDictionary) => [
+    {
+        value: 'border' as const,
+        label: dictionary['input.advanced-frame.overlay-blend.border.label'],
+    },
+    {
+        value: 'frame' as const,
+        label: dictionary['input.advanced-frame.overlay-blend.frame.label'],
+    },
+];
+export type OverlayTarget = ReturnType<typeof getOverlayTargetList>[0]['value'];
 
 /**
  * @summary About x y headache.
@@ -35,6 +71,8 @@ export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'
 export type MasterSeriesCanvas = {
     artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
+    overlayCanvasRef: React.RefObject<HTMLCanvasElement>,
+    iconImageCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportCanvasRef: React.RefObject<HTMLCanvasElement>,
     frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,
@@ -57,6 +95,8 @@ export type MasterSeriesCanvas = {
 export type RushSeriesCanvas = {
     artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
+    overlayCanvasRef: React.RefObject<HTMLCanvasElement>,
+    iconImageCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportCanvasRef: React.RefObject<HTMLCanvasElement>,
     frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,
@@ -107,9 +147,9 @@ export const CanvasConst = {
     finishTypeCardWidth: 702,
     finishTypeCardHeight: 200,
     stickerSize: 52,
-    attributeSize: 77,
+    attributeSize: 76,
     attributeY: 55,
-    attributeX: 679,
+    attributeX: 680,
     stickerX: 739.1438,
     stickerY: 1110.938,
     iconWidth: 43,
@@ -366,8 +406,8 @@ export const CardArtCanvasCoordinateMap = {
         artWidth: 813,
         artX: 0,
         artY: 0,
-        ratio: 0.686,
-        backgroundRatio: 0.686,
+        ratio: 0.685,
+        backgroundRatio: 0.685,
         artFrameWidth: 614,
         artFrameHeight: 614,
         artFrameY: 219,
@@ -382,8 +422,8 @@ export const CardArtCanvasCoordinateMap = {
         artWidth: 813,
         artX: 0,
         artY: 0,
-        ratio: 0.686,
-        backgroundRatio: 0.686,
+        ratio: 0.685,
+        backgroundRatio: 0.685,
         artFrameWidth: 702,
         artFrameHeight: 530,
         artFrameY: 213,
@@ -400,8 +440,8 @@ export const CardArtCanvasCoordinateMap = {
         artWidth: 813,
         artX: 0,
         artY: 0,
-        ratio: 0.686,
-        backgroundRatio: 0.686,
+        ratio: 0.685,
+        backgroundRatio: 0.685,
         artFrameWidth: 702,
         artFrameHeight: 568,
         artFrameY: 213,
@@ -486,7 +526,7 @@ export const getArtCanvasCoordinate = (
         ...result,
         /** Unlike span background, frame background replace the entire frame even under the border. So frame background start from 0,0 while span background start from 28,28. */
         backgroundRatio: backgroundType === 'frame'
-            ? 0.686
+            ? 0.685
             : result.backgroundRatio,
     };
 };

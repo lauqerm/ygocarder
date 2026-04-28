@@ -1,4 +1,5 @@
 import { Drawer, Popover } from 'antd';
+import React from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
 export const StyledMarkdown = styled.div`
@@ -177,9 +178,9 @@ export type ResolutionLabel = {
     warning?: boolean,
     width: number,
     height: number,
-}
-export const ResolutionLabel = ({ width, height, warning = false }: ResolutionLabel) => {
-    return <ResolutionLabelContainer $warning={warning}>
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+export const ResolutionLabel = ({ width, height, warning = false, ...rest }: ResolutionLabel) => {
+    return <ResolutionLabelContainer $warning={warning} {...rest}>
         <span className="left-part">{width}</span>
         <span>×</span>
         <span className="right-part">{height}</span>

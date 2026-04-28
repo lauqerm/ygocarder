@@ -32,7 +32,6 @@ import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
     AttributeInputGroup,
     AttributeInputGroupRef,
-    CardIconInputGroup,
     EffectInputGroup,
     EffectInputGroupRef,
     FooterInputGroup,
@@ -56,6 +55,7 @@ import {
     StyledNameSetIdInputContainer,
 } from './input-panel.styled';
 import './input-panel.scss';
+import { IconInputGroup, IconInputGroupRef } from './icon-input-group';
 
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
@@ -64,11 +64,15 @@ export type CardInputPanelRef = {
 export type CardInputPanel = {
     artworkCanvas?: ImageInputGroup['receivingCanvas'],
     backgroundCanvas?: ImageInputGroup['receivingCanvas'],
+    overlayCanvas: ImageInputGroup['receivingCanvas'],
+    iconImageCanvas: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData'>;
 export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     applyCardData,
     artworkCanvas,
     backgroundCanvas,
+    overlayCanvas,
+    iconImageCanvas,
     onCropChange,
     onTainted,
     onSourceLoaded,
@@ -108,6 +112,7 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
 
     const frameTrainRef = useRef<FrameTrainRef>(null);
     const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);
+    const iconInputGroupRef = useRef<IconInputGroupRef>(null);
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
     const layoutPickerRef = useRef<OpacityPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
@@ -161,14 +166,18 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
     }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
+        /** @todo Maybe we need to check foil loading too. */
         isLoading: () => (imageInputGroupRef.current?.isLoading() ?? false)
-            || (layoutPickerRef.current?.isLoading() ?? false),
+            || (layoutPickerRef.current?.isLoading() ?? false)
+            || (iconInputGroupRef.current?.isLoading() ?? false),
         forceCardData: card => {
             setStylePickerResetCount(cnt => cnt + 1);
             const {
                 name,
                 art, artCrop, artData, artSource,
                 background, backgroundCrop, backgroundData, backgroundSource,
+                iconImage, iconImageCrop, iconImageData, iconImageSource,
+                overlay, overlayCrop, overlayData, overlaySource,
                 opacity,
                 attribute, attributeType,
                 setId,
@@ -191,7 +200,13 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
                 attribute, attributeType,
             });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
-            pendulumInputGroupRef.current?.setValue({ pendulumEffect });
+            pendulumInputGroupRef.current?.setValue({
+                pendulumEffect,
+                overlay, overlayCrop, overlayData, overlaySource,
+            });
+            iconInputGroupRef.current?.setValue({
+                iconImage, iconImageCrop, iconImageData, iconImageSource,
+            });
             effectInputGroupRef.current?.setValue(effect);
             postPendulumInputGroupRef.current?.setValue({
                 typeAbility,
@@ -205,7 +220,7 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
     }));
 
     return <div
-        className={['card-info-panel card-info-panel-master', format === 'ocg' ? 'input-ocg' : 'input-tcg'].join(' ')}
+        className={['card-info-panel', format === 'ocg' ? 'input-ocg' : 'input-tcg'].join(' ')}
     >
         <AppHeader
             applyCardData={applyCardData}
@@ -220,7 +235,6 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
             <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
                 <span>{language['input.foil.label']}</span>
             </RadioTrain>
-
             {showExtraDecorativeOption && <CheckboxTrain
                 className="finish-checkbox"
                 value={finish}
@@ -273,8 +287,11 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
                 showExtraDecorativeOption={showExtraDecorativeOption}
                 onChange={changeNameStyle}
             />
-            <CardIconInputGroup
+            <IconInputGroup ref={iconInputGroupRef}
                 showCreativeOption={showCreativeOption}
+                receivingCanvas={iconImageCanvas}
+                onTainted={onTainted}
+                onSourceLoaded={onSourceLoaded}
             />
         </StyledNameSetIdInputContainer>
         <div className="main-info">
@@ -285,6 +302,10 @@ export const MasterCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel
                     showCreativeOption={showCreativeOption}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     softMode={reduceMotionColor}
+                    receivingCanvas={overlayCanvas}
+                    onTainted={onTainted}
+                    onSourceLoaded={onSourceLoaded}
+                    onCropChange={onCropChange}
                     onTakePicker={setPickerTarget}
                     onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
                 />

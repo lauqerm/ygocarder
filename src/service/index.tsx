@@ -1,6 +1,7 @@
 export * from './format-change';
 export * from './use-batch-download';
 export * from './use-card';
+export * from './use-card-canvas';
 export * from './use-card-export';
 export * from './use-card-list';
 export * from './use-carder-db';

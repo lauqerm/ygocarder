@@ -33,7 +33,6 @@ import {
     OpacityPickerRef,
     AttributeInputGroup,
     AttributeInputGroupRef,
-    CardIconInputGroup,
     EffectInputGroup,
     EffectInputGroupRef,
     FooterInputGroup,
@@ -53,6 +52,8 @@ import {
     CardInputPanelRef,
     CardInputPanel,
     getRushFrameButtonList,
+    IconInputGroupRef,
+    IconInputGroup,
 } from '../input-panel';
 import { useShallow } from 'zustand/react/shallow';
 import './input-panel-rush.scss';
@@ -61,6 +62,8 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
     applyCardData,
     artworkCanvas,
     backgroundCanvas,
+    overlayCanvas,
+    iconImageCanvas,
     onCropChange,
     onTainted,
     onSourceLoaded,
@@ -100,6 +103,7 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
 
     const frameTrainRef = useRef<FrameTrainRef>(null);
     const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);
+    const iconInputGroupRef = useRef<IconInputGroupRef>(null);
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
     const layoutPickerRef = useRef<OpacityPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
@@ -153,14 +157,18 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
     }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
+        /** @todo Maybe we need to check foil loading too. */
         isLoading: () => (imageInputGroupRef.current?.isLoading() ?? false)
-            || (layoutPickerRef.current?.isLoading() ?? false),
+            || (layoutPickerRef.current?.isLoading() ?? false)
+            || (iconInputGroupRef.current?.isLoading() ?? false),
         forceCardData: card => {
             setStylePickerResetCount(cnt => cnt + 1);
             const {
                 name,
                 art, artCrop, artData, artSource,
                 background, backgroundCrop, backgroundData, backgroundSource,
+                iconImage, iconImageCrop, iconImageData, iconImageSource,
+                overlay, overlayCrop, overlayData, overlaySource,
                 opacity,
                 attribute, attributeType,
                 setId,
@@ -183,7 +191,13 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
                 attribute, attributeType,
             });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
-            pendulumInputGroupRef.current?.setValue({ pendulumEffect });
+            pendulumInputGroupRef.current?.setValue({
+                pendulumEffect,
+                overlay, overlayCrop, overlayData, overlaySource,
+            });
+            iconInputGroupRef.current?.setValue({
+                iconImage, iconImageCrop, iconImageData, iconImageSource,
+            });
             effectInputGroupRef.current?.setValue(effect);
             postPendulumInputGroupRef.current?.setValue({
                 typeAbility,
@@ -212,7 +226,6 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
             <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
                 <span>{language['input.foil.label']}</span>
             </RadioTrain>
-
             {showExtraDecorativeOption && <CheckboxTrain
                 className="finish-checkbox"
                 value={finish}
@@ -266,8 +279,11 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
                 showExtraDecorativeOption={showExtraDecorativeOption}
                 onChange={changeNameStyle}
             />
-            <CardIconInputGroup
+            <IconInputGroup ref={iconInputGroupRef}
                 showCreativeOption={showCreativeOption}
+                receivingCanvas={iconImageCanvas}
+                onTainted={onTainted}
+                onSourceLoaded={onSourceLoaded}
             />
         </StyledNameSetIdInputContainer>
         <div className="main-info">
@@ -278,9 +294,12 @@ export const RushCardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(
                     showCreativeOption={showCreativeOption}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     softMode={reduceMotionColor}
+                    receivingCanvas={overlayCanvas}
+                    onTainted={onTainted}
+                    onSourceLoaded={onSourceLoaded}
+                    onCropChange={onCropChange}
                     onTakePicker={setPickerTarget}
                     onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
-                    onGetFrameButtonList={getRushFrameButtonList}
                 />
 
                 <PostPendulumInputGroup ref={postPendulumInputGroupRef} onTakePicker={setPickerTarget} />

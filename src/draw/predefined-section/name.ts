@@ -7,10 +7,10 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontDebugger } from 'src/util';
-import { tokenizeText } from '../text-util';
-import { drawLine } from '../text';
-import { createLineList } from '../line';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontMeasurer, normalizeCardName } from 'src/util';
+import { getWritingDirection, tokenizeText } from '../text-util';
+import { drawLine } from '../line';
+import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { setTextStyle } from '../canvas-util';
@@ -104,7 +104,10 @@ export const drawName = async (
     const { isSpeedSkill, format, frame, furiganaHelper, globalScale } = option;
     const edge = _edge * globalScale;
     const trueBaseline = _trueBaseline * globalScale;
+    const direction = getWritingDirection(value);
     const width = _width * globalScale;
+    const normalizedName = normalizeCardName(value);
+    const debug = false;
 
     if (!(ctx && value)) return;
     const {
@@ -150,7 +153,7 @@ export const drawName = async (
     const quoteConvertedValue = normalizeCardText(
         value,
         format,
-        { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName' },
+        { multiline: false, furiganaHelper, dictionaryType: 'rubyFormName', direction },
     );
 
     /** Calculate the bounding box that contains all card name's graphic, and passing it to gradient calculator. Beware - gradient does not apply to head text. */
@@ -221,7 +224,7 @@ export const drawName = async (
         : undefined;
 
 
-    fontDebugger.test(
+    fontMeasurer.test(
         { globalScale, xRatio, normalStyle },
         {
             scale: globalScale,
@@ -260,11 +263,13 @@ export const drawName = async (
         lineHeight,
         format,
         globalScale,
-        option: { drawHeadText: false },
+        option: { drawHeadText: false, direction },
+        width: actualLineWidth * xRatio,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
             ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
         },
+        debug,
     });
     resetEmbossStroke();
 
@@ -285,10 +290,12 @@ export const drawName = async (
             await drawAsset(patternContext, `background/background-name-${frame}.png`, 0, 0);
             patternContext.globalCompositeOperation = patternBlendMode;
             patternContext.resetTransform();
+            /** The first letter of card name may reach outside of the card edge (for example letter J), so we skew the pattern image if needed. */
+            const offset = ctx.measureText(normalizedName).actualBoundingBoxLeft;
             await drawAssetWithSize(
                 patternContext, `finish-name/${patternImage}.png`,
-                edge, trueBaseline - maxAscent,
-                width,
+                edge - offset, trueBaseline - maxAscent,
+                width + offset,
                 maxAscent + maxDescent,
             );
             ctx.globalCompositeOperation = 'source-in';
@@ -335,7 +342,8 @@ export const drawName = async (
             lineHeight,
             format,
             globalScale,
-            option: { drawHeadText: false },
+            option: { drawHeadText: false, direction },
+            width: actualLineWidth * xRatio,
             drawImage: false,
             textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
                 ctx.lineJoin = 'round';
@@ -345,6 +353,7 @@ export const drawName = async (
                     scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
                 );
             },
+            debug,
         });
         ctx.lineJoin = 'miter';
         ctx.globalCompositeOperation = 'source-over';
@@ -387,7 +396,10 @@ export const drawName = async (
         format,
         globalScale,
         drawImage: false,
+        option: { direction },
+        width: actualLineWidth * xRatio,
         textDrawer: () => { },
+        debug,
     });
 
     const defaultTextStyle = getDefaultNameStyle();
@@ -395,4 +407,9 @@ export const drawName = async (
     ctx.fillStyle = defaultTextStyle.fillStyle;
     ctx.lineJoin = 'miter';
     ctx.globalCompositeOperation = 'source-over';
+    // ctx.globalAlpha = 0.5;
+    // ctx.fillStyle = 'rgba(255, 255, 255)';
+    // ctx.fillRect(0, trueBaseline, 813, 1);
+    // ctx.fillRect(0, (trueBaseline - 35 * globalScale), 813, 1);
+    // ctx.globalAlpha = 1;
 };

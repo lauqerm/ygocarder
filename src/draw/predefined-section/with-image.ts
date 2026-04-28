@@ -13,6 +13,7 @@ const {
 
 export const drawStarContent = async ({
     ctx,
+    iconImage,
     globalScale,
     cardIcon,
     text,
@@ -24,6 +25,7 @@ export const drawStarContent = async ({
     loopStarFinish,
 }: {
     ctx: CanvasRenderingContext2D | null | undefined,
+    iconImage: HTMLCanvasElement | null | undefined,
     globalScale: number,
     cardIcon: string,
     text: string | null,
@@ -95,7 +97,9 @@ export const drawStarContent = async ({
             offset += (starWidth + starSpacing);
             /** We must factor alignment here, because presentation does not factor alignment */
             const cardIconIndex = normalizedStarCount - 1 - index;
-            const cardIconName = cardIcon === 'custom' ? normalizedStarList[cardIconIndex] : cardIcon;
+            const cardIconName = cardIcon === 'custom'
+                ? normalizedStarList[cardIconIndex]
+                : cardIcon;
             const coordinate: [number, number] = [
                 leftEdge - (starWidth + Math.ceil(offset)),
                 baseline,
@@ -105,7 +109,15 @@ export const drawStarContent = async ({
                 baseline - 3,
             ];
             if (IconWithGlowMap[cardIconName]) await drawAsset(starCtx, 'subfamily/subfamily-glow.png', ...glowCoordinate);
-            await drawAsset(starCtx, `subfamily/subfamily-${cardIconName}.png`, ...coordinate);
+            if (cardIconName === 'user-defined' && starCtx && iconImage) {
+                starCtx?.drawImage(
+                    iconImage,
+                    ...coordinate,
+                    starWidth, starWidth,
+                );
+            } else {
+                await drawAsset(starCtx, `subfamily/subfamily-${cardIconName}.png`, ...coordinate);
+            }
             return await onStarDraw(coordinate);
         })
     );
@@ -240,7 +252,9 @@ export const drawLimitedEditionMark = async ({
     textStyle?: CanvasTextStyle,
 }) => {
     const coordinate: [number, number, number, number] = !isLegacyCard || isPendulum
-        ? [145, 1123, 240 - widthOffset / globalScale, 37]
+        ? (isLink && isPendulum)
+            ? [220, 1123, 150 - widthOffset / globalScale, 37]
+            : [145, 1123, 240 - widthOffset / globalScale, 37]
         : isLink
             ? [151, 846, 216, 36]
             : [80, 843, 240, 40];

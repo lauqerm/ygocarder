@@ -61,37 +61,40 @@ export const FrameBehaviorSettingPanel = () => {
     });
 
     return <FrameBehaviorSettingPanelContainer>
-        {flag.map((entry, index) => {
-            const { labelKey, type } = FlagInfoList[index] ?? {};
+        {flag
+            .map((value, index) => ({ component: FlagInfoList[index], value, index }))
+            .sort((l, r) => l.component.order - r.component.order)
+            .map(({ component, value, index }) => {
+                const { labelKey, type } = component ?? {};
 
-            if (type === 'checkbox') {
-                return <div key={labelKey}>
-                    <Checkbox
-                        checked={entry !== 0}
-                        onChange={e => {
-                            const value = e.target.checked ? 1 : 0;
+                if (type === 'checkbox') {
+                    return <div key={labelKey}>
+                        <Checkbox
+                            checked={value !== 0}
+                            onChange={e => {
+                                const value = e.target.checked ? 1 : 0;
 
-                            updateFlag(value, index);
-                        }}
-                    >{language[labelKey]}</Checkbox>
-                </div>;
-            }
-            if (type === 'link-rating-behavior') {
-                return <RadioTrain key={labelKey}
-                    className="link-rating-behavior-panel"
-                    onChange={(value) => updateFlag(Number(value), index)}
-                    optionList={[
-                        { label: language['input.flag.link-rating-behavior.auto'], value: LINK_RATING_ALWAYS_AUTO },
-                        { label: language['input.flag.link-rating-behavior.show'], value: LINK_RATING_ALWAYS_SHOW },
-                        { label: language['input.flag.link-rating-behavior.hide'], value: LINK_RATING_ALWAYS_HIDE },
-                    ]}
-                    value={entry}
-                    suffix={<label>
-                        {language[labelKey]}
-                    </label>}
-                />;
-            }
-            return null;
-        })}
+                                updateFlag(value, index);
+                            }}
+                        >{language[labelKey]}</Checkbox>
+                    </div>;
+                }
+                if (type === 'link-rating-behavior') {
+                    return <RadioTrain key={labelKey}
+                        className="link-rating-behavior-panel"
+                        onChange={(value) => updateFlag(Number(value), index)}
+                        optionList={[
+                            { label: language['input.flag.link-rating-behavior.auto'], value: LINK_RATING_ALWAYS_AUTO },
+                            { label: language['input.flag.link-rating-behavior.show'], value: LINK_RATING_ALWAYS_SHOW },
+                            { label: language['input.flag.link-rating-behavior.hide'], value: LINK_RATING_ALWAYS_HIDE },
+                        ]}
+                        value={value}
+                        suffix={<label>
+                            {language[labelKey]}
+                        </label>}
+                    />;
+                }
+                return null;
+            })}
     </FrameBehaviorSettingPanelContainer>;
 };

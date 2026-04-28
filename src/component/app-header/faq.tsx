@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '11/03/2026';
+        const currentReminder = '28/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -80,7 +80,90 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
-            author: 'MaSaHo',
+            author: 'Anonymous at April 28, 2026',
+            question: 'I saw a card template once and thought "wow it would be rly cool if i made a card outta this", then i realised i couldn\'t, so could you give us the feature to upload our own custom templates without needing to use the default ones??\n\nOh, and by templates i mean the Monster templates',
+            answer: 'Hi, what does your template look like? The app supports customizing a variety of card components, including background layer, foil, etc. If you can provide more details about your template and which part you want to customize, I may be able to suggest how to achieve that with current features or by adding new ones if needed.',
+        },
+        {
+            author: 'Ryan at April 24, 2026',
+            question: 'Importing a Spell Card (haven\'t tried on Traps) don\'t auto attach the Spell Attribute and show ATK/DEF like a Monster card.',
+            answer: 'Thanks for your report, I have fixed the issue.',
+        },
+        {
+            author: 'Anonymous at April 18, 2026',
+            question: 'I want to remove the pendulum effect frame, as it\'s already available on the overframe card',
+            answer: 'Do you want to be able to remove the effect background as well? I may give it a try.',
+        },
+        {
+            author: 'Anonymous at April 14, 2026',
+            question: 'Hey it\'s me again, i see that the issue wasnt fixed, ik if the issue lasts more than 2 weeks then you are unable to fix it, but pls reconsider.\nheres a screenshot for reference',
+            answer: 'I have update the formatting in card name and effects to adapt with Arabic, you may try it now.'
+        },
+        {
+            author: 'Anonymous at April 12, 2026',
+            question: 'Hi Lauqerm, have you fix the issue of G and S leeters😭😭 i think the height issue cameback maybe came from the shrinkage of the attribute icons in the name box 🤔🤔',
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'The S and G letter now are lower than other letters Lauqerm, i tried on Slifer the Sky Dragon, its same as the N letter issue before you fixed for me 😭😭😭',
+            answer: 'Can you provide some images / screenshots to help me visualize the issue better? It\'s pretty weird because I never adjust the letter S so it very unlikely that it bugged out right now when it is not before.'
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'Hello, its me again.\nThe same issue is back with G letter again Lauqerm, please fix it 😭😭😭',
+            answer: 'Oh man 😭.'
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: '"From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page."\n\nI don\'t know what to say. It simply is not stored as a saved toggle feature whenever I import the card list. It\'s a very minor thing and a peeve at worst. I cannot say it\'s exclusively a me thing, but if you say it should work that way, then it just doesn\'t do it for me.',
+            answer: 'I see. I have tried apply a fix for this, hopefully this will resolve the issue. But if it still persists, could you send me a part of your card list as well? (not the whole thing, just the first few lines are enough). It will help me a lot to investigate the problem. Thanks for your help.'
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'I\'m an Arab and love Yu-Gi-Oh, but your card maker doesn\'t support the Arabic language and I really want to make Arabic Yu-Gi-Oh cards becuz my friends can\'t understand english to read the cards I maker',
+        },
+        {
+            author: 'Anonymous at April 09, 2026',
+            question: 'If I wasn\'t clear before, the Arabic text is supposed to look like this\n أهلا، انا اتحدث العربية\nInstead it looks like this\nة ي ب ر ل أ  ث د ح ت ا، أ ل ه ا \nPlease fix this\n(Btw the translation is "Hello, I speak Arabic")',
+            answer: 'I will try my best. But I don\'t know Arabic and its writing system so it may take sometime 😭. Thanks for your patience.'
+        },
+        {
+            author: 'Anonymous at April 05, 2026',
+            question: 'OCG Series 1 and 2 only button from change setting.',
+            answer: 'Sorry, I do not have access to the template for older series.'
+        },
+        {
+            author: 'Anonymous at April 05, 2026',
+            question: 'Any reason in particular why the Condense tet in the paragraph style tab isn\'t saved or at least defaulted like almost everything else is? It\'s pretty convenient as a feature, or rather I\'ve yet to encounter the use case where less condensation is better.\n\nWhat isn\'t convenient however is how you have to toggle it each time when your load your save file.',
+            answer: 'Hi there, I\'m not sure if I fully understand your problem. Do you mean the condense option is not saved when you export the card? From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page. If you could provide the steps to reproduce the issue (and explain what you expect to happen), it would help me resolve the problem.'
+        },
+        {
+            author: 'Lukas at March 27, 2026',
+            question: 'Thanks to the new Utopia overframe card I noticed that the attributes of both spells/ traps aren\'t aligned like the monsters attributes. Is that intentional or an error? (I reported before without the screenshot, sorry).',
+            answer: 'Hi there, I\'m not sure I fully understand your feedback, as all attributes (both monsters and spells/traps) appear to be aligned the same way from what I can see. Compared to the Utopia Overframe card, the attribute is slightly larger and misaligned however, which I have already made some updates to it.'
+        },
+        {
+            author: 'Yugiohfann at March 20, 2026',
+            question: 'Hello again Lauqerm\nI forgot to mention that the letter "q" also has a similar height issue compared to other letters like the letter "n" while it is in a long card\'s name 😅😅😅',
+        },
+        {
+            author: 'Yugiohfann at March 20, 2026',
+            question: 'Hello again Lauqerm, \nThank you for fixing the height issue of the letter "i" before, but now the issue is back with the letter "n" while it is shifted further down the line compared to the other letters in some long card\'s name such as "Gandora-G the Dragon of Destruction", "Dark Magician the Magician of Black Magic", "Dark Magician Girl the Magician\'s Apprentice".... 😭😭😭',
+            answer: 'My bad, I have updated the caliberation rule for the letter (again) 😭😭.'
+        },
+        {
+            author: 'Anonymous at March 19, 2026',
+            question: 'I am not sure if this is even feasible, but I think it\'d be mighty convenient if there was a feature that allowed you to display the submitted card art mirrored in the card display, to save the bother of mirroring it beforehand.',
+            answer: 'Hi, now card artwork / background will allow you to flip the image horizontally / vertically.',
+            image: 'https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png',
+        },
+        {
+            author: 'RedSupernovaDragon at March 17, 2026',
+            question: 'Hello again, I have some news that could help you in fixing the "name box shrinking issue". I tried to see if it was a common problem on similar sites; I typed the whole alphabet and the numbers on YGOPro and found out that it does not have such a defect: letters in the name box shrink normally, keeping their ratio and heights. As your site is objectively superior to YGOpro in terms of card making, image quality and UI, I was wondering if you could try something more to fix the issue, particularly on pc but mobile version would be nice too.\nNamely, you could do 3 things:\n1. Taking inspiration by how YGOpro managed to code the compression. To be clear, this is *not* an incitation to plagiarism, just a small comparison; maybe DevTools can show you how they coded that specific feature, so you can see if there is any substantial difference in the lines. IDK, but there must be a reason why their carder displays the right text at any length.\n2. You could simply try a different font file. I assume you uploaded fonts on this site, perhaps the rendering problem is due to the otf / ttf / whatever file itself.\n3. Finally, you could focus on mastering the manipulation of curved strokes, what is currently difficult for you. You managed to fix basically every other letter, at least on PC; on mobile there are still some issues even with E and I, but that may be related to my browser.\n\nI regard this issue as much more fundamental than it seems, since it affects basically every card with a (not so) long name created with your site.\nThere has to be a solution, otherwise it would be really sad to keep this defect. I think that details like this matter, even more than other features. A realistic proxy can have some defects that are not visibile at first glance; those defects do not include a letter O that goes Over the top in the name box, which is one of the first things you read on a card.\n\nI tried to give some suggestions, hoping that my words didn\'t sound too bad or out of place. And I also hope that this problem will be solved sooner or later.\nLooking forward to the next updates!',
+            answer: 'Thanks, I know how irritating this problem is, and believe me, I\'ve spent quite a while trying to figure something out over the past years. The cause is very clear, rendering the font in large size causes the problem to appear when they are condensed. I just can\'t find a way to effectively solve it.\nI appreciate your suggestions though, here is what I have done:\n1. Unfortunately, all other card makers (as far as I know) are closed-source, which means I basically cannot access their codebase to see what they are doing at all.\n2. I did try the font from YGOPro card maker and ygocardmaker.net before, but to no avail.\n3. This is my only tactic right now: keep throwing fixes at the wall to see what sticks 😭.\nAnyway, I have issued another experimental fix for now. If you encounter the problem again (which unfortunately is likely), please attach an image of the app (the report dialog has a screencapture function). It may help me a bit when evaluating any future fixes. Appreciate your help.'
+        },
+        {
+            author: 'MaSaHo at March 11, 2026',
             question: 'I recently noticed that Yu-Gi-Oh cards have had several small reformulations throughout the life of the game, which they call “Series”, and your model is equivalent to Series 10 (the current one). Do you have plans to add the older series layouts at some point in the future?',
             answer: 'Hi there, unfortunately that will require access to old series templates as well as a list of changes made over time, which I currently do not have. The app can only support a few limited options (for example, "small" and "large" pendulum frames, or the old position for the "1st Edition" text), but that is about it.',
         },

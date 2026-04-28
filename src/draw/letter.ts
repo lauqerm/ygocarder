@@ -19,7 +19,7 @@ import {
     TCGOffsetMap,
     nonBreakableSymbolRegex,
 } from 'src/model';
-import { fontDebugger } from 'src/util';
+import { fontMeasurer } from 'src/util';
 
 /**
  * Return the width of a letter. This function return true width of a scalable letter, but will return the inverse-scaled width of a non-scalable letter (based on the `xRatio` property). For example:
@@ -58,7 +58,6 @@ export const getLetterWidth = ({
         width: 0,
         boundWidth: 0,
     };
-
     
     const boxSpacingRatioMap = fontStyle === 'tcg'
         ? TCGBoxSpacingRatioMap
@@ -206,7 +205,7 @@ export const drawLetter = ({
         height: actualLetterHeight,
         ascentCompensate,
         descentCompensate,
-    } = fontDebugger.get(baseLetter) ?? {};
+    } = fontMeasurer.get(baseLetter) ?? {};
 
     const letterWidth = metric.width * xRatio;
     const scaledBoundingWidth = boundWidth ? boundWidth * xRatio : letterWidth;
@@ -229,9 +228,14 @@ export const drawLetter = ({
         && actualLetterHeight > 0
         && xRatio >= threshold
     ) {
+        const compensateThreshold = 2;
         /** Need to carefully survey if we over-compensate in edge case. */
-        normalizedDescentCompensate = typeof descentCompensate === 'number' ? descentCompensate : 0;
-        normalizedAscentCompensate = typeof ascentCompensate === 'number' ? ascentCompensate : 0;
+        normalizedDescentCompensate = typeof descentCompensate === 'number' && Math.abs(descentCompensate) <= compensateThreshold
+            ? descentCompensate
+            : 0;
+        normalizedAscentCompensate = typeof ascentCompensate === 'number' && Math.abs(ascentCompensate) <= compensateThreshold
+            ? ascentCompensate
+            : 0;
 
         // const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
         compensateYScale = (actualLetterHeight + normalizedDescentCompensate + normalizedAscentCompensate) / actualLetterHeight;

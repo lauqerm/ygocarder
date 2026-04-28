@@ -1,6 +1,5 @@
 import { Popover } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { ExtractProps } from 'src/type';
 import styled from 'styled-components';
 
 const StyledExplanationIcon = styled(ExclamationCircleOutlined)`
@@ -11,9 +10,9 @@ const StyledExplanationIcon = styled(ExclamationCircleOutlined)`
 `;
 
 export type Explanation = {
-    iconProps?: ExtractProps<typeof ExclamationCircleOutlined>,
+    iconProps?: React.ComponentProps<typeof ExclamationCircleOutlined>,
     icon?: typeof StyledExplanationIcon,
-} & ExtractProps<typeof Popover>;
+} & React.ComponentProps<typeof Popover>;
 export const Explanation = ({
     overlayClassName,
     iconProps,

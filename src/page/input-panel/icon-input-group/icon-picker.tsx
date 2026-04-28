@@ -1,15 +1,16 @@
 import { Button, Checkbox, Modal } from 'antd';
-import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
     IconTypeAttributeList,
     IconTypeInfo,
     IconTypeList,
+    IconTypeMap,
     IconTypeStList,
     MAX_STAR_LENGTH,
     NORMAL_STAR_LENGTH,
     TotalIconTypeMap,
 } from 'src/model';
-import { useCard, WithLanguage } from 'src/service';
+import { useCard, useCardCanvas, WithLanguage } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { CloseCircleOutlined, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
@@ -22,6 +23,7 @@ const IconDropdownOverlay = styled.div`
     height: 100%;
     border-radius: var(--br-lg);
     cursor: not-allowed;
+    z-index: 2;
 `;
 export const StyledIconDropdown = styled(StyledDropdown.Container)`
     .anticon-close-circle {
@@ -30,10 +32,13 @@ export const StyledIconDropdown = styled(StyledDropdown.Container)`
     img.icon-image {
         width: var(--fs-lg);
     }
+    > label {
+        margin: 0 var(--spacing-xs);
+    }
 `;
 export const IconDropdownContainer = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1.5fr;
     gap: var(--spacing-px);
     background-color: var(--sub-level-1);
     border: var(--bw) solid var(--sub-level-1);
@@ -45,12 +50,21 @@ export const IconDropdownContainer = styled.div`
         border: none;
         border-radius: 0;
     }
+    .card-image-cropper {
+        width: 225px;
+        grid-template-columns: 1fr;
+        gap: var(--spacing);
+        margin: 0 var(--spacing-xs);
+        --max-image-height: 200px;
+    }
     &.selector-disabled {
         filter: opacity(0.65) grayscale(0.85);
     }
 `;
-export type StarTypeSelector = {
+export type IconTypePickerRef = {};
+export type IconTypePicker = {
     disabled?: boolean,
+    children?: React.ReactNode,
     className?: string,
     activeCardIcon: string,
     onChange: (value: string) => void,
@@ -58,7 +72,8 @@ export type StarTypeSelector = {
     showMixableOnly?: boolean,
     showRemove?: boolean,
 } & WithLanguage;
-export const StarTypeSelector = ({
+export const IconTypePicker = forwardRef<IconTypePickerRef, IconTypePicker>(({
+    children,
     disabled = false,
     className,
     language,
@@ -67,7 +82,7 @@ export const StarTypeSelector = ({
     showRemove = false,
     onChange,
     onRemove,
-}: StarTypeSelector) => {
+}, _ref) => {
     const filterFunction = showMixableOnly ? (entry: IconTypeInfo) => entry.isMixable : () => true;
 
     return <IconDropdownContainer
@@ -109,18 +124,28 @@ export const StarTypeSelector = ({
                 </StyledDropdown.Option>;
             })}
         </StyledIconDropdown>
+        <StyledIconDropdown className="container-group container-user-defined">
+            {disabled && <IconDropdownOverlay className="container-disable-overlay" />}
+            <Checkbox
+                checked={activeCardIcon === 'user-defined'}
+                onChange={e => onChange(e.target.checked ? 'user-defined' : IconTypeMap['auto'].value)}
+            >
+                {language['input.icon-type.user-defined.label']}
+            </Checkbox>
+            {children}
+        </StyledIconDropdown>
     </IconDropdownContainer>;
-};
+});
 
-const StarListSelectPanel = styled.div`
+const IconListSelectPanel = styled.div`
     margin-bottom: var(--spacing);
 `;
-const StarListControlPanel = styled.div`
+const IconListControlPanel = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: var(--spacing);
 `;
-const StarListContainer = styled.div`
+const IconListContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(13, 2rem);
     gap: var(--spacing-xs);
@@ -162,14 +187,26 @@ const StarListContainer = styled.div`
         border-color: var(--sub-active);
     }
 `;
+const StyledIconTypePicker = styled(IconTypePicker)`
+    grid-template-columns: 1fr 1fr 1fr;
+    .container-user-defined {
+        min-height: 175px;
+        grid-column: span 3;
+    }
+    .card-image-cropper {
+        width: unset;
+        grid-template-columns: 1fr 1fr;
+    }
+`;
 
-export type StarPickerRef = {
+export type IconPickerRef = {
     changeStatus: (status: 'open' | 'close' | 'toggle') => void,
 };
-export type StarPicker = {
-
+export type IconPicker = {
+    children?: React.ReactNode,
 } & WithLanguage;
-export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
+export const IconPicker = forwardRef<IconPickerRef, IconPicker>(({
+    children,
     language,
 }, ref) => {
     const {
@@ -185,13 +222,14 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
         setCard,
     })));
     const [visible, setVisible] = useState(false);
-    const changeStarList = useMemo(() => (transformer: string[] | ((prev: string[]) => string[])) => {
+    const [hidden, setHidden] = useState(true);
+    const changeIconList = useMemo(() => (transformer: string[] | ((prev: string[]) => string[])) => {
         setCard(card => {
-            const nextStarList = Array.isArray(transformer) ? transformer : transformer(card.starList);
+            const nextIconList = Array.isArray(transformer) ? transformer : transformer(card.starList);
 
             return {
                 ...card,
-                starList: nextStarList,
+                starList: nextIconList,
             };
         });
     }, [setCard]);
@@ -214,6 +252,12 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
     const [activeInformation, setActiveInformation] = useState({
         activeList: [] as number[],
     });
+    const iconTypePickerRef = useRef<IconTypePickerRef>(null);
+    const { cardIconImage } = useCardCanvas(useShallow(({
+        canvasDataMap,
+    }) => ({
+        cardIconImage: canvasDataMap.iconImage,
+    })));
 
     useImperativeHandle(ref, () => ({
         changeStatus: status => {
@@ -225,23 +269,33 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
                 setVisible(cur => !cur);
             }
             setActiveInformation({ activeList: [] });
-        }
+        },
     }));
+
+    useEffect(() => {
+        /** Force visible canvas so image cropper works properly. */
+        setVisible(true);
+        setTimeout(() => {
+            setVisible(false);
+        }, 250);
+        setTimeout(() => {
+        }, 800);
+    }, []);
 
     const {
         activeList
     } = activeInformation;
     return <Modal
-        className="global-overlay global-no-close"
+        className={mergeClass('global-overlay global-no-close', hidden ? 'global-modal-hidden' : '')}
+        mask={hidden ? false : undefined}
         visible={visible}
         width={506}
         onCancel={() => setVisible(false)}
+        onOk={() => setVisible(false)}
+        afterClose={() => setHidden(false)}
         cancelText={language['manager.template.button.cancel.label']}
-        okButtonProps={{
-            style: { display: 'none' },
-        }}
     >
-        <StarListSelectPanel className="star-list-control-panel">
+        <IconListSelectPanel className="star-list-control-panel">
             <Checkbox
                 checked={use12}
                 onChange={e => {
@@ -254,7 +308,7 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
 
                             return { slotList: nextSlotList, use12: true };
                         });
-                        changeStarList(currentStarList => currentStarList.slice(0, NORMAL_STAR_LENGTH));
+                        changeIconList(currentIconList => currentIconList.slice(0, NORMAL_STAR_LENGTH));
                         setActiveInformation(({ activeList }) => ({ activeList: activeList.filter(entry => entry !== MAX_STAR_LENGTH - 1) }));
                     } else {
                         setSlot(({ slotList }) => {
@@ -265,7 +319,7 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
 
                             return { slotList: nextSlotList, use12: false };
                         });
-                        changeStarList(currentStarList => padRight(currentStarList, MAX_STAR_LENGTH));
+                        changeIconList(currentIconList => padRight(currentIconList, MAX_STAR_LENGTH));
                     }
                 }}
             >{language['input.icon-type.slot.use-12.label']}</Checkbox>
@@ -292,11 +346,15 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
             }}>
                 {language['input.icon-type.slot.deselect-all.label']}
             </Button>
-        </StarListSelectPanel>
-        <StarListContainer className="star-list-container">
+        </IconListSelectPanel>
+        <IconListContainer className="star-list-container">
             {slotList.map(({ slot, index, disabled }) => {
                 const slotValue = starList[index];
-                const starInfo = TotalIconTypeMap[slotValue ?? ''];
+                const starInfo = slotValue === 'user-defined' && cardIconImage
+                    ? {
+                        icon: <img className="icon-image" src={cardIconImage} alt={'User-defined icon'} />
+                    }
+                    : TotalIconTypeMap[slotValue ?? ''];
                 const active = activeList.includes(index);
 
                 return <div key={slot}
@@ -340,13 +398,13 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
                     </div>
                 </div>;
             })}
-        </StarListContainer>
-        <StarListControlPanel>
+        </IconListContainer>
+        <IconListControlPanel>
             <Button
                 size="small"
                 onClick={() => {
-                    changeStarList(currentStarList => {
-                        return [...currentStarList.slice(1, currentStarList.length), ''];
+                    changeIconList(currentIconList => {
+                        return [...currentIconList.slice(1, currentIconList.length), ''];
                     });
                     setActiveInformation({ activeList: [] });
                 }}
@@ -356,37 +414,40 @@ export const StarPicker = forwardRef<StarPickerRef, StarPicker>(({
             <Button
                 size="small"
                 onClick={() => {
-                    changeStarList(currentStarList => {
-                        return ['', ...currentStarList.slice(0, currentStarList.length - 1)];
+                    changeIconList(currentIconList => {
+                        return ['', ...currentIconList.slice(0, currentIconList.length - 1)];
                     });
                     setActiveInformation({ activeList: [] });
                 }}
             >
                 {language['input.icon-type.slot.shift-right.label']}&nbsp;<DoubleRightOutlined />
             </Button>
-        </StarListControlPanel>
-        <StarTypeSelector
+        </IconListControlPanel>
+        <StyledIconTypePicker
+            ref={iconTypePickerRef}
             disabled={activeList.length === 0}
             language={language}
             activeCardIcon={activeList.length > 1 ? '' : starList[activeList[0]]}
             showMixableOnly={true}
             showRemove={true}
             onRemove={() => {
-                changeStarList(currentStarList => {
+                changeIconList(currentIconList => {
                     return slotList.filter(entry => !entry.disabled).map((_, index) => {
                         if (activeList.includes(index)) return '';
-                        return currentStarList[index];
+                        return currentIconList[index];
                     });
                 });
             }}
             onChange={value => {
-                changeStarList(currentStarList => {
+                changeIconList(currentIconList => {
                     return slotList.filter(entry => !entry.disabled).map((_, index) => {
                         if (activeList.includes(index)) return value;
-                        return currentStarList[index];
+                        return currentIconList[index];
                     });
                 });
             }}
-        />
+        >
+            {children}
+        </StyledIconTypePicker>
     </Modal>;
 });

@@ -8,6 +8,7 @@ import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
 import { LanguageDataDictionary } from 'src/service';
 import { DEFAULT_TEXT_COLOR } from './font-data-effect';
+import { getDefaultImageStyle, ImageSourceType } from './image';
 
 export type CardSeries = keyof typeof CardSeriesMetadata;
 export const CardSeriesMetadata = {
@@ -28,6 +29,22 @@ export const getDefaultCrop = () => ({
     y: 4,
     width: 100,
     height: 89.5,
+    unit: '%' as '%' | 'px',
+    aspect: 1,
+});
+export const getDefaultOverlayCrop = () => ({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+    unit: '%' as '%' | 'px',
+    aspect: 0.685,
+});
+export const getDefaultIconCrop = () => ({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
     unit: '%' as '%' | 'px',
     aspect: 1,
 });
@@ -70,15 +87,30 @@ export const getDefaultCard = () => ({
     art: 'https://i.imgur.com/h5kXZeC.png',
     artData: '',
     artFit: false,
-    artSource: 'online',
+    artStyle: getDefaultImageStyle(),
+    artSource: 'online' as ImageSourceType,
     artCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
     hasBackground: false,
     background: '',
     backgroundData: '',
     backgroundFit: false,
-    backgroundSource: 'online',
+    backgroundStyle: getDefaultImageStyle(),
+    backgroundSource: 'online' as ImageSourceType,
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
+    overlay: '',
+    overlayData: '',
+    overlayFit: true,
+    overlayType: 'border,source-in|frame,none',
+    overlayStyle: getDefaultImageStyle(),
+    overlaySource: 'online' as ImageSourceType,
+    overlayCrop: getDefaultOverlayCrop() as Partial<ReactCrop.Crop>,
+    iconImage: '',
+    iconImageData: '',
+    iconImageFit: true,
+    iconImageStyle: getDefaultImageStyle(),
+    iconImageSource: 'online' as ImageSourceType,
+    iconImageCrop: getDefaultIconCrop() as Partial<ReactCrop.Crop>,
     linkMap: [
         '1',
         '3',
@@ -175,8 +207,9 @@ export const getEmptyCard = (): Card => ({
     starAlignment: 'auto',
     art: 'https://i.imgur.com/jjtCuG5.png',
     artData: '',
-    artSource: 'online',
+    artSource: 'online' as ImageSourceType,
     artFit: false,
+    artStyle: getDefaultImageStyle(),
     artCrop: {
         x: 0,
         y: 4,
@@ -189,7 +222,8 @@ export const getEmptyCard = (): Card => ({
     background: '',
     backgroundData: '',
     backgroundFit: false,
-    backgroundSource: 'online',
+    backgroundStyle: getDefaultImageStyle(),
+    backgroundSource: 'online' as ImageSourceType,
     backgroundType: 'fit',
     backgroundCrop: {
         x: 0,
@@ -199,6 +233,26 @@ export const getEmptyCard = (): Card => ({
         unit: '%',
         aspect: 1,
     },
+    overlay: '',
+    overlayData: '',
+    overlayFit: true,
+    overlayType: 'border,source-in|frame,none',
+    overlayStyle: getDefaultImageStyle(),
+    overlaySource: 'online' as ImageSourceType,
+    overlayCrop: {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        unit: '%',
+        aspect: 0.685,
+    },
+    iconImage: '',
+    iconImageData: '',
+    iconImageFit: true,
+    iconImageStyle: getDefaultImageStyle(),
+    iconImageSource: 'online' as ImageSourceType,
+    iconImageCrop: getDefaultIconCrop() as Partial<ReactCrop.Crop>,
     linkMap: [],
     linkRating: '',
     isLink: null,
@@ -379,6 +433,8 @@ export const getSlindingTypeList = (language: LanguageDataDictionary) => [
     },
 ];
 
+export type WritingDirection = 'ltr' | 'rtl';
+
 export * from './canvas';
 export * from './compatible-card';
 export * from './condense';
@@ -394,6 +450,7 @@ export * from './font-data-pendulum-effect';
 export * from './format';
 export * from './frame';
 export * from './icon';
+export * from './image';
 export * from './link';
 export * from './name-preset';
 export * from './pendulum';

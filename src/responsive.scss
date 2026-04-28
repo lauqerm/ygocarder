@@ -293,11 +293,14 @@
 				}
 			}
 			.custom-star-picker .star-preview-entry {
+				width: 14px;
+				height: 14px;
 				.icon-image {
 					max-width: 14px;
 					max-height: 14px;
 				}
 				.anticon-close-circle {
+					margin: 0;
 					font-size: var(--fs);
 				}
 			}
@@ -324,12 +327,15 @@
 				}
 			}
 			.custom-star-picker .star-preview-entry {
+				width: 22px; // Alignment
+				height: 22px; // Alignment
 				.icon-image {
-					max-width: 22px;
-					max-height: 22px;
+					max-width: 22px; // Alignment
+					max-height: 22px; // Alignment
 				}
 				.anticon-close-circle {
 					font-size: var(--fs-xl);
+					margin-top: 1px; // Alignment
 				}
 			}
 		}

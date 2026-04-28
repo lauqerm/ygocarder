@@ -1,4 +1,1 @@
-export type ExtractProps<TComponentOrTProps> =
-  TComponentOrTProps extends React.ComponentType<infer TProps>
-    ? TProps
-    : TComponentOrTProps;
+export type KeyWithRecommend<T> = T | (string & Record<never, never>);

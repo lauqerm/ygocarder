@@ -102,6 +102,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         exportCanvasRef,
         artworkCanvasRef,
         backgroundCanvasRef,
+        overlayCanvasRef,
+        iconImageCanvasRef,
         frameCanvasRef,
         creatorCanvasRef,
         effectCanvasRef,
@@ -122,6 +124,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         format, region,
         legacyTemplate,
         hasBackground, backgroundType,
+        overlay, overlayData, overlaySource, overlayType,
+        iconImage, iconImageData, iconImageSource,
         frame,
         foil, finish, artFinish, otherFinish, opacity,
         name, nameStyle, nameStyleType,
@@ -145,6 +149,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         furiganaHelper,
         flag,
     } = card;
+    const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
+        || (overlaySource === 'offline' && overlayData.trim() !== '');
+    const hasIconImage = (iconImageSource === 'online' && iconImage.trim() !== '')
+        || (iconImageSource === 'offline' && iconImageData.trim() !== '');
 
     const drawingPipeline = useRef<Record<string, DrawingPipeline>>({
         frame: {
@@ -277,6 +285,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const [
         showDefAndLinkFlag,
         linkRatingDisplayMode,
+        hideDeactivatedLinkMarker,
     ] = flag;
 
     /** One special case where we do not show link rating */
@@ -309,9 +318,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!readyToDraw) return;
         drawingPipeline.current.frame.rerun += 1;
         drawingPipeline.current.frame.instructor = async () => {
-            const ctx = frameCanvasRef?.current?.getContext('2d');
             const artworkCanvas = artworkCanvasRef?.current;
             const backgroundCanvas = backgroundCanvasRef?.current;
+            const ctx = frameCanvasRef?.current?.getContext('2d');
+            const overlayCanvas = overlayCanvasRef.current;
 
             if (!clearCanvas(ctx) || !frameCanvasRef?.current) return;
 
@@ -325,6 +335,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 baseFill,
                 frameBorder,
             } = normalizedOpacity;
+            /**
+             * Layers:
+             * * Base color
+             * * Background
+             * * Effect / Pend Effect background (for extended artwork)
+             * * Artwork (for see-through body)
+             * * Frame (or custom frame)
+             * * Card border
+             * * Background (for pendulum)
+             * * Artwork (for pendulum)
+             * * Name box frame
+             * * Pendulum box frame
+             * * Effect box
+             * * Art box frame
+             * * Foil
+             * * Name box frame (for overframe)
+             * * Artwork (for overframe)
+             * * Pendulum box frame (for overframe)
+             * * Effect box (for overframe)
+             * * Predefined texts
+             */
 
             /** Extremely weird bug in Chrome Mobile that make this frame draw twice and overlapping each other. The bug appear and disappear consistently with seemingly unrelated actions:
              * * Choose a finish type with overlay finish fixex the problem, but draw the same overlay manually won't fix it.
@@ -373,6 +404,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawAttributeFinish,
                 drawArtBorderFoil,
                 drawEffectBorderFoil,
+                drawPendulumBorderFoil,
 
                 drawNameFinish,
                 drawArtFinish,
@@ -385,7 +417,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawCardBorderFinish,
             } = getMasterLayoutDrawFunction({
                 canvas: frameCanvasRef.current,
-                artworkCanvas, backgroundCanvas,
+                artworkCanvas, backgroundCanvas, overlayCanvas,
                 globalScale,
                 region,
                 legacyTemplate,
@@ -393,6 +425,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 dyeList,
                 effectBackground, pendulumEffectBackground,
                 hasBackground,
+                hasOverlay, overlayType,
                 backgroundType,
                 attribute,
                 attributeType,
@@ -431,18 +464,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (combinedArtCtx) await fillBaseColor(combinedArtCtx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
             if (backgroundCanvas && combinedArtCtx) await drawBackground(combinedArtCtx, hasArtBorder);
             /** Fill effect background here, bascially create a sandwich: opaque effect background => artwork => transparent effect background. */
-            if (backgroundType === 'strict' && opacityEffect < 100 && combinedArtCtx) await drawEffectBackground({
-                externalCtx: combinedArtCtx,
-                blendWithBackground: false,
-                withPendulum: isPendulum,
-            });
+            if (backgroundType === 'strict' && opacityEffect < 100 && combinedArtCtx && keepEffectBox) {
+                await drawEffectBackground({
+                    externalCtx: combinedArtCtx,
+                    blendWithBackground: false,
+                    withPendulum: isPendulum,
+                });
+            }
             if (!boundless && combinedArtCtx) combinedArtCtx.drawImage(artOnCardCanvas, 0, 0);
 
             /** @summary Draw the overall layout */
             /** Start with artwork at the bottom, then main frame, then outer card border. */
             ctx.drawImage(combinedArtCanvas, 0, 0);
             await drawFrame();
-            await drawCardBorder();
+            if (backgroundType !== 'frame' || keepEffectBox) await drawCardBorder();
             await drawCardBorderFinish();
 
             /** @summary Draw NON-PENDULUM non-boundless card layout */
@@ -479,15 +514,19 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 );
 
                 await drawNameBackground();
-                await drawEffectBackground({ withPendulum: true });
+                if (keepEffectBox) {
+                    await drawEffectBackground({ withPendulum: true });
+                }
                 
                 /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
                 await drawPendulumScaleIcon();
                 /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
-                await drawPendulumBorder(hasArtBorder, 'normal');
-                if (foil !== 'normal') await drawPendulumBorder(hasArtBorder, foil, true);
-                await drawPendulumArtBorderFinish();
-                if (hasArtBorder) await drawBorderPendulumFinish();
+                if (keepEffectBox) {
+                    await drawPendulumBorder(hasArtBorder);
+                    await drawPendulumBorderFoil(hasArtBorder);
+                    await drawPendulumArtBorderFinish();
+                    if (hasArtBorder) await drawBorderPendulumFinish();
+                }
             }
 
             if (!boundless) {
@@ -504,10 +543,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 if (isLink && !isPendulum) {
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
                     await drawArtBorderFinish();
-                } else if (isPendulum) {
+                } else if (isPendulum && keepEffectBox) {
                     if (hasArtBorder) {
-                        await drawPendulumBorder(hasArtBorder, 'normal');
-                        if (foil !== 'normal') await drawPendulumBorder(hasArtBorder, foil, true);
+                        await drawPendulumBorder(hasArtBorder);
+                        await drawPendulumBorderFoil(hasArtBorder);
                     }
                     await drawPendulumArtBorderFinish();
                 }
@@ -530,11 +569,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 if (!frameBorder) await drawFrameBorder();
                 /** Redraw various part here because the extended artwork may overlap with those */
                 if (isPendulum) {
-                    await drawEffectBackground({ withPendulum: true });
-                    await drawPendulumScaleIcon();
-                    await drawPendulumBorder(false, 'normal');
-                    if (foil !== 'normal') await drawPendulumBorder(false, foil, true);
-                    await drawBorderPendulumFinish();
+                    if (keepEffectBox) {
+                        await drawEffectBackground({ withPendulum: true });
+                        await drawPendulumScaleIcon();
+                        await drawPendulumBorder(false);
+                        await drawPendulumBorderFoil(false);
+                        await drawBorderPendulumFinish();
+                    }
                 } else if (keepEffectBox) {
                     await drawEffectBackground({});
                     await drawEffectBorder();
@@ -558,8 +599,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 console.error('drawAttribute error', e);
             }
             await drawAttributeFinish();
-            await drawStar({ style: levelStyle, starAlignment });
-            
+            await drawStar({ style: levelStyle, starAlignment, iconImage: hasIconImage ? iconImageCanvasRef.current : undefined });
+
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
                 const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
@@ -596,6 +637,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         frame,
         frameCanvasRef,
         hasBackground,
+        hasOverlay,
+        hasIconImage,
+        iconImageCanvasRef,
         isDuelTerminalCard,
         isLink,
         isPendulum,
@@ -612,6 +656,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         loopFinish,
         opacity,
         otherFinish,
+        overlayCanvasRef,
+        overlayType,
         pendulumEffectBackground,
         pendulumFrame,
         pendulumRightFrame,
@@ -771,8 +817,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!clearCanvas(ctx)) return;
 
             const isNumberPassword = /^[0-9]*$/.test(password);
-            const mayOffset = isNumberPassword && isPendulum && isLink;
-            const willOffset = mayOffset;
+            const willOffset = isNumberPassword && isPendulum && isLink;
             const { rightEdge } = await drawPasswordText({
                 ctx,
                 globalScale,
@@ -787,7 +832,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             });
             const editionTextUseTopPosition = (isLegacyCard || !isNumberPassword) && !isPendulum;
             if (isFirstEdition) {
-                const willDraw = isPendulum
+                const willDrawFirstEdition = isPendulum
                     ? isNumberPassword ? true : false
                     : true;
                 const left = editionTextUseTopPosition
@@ -803,11 +848,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     ? isPendulum
                         ? 683
                         : 475
-                    : creator.trim().length === 0
-                        ? 615
-                        : 185;
+                    : (isLink && isPendulum)
+                        ? 130
+                        : creator.trim().length === 0
+                            ? 615
+                            : 185;
 
-                if (willDraw) drawOnFrameText({
+                if (willDrawFirstEdition) drawOnFrameText({
                     ctx,
                     txt: firstEditionText,
                     edge: left,
@@ -910,6 +957,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 format,
                 value: creator,
                 alignment: 'right',
+                edgeOffset: (isLink && isPendulum) ? -20 : 0,
+                widthOffset: ((isLink && isPendulum) ? -120 : 0) * globalScale,
                 baselineOffset: isSpeedSkill ? -2 : 0,
                 hasShadow: requireShadow,
                 lightFooter: lightRightFooter,
@@ -1212,6 +1261,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         foil,
         resolvedStatTextStyle,
         statInEffect,
+        hideDeactivatedLinkMarker,
         frameCanvasRef,
     ]);
 
@@ -1244,7 +1294,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         return instructor();
                     }
                     return Promise.resolve();
-                })).catch(e => {
+                }))
+                .catch(e => {
                     console.error(e);
                     /** Ensure it does not fire repeatedly */
                     const key = 'fail-to-draw-notification';

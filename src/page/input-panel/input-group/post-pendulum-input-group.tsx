@@ -223,6 +223,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
     return <>
         <PostPendulumFirstLineContainer className={`post-pendulum-input first-line variant-${format}`}>
             <CardTextInput ref={typeAbilityInputRef}
+                dir="auto"
                 addonBefore={language[typeLabel]}
                 id="type-ability"
                 defaultValue={useCard.getState().card.typeAbility.join(typeAbilitySeparator)}

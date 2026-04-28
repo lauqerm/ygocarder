@@ -21,6 +21,7 @@ import {
     STYLING_TAG_SOURCE,
     UNCOMPRESSED_SOURCE,
     WHOLE_WORD_SOURCE,
+    WritingDirection,
     contextualDoubleQuoteRegex,
     ocgKeywordDataMap,
     ocgNumberCircleMap,
@@ -108,6 +109,7 @@ export const normalizeCardText = (
         furiganaHelper?: boolean,
         dictionaryType?: 'rubyForm' | 'rubyFormName',
         skip?: Array<'quote-conversion' | 'encase-word'>,
+        direction?: WritingDirection,
     },
 ) => {
     const {
@@ -115,6 +117,7 @@ export const normalizeCardText = (
         furiganaHelper = true,
         dictionaryType = 'rubyForm',
         skip = [],
+        direction = 'ltr',
     } = option ?? {};
     const nonNullableText = text ?? '';
     const skipQuoteConversion = skip.includes('quote-conversion');
@@ -142,12 +145,36 @@ export const normalizeCardText = (
 
     /** Various contextual swaps */
     const contextutalSwapList = [
-        { active: !skipQuoteConversion, search: /(^|[-\u2014\s(["])'/g, replacement: '$1\u2018' },        /** Turn straight single quote ' into contextual curly quote ‘ */
-        { active: !skipQuoteConversion, search: /'/g, replacement: '\u2019' },                            /** Close open curly quote ’ */
-        { active: !skipQuoteConversion, search: contextualDoubleQuoteRegex, replacement: '$1\u201c' },    /** Turn straight double quote " into contextual curly double quote “ */
-        { active: !skipQuoteConversion, search: /"/g, replacement: '\u201d' },                            /** Close open curly double quote ” */
-        { active: true, search: /--/g, replacement: '\u2014' },                           /** Turn double dash "--" into em-dash "—" */
-        { active: true, search: /● /g, replacement: '●' },                                /** Remove direct whitespace after bullet, bullet have their own fixed space that we will draw later */
+        {
+            active: !skipQuoteConversion,
+            search: /(^|[-\u2014\s(["])'/g,
+            replacement: direction === 'rtl' ? '$1\u2019' : '$1\u2018',
+        }, /** Turn straight single quote ' into contextual curly quote ‘ */
+        {
+            active: !skipQuoteConversion,
+            search: /'/g,
+            replacement: direction === 'rtl' ? '\u2018' : '\u2019',
+        }, /** Close open curly quote ’ */
+        {
+            active: !skipQuoteConversion,
+            search: contextualDoubleQuoteRegex,
+            replacement: direction === 'rtl' ? '$1\u201d' : '$1\u201c',
+        }, /** Turn straight double quote " into contextual curly double quote “ */
+        {
+            active: !skipQuoteConversion,
+            search: /"/g,
+            replacement: direction === 'rtl' ? '\u201c' : '\u201d',
+        }, /** Close open curly double quote ” */
+        {
+            active: true,
+            search: /--/g,
+            replacement: '\u2014',
+        }, /** Turn double dash "--" into em-dash "—" */
+        {
+            active: true,
+            search: /● /g,
+            replacement: '●',
+        }, /** Remove direct whitespace after bullet, bullet have their own fixed space that we will draw later */
         /** Convert ordinal shorthand syntax, for example "(15)" will become "⑮", used in OCG effect */
         { active: true, search: /(\([０-９0-9]{1,2}\))/g, replacement: (m: string) => {
             const correspondingCircleSymbol = ocgNumberCircleMap[m];
@@ -201,7 +228,9 @@ export const normalizeCardText = (
                 }
                 return `${NB_WORD_OPEN}${reversedSwappedText}${NB_WORD_CLOSE}`;
             })
-            .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
+            .replaceAll(new RegExp(WHOLE_WORD_SOURCE, 'gu'), m => {
+                return `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`;
+            })
             .replaceAll(new RegExp(NOT_END_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
             .replaceAll(new RegExp(NOT_START_OF_LINE_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)
             .replaceAll(new RegExp(NOT_SPLIT_SOURCE, 'g'), m => `${NB_WORD_OPEN}${m}${NB_WORD_CLOSE}`)

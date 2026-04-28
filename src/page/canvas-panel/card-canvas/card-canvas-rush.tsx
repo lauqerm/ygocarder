@@ -1,5 +1,5 @@
 import { CanvasConst } from 'src/model';
-import { useSetting, useGlobal } from 'src/service';
+import { useSetting, useGlobal, useCardCanvas } from 'src/service';
 import { CardCanvasGroupContainer, CardPreviewContainer } from './card-canvas.styled';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
@@ -39,34 +39,40 @@ export const RushCardCanvas = forwardRef<CardCanvasRef, CardCanvas>(({
     const finishCanvasRef = useRef<HTMLCanvasElement>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
+    const iconImageCanvasRef = useRef<HTMLCanvasElement>(null);
+    const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const didMountRef = useRef(false);
     useEffect(() => {
         if (didMountRef.current === false) {
             didMountRef.current = true;
+            const canvasMap = {
+                artworkCanvasRef,
+                backgroundCanvasRef,
+                overlayCanvasRef,
+                iconImageCanvasRef,
+                exportCanvasRef,
+                frameCanvasRef,
+                cardIconCanvasRef,
+                pendulumScaleCanvasRef,
+                pendulumEffectCanvasRef,
+                typeCanvasRef,
+                effectCanvasRef,
+                nameCanvasRef,
+                statCanvasRef,
+                setIdCanvasRef,
+                passwordCanvasRef,
+                creatorCanvasRef,
+                stickerCanvasRef,
+                finishCanvasRef,
+                lightboxRef,
+                previewCanvasRef,
+            };
             onMount({
                 type: 'rush',
-                canvasMap: {
-                    artworkCanvasRef,
-                    backgroundCanvasRef,
-                    exportCanvasRef,
-                    frameCanvasRef,
-                    cardIconCanvasRef,
-                    pendulumScaleCanvasRef,
-                    pendulumEffectCanvasRef,
-                    typeCanvasRef,
-                    effectCanvasRef,
-                    nameCanvasRef,
-                    statCanvasRef,
-                    setIdCanvasRef,
-                    passwordCanvasRef,
-                    creatorCanvasRef,
-                    stickerCanvasRef,
-                    finishCanvasRef,
-                    lightboxRef,
-                    previewCanvasRef,
-                },
+                canvasMap,
             });
+            useCardCanvas.getState().updateCanvasMap(canvasMap);
         }
     }, [lightboxRef, onMount]);
 
@@ -177,6 +183,12 @@ export const RushCardCanvas = forwardRef<CardCanvasRef, CardCanvas>(({
             />
             <canvas className="crop-canvas"
                 ref={backgroundCanvasRef}
+            />
+            <canvas className="crop-canvas"
+                ref={overlayCanvasRef}
+            />
+            <canvas className="crop-canvas"
+                ref={iconImageCanvasRef}
             />
         </CardCanvasGroupContainer>
     </CardPreviewContainer>;

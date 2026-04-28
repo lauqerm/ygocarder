@@ -1,5 +1,6 @@
 export * from './char-picker';
 export * from './const';
+export * from './icon-input-group';
 export * from './input-group';
 export * from './input-panel';
 export * from './input-panel.styled';
