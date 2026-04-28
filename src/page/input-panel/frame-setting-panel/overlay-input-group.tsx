@@ -2,7 +2,7 @@ import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'r
 import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
-import { CardArtCanvasCoordinateMap, ImageStyle } from 'src/model';
+import { CardArtCanvasCoordinateMap, ImageSourceType, ImageStyle } from 'src/model';
 import styled from 'styled-components';
 import { notification } from 'antd';
 
@@ -42,7 +42,7 @@ export type OverlayInputGroupRef = {
 };
 export type OverlayInputGroup = {
     children?: React.ReactNode,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType) => void,
 } & Pick<ImageCropper, 'receivingCanvas' | 'onTainted' | 'onSourceLoaded'>;
 export const OverlayInputGroup = forwardRef<OverlayInputGroupRef, OverlayInputGroup>(({
     children,
@@ -84,7 +84,7 @@ export const OverlayInputGroup = forwardRef<OverlayInputGroupRef, OverlayInputGr
             overlayStyle: { ...currentCard.overlayStyle, ...style },
         };
     }), [setCard]);
-    const changeOverlayCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
+    const changeOverlayCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(
             curr => ({

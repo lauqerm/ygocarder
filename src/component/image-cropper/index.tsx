@@ -7,7 +7,7 @@ import { IconButton } from '../icon-button';
 import { useGlobal, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import { DropZone } from '../atom';
-import { ImageStyle } from 'src/model';
+import { ImageSourceType, ImageStyle } from 'src/model';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
 
@@ -118,7 +118,8 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
 export type ImageCropperRef = {
     isLoading: () => boolean,
     hasImage: () => boolean,
-    forceSource: (type: 'online' | 'offline', artLinkOrData: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+    forceSource: (type: ImageSourceType, artLinkOrData: string, cropInfo: Partial<ReactCrop.Crop>) => void,
+    getSource: () => ({ type: ImageSourceType, image: string, imageData: string, crop: Partial<ReactCrop.Crop> }),
 }
 export type ImageCropper = {
     title?: React.ReactNode,
@@ -137,9 +138,9 @@ export type ImageCropper = {
     imageStyle: ImageStyle,
     isNotFoundAnError?: boolean,
     onImageStyleChange: (style: ImageStyle) => void,
-    onSourceChange?: (sourceType: 'offline' | 'online', source: string) => void,
-    onSourceLoaded?: (crossorigin?: string) => void,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => void,
+    onSourceChange?: (sourceType: ImageSourceType, source: string, byUser?: boolean) => void,
+    onSourceLoaded?: (crossorigin?: string, byUser?: boolean) => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => void,
     onTainted: () => void,
     onMaxSizeExceeded: (size: number) => void,
     onForceFitChange?: (status: boolean) => void,
@@ -177,8 +178,8 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         setCrossOrigin,
     ] = useState<'anonymous' | 'use-credentials' | undefined>('anonymous');
     const [redrawSignal, setRedrawSignal] = useState(0);
-    const [sourceType, setSourceType] = useState<'offline' | 'online'>(normalizedDefaultSource);
-    const [inputMode, setInputMode] = useState<'offline' | 'online'>(normalizedDefaultSource);
+    const [sourceType, setSourceType] = useState<ImageSourceType>(normalizedDefaultSource);
+    const [inputMode, setInputMode] = useState<ImageSourceType>(normalizedDefaultSource);
     const [internalSource, setInternalSource] = useState(defaultInternalSource);
     const [isLoading, setLoading] = useState(false);
     const [activeDropzone, setActiveDropzone] = useGlobal('activeDropzone');
@@ -213,7 +214,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 setInternalSource(reader.result);
                 setSourceType('offline');
                 setInputMode('offline');
-                onSourceChange('offline', reader.result);
+                onSourceChange('offline', reader.result, interacted);
                 setLoading(false);
             }
         });
@@ -227,7 +228,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const onLoad = useCallback((img: HTMLImageElement) => {
         setLoading(false);
         setError(null);
-        onSourceLoaded(crossorigin);
+        onSourceLoaded(crossorigin, interacted);
         imgRef.current = img;
         /** @todo Check if we really need timeout delay here */
         if (img.src === pendingCrop.current.source && pendingCrop.current.crop) {
@@ -258,7 +259,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 setMigrated(true);
             }, 250);
         }
-    }, [crossorigin, onSourceLoaded, ratio]);
+    }, [crossorigin, interacted, onSourceLoaded, ratio]);
 
     const applyOnlineSource = (e: React.ChangeEvent<HTMLInputElement>) => {
         const source = e.target.value;
@@ -267,7 +268,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         setLoading(true);
         setSourceType('online');
         setInputMode('online');
-        onSourceChange('online', source);
+        onSourceChange('online', source, interacted);
         setExternalSource(source);
     };
 
@@ -431,14 +432,22 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         isLoading: () => isLoading,
         hasImage: () => (typeof internalSource === 'string' && internalSource.length > 0 && sourceType === 'offline')
             || (typeof externalSource === 'string' && externalSource.length > 0 && sourceType === 'online'),
-        forceSource: (type: 'online' | 'offline', source, cropInfo) => {
+        getSource: () => {
+            return {
+                type: sourceType,
+                crop: crop.current,
+                image: sourceType === 'online' ? externalSource : '',
+                imageData: sourceType === 'offline' ? internalSource : '',
+            };
+        },
+        forceSource: (type: ImageSourceType, source, cropInfo) => {
             const currentSource = sourceType === 'offline' ? internalSource : externalSource;
             setInteracted(false);
             if (currentSource !== source) {
                 setLoading(true);
                 setSourceType(type);
                 setInputMode(type);
-                onSourceChange(type, source);
+                onSourceChange(type, source, interacted);
                 if (type === 'offline') {
                     setInternalSource(source);
                 } else setExternalSource(source);
@@ -482,10 +491,10 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                 onClick={() => {
                                     if (sourceType === 'offline') {
                                         setInternalSource('');
-                                        onSourceChange('offline', '');
+                                        onSourceChange('offline', '', interacted);
                                     } else {
                                         setExternalSource('');
-                                        onSourceChange('online', '');
+                                        onSourceChange('online', '', interacted);
                                     }
                                 }}
                             />
@@ -502,9 +511,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                                     setSourceType(value);
                                     if (value === 'offline') {
                                         setCrossOrigin('anonymous');
-                                        onSourceChange('offline', internalSource);
+                                        onSourceChange('offline', internalSource, interacted);
                                     } else {
-                                        onSourceChange('online', externalSource);
+                                        onSourceChange('online', externalSource, interacted);
                                     }
                                     // setLoading(true);
                                 }
@@ -712,7 +721,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
                             ctx?.clearRect(0, 0, width, height);
                             if (completedCrop) onCropChange(completedCrop, sourceType, interacted);
-                            onSourceLoaded(crossorigin);
+                            onSourceLoaded(crossorigin, interacted);
                             setLoading(false);
                             setError('Image not found');
                         } else {

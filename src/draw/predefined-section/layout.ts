@@ -496,7 +496,15 @@ export const getLayoutDrawFunction = ({
             }
             ctx.resetTransform();
         },
-        drawStar: async ({ style, starAlignment }: { style?: CanvasTextStyle, starAlignment: string }) => {
+        drawStar: async ({
+            style,
+            starAlignment,
+            iconImage,
+        }: {
+            style?: CanvasTextStyle,
+            starAlignment: string,
+            iconImage?: HTMLCanvasElement | null,
+        }) => {
             const normalizedCardIcon = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
 
             if (!ctx) return;
@@ -505,6 +513,7 @@ export const getLayoutDrawFunction = ({
             const loopStarFinish = starFinish !== 'normal' ? getFinishIterator([starFinish], ArtFinishMap) : undefined;
             await drawStarContent({
                 ctx,
+                iconImage,
                 cardIcon: normalizedCardIcon,
                 text: typeof star === 'string' ? star : null,
                 star,
