@@ -469,7 +469,15 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     return (
         <div className={mergeClass('card-image-cropper', className)}>
             <div className="card-image-source-input">
-                <div className="card-image-source-input-container">
+                <div
+                    className="card-image-source-input-container"
+                    onKeyDown={() => {
+                        setInteracted(true);
+                    }}
+                    onClick={() => {
+                        setInteracted(true);
+                    }}
+                >
                     <div className="card-image-source-input-title">
                         <span className="field-title">
                             {title}

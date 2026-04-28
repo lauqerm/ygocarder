@@ -9,6 +9,7 @@ import {
     Card,
     getDefaultCard,
     ImagePreset,
+    ImageSourceType,
     NameStyle,
 } from './model';
 import {
@@ -39,6 +40,7 @@ import {
     RESET_CANVAS_BASE_COUNTER,
     retrieveSavedCard,
     useCard,
+    useCardCanvas,
     useCarderDb,
     useCardList,
     useGlobal,
@@ -130,7 +132,7 @@ function App() {
     const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [resetCanvasCounter] = useGlobal('resetCanvasCounter');
     const [error, setError] = useState('');
-    const [sourceType, setSourceType] = useState<'offline' | 'online'>('online');
+    const [sourceType, setSourceType] = useState<ImageSourceType>('online');
     const { db, dbReady } = useCarderDb();
     const [managerVisible, setManagerVisible] = useState(false);
     const slidingWindowRef = useRef<HTMLDivElement>(null);
@@ -140,6 +142,7 @@ function App() {
     const cardInputRef = useRef<CardInputPanelRef>(null);
     const artworkCanvasRef = useRef<HTMLCanvasElement>(null);
     const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
+    const iconImageCanvasRef = useRef<HTMLCanvasElement>(null);
     const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
     const exportCanvasRef = useRef<HTMLCanvasElement>(null);
     const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -161,6 +164,7 @@ function App() {
         artworkCanvasRef,
         backgroundCanvasRef,
         overlayCanvasRef,
+        iconImageCanvasRef,
         exportCanvasRef,
         frameCanvasRef,
         cardIconCanvasRef,
@@ -178,6 +182,16 @@ function App() {
         lightboxRef,
         previewCanvasRef,
     });
+    const {
+        updateCanvasRenderCount,
+        updateCanvasData,
+    } = useCardCanvas(useShallow(({
+        updateCanvasRenderCount,
+        updateCanvasData,
+    }) => ({
+        updateCanvasRenderCount,
+        updateCanvasData,
+    })));
 
     const downloadButtonRef = useRef<DownloadButtonRef>(null);
     const exportPanelRef = useRef<ExportPanelRef>(null);
@@ -283,6 +297,7 @@ function App() {
                     }
                     await nameStylePresetTx.done;
                     useGlobalMemory.getState().updateGlobalMemory({ nameStylePresetList });
+                    useCardCanvas.getState().updateCanvasMap(canvasMap);
                 }
             } catch (e) {
                 console.error('Error reading database', e);
@@ -292,7 +307,7 @@ function App() {
                 });
             }
         })();
-    }, [db, isLanguageLoading, language]);
+    }, [canvasMap, db, isLanguageLoading, language]);
     useEffect(() => {
         const ctx = exportCanvasRef.current?.getContext('2d');
         const setCard = useCard.getState().setCard;
@@ -561,6 +576,20 @@ function App() {
         setSourceType(sourceType);
     }, []);
 
+    const {
+        iconImageCrop, iconImageSource,
+    } = useCard(useShallow(({
+        card: {
+            iconImageCrop, iconImageSource,
+        },
+    }) => ({
+        iconImageCrop, iconImageSource,
+    })));
+
+    useEffect(() => {
+        rerenderCardImage(iconImageCrop, iconImageSource);
+    }, [rerenderCardImage, iconImageCrop, iconImageSource, updateCanvasRenderCount]);
+
     const markTaintedImage = useCallback(() => {
         setImageChangeCount(cnt => cnt + 1);
         setTainted(true);
@@ -572,7 +601,8 @@ function App() {
 
     const onExportSuccess = useCallback(() => {
         setTainted(false);
-    }, []);
+        updateCanvasData(['iconImage']);
+    }, [updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
     return (
@@ -820,6 +850,9 @@ function App() {
                                     <canvas className="crop-canvas"
                                         ref={overlayCanvasRef}
                                     />
+                                    <canvas className="crop-canvas"
+                                        ref={iconImageCanvasRef}
+                                    />
                                 </CardCanvasGroupContainer>
                             </CardPreviewContainer>
                         </div>
@@ -853,7 +886,8 @@ function App() {
                         applyCardData={treatNewCard}
                         artworkCanvas={artworkCanvasRef.current}
                         backgroundCanvas={backgroundCanvasRef.current}
-                        foilCanvas={overlayCanvasRef.current}
+                        overlayCanvas={overlayCanvasRef.current}
+                        iconImageCanvas={iconImageCanvasRef.current}
                         onSourceLoaded={rerenderAllImage}
                         onCropChange={rerenderCardImage}
                         onTainted={markTaintedImage}

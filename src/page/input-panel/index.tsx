@@ -32,7 +32,6 @@ import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
     AttributeInputGroup,
     AttributeInputGroupRef,
-    CardIconInputGroup,
     EffectInputGroup,
     EffectInputGroupRef,
     FooterInputGroup,
@@ -55,6 +54,7 @@ import {
     StyledInputLabelWithButton,
     StyledNameSetIdInputContainer,
 } from './input-panel.styled';
+import { IconInputGroup, IconInputGroupRef } from './icon-input-group';
 import './input-panel.scss';
 
 export type CardInputPanelRef = {
@@ -64,13 +64,15 @@ export type CardInputPanelRef = {
 export type CardInputPanel = {
     artworkCanvas: ImageInputGroup['receivingCanvas'],
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
-    foilCanvas: ImageInputGroup['receivingCanvas'],
+    overlayCanvas: ImageInputGroup['receivingCanvas'],
+    iconImageCanvas: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData'>;
 export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     applyCardData,
     artworkCanvas,
     backgroundCanvas,
-    foilCanvas,
+    overlayCanvas,
+    iconImageCanvas,
     onCropChange,
     onTainted,
     onSourceLoaded,
@@ -110,6 +112,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
     const frameTrainRef = useRef<FrameTrainRef>(null);
     const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);
+    const iconInputGroupRef = useRef<IconInputGroupRef>(null);
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
     const layoutPickerRef = useRef<OpacityPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
@@ -162,14 +165,17 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     }, [opacity]);
 
     useImperativeHandle(forwardedRef, () => ({
+        /** @todo Maybe we need to check foil loading too. */
         isLoading: () => (imageInputGroupRef.current?.isLoading() ?? false)
-            || (layoutPickerRef.current?.isLoading() ?? false),
+            || (layoutPickerRef.current?.isLoading() ?? false)
+            || (iconInputGroupRef.current?.isLoading() ?? false),
         forceCardData: card => {
             setStylePickerResetCount(cnt => cnt + 1);
             const {
                 name,
                 art, artCrop, artData, artSource,
                 background, backgroundCrop, backgroundData, backgroundSource,
+                iconImage, iconImageCrop, iconImageData, iconImageSource,
                 overlay, overlayCrop, overlayData, overlaySource,
                 opacity,
                 attribute, attributeType,
@@ -196,6 +202,9 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             pendulumInputGroupRef.current?.setValue({
                 pendulumEffect,
                 overlay, overlayCrop, overlayData, overlaySource,
+            });
+            iconInputGroupRef.current?.setValue({
+                iconImage, iconImageCrop, iconImageData, iconImageSource,
             });
             effectInputGroupRef.current?.setValue(effect);
             postPendulumInputGroupRef.current?.setValue({
@@ -277,8 +286,11 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 showExtraDecorativeOption={showExtraDecorativeOption}
                 onChange={changeNameStyle}
             />
-            <CardIconInputGroup
+            <IconInputGroup ref={iconInputGroupRef}
                 showCreativeOption={showCreativeOption}
+                receivingCanvas={iconImageCanvas}
+                onTainted={onTainted}
+                onSourceLoaded={onSourceLoaded}
             />
         </StyledNameSetIdInputContainer>
         <div className="main-info">
@@ -289,7 +301,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                     showCreativeOption={showCreativeOption}
                     showExtraDecorativeOption={showExtraDecorativeOption}
                     softMode={reduceMotionColor}
-                    receivingCanvas={foilCanvas}
+                    receivingCanvas={overlayCanvas}
                     onTainted={onTainted}
                     onSourceLoaded={onSourceLoaded}
                     onCropChange={onCropChange}

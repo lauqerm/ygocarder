@@ -8,7 +8,7 @@ import { DEFAULT_PENDULUM_SIZE } from './pendulum';
 import { getDefaultCardFlag } from './flag';
 import { LanguageDataDictionary } from 'src/service';
 import { DEFAULT_TEXT_COLOR } from './font-data-effect';
-import { getDefaultImageStyle } from './image';
+import { getDefaultImageStyle, ImageSourceType } from './image';
 
 export const getDefaultCrop = () => ({
     x: 0,
@@ -25,6 +25,14 @@ export const getDefaultOverlayCrop = () => ({
     height: 100,
     unit: '%' as '%' | 'px',
     aspect: 0.685,
+});
+export const getDefaultIconCrop = () => ({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+    unit: '%' as '%' | 'px',
+    aspect: 1,
 });
 
 /**
@@ -65,14 +73,14 @@ export const getDefaultCard = () => ({
     artData: '',
     artFit: false,
     artStyle: getDefaultImageStyle(),
-    artSource: 'online',
+    artSource: 'online' as ImageSourceType,
     artCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
     hasBackground: false,
     background: '',
     backgroundData: '',
     backgroundFit: false,
     backgroundStyle: getDefaultImageStyle(),
-    backgroundSource: 'online',
+    backgroundSource: 'online' as ImageSourceType,
     backgroundType: 'fit' as BackgroundType,
     backgroundCrop: getDefaultCrop() as Partial<ReactCrop.Crop>,
     overlay: '',
@@ -80,8 +88,14 @@ export const getDefaultCard = () => ({
     overlayFit: true,
     overlayType: 'border,source-in|frame,none',
     overlayStyle: getDefaultImageStyle(),
-    overlaySource: 'online',
+    overlaySource: 'online' as ImageSourceType,
     overlayCrop: getDefaultOverlayCrop() as Partial<ReactCrop.Crop>,
+    iconImage: '',
+    iconImageData: '',
+    iconImageFit: true,
+    iconImageStyle: getDefaultImageStyle(),
+    iconImageSource: 'online' as ImageSourceType,
+    iconImageCrop: getDefaultIconCrop() as Partial<ReactCrop.Crop>,
     linkMap: [
         '1',
         '3',
@@ -177,7 +191,7 @@ export const getEmptyCard = (): Card => ({
     starAlignment: 'auto',
     art: 'https://i.imgur.com/jjtCuG5.png',
     artData: '',
-    artSource: 'online',
+    artSource: 'online' as ImageSourceType,
     artFit: false,
     artStyle: getDefaultImageStyle(),
     artCrop: {
@@ -193,7 +207,7 @@ export const getEmptyCard = (): Card => ({
     backgroundData: '',
     backgroundFit: false,
     backgroundStyle: getDefaultImageStyle(),
-    backgroundSource: 'online',
+    backgroundSource: 'online' as ImageSourceType,
     backgroundType: 'fit',
     backgroundCrop: {
         x: 0,
@@ -208,7 +222,7 @@ export const getEmptyCard = (): Card => ({
     overlayFit: true,
     overlayType: 'border,source-in|frame,none',
     overlayStyle: getDefaultImageStyle(),
-    overlaySource: 'online',
+    overlaySource: 'online' as ImageSourceType,
     overlayCrop: {
         x: 0,
         y: 0,
@@ -217,6 +231,12 @@ export const getEmptyCard = (): Card => ({
         unit: '%',
         aspect: 0.685,
     },
+    iconImage: '',
+    iconImageData: '',
+    iconImageFit: true,
+    iconImageStyle: getDefaultImageStyle(),
+    iconImageSource: 'online' as ImageSourceType,
+    iconImageCrop: getDefaultIconCrop() as Partial<ReactCrop.Crop>,
     linkMap: [],
     linkRating: '',
     isLink: null,
