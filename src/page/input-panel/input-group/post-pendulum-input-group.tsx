@@ -66,7 +66,7 @@ const AdvancedParagraphButton = styled.div`
     }
 `;
 const AdvancedParagraphPanel = styled.div`
-    max-width: 20rem;
+    width: 20rem;
     padding: var(--spacing-sm);
     .input-section {
         h2 {

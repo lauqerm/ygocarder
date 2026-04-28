@@ -663,7 +663,7 @@ export const drawLine = async ({
                     let offsetedPosition = currentPosition * (edge ?? 1);
                     const drawLetterofWordParameter = {
                         ...drawLetterParameter,
-                        deviation: letterDeviationMap[`${globalScale}`],
+                        deviation: letterDeviationMap['default'],
                         letter: currentLetter,
                         edge: offsetedPosition,
                     };
@@ -774,7 +774,7 @@ export const drawLine = async ({
                     ...drawLetterParameter,
                     letter,
                     edge: fragmentEdge,
-                    deviation: letterDeviationMap?.[`${globalScale}`],
+                    deviation: letterDeviationMap?.['default'],
                     letterMetric,
                 });
                 fragmentEdge += letterWidth;

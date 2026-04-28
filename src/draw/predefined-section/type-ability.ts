@@ -1,6 +1,6 @@
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData, createCanvas } from 'src/util';
-import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType, CanvasConst } from 'src/model';
+import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType, CanvasConst, DEFAULT_TEXT_COLOR } from 'src/model';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../text';
 import { createLineList } from '../line';
@@ -156,7 +156,7 @@ export const drawTypeAbility = async ({
     /** Special treatment for speed skill */
     const defaultFillStyle = checkLightFrame(frame) && !checkSpeedSkill({ frame }) && size === 'large'
         ? '#ffffff'
-        : '#221F1F';
+        : DEFAULT_TEXT_COLOR;
     const normalizedStyle = { color: defaultFillStyle, ...textStyle };
     const resetStyle = setTextStyle({ ctx, ...normalizedStyle, globalScale });
     const { iconPositionList, xRatio } = await drawTypeAbilityText({
@@ -194,6 +194,7 @@ export const drawTypeAbility = async ({
             } = createCanvas(CanvasWidth * globalScale, (baseline + iconWidth) * globalScale);
             if (iconFinishCtx && iconCtx) {
                 iconFinishCtx.drawImage(iconCanvas, 0, 0);
+                iconFinishCtx.scale(globalScale, globalScale);
                 await loopIconFinish(
                     iconFinishCtx,
                     'art',
@@ -205,6 +206,7 @@ export const drawTypeAbility = async ({
                         );
                     },
                 );
+                iconFinishCtx.resetTransform();
                 iconCtx.globalCompositeOperation = 'source-in';
                 iconCtx.drawImage(iconFinishCanvas, 0, 0);
                 ctx.drawImage(iconCanvas, 0, 0);

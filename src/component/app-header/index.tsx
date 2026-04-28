@@ -127,12 +127,15 @@ export const AppHeader = ({
                         .map(({ value, imagePath }) => {
                             return <Radio.Button key={value}
                                 value={value}
-                                onChange={e => setCard(card => {
-                                    const nextCard = { ...card };
-                                    nextCard.series = e.target.value;
+                                onChange={e => {
+                                    return setCard(card => {
+                                        const nextCard = { ...card };
+                                        nextCard.series = e.target.value;
+                                    console.log('🚀 ~ AppHeader ~ nextCard:', nextCard);
 
-                                    return nextCard;
-                                })}
+                                        return nextCard;
+                                    });
+                                }}
                             >
                                 <img src={`${process.env.PUBLIC_URL}/asset/image/series/${imagePath}.png`} alt={imagePath} />
                             </Radio.Button>;
@@ -233,8 +236,9 @@ export const AppHeader = ({
                             href="https://www.deviantart.com/9558able/art/Yugioh-Series-10-Proxy-Template-DELUXE-EDITION-843282421"
                             target="_blank"
                             rel="noreferrer"><b>9558able</b></a>,
-                        <b>gecko-chan</b>,
+                        <b key="artist-3">gecko-chan</b>,
                         <Explanation
+                            key="artist-5"
                             icon={AdditionalContributorIcon}
                             content={<AdditionalContributorContainer className="additional-contributors">
                                 <ul className="template-creator">

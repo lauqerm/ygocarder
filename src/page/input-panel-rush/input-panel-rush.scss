@@ -1,0 +1,164 @@
+.card-info-panel-rush {
+    .card-overlay-input {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: var(--spacing-sm);
+        row-gap: var(--spacing-sm);
+    }
+    .foil-radio.radio-train {
+        display: inline-flex;
+    }
+    .finish-checkbox {
+        .checkbox-train-input-group {
+            .ant-radio-button-wrapper {
+                min-width: 32px; // Alignment
+                padding: 0;
+            }
+        }
+    }
+    .card-layout-input {
+        display: grid;
+        grid-template-columns: var(--width-label) 1fr;
+        margin-bottom: var(--spacing-sm);
+        align-content: center;
+        min-height: 32px; // Alignment
+    }
+    .link-attribute-input {
+        display: flex;
+        align-items: center;
+        .ant-input-affix-wrapper {
+            flex: 0 1 auto;
+        }
+        .icon-button {
+            flex: 0 0 auto;
+        }
+    }
+    .extra-attribute-input {
+        .radio-train-input-group {
+            flex: 0 1 auto;
+        }
+    }
+    .attribute-input {
+        .ant-radio-button-wrapper {
+            padding: 0 var(--spacing-xxs);
+        }
+    }
+    .main-info {
+        display: flex;
+        align-items: flex-start;
+        margin-top: var(--spacing-sm);
+        column-gap: var(--spacing-sm);
+        row-gap: var(--spacing-sm);
+        .main-info-first {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            row-gap: var(--spacing-sm);
+            #card-effect {
+                min-height: 13rem;
+            }
+            .effect-input .ql-editor {
+                min-height: 169px; // Alignment with 8 rows of TextArea
+            }
+        }
+        .main-info-second {
+            flex: 0 0 var(--cropper-width);
+            text-align: center;
+            .art-finish-checkbox {
+                display: block;
+                .standalone-addon.ant-input-group-addon {
+                    width: unset;
+                }
+            }
+        }
+    }
+    .text-style-input {
+        width: 100%;
+        position: relative;
+        z-index: 3;
+        min-height: 32px; // Alignment
+        align-content: center;
+        .ant-input-affix-wrapper {
+            outline: none !important; // Avoid default state styling
+            &:hover {
+                border-color: var(--sub-level-1);
+            }
+        }
+        .ant-radio-group {
+            box-shadow: none;
+            .ant-radio-wrapper {
+                color: var(--color-heavy);
+                &:hover .ant-radio-label {
+                    color: var(--sub-active);
+                }
+            }
+        }
+    }
+    .card-icon-dropdown {
+        label {
+            color: var(--color);
+        }
+        &:not(.disable) {
+            cursor: pointer;
+        }
+        &:hover {
+            color: var(--sub-active);
+            .anticon {
+                color: var(--sub-active);
+            }
+        }
+        &.active {
+            color: var(--main-active);
+            .anticon {
+                color: var(--main-active);
+            }
+            &:hover {
+                color: var(--sub-active);
+                .anticon {
+                    color: var(--sub-active);
+                }
+            }
+        }
+    }
+    .fill-input-train label:not(.standalone-addon) {
+        flex: 1;
+        span:nth-child(2) {
+            width: 100%;
+            height: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            img {
+                width: 26px;
+                height: 26px;
+            }
+        }
+    }
+
+    .ant-input-group-addon {
+        min-width: var(--width-label);
+        text-align: right;
+    }
+    .standalone-addon.ant-input-group-addon {
+        display: inline-block;
+        height: 32px;
+        width: var(--width-label);
+        line-height: 30px;
+        position: relative;
+    }
+    .card-effect-letter-helper {
+        display: grid;
+        grid-template-columns: max-content max-content 1fr;
+        align-items: center;
+        padding-bottom: var(--spacing-sm);
+    }
+    .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+        margin-left: var(--spacing-xs);
+    }
+    .ant-checkbox-wrapper:last-child > span {
+        padding-right: 0;
+    }
+    .checkbox-input {
+        text-align: right;
+    }
+}

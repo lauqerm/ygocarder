@@ -15,6 +15,10 @@ class RubyBlot extends InlineBlot {
 
         return node;
     }
+
+    optimize() {
+        // Never optimize/merge these
+    }
 };
 
 RubyBlot.blotName = RUBY_HANDLER;
@@ -112,6 +116,7 @@ WordBlot.blotName = WORD_HANDLER;
 WordBlot.tagName = 'word';
 Quill.register(`formats/${WORD_HANDLER}`, WordBlot);
 
+/** Lower = Will wrap higher tags */
 InlineBlot.order = [
     'cursor',
     'inline', // Must be lower
@@ -124,6 +129,7 @@ InlineBlot.order = [
     FITRT_HANDLER,
     RUBY_HANDLER,
     QUOTE_HANDLER,
+    WORD_HANDLER,
     'script',
     'code', // Must be higher
 ];

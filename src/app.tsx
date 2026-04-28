@@ -13,16 +13,15 @@ import {
     SeriesCanvasInfo,
 } from './model';
 import {
+    DebugCanvas,
     forceRefocus,
-    isMobileDevice,
+    IS_MOBILE,
     isTouchDevice,
     mergeClass,
 } from './util';
 import {
     BatchConverter,
-    CardInputPanel,
     CardInputPanelRef,
-    CardManagerPanel,
     MasterDownloadButton,
     DownloadButtonRef,
     ExportPanel,
@@ -32,6 +31,12 @@ import {
     ResolutionButton,
     CardCanvasRef,
     MasterCardCanvas,
+    RushCardInputPanel,
+    MasterCardInputPanel,
+    CardInputPanel,
+    CardManagerPanel,
+    RushCardCanvas,
+    RushDownloadButton,
 } from './page';
 import WebFont from 'webfontloader';
 import {
@@ -78,6 +83,7 @@ const AppGlobalHotkeyMap = {
 };
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
+const { height: DebugCanvasHeight, width: DebugCanvasWidth } = DebugCanvas;
 function App() {
     const {
         allowHotkey,
@@ -123,8 +129,7 @@ function App() {
         initiate,
         loadDefaultLanguage,
     })));
-    const isMobile = isMobileDevice();
-    const windowSlidable = !isMobile && !isTouchDevice();
+    const windowSlidable = !IS_MOBILE && !isTouchDevice();
     const [isInitializing, setInitializing] = useState(true);
     const [, setActiveDropzone] = useGlobal('activeDropzone');
     const [resetCanvasCounter] = useGlobal('resetCanvasCounter');
@@ -529,8 +534,12 @@ function App() {
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
     const CardCanvas = series === 'rush'
-        ? MasterCardCanvas
+        ? RushCardCanvas
         : MasterCardCanvas;
+    const CardInputPanel = series === 'rush'
+        ? RushCardInputPanel
+        : MasterCardInputPanel;
+    console.log('🚀 ~ App ~ series:', series, canvasInfo?.type);
     return (
         <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
             <div id="app"
@@ -564,7 +573,7 @@ function App() {
                 style={{
                     backgroundImage: `url("${process.env.PUBLIC_URL
                         }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
-                    height: isMobile ? '-webkit-fill-available' : '100vh',
+                    height: IS_MOBILE ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasHeight * globalScale}px`,
                         '--card-width': `${CanvasWidth * globalScale}px`,
@@ -613,6 +622,16 @@ function App() {
                                 </div>
                                 <BatchConverter language={language} />
                                 {canvasInfo?.type === 'master' && <MasterDownloadButton ref={downloadButtonRef}
+                                    canvasMap={canvasInfo.canvasMap}
+                                    imageChangeCount={imageChangeCount}
+                                    isTainted={isTainted}
+                                    onTainted={markTaintedImage}
+                                    onExportSucess={onExportSuccess}
+                                    isInitializing={isInitializing}
+                                    globalScale={globalScale}
+                                    onDownloadError={alertDownloadError}
+                                />}
+                                {canvasInfo?.type === 'rush' && <RushDownloadButton ref={downloadButtonRef}
                                     canvasMap={canvasInfo.canvasMap}
                                     imageChangeCount={imageChangeCount}
                                     isTainted={isTainted}
@@ -675,6 +694,14 @@ function App() {
                                         <ZoomInOutlined />
                                     </LightboxButton>
                                 </Tooltip>
+                                {/** <div id="debug-monitor" /> */}
+                                {/** This canvas should reset everytime globalScale change so `getCanvasFontDebugger` works. */}
+                                <canvas
+                                    key={globalScale + 'scale'}
+                                    id="debug-canvas"
+                                    width={DebugCanvasWidth * globalScale}
+                                    height={DebugCanvasHeight}
+                                />
                             </CardCanvas>
                         </div>
                         {windowSlidable && <Moveable

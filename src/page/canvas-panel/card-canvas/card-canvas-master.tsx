@@ -1,21 +1,14 @@
-import { CanvasConst, SeriesCanvasInfo } from 'src/model';
+import { CanvasConst } from 'src/model';
 import { useSetting, useGlobal } from 'src/service';
 import { CardCanvasGroupContainer, CardPreviewContainer } from './card-canvas.styled';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { CardCanvasRef } from './unconnected-card-canvas';
+import { CardCanvas, CardCanvasRef } from './unconnected-card-canvas';
 import { clearCanvas } from 'src/draw';
-import { LightboxRef } from 'src/component';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 
-export type MasterCardCanvas = {
-    children?: React.ReactNode,
-    lightBoxCanvasKey: number,
-    lightboxRef: React.RefObject<LightboxRef>,
-    onMount: (canvasInfo: SeriesCanvasInfo) => void,
-};
-export const MasterCardCanvas = forwardRef<CardCanvasRef, MasterCardCanvas>(({
+export const MasterCardCanvas = forwardRef<CardCanvasRef, CardCanvas>(({
     children,
     lightBoxCanvasKey,
     lightboxRef,

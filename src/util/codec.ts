@@ -7,7 +7,9 @@ import { checkMonster } from './categorize';
 const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, string>> = {
     version: 've',
     format: 'fm',
+    series: 'sr',
     region: 'rg',
+    legacyTemplate: 'lt',
     frame: 'fr',
     rightFrame: 'rf',
     leftFrame: 'lf',

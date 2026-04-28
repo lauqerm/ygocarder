@@ -158,11 +158,11 @@ export type CardStore = {
         cardTransform: Card | InternalCard | ((currentCard: InternalCard) => InternalCard),
         forcePurityCheck?: boolean,
     ) => void,
-    getUpdater: (
+    getUpdater: <Value = any>(
         key: string,
         valueTransform?: (value: any) => any,
         variant?: 'throttle' | 'debounce' | { type: 'throttle', wait: number } | { type: 'debounce', wait: number },
-    ) => (e: any) => void,
+    ) => (e: string | number | any[] | ((card: Card) => Value) | { target: { value: Value }}) => void,
 };
 export const useCard = create<CardStore>((set, get) => {
     return {
@@ -189,16 +189,20 @@ export const useCard = create<CardStore>((set, get) => {
                 set({ card: normalizedCard });
             }
         },
-        getUpdater: (
+        getUpdater: <Value = any>(
             key: string,
             valueTransform: (value: any) => any = (value) => value,
-            variant,
+            variant?: 'throttle' | 'debounce' | { type: 'throttle', wait: number } | { type: 'debounce', wait: number },
         ) => {
             const { setCard } = get();
-            const returnFunction = (e: any) => {
+            const returnFunction = (e: string | number | any[] | ((card: Card) => (Value | boolean)) | { target: { value: (Value | boolean) }}) => {
                 setCard(current => ({
                     ...current,
-                    [key]: valueTransform(typeof e === 'string' || typeof e === 'number' || Array.isArray(e) ? e : e?.target?.value),
+                    [key]: valueTransform(typeof e === 'string' || typeof e === 'number' || Array.isArray(e)
+                        ? e
+                        : typeof e === 'function'
+                            ? e(current)
+                            : e?.target?.value),
                 }));
             };
 

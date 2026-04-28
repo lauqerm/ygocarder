@@ -1,5 +1,5 @@
 
-import { CanvasConst, NO_STICKER } from 'src/model';
+import { CanvasConst, IconWithGlowMap, NO_STICKER } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
@@ -39,13 +39,13 @@ export const drawStarContent = async ({
         ? starList
         : [];
     const starWidth = 50;
-    const startSpacing = 4;
+    const starSpacing = 3.8;
     let normalizedStarCount = cardIcon === 'custom'
         ? normalizedStarList.length
         : typeof star === 'string'
             ? star === '' ? 0 : 1
             : typeof star === 'number' ? star : 0;
-    let totalWidth = starWidth * normalizedStarCount + startSpacing * (normalizedStarCount - 1);
+    let totalWidth = starWidth * normalizedStarCount + starSpacing * (normalizedStarCount - 1);
     const baseline = 145;
 
     let alignment = 'right';
@@ -67,7 +67,7 @@ export const drawStarContent = async ({
             ? 85.9125 + totalWidth
             : 728.775;
 
-    let offset = 0 - (starWidth + startSpacing);
+    let offset = 0 - (starWidth + starSpacing);
 
     if (ctx && text && cardIcon !== 'st') {
         const fontSize = 50;
@@ -79,8 +79,8 @@ export const drawStarContent = async ({
         const offset = alignment === 'center'
             ? ctx.measureText(text).width / -2
             : alignment === 'left'
-                ? startSpacing
-                : (starWidth + startSpacing * 2) * -1;
+                ? starSpacing
+                : (starWidth + starSpacing * 2) * -1;
         ctx.fillText(text, leftEdge + offset, baseline + fontSize * 0.9);
         ctx.textAlign = 'left';
         resetShadow();
@@ -92,14 +92,19 @@ export const drawStarContent = async ({
     } = createCanvas(CanvasWidth * globalScale, (baseline + starWidth) * globalScale);
     await Promise.all([...Array(normalizedStarCount)]
         .map(async (_, index) => {
-            offset += (starWidth + startSpacing);
+            offset += (starWidth + starSpacing);
             /** We must factor alignment here, because presentation does not factor alignment */
             const cardIconIndex = normalizedStarCount - 1 - index;
             const cardIconName = cardIcon === 'custom' ? normalizedStarList[cardIconIndex] : cardIcon;
-            let coordinate: [number, number] = [
-                leftEdge - (starWidth + offset),
+            const coordinate: [number, number] = [
+                leftEdge - (starWidth + Math.ceil(offset)),
                 baseline,
             ];
+            const glowCoordinate: [number, number] = [
+                leftEdge - (starWidth + Math.ceil(offset)) - 3,
+                baseline - 3,
+            ];
+            if (IconWithGlowMap[cardIconName]) await drawAsset(starCtx, 'subfamily/subfamily-glow.png', ...glowCoordinate);
             await drawAsset(starCtx, `subfamily/subfamily-${cardIconName}.png`, ...coordinate);
             return await onStarDraw(coordinate);
         })

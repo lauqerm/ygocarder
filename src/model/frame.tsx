@@ -28,6 +28,15 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         sortWeight: 90,
         isOfficial: true,
     },
+    'ritual': {
+        name: 'ritual',
+        nameKey: 'input.frame.ritual',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#5e85c9',
+        sortWeight: 85,
+        isOfficial: true,
+    },
     'fusion': {
         name: 'fusion',
         nameKey: 'input.frame.fusion',
@@ -62,15 +71,6 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
         edition: 'normal',
         labelBackgroundColor: '#0c8ac6',
         sortWeight: 50,
-        isOfficial: true,
-    },
-    'ritual': {
-        name: 'ritual',
-        nameKey: 'input.frame.ritual',
-        labelColor: '#ffffff',
-        edition: 'normal',
-        labelBackgroundColor: '#5e85c9',
-        sortWeight: 85,
         isOfficial: true,
     },
     'spell': {
@@ -215,6 +215,100 @@ export const FrameInfoMap: Record<string, FrameInfo> = {
 };
 export const frameList = Object.values(FrameInfoMap);
 export const DefaultFrameInfo = FrameInfoMap['effect'];
+export const RushFrameInfoMap: Record<string, FrameInfo> = {
+    'normal': {
+        name: 'normal',
+        nameKey: 'input.frame.normal',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#c49c5e',
+        sortWeight: 100,
+        isOfficial: true,
+    },
+    'effect': {
+        name: 'effect',
+        nameKey: 'input.frame.effect',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#b96c49',
+        sortWeight: 90,
+        isOfficial: true,
+    },
+    'ritual': {
+        name: 'ritual',
+        nameKey: 'input.frame.ritual',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#5e85c9',
+        sortWeight: 85,
+        isOfficial: true,
+    },
+    'fusion': {
+        name: 'fusion',
+        nameKey: 'input.frame.fusion',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#8948a4',
+        sortWeight: 80,
+        isOfficial: true,
+    },
+    'synchro': {
+        name: 'synchro',
+        nameKey: 'input.frame.synchro',
+        labelColor: '#000',
+        edition: 'normal',
+        labelBackgroundColor: '#efefef',
+        sortWeight: 70,
+        isOfficial: true,
+    },
+    'xyz': {
+        name: 'xyz',
+        nameKey: 'input.frame.xyz',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#000000',
+        sortWeight: 60,
+        isOfficial: true,
+    },
+    'link': {
+        name: 'link',
+        nameKey: 'input.frame.link',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#0c8ac6',
+        sortWeight: 50,
+        isOfficial: true,
+    },
+    'spell': {
+        name: 'spell',
+        nameKey: 'input.frame.spell',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#1b8f83',
+        sortWeight: 30,
+        isOfficial: true,
+    },
+    'trap': {
+        name: 'trap',
+        nameKey: 'input.frame.trap',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#c32a8c',
+        sortWeight: 25,
+        isOfficial: true,
+    },
+    'token': {
+        name: 'token',
+        nameKey: 'input.frame.token',
+        labelColor: '#ffffff',
+        edition: 'normal',
+        labelBackgroundColor: '#666c74',
+        sortWeight: 1,
+        isOfficial: true,
+    },
+};
+export const rushFrameList = Object.values(RushFrameInfoMap);
+export const DefaultRushFrameInfo = RushFrameInfoMap['effect'];
 
 export const FramePositionMap: Record<string, { labelKey: string }> = {
     bottomLeftFrame: { labelKey: 'input.advanced-frame.name.bottom-left' },

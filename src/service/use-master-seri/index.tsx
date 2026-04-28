@@ -14,14 +14,14 @@ import {
     drawTypeAbility,
     getEffectFontAndCoordinate,
     drawAsset,
-    getLayoutDrawFunction,
+    getMasterLayoutDrawFunction,
     drawLinkRatingText,
     drawPredefinedMark,
     setTextStyle,
     drawPasswordText,
     drawLimitedEditionMark,
-    baseDrawLinkArrowMap,
-    baseDrawLinkMapFoil,
+    baseDrawMasterLinkArrowMap,
+    baseDrawMasterLinkMapFoil,
 } from 'src/draw';
 import {
     CanvasConst,
@@ -57,7 +57,7 @@ import {
     resolveNameStyle,
 } from 'src/util';
 import { useCard } from '../use-card';
-import { prepareStyle } from './prepare-style';
+import { prepareMasterStyle } from './prepare-style';
 import { useLanguage } from '../use-i18n';
 import { notification } from 'antd';
 
@@ -120,6 +120,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     } = canvasMap;
     const {
         format, region,
+        legacyTemplate,
         hasBackground, backgroundType,
         frame,
         foil, finish, artFinish, otherFinish, opacity,
@@ -249,7 +250,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedTypeTextStyle,
         resolvedOtherEffectTextStyle,
     } = useMemo(() => {
-        return prepareStyle({
+        return prepareMasterStyle({
             lightFooter,
             lightHeader,
             requireShadow,
@@ -382,11 +383,12 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawFrameBackgroundFinish,
                 drawOverlayFinish,
                 drawCardBorderFinish,
-            } = getLayoutDrawFunction({
+            } = getMasterLayoutDrawFunction({
                 canvas: frameCanvasRef.current,
                 artworkCanvas, backgroundCanvas,
                 globalScale,
                 region,
+                legacyTemplate,
                 frame, leftFrame, pendulumFrame, rightFrame, pendulumRightFrame,
                 dyeList,
                 effectBackground, pendulumEffectBackground,
@@ -546,6 +548,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ...resolvedStatTextStyle,
             });
 
+            if (!boundless) {
+                await drawNameBorder();
+                await drawFrameBorder();
+            }
             try {
                 await drawAttribute();
             } catch (e) {
@@ -553,10 +559,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             }
             await drawAttributeFinish();
             await drawStar({ style: levelStyle, starAlignment });
-            if (!boundless) {
-                await drawNameBorder();
-                await drawFrameBorder();
-            }
             
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
@@ -591,7 +593,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         finish,
         foil,
         format,
-        region,
         frame,
         frameCanvasRef,
         hasBackground,
@@ -602,6 +603,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isSpeedSkill,
         isXyz,
         leftFrame,
+        legacyTemplate,
         levelStyle,
         lightFooter,
         linkMap,
@@ -614,13 +616,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         pendulumFrame,
         pendulumRightFrame,
         pendulumSize,
+        region,
         resolvedOtherEffectTextStyle,
         resolvedStatTextStyle,
         rightFrame,
         showLinkRating,
         star,
-        starList,
         starAlignment,
+        starList,
         statInEffect,
         withBlueScale,
         withRedScale,
@@ -635,10 +638,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
             const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
-            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale);
-            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale);
+            const scaleColor = resolvedPendulumEffectTextStyle.color;
+            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale, scaleColor);
+            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale, scaleColor);
         }
-    }, [readyToDraw, globalScale, isPendulum, pendulumSize, pendulumScaleBlue, pendulumScaleRed, pendulumScaleCanvasRef]);
+    }, [
+        readyToDraw,
+        globalScale,
+        isPendulum,
+        pendulumSize,
+        pendulumScaleBlue,
+        pendulumScaleRed,
+        pendulumScaleCanvasRef,
+        resolvedPendulumEffectTextStyle,
+    ]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -653,7 +666,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 nameCanvasRef?.current,
                 ctx,
                 name,
-                format === 'tcg' ? 60 : 68, 116,
+                format === 'tcg' ? 63 : 68, 116,
                 attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),
@@ -1172,8 +1185,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     boundless,
                 } = normalizedOpacity;
                 const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-                await baseDrawLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
-                await baseDrawLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
+                await baseDrawMasterLinkArrowMap(ctx, globalScale, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
+                await baseDrawMasterLinkMapFoil(ctx, globalScale, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
             }
 
             ctx.scale(globalScale, globalScale);

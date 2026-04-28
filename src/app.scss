@@ -178,9 +178,28 @@ hr {
 #app {
     width: 100%;
     min-height: 100vh;
-    padding: var(--spacing) 0;
+    padding: var(--spacing-xs) 0;
     overflow-y: scroll;
     position: relative;
+}
+#debug-canvas,
+#debug-monitor {
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+}
+#debug-monitor {
+    background-color: var(--main-level-1);
+    color: var(--color);
+    width: 100%;
+    height: 200px;
+    top: 100px;
+    overflow: auto;
+}
+#debug-canvas {
+    // top: 200px;
+    top: 0;
+    visibility: hidden;
 }
 .manager_visible {
     .app-container {
@@ -350,5 +369,139 @@ input:-internal-autofill-selected {
     .moveable-line,
     .moveable-control {
         visibility: hidden;
+    }
+}
+
+.global-style-picker-overlay {
+    &.low-index {
+        z-index: 1000;
+    }
+    hr {
+        border-color: var(--sub-level-4);
+    }
+    .style-picker-mask {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+    .style-picker-auto {
+        background-color: var(--main-level-3);
+        text-align: left;
+        padding: var(--spacing-xs);
+        display: grid;
+        grid-template-columns: 1fr min-content;
+        position: relative;
+        .style-picker-close {
+            color: var(--main-danger);
+            font-size: var(--fs-xl);
+            cursor: pointer;
+        }
+    }
+    .custom-style-text,
+    .custom-style-shadow,
+    .custom-style-line,
+    .custom-style-gradient {
+        position: relative;
+    }
+    .custom-style-text {
+        overflow: hidden;
+    }
+    .input-popover {
+        color: var(--color);
+        background-color: var(--main-level-3);
+        position: relative;
+        border: var(--bw) solid var(--sub-level-1);
+        border-radius: var(--br);
+        min-width: 247px; /** To avoid text overflow in different language */
+        h2,
+        h3 {
+            text-align: left;
+            background-color: var(--main-level-3);
+            margin: 0;
+            padding: var(--spacing-sm) var(--spacing-xs);
+            font-size: var(--fs);
+            .ant-checkbox-wrapper {
+                color: var(--color);
+            }
+        }
+        h3 {
+            padding: var(--spacing-xxs) var(--spacing-xs);
+            background-color: var(--main-level-4);
+            border-bottom: var(--bw) solid var(--sub-level-4);
+            &.inactive,
+            &:last-child {
+                border-bottom-color: transparent;
+            }
+        }
+        .compact-picker {
+            color: var(--color-heavy);
+            background-color: var(--main-level-3);
+            .flexbox-fix {
+                input {
+                    color: var(--color-heavy) !important; // Override inline style
+                }
+            }
+            > div > span > div {
+                outline: var(--bw) solid var(--sub-level-4) !important; // Override inline style
+            }
+        }
+        .shadow-position,
+        .line-position {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            column-gap: var(--spacing-sm);
+            row-gap: var(--spacing-sm);
+            font-size: var(--fs-sm);
+            padding: 0 var(--spacing-sm);
+            padding-bottom: var(--spacing-xs);
+            > :first-child {
+                &::before {
+                    content: "";
+                    width: 100%;
+                    border-top: var(--bw) solid white;
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    z-index: 1;
+                }
+                &::after {
+                    content: "";
+                    height: 100%;
+                    border-left: var(--bw) solid white;
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    z-index: 1;
+                }
+                > :last-child {
+                    z-index: 2;
+                }
+            }
+        }
+    }
+}
+
+div.chrome-picker {
+    input {
+        background: var(--main-level-1);
+    }
+    svg {
+        filter: invert(1);
+    }
+    .flexbox-fix {
+        column-gap: var(--spacing-xs);
+        input {
+            color: var(--color-heavy) !important; // Override inline style
+            padding: 0 !important; // Override inline style
+            width: 100% !important; // Override inline style
+            transform: translateY(-1px);
+            vertical-align: middle;
+        }
+        label {
+            line-height: var(--spacing-xl);
+            margin-top: var(--spacing-xs) !important; // Override inline style
+        }
     }
 }

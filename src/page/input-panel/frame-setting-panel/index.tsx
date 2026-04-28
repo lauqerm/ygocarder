@@ -2,7 +2,7 @@ import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
 import { StyledPendulumFrameContainer } from '../input-panel.styled';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage } from 'src/service';
-import { getFoilButtonList, getFrameButtonList } from '../const';
+import { getFoilButtonList, getMasterFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
 import { CardLayoutPreview, FrameInfoBlock, HorizontalSketchPicker, RadioTrain } from 'src/component';
 import styled from 'styled-components';
@@ -73,7 +73,7 @@ type FramelayoutSettingPanelRef = {
 export type FramelayoutSettingPanel = {
     isPendulum: boolean,
     pendulumFrame: string,
-    frameList: ReturnType<typeof getFrameButtonList>,
+    frameList: ReturnType<typeof getMasterFrameButtonList>,
     onFrameChange: (frame: string) => void,
     onCancel: () => void,
 };

@@ -97,7 +97,7 @@ export const applyEmboss = ({
         const heightmapCanvas = document.createElement('canvas');
         heightmapCanvas.width = width;
         heightmapCanvas.height = height;
-        heightmapCanvas.getContext('2d').putImageData(
+        heightmapCanvas.getContext('2d')?.putImageData(
             new ImageData(nextDtBitmap, width, height),
             0,
             0,
@@ -128,13 +128,15 @@ export const applyEmboss = ({
         softenNormalMapCanvas.height = height;
 
         const softenNormalMapContext = softenNormalMapCanvas.getContext('2d');
-        softenNormalMapContext.drawImage(
+        softenNormalMapContext?.drawImage(
             normalMapCanvas,
             0,
             0,
             width,
             height,
         );
+
+        if (!softenNormalMapContext) throw new Error('Could not soften normal map');
         const filteredData = bilateralFilter(
             softenNormalMapContext.getImageData(0, 0, width, height).data,
             width,

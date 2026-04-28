@@ -1,21 +1,22 @@
 import {
-    frameList,
-    IconList,
+    AUTO_FONT,
+    ArtFinishMap,
     AttributeList,
-    StickerList,
-    getFoilList,
     CondenseTolerantLabelMap,
-    NameFontDataMap,
+    ExtraAttributeList,
+    FinishMap,
+    IconList,
     NO_ATTRIBUTE,
     NO_ICON,
-    ArtFinishMap,
-    FinishMap,
     NO_STICKER,
-    PendulumSizeMap,
+    NameFontDataMap,
     OtherFinishTypeMap,
-    ExtraAttributeList,
+    PendulumSizeMap,
     RegionMap,
-    AUTO_FONT,
+    StickerList,
+    frameList,
+    getFoilList,
+    rushFrameList,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -88,7 +89,24 @@ export const ArtFinishButtonList = [
     })),
 ];
 
-export const getFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 'official') => frameList
+export const getMasterFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 'official') => frameList
+    .filter(({ isOfficial }) => origin === 'both'
+        ? true
+        : origin === 'official'
+            ? isOfficial
+            : !isOfficial,
+    )
+    .map(({ name, nameKey, labelBackgroundColor, labelBackgroundColorList, edition, isOfficial }) => ({
+        label: <FrameInfoBlock
+            labelBackgroundColor={labelBackgroundColor}
+            labelBackgroundColorList={labelBackgroundColorList}
+            nameKey={nameKey}
+            isOfficial={isOfficial}
+        />,
+        value: name,
+        edition,
+    }));
+export const getRushFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 'official') => rushFrameList
     .filter(({ isOfficial }) => origin === 'both'
         ? true
         : origin === 'official'

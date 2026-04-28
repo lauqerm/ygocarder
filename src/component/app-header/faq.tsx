@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '15/02/2026';
+        const currentReminder = '11/03/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,71 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'MaSaHo',
+            question: 'I recently noticed that Yu-Gi-Oh cards have had several small reformulations throughout the life of the game, which they call “Series”, and your model is equivalent to Series 10 (the current one). Do you have plans to add the older series layouts at some point in the future?',
+            answer: 'Hi there, unfortunately that will require access to old series templates as well as a list of changes made over time, which I currently do not have. The app can only support a few limited options (for example, "small" and "large" pendulum frames, or the old position for the "1st Edition" text), but that is about it.',
+        },
+        {
+            author: 'Seamornf at March 09, 2026',
+            question: 'Hi! Love the work. I found that because traps in portuguese have the longest name of any attribute currently, the last "A" is getting the shadow from the name border.',
+            answer: 'I have updated the issue, thanks for your report.',
+        },
+        {
+            author: 'RedSupernovaDragon at March 07, 2026',
+            question: 'Well, it\'s really unlucky for the name box to have those shrinking issues that you cannot fix at the moment. At least the problem was noticed.\nAside from this issue, there is a (very) small UI update you could make: in the frame panel, "Ritual" is currently placed after "Link"; a better position would be between "Effect" and "Fusion", since\n1) Rituals are Main Deck monsters;\n2) they were introduced early along with Fusions;\n3) this "R, F, S, X" order is the most natural, and it\'s found in some cards like the Firewall upgrades..',
+            answer: 'Yeah, I\'m not the font maker so I can only have limited control over the font rendering. About your recommendation for the ritual frame, it should have been updated now.',
+        },
+        {
+            author: 'RedSupernovaDragon at March 05, 2026',
+            question: 'Thank you very much for making the paragraph box static.\nWonderful fix for the letters! Unfortunately, there are other similar height issue: on "o"/"O", "q", and some of the numbers (namely 1, 2, and 0). When compression is necessary to fit longer names in the box, all of these characters are taller than they should be to fit on a common line.\nIt\'s a really frustrating issue, I know, especially since the font is supposed to be Regular. Thanks in advance for your working on this issue.',
+            answer: 'Right now, it is quite difficult for me to handle characters with curved strokes (like the letters O, Q, and the numbers 0, 3, 6, 9), because they actually protrude slightly beyond the normal top/bottom baselines as far as I can investigate. I might double check the bases of numbers 1 and 2, and that may be it. Sorry for the inconvenience.',
+        },
+        {
+            author: 'RedSupernovaDragon at March 04, 2026',
+            question: 'Hello again, about the "i"/"I" issue, I tried to write the whole alphabet (upper and lower case) in the name box and I have to report the same issue for "E" and "N", at least from pc version.',
+            answer: 'Now this is really getting out of hand 😭. I have issued another fix for this.',
+        },
+        {
+            author: 'RedSupernovaDragon at March 03, 2026',
+            question: 'Hello! First off, thank you very much for this cardmaker, I\'m new to custom cards but this  carder has already become my favourite.\nI\'m using the site on pc, and noticed that when you open the "Paragraph Style" section, its width does not stay fixed like the other settings, but it slides to the right until it eventually stops. I was wondering if you could fix this by making it static, since it\'s kind of difficult to select the things you want while they\'re moving.\nThank you again for your work!',
+            answer: 'The paragraph panel should have fixed width now.',
+        },
+        {
+            author: 'Yugiohfann at March 03, 2026',
+            question: 'Thank you so much for fixing the "i" letter for me, but it seems the issue has been fixed in the Android version, and the PC version still has the "i" letter sometimes positioned higher and sometimes lower 😭😭.',
+            answer: 'It\'s okay, at least something is working 😭. If possible, please also send me the report from the app on the bugged browser (it seems you send most of your reports from Chrome on a mobile device). The report will include additional information about your browser that may help me investigate further. Sorry for the inconvenience.',
+        },
+        {
+            author: 'Yugiohfann at March 02, 2026',
+            question: 'I use 813x1185 resolution, can you adjust the height of the letter "i" so that it\'s the same height as the other letters in the name box? Thank you.',
+            answer: 'I have updated the font a bit, if this does not improve your issue I\'m sorry I cannot do much more to help.',
+        },
+        {
+            author: 'MaSaHo at March 01, 2026',
+            question: 'Is there a plan to update the foil border? I mean, adding the rainbow pattern of the new Overframe cards, as well as the assets from the Grand Master version?',
+            answer: 'I would love to but right now I am entirely depend on other artists to provide the assets for those first, so I cannot give a clear ETA on that.',
+        },
+        {
+            author: 'LigerrFanArt at Feb 24, 2026',
+            question: 'Hello,\nI noticed a formatting issue with italic text in the effect box (Normal Monster text).\nWhen a line starts directly with a parenthesis, for example:\n"(This card is always treated as an "Archfiend" card.)"\nthe italic formatting does not activate properly.\nTo make the italics work, I have to manually add a space before the "(" at the beginning of the line. However, adding this space causes the text to shift\nslightly and the font size to shrink, as the entire text box appears to be recalculated and resized.\nIt seems like the issue may be related to how the parser handles lines beginning with a parenthesis.\nJust reporting it in case it helps improve the tool.\nThanks for your work!\n\nLigerrFanArt',
+            answer: 'I have fixed the issue T.T',
+        },
+        {
+            author: 'TheTonyB at Feb 23, 2026',
+            question: 'Spell/Trap icon finishes not working with high-res cards.',
+            answer: 'I have fixed the issue.',
+        },
+        {
+            author: 'El Kebabini at Feb 17, 2026',
+            question: 'The german Attribute for Dark Finsternis is wrong. It\'s too condensed.',
+            answer: 'I am sorry but that is the only one that I have access to, I will update it if I can but right now it\'s really hard to get access to attributes for other languages.',
+        },
+        {
+            author: 'Long at Feb 16, 2026',
+            question: 'Why did you change the font color? The default text used to be black, but now it’s gray, and I don’t think this change was necessary.',
+            answer: 'I am experimenting with a new color based on high-res official proxy from Konami site, so it may get further adjusted to fit the nature of the app. But you can always change it to pure black in Effect > Text Style. Sorry for the inconvenience.',
+        },
         {
             author: 'LigerrFanArt at Feb 14, 2026',
             question: 'Hi,\nWhen I disable “best effort render” to get the rainbow effect on my card, it disables ATK / and DEF / in your menu.\nWould it be possible to add a new section next to Foil, with a Rainbow version alongside Gold and Platinum — unless you’re already working on that?\nI had to manually add ATK / and DEF / in Photoshop myself.\n\nThx\nLigerrFanArt',

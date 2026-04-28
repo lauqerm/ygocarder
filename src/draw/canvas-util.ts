@@ -1,4 +1,4 @@
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, FinishInformation, FinishMap, PendulumSize } from 'src/model';
+import { CanvasConst, DEFAULT_PENDULUM_SIZE, DEFAULT_TEXT_COLOR, FinishInformation, FinishMap, PendulumSize } from 'src/model';
 import { CanvasTextStyle } from 'src/service';
 
 const { height: CanvasHeight, width: CanvasWidth, maximumScale } = CanvasConst;
@@ -147,7 +147,6 @@ const DEFAULT_SHADOW_BLUR = 0;
 const DEFAULT_SHADOW_COLOR = '#000000';
 const DEFAULT_SHADOW_OFFSET_X = 0;
 const DEFAULT_SHADOW_OFFSET_Y = 0;
-const DEFAULT_TEXT_COLOR = '#221F1F';
 
 export const setTextStyle = ({
     ctx,

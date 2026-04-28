@@ -1,6 +1,7 @@
 import {
     AUTO_FONT,
     Card,
+    DEFAULT_TEXT_COLOR,
     Foil,
     frameList,
     LINK_RATING_ALWAYS_AUTO,
@@ -142,8 +143,8 @@ export const resolveNameStyle = ({
 
     /** Predefined name style has dynamic font based on format unless explictly stated */
     let contextualColor = {
-        fillStyle: lightHeader ? '#ffffff' : '#221F1F',
-        headTextFillStyle: lightHeader ? '#ffffff' : '#221F1F',
+        fillStyle: lightHeader ? '#ffffff' : DEFAULT_TEXT_COLOR,
+        headTextFillStyle: lightHeader ? '#ffffff' : DEFAULT_TEXT_COLOR,
     };
     if (nameStyleType === 'predefined') {
         const resultNameStyle = { ...PresetNameStyleMap[nameStyle.preset ?? 'commonB'].value };

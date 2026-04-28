@@ -1,4 +1,4 @@
-import { TextStyle } from 'src/model';
+import { DEFAULT_TEXT_COLOR, TextStyle } from 'src/model';
 
 export type CanvasTextStyle = {
     x?: number,
@@ -10,7 +10,7 @@ export type CanvasTextStyle = {
     lineColor?: string,
 };
 
-export const prepareStyle = ({
+export const prepareMasterStyle = ({
     // lightFooter,
     lightHeader,
     requireShadow,
@@ -29,7 +29,7 @@ export const prepareStyle = ({
     statTextStyle: TextStyle,
     typeTextStyle: TextStyle,
 }) => {
-    const levelColor = { color: lightHeader ? '#ffffff' : '#221F1F' };
+    const levelColor = { color: lightHeader ? '#ffffff' : DEFAULT_TEXT_COLOR };
     const levelStyle = requireShadow
         ? {
             blur: 2,

@@ -10,8 +10,11 @@ import {
     NB_WORD_CLOSE,
     NB_WORD_OPEN,
     ReverseTotalImagePresetMap,
+    RUBY_SEPARATOR,
     RubyDelimiterRegex,
+    RubyWithoutHeadRegex,
     RubyWordANRegex,
+    SingleForceWordANRegex,
 } from 'src/model';
 import { normalizeCardText } from 'src/draw';
 import sanitizeHtml from 'sanitize-html';
@@ -30,7 +33,7 @@ export const carderToHtml = (value: string, format: string, furiganaHelper: bool
     const convertedValue = normalizeCardText(
         value + '\n',
         format,
-        { furiganaHelper, skip: ['encase-word', 'quote-conversion'] },
+        { furiganaHelper: false, skip: ['encase-word', 'quote-conversion'] },
     );
     const valueAsHtml = convertedValue
         .split('\n')
@@ -40,18 +43,32 @@ export const carderToHtml = (value: string, format: string, furiganaHelper: bool
                 parsedLine = `<p>${parsedLine === '' ? '<br>' : parsedLine}</p>`;
             }
             return parsedLine
+                .replaceAll(RUBY_SEPARATOR, '')
                 .replaceAll(NB_FULL_LINE_OPEN, fitLineOpenTag).replaceAll(NB_FULL_LINE_CLOSE, fitLineCloseTag)
                 .replaceAll(NB_LINE_OPEN, lineOpenTag).replaceAll(NB_LINE_CLOSE, lineCloseTag)
                 .replaceAll(NB_UNCOMPRESSED_START, '<q>').replaceAll(NB_UNCOMPRESSED_END, '</q>')
+                .replaceAll(SingleForceWordANRegex, m => {
+                    const [foot, delimiter, head] = m
+                        .replaceAll(`${NB_WORD_OPEN}{`, '')
+                        .replaceAll(`}${NB_WORD_CLOSE}`, '')
+                        .split(RubyDelimiterRegex);
+
+                    if (delimiter === FIT_RUBY_DELIMITER) return `<ruby>${foot}<fitrt>${head}</fitrt>${RUBY_SEPARATOR}</ruby>`;
+                    if (!delimiter) return `<word>${foot}</word>`;
+                    return `<ruby>${foot}<rt>${head}</rt>${RUBY_SEPARATOR}</ruby>`;
+                })
                 .replaceAll(ForceWordANRegex, m => {
-                    return m.replaceAll(`${NB_WORD_OPEN}{`, '<word>').replaceAll(`}${NB_WORD_CLOSE}`, '</word>');
+                    return m.replaceAll(`${NB_WORD_OPEN}{`, '<word>{').replaceAll(`}${NB_WORD_CLOSE}`, '}</word>');
                 })
                 .replaceAll(RubyWordANRegex, m => {
-                    const [foot, delimiter, head] = m.replaceAll(`${NB_WORD_OPEN}{`, '').replaceAll(`}${NB_WORD_CLOSE}`, '').split(RubyDelimiterRegex);
+                    const [foot, delimiter, head] = m.replaceAll('{', '').replaceAll('}', '').split(RubyDelimiterRegex);
 
-                    if (delimiter === FIT_RUBY_DELIMITER) return `<ruby>${foot}<fitrt>${head}</fitrt></ruby>`;
-                    return `<ruby>${foot}<rt>${head}</rt></ruby>`;
-                });
+                    if (delimiter === FIT_RUBY_DELIMITER) return `<ruby>${foot}<fitrt>${head}</fitrt>${RUBY_SEPARATOR}</ruby>`;
+                    if (!delimiter) return `<word>${foot}</word>`;
+                    return `<ruby>${foot}<rt>${head}</rt>${RUBY_SEPARATOR}</ruby>`;
+                })
+                /** Remove all useless word brackets */
+                .replaceAll(NB_WORD_OPEN, '').replaceAll(NB_WORD_CLOSE, '');
         })
         .join('');
     // console.info('Debug carderToHtml:', value, '\n=====\n', convertedValue, '\n=====\n', valueAsHtml);
@@ -140,7 +157,7 @@ export const htmlToCarder = (delta: { ops?: DeltaOperation[] }) => {
             }
             if (word) {
                 if (!isInWord) {
-                    insertContent = `{${insertContent}`;
+                    insertContent = `${NB_WORD_OPEN}${insertContent}`;
                     isInWord = true;
                 }
             }
@@ -177,7 +194,7 @@ export const htmlToCarder = (delta: { ops?: DeltaOperation[] }) => {
             }
             /** Close word */
             if (isInWord && (!nextOp || !nextOp.attributes?.word)) {
-                insertContent += '}';
+                insertContent += NB_WORD_CLOSE;
                 isInWord = false;
             }
             /** Close quote */
@@ -185,8 +202,16 @@ export const htmlToCarder = (delta: { ops?: DeltaOperation[] }) => {
                 insertContent += '}}';
                 isInQuote = false;
             }
-            carderLine += insertContent;
+            carderLine += insertContent.replaceAll(RUBY_SEPARATOR, '');
         });
+
+        carderLine = carderLine
+            /** Remove all empty ruby (ruby without notation, this does not confuse with words because we use different open / closing tag for words) */
+            .replaceAll(RubyWithoutHeadRegex, m => {
+                return m.replaceAll('{', '').replaceAll('}', '');
+            })
+            /** Now transform words back to their semantic tag */
+            .replaceAll(NB_WORD_OPEN, '{').replaceAll(NB_WORD_CLOSE, '}');
 
         /** We do not support nested lines */
         if (line) carderLine = `[${carderLine}]`;
