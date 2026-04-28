@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '24/04/2026';
+        const currentReminder = '28/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,11 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 28, 2026',
+            question: 'I saw a card template once and thought "wow it would be rly cool if i made a card outta this", then i realised i couldn\'t, so could you give us the feature to upload our own custom templates without needing to use the default ones??\n\nOh, and by templates i mean the Monster templates',
+            answer: 'Hi, what does your template look like? The app supports customizing a variety of card components, including background layer, foil, etc. If you can provide more details about your template and which part you want to customize, I may be able to suggest how to achieve that with current features or by adding new ones if needed.',
+        },
         {
             author: 'Ryan at April 24, 2026',
             question: 'Importing a Spell Card (haven\'t tried on Traps) don\'t auto attach the Spell Attribute and show ATK/DEF like a Monster card.',
