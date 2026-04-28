@@ -412,6 +412,7 @@
         "input.frame.rebirth": "Rebirth",
         "input.frame.unofficial.label": "Fanmade",
         "input.icon-type.slot.use-12.label": "Maximum 12 stars",
+        "input.icon-type.user-defined.label": "Custom Icon",
         "input.name-style.emboss.alert": "Emboss effect will override some text features",
         "input.name-style.emboss.color.alert": "Change color in the {colorTab} button.",
         "input.opacity.art-border.label": "Keep art border",

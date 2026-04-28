@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.4.10 (2026/04/28)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for user-defined card icon (stars).",
+                "image": "https://i.postimg.cc/Jz489HS0/image.png"
+            }
+        ]
+    },
+    {
         "version": "v2.4.9 (2026/04/22)",
         "logList": [
             {

@@ -264,6 +264,7 @@
         "input.icon-type.slot.shift-left.label": "Dịch trái",
         "input.icon-type.slot.shift-right.label": "Dịch phải",
         "input.icon-type.slot.use-12.label": "Chỉ hiện 12 sao",
+        "input.icon-type.user-defined.label": "Tùy chọn",
         "input.icon.continuous": "Continuous",
         "input.icon.counter": "Counter",
         "input.icon.equip": "Equip",
