@@ -104,6 +104,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         artworkCanvasRef,
         backgroundCanvasRef,
         overlayCanvasRef,
+        iconImageCanvasRef,
         frameCanvasRef,
         creatorCanvasRef,
         effectCanvasRef,
@@ -125,6 +126,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         legacyTemplate,
         hasBackground, backgroundType,
         overlay, overlayData, overlaySource, overlayType,
+        iconImage, iconImageData, iconImageSource,
         frame,
         foil, finish, artFinish, otherFinish, opacity,
         name, nameStyle, nameStyleType,
@@ -150,6 +152,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     } = card;
     const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
         || (overlaySource === 'offline' && overlayData.trim() !== '');
+    const hasIconImage = (iconImageSource === 'online' && iconImage.trim() !== '')
+        || (iconImageSource === 'offline' && iconImageData.trim() !== '');
 
     const drawingPipeline = useRef<Record<string, DrawingPipeline>>({
         frame: {
@@ -597,8 +601,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 console.error('drawAttribute error', e);
             }
             await drawAttributeFinish();
-            await drawStar({ style: levelStyle, starAlignment });
-            
+            await drawStar({ style: levelStyle, starAlignment, iconImage: hasIconImage ? iconImageCanvasRef.current : undefined });
+
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
                 const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
@@ -625,7 +629,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         attribute,
         attributeType,
         backgroundCanvasRef,
-        overlayCanvasRef,
         backgroundType,
         cardIcon,
         dyeList,
@@ -637,7 +640,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         frameCanvasRef,
         hasBackground,
         hasOverlay,
-        overlayType,
+        hasIconImage,
+        iconImageCanvasRef,
         isDuelTerminalCard,
         isLink,
         isPendulum,
@@ -654,6 +658,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         loopFinish,
         opacity,
         otherFinish,
+        overlayCanvasRef,
+        overlayType,
         pendulumEffectBackground,
         pendulumFrame,
         pendulumRightFrame,

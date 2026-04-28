@@ -1,6 +1,23 @@
 import { clone, equals } from 'ramda';
 import { JSONUncrush } from '../3rd';
-import { ART_FINISH_TYPE, RegionMap, Card, CardFlag, FrameDyeList, getDefaultCardFlag, getDefaultCardOpacity, getDefaultCrop, getDefaultDyeList, getDefaultTextStyle, getEmptyCard, InternalCard, getDefaultImageStyle, getDefaultOverlayCrop } from '../model';
+import {
+    ART_FINISH_TYPE,
+    RegionMap,
+    Card,
+    CardFlag,
+    FrameDyeList,
+    getDefaultCardFlag,
+    getDefaultCardOpacity,
+    getDefaultCrop,
+    getDefaultDyeList,
+    getDefaultTextStyle,
+    getEmptyCard,
+    InternalCard,
+    getDefaultImageStyle,
+    getDefaultOverlayCrop,
+    getDefaultIconCrop,
+    ImageSourceType,
+} from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
 import { HexColorRegex } from './color';
@@ -89,6 +106,24 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         height: 'ovgh',
         unit: 'ovgu',
         aspect: 'ovga',
+    },
+    iconImage: 'sivg',
+    iconImageFit: 'sivf',
+    iconImageStyle: {
+        _newKey: 'sivst',
+        flipX: 'sivsfx',
+        flipY: 'sivsfy',
+    },
+    iconImageData: 'sivgd',
+    iconImageSource: 'sivgs',
+    iconImageCrop: {
+        _newKey: 'sivgc',
+        x: 'sivgx',
+        y: 'sivgy',
+        width: 'sivgw',
+        height: 'sivgh',
+        unit: 'sivgu',
+        aspect: 'sivga',
     },
     name: 'na',
     nameStyleType: 'nst',
@@ -354,7 +389,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     // if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
     if ((migratedCard.art ?? '') === '') migratedCard.art = '';
     if ((migratedCard.artData ?? '') === '') migratedCard.artData = '';
-    if ((migratedCard.artSource ?? '') === '') migratedCard.artSource = 'online';
+    if ((migratedCard.artSource ?? '') as string === '') migratedCard.artSource = 'online' as ImageSourceType;
     if (migratedCard.artFit == null) migratedCard.artFit = false;
     migratedCard.artStyle = { ...getDefaultImageStyle(), ...migratedCard.artStyle };
 
@@ -368,7 +403,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
     if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
-    if ((migratedCard.backgroundSource ?? '') === '') migratedCard.backgroundSource = 'online';
+    if ((migratedCard.backgroundSource ?? '') as string === '') migratedCard.backgroundSource = 'online' as ImageSourceType;
     if (migratedCard.backgroundFit == null) migratedCard.backgroundFit = false;
     migratedCard.backgroundStyle = { ...getDefaultImageStyle(), ...migratedCard.backgroundStyle };
     if (migratedCard.hasBackground == null
@@ -383,12 +418,22 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
 
     if ((migratedCard.overlay ?? '') === '') migratedCard.overlay = '';
     if ((migratedCard.overlayData ?? '') === '') migratedCard.overlayData = '';
-    if ((migratedCard.overlaySource ?? '') === '') migratedCard.overlaySource = 'online';
+    if ((migratedCard.overlaySource ?? '') as string === '') migratedCard.overlaySource = 'online' as ImageSourceType;
     if (migratedCard.overlayFit == null) migratedCard.overlayFit = true;
     migratedCard.overlayStyle = { ...getDefaultImageStyle(), ...migratedCard.overlayStyle };
     migratedCard.overlayCrop = {
         ...getDefaultOverlayCrop(),
         ...migratedCard.overlayCrop,
+    };
+
+    if ((migratedCard.iconImage ?? '') === '') migratedCard.iconImage = '';
+    if ((migratedCard.iconImageData ?? '') === '') migratedCard.iconImageData = '';
+    if ((migratedCard.iconImageSource ?? '') as string === '') migratedCard.iconImageSource = 'online' as ImageSourceType;
+    if (migratedCard.iconImageFit == null) migratedCard.iconImageFit = true;
+    migratedCard.iconImageStyle = { ...getDefaultImageStyle(), ...migratedCard.iconImageStyle };
+    migratedCard.iconImageCrop = {
+        ...getDefaultIconCrop(),
+        ...migratedCard.iconImageCrop,
     };
 
     if (migratedCard.isLink == null && migratedCard.frame === 'link') {

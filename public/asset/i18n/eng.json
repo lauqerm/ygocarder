@@ -256,6 +256,7 @@
         "input.icon-type.slot.shift-left.label": "Shift left",
         "input.icon-type.slot.shift-right.label": "Shift right",
         "input.icon-type.slot.use-12.label": "Maximum 12 stars",
+        "input.icon-type.user-defined.label": "Custom Icon",
         "input.icon.continuous": "Continuous",
         "input.icon.counter": "Counter",
         "input.icon.equip": "Equip",

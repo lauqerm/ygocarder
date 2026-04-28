@@ -292,7 +292,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                     });
                 }
             }
-        }
+        },
     }));
 
     const noBackground = (background ?? '').length === 0

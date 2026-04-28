@@ -2,7 +2,7 @@ import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'r
 import { useCard, useLanguage } from 'src/service';
 import { ImageCropper, ImageCropperRef } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
-import { getArtCanvasCoordinate, ImageStyle } from 'src/model';
+import { getArtCanvasCoordinate, ImageSourceType, ImageStyle } from 'src/model';
 import styled from 'styled-components';
 import { notification } from 'antd';
 
@@ -42,7 +42,7 @@ export type BackgroundInputGroupRef = {
 };
 export type BackgroundInputGroup = {
     children?: React.ReactNode,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType) => void,
 } & Pick<ImageCropper, 'backgroundColor' | 'receivingCanvas' | 'onTainted' | 'onSourceLoaded'>;
 export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, BackgroundInputGroup>(({
     backgroundColor,
@@ -91,7 +91,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
             backgroundStyle: { ...currentCard.backgroundStyle, ...style },
         };
     }), [setCard]);
-    const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
+    const changeBackgroundCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(
             curr => ({

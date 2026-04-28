@@ -11,7 +11,7 @@ import {
 } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
 import { ArtFinishButtonList, getOtherFinishList } from '../const';
-import { getArtCanvasCoordinate, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
+import { getArtCanvasCoordinate, ImageSourceType, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
 import styled from 'styled-components';
 import { CaretDownOutlined } from '@ant-design/icons';
 import { notification, Popover } from 'antd';
@@ -155,7 +155,7 @@ export type ImageInputGroup = {
     showExtraDecorativeOption: boolean,
     showCreativeOption: boolean,
     receivingCanvas: HTMLCanvasElement | null,
-    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online') => void,
+    onCropChange?: (cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType) => void,
     onTainted: ImageCropper['onTainted'],
     onSourceLoaded: ImageCropper['onSourceLoaded'],
 };
@@ -224,7 +224,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
     const changeArtSource = useMemo(() => getUpdater('artSource'), [getUpdater]);
     const changeArtFinish = useMemo(() => getUpdater('artFinish'), [getUpdater]);
     const changeOtherFinish = useMemo(() => getUpdater('otherFinish'), [getUpdater]);
-    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: 'offline' | 'online', byUser?: boolean) => {
+    const changeImageCrop = useCallback((cropInfo: Partial<ReactCrop.Crop>, sourceType: ImageSourceType, byUser?: boolean) => {
         onCropChange?.(cropInfo, sourceType);
         if (cropInfo) setCard(
             curr => ({

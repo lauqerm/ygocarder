@@ -72,6 +72,7 @@ export type MasterSeriesCanvas = {
     artworkCanvasRef: React.RefObject<HTMLCanvasElement>,
     backgroundCanvasRef: React.RefObject<HTMLCanvasElement>,
     overlayCanvasRef: React.RefObject<HTMLCanvasElement>,
+    iconImageCanvasRef: React.RefObject<HTMLCanvasElement>,
     exportCanvasRef: React.RefObject<HTMLCanvasElement>,
     frameCanvasRef: React.RefObject<HTMLCanvasElement>,
     cardIconCanvasRef: React.RefObject<HTMLCanvasElement>,

@@ -159,7 +159,7 @@ export const useCardExport = ({
                 localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
             } catch (e) {
                 try {
-                    const { artData, backgroundData, overlayData, ...shortenedCard } = currentCard;
+                    const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = currentCard;
                     localStorage.setItem('card-data', JSON.stringify(shortenedCard));
                     localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
                 } catch (e) {
@@ -207,7 +207,7 @@ export const useCardExport = ({
                         await exportRef.current.currentPipeline;
                         if (relevant) {
                             /** Never include art data here, it will easily exceed the limit of url length */
-                            const normalizedCard = { ...currentCard, artData: '', backgroundData: '', overlayData: '' };
+                            const normalizedCard = { ...currentCard, artData: '', backgroundData: '', overlayData: '', iconImageData: '' };
                             const condensedCard = JSON.stringify(compressCardData(normalizedCard));
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 

@@ -3,6 +3,7 @@
 	flex-direction: column;
 	grid-column-gap: var(--spacing);
 	row-gap: var(--spacing-sm);
+	--max-image-height: 400px;
 
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
@@ -79,7 +80,7 @@
 	}
 
 	.card-cropper {
-		max-height: 400px;
+		max-height: var(--max-image-height);
 		min-height: 50px;
 		position: relative;
 		line-height: 0;
@@ -93,7 +94,7 @@
 
 	.ReactCrop__image {
 		max-width: 100%;
-		max-height: 400px;
+		max-height: var(--max-image-height);
 	}
 
 	.ReactCrop {

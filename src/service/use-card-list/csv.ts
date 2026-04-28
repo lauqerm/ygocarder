@@ -17,11 +17,13 @@ import {
     getDefaultCardOpacity,
     getDefaultCrop,
     getDefaultDyeList,
+    getDefaultIconCrop,
     getDefaultImageStyle,
     getDefaultNameStyle,
     getDefaultOverlayCrop,
     getDefaultTextStyle,
     getEmptyCard,
+    ImageSourceType,
     InternalCard,
     MAX_STAR_LENGTH,
     NameStyle,
@@ -183,6 +185,15 @@ const CsvStandardFieldList = [
     'Overlay Crop - Y (%)',
     'Overlay Crop - Width (%)',
     'Overlay Crop - Height (%)',
+    'Icon Link',
+    'Icon Data',
+    'Icon Source',
+    'Is Using Full Icon Image',
+    'Icon Style',
+    'Icon Crop - X (%)',
+    'Icon Crop - Y (%)',
+    'Icon Crop - Width (%)',
+    'Icon Crop - Height (%)',
     'Left Frame',
     'Right Frame',
     'Bottom Right Frame',
@@ -323,6 +334,12 @@ export const cardListToCsv = (cardList: Card[]) => {
             setId,
             star,
             starAlignment,
+            iconImage,
+            iconImageCrop,
+            iconImageData,
+            iconImageFit,
+            iconImageSource,
+            iconImageStyle,
             starList,
             statTextStyle,
             sticker,
@@ -480,6 +497,15 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Overlay Crop - Y (%)', overlayCrop.y);
         write('Overlay Crop - Width (%)', overlayCrop.width);
         write('Overlay Crop - Height (%)', overlayCrop.height);
+        write('Icon Link', iconImage);
+        write('Icon Data', iconImageData);
+        write('Icon Source', iconImageSource);
+        write('Is Using Full Icon Image', iconImageFit);
+        write('Icon Style', JSON.stringify(iconImageStyle));
+        write('Icon Crop - X (%)', iconImageCrop.x);
+        write('Icon Crop - Y (%)', iconImageCrop.y);
+        write('Icon Crop - Width (%)', iconImageCrop.width);
+        write('Icon Crop - Height (%)', iconImageCrop.height);
         write('Left Frame', leftFrame);
         write('Right Frame', rightFrame);
         write('Bottom Right Frame', pendulumRightFrame);
@@ -690,7 +716,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const emptyArtCrop = getDefaultCrop();
                 const art = reader('Art Link') ?? emptyCard.art;
                 const artData = reader('Art Data') ?? emptyCard.artData;
-                const artSource = reader('Art Source') ?? emptyCard.artSource;
+                const artSource = (reader('Art Source') ?? emptyCard.artSource) as ImageSourceType;
                 const artFit = normalizeBoolean(reader('Is Using Full Art'), emptyCard.artFit);
                 const artCrop: Crop = {
                     aspect: getArtCanvasCoordinate(isPendulum, opacity, undefined, pendulumSize).ratio,
@@ -711,7 +737,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const hasBackground = normalizeBoolean(reader('Has Background'), emptyCard.hasBackground);
                 const background = reader('Background Link') ?? emptyCard.background;
                 const backgroundData = reader('Background Data') ?? emptyCard.backgroundData;
-                const backgroundSource = reader('Background Source') ?? emptyCard.backgroundSource;
+                const backgroundSource = (reader('Background Source') ?? emptyCard.backgroundSource) as ImageSourceType;
                 const backgroundType = (reader('Background Type') ?? emptyCard.backgroundType).toLowerCase() as BackgroundType;
                 const backgroundFit = normalizeBoolean(reader('Is Using Full Background'), emptyCard.backgroundFit);
                 const backgroundCrop: Crop = {
@@ -732,7 +758,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const emptyOverlayCrop = getDefaultOverlayCrop();
                 const overlay = reader('Overlay Link') ?? emptyCard.overlay;
                 const overlayData = reader('Overlay Data') ?? emptyCard.overlayData;
-                const overlaySource = reader('Overlay Source') ?? emptyCard.overlaySource;
+                const overlaySource = (reader('Overlay Source') ?? emptyCard.overlaySource) as ImageSourceType;
                 const overlayFit = normalizeBoolean(reader('Is Using Full Overlay'), emptyCard.overlayFit);
                 const overlayType = (reader('Overlay Type') ?? emptyCard.overlayType).toLowerCase();
                 const overlayCrop: Crop = {
@@ -746,6 +772,26 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 let overlayStyle = getDefaultImageStyle();
                 try {
                     overlayStyle = JSON.parse(reader('Overlay Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
+
+                const emptyIconImageCrop = getDefaultIconCrop();
+                const iconImage = reader('Icon Link') ?? emptyCard.iconImage;
+                const iconImageData = reader('Icon Data') ?? emptyCard.iconImageData;
+                const iconImageSource = (reader('Icon Source') ?? emptyCard.iconImageSource) as ImageSourceType;
+                const iconImageFit = normalizeBoolean(reader('Is Using Full Icon Image'), emptyCard.iconImageFit);
+                const iconImageCrop: Crop = {
+                    aspect: 1,
+                    height: normalizeFloat(reader('Icon Crop - Height (%)'), emptyIconImageCrop.height),
+                    width: normalizeFloat(reader('Icon Crop - Width (%)'), emptyIconImageCrop.width),
+                    x: normalizeFloat(reader('Icon Crop - X (%)'), emptyIconImageCrop.x),
+                    y: normalizeFloat(reader('Icon Crop - Y (%)'), emptyIconImageCrop.y),
+                    unit: '%',
+                };
+                let iconImageStyle = getDefaultImageStyle();
+                try {
+                    iconImageStyle = JSON.parse(reader('Icon Style') ?? '{}');
                 } catch (e) {
                     console.error('csvToCardList', e);
                 }
@@ -911,6 +957,12 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     overlaySource,
                     overlayStyle,
                     overlayType,
+                    iconImage,
+                    iconImageCrop,
+                    iconImageData,
+                    iconImageFit,
+                    iconImageSource,
+                    iconImageStyle,
                     password,
                     pendulumEffect,
                     pendulumFrame,

@@ -306,6 +306,9 @@ export const CardThumb = ({
         pendulumStyle,
         setId,
         star,
+        iconImage,
+        iconImageData,
+        iconImageSource,
         subFamily,
         typeAbility,
     } = card;
@@ -345,6 +348,15 @@ export const CardThumb = ({
         artFrameHeight,
         artFrameWidth,
     } = canvasCoordinate;
+    /** This will not account for icon cropping, but right now I don't think it is worth it to hook this component into main data hook. */
+    const starSrc = (cardIcon === 'user-defined'
+        ? iconImageSource === 'online' && iconImage
+            ? iconImage
+            : iconImageSource === 'offline' && iconImageData
+                ? iconImageData
+                : undefined
+        : undefined)
+        ?? `${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom' ? 'icon-list' : normalizedCardIcon).toLowerCase()}.png`;
 
     return <StyledCardThumb
         className={mergeClass(
@@ -474,9 +486,7 @@ export const CardThumb = ({
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
                 {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img
                     className="card-icon"
-                    src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom'
-                        ? 'icon-list'
-                        : normalizedCardIcon).toLowerCase()}.png`}
+                    src={starSrc}
                     alt="Icon"
                 />}
                 {(normalizedCardIcon !== NO_ICON

@@ -680,6 +680,17 @@ export const TotalIconTypeMap = {
     ...IconTypeMap,
     ...IconTypeAttributeMap,
     ...IconTypeStMap,
+    'user-defined':{
+        value: 'user-defined',
+        labelKey: 'input.icon-type.user-defined.label',
+        fullLabelKey: 'input.icon-type.user-defined.label',
+        icon: null,
+        isOption: true,
+        isMixable: true,
+        showIcon: true,
+        imagePresetPath: '',
+        imagePresetSource: '',
+    },
 };
 export const MAX_STAR_LENGTH = 13;
 export const NORMAL_STAR_LENGTH = 12;
