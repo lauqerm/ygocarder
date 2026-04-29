@@ -10,7 +10,7 @@ type Feedback = {
     author?: string,
     question: string,
     answer?: string,
-    image?: string,
+    image?: string[],
 };
 
 const StyledQuoteContainer = styled(QuoteContainer)`
@@ -24,7 +24,7 @@ const StyledQuoteContainer = styled(QuoteContainer)`
     }
 `;
 type Quote = {
-    image?: string,
+    image?: string[],
     author?: string,
     question: string,
     children: React.ReactNode,
@@ -41,7 +41,7 @@ const Quote = ({
             <div className="question">{question}</div>
         </blockquote>
         <div className="answer">{children}</div>
-        {image && <img className="image" src={image} alt="answer preview" />}
+        {image && image.map((src, index) => <img key={`${src}-${index}`} className="image" src={src} alt={`answer preview ${index}`} />)}
     </StyledQuoteContainer>;
 };
 
@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '28/04/2026';
+        const currentReminder = '29/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,15 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 29, 2026',
+            question: 'this is the frame i want \nhttps://static.wikia.nocookie.net/ycm/images/4/46/Constellation_Monster.png/revision/latest?cb=20180202161511\n\nif we can pull it off thats good, but if we cant then can i get a feature that lets me add custom templates like this one to your app?',
+            answer: 'Hi, it takes a bit of set up but you can certainly apply your template in the app. Below is a step-by-step guide and the end result.',
+            image: [
+                'https://i.postimg.cc/HL4PXZjw/test.png',
+                'https://i.postimg.cc/Z5gyj4v0/download-(2).png',
+            ],
+        },
         {
             author: 'Anonymous at April 28, 2026',
             question: 'I saw a card template once and thought "wow it would be rly cool if i made a card outta this", then i realised i couldn\'t, so could you give us the feature to upload our own custom templates without needing to use the default ones??\n\nOh, and by templates i mean the Monster templates',
@@ -155,7 +164,7 @@ export const QuestionAndFeedback = () => {
             author: 'Anonymous at March 19, 2026',
             question: 'I am not sure if this is even feasible, but I think it\'d be mighty convenient if there was a feature that allowed you to display the submitted card art mirrored in the card display, to save the bother of mirroring it beforehand.',
             answer: 'Hi, now card artwork / background will allow you to flip the image horizontally / vertically.',
-            image: 'https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png',
+            image: ['https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png'],
         },
         {
             author: 'RedSupernovaDragon at March 17, 2026',
@@ -290,7 +299,7 @@ export const QuestionAndFeedback = () => {
             author: 'Blake at Dec 21, 2025',
             question: 'When are you going to be adding the overframe rare?',
             answer: 'With Layout options the app is already able to create cards with extended art (see attached image), but I will need to tweak some behaviors so it looks more correct.\nGrandmaster Rare however is a different story, as it use an entirely different set of layers and I can only wait for talented artists to extract them.',
-            image: 'https://i.imgur.com/a6ZlmEg.png',
+            image: ['https://i.imgur.com/a6ZlmEg.png'],
         },
         {
             author: 'Blake at Dec 18, 2025',
@@ -310,7 +319,7 @@ export const QuestionAndFeedback = () => {
             author: 'Anonymous User at Dec 13, 2025',
             question: 'would it be possible to add the ability to upload custom attribute icons?',
             answer: 'Right now I can only support using external link for attribute, so you can upload your custom attribute icon to an image hosting service (e.g., imgur) and use the link in the attribute input box.',
-            image: 'https://i.postimg.cc/cJMFW3M1/image.png',
+            image: ['https://i.postimg.cc/cJMFW3M1/image.png'],
         },
         {
             author: 'TheTonyB at Dec 12, 2025',
@@ -360,7 +369,7 @@ export const QuestionAndFeedback = () => {
             author: 'Armando Giordano at Sep 06, 2025',
             question: 'Hello! I am loving your work. I hope my issue is not because of ignorance, but it seems like it\'s not possible to download cards as images.',
             answer: 'Hi there, based on the report it seems that you are using an iPad. I don\'t have an iPad to test right now, but could you please provide me some more information?\n1. When you click the Download button, does anything happen? Does the app freeze or it just not doing anything?\n2. Is the problem just appear recently, or it never worked in the first place?',
-            image: 'https://i.postimg.cc/Y2fjyvV2/image.png',
+            image: ['https://i.postimg.cc/Y2fjyvV2/image.png'],
         },
         {
             author: 'Rush Duel at Jun 22, 2025',

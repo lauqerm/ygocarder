@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.4.11 (2026/04/29)",
+        "logList": [
+            {
+                "content": "Feat: Flag to hide stat labels (ATK/DEF/Link)."
+            }
+        ]
+    },
+    {
         "version": "v2.4.10 (2026/04/28)",
         "logList": [
             {

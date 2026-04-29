@@ -272,13 +272,14 @@ export const drawLinkRatingText = async (
     canvas: HTMLCanvasElement,
     rating: string,
     style: CanvasTextStyle,
+    showStatLabelFlag: boolean,
     globalScale: number,
 ) => {
     const ctx = canvas.getContext('2d');
 
     if (!ctx || typeof rating !== 'string') return;
 
-    await drawWithStyle(
+    if (showStatLabelFlag) await drawWithStyle(
         canvas,
         'link/link-text.png',
         ...scaleDrawCoordinate([600, 1080, 120, 30], globalScale),

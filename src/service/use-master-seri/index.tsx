@@ -287,6 +287,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         showDefAndLinkFlag,
         linkRatingDisplayMode,
         hideDeactivatedLinkMarker,
+        hideStatLabel,
     ] = flag;
 
     /** One special case where we do not show link rating */
@@ -608,7 +609,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
                     ? linkRating
                     : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
-                await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, globalScale);
+                await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, !hideStatLabel, globalScale);
                 resetStyle();
             }
             await drawPredefinedMark({
@@ -639,8 +640,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         frame,
         frameCanvasRef,
         hasBackground,
-        hasOverlay,
         hasIconImage,
+        hasOverlay,
+        hideStatLabel,
         iconImageCanvasRef,
         isDuelTerminalCard,
         isLink,
@@ -752,24 +754,25 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const hasLink = showLinkRating;
         if (atk) {
             const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0);
-            drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
+            if (!hideStatLabel) drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5, globalScale);
         }
         if (def && (!showLinkRating || showDefAndLink)) {
             const offset = hasLink ? 168.75 : 0;
-            drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
+            if (!hideStatLabel) drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
             drawStat(ctx, def.trim(), 673.865 - offset, 1106.5, globalScale);
         }
         resetStyle();
     }, [
-        readyToDraw,
-        globalScale,
         atk,
         def,
-        showLinkRating,
+        globalScale,
         isMonster,
-        showDefAndLink,
+        readyToDraw,
         resolvedStatTextStyle,
+        showDefAndLink,
+        showLinkRating,
+        hideStatLabel,
         statCanvasRef,
         statInEffect,
     ]);
