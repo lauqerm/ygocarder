@@ -202,6 +202,7 @@
         "input.flag.link-rating-behavior.hide": "Luôn ẩn",
         "input.flag.link-rating-behavior.show": "Luôn hiện",
         "input.flag.mix-def-link": "Hiển thị đồng thời DEF và số Link",
+        "input.flag.stat-label": "Ẩn nhãn chỉ số (ATK/DEF/Link)",
         "input.flag.hide-deactivated-link": "Giấu các mũi tên Link không hoạt động",
         "input.foil.gold.label": "Gold",
         "input.foil.label": "Phôi bài",
