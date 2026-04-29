@@ -1,7 +1,7 @@
 {
   "name": "ygocarder",
   "homepage": "http://lauqerm.github.io/ygocarder",
-  "version": "2.4.10",
+  "version": "2.4.11",
   "private": true,
   "dependencies": {
     "@sentry/cli": "^2",
