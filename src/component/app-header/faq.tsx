@@ -9,7 +9,7 @@ export const FAD_BUTTON_ID = 'faq-button';
 type Feedback = {
     author?: string,
     question: string,
-    answer?: string,
+    answer?: string | React.ReactNode,
     image?: string[],
 };
 
@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '30/04/2026';
+        const currentReminder = '30/04/2026-1';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 30, 2026',
+            question: 'Now the image just literally goes over the frame, like literally I can\'t see the effect box',
+            answer: <div>Well from your attached screenshot I thought the transparent effect box was intentional 😅. But regardless, just pull up the effect opacity back to 100. <a href='https://lauqerm.github.io/ygocarder/?data=%7B%22fm%22%3A%22tcg%22%2C%22rg%22%3A%22en%22%2C%22fr%22%3A%22fusion%22%2C%22lt%22%3Afalse%2C%22lf%22%3A%22auto%22%2C%22rf%22%3A%22auto%22%2C%22rpf%22%3A%22auto%22%2C%22fo%22%3A%22normal%22%2C%22op%22%3A%7B%22opbd%22%3A100%2C%22oppd%22%3A100%2C%22optx%22%3A100%2C%22opnm%22%3A0%2C%22opbf%22%3A%22%23404040%22%2C%22opab%22%3Atrue%2C%22opnb%22%3Atrue%2C%22opeb%22%3Afalse%2C%22opfb%22%3Atrue%2C%22opbl%22%3Afalse%7D%2C%22fn%22%3A%5B%5D%2C%22afn%22%3A%22normal%22%2C%22of%22%3A%5B%22normal%22%2C%22normal%22%2C%22normal%22%2C%22normal%22%5D%2C%22na%22%3A%22Junko%22%2C%22nst%22%3A%22predefined%22%2C%22ns%22%3A%7B%22nsep%22%3A90%2C%22nset%22%3A0%2C%22nsey%22%3A90%2C%22nsfs%22%3A%22%23cfc6de%22%2C%22nsft%22%3A%22Auto%22%2C%22nsgd%22%3A0%2C%22nscg%22%3A%220.000%7C%23eef10b%2C0.5%7C%23d78025%2C1.000%7C%237e20cf%22%2C%22nshe%22%3Afalse%2C%22nshg%22%3Afalse%2C%22nshl%22%3Afalse%2C%22nshs%22%3Afalse%2C%22nshfs%22%3A%22%23010101%22%2C%22nslc%22%3A%22%23000000%22%2C%22nslox%22%3A0%2C%22nsloy%22%3A0%2C%22nslw%22%3A0%2C%22nspt%22%3A%22none%22%2C%22nspr%22%3A%22rare%22%2C%22nssb%22%3A0%2C%22nssc%22%3A%22%23000000%22%2C%22nssox%22%3A0%2C%22nssoy%22%3A0%7D%2C%22at%22%3A%22LIGHT%22%2C%22att%22%3A%22auto%22%2C%22sf%22%3A%22NO+ICON%22%2C%22it%22%3A%22auto%22%2C%22st%22%3A6%2C%22stl%22%3A%5B%5D%2C%22sa%22%3A%22auto%22%2C%22ar%22%3A%22https%3A%2F%2Fi.imgur.com%2Fh5kXZeC.png%22%2C%22ad%22%3A%22%22%2C%22as%22%3A%22online%22%2C%22af%22%3Afalse%2C%22ast%22%3A%7B%22asfx%22%3Afalse%2C%22asfy%22%3Afalse%7D%2C%22arc%22%3A%7B%22aru%22%3A%22%25%22%2C%22ara%22%3A1%2C%22arx%22%3A0%2C%22ary%22%3A4%2C%22arw%22%3A100%2C%22arh%22%3A89.5%7D%2C%22hbg%22%3Atrue%2C%22bg%22%3A%22https%3A%2F%2Fi.postimg.cc%2FncXnFCGh%2FConstellation-Monster.webp%22%2C%22bgd%22%3A%22%22%2C%22bf%22%3Atrue%2C%22bst%22%3A%7B%22bsfx%22%3Afalse%2C%22bsfy%22%3Afalse%7D%2C%22bgs%22%3A%22online%22%2C%22bgt%22%3A%22frame%22%2C%22bgc%22%3A%7B%22bgu%22%3A%22%25%22%2C%22bga%22%3A0.685%2C%22bgx%22%3A0.0910746812386094%2C%22bgy%22%3A0%2C%22bgw%22%3A99.81785063752277%2C%22bgh%22%3A100%7D%2C%22ovg%22%3A%22%22%2C%22ovgd%22%3A%22%22%2C%22ovf%22%3Atrue%2C%22ovt%22%3A%22border%2Csource-in%7Cframe%2Cnone%22%2C%22ovst%22%3A%7B%22ovsfx%22%3Afalse%2C%22ovsfy%22%3Afalse%7D%2C%22ovgs%22%3A%22online%22%2C%22ovgc%22%3A%7B%22ovgx%22%3A0%2C%22ovgy%22%3A0%2C%22ovgw%22%3A100%2C%22ovgh%22%3A100%2C%22ovgu%22%3A%22%25%22%2C%22ovga%22%3A0.685%7D%2C%22sivg%22%3A%22%22%2C%22sivgd%22%3A%22%22%2C%22sivf%22%3Atrue%2C%22sivst%22%3A%7B%22sivsfx%22%3Afalse%2C%22sivsfy%22%3Afalse%7D%2C%22sivgs%22%3A%22online%22%2C%22sivgc%22%3A%7B%22sivgx%22%3A0%2C%22sivgy%22%3A0%2C%22sivgw%22%3A100%2C%22sivgh%22%3A100%2C%22sivgu%22%3A%22%25%22%2C%22sivga%22%3A1%7D%2C%22lm%22%3A%5B%221%22%2C%223%22%2C%227%22%2C%229%22%5D%2C%22lr%22%3A%22%22%2C%22il%22%3Afalse%2C%22ip%22%3Afalse%2C%22pf%22%3A%22auto%22%2C%22pe%22%3A%22Once+per+turn%3A+You+can+pay+800+LP%2C+increase+this+card%27s+Pendulum+Scale+by+1.%22%2C%22rs%22%3A%224%22%2C%22bs%22%3A%224%22%2C%22psi%22%3A%22medium%22%2C%22ta%22%3A%5B%22Fairy%22%2C%22Fusion%22%2C%22Effect%22%5D%2C%22es%22%3A%7B%22cdtl%22%3A%22strict%22%2C%22efs%22%3A%22auto%22%2C%22eus%22%3A0%2C%22ebg%22%3A%22auto%22%2C%22eml%22%3A0%2C%22ejr%22%3A100%7D%2C%22ps%22%3A%7B%22pfs%22%3A%22auto%22%2C%22pus%22%3A0%2C%22pbg%22%3A%22auto%22%2C%22pml%22%3A0%2C%22pjr%22%3A100%7D%2C%22ef%22%3A%22%5B2%2B+Effect+Monsters+on+your+field%5D%5CnEach+time+an+opponent%27s+monster+activates+its+effect%2C+place+1+Pure+Counter+on+that+opponent%27s+monster+%28max.+1%29+after+that+effect+resolves.+Unaffected+by+activated+effects+from+monster+with+a+Pure+Counter.+Cannot+be+destroyed+by+battle+with+monsters+with+a+Pure+Counter.%22%2C%22si%22%3A%22YGOC-EN001%22%2C%22atk%22%3A%222000%22%2C%22def%22%3A%222000%22%2C%22pw%22%3A%2218199611%22%2C%22sti%22%3A%22holo5%22%2C%22fe%22%3A%221%3Cst%3E+Edition%22%2C%22ife%22%3Atrue%2C%22act%22%3A%22%22%2C%22hct%22%3Afalse%2C%22isp%22%3Afalse%2C%22ile%22%3Afalse%2C%22idt%22%3Afalse%2C%22ilc%22%3Afalse%2C%22cr%22%3A%22%C2%A92020+Studio+Dice%2FSHUEISHA%2C+TV+TOKYO%2C+KONAMI%22%2C%22fh%22%3Atrue%2C%22sts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22tts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22ets%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22pts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22ots%22%3A%5Btrue%2C%22%23ffffff%22%2Ctrue%2C%22%23000000%22%5D%2C%22dl%22%3A%5B%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%5D%2C%22fl%22%3A%5B0%2C0%2C0%2C1%5D%2C%22ve%22%3A3%7D' target='_blank' rel='noreferrer'>This link</a> contains a sample card with your frame already applied, you can work from here if you still have trouble adjusting the config.</div>,
+            image: ['https://i.postimg.cc/cJCJnXQR/image.png'],
+        },
         {
             author: 'Anonymous at April 30, 2026',
             question: 'That didnt work, even though i did everything you told me, is there smth im missing?',
