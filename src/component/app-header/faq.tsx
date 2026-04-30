@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '29/04/2026';
+        const currentReminder = '30/04/2026';
         if (faqReminder !== currentReminder) {
             if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Anonymous at April 30, 2026',
+            question: 'That didnt work, even though i did everything you told me, is there smth im missing?',
+            answer: 'Your frame crop is a bit off so it does not align with other elements on the card. You can use the "Use whole image" option to ignore manual crop and use the full image instead. Let me know if there is still any issue after that.',
+            image: ['https://i.postimg.cc/Dfqqd5VQ/image.png'],
+        },
         {
             author: 'Anonymous at April 29, 2026',
             question: 'this is the frame i want \nhttps://static.wikia.nocookie.net/ycm/images/4/46/Constellation_Monster.png/revision/latest?cb=20180202161511\n\nif we can pull it off thats good, but if we cant then can i get a feature that lets me add custom templates like this one to your app?',
