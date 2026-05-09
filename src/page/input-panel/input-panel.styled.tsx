@@ -2,7 +2,7 @@ import { RadioTrain, StyledDropdown } from 'src/component';
 import styled from 'styled-components';
 import { TrainGridStyle } from './input-train';
 
-export const StyledPendulumFrameContainer = styled(StyledDropdown.Container)`
+export const StyledFrameMixer = styled(StyledDropdown.Container)`
     padding: var(--spacing-xs);
     position: relative;
     .radio-train {

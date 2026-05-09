@@ -60,7 +60,7 @@ export const FrameBehaviorSettingPanel = () => {
         };
     });
 
-    return <FrameBehaviorSettingPanelContainer>
+    return <FrameBehaviorSettingPanelContainer className="frame-behavior-setting-panel">
         {flag
             .map((value, index) => ({ component: FlagInfoList[index], value, index }))
             .sort((l, r) => l.component.order - r.component.order)

@@ -1,5 +1,5 @@
 import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
-import { StyledPendulumFrameContainer } from '../input-panel.styled';
+import { StyledFrameMixer } from '../input-panel.styled';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage, useSetting } from 'src/service';
 import { getFoilButtonList, getFrameButtonList } from '../const';
@@ -22,7 +22,7 @@ const FrameLayoutContainer = styled.div`
     column-gap: var(--spacing-sm);
     background-color: var(--main-level-3);
     padding: var(--spacing-sm);
-    ${StyledPendulumFrameContainer} {
+    ${StyledFrameMixer} {
         border: none;
         box-shadow: none;
         padding: 0;
@@ -281,7 +281,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
     const dyeColor = DyeIndexMap[activeLayout];
     const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
         || (overlaySource === 'offline' && overlayData.trim() !== '');
-    return <FrameLayoutContainer>
+    return <FrameLayoutContainer className="frame-layout-container">
         <div className="visual-preview-container">
             <label>{language['input.advanced-frame.main.label']}</label>
             <FrameInfoBlock
@@ -357,8 +357,8 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
             </div>
         </div>
         <div>
-            <StyledPendulumFrameContainer
-                className="pendulum-frame-picker"
+            <StyledFrameMixer
+                className="frame-mixer"
                 {...getNavigationProps({
                     stopPropagation: true,
                     optionLength: frameList.length,
@@ -430,7 +430,7 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                 >
                     <StandaloneLabel $fixedSize={false}>{language['input.advanced-frame.dye']}</StandaloneLabel>
                 </HorizontalSketchPicker>}
-            </StyledPendulumFrameContainer>
+            </StyledFrameMixer>
         </div>
         <FramePresetPanel
             language={language}

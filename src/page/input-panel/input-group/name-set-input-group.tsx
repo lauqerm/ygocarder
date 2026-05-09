@@ -16,7 +16,7 @@ const StyledNameInputContainer = styled.div`
     width: 100%;
     .name-input {
         flex: 3;
-        min-width: 400px;
+        min-width: 40%;
     }
     .set-id-input {
         flex: 1;

@@ -102,7 +102,7 @@ export const AppHeader = ({
     const sampleCardRef = useRef<SampleCardRef>(null);
 
     return <div className="app-header">
-        <img alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
+        <img className="app-logo" alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
         <div className="app-description">
             <div className="header-language">
                 <h1>Yugioh Carder</h1>
@@ -222,10 +222,10 @@ export const AppHeader = ({
                 </span>
             </div>
         </div>
-        <StyledAppHeaderButtonContainer className="app-setting">
+        <StyledAppHeaderButtonContainer className="app-header-button app-setting">
             <SettingButton />
         </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="card-manager">
+        <StyledAppHeaderButtonContainer className="app-header-button card-manager">
             <StyledHeaderButtonContainer
                 className={mergeClass('manager-button-label', visible ? 'manager-active' : '')}
                 onClick={() => toggleVisible()}
@@ -237,7 +237,7 @@ export const AppHeader = ({
                 </div>
             </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="preset-manager">
+        <StyledAppHeaderButtonContainer className="app-header-button preset-manager">
             <StyledHeaderButtonContainer
                 className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
                 onClick={() => setPresetManagerVisible()}
@@ -249,7 +249,7 @@ export const AppHeader = ({
             </StyledHeaderButtonContainer>
             <PresetManager language={language} />
         </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="sample-card">
+        <StyledAppHeaderButtonContainer className="app-header-button sample-card">
             <StyledHeaderButtonContainer
                 className={mergeClass('preset-sample-button-label')}
                 onClick={() => {

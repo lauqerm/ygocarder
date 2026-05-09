@@ -108,7 +108,6 @@ export const IconImageInput = forwardRef<IconImageInputRef, IconImageInput>(({
         changeIconImageCrop(cropInfo, sourceType, byUser);
     }, [changeIconImageCrop, onUserChange]);
     const intermediateOnSourceLoaded: NonNullable<IconImageInput['onSourceLoaded']> = useCallback((crossorigin, byUser) => {
-        console.log('🚀 ~ crossorigin, byUser:', crossorigin, byUser);
         if (byUser) onUserChange?.();
         onSourceLoaded?.(crossorigin, byUser);
     }, [onUserChange, onSourceLoaded]);

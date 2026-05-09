@@ -428,7 +428,7 @@ export const NameStylePicker = forwardRef(({
                         trigger={['click']}
                         overlayClassName="global-input-overlay pattern-picker-overlay"
                         content={<div className="overlay-event-absorber">
-                            <StyledPatternContainer onClick={e => e.stopPropagation()}>
+                            <StyledPatternContainer className="pattern-container" onClick={e => e.stopPropagation()}>
                                 <div className="alert">
                                     {language['input.name-style.pattern.alert']}
                                 </div>

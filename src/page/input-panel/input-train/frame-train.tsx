@@ -11,6 +11,9 @@ import { Popover, Tooltip } from 'antd';
 
 const StyledPopoverButton = styled(PopoverButton)<{ $inline?: boolean }>`
     ${({ $inline }) => $inline ? 'margin-left: var(--spacing-xs);' : 'margin-top: var(--spacing);'}
+    .custom-frame-label {
+        display: none;
+    }
 `;
 
 export type UnofficialFrameTrain = {
@@ -51,9 +54,9 @@ export const UnofficialFrameTrain = ({ inline, changeFrame }: UnofficialFrameTra
                     $softMode={reduceMotionColor}
                     $inline={inline}
                     $active={FrameInfoMap[frame]?.isOfficial === false}
-                    className="picker-dropdown color-picker-dropdown"
+                    className="picker-dropdown custom-frame-dropdown"
                 >
-                    <BookOutlined />
+                    <BookOutlined /><div className="custom-frame-label">&nbsp;{language['input.frame.unofficial.label']}</div>
                 </StyledPopoverButton>
             </Tooltip>
         </Popover>
