@@ -25,12 +25,13 @@ import {
     CardInputPanelRef,
     CardManagerPanel,
     DownloadButton,
-    DownloadButtonRef,
+    DownloadPanel,
+    DownloadPanelRef,
+    DownloadResolutionDropdown,
     ExportPanel,
     ExportPanelRef,
     ImportPanel,
     ImportPanelRef,
-    ResolutionButton,
 } from './page';
 import WebFont from 'webfontloader';
 import {
@@ -49,10 +50,10 @@ import {
     useOCGFont,
     useSetting,
 } from './service';
-import { Dropdown, notification, Tooltip } from 'antd';
-import { CROPPER_WIDTH, Lightbox, LightboxRef, ResolutionPicker, TaintedCanvasWarning } from './component';
+import { notification, Tooltip } from 'antd';
+import { CROPPER_WIDTH, Lightbox, LightboxRef, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
-import { ZoomInOutlined, ClearOutlined, GatewayOutlined } from '@ant-design/icons';
+import { ZoomInOutlined, ClearOutlined, FileImageOutlined } from '@ant-design/icons';
 import {
     CardPreviewContainer,
     ErrorAlert,
@@ -62,6 +63,7 @@ import {
     StyledByMe,
     CardCanvasGroupContainer,
     StyledDataButtonPanelContainer,
+    FarSightButton,
 } from './app.styled';
 import { configure, HotKeys } from 'react-hotkeys';
 import { useShallow } from 'zustand/react/shallow';
@@ -193,7 +195,7 @@ function App() {
         updateCanvasData,
     })));
 
-    const downloadButtonRef = useRef<DownloadButtonRef>(null);
+    const downloadButtonRef = useRef<DownloadPanelRef>(null);
     const exportPanelRef = useRef<ExportPanelRef>(null);
     const importPanelRef = useRef<ImportPanelRef>(null);
 
@@ -385,6 +387,7 @@ function App() {
     });
 
     const [isTainted, setTainted] = useState(false);
+    const [isDownloading, setDownloading] = useState(true);
 
     useEffect(() => {
         if (resetCanvasCounter > RESET_CANVAS_BASE_COUNTER && isTainted) {
@@ -405,6 +408,10 @@ function App() {
 
         lightboxRef.current?.setVisible(cur => typeof status === 'boolean' ? status : !cur);
     }, [allowHotkey]);
+
+    const displayFitLightbox = useCallback((status?: boolean) => {
+        lightboxRef.current?.setVisible(cur => typeof status === 'boolean' ? status : !cur);
+    }, []);
 
     const sentryInitialized = useRef(false);
     const reportTarget = document.getElementById('sentry-bug-report');
@@ -602,6 +609,7 @@ function App() {
     const onExportSuccess = useCallback(() => {
         setTainted(false);
         updateCanvasData(['iconImage']);
+        setDownloading(false);
     }, [updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
@@ -686,7 +694,7 @@ function App() {
                                     />
                                 </div>
                                 <BatchConverter language={language} />
-                                <DownloadButton ref={downloadButtonRef}
+                                <DownloadPanel ref={downloadButtonRef}
                                     canvasMap={canvasMap}
                                     imageChangeCount={imageChangeCount}
                                     isTainted={isTainted}
@@ -701,16 +709,9 @@ function App() {
                                         {language['alert.download.tainted-first-line']}<br />
                                         {language['alert.download.tainted-second-line']} <TaintedCanvasWarning />
                                     </div>
-                                    <Dropdown
-                                        className="save-button-dropdown"
-                                        placement="bottomRight"
-                                        overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
-                                    >
-                                        <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
-                                            <GatewayOutlined className="resolution-icon" />
-                                            <span className="resolution-overlay">{resolution[1]}</span>
-                                        </ResolutionButton>
-                                    </Dropdown>
+                                    <DownloadResolutionDropdown
+                                        resolution={resolution}
+                                    />
                                 </div>}
                             </StyledDataButtonPanelContainer>
                             <CardPreviewContainer className="card-preview-container">
@@ -905,7 +906,23 @@ function App() {
                 <Lightbox
                     ref={lightboxRef}
                     globalScale={globalScale}
-                />
+                >
+                    <DownloadButton
+                        onDownload={() => {
+                            setDownloading(true);
+                            downloadButtonRef.current?.download();
+                        }}
+                        onResolutionChange={() => {
+                            setTimeout(() => {
+                                lightboxRef.current?.resetTransform();
+                            }, 200);
+                        }}
+                        isDownloading={isDownloading}
+                    />
+                </Lightbox>
+                <FarSightButton className="far-sight-button" onClick={() => displayFitLightbox()}>
+                    <FileImageOutlined /><br /><div>{language['button.far-sight.label']}</div>
+                </FarSightButton>
                 <StyledByMe className="by-me">
                     Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                 </StyledByMe>

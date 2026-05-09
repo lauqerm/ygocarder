@@ -25,10 +25,10 @@ const StyledDownloadDropdownOption = styled(Menu.Item)`
     }
 `;
 export type ResolutionPicker = {
-    onChange?: (nextResolution: [number, number], nextScale: number) => void,
+    onResolutionChange?: (nextResolution: [number, number], nextScale: number) => void,
 } & React.ComponentProps<typeof Menu>;
 export const ResolutionPicker = ({
-    onChange,
+    onResolutionChange,
     ...rest
 }: ResolutionPicker) => {
     const language = useLanguage();
@@ -56,7 +56,7 @@ export const ResolutionPicker = ({
                         resolution: [width, height],
                         globalScale: scale,
                     });
-                    onChange?.([width, height], scale);
+                    onResolutionChange?.([width, height], scale);
                 }}
             >
                 {scale > 1

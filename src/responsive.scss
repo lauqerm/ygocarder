@@ -465,6 +465,9 @@
 
 @media only screen and (max-width: 640px) {
 	.app-container {
+		.card-preview-container {
+			margin: 0;
+		}
 		.card-info-panel {
 			.main-info {
 				.card-image-cropper {
@@ -474,5 +477,225 @@
 				}
 			}
 		}
+	}
+	.far-sight-button {
+		display: block;
+	}
+}
+
+@media only screen and (max-width: 512px) {
+	.app-container {
+		--resize-ratio: 0.5;
+		--resize-percentage: 50%;
+	}
+	.ant-popover.pendulum-frame-picker-overlay {
+		width: unset;
+		.frame-layout-container {
+			grid-template-columns: 1fr;
+			.visual-preview-container {
+				width: unset;
+			}
+			.frame-mixer {
+				margin-top: var(--spacing);
+				.frame-part-name {
+					border-top: var(--bw) solid var(--sub-level-4);
+				}
+				.card-image-source-input {
+					width: unset;
+					padding-right: 0;
+				}
+				.card-cropper {
+					margin: auto;
+				}
+			}
+		}
+		.frame-behavior-setting-panel {
+			.radio-train {
+				flex-wrap: wrap;
+			}
+		}
+	}
+	.ant-drawer.formattting-guide-overlay {
+		.ant-drawer-content-wrapper {
+			min-width: 100%;
+		}
+		.image-with-caption {
+			width: unset;
+		}
+		.ant-drawer-body {
+			padding: var(--spacing-sm);
+		}
+	}
+}
+
+@media only screen and (max-width: 420px) {
+	.app-container {
+		--resize-ratio: 0.45;
+		--resize-percentage: 45%;
+		.card-preview-panel {
+			margin-bottom: var(--spacing-3xl);
+		}
+		.card-preview-container {
+			margin: 0;
+		}
+		.data-button-panel {
+			flex-wrap: wrap;
+			.imexport {
+				flex: 1;
+			}
+			.save-button-container {
+				flex: 1 0 auto;
+			}
+		}
+		.app-header {
+			width: unset;
+			grid-template-columns: max-content 1fr 1fr 1fr 1fr;
+			padding-bottom: var(--spacing-xs);
+			.language-option {
+				flex: 1 0 100%;
+				text-align: left;
+			}
+			.app-logo {
+				grid-row: span 2;
+			}
+			.app-description {
+				grid-column: span 4;
+				.app-contribution {
+					.template-creator,
+					.app-creator {
+						margin-bottom: var(--spacing-sm);
+					}
+				}
+			}
+			.app-header-button {
+				padding-left: var(--spacing-xs);
+				margin-left: var(--spacing-xs);
+				text-align: center;
+			}
+		}
+		.card-info-panel {
+			.joined-row .pendulum-checkbox,
+			.ant-input-group-addon,
+			.standalone-label {
+				text-align: left;
+			}
+			.finish-checkbox {
+				flex-wrap: wrap;
+				.checkbox-train-input-group {
+					width: 100%;
+					.ant-radio-button-wrapper {
+						width: 3rem;
+					}
+				}
+			}
+			.card-layout-input {
+				grid-template-columns: 1fr;
+			}
+			.set-id-input,
+			.name-input,
+			.text-style-input {
+				.ant-input-group {
+					display: flex;
+					flex-wrap: wrap;
+					gap: var(--spacing-xs);
+				}
+			}
+			.attribute-input {
+				display: grid;
+				grid-template-columns: 1fr min-content;
+				.standalone-addon {
+					grid-column: span 2;
+				}
+			}
+			.checkbox-star-train {
+				grid-template-columns: 1fr;
+				.checkbox-star-suffix {
+					grid-column: 1;
+				}
+			}
+			.post-pendulum-input {
+				flex-wrap: wrap;
+			}
+			.card-effect-letter-helper {
+				grid-template-columns: max-content 1fr;
+				gap: var(--spacing-sm);
+				.char-picker-container {
+					grid-column: span 2;
+				}
+				.text-style-preview {
+					margin-right: 0;
+				}
+			}
+			.frame-radio {
+				flex-wrap: wrap;
+				.custom-frame-dropdown {
+					margin: var(--spacing-xs) 0;
+				}
+				.custom-frame-label {
+					display: inline-block;
+				}
+			}
+			.card-footer-input {
+				grid-template-columns: 1fr;
+				.checkbox-input,
+				.sticker-input {
+					grid-column: 1;
+				}
+			}
+			.main-info .field-title {
+				width: unset;
+			}
+		}
+	}
+	.custom-style-gradient .controls-wrapper.gradient-picker-container {
+		.gradient-angle-control {
+			position: static;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+		.stop-point-control-panel {
+			align-self: center;
+		}
+	}
+	.layout-picker-overlay {
+		.overlay-no-background-image {
+			i {
+				width: 245px; // Alignemnt
+			}
+			.card-image-cropper {
+				.card-image-source-input {
+					width: 245px; // Alignemnt
+				}
+			}
+		}
+		i {
+			width: 245px;
+		}
+		.layout-picker-panel {
+			flex-wrap: wrap;
+			.background-type-picker .radio-train-input-group {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+	}
+	.pattern-picker-overlay .pattern-container {
+		grid-template-columns: 300px;
+		.alert {
+			grid-column: 1;
+		}
+	}
+}
+
+@media only screen and (max-width: 360px) {
+	.app-container {
+		--resize-ratio: 0.4;
+		--resize-percentage: 40%;
+	}
+}
+
+@media only screen and (max-width: 320px) {
+	.app-container {
+		--resize-ratio: 0.35;
+		--resize-percentage: 35%;
 	}
 }

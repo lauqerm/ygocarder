@@ -23,16 +23,18 @@
         border: var(--bw) solid var(--main-level-4);
     }
     .data-button-panel {
+        .resolution-option {
+            &:hover {
+                background: #7373bd;
+            }
+        }
+    }
+    .save-button {
         .button-label {
             background: linear-gradient(135deg, #6363ad 0%, #8888a9 50%, #6363ad 100%);
             animation: none;
             &:hover {
                 background: linear-gradient(90deg, #7373bd 0%, #9898b9 50%, #7373bd 100%);
-            }
-        }
-        .resolution-option {
-            &:hover {
-                background: #7373bd;
             }
         }
     }

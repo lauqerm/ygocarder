@@ -4,7 +4,7 @@ import { CardActionButton } from './component';
 
 export const StyledDataButtonPanelContainer = styled.div`
     display: flex;
-    column-gap: var(--spacing);
+    gap: var(--spacing);
     border-radius: var(--br-lg);
     font-size: var(--fs-4xl);
     line-height: 1.5;
@@ -25,18 +25,6 @@ export const StyledDataButtonPanelContainer = styled.div`
         outline: none !important;   // Avoid default state styling
         cursor: pointer;
     }
-    .save-button {
-        flex: 1;
-        font-size: var(--fs-xl);
-        border: none;
-        font-weight: 500;
-        box-shadow: var(--bs-button);
-        height: 39px; // Alignment
-        line-height: 1;
-        &:focus, &:active {
-            color: white;
-        }
-    }
     #save-button-waiting {
         cursor: wait;
         position: absolute;
@@ -52,13 +40,6 @@ export const StyledDataButtonPanelContainer = styled.div`
             background-color: var(--sub-info);
             box-shadow: none;
         }
-    }
-    .save-button-container {
-        display: flex;
-        flex: 1;
-        font-size: var(--fs);
-        line-height: 1.35;
-        position: relative;
     }
     .save-button-tainted {
         .alert-label {
@@ -216,6 +197,7 @@ export const StyledAppLoading = styled.div`
 	font-size: var(--fs-3xl);
 	display: flex;
 	align-items: center;
+    text-align: center;
 	justify-content: center;
 `;
 
@@ -245,6 +227,20 @@ export const OverlayButton = styled(CardActionButton)`
 export const LightboxButton = styled(OverlayButton)`
     top: var(--spacing-xs);
     right: var(--spacing-xs);
+`;
+
+export const FarSightButton = styled(OverlayButton)`
+    --overlay-size: 64px;
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    box-shadow: 0 1px 3px -2px #0000004f, 0 3px 8px #00000044, 0 4px 14px 4px #0000003d;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    .anticon {
+        font-size: 36px;
+    }
 `;
 
 export const ResetButton = styled(OverlayButton)`

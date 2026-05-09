@@ -12,18 +12,12 @@ import { CardActionButton } from '../atom';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 const StyledLightboxContainer = styled.div`
-    width: ${CanvasWidth}px;
-    height: ${CanvasHeight}px;
-    overflow: hidden;
     position: relative;
     line-height: 0;
     .card-lightbox-control {
-        position: absolute;
-        z-index: 1;
-        top: var(--spacing);
-        right: var(--spacing);
         user-select: none;
         text-align: right;
+        margin-bottom: var(--spacing-sm);
         .action-list {
             display: inline-flex;
             gap: var(--spacing-xs);
@@ -31,12 +25,20 @@ const StyledLightboxContainer = styled.div`
         .control-info {
             background-color: var(--main-level-1);
             padding: var(--spacing-xs);
-            margin-top: var(--spacing-xs);
+            align-content: center;
             border-radius: var(--br);
             border: var(--bw) solid var(--sub-level-1);
             line-height: 1;
             box-shadow: var(--bs-1);
         }
+        .control-container {
+            display: grid;
+            grid-template-columns: 1fr 150px max-content;
+            gap: var(--spacing-xs);
+        }
+    }
+    .lightbox-children-container {
+        margin-top: var(--spacing);
     }
     .card-lightbox-content {
         cursor: grab;
@@ -60,6 +62,12 @@ const Controls = ({
     height: number,
 }) => {
     return <div className="control-container">
+        <div />
+        <div className="control-info">
+            {scale && <>×{
+                scale < 1 ? `1/${Math.round(1 / scale * 10) / 10}` : (Math.round(scale * 10) / 10)
+            }</>}&nbsp;({width} × {height})
+        </div>
         <div className="action-list">
             <CardActionButton disabled={scale >= MAX_ZOOM} onClick={() => {
                 zoomIn();
@@ -86,34 +94,39 @@ const Controls = ({
                 <FullscreenOutlined />
             </CardActionButton>
         </div>
-        <div className="control-info">
-            {scale && <>×{
-                scale < 1 ? `1/${Math.round(1 / scale * 10) / 10}` : (Math.round(scale * 10) / 10)
-            }</>}&nbsp;({width} × {height})
-        </div>
     </div>;
 };
 
 export type Lightbox = {
     globalScale: number,
+    children?: React.ReactNode,
 };
 export type LightboxRef = {
     setVisible: (dispatcher: (cur: boolean) => boolean) => void,
     draw: (targetCanvas: HTMLCanvasElement) => void,
     refresh: () => void,
+    resetTransform: () => void,
     getCanvasKey: () => number,
 };
 export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
     globalScale,
+    children,
 }, ref) => {
     const [lightboxVisible, setLightboxVisible] = useState(false);
     const [canvasKey, setCanvasKey] = useState(0);
     const lightboxCanvasRef = useRef<HTMLCanvasElement>(null);
     const lightboxRef = useRef<ReactZoomPanPinchContentRef>(null);
     const [scale, setScale] = useState(() => 1 / globalScale);
+    const [neutralScale, setNeutralScale] = useState(() => 1);
 
     useImperativeHandle(ref, () => ({
-        setVisible: setLightboxVisible,
+        setVisible: status => {
+            setLightboxVisible(status);
+            /** Wait for animation to play out */
+            setTimeout(() => {
+                lightboxRef.current?.resetTransform();
+            }, 200);
+        },
         draw: targetCanvas => {
             lightboxCanvasRef.current?.getContext('2d')?.drawImage(
                 targetCanvas,
@@ -121,16 +134,37 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
                 0,
             );
         },
-        refresh: () => setCanvasKey(cnt => cnt + 1),
+        resetTransform: () => {
+            lightboxRef.current?.resetTransform();
+        },
+        refresh: () => {
+            setCanvasKey(cnt => cnt + 1);
+        },
         getCanvasKey: () => canvasKey,
     }));
+    const padding = 15;
+    const cardContainer = document.querySelector('.app-container');
+    const currentResize = cardContainer
+        ? Math.round(
+            Math.min(1, (cardContainer.clientWidth - padding * 2) / CanvasWidth) * 100
+        ) / 100
+        : 1;
+
+    useEffect(() => {
+        setNeutralScale(currentResize / globalScale);
+        setScale(currentResize / globalScale);
+    }, [globalScale, currentResize]);
 
     useEffect(() => {
         lightboxRef.current?.resetTransform();
     }, [globalScale]);
 
+    useEffect(() => {
+        lightboxRef.current?.setTransform(0, 0, neutralScale);
+    }, [neutralScale]);
+
     return <Modal
-        width={`${CanvasWidth + 15 * 2}px`}
+        width={`${CanvasWidth * currentResize + padding * 2}px`}
         wrapClassName="card-lightbox-overlay"
         visible={lightboxVisible}
         forceRender={true}
@@ -141,10 +175,10 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
             className="card-lightbox-container"
         >
             <TransformWrapper ref={lightboxRef}
-                initialScale={1 / globalScale}
+                initialScale={neutralScale}
                 initialPositionX={0}
                 initialPositionY={0}
-                minScale={1 / globalScale}
+                minScale={neutralScale}
                 maxScale={MAX_ZOOM}
                 onTransformed={ref => {
                     setScale(ref.state.scale);
@@ -165,7 +199,7 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
                         </div>
                         <TransformComponent
                             wrapperClass="card-lightbox-content"
-                            wrapperStyle={{ maxWidth: CanvasWidth, maxHeight: CanvasHeight, lineHeight: 0 }}
+                            wrapperStyle={{ maxWidth: CanvasWidth * currentResize, maxHeight: CanvasHeight * currentResize, lineHeight: 0 }}
                         >
                             <canvas key={canvasKey + 0.1}
                                 id="lightbox-canvas"
@@ -177,6 +211,9 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
                     </>;
                 }}
             </TransformWrapper>
+            <div className="lightbox-children-container">
+                {children}
+            </div>
         </StyledLightboxContainer>
     </Modal>;
 });

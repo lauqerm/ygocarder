@@ -38,6 +38,16 @@ export const ResolutionButton = styled.div`
 `;
 const StyledDownloadButton = styled(Button)`
     padding: 0;
+    flex: 1;
+    font-size: var(--fs-xl);
+    border: none;
+    font-weight: 500;
+    box-shadow: var(--bs-button);
+    height: 39px; // Alignment
+    line-height: 1;
+    &:focus, &:active {
+        color: white;
+    }
     .button-label {
         height: 100%; // Alignment
         align-content: center;
@@ -51,11 +61,11 @@ const StyledDownloadButton = styled(Button)`
         }
     }
 `;
-export type DownloadButtonRef = {
+export type DownloadPanelRef = {
     download: () => void,
     isPipelineRunning: () => boolean,
 }
-export type DownloadButton = {
+export type DownloadPanel = {
     imageChangeCount: number,
     globalScale: number,
     canvasMap: MasterSeriesCanvas,
@@ -64,7 +74,7 @@ export type DownloadButton = {
 } & Pick<UseCardExport, 'isTainted'
 | 'isInitializing'
 | 'onDownloadError'>;
-export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
+export const DownloadPanel = forwardRef<DownloadPanelRef, DownloadPanel>(({
     isTainted,
     isInitializing,
     imageChangeCount,
@@ -75,14 +85,6 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     onDownloadError,
 }, ref) => {
     const language = useLanguage();
-    const {
-        allowHotkey,
-        resolution,
-    } = useSetting(useShallow(({
-        setting: { allowHotkey, resolution },
-    }) => ({
-        allowHotkey, resolution,
-    })));
     const { onExport } = useMasterSeriDrawer(
         true,
         canvasMap,
@@ -143,29 +145,76 @@ export const DownloadButton = forwardRef<DownloadButtonRef, DownloadButton>(({
     }));
 
     if (isTainted) return null;
+    return <DownloadButton
+        onDownload={download}
+        isDownloading={isDownloading}
+    />;
+});
+
+export type  DownloadButton = {
+    isDownloading: boolean,
+    onDownload?: (size?: [number, number]) => void,
+} & Pick<ResolutionPicker, 'onResolutionChange'>;
+export const DownloadButton = ({
+    isDownloading,
+    onDownload,
+    onResolutionChange,
+}: DownloadButton) => {
+    const language = useLanguage();
+    const {
+        allowHotkey,
+        resolution,
+    } = useSetting(useShallow(({
+        setting: { allowHotkey, resolution },
+    }) => ({
+        allowHotkey, resolution,
+    })));
+
     return <div className="save-button-container">
         <div id="save-button-waiting" />
         <StyledDownloadButton className="save-button" id="save-button-ready">
             <Tooltip overlay={allowHotkey ? <>Ctrl+S / ⌘+S</> : null}>
                 <div className="button-label">
-                    <div className="label-content" onClick={() => download()}>
+                    <div className="label-content" onClick={() => onDownload?.()}>
                         {isDownloading
                             ? language['button.download.ongoing.label']
                             : language['button.download.label']}
                     </div>
                 </div>
             </Tooltip>
-            <Dropdown
+            <DownloadResolutionDropdown
                 disabled={isDownloading}
-                className="save-button-dropdown"
-                placement="bottomRight"
-                overlay={<ResolutionPicker onChange={() => forceRefocus()} />}
-            >
-                <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
-                    <GatewayOutlined className="resolution-icon" />
-                    <span className="resolution-overlay">{resolution[1]}</span>
-                </ResolutionButton>
-            </Dropdown>
+                resolution={resolution}
+                onResolutionChange={onResolutionChange}
+            />
         </StyledDownloadButton>
     </div>;
-});
+};
+
+export type DownloadResolutionDropdown = {
+    resolution: [number, number],
+    disabled?: boolean,
+    onResolutionChange?: ResolutionPicker['onResolutionChange'],
+}
+export const DownloadResolutionDropdown = ({
+    resolution,
+    disabled,
+    onResolutionChange,
+}: DownloadResolutionDropdown) => {
+    return <Dropdown
+        disabled={disabled}
+        className="save-button-dropdown"
+        placement="bottomRight"
+        overlay={<ResolutionPicker
+            onResolutionChange={(...args) => {
+                forceRefocus();
+                onResolutionChange?.(...args);
+            }}
+        />}
+    >
+        <ResolutionButton className="resolution-option" onClick={e => e.stopPropagation()}>
+            <GatewayOutlined className="resolution-icon" />
+            <span className="resolution-overlay">{resolution[1]}</span>
+        </ResolutionButton>
+    </Dropdown>;
+};

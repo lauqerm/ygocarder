@@ -211,7 +211,7 @@ export const TextGradientPicker = ({
         </div>
         <div className="stop-color-picker-container">
             <GradientPicker {...{
-                width: 370,
+                width: window.innerWidth < 512 ? 300 : 370,
                 paletteHeight: 32,
                 maxStops: MAX_STOP_POINT,
                 minStops: 2,

@@ -1,6 +1,6 @@
 html {
     background-color: #ffffff;
-    min-width: 600px;
+    min-width: 320px;
     --card-width: 813px;
     --card-height: 1185px;
     --global-scale: 1;
@@ -271,6 +271,18 @@ hr {
     }
 }
 
+.far-sight-button {
+    display: none;
+}
+
+.save-button-container {
+    display: flex;
+    flex: 1;
+    font-size: var(--fs);
+    line-height: 1.35;
+    position: relative;
+}
+
 .control-board {
     .control-zoom {
         display: grid;
@@ -323,7 +335,7 @@ input:-internal-autofill-selected {
 }
 
 /** Slow animation for download button **/
-.data-button-panel .button-label {
+.save-button .button-label {
     background: linear-gradient(135deg, #22c1c3 0%, #298ae9 50%, #22c1c3 100%);
     background-size: 300% 300%;
     animation: SlowPulsating ease infinite 10s;
@@ -353,7 +365,6 @@ input:-internal-autofill-selected {
     .ant-modal-content .ant-modal-body {
         --lightbox-padding: var(--spacing-lg);
         padding: var(--lightbox-padding);
-        width: calc(var(--card-width) + var(--lightbox-padding) * 2);
     }
 }
 
