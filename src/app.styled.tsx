@@ -188,6 +188,7 @@ export const StyledAppLoading = styled.div`
 	left: 0;
 	width: 100%;
 	height: 100%;
+    padding: var(--spacing);
 	background-image: linear-gradient(45deg, #333, #333);
 	z-index: 4000;
 	color: white;

@@ -184,7 +184,7 @@ export const TextStylePicker = () => {
         trigger={['click']}
         placement="bottomLeft"
         // visible={true}
-        overlayClassName="global-input-overlay global-style-picker-overlay"
+        overlayClassName="global-input-overlay global-style-picker-overlay text-style-picker-overlay"
         content={<div className="overlay-event-absorber">
             <StyledTextStylePicker className="input-popover">
                 {styleList.map(({ info, value, extraValue }) => {

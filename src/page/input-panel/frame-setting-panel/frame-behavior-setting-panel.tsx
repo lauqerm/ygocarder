@@ -16,7 +16,7 @@ const FrameBehaviorSettingPanelContainer = styled.div`
     padding: var(--spacing-sm);
     border-top: var(--bw) solid var(--sub-level-3);
     > * + * {
-        margin-top: var(--spacing-sm);
+        margin-top: var(--spacing-xxs);
     }
     .link-rating-behavior-panel {
         .radio-train-input-group {

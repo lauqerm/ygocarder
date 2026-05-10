@@ -461,6 +461,27 @@
 			}
 		}
 	}
+	.layout-picker-overlay {
+		.overlay-no-background-image {
+			i {
+				width: 245px; // Alignemnt
+			}
+			.card-image-cropper {
+				.card-image-source-input {
+					width: 245px; // Alignemnt
+				}
+			}
+		}
+		i {
+			width: 245px;
+		}
+		.layout-picker-panel {
+			flex-wrap: wrap;
+			.background-type-picker .radio-train-input-group {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+	}
 }
 
 @media only screen and (max-width: 640px) {
@@ -476,17 +497,13 @@
 					}
 				}
 			}
+			.main-info .field-title {
+				width: unset;
+			}
 		}
 	}
 	.far-sight-button {
 		display: block;
-	}
-}
-
-@media only screen and (max-width: 512px) {
-	.app-container {
-		--resize-ratio: 0.5;
-		--resize-percentage: 50%;
 	}
 	.ant-popover.pendulum-frame-picker-overlay {
 		width: unset;
@@ -515,6 +532,13 @@
 			}
 		}
 	}
+}
+
+@media only screen and (max-width: 512px) {
+	.app-container {
+		--resize-ratio: 0.5;
+		--resize-percentage: 50%;
+	}
 	.ant-drawer.formattting-guide-overlay {
 		.ant-drawer-content-wrapper {
 			min-width: 100%;
@@ -524,6 +548,11 @@
 		}
 		.ant-drawer-body {
 			padding: var(--spacing-sm);
+		}
+	}
+	.text-style-picker-overlay {
+		.input-popover {
+			grid-template-columns: 1fr;
 		}
 	}
 }
@@ -642,19 +671,6 @@
 					grid-column: 1;
 				}
 			}
-			.main-info .field-title {
-				width: unset;
-			}
-		}
-	}
-	.custom-style-gradient .controls-wrapper.gradient-picker-container {
-		.gradient-angle-control {
-			position: static;
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-		}
-		.stop-point-control-panel {
-			align-self: center;
 		}
 	}
 	.layout-picker-overlay {
