@@ -416,7 +416,7 @@ function App() {
     const sentryInitialized = useRef(false);
     const reportTarget = document.getElementById('sentry-bug-report');
     useEffect(() => {
-        const sentryDsn = process.env.REACT_APP_SENTRY_DSN;
+        const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
         if (reportTarget
             && sentryDsn
             && language
@@ -644,7 +644,7 @@ function App() {
                 }}
                 className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
-                    backgroundImage: `url("${process.env.PUBLIC_URL
+                    backgroundImage: `url("${import.meta.env.BASE_URL
                     }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: IS_MOBILE ? '-webkit-fill-available' : '100vh',
                     ...({
@@ -659,7 +659,7 @@ function App() {
                 <div
                     className={'app-container'}
                     style={{
-                        backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/dark-denim-3.png")`,
+                        backgroundImage: `url("${import.meta.env.BASE_URL}/asset/image/texture/dark-denim-3.png")`,
                     }}
                 >
                     {isLoading && <StyledAppLoading className="app-loading">

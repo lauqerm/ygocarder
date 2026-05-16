@@ -448,7 +448,7 @@ export const NameStylePicker = forwardRef(({
                                             ? <img
                                                 style={patternImage ? patternStyle : {}}
                                                 className="pattern-image"
-                                                src={`${process.env.PUBLIC_URL}/asset/image/finish-name/${patternImage}.png`}
+                                                src={`${import.meta.env.BASE_URL}/asset/image/finish-name/${patternImage}.png`}
                                                 alt={key}
                                             />
                                             : <>

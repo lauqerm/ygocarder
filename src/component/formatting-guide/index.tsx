@@ -67,7 +67,7 @@ type ImagePathPreview = { path: string, imagePath: string };
 const ImagePathPreview = ({ path, imagePath }: ImagePathPreview) => {
     return <div className="special-path-item">
         <div className="image">
-            <img src={`${process.env.PUBLIC_URL}/asset/image/${imagePath}`} alt={path} />
+            <img src={`${import.meta.env.BASE_URL}/asset/image/${imagePath}`} alt={path} />
         </div>
         <div className="path">
             <CopiableCode data={path}>{path}</CopiableCode>
@@ -128,13 +128,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-1-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-1-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-1-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-1-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -149,13 +149,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'justified non-breakable line raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-6-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-6-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'justified non-breakable line preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-6-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-6-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -170,13 +170,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-2-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-2-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-2-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-2-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -190,13 +190,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-3-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-3-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-3-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-3-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -210,13 +210,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-4-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-4-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-4-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-4-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -231,13 +231,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'non-breakable line raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-5-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-5-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'non-breakable line preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-5-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-5-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -252,13 +252,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'italic text raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-7-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-7-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'italic text preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-7-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-7-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -273,13 +273,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'bold text raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-8-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-8-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'bold text preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-8-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-8-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>
@@ -336,13 +336,13 @@ export const FormattingHelpDrawer = () => {
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-raw' }}
                         alt={'image raw'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-9-raw.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-9-raw.jpg`}
                         caption={language['guide.format.caption.input']}
                     />
                     <ImageWithCaption
                         containerProps={{ className: 'panel-box box-preview' }}
                         alt={'image preview'}
-                        src={`${process.env.PUBLIC_URL}/asset/image/syntax/syntax-9-preview.jpg`}
+                        src={`${import.meta.env.BASE_URL}/asset/image/syntax/syntax-9-preview.jpg`}
                         caption={language['guide.format.caption.output']}
                     />
                 </StyledImageSection>

@@ -32,7 +32,7 @@ const VersionLogStore = (() => {
         getLog: async () => {
             if (isReady) return versionLog;
             const response = await fetch(
-                `${process.env.PUBLIC_URL}/log/version.json`,
+                `${import.meta.env.BASE_URL}/log/version.json`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -124,9 +124,9 @@ export const VersionLogButton = memo(() => {
 
     useEffect(() => {
         if (version) {
-            const currentSemver = process.env.REACT_APP_VERSION ?? '0.0.0';
+            const currentSemver = import.meta.env.VITE_VERSION ?? '0.0.0';
             const memoizedSemver = version;
-            if (process.env.REACT_APP_VERSION) setMemoizedVersion(process.env.REACT_APP_VERSION);
+            if (import.meta.env.VITE_VERSION) setMemoizedVersion(import.meta.env.VITE_VERSION);
 
             if (compareSemver(currentSemver, memoizedSemver)) {
                 setAnimating(true);
@@ -144,7 +144,7 @@ export const VersionLogButton = memo(() => {
         </StyledVersionLog>}
     >
         <VersionLogButtonLabel $animating={animating} className="app-log" onMouseOver={() => setAnimating(false)}>
-            v{process.env.REACT_APP_VERSION ?? 'unknown'}
+            v{import.meta.env.VITE_VERSION ?? 'unknown'}
         </VersionLogButtonLabel>
     </Popover>;
 });

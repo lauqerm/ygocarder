@@ -703,7 +703,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             backgroundColor,
                         }
                         : {
-                            backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/transparent-tile.png")`
+                            backgroundImage: `url("${import.meta.env.BASE_URL}/asset/image/texture/transparent-tile.png")`
                         }}
                     onImageLoaded={onLoad}
                     onImageError={() => {

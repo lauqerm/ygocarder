@@ -76,7 +76,7 @@ export const ManagerSample = ({
     language,
 }: ManagerSample) => {
     const [visible, setVisible] = useState(false);
-    const templateFileLink = process.env.REACT_APP_TEMPLATE_FILE;
+    const templateFileLink = import.meta.env.VITE_TEMPLATE_FILE;
 
     return <>
         <StyledToggleButton className="manager-toggle-button" onClick={() => setVisible(true)}>

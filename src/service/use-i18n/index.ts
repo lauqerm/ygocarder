@@ -49,7 +49,7 @@ export const useI18N = create<I18NStore>((set, get) => {
     const loadLanguageMetadata = async () => {
         try {
             const response = await fetch(
-                `${process.env.PUBLIC_URL}/asset/i18n/metadata.json`,
+                `${import.meta.env.BASE_URL}/asset/i18n/metadata.json`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export const useI18N = create<I18NStore>((set, get) => {
         if (languageMap[languageName]) return null;
         try {
             const response = await fetch(
-                `${process.env.PUBLIC_URL}/asset/i18n/${languageName}.json`,
+                `${import.meta.env.BASE_URL}/asset/i18n/${languageName}.json`,
                 {
                     headers: {
                         'Content-Type': 'application/json',

@@ -54,7 +54,7 @@ export const QuestionAndFeedback = () => {
     useEffect(() => {
         const currentReminder = '30/04/2026-1';
         if (faqReminder !== currentReminder) {
-            if (process.env.REACT_APP_VERSION) setMemoizedReminder(currentReminder);
+            if (import.meta.env.VITE_VERSION) setMemoizedReminder(currentReminder);
 
             setAnimating(true);
             setTimeout(() => {

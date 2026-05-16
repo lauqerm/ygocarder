@@ -134,7 +134,7 @@ export const retrieveSavedCard = (): InternalCard => {
             if (iconImageSource === 'offline') combinedCard.iconImageData = localCardData?.iconImageData ?? '';
 
             return combinedCard;
-        } else if (localCardData !== null && localCardVersion === process.env.REACT_APP_VERSION) {
+        } else if (localCardData !== null && localCardVersion === import.meta.env.VITE_VERSION) {
             return localCardData;
         }
         return getDefaultInternalCard();
@@ -164,7 +164,7 @@ export type CardStore = {
         key: string,
         valueTransform?: (value: any) => any,
         variant?: 'throttle' | 'debounce' | { type: 'throttle', wait: number } | { type: 'debounce', wait: number },
-    ) => (e: string | number | any[] | ((card: Card) => Value) | { target: { value: Value }}) => void,
+    ) => (e: string | number | any[] | ((card: Card) => Value) | { target: { value: Value } }) => void,
 };
 export const useCard = create<CardStore>((set, get) => {
     return {
@@ -197,7 +197,7 @@ export const useCard = create<CardStore>((set, get) => {
             variant?: 'throttle' | 'debounce' | { type: 'throttle', wait: number } | { type: 'debounce', wait: number },
         ) => {
             const { setCard } = get();
-            const returnFunction = (e: string | number | any[] | ((card: Card) => (Value | boolean)) | { target: { value: (Value | boolean) }}) => {
+            const returnFunction = (e: string | number | any[] | ((card: Card) => (Value | boolean)) | { target: { value: (Value | boolean) } }) => {
                 setCard(current => ({
                     ...current,
                     [key]: valueTransform(typeof e === 'string' || typeof e === 'number' || Array.isArray(e)

@@ -80,7 +80,7 @@ export const Test = () => {
                     inputCanvas: canvasRef.current,
                     lightAngleVec: angleVector,
                 });
-                if (result) canvasRef6.current?.getContext('2d').putImageData(result, 0, 0);
+                if (result) canvasRef6.current?.getContext('2d')?.putImageData(result, 0, 0);
             }
         }
     }, [color2, refreshCnt, angleVector]);

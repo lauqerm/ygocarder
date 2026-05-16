@@ -356,7 +356,7 @@ export const CardThumb = ({
                 ? iconImageData
                 : undefined
         : undefined)
-        ?? `${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom' ? 'icon-list' : normalizedCardIcon).toLowerCase()}.png`;
+        ?? `${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom' ? 'icon-list' : normalizedCardIcon).toLowerCase()}.png`;
 
     return <StyledCardThumb
         className={mergeClass(
@@ -479,7 +479,7 @@ export const CardThumb = ({
                     : attribute === 'NONE'
                         ? null
                         : <img className="attribute-icon"
-                            src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
+                            src={`${import.meta.env.BASE_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
                             alt="Attribute"
                         />}
                 {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}

@@ -113,7 +113,7 @@ export const getAttributeList = (region: string, dictionary: Record<string, stri
             : <Tooltip overlay={dictionary[nameKey]}>
                 <img
                     alt={dictionary[nameKey]}
-                    src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${RegionMap[region]?.fileKey}-${name.toLowerCase()}.png`}
+                    src={`${import.meta.env.BASE_URL}/asset/image/attribute/attr-${RegionMap[region]?.fileKey}-${name.toLowerCase()}.png`}
                 />
             </Tooltip>,
         value: name,
@@ -126,7 +126,7 @@ export const getExtraAttributeList = (format: string, dictionary: Record<string,
         label: <Tooltip overlay={dictionary[nameKey]}>
             <img
                 alt={dictionary[nameKey]}
-                src={`${process.env.PUBLIC_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
+                src={`${import.meta.env.BASE_URL}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
             />
         </Tooltip>,
         value: name,
@@ -140,7 +140,7 @@ export const getSTIconButtonList = (dictionary: Record<string, string>) => IconL
         : <Tooltip overlay={dictionary[nameKey]}>
             <img
                 alt={dictionary[nameKey]}
-                src={`${process.env.PUBLIC_URL}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`}
+                src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`}
             />
         </Tooltip>,
     value,
@@ -151,7 +151,7 @@ export const StarButtonList = [...Array(14)].map((_, index) => ({ label: index, 
 export const StickerButtonList = StickerList.map(({ value }) => ({
     label: value === NO_STICKER
         ? <CloseCircleOutlined />
-        : <img alt={value} src={`${process.env.PUBLIC_URL}/asset/image/sticker/sticker-${value.toLowerCase()}.png`} />,
+        : <img alt={value} src={`${import.meta.env.BASE_URL}/asset/image/sticker/sticker-${value.toLowerCase()}.png`} />,
     value,
 }));
 

@@ -62,7 +62,7 @@ export const PredefinedOptionGrid = forwardRef<PredefinedOptionGridRef, Predefin
                 {/* <Tooltip title={label} placement="right"> */}
                 <img
                     className="preset-preview"
-                    src={`${process.env.PUBLIC_URL}/${image}`}
+                    src={`${import.meta.env.BASE_URL}/${image}`}
                     alt={label}
                 />
                 {/* </Tooltip> */}

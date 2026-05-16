@@ -43,7 +43,7 @@ export const drawFrom = async (
 
         if (!imageCached) image.src = source.startsWith('http')
             ? source
-            : process.env.PUBLIC_URL + source;
+            : import.meta.env.BASE_URL + source;
         image.addEventListener(
             'load',
             () => {
@@ -181,7 +181,7 @@ export const drawFromWithSize = async (
             image.crossOrigin = crossorigin;
         }
         if (!imageCached) image.src = internalImage
-            ? process.env.PUBLIC_URL + source
+            ? import.meta.env.BASE_URL + source
             : source;
         image.addEventListener(
             'load',
@@ -193,7 +193,7 @@ export const drawFromWithSize = async (
                 const actualSW = typeof sw === 'number' ? sw : sw?.(image);
                 const actualSH = typeof sh === 'number' ? sh : sh?.(image);
                 const { actualDH, actualDW } = normalizeDxy(image, dw, dh);
-    
+
                 if (
                     typeof actualSX === 'number'
                     && typeof actualSY === 'number'

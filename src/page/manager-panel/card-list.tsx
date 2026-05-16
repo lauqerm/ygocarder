@@ -189,7 +189,7 @@ export const ManagerCardList = ({
 
     return <StyledManagerCardList
         style={{
-            backgroundImage: `url("${process.env.PUBLIC_URL}/asset/image/texture/dark-denim-3.png")`,
+            backgroundImage: `url("${import.meta.env.BASE_URL}/asset/image/texture/dark-denim-3.png")`,
         }}
     >
         {cardDisplayList.length > 0 && <div className="select-panel">

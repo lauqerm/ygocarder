@@ -1,5 +1,5 @@
 export const uploadToImgur = async (imgLink: string) => {
-    const imgurClientId = process.env.REACT_APP_IMGUR_CLIENT_ID;
+    const imgurClientId = import.meta.env.VITE_IMGUR_CLIENT_ID;
     if (!imgurClientId) throw new Error('No imgur client id found');
 
     const myHeaders = new Headers();

@@ -102,7 +102,7 @@ export const AppHeader = ({
     const sampleCardRef = useRef<SampleCardRef>(null);
 
     return <div className="app-header">
-        <img className="app-logo" alt="app-logo" src={`${process.env.PUBLIC_URL}/logo192.png`} width={35} />
+        <img className="app-logo" alt="app-logo" src={`${import.meta.env.BASE_URL}/logo192.png`} width={35} />
         <div className="app-description">
             <div className="header-language">
                 <h1>Yugioh Carder</h1>

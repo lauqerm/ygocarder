@@ -148,7 +148,7 @@ const NormalMapShader = {
         'invertH': { type: '1f', value: 1 },
         'dz': { type: '1f', value: 0 },
         'dimensions': { type: 'fv', value: [0, 0, 0] },
-        'tHeightMap': { type: 't', value: null }
+        'tHeightMap': { type: 't', value: null as null | THREE.Texture }
     },
     vertexShader: [
         'precision mediump float;',

@@ -138,7 +138,7 @@ export const useCardExport = ({
     useEffect(() => {
         let saveBeforeReload = () => {
             localStorage.setItem('card-data', JSON.stringify(currentCard));
-            localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+            localStorage.setItem('card-version', import.meta.env.VITE_VERSION ?? 'unknown');
         };
         window.addEventListener('beforeunload', saveBeforeReload);
 
@@ -156,12 +156,12 @@ export const useCardExport = ({
         if (isInitializing === false) {
             try {
                 localStorage.setItem('card-data', JSON.stringify(currentCard));
-                localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+                localStorage.setItem('card-version', import.meta.env.VITE_VERSION ?? 'unknown');
             } catch (e) {
                 try {
                     const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = currentCard;
                     localStorage.setItem('card-data', JSON.stringify(shortenedCard));
-                    localStorage.setItem('card-version', process.env.REACT_APP_VERSION ?? 'unknown');
+                    localStorage.setItem('card-version', import.meta.env.VITE_VERSION ?? 'unknown');
                 } catch (e) {
                     /** Ensure it does not fire repeatedly */
                     const key = 'fail-to-set-storage-notification';
