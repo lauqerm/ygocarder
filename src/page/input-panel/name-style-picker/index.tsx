@@ -9,6 +9,7 @@ import {
     PatternList,
     FrameInfo,
     DefaultColorList,
+    PUBLIC_PATH,
 } from '../../../model';
 import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
@@ -448,7 +449,7 @@ export const NameStylePicker = forwardRef(({
                                             ? <img
                                                 style={patternImage ? patternStyle : {}}
                                                 className="pattern-image"
-                                                src={`${import.meta.env.BASE_URL}/asset/image/finish-name/${patternImage}.png`}
+                                                src={`${PUBLIC_PATH}/asset/image/finish-name/${patternImage}.png`}
                                                 alt={key}
                                             />
                                             : <>

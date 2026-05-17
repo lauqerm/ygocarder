@@ -7,7 +7,7 @@ import { IconButton } from '../icon-button';
 import { useGlobal, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import { DropZone } from '../atom';
-import { ImageSourceType, ImageStyle } from 'src/model';
+import { ImageSourceType, ImageStyle, PUBLIC_PATH } from 'src/model';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
 
@@ -703,7 +703,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             backgroundColor,
                         }
                         : {
-                            backgroundImage: `url("${import.meta.env.BASE_URL}/asset/image/texture/transparent-tile.png")`
+                            backgroundImage: `url("${PUBLIC_PATH}/asset/image/texture/transparent-tile.png")`
                         }}
                     onImageLoaded={onLoad}
                     onImageError={() => {

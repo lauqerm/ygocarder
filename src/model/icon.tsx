@@ -1,5 +1,6 @@
 import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { WithLanguage } from 'src/service';
+import { PUBLIC_PATH } from './app';
 
 export const DEFAULT_EXTERNAL_ATTRIBUTE = 'https://i.postimg.cc/3w5ZQ2rt/attr-custom-void.png';
 export type AttributeType = 'auto' | 'custom';
@@ -309,7 +310,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="s/t-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-icon-list.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-icon-list.png`}
         />,
         isOption: true,
         isMixable: false,
@@ -324,7 +325,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="level-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-level.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-level.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -339,7 +340,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="negative-level-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-negative-level.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-negative-level.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -354,7 +355,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="rank-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-rank.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-rank.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -369,7 +370,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="level-rank-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-level-rank.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-level-rank.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -384,7 +385,7 @@ export const IconTypeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="grade-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-grade.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-grade.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -403,7 +404,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="dark-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-dark.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-dark.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -418,7 +419,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="earth-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-earth.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-earth.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -433,7 +434,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="fire-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-fire.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-fire.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -448,7 +449,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="light-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-light.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-light.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -463,7 +464,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="water-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-water.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-water.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -478,7 +479,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="wind-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-wind.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-wind.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -493,7 +494,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="divine-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-divine.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-divine.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -508,7 +509,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="spell-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-spell.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-spell.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -523,7 +524,7 @@ export const IconTypeAttributeMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="trap-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-trap.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-trap.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -542,7 +543,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="continuous-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-continuous-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-continuous-l.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -557,7 +558,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="counter-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-counter-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-counter-l.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -572,7 +573,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="equip-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-equip-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-equip-l.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -587,7 +588,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="field-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-field-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-field-l.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -602,7 +603,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="quick-play-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-quick-play-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-quick-play-l.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -617,7 +618,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="ritual-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-ritual-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-ritual-l.png`}
         />,
         isOption: true,
         isMixable: true,
@@ -632,7 +633,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
         icon: <img
             className="icon-image"
             alt="normal-large-icon"
-            src={`${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-normal-l.png`}
+            src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-normal-l.png`}
         />,
         isOption: true,
         isMixable: true,

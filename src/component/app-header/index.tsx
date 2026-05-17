@@ -14,6 +14,7 @@ import { PresetManager } from '../preset-manager';
 import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
 import './app-header.scss';
+import { PUBLIC_PATH } from 'src/model';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -102,7 +103,7 @@ export const AppHeader = ({
     const sampleCardRef = useRef<SampleCardRef>(null);
 
     return <div className="app-header">
-        <img className="app-logo" alt="app-logo" src={`${import.meta.env.BASE_URL}/logo192.png`} width={35} />
+        <img className="app-logo" alt="app-logo" src={`${PUBLIC_PATH}/logo192.png`} width={35} />
         <div className="app-description">
             <div className="header-language">
                 <h1>Yugioh Carder</h1>

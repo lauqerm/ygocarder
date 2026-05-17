@@ -6,6 +6,7 @@ import {
     processLanguage,
     RawLanguageData,
 } from './processor';
+import { PUBLIC_PATH } from 'src/model';
 
 export type I18NStore = {
     languageInfo: LanguageMetadata,
@@ -49,7 +50,7 @@ export const useI18N = create<I18NStore>((set, get) => {
     const loadLanguageMetadata = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.BASE_URL}/asset/i18n/metadata.json`,
+                `${PUBLIC_PATH}/asset/i18n/metadata.json`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ export const useI18N = create<I18NStore>((set, get) => {
         if (languageMap[languageName]) return null;
         try {
             const response = await fetch(
-                `${import.meta.env.BASE_URL}/asset/i18n/${languageName}.json`,
+                `${PUBLIC_PATH}/asset/i18n/${languageName}.json`,
                 {
                     headers: {
                         'Content-Type': 'application/json',

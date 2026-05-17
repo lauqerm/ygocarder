@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyledPredefinedContainer, StyledPredefinedOption } from './style-picker.styled';
-import { NameStyle, PresetNameStyle, PresetNameStyleList } from 'src/model';
+import { NameStyle, PresetNameStyle, PresetNameStyleList, PUBLIC_PATH } from 'src/model';
 import { getNavigationProps, mergeClass } from 'src/util';
 // import { Tooltip } from 'antd';
 
@@ -62,7 +62,7 @@ export const PredefinedOptionGrid = forwardRef<PredefinedOptionGridRef, Predefin
                 {/* <Tooltip title={label} placement="right"> */}
                 <img
                     className="preset-preview"
-                    src={`${import.meta.env.BASE_URL}/${image}`}
+                    src={`${PUBLIC_PATH}/${image}`}
                     alt={label}
                 />
                 {/* </Tooltip> */}

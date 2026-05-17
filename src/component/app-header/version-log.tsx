@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
 import { useNotification } from 'src/service';
 import { VersionLogButtonLabel } from './styled';
+import { PUBLIC_PATH } from 'src/model';
 
 const LogSentence = styled.li`
     text-align: center;
@@ -32,7 +33,7 @@ const VersionLogStore = (() => {
         getLog: async () => {
             if (isReady) return versionLog;
             const response = await fetch(
-                `${import.meta.env.BASE_URL}/log/version.json`,
+                `${PUBLIC_PATH}/asset/log/version.json`,
                 {
                     headers: {
                         'Content-Type': 'application/json',

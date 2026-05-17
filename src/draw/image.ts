@@ -1,5 +1,6 @@
 import { CanvasTextStyle } from 'src/service';
 import { setTextStyle } from './canvas-util';
+import { PUBLIC_PATH } from 'src/model';
 
 const imageCacheMap: Record<string, {
     image: HTMLImageElement,
@@ -8,6 +9,7 @@ const imageCacheMap: Record<string, {
     cache: boolean,
 }> = {};
 
+const IN_MEMORY_CACHE = false;
 export const drawFrom = async (
     ctx: CanvasRenderingContext2D | null | undefined,
     source: string,
@@ -36,14 +38,14 @@ export const drawFrom = async (
             return;
         }
 
-        const imageCached = imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
+        const imageCached = IN_MEMORY_CACHE && imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
         const image = imageCached
             ? imageCacheMap[source].image
             : new Image();
 
         if (!imageCached) image.src = source.startsWith('http')
             ? source
-            : import.meta.env.BASE_URL + source;
+            : PUBLIC_PATH + source;
         image.addEventListener(
             'load',
             () => {
@@ -51,7 +53,7 @@ export const drawFrom = async (
                 const actualDY = typeof dy === 'number' ? dy : dy(image);
 
                 ctx.drawImage(image, actualDX, actualDY);
-                if (imageCacheMap[source]) {
+                if (IN_MEMORY_CACHE && imageCacheMap[source]) {
                     imageCacheMap[source].ready = true;
                     imageCacheMap[source].error = false;
                 }
@@ -62,7 +64,7 @@ export const drawFrom = async (
         image.addEventListener(
             'error',
             () => {
-                if (imageCacheMap[source]) {
+                if (IN_MEMORY_CACHE && imageCacheMap[source]) {
                     imageCacheMap[source].error = true;
                 }
                 resolve(false);
@@ -70,7 +72,7 @@ export const drawFrom = async (
             { once: true },
         );
 
-        if (!imageCached) imageCacheMap[source] = {
+        if (IN_MEMORY_CACHE && !imageCached) imageCacheMap[source] = {
             image: image,
             ready: false,
             error: false,
@@ -172,7 +174,7 @@ export const drawFromWithSize = async (
 
         const imageCached = overwrite
             ? false
-            : imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
+            : IN_MEMORY_CACHE && imageCacheMap[source] && (imageCacheMap[source].cache || imageCacheMap[source].ready);
         const image = imageCached
             ? imageCacheMap[source].image
             : new Image();
@@ -181,7 +183,7 @@ export const drawFromWithSize = async (
             image.crossOrigin = crossorigin;
         }
         if (!imageCached) image.src = internalImage
-            ? import.meta.env.BASE_URL + source
+            ? PUBLIC_PATH + source
             : source;
         image.addEventListener(
             'load',
@@ -204,7 +206,7 @@ export const drawFromWithSize = async (
                 } else {
                     ctx.drawImage(image, actualDX, actualDY, actualDW, actualDH);
                 }
-                if (imageCacheMap[source]) {
+                if (IN_MEMORY_CACHE && imageCacheMap[source]) {
                     imageCacheMap[source].ready = true;
                     imageCacheMap[source].error = false;
                 }
@@ -215,7 +217,7 @@ export const drawFromWithSize = async (
         image.addEventListener(
             'error',
             () => {
-                if (imageCacheMap[source]) {
+                if (IN_MEMORY_CACHE && imageCacheMap[source]) {
                     imageCacheMap[source].error = true;
                 }
                 resolve(false);
@@ -223,7 +225,7 @@ export const drawFromWithSize = async (
             { once: true },
         );
 
-        if (cache && !imageCached) imageCacheMap[source] = {
+        if (IN_MEMORY_CACHE && cache && !imageCached) imageCacheMap[source] = {
             image: image,
             ready: false,
             error: false,

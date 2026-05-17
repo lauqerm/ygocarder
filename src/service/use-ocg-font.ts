@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import WebFont from 'webfontloader';
 import { useCard } from './use-card';
 import { useShallow } from 'zustand/react/shallow';
+import { PUBLIC_PATH } from 'src/model';
 
 export type UseOCGFont = {
     isLanguageInitiating: boolean,
@@ -36,7 +37,7 @@ export const useOCGFont = ({
             && isLanguageInitiating === false
         ) {
             loadAttempt.current += 1;
-            setStyleContent(`${import.meta.env.BASE_URL}/asset/ocg-font.css`);
+            setStyleContent(`${PUBLIC_PATH}/asset/ocg-font.css`);
             onBeforeLoad();
 
             /** @todo Once these fonts are loaded, some letters previously appear ugly will inherit the font and looks much better, for example OCG-style ordinal number ① ② But right now it may not worth the trade off of including large fonts by default. */

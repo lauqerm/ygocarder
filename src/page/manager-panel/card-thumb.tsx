@@ -11,6 +11,7 @@ import {
     LinkPendulumOffsetList,
     LinkRotateList,
     NO_ICON,
+    PUBLIC_PATH,
 } from 'src/model';
 import { compressCardData, getCardIconFromFrame, mergeClass, normalizeCardName, resolveFrameStyle } from 'src/util';
 import { CopyOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons';
@@ -356,7 +357,7 @@ export const CardThumb = ({
                 ? iconImageData
                 : undefined
         : undefined)
-        ?? `${import.meta.env.BASE_URL}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom' ? 'icon-list' : normalizedCardIcon).toLowerCase()}.png`;
+        ?? `${PUBLIC_PATH}/asset/image/subfamily/subfamily-${(normalizedCardIcon === 'custom' ? 'icon-list' : normalizedCardIcon).toLowerCase()}.png`;
 
     return <StyledCardThumb
         className={mergeClass(
@@ -479,7 +480,7 @@ export const CardThumb = ({
                     : attribute === 'NONE'
                         ? null
                         : <img className="attribute-icon"
-                            src={`${import.meta.env.BASE_URL}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
+                            src={`${PUBLIC_PATH}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
                             alt="Attribute"
                         />}
                 {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}

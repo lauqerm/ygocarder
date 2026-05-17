@@ -2,7 +2,7 @@ import { LanguageDataDictionary, useCardList, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { CardThumb, THUMB_SIZE } from './card-thumb';
 import { useCallback, useEffect, useState } from 'react';
-import { getEmptyCard, InternalCard } from 'src/model';
+import { getEmptyCard, InternalCard, PUBLIC_PATH } from 'src/model';
 import { v4 as uuid } from 'uuid';
 import styled from 'styled-components';
 import { Button, Dropdown, Menu } from 'antd';
@@ -189,7 +189,7 @@ export const ManagerCardList = ({
 
     return <StyledManagerCardList
         style={{
-            backgroundImage: `url("${import.meta.env.BASE_URL}/asset/image/texture/dark-denim-3.png")`,
+            backgroundImage: `url("${PUBLIC_PATH}/asset/image/texture/dark-denim-3.png")`,
         }}
     >
         {cardDisplayList.length > 0 && <div className="select-panel">

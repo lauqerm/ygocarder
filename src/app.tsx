@@ -11,12 +11,11 @@ import {
     ImagePreset,
     ImageSourceType,
     NameStyle,
+    PUBLIC_PATH,
 } from './model';
 import {
     DebugCanvas,
     forceRefocus,
-    IS_MOBILE,
-    isTouchDevice,
     mergeClass,
 } from './util';
 import {
@@ -69,6 +68,10 @@ import { configure, HotKeys } from 'react-hotkeys';
 import { useShallow } from 'zustand/react/shallow';
 import * as Sentry from '@sentry/react';
 import Moveable from 'react-moveable';
+import {
+    IS_MOBILE,
+    isTouchDevice,
+} from './pwa';
 
 /** React hotkey setup */
 configure({
@@ -644,8 +647,7 @@ function App() {
                 }}
                 className={`language-${languageInfo.codeName} manager_${managerVisible ? 'visible' : 'hidden'}`}
                 style={{
-                    backgroundImage: `url("${import.meta.env.BASE_URL
-                    }/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
+                    backgroundImage: `url("${PUBLIC_PATH}/asset/image/texture/debut-dark.png"), linear-gradient(180deg, #00000022, #00000044)`,
                     height: IS_MOBILE ? '-webkit-fill-available' : '100vh',
                     ...({
                         '--card-height': `${CanvasHeight * globalScale}px`,
@@ -659,7 +661,7 @@ function App() {
                 <div
                     className={'app-container'}
                     style={{
-                        backgroundImage: `url("${import.meta.env.BASE_URL}/asset/image/texture/dark-denim-3.png")`,
+                        backgroundImage: `url("${PUBLIC_PATH}/asset/image/texture/dark-denim-3.png")`,
                     }}
                 >
                     {isLoading && <StyledAppLoading className="app-loading">

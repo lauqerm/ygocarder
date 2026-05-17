@@ -48,7 +48,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'dist/static/js/*.js'",
-    "build": "vite build && yarn sentry:sourcemaps",
+    "build": "vite build",
     "build:manifest": "tsx scripts/build-asset-manifest.ts",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
@@ -56,6 +56,7 @@
     "dev": "vite",
     "eject": "react-scripts eject",
     "lint": "eslint --fix --ext .ts,.tsx .",
+    "prebuild": "yarn build:manifest",
     "predeploy": "yarn run build",
     "preview": "vite preview",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org lauqerm --project ygo-carder ./dist && sentry-cli sourcemaps upload --org lauqerm --project ygo-carder ./dist",

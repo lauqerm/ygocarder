@@ -2,6 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './app';
+import {
+    registerServiceWorker,
+    initInstallPrompt,
+} from './pwa';
 
 ReactDOM.render(
     <React.StrictMode>
@@ -9,3 +13,13 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root'),
 );
+
+/** Ready for install prompt */
+initInstallPrompt();
+
+// Register after the app has rendered, not during boot
+if (import.meta.env.PROD) {
+    window.addEventListener('load', () => {
+        registerServiceWorker();
+    });
+}

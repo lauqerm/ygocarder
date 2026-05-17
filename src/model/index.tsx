@@ -419,6 +419,7 @@ export const getSlindingTypeList = (language: LanguageDataDictionary) => [
 
 export type WritingDirection = 'ltr' | 'rtl';
 
+export * from './app';
 export * from './canvas';
 export * from './compatible-card';
 export * from './condense';
