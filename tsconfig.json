@@ -27,9 +27,13 @@
     "typeRoots": [
       "./type",
       "node_modules/@types"
+    ],
+    "types": [
+      "node"
     ]
   },
   "include": [
-    "src"
+    "src",
+    "scripts/**/*.ts"
   ]
 }

@@ -1,5 +1,5 @@
 const MAX_CONDENSER_THRESHOLD = 1000;
-/** Simple iteration method
+/** Simple iteration method (radix-like search)
  * 1 The initial threshold is 1000, initial step is 100, max step count is 30.
  * 1. If current threshold satisfy the driver, or step count is already 0, return the current threshold.
  * 1. Step down the threshold, and keep stepdown until driver return satisfy signal, reduce step count by 1 for each step made.

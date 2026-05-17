@@ -12,6 +12,7 @@ node_modules
 # production
 /build
 /dist
+public/asset-manifest.json
 
 # misc
 .DS_Store
@@ -45,4 +46,5 @@ yarn-error.log*
 # Sentry Config File
 .sentryclirc
 
+# Experimental or one-time run
 test.html
