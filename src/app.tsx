@@ -69,6 +69,7 @@ import { useShallow } from 'zustand/react/shallow';
 import * as Sentry from '@sentry/react';
 import Moveable from 'react-moveable';
 import {
+    getFullDiagnostics,
     IS_MOBILE,
     isTouchDevice,
 } from './pwa';
@@ -416,9 +417,36 @@ function App() {
         lightboxRef.current?.setVisible(cur => typeof status === 'boolean' ? status : !cur);
     }, []);
 
+    /** Analytic and report */
     const sentryInitialized = useRef(false);
     const reportTarget = document.getElementById('sentry-bug-report');
     useEffect(() => {
+        window.addEventListener('online', () => {
+            Sentry.setTag('pwa_online', true);
+        });
+        window.addEventListener('offline', () => {
+            Sentry.setTag('pwa_online', false);
+        });
+        if (navigator) navigator.serviceWorker?.addEventListener('message', (event) => {
+            if (event.data?.type === 'MANIFEST_SYNCED') {
+                Sentry.setTag('pwa_manifest_version', event.data.version);
+            }
+        });
+
+        // Re-sync after install completes
+        window.addEventListener('appinstalled', () => {
+            Sentry.setTag('pwa_just_installed', true);
+        });
+    }, []);
+    useEffect(() => {
+        // Re-sync when network status flips
+        window.addEventListener('online', () => {
+            Sentry.setTag('pwa_online', true);
+        });
+        window.addEventListener('offline', () => {
+            Sentry.setTag('pwa_online', false);
+        });
+
         const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
         if (reportTarget
             && sentryDsn
@@ -428,6 +456,7 @@ function App() {
         ) {
             sentryInitialized.current = true;
 
+            Sentry.setUser({ email: "user@example.com", });
             Sentry.init({
                 dsn: sentryDsn,
                 integrations: [
@@ -436,6 +465,32 @@ function App() {
                     Sentry.feedbackIntegration({
                         colorScheme: 'system',
                         autoInject: false,
+                        onSubmitSuccess: async ({
+                            name,
+                            message,
+                        }: {
+                            name: string;
+                            email: string;
+                            message: string;
+                            attachments: unknown[] | undefined;
+                        }) => {
+                            const diagnostics = await getFullDiagnostics();
+
+                            Sentry.captureMessage('User feedback', {
+                                level: 'info',
+                                contexts: {
+                                    pwa_diagnostics: JSON.parse(JSON.stringify(diagnostics)),
+                                },
+                                extra: {
+                                    feedback_name: name,
+                                    feedback_message: message,
+                                    cache_completion_pct: Math.round(diagnostics.cacheCompletion * 100),
+                                    storage_used_mb: diagnostics.storageUsageBytes
+                                        ? (diagnostics.storageUsageBytes / 1024 / 1024).toFixed(1)
+                                        : null,
+                                },
+                            });
+                        },
                     }).attachTo(reportTarget, {
                         formTitle: language['contributor.bug-report.tooltip'],
                         nameLabel: language['contributor.bug-report.name.label'],

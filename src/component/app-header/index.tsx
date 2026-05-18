@@ -15,6 +15,7 @@ import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
 import './app-header.scss';
 import { PUBLIC_PATH } from 'src/model';
+import { InstallButton } from '../install-button';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -267,6 +268,18 @@ export const AppHeader = ({
                 language={language}
                 applyCardData={applyCardData}
             />
+        </StyledAppHeaderButtonContainer>
+        <StyledAppHeaderButtonContainer className="app-header-button sample-card">
+            <StyledHeaderButtonContainer
+                className={mergeClass('preset-sample-button-label')}
+                onClick={() => {
+                    sampleCardRef.current?.open();
+                }}
+            >
+                <div className="button-label">
+                    <InstallButton />
+                </div>
+            </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>
     </div>;
 };
