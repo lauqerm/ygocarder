@@ -242,21 +242,33 @@ export function InstallButton({
     }
 
     const [cacheProgress, setCacheProgress] = useState('');
+    const [cachedAssetCount, setCachedAssetCount] = useState(0);
     useEffect(() => {
         (async () => {
             const {
                 cacheCompletion,
+                cachedAssetCount,
             } = await getFullDiagnostics();
             setCacheProgress(`${Math.round(cacheCompletion * 100)}% cached`);
+            setCachedAssetCount(cachedAssetCount);
         })();
     }, [])
 
     const mountModal = pwaState.kind !== 'sw-not-ready' && pwaState.kind !== 'not-supported';
 
-    if (cacheProgress) return <div className={className} onClick={callback}>
-        <CloudDownloadOutlined />
-        <label>{cacheProgress}</label>
-    </div>
+    if (cacheProgress) return <Popover
+        content={
+            <StyledPopMarkdown>
+                <div>{cachedAssetCount} assets cached</div>
+            </StyledPopMarkdown>
+        }
+        placement="topLeft"
+    >
+        <div className={className} onClick={callback}>
+            <CloudDownloadOutlined />
+            <label>{cacheProgress}</label>
+        </div>
+    </Popover>
     if (pwaState.kind === 'not-supported') return <UnsupportedHint className={className} reason={pwaState.reason} />;
     return <>
         <div className={className} onClick={callback}>

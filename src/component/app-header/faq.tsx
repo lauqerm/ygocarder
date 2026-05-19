@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '30/04/2026-1';
+        const currentReminder = '19/05/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.VITE_VERSION) setMemoizedReminder(currentReminder);
 
@@ -79,6 +79,25 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'TOVYA at May 19, 2026',
+            question: 'Hello bạn, khi chạy trên local với Docker thì mình gặp vấn đề:\n```\nerror: Auth token is required for this request. Please run `sentry-cli login` and try again!\n```\nĐồng thời mình thấy cách chạy Docker có phần hơi rối rắm.\nTin vui là bạn không cần phải fix lỗi cũng như refactor lại cho bạn, mình đã làm sẵn rồi. Nhớ check PR #21 nhé.',
+            answer: 'Ok nha bạn, mình sẽ review PR của bạn sớm.',
+        },
+        {
+            author: 'Knezzo at May 18, 2026',
+            question: 'Hi , I am unsure if this has been asked already, but I want to qsk nonetheless. Are you planning on adding the "Grandmaster Rare" styled outline for the cards (with the hieroglyphs) as well as (an optional?) series tracker on the bottom left like the Grandmaster Rares have? I\'d really appreciate it! Thank you very much for making this Card maker',
+            answer: 'Of course! I am waiting for high quality assets to implement these new rarities, including rainbow colored frame and hieroglyph pattern for Grandmaster Rare. I will add them as soon as I can get the assets ready, hopefully I won\'t need to wait too long.',
+        },
+        {
+            author: 'RedSupernovaDragon at May 16, 2026',
+            question: 'Test with capital letters: G, O, Q with height issue, along with the numbers. Also reporting that the N may occasionally appear lower than it should be in long names (C62), similarly to its lowercase counterpart.',
+        },
+        {
+            author: 'RedSupernovaDragon at May 16, 2026',
+            question: 'Hello again, Lauqerm\nI went off for almost two months, but now I\'m back. Glad to see that you are working hard trying to find a solution for the text compression issue in the name box. I\'ve seen that others have reported similar issues in these past months, so I\'m adding my screenshots as well. For starters, letter O can also go off in the other direction, below the line, as seen in this picture, Italian name for Purplish Armageddon. Even before finding this site back in February, I had the intention to create Italian proxies of the heroes and rivals ace cards (from DM to VRAINS), along with their forms, of course. I prefer the 813x1185 resolution, btw. Your site is just what I need, so I\'m hoping that you\'ll eventually fix the text at all scales.',
+            answer: 'Thank you for helping me find these cases, I will try to adapt my fix accordingly.'
+        },
         {
             author: 'Anonymous at April 30, 2026',
             question: 'Now the image just literally goes over the frame, like literally I can\'t see the effect box',
