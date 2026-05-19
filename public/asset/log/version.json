@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.4.12 (2026/05/20)",
+        "logList": [
+            {
+                "content": "Fix: Minor issues."
+            },
+            {
+                "content": "Feat: Experimental caching tactic."
+            }
+        ]
+    },
+    {
         "version": "v2.4.11 (2026/04/29)",
         "logList": [
             {
