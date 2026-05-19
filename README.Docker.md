@@ -46,3 +46,7 @@ Now you can access the app at <http://localhost:8080/ygocarder>. This is just a 
 #### Using image from Docker Hub
 
 I have no plan to publish ygocarder's image on Docker Hub yet.
+
+#### Troubleshoot
+
+On Windows Docker Desktop, use semicolon `;` instead of colon `:` for `COMPOSE_FILE` variables.
