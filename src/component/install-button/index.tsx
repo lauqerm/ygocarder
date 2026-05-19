@@ -7,6 +7,7 @@ import {
     QuestionCircleOutlined,
     LoadingOutlined,
     WarningOutlined,
+    CloudDownloadOutlined,
 } from '@ant-design/icons';
 import {
     usePWAState,
@@ -16,6 +17,7 @@ import {
     type BulkDownloadProgress,
     NotSupportedReason,
     syncManifestWithWorker,
+    getFullDiagnostics,
 } from '../../pwa';
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
@@ -239,8 +241,22 @@ export function InstallButton({
         }
     }
 
+    const [cacheProgress, setCacheProgress] = useState('');
+    useEffect(() => {
+        (async () => {
+            const {
+                cacheCompletion,
+            } = await getFullDiagnostics();
+            setCacheProgress(`${Math.round(cacheCompletion * 100)}% cached`);
+        })();
+    }, [])
+
     const mountModal = pwaState.kind !== 'sw-not-ready' && pwaState.kind !== 'not-supported';
 
+    if (cacheProgress) return <div className={className} onClick={callback}>
+        <CloudDownloadOutlined />
+        <label>{cacheProgress}</label>
+    </div>
     if (pwaState.kind === 'not-supported') return <UnsupportedHint className={className} reason={pwaState.reason} />;
     return <>
         <div className={className} onClick={callback}>

@@ -59,8 +59,7 @@ export function getSyncDiagnostics(): SyncDiagnostics {
         connectionType: getConnectionType(),
         saveData: getSaveData(),
         serviceWorkerSupported: 'serviceWorker' in navigator,
-        serviceWorkerController:
-            'serviceWorker' in navigator && navigator.serviceWorker.controller !== null,
+        serviceWorkerController: 'serviceWorker' in navigator && navigator.serviceWorker.controller !== null,
         sessionDurationMs: Date.now() - SESSION_START,
         pageVisibility: document.visibilityState === 'hidden' ? 'hidden' : 'visible',
         language: navigator.language,
