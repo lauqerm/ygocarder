@@ -1,0 +1,872 @@
+[
+    {
+        "version": "v2.4.12 (2026/05/20)",
+        "logList": [
+            {
+                "content": "Fix: Minor issues."
+            },
+            {
+                "content": "Feat: Experimental caching tactic."
+            }
+        ]
+    },
+    {
+        "version": "v2.4.11 (2026/04/29)",
+        "logList": [
+            {
+                "content": "Feat: Flag to hide stat labels (ATK/DEF/Link)."
+            }
+        ]
+    },
+    {
+        "version": "v2.4.10 (2026/04/28)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for user-defined card icon (stars).",
+                "image": "https://i.postimg.cc/Jz489HS0/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.9 (2026/04/22)",
+        "logList": [
+            {
+                "content": "Fix: compatible issue when import Spell/Trap from ygoprodeck"
+            },
+            {
+                "content": "Feat: Experimental support separate customizable foil blending for both border and frame, as well as more blending options.",
+                "image": "https://i.postimg.cc/Fz3wgcSx/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.8 (2026/04/22)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for customizable foil.",
+                "image": "https://i.postimg.cc/Y0YSrK13/image-mh.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.7 (2026/04/14)",
+        "logList": [
+            {
+                "content": "Feat: Experimental support for Arabic.",
+                "image": "https://i.postimg.cc/fLdCG8wv/download.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.6 (2026/03/19)",
+        "logList": [
+            {
+                "content": "Feat: Allow flip card artwork / background horizontally / vertically.",
+                "image": "https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.5 (2026/03/17)",
+        "logList": [
+            {
+                "content": "Feat: Advanced layout option now support hide deactivated link markers."
+            }
+        ]
+    },
+    {
+        "version": "v2.4.4 (2026/03/09)",
+        "logList": [
+            {
+                "content": "Fix: Minor layer issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.4.3 (2026/03/05)",
+        "logList": [
+            {
+                "content": "Fix: Minor font and UI issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.4.2 (2026/03/01)",
+        "logList": [
+            {
+                "content": "Support switch to use legacy layers for card frames. Comparison below (left is new and right is legacy):",
+                "image": "https://i.postimg.cc/Nf9242k0/comparison-resized.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.4.1 (2026/02/27)",
+        "logList": [
+            {
+                "content": "Fix: Finishes does not display correctly on upscaled cards."
+            },
+            {
+                "content": "Fix: Pendulum number does not follow custom text colors."
+            },
+            {
+                "content": "Various color and position changes."
+            }
+        ]
+    },
+    {
+        "version": "v2.4.0 (2026/02/25)",
+        "logList": [
+            {
+                "content": "Fix: Incorrect font for Normal monsters with name condition."
+            },
+            {
+                "content": "Various updates on card frames (color, bevel and shadow)."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.46 (2026/02/15)",
+        "logList": [
+            {
+                "content": "Fix: Best effort render option now no longer affect ATK / DEF / Link rating texts."
+            },
+            {
+                "content": "Various tweaks on font colors."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.45 (2026/01/22)",
+        "logList": [
+            {
+                "content": "Experimental support for fanmade Rebirth card (from NeoPhoenixKnight)."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.44 (2026/01/15)",
+        "logList": [
+            {
+                "content": "Fonts tweak."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.43 (2026/01/06)",
+        "logList": [
+            {
+                "content": "More font tweaks for card type, edition text and more."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.42 (2025/12/31)",
+        "logList": [
+            {
+                "content": "Support for custom text below card art's corner."
+            },
+            {
+                "content": "Fix: Custom attribute get incorrectly resized and placed."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.41 (2025/12/29)",
+        "logList": [
+            {
+                "content": "Regional attributes for Portuguese."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.40 (2025/12/27)",
+        "logList": [
+            {
+                "content": "Fix: Various font tweaks."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.39 (2025/12/25)",
+        "logList": [
+            {
+                "content": "Readjust layout options for better user experience."
+            },
+            {
+                "content": "Add Sample button to provide some familarity to the app's advanced card making options.",
+                "image": "https://i.postimg.cc/XNgkj6P8/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.38 (2025/12/23)",
+        "logList": [
+            {
+                "content": "Fix: Edition text does not display correctly on darker frames."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.37 (2025/12/22)",
+        "logList": [
+            {
+                "content": "Experimental support for customizable \"1st edition\" text, with some predefined options for different languages."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.36 (2025/12/18)",
+        "logList": [
+            {
+                "content": "Fix: Error when using custom attribute image that trigger browser's protect mechanism."
+            },
+            {
+                "content": "Experimental support for running / deploying the app with Docker."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.35 (2025/12/13)",
+        "logList": [
+            {
+                "content": "Experimental support for using custom attribute icon via external image link.",
+                "image": "https://i.postimg.cc/cJMFW3M1/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.34 (2025/11/08)",
+        "logList": [
+            {
+                "content": "Experimental support for advanced unicode letters in card text, allowing better display for wider range of letters.",
+                "image": "https://i.postimg.cc/YS0r5NNS/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.33 (2025/10/11)",
+        "logList": [
+            {
+                "content": "Fix: Minor font updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.32 (2025/09/18)",
+        "logList": [
+            {
+                "content": "Update predefined presets."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.31 (2025/09/13)",
+        "logList": [
+            {
+                "content": "Experimental syntax for inline image. Using \"<img src=\"your-image-url\" />\" to insert an image into effect text. If you want to reuse image without repeatedly typing/pasting the url, you may use image preset feature. For more information click the Syntax button.",
+                "image": "https://i.postimg.cc/zfQScSRb/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.30 (2025/09/10)",
+        "logList": [
+            {
+                "content": "Fix: Dynamic font not working for effect with too many lines."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.29 (2025/09/08)",
+        "logList": [
+            {
+                "content": "Experimental syntax for bold text. Wrap your text in \"<b>\" and \"</b>\" to make it bolder. For more information click the Syntax button.",
+                "image": "https://i.postimg.cc/G3Qd2Ws9/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.28 (2025/09/05)",
+        "logList": [
+            {
+                "content": "Experimental syntax for text with consistent space. Wrap your text in \"<pre>\" and \"</pre>\" to remove dynamic spacing of the text, for use-case like effect alignment.",
+                "image": "https://i.postimg.cc/GhbnM0qt/image.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.27 (2025/09/03)",
+        "logList": [
+            {
+                "content": "Allow turning off effect box (background + border + stat labels) when background is present. The option is a checkbox in Effect section of Layout row."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.26 (2025/09/01)",
+        "logList": [
+            {
+                "content": "Experimental syntax for italic text. Wrap your text in \"<i>\" and \"</i>\" to make it italic like the flavor text of Normal Monster. For more information click the Syntax button.",
+                "image": "https://images2.imgbox.com/c3/1b/OFLOLdf9_o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.25 (2025/08/26)",
+        "logList": [
+            {
+                "content": "Fix: Issues for effect with new lines in between."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.24 (2025/08/09)",
+        "logList": [
+            {
+                "content": "Support rgb inputs for dye color picker."
+            },
+            {
+                "content": "Move Minimum Lines input into Paragraph Style button for better layout."
+            },
+            {
+                "content": "Add Justify Ratio input in Paragraph Style. This input is used to control the behavior of the last line of effect.",
+                "image": "https://i.imgur.com/V9RTU1o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.23 (2025/08/06)",
+        "logList": [
+            {
+                "content": "Fix: Minor UI and font ratio updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.22 (2025/07/30)",
+        "logList": [
+            {
+                "content": "Fix: Another fix for exotic letters (★ and Ø) and freezing issue on mobile / touch device."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.21 (2025/07/29)",
+        "logList": [
+            {
+                "content": "Fix: Better display for exotic letters (★ and Ø)."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.20 (2025/07/29)",
+        "logList": [
+            {
+                "content": "Fix: Freezing issue on mobile devices."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.19 (2025/07/28)",
+        "logList": [
+            {
+                "content": "Support manual drag option for sticky preview feature."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.18 (2025/07/25)",
+        "logList": [
+            {
+                "content": "Minor UI/UX updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.17 (2025/07/21)",
+        "logList": [
+            {
+                "content": "Beta version for presets. Now you can save custom layout and name style as presets to reuse later. Presets are saved locally but can be exported and imported elsewhere."
+            },
+            {
+                "content": "Fix: Minor UX updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.16 (2025/07/12)",
+        "logList": [
+            {
+                "content": "Support drag and drop image from device into card art / background."
+            },
+            {
+                "content": "Fix: Minor font updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.15 (2025/07/10)",
+        "logList": [
+            {
+                "content": "Better font fallback for Greek letters."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.14 (2025/07/09)",
+        "logList": [
+            {
+                "content": "Fix: Minor issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.13 (2025/07/09)",
+        "logList": [
+            {
+                "content": "Fix: Minor issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.12 (2025/06/30)",
+        "logList": [
+            {
+                "content": "Fix: Better behavior for accented letter (for example \"é\")."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.11 (2025/06/28)",
+        "logList": [
+            {
+                "content": "Fix: Update DARK/LIGHT Attribute image for French region."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.10 (2025/06/27)",
+        "logList": [
+            {
+                "content": "Batch download for card list."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.9 (2025/06/27)",
+        "logList": [
+            {
+                "content": "Fix: Wrong Attribute image for French and German region."
+            },
+            {
+                "content": "Fix: Incorrect color apply on bottom half of pendulum frame structure."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.8 (2025/06/26)",
+        "logList": [
+            {
+                "content": "Support dyeing for foil."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.7 (2025/06/24)",
+        "logList": [
+            {
+                "content": "Fix: Issue when displaying card art in non-Pendulum cards when choosing \"Replace Frame\" cover option."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.6 (2025/06/22)",
+        "logList": [
+            {
+                "content": "Add Normal icon as star type / subcategory type."
+            },
+            {
+                "content": "Update the usability of custom star list, now the position of stars in editor reflect exactly their positions on the card (no longer affected by alignment). Also adding some utility buttons and allow display in either 12 or 13 stars distribution.",
+                "image": "https://images2.imgbox.com/46/b8/ur9AKvUE_o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.5 (2025/06/21)",
+        "logList": [
+            {
+                "content": "Allow using Level/Rank combined, monster Attributes, Spell / Trap icons as additional star type.",
+                "image": "https://images2.imgbox.com/f8/1a/x26qSXHu_o.png"
+            },
+            {
+                "content": "Allow custom star list, which can be used to display a combination of available star types.",
+                "image": "https://images2.imgbox.com/58/51/hLLDqgbD_o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.4 (2025/06/19)",
+        "logList": [
+            {
+                "content": "Additional attribute for other regions: French, German, Italian, Spanish and Chinese."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.3 (2025/06/16)",
+        "logList": [
+            {
+                "content": "Loosen up the requirement for non-breakable line syntaxes (normal and justified). Before: Can only be used at the start of the effect, or after another non-breakable lines. After: Can be used at the start of the effect, or after any paragraphs."
+            },
+            {
+                "content": "Minor tweaks for Link Rating and Pendulum Scale Numbers."
+            },
+            {
+                "content": "Allow explicit control for the minimum lines of effect / pendulum effect, offer more granular control compare to Condense option.",
+                "image": "https://images2.imgbox.com/d5/3d/vtPX77V7_o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.2 (2025/06/14)",
+        "logList": [
+            {
+                "content": "Fix: Issue when import card list."
+            }
+        ]
+    },
+    {
+        "version": "v2.3.1 (2025/06/13)",
+        "logList": [
+            {
+                "content": "New behavior in Advanced Layout: allow always show / hidden link rating."
+            },
+            {
+                "content": "ATK and DEF now disappear entirely (even the label) if their values are empty."
+            },
+            {
+                "content": "Support dyeing for frames in Advanced Layout: allow merging the current frame with a color of choice.",
+                "image": "https://images2.imgbox.com/a4/68/CFbr3ntD_o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.3.0 (2025/06/11)",
+        "logList": [
+            {
+                "content": "Various updates on UI. The Background button is moved to a more prominent display."
+            },
+            {
+                "content": "Allow custom Link rating."
+            },
+            {
+                "content": "Add new behavior in Advanced Layout: allow displaying both DEF and Link rating of a card if it has both."
+            },
+            {
+                "content": "Add art finish type 9. Add card finish type 10, 11, 12, 13."
+            },
+            {
+                "content": "Support finish for background; this will allow a more fine-tuned behavior. In the example, the left image uses a background with finish and artwork render with transparency, while the right image uses normal artwork with finish.",
+                "image": "https://images2.imgbox.com/59/3f/vH25QP75_o.jpg"
+            }
+        ]
+    },
+    {
+        "version": "v2.2.9 (2025/06/05)",
+        "logList": [
+            {
+                "content": "Fix: Missing Link rating in rare cases for cards with both Pendulum frame and Link Markers."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.7 (2025/05/31)",
+        "logList": [
+            {
+                "content": "Fix: Incorrect resolving font color for set ID and creator text on darker frames."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.6 (2025/05/31)",
+        "logList": [
+            {
+                "content": "\"Bottom Frame\" option changed to \"Advanced Layout\", now allow changing frame style of all 4 corners, as well as effect's background.",
+                "image": "https://images2.imgbox.com/05/02/5EmXHbQy_o.png"
+            }
+        ]
+    },
+    {
+        "version": "v2.2.5 (2025/05/26)",
+        "logList": [
+            {
+                "content": "Small adjustment for size and style of card stats (ATK, DEF)."
+            },
+            {
+                "content": "Add art finish type 8."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.4 (2025/05/02)",
+        "logList": [
+            {
+                "content": "Remove mimic finish type, now allow picking individual finish type for each card level, attribute and sticker."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.3 (2025/04/29)",
+        "logList": [
+            {
+                "content": "Allow changing export resolution even in the case of tainted card."
+            },
+            {
+                "content": "New finish type allow apply the same finish used for artwork into card level, attribute and sticker."
+            },
+            {
+                "content": "New button for FAQs. I will try to communicate with anonymous feedbacks through this button, and also help to guide users to some advance features that is already implemented but is not immediately obvious."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.2 (2025/04/24)",
+        "logList": [
+            {
+                "content": "Fix: Minor UI issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.1 (2025/04/22)",
+        "logList": [
+            {
+                "content": "Support old Magic attribute."
+            }
+        ]
+    },
+    {
+        "version": "v2.2.0 (2025/04/22)",
+        "logList": [
+            {
+                "content": "Mirror scale option now persists after reload (just like app settings)."
+            },
+            {
+                "content": "Support 3 pendulum frame sizes from Series 9. Support absence for blue/red/both scales.",
+                "image": "https://i.imgur.com/2EFEayi.png"
+            },
+            {
+                "content": "Fix: Minor behavior issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.23 (2025/04/12)",
+        "logList": [
+            {
+                "content": "Now link markers on pendulum frame are drawn on top of password and other texts at footer."
+            },
+            {
+                "content": "Fix: Minor UI issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.22 (2025/04/11)",
+        "logList": [
+            {
+                "content": "Fix: Attempt to fix the incorrect behavior when apply shadow effect for long card name."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.21 (2025/04/11)",
+        "logList": [
+            {
+                "content": "Support justified line syntax. Wrap your sentences in \"[[\" and \"]]\" so they stay on the same line and fill as much space as they can. For more information click Formatting Help button.",
+                "image": "https://i.imgur.com/wdsNbUt.jpeg"
+            },
+            {
+                "content": "Fix: Incorrect behavior when applying some combination of outline, shadow and emboss effect in card name. Emboss effect no longer affect furigana texts."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.20 (2025/04/10)",
+        "logList": [
+            {
+                "content": "Upsize support for 1122 × 1636 resolution, also display current export resolution."
+            },
+            {
+                "content": "Support thickness level for emboss effect."
+            },
+            {
+                "content": "Link markers and pendulum frame are no longer mutually exclusive."
+            },
+            {
+                "content": "Detailed color picker for card name's color."
+            },
+            {
+                "content": "Allow displaying ATK, DEF and card type on Spell/Trap card frame, and conversely hiding them on monster card frame."
+            },
+            {
+                "content": "Allow displaying level/rank/etc... for all frames including Link and Speed Skill."
+            },
+            {
+                "content": "Minor UI updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.19 (2025/04/08)",
+        "logList": [
+            {
+                "content": "Support emboss effect for card name. Add two more predefined name styles."
+            },
+            {
+                "content": "Pattern and text shadow in card name are no longer mutually exclusive."
+            },
+            {
+                "content": "Increase maximum lines of effect."
+            },
+            {
+                "content": "Minor UI updates."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.18 (2025/04/04)",
+        "logList": [
+            {
+                "content": "Upsize support for 1388 × 2026 and 1626 × 2370 resolutions. Card textures are scaled naively but card text and card image will be redrawn at higher size."
+            },
+            {
+                "content": "Improve lightbox mode with zoom and pan features."
+            },
+            {
+                "content": "Fix: Incorrectly recover card's data for Link monster."
+            },
+            {
+                "content": "Fix: Export/import card list in manager does not process font style correctly."
+            },
+            {
+                "content": "Fix: Wrong text spacing of monster's type in some rare cases for OCG cards."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.17 (2025/03/28)",
+        "logList": [
+            {
+                "content": "Allow customizing font style for card's effects in \"Text Style\" menu."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.16 (2025/03/27)",
+        "logList": [
+            {
+                "content": "Add more fine-tune behavior when apply Token frame."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.15 (2025/03/15)",
+        "logList": [
+            {
+                "content": "Fix: Minor font issues."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.14 (2025/03/14)",
+        "logList": [
+            {
+                "content": "Pendulum effects now support up to 8 line of effects (was 5 before)."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.13 (2025/03/12)",
+        "logList": [
+            {
+                "content": "Attempt to support display for letter \"∅\" (\"K9 - ØØ Lupus\") for OCG cards."
+            },
+            {
+                "content": "Fix: Incorrect display for letter \"☆\" (Live☆Twin) in card's name. It is now consistent with letter \"★\"."
+            },
+            {
+                "content": "Fix: Attempt to fix behavior for contextual double quotes in card's text."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.12 (2025/02/28)",
+        "logList": [
+            {
+                "content": "Fix: Capital letter E does not display correctly on card's name."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.11 (2025/02/21)",
+        "logList": [
+            {
+                "content": "Minor UI updates."
+            },
+            {
+                "content": "Fix: UI issues for tooltips."
+            },
+            {
+                "content": "Fix: The border between stats and card effects should also support shadow."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.10 (2025/02/18)",
+        "logList": [
+            {
+                "content": "Adjust setting modal."
+            },
+            {
+                "content": "Support xlsx file format when export card list."
+            },
+            {
+                "content": "Fix: Unable to read special letters from imported card list."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.9",
+        "logList": [
+            {
+                "content": "Adjust export modal."
+            },
+            {
+                "content": "Changelog viewer."
+            },
+            {
+                "content": "Fix: Remove individual card export in Manager for compatibility reasons."
+            },
+            {
+                "content": "Fix: Allow to use cross-site image for artwork and background again."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.8",
+        "logList": [
+            {
+                "content": "Fix: Font for card lore."
+            }
+        ]
+    },
+    {
+        "version": "v2.1.7",
+        "logList": [
+            {
+                "content": "Adjust ratio for frame-replacement background."
+            }
+        ]
+    }
+]

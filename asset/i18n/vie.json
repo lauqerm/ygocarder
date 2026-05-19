@@ -442,6 +442,7 @@
         "preset.manager.check.label": "[Kiểm tra mẫu đang có]",
         "preset.manager.label": "Mẫu",
         "sample.manager.label": "Ví dụ",
+        "install.trigger.label": "Tải app",
         "sample.manager.creative-requires.label": "Các ví dụ này cần bật chức năng nâng cao.",
         "preset.review-description": "Các mẫu sau sẽ chuẩn bị được nhập vào dữ liệu hiện có, bạn có thể lựa chọn hành động với chúng.",
         "preset.review-table.action.discard.label": "Không dùng",
@@ -491,6 +492,7 @@
         "input.frame.unofficial.label": "Fanmade",
         "input.frame.rebirth": "Rebirth",
         "image-cropper.not-found-info": "Không có ảnh.",
+        "button.far-sight.label": "Kết quả",
         "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
     }
 }

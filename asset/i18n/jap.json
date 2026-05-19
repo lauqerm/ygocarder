@@ -486,12 +486,14 @@
         "image-cropper.button.flip-horizontal.tooltip": "Flip horizontally",
         "image-cropper.button.flip-vertical.tooltip": "Flip vertically",
         "sample.manager.label": "Sample",
+        "install.trigger.label": "Install",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "service.decode.partial.message": "Partial export mode",
         "setting.option.resolution.warning": "May affect performance",
         "setting.option.sliding-type.auto.label": "Auto",
         "setting.option.sliding-type.label": "Preview sliding (Desktop only)",
         "image-cropper.not-found-info": "No image.",
+        "button.far-sight.label": "Result",
         "setting.option.sliding-type.manual.label": "Manual drag"
     }
 }

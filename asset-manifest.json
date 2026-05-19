@@ -1,25 +1,2665 @@
 {
-  "files": {
-    "main.css": "/ygocarder/static/css/main.dba91c41.chunk.css",
-    "main.js": "/ygocarder/static/js/main.301b5669.chunk.js",
-    "main.js.map": "/ygocarder/static/js/main.301b5669.chunk.js.map",
-    "runtime-main.js": "/ygocarder/static/js/runtime-main.0ff562e7.js",
-    "runtime-main.js.map": "/ygocarder/static/js/runtime-main.0ff562e7.js.map",
-    "static/css/2.070f0dca.chunk.css": "/ygocarder/static/css/2.070f0dca.chunk.css",
-    "static/js/2.af21470d.chunk.js": "/ygocarder/static/js/2.af21470d.chunk.js",
-    "static/js/2.af21470d.chunk.js.map": "/ygocarder/static/js/2.af21470d.chunk.js.map",
-    "static/js/3.b0ce6496.chunk.js": "/ygocarder/static/js/3.b0ce6496.chunk.js",
-    "static/js/3.b0ce6496.chunk.js.map": "/ygocarder/static/js/3.b0ce6496.chunk.js.map",
-    "index.html": "/ygocarder/index.html",
-    "static/css/2.070f0dca.chunk.css.map": "/ygocarder/static/css/2.070f0dca.chunk.css.map",
-    "static/css/main.dba91c41.chunk.css.map": "/ygocarder/static/css/main.dba91c41.chunk.css.map",
-    "static/js/2.af21470d.chunk.js.LICENSE.txt": "/ygocarder/static/js/2.af21470d.chunk.js.LICENSE.txt"
-  },
-  "entrypoints": [
-    "static/js/runtime-main.0ff562e7.js",
-    "static/css/2.070f0dca.chunk.css",
-    "static/js/2.af21470d.chunk.js",
-    "static/css/main.dba91c41.chunk.css",
-    "static/js/main.301b5669.chunk.js"
-  ]
+  "version": "7603c8a39ccdae22",
+  "generatedAt": "2026-05-19T18:03:02.129Z",
+  "basePath": "/ygocarder/",
+  "assetCount": 664,
+  "totalBytes": 79973720,
+  "assets": {
+    "/ygocarder/asset/.DS_Store": {
+      "hash": "0196a9f8912641b8",
+      "size": 6148
+    },
+    "/ygocarder/asset/font.css": {
+      "hash": "927e46a66e38bcdf",
+      "size": 2720
+    },
+    "/ygocarder/asset/font/DFHsg3.ttf": {
+      "hash": "891be08f88c2c1a9",
+      "size": 2015200
+    },
+    "/ygocarder/asset/font/DFKakuTaiHiStd-W4.otf": {
+      "hash": "eb759f0e6f408f92",
+      "size": 327456
+    },
+    "/ygocarder/asset/font/FOT-RodinPro-M.ttf": {
+      "hash": "8b39cc674b91ce06",
+      "size": 4327256
+    },
+    "/ygocarder/asset/font/ITC Stone Serif Std Semibold.otf": {
+      "hash": "657d1b4b9242de5d",
+      "size": 30444
+    },
+    "/ygocarder/asset/font/LucidaFax-Italic.ttf": {
+      "hash": "175dd7a3c209644a",
+      "size": 53900
+    },
+    "/ygocarder/asset/font/Matrix Book.ttf": {
+      "hash": "83348be76ede6101",
+      "size": 31240
+    },
+    "/ygocarder/asset/font/Matrix-Bold.otf": {
+      "hash": "5731e19a47133de8",
+      "size": 16928
+    },
+    "/ygocarder/asset/font/MatrixBoldSmallCaps.woff": {
+      "hash": "2f3463642ed6e248",
+      "size": 17896
+    },
+    "/ygocarder/asset/font/MatrixBoldSmallCaps.woff2": {
+      "hash": "0fc956c16f859f11",
+      "size": 13804
+    },
+    "/ygocarder/asset/font/RoGSanSrfStd-Bd.otf": {
+      "hash": "e7c93ff7251c4ccc",
+      "size": 1353880
+    },
+    "/ygocarder/asset/font/SVN-Times New Roman Italic.ttf": {
+      "hash": "0b3f623c059f4a92",
+      "size": 87628
+    },
+    "/ygocarder/asset/font/StoneSerif-Italic.otf": {
+      "hash": "1851f150cae8513c",
+      "size": 32660
+    },
+    "/ygocarder/asset/font/Yu-Gi-Oh Matrix Regular Small Caps 1.ttf": {
+      "hash": "44711814b51b0d28",
+      "size": 15520
+    },
+    "/ygocarder/asset/font/Yu-Gi-Oh! DF Leisho 3.ttf": {
+      "hash": "01a2ce067b2cdc4a",
+      "size": 4602972
+    },
+    "/ygocarder/asset/font/YuGiOhITCStoneSerifBSc.ttf": {
+      "hash": "8a3554dce048cafb",
+      "size": 17368
+    },
+    "/ygocarder/asset/font/YugiohRushDuelNumbersV4-Rg.woff": {
+      "hash": "8ffcf0a33b43d1a4",
+      "size": 2988
+    },
+    "/ygocarder/asset/font/YugiohRushDuelNumbersV4-Rg.woff2": {
+      "hash": "95a9cff32118d757",
+      "size": 2228
+    },
+    "/ygocarder/asset/font/matrix.woff": {
+      "hash": "27025e0ae41bfe14",
+      "size": 12676
+    },
+    "/ygocarder/asset/font/matrix.woff2": {
+      "hash": "27025e0ae41bfe14",
+      "size": 12676
+    },
+    "/ygocarder/asset/font/palatino-linotype-bold-webfont.woff": {
+      "hash": "02289cd9081b064f",
+      "size": 37384
+    },
+    "/ygocarder/asset/font/palatino-linotype-bold-webfont.woff2": {
+      "hash": "8b9a444f630c9d84",
+      "size": 29244
+    },
+    "/ygocarder/asset/font/stone-serif-bold-webfont.woff": {
+      "hash": "b4878a694f175d6a",
+      "size": 23544
+    },
+    "/ygocarder/asset/font/stone-serif-bold-webfont.woff2": {
+      "hash": "8de77842a77eddb6",
+      "size": 18400
+    },
+    "/ygocarder/asset/font/stone-serif-regular-webfont.woff": {
+      "hash": "17b05b8a5ba9c211",
+      "size": 31560
+    },
+    "/ygocarder/asset/font/stone-serif-regular-webfont.woff2": {
+      "hash": "b5ef6c885f06a519",
+      "size": 24764
+    },
+    "/ygocarder/asset/i18n/eng.json": {
+      "hash": "1044ec7086586444",
+      "size": 36470
+    },
+    "/ygocarder/asset/i18n/jap.json": {
+      "hash": "1723f44909e0e1db",
+      "size": 40448
+    },
+    "/ygocarder/asset/i18n/metadata.json": {
+      "hash": "0159f5cce82d32f2",
+      "size": 1074
+    },
+    "/ygocarder/asset/i18n/vie.json": {
+      "hash": "7e4d159bedf538b0",
+      "size": 41672
+    },
+    "/ygocarder/asset/image/.DS_Store": {
+      "hash": "38ae1163ebdf170e",
+      "size": 12292
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-dark.png": {
+      "hash": "4bdad1239b4dd115",
+      "size": 23267
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-divine.png": {
+      "hash": "7b5eedaf7ce0a01f",
+      "size": 26788
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-earth.png": {
+      "hash": "7c6f4db90b9efd66",
+      "size": 22330
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-fire.png": {
+      "hash": "4c4c062451531fbc",
+      "size": 23053
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-light.png": {
+      "hash": "6788544fd2f7bec7",
+      "size": 26572
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-spell.png": {
+      "hash": "0984d5e9e56b5e15",
+      "size": 34426
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-trap.png": {
+      "hash": "b247402af2cbfc12",
+      "size": 24290
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-water.png": {
+      "hash": "42831a2f84754d66",
+      "size": 22987
+    },
+    "/ygocarder/asset/image/attribute/attr-ch-wind.png": {
+      "hash": "6466700c6924ffcc",
+      "size": 27332
+    },
+    "/ygocarder/asset/image/attribute/attr-de-dark.png": {
+      "hash": "d01739ace6997dd4",
+      "size": 25338
+    },
+    "/ygocarder/asset/image/attribute/attr-de-divine.png": {
+      "hash": "5f0a8d0008d70182",
+      "size": 29493
+    },
+    "/ygocarder/asset/image/attribute/attr-de-earth.png": {
+      "hash": "a86bec4933ad9676",
+      "size": 24003
+    },
+    "/ygocarder/asset/image/attribute/attr-de-fire.png": {
+      "hash": "54f8a1ac4c23f6b9",
+      "size": 25202
+    },
+    "/ygocarder/asset/image/attribute/attr-de-light.png": {
+      "hash": "bb7a833137dbf429",
+      "size": 27851
+    },
+    "/ygocarder/asset/image/attribute/attr-de-spell.png": {
+      "hash": "1277cc7dd2e12490",
+      "size": 13431
+    },
+    "/ygocarder/asset/image/attribute/attr-de-trap.png": {
+      "hash": "7bab3c2ffee284ca",
+      "size": 26338
+    },
+    "/ygocarder/asset/image/attribute/attr-de-water.png": {
+      "hash": "c4479ac373d83cd5",
+      "size": 25571
+    },
+    "/ygocarder/asset/image/attribute/attr-de-wind.png": {
+      "hash": "ac904004d1774445",
+      "size": 29639
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-dark.png": {
+      "hash": "0abc5e057fc9d777",
+      "size": 11120
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-divine.png": {
+      "hash": "bd0f8c3ab067492b",
+      "size": 29006
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-earth.png": {
+      "hash": "13e5051afcdfe333",
+      "size": 24395
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-fire.png": {
+      "hash": "4495c1f146b7355c",
+      "size": 24381
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-light.png": {
+      "hash": "a199e28ff0c334fe",
+      "size": 11630
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-spell.png": {
+      "hash": "3398cd949044d264",
+      "size": 35760
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-trap.png": {
+      "hash": "41fccd578174dd1c",
+      "size": 26624
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-water.png": {
+      "hash": "36f16e3f0011626b",
+      "size": 24403
+    },
+    "/ygocarder/asset/image/attribute/attr-fr-wind.png": {
+      "hash": "b941d04775c169e8",
+      "size": 29363
+    },
+    "/ygocarder/asset/image/attribute/attr-it-dark.png": {
+      "hash": "0712105496e67d94",
+      "size": 25383
+    },
+    "/ygocarder/asset/image/attribute/attr-it-divine.png": {
+      "hash": "96aef3d09ddc795c",
+      "size": 29241
+    },
+    "/ygocarder/asset/image/attribute/attr-it-earth.png": {
+      "hash": "f843efc3904eb26d",
+      "size": 24648
+    },
+    "/ygocarder/asset/image/attribute/attr-it-fire.png": {
+      "hash": "7abc622232531012",
+      "size": 25329
+    },
+    "/ygocarder/asset/image/attribute/attr-it-light.png": {
+      "hash": "c20606939acb5c5e",
+      "size": 28191
+    },
+    "/ygocarder/asset/image/attribute/attr-it-spell.png": {
+      "hash": "13915df4ece881ad",
+      "size": 35738
+    },
+    "/ygocarder/asset/image/attribute/attr-it-trap.png": {
+      "hash": "481bd917c12872ab",
+      "size": 26706
+    },
+    "/ygocarder/asset/image/attribute/attr-it-water.png": {
+      "hash": "d624c47b9af736fa",
+      "size": 25813
+    },
+    "/ygocarder/asset/image/attribute/attr-it-wind.png": {
+      "hash": "cfad5c6d7b61b5ee",
+      "size": 29860
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-boss-1.png": {
+      "hash": "435b2b47398fc345",
+      "size": 18519
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-boss-2.png": {
+      "hash": "d3a35e8ae2d8d696",
+      "size": 21087
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-boss-3.png": {
+      "hash": "c6048cf49e83df1b",
+      "size": 21278
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-boss-start.png": {
+      "hash": "b4f89a7319312972",
+      "size": 26928
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-dark.png": {
+      "hash": "57a8938f13a5164a",
+      "size": 31443
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-divine.png": {
+      "hash": "60a4840ac903b29c",
+      "size": 31338
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-earth.png": {
+      "hash": "20eb69d386139ba3",
+      "size": 29775
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-fire.png": {
+      "hash": "a209edbf5297b6ec",
+      "size": 32252
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-laugh.png": {
+      "hash": "77fa91ca6898cf55",
+      "size": 7624
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-light.png": {
+      "hash": "00a7378caf3b55e8",
+      "size": 32034
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-magic.png": {
+      "hash": "c95e9b0ff1c6ac4f",
+      "size": 13513
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-spell.png": {
+      "hash": "9b85456f97d4a951",
+      "size": 36161
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-trap.png": {
+      "hash": "ca100b9f0641d211",
+      "size": 30907
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-water.png": {
+      "hash": "decd88ac62a96153",
+      "size": 30492
+    },
+    "/ygocarder/asset/image/attribute/attr-ocg-wind.png": {
+      "hash": "374b11b5c3b6d40c",
+      "size": 33916
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-dark.png": {
+      "hash": "eebe67946365bc7d",
+      "size": 11935
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-divine.png": {
+      "hash": "bf8a7e95ddad267d",
+      "size": 11377
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-earth.png": {
+      "hash": "2c20de136e81df4d",
+      "size": 12043
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-fire.png": {
+      "hash": "8f497fae3a04981f",
+      "size": 12283
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-light.png": {
+      "hash": "92fe922301a08b23",
+      "size": 11261
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-spell.png": {
+      "hash": "d71e0d7ded5631ce",
+      "size": 14042
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-trap.png": {
+      "hash": "6564d37ee0c30dee",
+      "size": 13144
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-water.png": {
+      "hash": "de851d9e4c1dd5d9",
+      "size": 11619
+    },
+    "/ygocarder/asset/image/attribute/attr-pt-wind.png": {
+      "hash": "664dd2dac45f6d43",
+      "size": 12855
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-dark.png": {
+      "hash": "eb12dc71353d6228",
+      "size": 25473
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-divine.png": {
+      "hash": "76e04969c6339ffd",
+      "size": 29246
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-earth.png": {
+      "hash": "47a305673731c9f7",
+      "size": 24216
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-fire.png": {
+      "hash": "c24a30ba58898ea5",
+      "size": 25073
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-light.png": {
+      "hash": "73a3b57af968e77d",
+      "size": 27715
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-spell.png": {
+      "hash": "881dd00502a63f51",
+      "size": 35807
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-trap.png": {
+      "hash": "6ce48f2f2a8b406a",
+      "size": 27142
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-water.png": {
+      "hash": "88259dfc045cdc09",
+      "size": 25316
+    },
+    "/ygocarder/asset/image/attribute/attr-sp-wind.png": {
+      "hash": "e9862f0cd443925f",
+      "size": 29720
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-boss-1.png": {
+      "hash": "435b2b47398fc345",
+      "size": 18519
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-boss-2.png": {
+      "hash": "d3a35e8ae2d8d696",
+      "size": 21087
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-boss-3.png": {
+      "hash": "c6048cf49e83df1b",
+      "size": 21278
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-boss-start.png": {
+      "hash": "b4f89a7319312972",
+      "size": 26928
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-dark.png": {
+      "hash": "be26da4743867d78",
+      "size": 33684
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-divine.png": {
+      "hash": "98622fdc522c57cc",
+      "size": 31105
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-earth.png": {
+      "hash": "3c3906c634b3be2c",
+      "size": 34422
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-fire.png": {
+      "hash": "fee088122150a5bb",
+      "size": 31663
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-laugh.png": {
+      "hash": "84f3dc110c7b741d",
+      "size": 25474
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-light.png": {
+      "hash": "a035e8c5f7505ec7",
+      "size": 32409
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-magic.png": {
+      "hash": "c95e9b0ff1c6ac4f",
+      "size": 13513
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-spell.png": {
+      "hash": "bac40a8415ded7e1",
+      "size": 36638
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-trap.png": {
+      "hash": "6b0c184d4fe75ae0",
+      "size": 30776
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-water.png": {
+      "hash": "cfb9fe1f04a7d52e",
+      "size": 33601
+    },
+    "/ygocarder/asset/image/attribute/attr-tcg-wind.png": {
+      "hash": "6b5cd8836e48fa19",
+      "size": 34108
+    },
+    "/ygocarder/asset/image/background/background-name-dark-synchro.png": {
+      "hash": "079bf53bb977e786",
+      "size": 50841
+    },
+    "/ygocarder/asset/image/background/background-name-dl-skill.png": {
+      "hash": "08ce49ef0eb299c7",
+      "size": 52929
+    },
+    "/ygocarder/asset/image/background/background-name-effect.png": {
+      "hash": "3062bc417c817df9",
+      "size": 74174
+    },
+    "/ygocarder/asset/image/background/background-name-fusion.png": {
+      "hash": "8b280537d518e91e",
+      "size": 54098
+    },
+    "/ygocarder/asset/image/background/background-name-hamon.png": {
+      "hash": "0696917012286b8b",
+      "size": 69759
+    },
+    "/ygocarder/asset/image/background/background-name-lg-dragon.png": {
+      "hash": "4f86ff092cf597fd",
+      "size": 57492
+    },
+    "/ygocarder/asset/image/background/background-name-link.png": {
+      "hash": "df5608ce02750e37",
+      "size": 72433
+    },
+    "/ygocarder/asset/image/background/background-name-normal.png": {
+      "hash": "36c9159821f98b6e",
+      "size": 55821
+    },
+    "/ygocarder/asset/image/background/background-name-obelisk.png": {
+      "hash": "345c766d8259e435",
+      "size": 55208
+    },
+    "/ygocarder/asset/image/background/background-name-osiris.png": {
+      "hash": "b1a1de562aa45587",
+      "size": 55576
+    },
+    "/ygocarder/asset/image/background/background-name-ra.png": {
+      "hash": "d7cfd528ea3b79fd",
+      "size": 60379
+    },
+    "/ygocarder/asset/image/background/background-name-raviel.png": {
+      "hash": "5dcb66d85a5483af",
+      "size": 56006
+    },
+    "/ygocarder/asset/image/background/background-name-rebirth.png": {
+      "hash": "77888f0fa5ba8e9f",
+      "size": 76179
+    },
+    "/ygocarder/asset/image/background/background-name-ritual.png": {
+      "hash": "ae33d597981dad8c",
+      "size": 53080
+    },
+    "/ygocarder/asset/image/background/background-name-speed-skill.png": {
+      "hash": "c39cd331f92659ee",
+      "size": 60138
+    },
+    "/ygocarder/asset/image/background/background-name-spell.png": {
+      "hash": "0ab9dcaf90dea173",
+      "size": 84695
+    },
+    "/ygocarder/asset/image/background/background-name-synchro.png": {
+      "hash": "b71c4024b67bd53c",
+      "size": 33578
+    },
+    "/ygocarder/asset/image/background/background-name-token.png": {
+      "hash": "cc9faeba2d4d271e",
+      "size": 40227
+    },
+    "/ygocarder/asset/image/background/background-name-trap.png": {
+      "hash": "450d6826ee2f3ed4",
+      "size": 60449
+    },
+    "/ygocarder/asset/image/background/background-name-uria.png": {
+      "hash": "30542ad25dc9e8c6",
+      "size": 50464
+    },
+    "/ygocarder/asset/image/background/background-name-xyz.png": {
+      "hash": "2859c3a180ecd36f",
+      "size": 51284
+    },
+    "/ygocarder/asset/image/background/background-name-zarc.png": {
+      "hash": "e349723ccbf32f8e",
+      "size": 64263
+    },
+    "/ygocarder/asset/image/background/background-pendulum-dark-synchro.png": {
+      "hash": "0184ab17710c56ab",
+      "size": 99943
+    },
+    "/ygocarder/asset/image/background/background-pendulum-dl-skill.png": {
+      "hash": "f3891d8a7df20117",
+      "size": 80241
+    },
+    "/ygocarder/asset/image/background/background-pendulum-effect.png": {
+      "hash": "8d37febc07b01323",
+      "size": 94568
+    },
+    "/ygocarder/asset/image/background/background-pendulum-fusion.png": {
+      "hash": "f6aa0b26b3c5e0c4",
+      "size": 69755
+    },
+    "/ygocarder/asset/image/background/background-pendulum-hamon.png": {
+      "hash": "975f0ab7c5a5a21d",
+      "size": 132543
+    },
+    "/ygocarder/asset/image/background/background-pendulum-large-zarc.png": {
+      "hash": "f9ad76eadae89097",
+      "size": 284069
+    },
+    "/ygocarder/asset/image/background/background-pendulum-lg-dragon.png": {
+      "hash": "f38cc90645a0c97e",
+      "size": 82199
+    },
+    "/ygocarder/asset/image/background/background-pendulum-link.png": {
+      "hash": "ca9d3dd35a79201b",
+      "size": 59278
+    },
+    "/ygocarder/asset/image/background/background-pendulum-normal.png": {
+      "hash": "aaf5e3b478710aeb",
+      "size": 58569
+    },
+    "/ygocarder/asset/image/background/background-pendulum-obelisk.png": {
+      "hash": "41c632b6be2ed61d",
+      "size": 79354
+    },
+    "/ygocarder/asset/image/background/background-pendulum-osiris.png": {
+      "hash": "2759125fd43c69e8",
+      "size": 75329
+    },
+    "/ygocarder/asset/image/background/background-pendulum-ra.png": {
+      "hash": "c2e7237a04561a43",
+      "size": 82911
+    },
+    "/ygocarder/asset/image/background/background-pendulum-raviel.png": {
+      "hash": "a6e411c81c038956",
+      "size": 95098
+    },
+    "/ygocarder/asset/image/background/background-pendulum-rebirth.png": {
+      "hash": "31215b8eeb2c3b00",
+      "size": 103788
+    },
+    "/ygocarder/asset/image/background/background-pendulum-ritual.png": {
+      "hash": "a6b030de2a44a0fc",
+      "size": 62289
+    },
+    "/ygocarder/asset/image/background/background-pendulum-speed-skill.png": {
+      "hash": "f0a5080ba8c16b13",
+      "size": 98461
+    },
+    "/ygocarder/asset/image/background/background-pendulum-spell.png": {
+      "hash": "b86584564d832349",
+      "size": 90323
+    },
+    "/ygocarder/asset/image/background/background-pendulum-synchro.png": {
+      "hash": "fbe1647eb8a7920f",
+      "size": 39753
+    },
+    "/ygocarder/asset/image/background/background-pendulum-token.png": {
+      "hash": "f4fccfd19f72d613",
+      "size": 62634
+    },
+    "/ygocarder/asset/image/background/background-pendulum-trap.png": {
+      "hash": "d58a44e5e136f3e0",
+      "size": 58848
+    },
+    "/ygocarder/asset/image/background/background-pendulum-uria.png": {
+      "hash": "4bbeb3371726894a",
+      "size": 98050
+    },
+    "/ygocarder/asset/image/background/background-pendulum-xyz.png": {
+      "hash": "34ab84a725b36ada",
+      "size": 73834
+    },
+    "/ygocarder/asset/image/background/background-pendulum-zarc.png": {
+      "hash": "0ea95332af66742a",
+      "size": 109839
+    },
+    "/ygocarder/asset/image/background/background-text-dark-synchro.png": {
+      "hash": "93afca02945e13d3",
+      "size": 137633
+    },
+    "/ygocarder/asset/image/background/background-text-dl-skill.png": {
+      "hash": "ecaa8c2e49946b4f",
+      "size": 108309
+    },
+    "/ygocarder/asset/image/background/background-text-effect.png": {
+      "hash": "204482a41f54a48b",
+      "size": 150824
+    },
+    "/ygocarder/asset/image/background/background-text-fusion.png": {
+      "hash": "2bc9878ed9ff35cc",
+      "size": 115201
+    },
+    "/ygocarder/asset/image/background/background-text-hamon.png": {
+      "hash": "2e3de7f7b8c97e26",
+      "size": 187033
+    },
+    "/ygocarder/asset/image/background/background-text-lg-dragon.png": {
+      "hash": "ab11b07760e8e8c3",
+      "size": 110736
+    },
+    "/ygocarder/asset/image/background/background-text-link.png": {
+      "hash": "cd9776c9167f2ebe",
+      "size": 94782
+    },
+    "/ygocarder/asset/image/background/background-text-normal.png": {
+      "hash": "0e2acce7ead80598",
+      "size": 96079
+    },
+    "/ygocarder/asset/image/background/background-text-obelisk.png": {
+      "hash": "c89ae3a4ccc5750f",
+      "size": 107823
+    },
+    "/ygocarder/asset/image/background/background-text-osiris.png": {
+      "hash": "d01fcf26ac350b29",
+      "size": 100924
+    },
+    "/ygocarder/asset/image/background/background-text-ra.png": {
+      "hash": "8e1489aa0b1b1815",
+      "size": 111807
+    },
+    "/ygocarder/asset/image/background/background-text-raviel.png": {
+      "hash": "a0b2e69e471d5c49",
+      "size": 129055
+    },
+    "/ygocarder/asset/image/background/background-text-rebirth.png": {
+      "hash": "8a4c0e19c065c35f",
+      "size": 160340
+    },
+    "/ygocarder/asset/image/background/background-text-ritual.png": {
+      "hash": "cc7ed169a7a21af1",
+      "size": 100796
+    },
+    "/ygocarder/asset/image/background/background-text-speed-skill.png": {
+      "hash": "add80fcc59edb1c7",
+      "size": 139293
+    },
+    "/ygocarder/asset/image/background/background-text-spell.png": {
+      "hash": "64e9cdf2fb8bf25d",
+      "size": 141127
+    },
+    "/ygocarder/asset/image/background/background-text-synchro.png": {
+      "hash": "ff80c88218f68a47",
+      "size": 64531
+    },
+    "/ygocarder/asset/image/background/background-text-token.png": {
+      "hash": "2937cff5bbf55004",
+      "size": 100500
+    },
+    "/ygocarder/asset/image/background/background-text-trap.png": {
+      "hash": "3ad60a627fd14300",
+      "size": 93840
+    },
+    "/ygocarder/asset/image/background/background-text-uria.png": {
+      "hash": "e1b266e229443fa1",
+      "size": 134556
+    },
+    "/ygocarder/asset/image/background/background-text-xyz.png": {
+      "hash": "bb84b2ed5e4177aa",
+      "size": 117480
+    },
+    "/ygocarder/asset/image/background/background-text-zarc.png": {
+      "hash": "c65e7c4ebccd0d91",
+      "size": 129774
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type1.png": {
+      "hash": "4dbd7916271fe48d",
+      "size": 52868
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type2.png": {
+      "hash": "a20091bdf265e3e9",
+      "size": 5926
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type3.png": {
+      "hash": "9581b08e37a7757b",
+      "size": 86661
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type4.png": {
+      "hash": "1a447042b389a9a3",
+      "size": 55295
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type5.png": {
+      "hash": "ba7ac00a7411ae1f",
+      "size": 94285
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type6.png": {
+      "hash": "8765306715ff404c",
+      "size": 94376
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type7.png": {
+      "hash": "175d5c9c384d8be9",
+      "size": 11247
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type8.png": {
+      "hash": "729ba1c05b926e03",
+      "size": 49586
+    },
+    "/ygocarder/asset/image/finish-name/finish-name-type9.png": {
+      "hash": "8dfe52633a19fb81",
+      "size": 10047
+    },
+    "/ygocarder/asset/image/finish/art-finish-type1-pendulum-medium.png": {
+      "hash": "eb5ef4a9c032c8d9",
+      "size": 227888
+    },
+    "/ygocarder/asset/image/finish/art-finish-type1-pendulum-small.png": {
+      "hash": "53f260cce3c2a585",
+      "size": 225834
+    },
+    "/ygocarder/asset/image/finish/art-finish-type1.png": {
+      "hash": "8ff641be1e1df7e1",
+      "size": 219348
+    },
+    "/ygocarder/asset/image/finish/art-finish-type2-pendulum-medium.png": {
+      "hash": "d874388b5155f7db",
+      "size": 549762
+    },
+    "/ygocarder/asset/image/finish/art-finish-type2.png": {
+      "hash": "ab6ce692aaa5a8f1",
+      "size": 604434
+    },
+    "/ygocarder/asset/image/finish/art-finish-type3-pendulum-medium.png": {
+      "hash": "7a78cda42bd4ae22",
+      "size": 720509
+    },
+    "/ygocarder/asset/image/finish/art-finish-type3.png": {
+      "hash": "2a2b8d1727002f30",
+      "size": 796429
+    },
+    "/ygocarder/asset/image/finish/art-finish-type4-pendulum-medium.png": {
+      "hash": "6d844aabd193ecdd",
+      "size": 302252
+    },
+    "/ygocarder/asset/image/finish/art-finish-type4.png": {
+      "hash": "367b008867e738ec",
+      "size": 351757
+    },
+    "/ygocarder/asset/image/finish/art-finish-type5-pendulum-medium.png": {
+      "hash": "15771cbbe13e824e",
+      "size": 339294
+    },
+    "/ygocarder/asset/image/finish/art-finish-type5.png": {
+      "hash": "8c8538e2195c02a0",
+      "size": 392279
+    },
+    "/ygocarder/asset/image/finish/art-finish-type6-pendulum-medium.png": {
+      "hash": "6db1975b56b4a272",
+      "size": 279428
+    },
+    "/ygocarder/asset/image/finish/art-finish-type6.png": {
+      "hash": "cc61d05d4ab467f4",
+      "size": 340354
+    },
+    "/ygocarder/asset/image/finish/art-finish-type7-pendulum-medium.png": {
+      "hash": "b562ff2c538e037f",
+      "size": 382581
+    },
+    "/ygocarder/asset/image/finish/art-finish-type7-pendulum-small.png": {
+      "hash": "77a9c6d6377c7d41",
+      "size": 382960
+    },
+    "/ygocarder/asset/image/finish/art-finish-type7.png": {
+      "hash": "3d1d9c3fa723820c",
+      "size": 364044
+    },
+    "/ygocarder/asset/image/finish/art-finish-type8-pendulum-medium.png": {
+      "hash": "01a8a908e90edc88",
+      "size": 390792
+    },
+    "/ygocarder/asset/image/finish/art-finish-type8.png": {
+      "hash": "4f07adb881e70fad",
+      "size": 466850
+    },
+    "/ygocarder/asset/image/finish/art-finish-type9-pendulum-medium.png": {
+      "hash": "e3a550ac32da6923",
+      "size": 1335588
+    },
+    "/ygocarder/asset/image/finish/art-finish-type9.png": {
+      "hash": "b760af8e8f49bbb1",
+      "size": 1407922
+    },
+    "/ygocarder/asset/image/finish/finish-type1-art-border-pendulum-large.png": {
+      "hash": "bdfe8be4d1b627cf",
+      "size": 21915
+    },
+    "/ygocarder/asset/image/finish/finish-type1-art-border-pendulum-medium.png": {
+      "hash": "0d4f2c0775e426eb",
+      "size": 22805
+    },
+    "/ygocarder/asset/image/finish/finish-type1-art-border-pendulum-small.png": {
+      "hash": "bdfe8be4d1b627cf",
+      "size": 21915
+    },
+    "/ygocarder/asset/image/finish/finish-type1-art-border.png": {
+      "hash": "404565a619fb5b49",
+      "size": 17767
+    },
+    "/ygocarder/asset/image/finish/finish-type1-card-border.png": {
+      "hash": "1b41c05e11447ff0",
+      "size": 77864
+    },
+    "/ygocarder/asset/image/finish/finish-type10-total-overlay.png": {
+      "hash": "a49316ff5bf8cd0c",
+      "size": 123293
+    },
+    "/ygocarder/asset/image/finish/finish-type11-total-overlay.png": {
+      "hash": "40cd6773cd1783ad",
+      "size": 2038707
+    },
+    "/ygocarder/asset/image/finish/finish-type12-total-overlay.png": {
+      "hash": "cfa764b2bf95f2a9",
+      "size": 281130
+    },
+    "/ygocarder/asset/image/finish/finish-type13-total-overlay.png": {
+      "hash": "071a6d7bcdd61923",
+      "size": 1952565
+    },
+    "/ygocarder/asset/image/finish/finish-type2-card-border.png": {
+      "hash": "181fab70ac1ea519",
+      "size": 11186
+    },
+    "/ygocarder/asset/image/finish/finish-type2-total-overlay.png": {
+      "hash": "aa91ee82e56539da",
+      "size": 45211
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-border-pendulum-large.png": {
+      "hash": "e1698cf828410e0a",
+      "size": 6621
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-border-pendulum-medium.png": {
+      "hash": "033489eab783fa28",
+      "size": 6461
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-border-pendulum-small.png": {
+      "hash": "98219eb001b4c245",
+      "size": 11523
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-border.png": {
+      "hash": "bf3bbfc1b982688c",
+      "size": 8057
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-overlay-pendulum-medium.png": {
+      "hash": "d32fccd027a794f8",
+      "size": 31655
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-overlay-pendulum-small.png": {
+      "hash": "3f0790681d955955",
+      "size": 33006
+    },
+    "/ygocarder/asset/image/finish/finish-type3-art-overlay.png": {
+      "hash": "9815e4b0bde560bd",
+      "size": 32407
+    },
+    "/ygocarder/asset/image/finish/finish-type3-attribute.png": {
+      "hash": "dffadf4d2e9c5f92",
+      "size": 7281
+    },
+    "/ygocarder/asset/image/finish/finish-type3-border-pendulum-large.png": {
+      "hash": "f107b3181e514007",
+      "size": 22718
+    },
+    "/ygocarder/asset/image/finish/finish-type3-border-pendulum-medium.png": {
+      "hash": "f56a1c2408e3a79f",
+      "size": 25298
+    },
+    "/ygocarder/asset/image/finish/finish-type3-border-pendulum-small.png": {
+      "hash": "1903ff891ec79e98",
+      "size": 22493
+    },
+    "/ygocarder/asset/image/finish/finish-type3-frame.png": {
+      "hash": "bdf018468bb88073",
+      "size": 17365
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-border-pendulum-large.png": {
+      "hash": "202c000ccc3c5028",
+      "size": 20179
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-border-pendulum-medium.png": {
+      "hash": "b07892abe8351487",
+      "size": 20187
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-border-pendulum-small.png": {
+      "hash": "a64327d1db8a3592",
+      "size": 21111
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-border.png": {
+      "hash": "4cd8c475a9db7a6d",
+      "size": 36388
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-overlay-pendulum-medium.png": {
+      "hash": "3f8d78923364b959",
+      "size": 217043
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-overlay-pendulum-small.png": {
+      "hash": "13a8e379dde302aa",
+      "size": 233085
+    },
+    "/ygocarder/asset/image/finish/finish-type4-art-overlay.png": {
+      "hash": "4823ce20b2c76121",
+      "size": 224402
+    },
+    "/ygocarder/asset/image/finish/finish-type4-attribute.png": {
+      "hash": "3f6758514ea43d65",
+      "size": 14142
+    },
+    "/ygocarder/asset/image/finish/finish-type4-border-pendulum-large-scaleless.png": {
+      "hash": "0e3f77e43a332907",
+      "size": 32868
+    },
+    "/ygocarder/asset/image/finish/finish-type4-border-pendulum-large.png": {
+      "hash": "c79416c0fec64402",
+      "size": 40885
+    },
+    "/ygocarder/asset/image/finish/finish-type4-border-pendulum-medium-scaleless.png": {
+      "hash": "be17ff284c5a65ff",
+      "size": 33491
+    },
+    "/ygocarder/asset/image/finish/finish-type4-border-pendulum-medium.png": {
+      "hash": "a822bbc63bf1d4bd",
+      "size": 40715
+    },
+    "/ygocarder/asset/image/finish/finish-type4-border-pendulum-small-scaleless.png": {
+      "hash": "d6ba328a8803f412",
+      "size": 32467
+    },
+    "/ygocarder/asset/image/finish/finish-type4-border-pendulum-small.png": {
+      "hash": "49158f789509b9cd",
+      "size": 39078
+    },
+    "/ygocarder/asset/image/finish/finish-type4-card-border.png": {
+      "hash": "2a030c9595d22c42",
+      "size": 95076
+    },
+    "/ygocarder/asset/image/finish/finish-type4-frame.png": {
+      "hash": "7b004ea7398e6af2",
+      "size": 106907
+    },
+    "/ygocarder/asset/image/finish/finish-type4-overlay.png": {
+      "hash": "e6a930f0664da282",
+      "size": 517255
+    },
+    "/ygocarder/asset/image/finish/finish-type4-star.png": {
+      "hash": "76bb8471475cb184",
+      "size": 11768
+    },
+    "/ygocarder/asset/image/finish/finish-type5-frame-pendulum-medium.png": {
+      "hash": "39d6821a2ae423ff",
+      "size": 142319
+    },
+    "/ygocarder/asset/image/finish/finish-type5-frame.png": {
+      "hash": "d5f9a100d95a16c8",
+      "size": 163630
+    },
+    "/ygocarder/asset/image/finish/finish-type5-unart-overlay-pendulum-medium.png": {
+      "hash": "0a0428ce328706c6",
+      "size": 79547
+    },
+    "/ygocarder/asset/image/finish/finish-type5-unart-overlay.png": {
+      "hash": "b4ce0ce0e5694429",
+      "size": 89600
+    },
+    "/ygocarder/asset/image/finish/finish-type6-total-overlay.png": {
+      "hash": "a46f7ca57741bded",
+      "size": 462609
+    },
+    "/ygocarder/asset/image/finish/finish-type7-total-overlay.png": {
+      "hash": "c87cef006cdab7ae",
+      "size": 1262004
+    },
+    "/ygocarder/asset/image/finish/finish-type8-art-border-pendulum-large.png": {
+      "hash": "b5c94e07c7832f21",
+      "size": 37236
+    },
+    "/ygocarder/asset/image/finish/finish-type8-art-border-pendulum-medium.png": {
+      "hash": "b5c94e07c7832f21",
+      "size": 37236
+    },
+    "/ygocarder/asset/image/finish/finish-type8-art-border-pendulum-small.png": {
+      "hash": "4c6c8988e192a2db",
+      "size": 31198
+    },
+    "/ygocarder/asset/image/finish/finish-type8-art-border.png": {
+      "hash": "335c30326b69bc9d",
+      "size": 54228
+    },
+    "/ygocarder/asset/image/finish/finish-type8-border-pendulum-large-scaleless.png": {
+      "hash": "841eda5db226313b",
+      "size": 37770
+    },
+    "/ygocarder/asset/image/finish/finish-type8-border-pendulum-large.png": {
+      "hash": "68124c4a984af098",
+      "size": 49500
+    },
+    "/ygocarder/asset/image/finish/finish-type8-border-pendulum-medium-scaleless.png": {
+      "hash": "e25fa7f13049ef72",
+      "size": 37295
+    },
+    "/ygocarder/asset/image/finish/finish-type8-border-pendulum-medium.png": {
+      "hash": "1357cc4eaa7db298",
+      "size": 46111
+    },
+    "/ygocarder/asset/image/finish/finish-type8-border-pendulum-small-scaleless.png": {
+      "hash": "cc2521a10ea90d67",
+      "size": 35795
+    },
+    "/ygocarder/asset/image/finish/finish-type8-border-pendulum-small.png": {
+      "hash": "5f8b676cbe1bf307",
+      "size": 45303
+    },
+    "/ygocarder/asset/image/finish/finish-type8-card-border.png": {
+      "hash": "2e6c8662193f7be5",
+      "size": 108823
+    },
+    "/ygocarder/asset/image/finish/finish-type8-frame-background-pendulum.png": {
+      "hash": "d4ff113707e20d6d",
+      "size": 119355
+    },
+    "/ygocarder/asset/image/finish/finish-type8-frame-background.png": {
+      "hash": "c5f5dcf14e7a4e94",
+      "size": 254601
+    },
+    "/ygocarder/asset/image/finish/finish-type8-frame.png": {
+      "hash": "b48ea37044ed0f07",
+      "size": 18472
+    },
+    "/ygocarder/asset/image/finish/finish-type8-name.png": {
+      "hash": "5585f491b82c82a2",
+      "size": 55126
+    },
+    "/ygocarder/asset/image/finish/finish-type8-star.png": {
+      "hash": "b45ae7f090892e68",
+      "size": 16050
+    },
+    "/ygocarder/asset/image/finish/finish-type9-total-overlay.png": {
+      "hash": "72cd3826c03add5f",
+      "size": 731306
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type1.png": {
+      "hash": "2cc48dd45252b33d",
+      "size": 167269
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type2.png": {
+      "hash": "fafd758ded497a8c",
+      "size": 213951
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type3.png": {
+      "hash": "5e397141da0066cd",
+      "size": 271167
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type4.png": {
+      "hash": "1d5a6d02fa44a37c",
+      "size": 138657
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type5.png": {
+      "hash": "46b3f06c08949a7e",
+      "size": 130952
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type6.png": {
+      "hash": "484163730664fe7a",
+      "size": 108955
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type7.png": {
+      "hash": "2cc48dd45252b33d",
+      "size": 167269
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type8.png": {
+      "hash": "a9657194ccb254de",
+      "size": 147312
+    },
+    "/ygocarder/asset/image/finish/finish-typeart-type9.png": {
+      "hash": "22626c3cf8f0ae82",
+      "size": 514538
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-base-artless-scaleless.png": {
+      "hash": "8e085ff27e669218",
+      "size": 64869
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-base-artless.png": {
+      "hash": "56926ed9d4309856",
+      "size": 70593
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-base.png": {
+      "hash": "1cb43e0104f5ab32",
+      "size": 43190
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-gold-artless-scaleless.png": {
+      "hash": "dd02acf081508fd2",
+      "size": 59417
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-gold-artless.png": {
+      "hash": "4f5d1d8632b970b5",
+      "size": 65913
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-gold.png": {
+      "hash": "383970484483fb53",
+      "size": 43044
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-normal-artless-scaleless.png": {
+      "hash": "db22a99ac4a8d3f3",
+      "size": 54922
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-normal-artless.png": {
+      "hash": "a7aab1019e95bb32",
+      "size": 60538
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-normal.png": {
+      "hash": "fe4427bcef7522be",
+      "size": 36944
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-platinum-artless-scaleless.png": {
+      "hash": "21536e27c25b3ecd",
+      "size": 61721
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-platinum-artless.png": {
+      "hash": "97228921e902fce6",
+      "size": 67818
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-large-platinum.png": {
+      "hash": "afb6ef0d3dc2d61b",
+      "size": 43867
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-base-artless-scaleless.png": {
+      "hash": "6885d66555bf4da8",
+      "size": 65507
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-base-artless.png": {
+      "hash": "631763b1315d0ab4",
+      "size": 63390
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-base.png": {
+      "hash": "a9b836bd47e0ea56",
+      "size": 43189
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-gold-artless-scaleless.png": {
+      "hash": "17f77ece24eed2d1",
+      "size": 58729
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-gold-artless.png": {
+      "hash": "2249705bfaf5c02e",
+      "size": 64273
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-gold.png": {
+      "hash": "58945ea48554455f",
+      "size": 43045
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-normal-artless-scaleless.png": {
+      "hash": "1bdc8834d1dcc6aa",
+      "size": 56034
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-normal-artless.png": {
+      "hash": "c80db847801d315b",
+      "size": 60363
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-normal.png": {
+      "hash": "59703555b756e607",
+      "size": 36944
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-platinum-artless-scaleless.png": {
+      "hash": "95221e98d8034456",
+      "size": 61272
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-platinum-artless.png": {
+      "hash": "e003df0dca53e5fc",
+      "size": 66388
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-medium-platinum.png": {
+      "hash": "7fe99ef1141c320c",
+      "size": 43778
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-base-artless-scaleless.png": {
+      "hash": "1f9f6283d6a0f28c",
+      "size": 56971
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-base-artless.png": {
+      "hash": "48dc765b961125a9",
+      "size": 60563
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-base.png": {
+      "hash": "a10f54022b07300d",
+      "size": 45071
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-gold-artless-scaleless.png": {
+      "hash": "737aebd1a6302293",
+      "size": 50446
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-gold-artless.png": {
+      "hash": "26daad6c950756bb",
+      "size": 54541
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-gold.png": {
+      "hash": "12eeabc773ba5115",
+      "size": 44786
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-normal-artless-scaleless.png": {
+      "hash": "ce0e6673b8df363a",
+      "size": 54181
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-normal-artless.png": {
+      "hash": "b8e12aed7bbee27c",
+      "size": 57493
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-normal.png": {
+      "hash": "0b646688d5badd1b",
+      "size": 38945
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-platinum-artless-scaleless.png": {
+      "hash": "61d0748c09dc432b",
+      "size": 52801
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-platinum-artless.png": {
+      "hash": "f79d86e4317a1d5c",
+      "size": 56867
+    },
+    "/ygocarder/asset/image/frame-pendulum/border-pendulum-small-platinum.png": {
+      "hash": "61cb9702a1a51da2",
+      "size": 45580
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-dark-synchro.png": {
+      "hash": "0dfa3584857c2329",
+      "size": 182945
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-dl-skill.png": {
+      "hash": "72ebc594b4b6b906",
+      "size": 203167
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-effect.png": {
+      "hash": "9a794ef55c281531",
+      "size": 238775
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-fusion.png": {
+      "hash": "c28dda51ceffaa13",
+      "size": 206025
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-hamon.png": {
+      "hash": "714649c0c2634c83",
+      "size": 206018
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-lg-dragon.png": {
+      "hash": "cc84035fe3fda853",
+      "size": 211684
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-link.png": {
+      "hash": "5c033f9ea3b9fdf8",
+      "size": 239331
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-normal.png": {
+      "hash": "5344762b8815e8eb",
+      "size": 209104
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-obelisk.png": {
+      "hash": "a82ecee09bd949d0",
+      "size": 205498
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-osiris.png": {
+      "hash": "819396d7ba8f2fad",
+      "size": 199708
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-ra.png": {
+      "hash": "b389b9699ad84aa4",
+      "size": 210138
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-raviel.png": {
+      "hash": "5702430e2db689a3",
+      "size": 192722
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-rebirth.png": {
+      "hash": "37c8f800627a8d28",
+      "size": 221242
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-ritual.png": {
+      "hash": "b8e3a421906c385e",
+      "size": 207549
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-speed-skill.png": {
+      "hash": "d8d459eaa6d854ab",
+      "size": 195760
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-spell.png": {
+      "hash": "ebefaeaff2c72fdd",
+      "size": 266285
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-synchro.png": {
+      "hash": "ef165db7b8e0b5a3",
+      "size": 135820
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-token.png": {
+      "hash": "85f42754a5416fab",
+      "size": 160180
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-trap.png": {
+      "hash": "610c3ac79ebbcfea",
+      "size": 219192
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-uria.png": {
+      "hash": "92f477d66a37841b",
+      "size": 197975
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-xyz.png": {
+      "hash": "6f70d7afc9a54e85",
+      "size": 232355
+    },
+    "/ygocarder/asset/image/frame-pendulum/frame-pendulum-zarc.png": {
+      "hash": "7022636b3ce342e2",
+      "size": 218645
+    },
+    "/ygocarder/asset/image/frame-pendulum/pendulum-scale-large.png": {
+      "hash": "4c2b5e4b8cb66b68",
+      "size": 14050
+    },
+    "/ygocarder/asset/image/frame-pendulum/pendulum-scale-medium.png": {
+      "hash": "3fccea26fc4013b7",
+      "size": 13637
+    },
+    "/ygocarder/asset/image/frame-pendulum/pendulum-scale-small.png": {
+      "hash": "ba227d90367ee148",
+      "size": 13942
+    },
+    "/ygocarder/asset/image/frame/art-border-base.png": {
+      "hash": "ba659d3658e5cbfb",
+      "size": 44749
+    },
+    "/ygocarder/asset/image/frame/art-border-gold.png": {
+      "hash": "311d8cbf1e6bd691",
+      "size": 43085
+    },
+    "/ygocarder/asset/image/frame/art-border-normal.png": {
+      "hash": "e696164a4e0d48a2",
+      "size": 34065
+    },
+    "/ygocarder/asset/image/frame/art-border-platinum.png": {
+      "hash": "ed2e1d6a1b81797a",
+      "size": 42654
+    },
+    "/ygocarder/asset/image/frame/art-border-special.png": {
+      "hash": "c700d97647e560f2",
+      "size": 45097
+    },
+    "/ygocarder/asset/image/frame/art-border-speed-skill.png": {
+      "hash": "e919f7add0a585f7",
+      "size": 59434
+    },
+    "/ygocarder/asset/image/frame/art-border-xyz.png": {
+      "hash": "7d7aedf5bbdecbe1",
+      "size": 44228
+    },
+    "/ygocarder/asset/image/frame/card-border-gold.png": {
+      "hash": "23446a489fea5f1b",
+      "size": 278110
+    },
+    "/ygocarder/asset/image/frame/card-border-normal.png": {
+      "hash": "f41c55b826950b0e",
+      "size": 202205
+    },
+    "/ygocarder/asset/image/frame/card-border-platinum.png": {
+      "hash": "0eee0bc7398f284e",
+      "size": 100415
+    },
+    "/ygocarder/asset/image/frame/card-border-rainbow.png": {
+      "hash": "14c60f8949041014",
+      "size": 96500
+    },
+    "/ygocarder/asset/image/frame/effect-border-base.png": {
+      "hash": "3b44cb10ac026603",
+      "size": 36634
+    },
+    "/ygocarder/asset/image/frame/effect-border-gold.png": {
+      "hash": "ce4769c21f91fc8d",
+      "size": 29682
+    },
+    "/ygocarder/asset/image/frame/effect-border-normal.png": {
+      "hash": "2b7f0e2cffb4947a",
+      "size": 33891
+    },
+    "/ygocarder/asset/image/frame/effect-border-platinum.png": {
+      "hash": "1f9234e91277c6e0",
+      "size": 34819
+    },
+    "/ygocarder/asset/image/frame/effect-border-speed-skill.png": {
+      "hash": "c41eb0c61cfab2dc",
+      "size": 28309
+    },
+    "/ygocarder/asset/image/frame/frame-border-normal.png": {
+      "hash": "2708f70ee59a4dd3",
+      "size": 6507
+    },
+    "/ygocarder/asset/image/frame/frame-border-pendulum.png": {
+      "hash": "56767bacf33c3b9f",
+      "size": 7228
+    },
+    "/ygocarder/asset/image/frame/frame-border-speed-skill.png": {
+      "hash": "abdbebde6e63979f",
+      "size": 6533
+    },
+    "/ygocarder/asset/image/frame/frame-border-xyz.png": {
+      "hash": "6b44065df248c178",
+      "size": 6497
+    },
+    "/ygocarder/asset/image/frame/frame-dark-synchro.png": {
+      "hash": "b92965b01ade5e89",
+      "size": 283933
+    },
+    "/ygocarder/asset/image/frame/frame-dl-skill.png": {
+      "hash": "6b8da57417923843",
+      "size": 316303
+    },
+    "/ygocarder/asset/image/frame/frame-effect.png": {
+      "hash": "00ff29b1728e022c",
+      "size": 376366
+    },
+    "/ygocarder/asset/image/frame/frame-fusion.png": {
+      "hash": "98be7e36e79a3050",
+      "size": 316420
+    },
+    "/ygocarder/asset/image/frame/frame-hamon.png": {
+      "hash": "065250b137af365e",
+      "size": 330999
+    },
+    "/ygocarder/asset/image/frame/frame-lg-dragon.png": {
+      "hash": "4efa5afdb4f11e9b",
+      "size": 336193
+    },
+    "/ygocarder/asset/image/frame/frame-link.png": {
+      "hash": "fdd6d8ebe74ea9b6",
+      "size": 401021
+    },
+    "/ygocarder/asset/image/frame/frame-normal.png": {
+      "hash": "eeed8ae1318aefc3",
+      "size": 324636
+    },
+    "/ygocarder/asset/image/frame/frame-obelisk.png": {
+      "hash": "9bcfdd7b966fff3e",
+      "size": 323938
+    },
+    "/ygocarder/asset/image/frame/frame-osiris.png": {
+      "hash": "dc7648499fadd78c",
+      "size": 310004
+    },
+    "/ygocarder/asset/image/frame/frame-ra.png": {
+      "hash": "d66d755dc216fa90",
+      "size": 333840
+    },
+    "/ygocarder/asset/image/frame/frame-raviel.png": {
+      "hash": "6977562b6a4128e4",
+      "size": 306573
+    },
+    "/ygocarder/asset/image/frame/frame-rebirth.png": {
+      "hash": "7987722d107d5b63",
+      "size": 362279
+    },
+    "/ygocarder/asset/image/frame/frame-ritual.png": {
+      "hash": "94e9a562fc761781",
+      "size": 316696
+    },
+    "/ygocarder/asset/image/frame/frame-speed-skill.png": {
+      "hash": "05e887cb269f5b72",
+      "size": 371711
+    },
+    "/ygocarder/asset/image/frame/frame-spell.png": {
+      "hash": "eac69f463659e508",
+      "size": 437869
+    },
+    "/ygocarder/asset/image/frame/frame-stat-border.png": {
+      "hash": "3c7386961c50dc63",
+      "size": 310
+    },
+    "/ygocarder/asset/image/frame/frame-synchro.png": {
+      "hash": "bd89d1952ecdbfd6",
+      "size": 181268
+    },
+    "/ygocarder/asset/image/frame/frame-token.png": {
+      "hash": "abb25d758ac49dd8",
+      "size": 234817
+    },
+    "/ygocarder/asset/image/frame/frame-trap.png": {
+      "hash": "45b77a0740a7a87b",
+      "size": 349403
+    },
+    "/ygocarder/asset/image/frame/frame-uria.png": {
+      "hash": "40cb371254b3cdf9",
+      "size": 314351
+    },
+    "/ygocarder/asset/image/frame/frame-xyz.png": {
+      "hash": "fda3ea36fd1b8e7d",
+      "size": 369337
+    },
+    "/ygocarder/asset/image/frame/frame-zarc.png": {
+      "hash": "7f2ce7e85628a5c4",
+      "size": 363881
+    },
+    "/ygocarder/asset/image/frame/name-border-normal.png": {
+      "hash": "1b052a9f1b971bb9",
+      "size": 1071
+    },
+    "/ygocarder/asset/image/frame/name-border-speed-skill.png": {
+      "hash": "69fb8de8f49ceaa1",
+      "size": 26894
+    },
+    "/ygocarder/asset/image/frame/name-border-xyz.png": {
+      "hash": "f41007e039b4f18b",
+      "size": 1074
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-dark-synchro.png": {
+      "hash": "079bf53bb977e786",
+      "size": 50841
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-dl-skill.png": {
+      "hash": "08ce49ef0eb299c7",
+      "size": 52929
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-effect.png": {
+      "hash": "d888350a1e695305",
+      "size": 69827
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-fusion.png": {
+      "hash": "5b1b0aa6093d7b9c",
+      "size": 52391
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-hamon.png": {
+      "hash": "0696917012286b8b",
+      "size": 69759
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-lg-dragon.png": {
+      "hash": "4f86ff092cf597fd",
+      "size": 57492
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-link.png": {
+      "hash": "df5608ce02750e37",
+      "size": 72433
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-normal.png": {
+      "hash": "1d7e7e77d7576105",
+      "size": 54928
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-obelisk.png": {
+      "hash": "345c766d8259e435",
+      "size": 55208
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-osiris.png": {
+      "hash": "b1a1de562aa45587",
+      "size": 55576
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-ra.png": {
+      "hash": "d7cfd528ea3b79fd",
+      "size": 60379
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-raviel.png": {
+      "hash": "5dcb66d85a5483af",
+      "size": 56006
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-rebirth.png": {
+      "hash": "77888f0fa5ba8e9f",
+      "size": 76179
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-ritual.png": {
+      "hash": "182b6810b68dec84",
+      "size": 50941
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-speed-skill.png": {
+      "hash": "c39cd331f92659ee",
+      "size": 60138
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-spell.png": {
+      "hash": "da18848d178cb974",
+      "size": 77679
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-synchro.png": {
+      "hash": "3a5107658e43ace6",
+      "size": 48951
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-token.png": {
+      "hash": "4cbcd83db248d6f4",
+      "size": 40844
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-trap.png": {
+      "hash": "f104f52456282e39",
+      "size": 57699
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-uria.png": {
+      "hash": "30542ad25dc9e8c6",
+      "size": 50464
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-xyz.png": {
+      "hash": "a6964663d57eb5e8",
+      "size": 51482
+    },
+    "/ygocarder/asset/image/legacy-background/background-name-zarc.png": {
+      "hash": "e349723ccbf32f8e",
+      "size": 64263
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-dark-synchro.png": {
+      "hash": "0184ab17710c56ab",
+      "size": 99943
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-dl-skill.png": {
+      "hash": "f3891d8a7df20117",
+      "size": 80241
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-effect.png": {
+      "hash": "919e42900e21ed12",
+      "size": 95173
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-fusion.png": {
+      "hash": "f818ac18780141e2",
+      "size": 82031
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-hamon.png": {
+      "hash": "975f0ab7c5a5a21d",
+      "size": 132543
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-large-zarc.png": {
+      "hash": "f9ad76eadae89097",
+      "size": 284069
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-lg-dragon.png": {
+      "hash": "f38cc90645a0c97e",
+      "size": 82199
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-link.png": {
+      "hash": "6dc6c0eefa4ba128",
+      "size": 79488
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-normal.png": {
+      "hash": "d7499852e33081ed",
+      "size": 70223
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-obelisk.png": {
+      "hash": "41c632b6be2ed61d",
+      "size": 79354
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-osiris.png": {
+      "hash": "2759125fd43c69e8",
+      "size": 75329
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-ra.png": {
+      "hash": "c2e7237a04561a43",
+      "size": 82911
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-raviel.png": {
+      "hash": "a6e411c81c038956",
+      "size": 95098
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-rebirth.png": {
+      "hash": "31215b8eeb2c3b00",
+      "size": 103788
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-ritual.png": {
+      "hash": "c274dbfbb7b7334b",
+      "size": 78529
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-speed-skill.png": {
+      "hash": "f0a5080ba8c16b13",
+      "size": 98461
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-spell.png": {
+      "hash": "fa74cfd08580b5ae",
+      "size": 102401
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-synchro.png": {
+      "hash": "a6cddd81a1267474",
+      "size": 73127
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-token.png": {
+      "hash": "764ce67a5605f6e8",
+      "size": 76999
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-trap.png": {
+      "hash": "4275e5966b50ddb3",
+      "size": 78296
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-uria.png": {
+      "hash": "4bbeb3371726894a",
+      "size": 98050
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-xyz.png": {
+      "hash": "e37e7a4de23b8632",
+      "size": 78668
+    },
+    "/ygocarder/asset/image/legacy-background/background-pendulum-zarc.png": {
+      "hash": "0ea95332af66742a",
+      "size": 109839
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-dark-synchro.png": {
+      "hash": "0a2168922018c6a8",
+      "size": 137532
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-dl-skill.png": {
+      "hash": "b031d3017af5f5bf",
+      "size": 108139
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-effect.png": {
+      "hash": "0e0e625a3c869aec",
+      "size": 145711
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-fusion.png": {
+      "hash": "9c4287d5a3a24652",
+      "size": 111298
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-hamon.png": {
+      "hash": "9d32eda70f159350",
+      "size": 186940
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-lg-dragon.png": {
+      "hash": "1a97f595c1703f2e",
+      "size": 110584
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-link.png": {
+      "hash": "6b773d35e52d4c88",
+      "size": 106567
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-normal.png": {
+      "hash": "af9994bab5648f7b",
+      "size": 96049
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-obelisk.png": {
+      "hash": "41f39b7faed6c7e0",
+      "size": 107698
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-osiris.png": {
+      "hash": "f64abfe30eb8ed91",
+      "size": 100741
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-ra.png": {
+      "hash": "bd2b11f7c2f47eb3",
+      "size": 111711
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-raviel.png": {
+      "hash": "0fb47767f03b9c46",
+      "size": 128941
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-rebirth.png": {
+      "hash": "cbf874a2fbdf0d61",
+      "size": 160230
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-ritual.png": {
+      "hash": "3dc41d80509c39af",
+      "size": 106386
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-speed-skill.png": {
+      "hash": "d40ff7762bd9dc53",
+      "size": 138471
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-spell.png": {
+      "hash": "a4aca8661253b504",
+      "size": 156199
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-synchro.png": {
+      "hash": "2de626e1f450734b",
+      "size": 98771
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-token.png": {
+      "hash": "ebc8e39ebfcf9721",
+      "size": 103240
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-trap.png": {
+      "hash": "37927cb24282745a",
+      "size": 106361
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-uria.png": {
+      "hash": "03c1b2fd769cdeb2",
+      "size": 134435
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-xyz.png": {
+      "hash": "9dc14c0517d7b885",
+      "size": 116483
+    },
+    "/ygocarder/asset/image/legacy-background/background-text-zarc.png": {
+      "hash": "e002c50ced5d41a5",
+      "size": 129704
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-dark-synchro.png": {
+      "hash": "0dfa3584857c2329",
+      "size": 182945
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-dl-skill.png": {
+      "hash": "72ebc594b4b6b906",
+      "size": 203167
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-effect.png": {
+      "hash": "008086a26bab4a8e",
+      "size": 220461
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-fusion.png": {
+      "hash": "b9bdb9acd636b34a",
+      "size": 188762
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-hamon.png": {
+      "hash": "714649c0c2634c83",
+      "size": 206018
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-lg-dragon.png": {
+      "hash": "cc84035fe3fda853",
+      "size": 211684
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-link.png": {
+      "hash": "5c033f9ea3b9fdf8",
+      "size": 239331
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-normal.png": {
+      "hash": "3774d923333ff332",
+      "size": 194386
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-obelisk.png": {
+      "hash": "a82ecee09bd949d0",
+      "size": 205498
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-osiris.png": {
+      "hash": "819396d7ba8f2fad",
+      "size": 199708
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-ra.png": {
+      "hash": "b389b9699ad84aa4",
+      "size": 210138
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-raviel.png": {
+      "hash": "5702430e2db689a3",
+      "size": 192722
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-rebirth.png": {
+      "hash": "37c8f800627a8d28",
+      "size": 221242
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-ritual.png": {
+      "hash": "da314df972008509",
+      "size": 197225
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-speed-skill.png": {
+      "hash": "d8d459eaa6d854ab",
+      "size": 195760
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-spell.png": {
+      "hash": "a5cc899e7a59ac8d",
+      "size": 244887
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-synchro.png": {
+      "hash": "d36d7ee82cab0445",
+      "size": 169683
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-token.png": {
+      "hash": "6d97952dad5ef987",
+      "size": 159682
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-trap.png": {
+      "hash": "78f3f9f6cadc1daa",
+      "size": 207459
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-uria.png": {
+      "hash": "92f477d66a37841b",
+      "size": 197975
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-xyz.png": {
+      "hash": "69b7d1dad482a335",
+      "size": 222821
+    },
+    "/ygocarder/asset/image/legacy-frame-pendulum/frame-pendulum-zarc.png": {
+      "hash": "7022636b3ce342e2",
+      "size": 218645
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-dark-synchro.png": {
+      "hash": "b92965b01ade5e89",
+      "size": 283933
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-dl-skill.png": {
+      "hash": "6b8da57417923843",
+      "size": 316303
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-effect.png": {
+      "hash": "49d83cfa68f6968d",
+      "size": 353818
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-fusion.png": {
+      "hash": "197300106c5fed14",
+      "size": 295543
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-hamon.png": {
+      "hash": "065250b137af365e",
+      "size": 330999
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-lg-dragon.png": {
+      "hash": "4efa5afdb4f11e9b",
+      "size": 336193
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-link.png": {
+      "hash": "fdd6d8ebe74ea9b6",
+      "size": 401021
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-normal.png": {
+      "hash": "a4121ff10590d88f",
+      "size": 307863
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-obelisk.png": {
+      "hash": "9bcfdd7b966fff3e",
+      "size": 323938
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-osiris.png": {
+      "hash": "dc7648499fadd78c",
+      "size": 310004
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-ra.png": {
+      "hash": "d66d755dc216fa90",
+      "size": 333840
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-raviel.png": {
+      "hash": "6977562b6a4128e4",
+      "size": 306573
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-rebirth.png": {
+      "hash": "7987722d107d5b63",
+      "size": 362279
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-ritual.png": {
+      "hash": "26a430c3daf60d3d",
+      "size": 306916
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-speed-skill.png": {
+      "hash": "05e887cb269f5b72",
+      "size": 371711
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-spell.png": {
+      "hash": "94f4a0394dd1647f",
+      "size": 406390
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-synchro.png": {
+      "hash": "5beb32ed54d0d7e5",
+      "size": 258554
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-token.png": {
+      "hash": "d8c975b2feeee2b0",
+      "size": 239533
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-trap.png": {
+      "hash": "69282e1bdd9f6a08",
+      "size": 330320
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-uria.png": {
+      "hash": "40cb371254b3cdf9",
+      "size": 314351
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-xyz.png": {
+      "hash": "4dcc6fdf4683e410",
+      "size": 369257
+    },
+    "/ygocarder/asset/image/legacy-frame/frame-zarc.png": {
+      "hash": "7f2ce7e85628a5c4",
+      "size": 363881
+    },
+    "/ygocarder/asset/image/link/link-active-1-base.png": {
+      "hash": "277f2f23d2aff279",
+      "size": 9231
+    },
+    "/ygocarder/asset/image/link/link-active-1-core.png": {
+      "hash": "de5595d184a4683c",
+      "size": 9505
+    },
+    "/ygocarder/asset/image/link/link-active-2-base.png": {
+      "hash": "f8b3827ce9f211b7",
+      "size": 9781
+    },
+    "/ygocarder/asset/image/link/link-active-2-core.png": {
+      "hash": "3e079c836a7ccdb0",
+      "size": 9837
+    },
+    "/ygocarder/asset/image/link/link-active-3-base.png": {
+      "hash": "76582c19f5a656e3",
+      "size": 9435
+    },
+    "/ygocarder/asset/image/link/link-active-3-core.png": {
+      "hash": "75daf175f566ff40",
+      "size": 9588
+    },
+    "/ygocarder/asset/image/link/link-active-4-base.png": {
+      "hash": "fa1eec736f811fcb",
+      "size": 9876
+    },
+    "/ygocarder/asset/image/link/link-active-4-core.png": {
+      "hash": "71b5c44cb7041a3c",
+      "size": 9917
+    },
+    "/ygocarder/asset/image/link/link-active-6-base.png": {
+      "hash": "6030e5dc1bca9d00",
+      "size": 10106
+    },
+    "/ygocarder/asset/image/link/link-active-6-core.png": {
+      "hash": "37796d243d7296d1",
+      "size": 9580
+    },
+    "/ygocarder/asset/image/link/link-active-7-base.png": {
+      "hash": "441f366c0f306d74",
+      "size": 9563
+    },
+    "/ygocarder/asset/image/link/link-active-7-core.png": {
+      "hash": "805ae9d09faed897",
+      "size": 9537
+    },
+    "/ygocarder/asset/image/link/link-active-8-base.png": {
+      "hash": "f3e965c7ceae9013",
+      "size": 10155
+    },
+    "/ygocarder/asset/image/link/link-active-8-core.png": {
+      "hash": "ba52a8c4f2881b32",
+      "size": 9827
+    },
+    "/ygocarder/asset/image/link/link-active-9-base.png": {
+      "hash": "d2b758fb21013f51",
+      "size": 9298
+    },
+    "/ygocarder/asset/image/link/link-active-9-core.png": {
+      "hash": "0e064341011f8a2f",
+      "size": 9088
+    },
+    "/ygocarder/asset/image/link/link-inactive-1-base-full.png": {
+      "hash": "3949e210755bd284",
+      "size": 11215
+    },
+    "/ygocarder/asset/image/link/link-inactive-1-base.png": {
+      "hash": "d3f82e4eb2079b21",
+      "size": 10880
+    },
+    "/ygocarder/asset/image/link/link-inactive-1-core.png": {
+      "hash": "94e005652aef27f6",
+      "size": 7542
+    },
+    "/ygocarder/asset/image/link/link-inactive-2-base-full.png": {
+      "hash": "151bfb251fbab7fd",
+      "size": 11250
+    },
+    "/ygocarder/asset/image/link/link-inactive-2-base.png": {
+      "hash": "7c6c591ceddf35ed",
+      "size": 11269
+    },
+    "/ygocarder/asset/image/link/link-inactive-2-core.png": {
+      "hash": "931fe909ea7c067e",
+      "size": 8873
+    },
+    "/ygocarder/asset/image/link/link-inactive-3-base-full.png": {
+      "hash": "23bbcd4a341030e2",
+      "size": 10624
+    },
+    "/ygocarder/asset/image/link/link-inactive-3-base.png": {
+      "hash": "46b41e432760f390",
+      "size": 10244
+    },
+    "/ygocarder/asset/image/link/link-inactive-3-core.png": {
+      "hash": "389c7787095b94e0",
+      "size": 8122
+    },
+    "/ygocarder/asset/image/link/link-inactive-4-base-full.png": {
+      "hash": "2ea1ec7da300142f",
+      "size": 11245
+    },
+    "/ygocarder/asset/image/link/link-inactive-4-base.png": {
+      "hash": "aee3fe7b317c7b07",
+      "size": 10978
+    },
+    "/ygocarder/asset/image/link/link-inactive-4-core.png": {
+      "hash": "a0a74b94c5e28a3c",
+      "size": 8701
+    },
+    "/ygocarder/asset/image/link/link-inactive-6-base-full.png": {
+      "hash": "9794f61e1260038e",
+      "size": 10700
+    },
+    "/ygocarder/asset/image/link/link-inactive-6-base.png": {
+      "hash": "bff933dfa7ac1ef5",
+      "size": 10374
+    },
+    "/ygocarder/asset/image/link/link-inactive-6-core.png": {
+      "hash": "e742fb9b1ccea834",
+      "size": 8950
+    },
+    "/ygocarder/asset/image/link/link-inactive-7-base-full.png": {
+      "hash": "104e05894a6541c4",
+      "size": 10662
+    },
+    "/ygocarder/asset/image/link/link-inactive-7-base.png": {
+      "hash": "dfd6b4a60c6d7bdc",
+      "size": 10227
+    },
+    "/ygocarder/asset/image/link/link-inactive-7-core.png": {
+      "hash": "7fd951f3913e76ff",
+      "size": 8178
+    },
+    "/ygocarder/asset/image/link/link-inactive-8-base-full.png": {
+      "hash": "03b49c87be5972b6",
+      "size": 11557
+    },
+    "/ygocarder/asset/image/link/link-inactive-8-base.png": {
+      "hash": "bc54404512f20576",
+      "size": 11273
+    },
+    "/ygocarder/asset/image/link/link-inactive-8-core.png": {
+      "hash": "aacbb775adf2a8d7",
+      "size": 8978
+    },
+    "/ygocarder/asset/image/link/link-inactive-9-base-full.png": {
+      "hash": "9791869e895a28a2",
+      "size": 10142
+    },
+    "/ygocarder/asset/image/link/link-inactive-9-base.png": {
+      "hash": "b0bda1ec3e80489e",
+      "size": 9648
+    },
+    "/ygocarder/asset/image/link/link-inactive-9-core.png": {
+      "hash": "666fc479ab03bd9b",
+      "size": 8421
+    },
+    "/ygocarder/asset/image/link/link-overlay-1-gold.png": {
+      "hash": "d9e9119b19f15168",
+      "size": 11862
+    },
+    "/ygocarder/asset/image/link/link-overlay-1-platinum.png": {
+      "hash": "d9fa9e80bcd1bf6b",
+      "size": 11666
+    },
+    "/ygocarder/asset/image/link/link-overlay-2-gold.png": {
+      "hash": "65f48f621cc413ea",
+      "size": 12198
+    },
+    "/ygocarder/asset/image/link/link-overlay-2-platinum.png": {
+      "hash": "1b4707acb914906e",
+      "size": 12273
+    },
+    "/ygocarder/asset/image/link/link-overlay-3-gold.png": {
+      "hash": "3fb6de3b7640ed8c",
+      "size": 11284
+    },
+    "/ygocarder/asset/image/link/link-overlay-3-platinum.png": {
+      "hash": "4ede36b479729bea",
+      "size": 11163
+    },
+    "/ygocarder/asset/image/link/link-overlay-4-gold.png": {
+      "hash": "7fbcad16243c7185",
+      "size": 14205
+    },
+    "/ygocarder/asset/image/link/link-overlay-4-platinum.png": {
+      "hash": "20eceb5b9d9fb6f4",
+      "size": 14535
+    },
+    "/ygocarder/asset/image/link/link-overlay-6-gold.png": {
+      "hash": "887b5c579affc9ce",
+      "size": 11267
+    },
+    "/ygocarder/asset/image/link/link-overlay-6-platinum.png": {
+      "hash": "5203bdf99e941e0b",
+      "size": 11310
+    },
+    "/ygocarder/asset/image/link/link-overlay-7-gold.png": {
+      "hash": "c1a327e3c3c8d50d",
+      "size": 11213
+    },
+    "/ygocarder/asset/image/link/link-overlay-7-platinum.png": {
+      "hash": "6eb6b3f2a7d29197",
+      "size": 11245
+    },
+    "/ygocarder/asset/image/link/link-overlay-8-gold.png": {
+      "hash": "bf1b325f8646f4eb",
+      "size": 10844
+    },
+    "/ygocarder/asset/image/link/link-overlay-8-platinum.png": {
+      "hash": "198b5ae809c9a5aa",
+      "size": 10927
+    },
+    "/ygocarder/asset/image/link/link-overlay-9-gold.png": {
+      "hash": "a8729fae02dac427",
+      "size": 10481
+    },
+    "/ygocarder/asset/image/link/link-overlay-9-platinum.png": {
+      "hash": "14fe8a4c01b4317b",
+      "size": 10450
+    },
+    "/ygocarder/asset/image/link/link-overlay-arrow-gold-artless.png": {
+      "hash": "3114af0988cc4ec9",
+      "size": 36067
+    },
+    "/ygocarder/asset/image/link/link-overlay-arrow-gold.png": {
+      "hash": "9d960a9441f5bd00",
+      "size": 56558
+    },
+    "/ygocarder/asset/image/link/link-overlay-arrow-platinum-artless.png": {
+      "hash": "7ec384e57ce70856",
+      "size": 37197
+    },
+    "/ygocarder/asset/image/link/link-overlay-arrow-platinum.png": {
+      "hash": "187d17bd151707aa",
+      "size": 57562
+    },
+    "/ygocarder/asset/image/link/link-text.png": {
+      "hash": "99716723309dee2a",
+      "size": 6634
+    },
+    "/ygocarder/asset/image/mask/mask-bottom-right.png": {
+      "hash": "541e79e52b7b45e0",
+      "size": 29011
+    },
+    "/ygocarder/asset/image/mask/mask-name.png": {
+      "hash": "981e64a948162e1c",
+      "size": 14787
+    },
+    "/ygocarder/asset/image/mask/mask-right.png": {
+      "hash": "5471a000093c98f8",
+      "size": 28510
+    },
+    "/ygocarder/asset/image/mask/mask-top-right.png": {
+      "hash": "39cdc9a7a8fa0fa1",
+      "size": 19986
+    },
+    "/ygocarder/asset/image/other/name-anime-gold.png": {
+      "hash": "14d711bed7aa3e18",
+      "size": 16991
+    },
+    "/ygocarder/asset/image/other/name-anime-red.png": {
+      "hash": "909667879d811f2f",
+      "size": 15628
+    },
+    "/ygocarder/asset/image/other/name-anime-silver.png": {
+      "hash": "78ece385f3150b7d",
+      "size": 15913
+    },
+    "/ygocarder/asset/image/other/name-common-b.png": {
+      "hash": "42c75585badb8a15",
+      "size": 12660
+    },
+    "/ygocarder/asset/image/other/name-common-w.png": {
+      "hash": "d560ff5ebce6920e",
+      "size": 12942
+    },
+    "/ygocarder/asset/image/other/name-emboss-gold.png": {
+      "hash": "f67585bbeecb3822",
+      "size": 9749
+    },
+    "/ygocarder/asset/image/other/name-emboss-platinum.png": {
+      "hash": "3e5195d907a9dacc",
+      "size": 11384
+    },
+    "/ygocarder/asset/image/other/name-foil-gold.png": {
+      "hash": "ddc4c8e980f6f088",
+      "size": 13293
+    },
+    "/ygocarder/asset/image/other/name-foil-platinum.png": {
+      "hash": "c68d8b7b100f6117",
+      "size": 13121
+    },
+    "/ygocarder/asset/image/other/name-platinum.png": {
+      "hash": "69ca7720a1b0e3ec",
+      "size": 11353
+    },
+    "/ygocarder/asset/image/other/name-promo.png": {
+      "hash": "560a96ff3830612a",
+      "size": 13451
+    },
+    "/ygocarder/asset/image/other/name-rainbow-secret-rare.png": {
+      "hash": "9731ac4d4e28f957",
+      "size": 9031
+    },
+    "/ygocarder/asset/image/other/name-rare.png": {
+      "hash": "f0660e21d7a45325",
+      "size": 12505
+    },
+    "/ygocarder/asset/image/other/name-secret-gradient.png": {
+      "hash": "ca497f15e844f120",
+      "size": 12839
+    },
+    "/ygocarder/asset/image/other/name-secret.png": {
+      "hash": "f174da7d70b663d1",
+      "size": 10538
+    },
+    "/ygocarder/asset/image/other/name-skill-arial.png": {
+      "hash": "1720be3b91add47e",
+      "size": 16077
+    },
+    "/ygocarder/asset/image/other/name-skill-default.png": {
+      "hash": "f3090bc149c23063",
+      "size": 17282
+    },
+    "/ygocarder/asset/image/other/name-ultra-2.png": {
+      "hash": "f38c0fbd003ea68c",
+      "size": 13662
+    },
+    "/ygocarder/asset/image/other/name-ultra.png": {
+      "hash": "9ff3b9d190800b9c",
+      "size": 12657
+    },
+    "/ygocarder/asset/image/other/subfamily-type-st-icon.png": {
+      "hash": "a1fc52f448f8aefe",
+      "size": 30953
+    },
+    "/ygocarder/asset/image/sticker/sticker-beta.png": {
+      "hash": "4151d78463ff002d",
+      "size": 5846
+    },
+    "/ygocarder/asset/image/sticker/sticker-gold.png": {
+      "hash": "ba4c17a5699f05a0",
+      "size": 6095
+    },
+    "/ygocarder/asset/image/sticker/sticker-holo1.png": {
+      "hash": "3b30173e5978bb6a",
+      "size": 25320
+    },
+    "/ygocarder/asset/image/sticker/sticker-holo2.png": {
+      "hash": "36b1dc700e85a0b2",
+      "size": 24818
+    },
+    "/ygocarder/asset/image/sticker/sticker-holo3.png": {
+      "hash": "001cefe6d7ff1458",
+      "size": 22766
+    },
+    "/ygocarder/asset/image/sticker/sticker-holo4.png": {
+      "hash": "2295e42a039f0990",
+      "size": 25338
+    },
+    "/ygocarder/asset/image/sticker/sticker-holo5.png": {
+      "hash": "5c3ee51ad9a8026c",
+      "size": 26107
+    },
+    "/ygocarder/asset/image/sticker/sticker-limited.png": {
+      "hash": "c0ef7bc564ebaff4",
+      "size": 22664
+    },
+    "/ygocarder/asset/image/sticker/sticker-silver.png": {
+      "hash": "122b81456de68462",
+      "size": 5769
+    },
+    "/ygocarder/asset/image/sticker/sticker-unlimited.png": {
+      "hash": "f50b8de81fba6dbe",
+      "size": 22084
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-continuous-l.png": {
+      "hash": "5affa4fc75e460d5",
+      "size": 29500
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-continuous.png": {
+      "hash": "31064d19ee1599b1",
+      "size": 29604
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-counter-l.png": {
+      "hash": "571b28785669a420",
+      "size": 28511
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-counter.png": {
+      "hash": "bc16e61e0968d835",
+      "size": 28765
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-dark.png": {
+      "hash": "2b456559e3a61d6f",
+      "size": 20718
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-divine.png": {
+      "hash": "de05d6a01bb5ff66",
+      "size": 23874
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-earth.png": {
+      "hash": "f653701bd7f8dc1e",
+      "size": 18667
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-equip-l.png": {
+      "hash": "eb553ddb80e78cde",
+      "size": 26928
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-equip.png": {
+      "hash": "11706e1291e1fac2",
+      "size": 26936
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-field-l.png": {
+      "hash": "167ffda19de93bb2",
+      "size": 29468
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-field.png": {
+      "hash": "626b3d899c79c373",
+      "size": 29652
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-fire.png": {
+      "hash": "5970ce6d9ebb06ba",
+      "size": 21295
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-glow.png": {
+      "hash": "8c2bab1d9112d61f",
+      "size": 11531
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-grade.png": {
+      "hash": "d5e7b4ea79fa2946",
+      "size": 4514
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-icon-list.png": {
+      "hash": "535d9a379a039a55",
+      "size": 27200
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-level-rank.png": {
+      "hash": "77798489f862fa41",
+      "size": 18730
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-level.png": {
+      "hash": "42590318ae37da6b",
+      "size": 18994
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-light.png": {
+      "hash": "50a7e35ed2aa2742",
+      "size": 23387
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-negative-level.png": {
+      "hash": "66823cdb896f2afe",
+      "size": 20323
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-normal-l.png": {
+      "hash": "a5cc3610009c69e0",
+      "size": 5673
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-normal.png": {
+      "hash": "60abe584dd758b03",
+      "size": 19987
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-quick-play-l.png": {
+      "hash": "4cf71e3380ba0398",
+      "size": 28210
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-quick-play.png": {
+      "hash": "7e418068f691ae9e",
+      "size": 28656
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-rank.png": {
+      "hash": "48bf468b27a9d06b",
+      "size": 17887
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-ritual-l.png": {
+      "hash": "c594c0406cf364f5",
+      "size": 28113
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-ritual.png": {
+      "hash": "7033e8cb77944eda",
+      "size": 28261
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-spell.png": {
+      "hash": "7b5f22c70e9ea30d",
+      "size": 28209
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-trap.png": {
+      "hash": "71d6f3a1cf6cc4da",
+      "size": 21187
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-water.png": {
+      "hash": "aa080ebbc30880d1",
+      "size": 20520
+    },
+    "/ygocarder/asset/image/subfamily/subfamily-wind.png": {
+      "hash": "710a2f4898a6fc89",
+      "size": 22364
+    },
+    "/ygocarder/asset/image/syntax/syntax-1-preview.jpg": {
+      "hash": "ff958dbfb65f3c49",
+      "size": 36284
+    },
+    "/ygocarder/asset/image/syntax/syntax-1-raw.jpg": {
+      "hash": "c7460494baddf294",
+      "size": 35407
+    },
+    "/ygocarder/asset/image/syntax/syntax-2-preview.jpg": {
+      "hash": "17d907ecb9147e53",
+      "size": 36548
+    },
+    "/ygocarder/asset/image/syntax/syntax-2-raw.jpg": {
+      "hash": "f2cd86c3de079a22",
+      "size": 29003
+    },
+    "/ygocarder/asset/image/syntax/syntax-3-preview.jpg": {
+      "hash": "09e78e3483272fb8",
+      "size": 32455
+    },
+    "/ygocarder/asset/image/syntax/syntax-3-raw.jpg": {
+      "hash": "da67c2f481513fb1",
+      "size": 26674
+    },
+    "/ygocarder/asset/image/syntax/syntax-4-preview.jpg": {
+      "hash": "3e8178a73bf7bfd2",
+      "size": 40857
+    },
+    "/ygocarder/asset/image/syntax/syntax-4-raw.jpg": {
+      "hash": "1467a5272147187e",
+      "size": 25673
+    },
+    "/ygocarder/asset/image/syntax/syntax-5-preview.jpg": {
+      "hash": "972d83354d224a8e",
+      "size": 35980
+    },
+    "/ygocarder/asset/image/syntax/syntax-5-raw.jpg": {
+      "hash": "2674824a13abb644",
+      "size": 39605
+    },
+    "/ygocarder/asset/image/syntax/syntax-6-preview.jpg": {
+      "hash": "bda84723bfa98808",
+      "size": 34905
+    },
+    "/ygocarder/asset/image/syntax/syntax-6-raw.jpg": {
+      "hash": "d44a45f4e7643680",
+      "size": 23728
+    },
+    "/ygocarder/asset/image/syntax/syntax-7-preview.jpg": {
+      "hash": "561f23e0eadd71a7",
+      "size": 38099
+    },
+    "/ygocarder/asset/image/syntax/syntax-7-raw.jpg": {
+      "hash": "1f162980f872224f",
+      "size": 28016
+    },
+    "/ygocarder/asset/image/syntax/syntax-8-preview.jpg": {
+      "hash": "e658f258495d819d",
+      "size": 13668
+    },
+    "/ygocarder/asset/image/syntax/syntax-8-raw.jpg": {
+      "hash": "022da83ec4bec081",
+      "size": 8947
+    },
+    "/ygocarder/asset/image/syntax/syntax-9-preview.jpg": {
+      "hash": "fa897abb7ab5d4bb",
+      "size": 18752
+    },
+    "/ygocarder/asset/image/syntax/syntax-9-raw.jpg": {
+      "hash": "95694d57db608c9d",
+      "size": 15276
+    },
+    "/ygocarder/asset/image/text/text-duel-terminal-black-bordered.png": {
+      "hash": "e9c9713a2ff132d3",
+      "size": 10016
+    },
+    "/ygocarder/asset/image/text/text-duel-terminal-black.png": {
+      "hash": "4484628aad77fd71",
+      "size": 6226
+    },
+    "/ygocarder/asset/image/text/text-duel-terminal-white-bordered.png": {
+      "hash": "467bf9026d02dbc5",
+      "size": 9636
+    },
+    "/ygocarder/asset/image/text/text-duel-terminal-white.png": {
+      "hash": "688cce5c82d374f3",
+      "size": 5764
+    },
+    "/ygocarder/asset/image/text/text-limited-edition-black-bordered.png": {
+      "hash": "f2a47594e50900d5",
+      "size": 11557
+    },
+    "/ygocarder/asset/image/text/text-limited-edition-black.png": {
+      "hash": "1c5e391add5f190c",
+      "size": 6857
+    },
+    "/ygocarder/asset/image/text/text-limited-edition-white-bordered.png": {
+      "hash": "4550e9c3183baf09",
+      "size": 11202
+    },
+    "/ygocarder/asset/image/text/text-limited-edition-white.png": {
+      "hash": "58671c6ef0c80bbd",
+      "size": 6291
+    },
+    "/ygocarder/asset/image/text/text-speed-duel-black-bordered.png": {
+      "hash": "a5d1a4d7d84b1459",
+      "size": 8948
+    },
+    "/ygocarder/asset/image/text/text-speed-duel-black.png": {
+      "hash": "1145176a69a6e2c9",
+      "size": 5948
+    },
+    "/ygocarder/asset/image/text/text-speed-duel-white-bordered.png": {
+      "hash": "d19d70ac9450bfba",
+      "size": 8815
+    },
+    "/ygocarder/asset/image/text/text-speed-duel-white.png": {
+      "hash": "1e80c04aaeab08d5",
+      "size": 5454
+    },
+    "/ygocarder/asset/image/texture/dark-denim-3.png": {
+      "hash": "bf195b00cdbf5492",
+      "size": 22261
+    },
+    "/ygocarder/asset/image/texture/debut-dark.png": {
+      "hash": "a34b8da2f7d3ac84",
+      "size": 19860
+    },
+    "/ygocarder/asset/image/texture/transparent-tile.png": {
+      "hash": "4c8b4752de5677ba",
+      "size": 198
+    },
+    "/ygocarder/asset/log/version.json": {
+      "hash": "b38317a0e3dd5e2c",
+      "size": 27964
+    },
+    "/ygocarder/asset/ocg-font.css": {
+      "hash": "6c12cf5956b6a842",
+      "size": 753
+    },
+    "/ygocarder/asset/script/JSONCrush.min.js": {
+      "hash": "5747c2d8a975f968",
+      "size": 1690
+    }
+  }
 }
