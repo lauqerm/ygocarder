@@ -63,12 +63,12 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                         ȼ̈: { baseLetter: 'c' },
                         ç̈: { baseLetter: 'c' },
 
-                        Q: { baseLetter: 'Q' },
-                        Ɋ: { baseLetter: 'Q' },
-                        q: { baseLetter: 'q' },
-                        ʠ: { baseLetter: 'q' },
-                        ɋ: { baseLetter: 'q' },
-                        q̃: { baseLetter: 'q' },
+                        Q: { baseLetter: 'O' },
+                        Ɋ: { baseLetter: 'O' },
+                        q: { baseLetter: 'o' },
+                        ʠ: { baseLetter: 'o' },
+                        ɋ: { baseLetter: 'o' },
+                        q̃: { baseLetter: 'o' },
 
                         o: { baseLetter: 'o' },
                         ø: { baseLetter: 'o' },

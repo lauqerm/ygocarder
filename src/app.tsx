@@ -432,21 +432,11 @@ function App() {
                 Sentry.setTag('pwa_manifest_version', event.data.version);
             }
         });
-
-        // Re-sync after install completes
         window.addEventListener('appinstalled', () => {
             Sentry.setTag('pwa_just_installed', true);
         });
     }, []);
     useEffect(() => {
-        // Re-sync when network status flips
-        window.addEventListener('online', () => {
-            Sentry.setTag('pwa_online', true);
-        });
-        window.addEventListener('offline', () => {
-            Sentry.setTag('pwa_online', false);
-        });
-
         const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
         if (reportTarget
             && sentryDsn

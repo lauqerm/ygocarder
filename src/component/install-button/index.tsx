@@ -10,7 +10,6 @@ import {
     bulkCacheAssets,
     type BulkDownloadProgress,
 } from '../../pwa';
-import './InstallButton.scss';
 
 const { Text, Paragraph } = Typography;
 

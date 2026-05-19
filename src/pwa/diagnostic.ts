@@ -36,6 +36,7 @@ export interface FullDiagnostics extends SyncDiagnostics {
     cachedAssetCount: number;
     expectedAssetCount: number | null;
     cacheCompletion: number; // 0–1
+    cacheState: string;
 
     // Storage
     storageQuotaBytes: number | null;
@@ -68,7 +69,13 @@ export function getSyncDiagnostics(): SyncDiagnostics {
 }
 
 // ─── Full async snapshot ───────────────────────────────────────────────────
-
+function cacheCompletionBucket(completion: number): string {
+    if (completion >= 1) return 'complete';
+    if (completion >= 0.9) return 'nearly';
+    if (completion >= 0.5) return 'partial';
+    if (completion > 0) return 'minimal';
+    return 'empty';
+}
 export async function getFullDiagnostics(): Promise<FullDiagnostics> {
     const sync = getSyncDiagnostics();
 
@@ -79,23 +86,24 @@ export async function getFullDiagnostics(): Promise<FullDiagnostics> {
         getServiceWorkerInfo(),
     ]);
 
-    const cacheCompletion =
-        cacheInfo.expected && cacheInfo.expected > 0
-            ? cacheInfo.cached / cacheInfo.expected
-            : 0;
+    const cacheCompletion = cacheInfo.expected && cacheInfo.expected > 0
+        ? cacheInfo.cached / cacheInfo.expected
+        : 0;
+    const cacheState = cacheCompletionBucket(cacheCompletion);
 
     return {
         ...sync,
-        manifestVersion: manifestInfo.version,
-        manifestGeneratedAt: manifestInfo.generatedAt,
+        cacheCompletion,
+        cacheState,
         cachedAssetCount: cacheInfo.cached,
         expectedAssetCount: cacheInfo.expected,
-        cacheCompletion,
+        manifestGeneratedAt: manifestInfo.generatedAt,
+        manifestVersion: manifestInfo.version,
+        serviceWorkerScriptURL: swInfo.scriptURL,
+        serviceWorkerState: swInfo.state,
+        storagePersisted: storageInfo.persisted,
         storageQuotaBytes: storageInfo.quota,
         storageUsageBytes: storageInfo.usage,
-        storagePersisted: storageInfo.persisted,
-        serviceWorkerState: swInfo.state,
-        serviceWorkerScriptURL: swInfo.scriptURL,
     };
 }
 

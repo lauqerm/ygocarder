@@ -50,6 +50,8 @@ export const DebugCanvas = {
 export const getCanvasFontDebugger = () => {
     let currentContext = '';
     let result: Record<string, {
+        trueAscent?: number,
+        trueDescent?: number,
         ascentCompensate?: number,
         descentCompensate?: number,
         height?: number,
@@ -137,12 +139,12 @@ export const getCanvasFontDebugger = () => {
                 if (checkpointList) {
                     const imageData = ctx.getImageData(0, 0, DebugCanvas.width * appliedScale, DebugCanvas.height);
                     const layerData = imageData.data;
-                    const paintSamplePixel = (pixel: number, positive: boolean, willCompensate: boolean) => {
+                    const paintSamplePixel = (pixel: number, positive: boolean, willCompensate: boolean, intensity = 1) => {
                         if (!debug) return;
                         layerData[pixel] = positive ? 255 : 0;
                         layerData[pixel + 1] = !willCompensate ? 255 : 0;
                         layerData[pixel + 2] = !positive ? 255 : 0;
-                        layerData[pixel + 3] = 255;
+                        layerData[pixel + 3] = 128 + 40 * intensity;
                     };
                     let anchorMap: Record<string, { ascent: number, descent: number }> = {};
                     for (let cnt = 0; cnt < checkpointList.length; cnt++) {
@@ -156,7 +158,7 @@ export const getCanvasFontDebugger = () => {
                         let trueAscent = -1;
                         let trueDescent = -1;
                         /** We do not count pixel that are too transparent to see. */
-                        const opacityConfidence = 90;
+                        const opacityConfidence = 80;
                         for (let yPos = 0; yPos < DebugCanvas.height; yPos++) {
                             const firstSamplePixel = (yPos * imageData.width + x) * 4;
                             const firstSampleOpacity = layerData[firstSamplePixel + 3];
@@ -164,22 +166,23 @@ export const getCanvasFontDebugger = () => {
                             if (firstSampleOpacity > opacityConfidence && trueAscent === -1) {
                                 firstSample = yPos;
                             }
-                            paintSamplePixel(firstSamplePixel, firstSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop);
+                            paintSamplePixel(firstSamplePixel, firstSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop, 1);
                             const secondSamplePixel = (yPos * imageData.width + x + 1) * 4;
                             const secondSampleOpacity = layerData[secondSamplePixel + 3];
                             let secondSample = -1;
                             if (secondSampleOpacity > opacityConfidence && trueAscent === -1) {
-                                secondSample = yPos + 1;
+                                secondSample = yPos;
                             }
-                            paintSamplePixel(secondSamplePixel, secondSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop);
+                            paintSamplePixel(secondSamplePixel, secondSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop, 2);
                             const thirdSamplePixel = (yPos * imageData.width + x + 2) * 4;
                             const thirdSampleOpacity = layerData[thirdSamplePixel + 3];
                             let thirdSample = -1;
                             if (thirdSampleOpacity > opacityConfidence && trueAscent === -1) {
-                                thirdSample = yPos + 2;
+                                thirdSample = yPos;
                             }
-                            paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop);
+                            paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop, 3);
                             trueAscent = Math.max(firstSample, secondSample, thirdSample);
+                            console.log(letter, firstSample, secondSample, thirdSample);
                             if (trueAscent !== -1) break;
                         }
                         for (let yPos = DebugCanvas.height - 1; yPos >= 0; yPos--) {
@@ -189,21 +192,21 @@ export const getCanvasFontDebugger = () => {
                             if (firstSampleOpacity > opacityConfidence && trueDescent === -1) {
                                 firstSample = yPos;
                             }
-                            paintSamplePixel(firstSamplePixel, firstSampleOpacity > opacityConfidence && trueDescent === -1, compensateBottom);
+                            paintSamplePixel(firstSamplePixel, firstSampleOpacity > opacityConfidence && trueDescent === -1, compensateBottom, 1);
                             const secondSamplePixel = (yPos * imageData.width + x + 1) * 4;
                             const secondSampleOpacity = layerData[secondSamplePixel + 3];
                             let secondSample = -1;
                             if (secondSampleOpacity > opacityConfidence && trueDescent === -1) {
-                                secondSample = yPos + 1;
+                                secondSample = yPos;
                             }
-                            paintSamplePixel(secondSamplePixel, secondSampleOpacity > opacityConfidence && trueDescent === -1, compensateBottom);
+                            paintSamplePixel(secondSamplePixel, secondSampleOpacity > opacityConfidence && trueDescent === -1, compensateBottom, 2);
                             const thirdSamplePixel = (yPos * imageData.width + x + 2) * 4;
                             const thirdSampleOpacity = layerData[thirdSamplePixel + 3];
                             let thirdSample = -1;
                             if (thirdSampleOpacity > opacityConfidence && trueDescent === -1) {
-                                thirdSample = yPos + 2;
+                                thirdSample = yPos;
                             }
-                            paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueDescent === -1, compensateBottom);
+                            paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueDescent === -1, compensateBottom, 3);
                             trueDescent = Math.max(firstSample, secondSample, thirdSample);
                             if (trueDescent !== -1) break;
                         }
@@ -215,6 +218,8 @@ export const getCanvasFontDebugger = () => {
                         } else {
                             const { ascent: anchorAscent, descent: anchorDescent } = anchorMap[anchor];
                             result[letter] = {
+                                trueAscent,
+                                trueDescent,
                                 ascentCompensate: (typeof anchorAscent === 'number' && compensateTop
                                     ? trueAscent - anchorAscent
                                     : 0) * 1,
@@ -229,6 +234,9 @@ export const getCanvasFontDebugger = () => {
                         }
                     }
 
+                    if (debug) {
+                        console.log(anchorMap, result);
+                    }
                     /** In debug mode, we draw back the guide point into dummy canvas to see if we put the correct measure line */
                     if (debug) ctx.putImageData(new ImageData(layerData, imageData.width, imageData.height), 0, 0);
                     ctx.font = '10px Arial';
