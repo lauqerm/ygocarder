@@ -182,7 +182,6 @@ export const getCanvasFontDebugger = () => {
                             }
                             paintSamplePixel(thirdSamplePixel, thirdSampleOpacity > opacityConfidence && trueAscent === -1, compensateTop, 3);
                             trueAscent = Math.max(firstSample, secondSample, thirdSample);
-                            console.log(letter, firstSample, secondSample, thirdSample);
                             if (trueAscent !== -1) break;
                         }
                         for (let yPos = DebugCanvas.height - 1; yPos >= 0; yPos--) {
@@ -234,9 +233,6 @@ export const getCanvasFontDebugger = () => {
                         }
                     }
 
-                    if (debug) {
-                        console.log(anchorMap, result);
-                    }
                     /** In debug mode, we draw back the guide point into dummy canvas to see if we put the correct measure line */
                     if (debug) ctx.putImageData(new ImageData(layerData, imageData.width, imageData.height), 0, 0);
                     ctx.font = '10px Arial';

@@ -6,6 +6,7 @@ import { StyledHeaderButtonContainer } from '../icon-button';
 import { RadioTrain } from '../input-train';
 import { ExportFormatList, getSlindingTypeList, ResolutionList, ResolutionMap } from 'src/model';
 import { ResolutionLabel, StyledPopMarkdown } from '../atom';
+import { ResetOfflineDataButton } from './reset-button';
 
 const rotate = keyframes`
     to {
@@ -153,6 +154,9 @@ export const SettingButton = () => {
                 </div>
                 <div>
                     <small>{language['setting.alert']}</small>
+                </div>
+                <div>
+                    <ResetOfflineDataButton />
                 </div>
             </StyledSettingPanel>}
         >

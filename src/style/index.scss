@@ -430,6 +430,7 @@ button.ant-btn {
     }
 
     .ant-modal-body {
+        color: var(--color);
         padding: var(--spacing-lg);
     }
 
@@ -511,4 +512,13 @@ button.ant-btn {
         left: 8px;
         right: unset;
     }
+}
+
+.ant-typography,
+.ant-typography.ant-typography-secondary {
+    color: var(--color);
+}
+
+.ant-progress-text {
+    color: var(--color);
 }

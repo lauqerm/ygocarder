@@ -37,7 +37,7 @@ export async function registerServiceWorker(): Promise<void> {
     }
 }
 
-async function syncManifestWithWorker(): Promise<void> {
+export async function syncManifestWithWorker(): Promise<void> {
     // Wait for there to actually be an active worker controlling the page
     const registration = await navigator.serviceWorker.ready;
     const worker = registration.active;

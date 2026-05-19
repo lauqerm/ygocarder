@@ -486,6 +486,7 @@
         "image-cropper.button.flip-horizontal.tooltip": "Flip horizontally",
         "image-cropper.button.flip-vertical.tooltip": "Flip vertically",
         "sample.manager.label": "Sample",
+        "install.trigger.label": "Install",
         "service.decode.partial.description": "Decode card data in partial mode, incompatible data will be removed.",
         "service.decode.partial.message": "Partial export mode",
         "setting.option.resolution.warning": "May affect performance",

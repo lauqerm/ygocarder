@@ -1,4 +1,4 @@
-import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -43,6 +43,9 @@ const StyledAppHeaderButtonContainer = styled.div`
     padding-left: var(--spacing);
     margin-left: var(--spacing);
     height: 100%;
+    label {
+        text-align: center;
+    }
     .button-label {
         position: relative;
     }
@@ -224,6 +227,13 @@ export const AppHeader = ({
                 </span>
             </div>
         </div>
+        <StyledAppHeaderButtonContainer className="app-header-button sample-card">
+            <StyledHeaderButtonContainer
+                className={mergeClass('install-button-label')}
+            >
+                <InstallButton className="button-label" />
+            </StyledHeaderButtonContainer>
+        </StyledAppHeaderButtonContainer>
         <StyledAppHeaderButtonContainer className="app-header-button app-setting">
             <SettingButton />
         </StyledAppHeaderButtonContainer>
@@ -268,18 +278,6 @@ export const AppHeader = ({
                 language={language}
                 applyCardData={applyCardData}
             />
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="app-header-button sample-card">
-            <StyledHeaderButtonContainer
-                className={mergeClass('preset-sample-button-label')}
-                onClick={() => {
-                    sampleCardRef.current?.open();
-                }}
-            >
-                <div className="button-label">
-                    <InstallButton />
-                </div>
-            </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>
     </div>;
 };
