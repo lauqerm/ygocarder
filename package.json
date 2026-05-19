@@ -50,7 +50,8 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "build": "react-scripts --openssl-legacy-provider build && yarn sentry:sourcemaps",
+    "build": "react-scripts --openssl-legacy-provider build",
+    "build:sentry": "yarn build && yarn sentry:sourcemaps",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
     "deploy": "gh-pages -d build",
