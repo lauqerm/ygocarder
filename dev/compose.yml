@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: ..
+      target: development
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+     - ..:/app
+     - ../node_modules:/app/node_modules
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      NODE_OPTIONS: --openssl-legacy-provider
+    stdin_open: true
+    tty: true
+    command: npm start
