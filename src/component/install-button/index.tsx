@@ -6,6 +6,7 @@ import {
     CheckCircleOutlined,
     QuestionCircleOutlined,
     LoadingOutlined,
+    WarningOutlined,
 } from '@ant-design/icons';
 import {
     usePWAState,
@@ -20,20 +21,20 @@ import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
 
 const { Text, Paragraph } = Typography;
-const StyledProgressModal = styled(Modal)`
-    
-`;
+const StyledProgressModal = styled(Modal)``;
 
-type Phase = 'idle' | 'downloading' | 'installing' | 'done' | 'error';
+type Phase = 'idle'
+    | 'downloading'
+    | 'ready-to-install'
+    | 'installing'
+    | 'done'
+    | 'error';
 
 export interface InstallButtonProps {
-    /** Custom button content. Defaults to "Install for offline use" with download icon. */
-    children?: ReactNode,
     className?: string,
 }
 
 export function InstallButton({
-    children,
     className,
 }: InstallButtonProps) {
     const pwaState = usePWAState();
@@ -65,32 +66,32 @@ export function InstallButton({
     };
 
     const startSync = async () => {
-  setError(null);
-  setPhase('downloading');
-  abortRef.current = new AbortController();
+        setError(null);
+        setPhase('downloading');
+        abortRef.current = new AbortController();
 
-  try {
-    await syncManifestWithWorker();
-    const result = await bulkCacheAssets({
-      signal: abortRef.current.signal,
-      onProgress: setProgress,
-    });
+        try {
+            await syncManifestWithWorker();
+            const result = await bulkCacheAssets({
+                signal: abortRef.current.signal,
+                onProgress: setProgress,
+            });
 
-    if (result.failed.length > 0) {
-      setError(`${result.failed.length} files failed to update.`);
-      setPhase('error');
-    } else {
-      setPhase('done');
-    }
-  } catch (err) {
-    if ((err as Error).name === 'AbortError') {
-      reset();
-    } else {
-      setError((err as Error).message);
-      setPhase('error');
-    }
-  }
-};
+            if (result.failed.length > 0) {
+                setError(`${result.failed.length} files failed to update.`);
+                setPhase('error');
+            } else {
+                setPhase('done');
+            }
+        } catch (err) {
+            if ((err as Error).name === 'AbortError') {
+                reset();
+            } else {
+                setError((err as Error).message);
+                setPhase('error');
+            }
+        }
+    };
 
     const startInstall = async () => {
         setError(null);
@@ -109,20 +110,15 @@ export function InstallButton({
                 return;
             }
 
+            // iOS skips the prompt step entirely
             if (isIOS()) {
                 setPhase('done');
                 return;
             }
 
-            setPhase('installing');
-            const outcome = await triggerInstall();
-
-            if (outcome === 'accepted') {
-                setPhase('done');
-            } else {
-                // User dismissed the OS prompt — cache is still good, allow retry
-                reset();
-            }
+            // Don't call prompt() here — gesture is consumed by now.
+            // Wait for the user to click "Install" in the modal.
+            setPhase('ready-to-install');
         } catch (err) {
             if ((err as Error).name === 'AbortError') {
                 reset();
@@ -130,6 +126,22 @@ export function InstallButton({
                 setError((err as Error).message);
                 setPhase('error');
             }
+        }
+    };
+
+    const handleInstallClick = async () => {
+        setPhase('installing');
+        try {
+            const outcome = await triggerInstall();
+            if (outcome === 'accepted') {
+                setPhase('done');
+            } else {
+                // Dismissed the OS prompt; cache is preserved
+                reset();
+            }
+        } catch (err) {
+            setError((err as Error).message);
+            setPhase('error');
         }
     };
 
@@ -159,157 +171,163 @@ export function InstallButton({
 
     const modalOpen = phase !== 'idle';
     const ModalComponent = <StyledProgressModal
-                visible={modalOpen}
-                title={modalTitle(phase)}
-                onCancel={requestClose}
-                maskClosable={phase !== 'downloading'}
-                keyboard={phase !== 'downloading'}
-                closable={phase !== 'installing'}
-                footer={modalFooter(phase, requestClose, startInstall, reset)}
-                width={460}
-                className="install-modal"
-                centered
-                destroyOnClose
-            >
-                {phase === 'downloading' && progress && (
-                    <DownloadingView progress={progress} />
-                )}
-                {phase === 'installing' && (
-                    <Paragraph>
-                        <Text>Waiting for system install prompt…</Text>
-                    </Paragraph>
-                )}
-                {phase === 'done' && <DoneView />}
-                {phase === 'error' && error && (
-                    <Alert
-                        type="error"
-                        showIcon
-                        message="Installation failed"
-                        description={error}
-                    />
-                )}
-            </StyledProgressModal>;
+        visible={modalOpen}
+        title={modalTitle(phase)}
+        onCancel={requestClose}
+        maskClosable={phase !== 'downloading'}
+        keyboard={phase !== 'downloading'}
+        closable={phase !== 'installing'}
+        footer={modalFooter(phase, requestClose, startInstall, reset, handleInstallClick)}
+        width={460}
+        className="install-modal"
+        centered
+        destroyOnClose
+    >
+        Checking for available assets.
+        {phase === 'downloading' && progress && (
+            <DownloadingView progress={progress} />
+        )}
+        {phase === 'ready-to-install' && <ReadyToInstallView />}
+        {phase === 'installing' && (
+            <Paragraph>
+                <Text>Waiting for system install prompt...</Text>
+            </Paragraph>
+        )}
+        {phase === 'done' && <DoneView />}
+        {phase === 'error' && error && (
+            <Alert
+                type="error"
+                showIcon
+                message="Installation failed"
+                description={error}
+            />
+        )}
+    </StyledProgressModal>;
 
+    let icon: React.ReactNode = null;
+    let label: React.ReactNode = null;
+    let callback: undefined | (() => void) = undefined;
     switch (pwaState.kind) {
-    case 'sw-not-ready':
-      return (
-        <div className={className}>
-                                  <LoadingOutlined />
-                                  <label>Preparing</label>
+        case 'sw-not-ready': {
+            icon = <LoadingOutlined />;
+            label = <label>Preparing</label>;
+            break;
+        }
+        case 'not-installed': {
+            icon = <DownloadOutlined />;
+            label = <label>Install</label>;
+            callback = startInstall;
+            break;
+        }
+        case 'installed-fresh': {
+            icon = <CheckCircleOutlined />;
+            label = <label>Check</label>;
+            callback = startSync;
+            break;
+        }
+        case 'installed-stale': {
+            icon = <SyncOutlined />;
+            label = <label>Update Now</label>;
+            callback = startSync;
+            break;
+        }
+        case 'installed-broken': {
+            icon = <WarningOutlined />;
+            label = <label>({Math.round(pwaState.cacheCompletion * 100)}%) Finish</label>;
+            callback = startSync;
+            break;
+        }
+    }
+
+    const mountModal = pwaState.kind !== 'sw-not-ready' && pwaState.kind !== 'not-supported';
+
+    if (pwaState.kind === 'not-supported') return <UnsupportedHint className={className} reason={pwaState.reason} />;
+    return <>
+        <div className={className} onClick={callback}>
+            {icon}
+            {label}
         </div>
-      );
+        {mountModal && ModalComponent}
+    </>;
+};
 
-    case 'not-supported':
-      return <>
-      <UnsupportedHint className={className} reason={pwaState.reason} />
-      </>;
-
-    case 'not-installed':
-      return (
-        <>
-        <div className={className} onClick={startInstall}>
-                                  <DownloadOutlined />
-                                  <label>Install</label>
-        </div>
-          {ModalComponent}
-        </>
-      );
-
-    case 'installed-fresh':
-      return (
-        <>
-        <div className={className} onClick={startSync}>
-                                  <CheckCircleOutlined />
-                                  <label>Check</label>
-        </div>
-          {ModalComponent}
-        </>
-      );
-
-    case 'installed-stale':
-      return (
-        <>
-        <div className={className} onClick={startSync}>
-                                  <SyncOutlined />
-                                  <label>Update Now</label>
-        </div>
-          {ModalComponent}
-        </>
-      );
-
-    case 'installed-broken':
-      return (
-        <>
-        <div className={className} onClick={startSync}>
-            ({Math.round(pwaState.cacheCompletion * 100)}%) Finish
-          </div>
-          {ModalComponent}
-        </>
-      );
-
-      default: return <>{children}</>;
-  }
+function ReadyToInstallView() {
+    return (
+        <Space direction="vertical" size="middle">
+            <Alert
+                type="success"
+                showIcon
+                message="All assets downloaded"
+                description="The app is ready to work fully offline."
+            />
+            <Paragraph type="secondary" style={{ margin: 0 }}>
+                Click <Text strong>Install</Text> to add the app to your home screen
+                or app drawer. You'll see a system confirmation dialog next.
+            </Paragraph>
+        </Space>
+    );
 }
 
 function UnsupportedHint({ reason, className }: { reason: NotSupportedReason, className?: string }) {
-  const { title, content } = unsupportedMessage(reason);
+    const { title, content } = unsupportedMessage(reason);
 
-  return (
-    <Popover
-      content={
-        <StyledPopMarkdown>
-          <strong>{title}</strong>
-          <div>{content}</div>
-        </StyledPopMarkdown>
-      }
-      placement="topLeft"
-    >
-        <div className={className}>
-      <QuestionCircleOutlined />
-        <label>Can't Install</label>
-      </div>
-    </Popover>
-  );
+    return (
+        <Popover
+            content={
+                <StyledPopMarkdown>
+                    <strong>{title}</strong>
+                    <div>{content}</div>
+                </StyledPopMarkdown>
+            }
+            placement="topLeft"
+        >
+            <div className={className}>
+                <QuestionCircleOutlined />
+                <label>Can't Install</label>
+            </div>
+        </Popover>
+    );
 }
 
 function unsupportedMessage(reason: NotSupportedReason): { title: string; content: string } {
-  switch (reason) {
-    case 'dev-mode':
-      return {
-        title: 'Install not available: Dev mode',
-        content: 'Run `yarn build && yarn preview` to test it.',
-      };
-    case 'no-service-worker':
-      return {
-        title: 'Install not available: Browser too old',
-        content: 'Your browser doesn\'t support offline web apps. Try a recent version of Chrome, Edge, Firefox, or Safari.',
-      };
-    case 'ios-no-prompt':
-      return {
-        title: 'Install not available: Add to Home Screen on iOS',
-        content: 'Tap the Share button in Safari, then "Add to Home Screen". The app will work offline once installed.',
-      };
-    case 'firefox-desktop':
-      return {
-        title: 'Install not available: Not supported on Firefox desktop',
-        content: 'Firefox on desktop doesn\'t support installing web apps. The app still works in the browser; for offline use, try Chrome, Edge, or use Firefox on mobile.',
-      };
-    case 'in-private-window':
-      return {
-        title: 'Install not available: Private window',
-        content: 'Offline mode doesn\'t work in private/incognito windows. Open the app in a regular window to install.',
-      };
-    default:
-      return {
-        title: 'Install not available',
-        content: 'Your browser doesn\'t support installing this app right now. Check that you\'re on the latest version, in a regular (non-private) window, and using HTTPS.',
-      };
-  }
+    switch (reason) {
+        case 'dev-mode':
+            return {
+                title: 'Install not available: Dev mode',
+                content: 'Run `yarn build && yarn preview` to test it.',
+            };
+        case 'no-service-worker':
+            return {
+                title: 'Install not available: Browser too old',
+                content: 'Your browser doesn\'t support offline web apps. Try a recent version of Chrome, Edge, Firefox, or Safari.',
+            };
+        case 'ios-no-prompt':
+            return {
+                title: 'Install not available: Add to Home Screen on iOS',
+                content: 'Tap the Share button in Safari, then "Add to Home Screen". The app will work offline once installed.',
+            };
+        case 'firefox-desktop':
+            return {
+                title: 'Install not available: Not supported on Firefox desktop',
+                content: 'Firefox on desktop doesn\'t support installing web apps. The app still works in the browser; for offline use, try Chrome, Edge, or use Firefox on mobile.',
+            };
+        case 'in-private-window':
+            return {
+                title: 'Install not available: Private window',
+                content: 'Offline mode doesn\'t work in private/incognito windows. Open the app in a regular window to install.',
+            };
+        default:
+            return {
+                title: 'Install not available',
+                content: 'Your browser doesn\'t support installing this app right now. Check that you\'re on the latest version, in a regular (non-private) window, have access to internet, and using HTTPS.',
+            };
+    }
 }
 
 function modalTitle(phase: Phase): string {
     switch (phase) {
         case 'downloading': return 'Downloading assets';
+        case 'ready-to-install': return 'Ready to install';
         case 'installing': return 'Confirm installation';
         case 'done': return isIOS() ? 'Almost done' : 'Installed';
         case 'error': return 'Something went wrong';
@@ -321,13 +339,22 @@ function modalFooter(
     phase: Phase,
     requestClose: () => void,
     retry: () => void,
-    reset: () => void
+    reset: () => void,
+    installNow: () => void,
 ) {
     if (phase === 'downloading') {
         return (
             <Button onClick={requestClose} danger>
                 Cancel
             </Button>
+        );
+    }
+    if (phase === 'ready-to-install') {
+        return (
+            <Space>
+                <Button onClick={reset}>Not now</Button>
+                <Button type="primary" onClick={installNow}>Install</Button>
+            </Space>
         );
     }
     if (phase === 'error') {

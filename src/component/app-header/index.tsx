@@ -227,13 +227,6 @@ export const AppHeader = ({
                 </span>
             </div>
         </div>
-        <StyledAppHeaderButtonContainer className="app-header-button sample-card">
-            <StyledHeaderButtonContainer
-                className={mergeClass('install-button-label')}
-            >
-                <InstallButton className="button-label" />
-            </StyledHeaderButtonContainer>
-        </StyledAppHeaderButtonContainer>
         <StyledAppHeaderButtonContainer className="app-header-button app-setting">
             <SettingButton />
         </StyledAppHeaderButtonContainer>
@@ -278,6 +271,13 @@ export const AppHeader = ({
                 language={language}
                 applyCardData={applyCardData}
             />
+        </StyledAppHeaderButtonContainer>
+        <StyledAppHeaderButtonContainer className="app-header-button install-app">
+            <StyledHeaderButtonContainer
+                className={mergeClass('install-button-label')}
+            >
+                <InstallButton className="button-label" />
+            </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>
     </div>;
 };

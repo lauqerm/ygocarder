@@ -338,7 +338,7 @@ button.ant-btn {
         border-color: var(--color);
     }
 
-    &.ant-btn-primary {
+    &.ant-btn-primary:not(.ant-btn-dangerous) {
         background: var(--main-primary);
         border-color: var(--main-active);
 
@@ -521,4 +521,11 @@ button.ant-btn {
 
 .ant-progress-text {
     color: var(--color);
+}
+
+.ant-modal-confirm-body {
+    .ant-modal-confirm-title,
+    .ant-modal-confirm-content {
+        color: var(--color);
+    }
 }
