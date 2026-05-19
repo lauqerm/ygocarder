@@ -1,13 +1,6 @@
 services:
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
       target: production
     ports:
       - "8080:8080"
-    env_file:
-      - .env
-    environment:
-      NODE_ENV: production
-      NODE_OPTIONS: --openssl-legacy-provider
