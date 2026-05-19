@@ -2,7 +2,7 @@
 
 ### Preparation
 
-Before working with the app, you will need to prepare your own `.env.docker` file, which the following attributes:
+Before working with the app, you will need to prepare your own `.env` file, which has the following attributes:
 ```env
 ### Template file used for batch import function
 REACT_APP_TEMPLATE_FILE="https://drive.google.com/file/d/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/view?usp=sharing"
@@ -27,16 +27,18 @@ Prerequisites:
 
 2. Start developing
     ```bash
-    docker compose build app-dev
-    docker compose up app-dev
+    cd dev
+    docker compose build app
+    docker compose up app
     ```
 
 Now you can access the app at <http://localhost:3000>.
 
 3. Production build and start serving
     ```bash
-    docker compose build app-prod
-    docker compose up app-prod
+    cd prod
+    docker compose build app
+    docker compose up app
     ```
 
 Now you can access the app at <http://localhost:8080/ygocarder>. This is just a basic webserver using nginx.
