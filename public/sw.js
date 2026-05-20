@@ -67,36 +67,46 @@ self.addEventListener('fetch', (event) => {
 
 /**
  * Network-first strategy for navigations.
- * Tries network so users get fresh HTML on updates, falls back to cached shell offline.
+ * Tries network so users get fresh HTML on updates, falls back to cached shell offline. Skip the check as quickly as possible when offline, to avoid stale waiting time.
  * @param {Request} request
  * @returns {Promise<Response>}
  */
+const NAV_TIMEOUT_MS = 3000;
 async function handleNavigation(request) {
-    // Fast path: if we know we're offline, go straight to cache
+    // Fast path: definitely offline
     if (!self.navigator.onLine) {
         const cached = await caches.match(SHELL_URL);
         if (cached) return cached;
-        // No cache — try network anyway, it'll fail and we'll throw
     }
-    try {
-        const response = await fetch(request);
-        // Cache the latest shell for offline use
+
+    const networkPromise = fetch(request).then(async (response) => {
         if (response.ok) {
             const cache = await caches.open(SHELL_CACHE);
-            cache.put(SHELL_URL, response.clone()).catch((err) => {
-                console.warn('[sw] shell cache.put failed', err);
-            });
+            cache.put(SHELL_URL, response.clone()).catch(() => { });
         }
         return response;
+    });
+
+    // Race: whichever finishes first wins
+    const timeoutPromise = new Promise((resolve) => {
+        setTimeout(async () => {
+            const cached = await caches.match(SHELL_URL);
+            if (cached) resolve(cached);
+            // If no cache, don't resolve — let network finish or fail
+        }, NAV_TIMEOUT_MS);
+    });
+
+    try {
+        const result = await Promise.race([networkPromise, timeoutPromise]);
+        if (result) return result;
+        return await networkPromise; // fallback
     } catch (err) {
-        // Offline — serve the cached shell as fallback for any in-scope navigation
-        const cache = await caches.open(SHELL_CACHE);
-        const cached = await cache.match(SHELL_URL);
+        // Network failed; serve cache as last resort
+        const cached = await caches.match(SHELL_URL);
         if (cached) return cached;
-        console.warn('[sw] navigation failed and no cached shell', err);
         throw err;
     }
-}
+};
 
 /**
  * Cache-first strategy for assets.
