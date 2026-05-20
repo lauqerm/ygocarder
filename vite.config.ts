@@ -35,7 +35,8 @@ export default defineConfig(({ mode }) => {
         },
         server: {
             port: 3000, // matches CRA's default, optional
-            open: true, // auto-open browser, like CRA
+            host: true,
+            open: false, // auto-open browser, like CRA
         },
     };
 });

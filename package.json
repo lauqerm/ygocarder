@@ -48,21 +48,19 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'dist/static/js/*.js'",
-    "build": "vite build",
+    "build": "VITE_VERSION=$npm_package_version vite build",
     "build:sentry": "vite build",
     "build:manifest": "tsx scripts/build-asset-manifest.ts",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
     "deploy": "yarn sentry:sourcemaps && gh-pages -d dist",
     "dev": "vite",
-    "eject": "react-scripts eject",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "prebuild": "yarn build:manifest",
     "predeploy": "yarn run build",
     "preview": "vite preview",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org lauqerm --project ygo-carder ./dist && sentry-cli sourcemaps upload --org lauqerm --project ygo-carder ./dist",
-    "start": "vite",
-    "test": "react-scripts test"
+    "start": "vite"
   },
   "browserslist": {
     "production": [
@@ -100,5 +98,8 @@
     "source-map-loader": "^1.0.0",
     "tsx": "^4.22.1",
     "vite": "^8.0.13"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-musl": "*"
   }
 }
