@@ -130,5 +130,5 @@ async function syncManifest(newManifest) {
         });
     }
 }
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="68c6880e-2203-5810-a12b-c25a7c9c305b")}catch(e){}}();
-//# debugId=68c6880e-2203-5810-a12b-c25a7c9c305b
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="23a09879-4d86-587c-9550-19b279bdcd49")}catch(e){}}();
+//# debugId=23a09879-4d86-587c-9550-19b279bdcd49
