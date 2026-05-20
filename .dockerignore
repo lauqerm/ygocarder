@@ -6,3 +6,4 @@ Dockerfile.dev
 .git
 .gitignore
 .env
+.yarn/cache
