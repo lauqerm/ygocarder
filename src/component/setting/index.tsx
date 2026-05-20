@@ -7,6 +7,7 @@ import { RadioTrain } from '../input-train';
 import { ExportFormatList, getSlindingTypeList, ResolutionList, ResolutionMap } from 'src/model';
 import { ResolutionLabel, StyledPopMarkdown } from '../atom';
 import { ResetOfflineDataButton } from './reset-button';
+import { InstallButton } from '../install-button';
 
 const rotate = keyframes`
     to {
@@ -157,6 +158,9 @@ export const SettingButton = () => {
                 </div>
                 <div>
                     <ResetOfflineDataButton />
+                </div>
+                <div>
+                    <InstallButton mode='install' />
                 </div>
             </StyledSettingPanel>}
         >

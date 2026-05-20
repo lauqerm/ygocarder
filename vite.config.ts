@@ -38,5 +38,8 @@ export default defineConfig(({ mode }) => {
             host: true,
             open: false, // auto-open browser, like CRA
         },
+        preview: {
+            allowedHosts: ['stress-snowfield-stinging.ngrok-free.dev'],
+        }
     };
 });

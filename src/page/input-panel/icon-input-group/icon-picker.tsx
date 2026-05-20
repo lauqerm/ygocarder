@@ -38,7 +38,7 @@ export const StyledIconDropdown = styled(StyledDropdown.Container)`
 `;
 export const IconDropdownContainer = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1.5fr;
+    grid-template-columns: 1fr 1fr 1fr 240px;
     gap: var(--spacing-px);
     background-color: var(--sub-level-1);
     border: var(--bw) solid var(--sub-level-1);
@@ -51,7 +51,7 @@ export const IconDropdownContainer = styled.div`
         border-radius: 0;
     }
     .card-image-cropper {
-        width: 225px;
+        width: 230px;
         grid-template-columns: 1fr;
         gap: var(--spacing);
         margin: 0 var(--spacing-xs);

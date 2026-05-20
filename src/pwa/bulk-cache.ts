@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react';
+
 interface AssetEntry {
     hash: string;
     size: number;
@@ -82,6 +84,12 @@ export async function bulkCacheAssets(
                 }
             } catch (err) {
                 if ((err as Error).name === 'AbortError') throw err;
+                else Sentry.captureException(err, {
+                    extra: {
+                        type: 'Failed to bulk cache',
+                        ...err,
+                    },
+                });
                 progress.failed.push(url);
                 console.warn('[bulk-cache] failed', url, err);
             }
@@ -120,6 +128,12 @@ async function fetchWithRetry(
             lastError = new Error(`HTTP ${response.status}`);
         } catch (err) {
             if ((err as Error).name === 'AbortError') throw err;
+            else Sentry.captureException(err, {
+                extra: {
+                    type: 'Failed to retry bulk cache',
+                    ...err,
+                },
+            });
             lastError = err;
         }
         // Exponential backoff: 500ms, 1000ms, 2000ms

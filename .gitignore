@@ -15,14 +15,17 @@ node_modules
 public/asset-manifest.json
 
 # misc
+**/.DS_Store
+**/Thumbs.db
 .DS_Store
 .env.development
-.env.local
 .env.development.local
-.env.test.local
-.env.production.local
 .env.docker
+.env.local
+.env.production.local
+.env.test.local
 .eslintcache
+Thumbs.db
 
 npm-debug.log*
 yarn-debug.log*

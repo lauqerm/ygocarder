@@ -8,6 +8,7 @@ import {
     LoadingOutlined,
     WarningOutlined,
     CloudDownloadOutlined,
+    CarryOutOutlined,
 } from '@ant-design/icons';
 import {
     usePWAState,
@@ -18,9 +19,11 @@ import {
     NotSupportedReason,
     syncManifestWithWorker,
     getFullDiagnostics,
+    isAppAlreadyInstalled,
 } from '../../pwa';
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
+import * as Sentry from '@sentry/react';
 
 const { Text, Paragraph } = Typography;
 const StyledProgressModal = styled(Modal)``;
@@ -33,16 +36,19 @@ type Phase = 'idle'
     | 'error';
 
 export interface InstallButtonProps {
+    mode?: 'status' | 'install',
     className?: string,
-}
+};
 
 export function InstallButton({
+    mode = 'status',
     className,
 }: InstallButtonProps) {
     const pwaState = usePWAState();
     const [phase, setPhase] = useState<Phase>('idle');
     const [progress, setProgress] = useState<BulkDownloadProgress | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [alreadyInstalled, setAlreadyInstalled] = useState(false);
     const abortRef = useRef<AbortController | null>(null);
 
     // Warn before unload while downloading
@@ -59,6 +65,10 @@ export function InstallButton({
         window.addEventListener('beforeunload', handler);
         return () => window.removeEventListener('beforeunload', handler);
     }, [phase]);
+
+    useEffect(() => {
+        isAppAlreadyInstalled().then(setAlreadyInstalled);
+    }, []);
 
     const reset = () => {
         setPhase('idle');
@@ -109,6 +119,12 @@ export function InstallButton({
             if (result.failed.length > 0) {
                 setError(`${result.failed.length} files failed to download. You can retry.`);
                 setPhase('error');
+                Sentry.captureException(new Error('PWA: Failed to cache asset'), {
+                    extra: {
+                        type: 'Failed to cache asset',
+                        ...result,
+                    },
+                });
                 return;
             }
 
@@ -125,6 +141,12 @@ export function InstallButton({
             if ((err as Error).name === 'AbortError') {
                 reset();
             } else {
+                Sentry.captureException(err, {
+                    extra: {
+                        type: 'Failed when prepare for install',
+                        ...err,
+                    },
+                });
                 setError((err as Error).message);
                 setPhase('error');
             }
@@ -142,6 +164,12 @@ export function InstallButton({
                 reset();
             }
         } catch (err) {
+            Sentry.captureException(err, {
+                extra: {
+                    type: 'Failed to install',
+                    ...err,
+                },
+            });
             setError((err as Error).message);
             setPhase('error');
         }
@@ -222,7 +250,7 @@ export function InstallButton({
             break;
         }
         case 'installed-fresh': {
-            icon = <CheckCircleOutlined />;
+            icon = <CarryOutOutlined />;
             label = <label>Check</label>;
             callback = startSync;
             break;
@@ -266,7 +294,31 @@ export function InstallButton({
 
     const mountModal = pwaState.kind !== 'sw-not-ready' && pwaState.kind !== 'not-supported';
 
-    if (cacheProgress) return <Popover
+    if (mode === 'status') return <Popover
+        content={
+            <StyledPopMarkdown>
+                <div>{cachedAssetCount} assets cached</div>
+            </StyledPopMarkdown>
+        }
+        placement="topLeft"
+    >
+        <div className={className}>
+            <CloudDownloadOutlined />
+            <label>{cacheProgress}</label>
+        </div>
+    </Popover>;
+    if (alreadyInstalled) {
+        return (
+            <Popover content="The app is already installed. Open it from your home screen or app drawer.">
+                <div className={className} onClick={callback}>
+                    <CheckCircleOutlined />
+                    <label>Installed</label>
+                </div>
+            </Popover>
+        );
+    }
+    if (pwaState.kind === 'not-supported') return <UnsupportedHint className={className} reason={pwaState.reason} />;
+    return <Popover
         content={
             <StyledPopMarkdown>
                 <div>{cachedAssetCount} assets cached</div>
@@ -275,18 +327,11 @@ export function InstallButton({
         placement="topLeft"
     >
         <div className={className} onClick={callback}>
-            <CloudDownloadOutlined />
-            <label>{cacheProgress}</label>
-        </div>
-    </Popover>
-    if (pwaState.kind === 'not-supported') return <UnsupportedHint className={className} reason={pwaState.reason} />;
-    return <>
-        <div className={className} onClick={callback}>
             {icon}
             {label}
         </div>
         {mountModal && ModalComponent}
-    </>;
+    </Popover>;
 };
 
 function ReadyToInstallView() {

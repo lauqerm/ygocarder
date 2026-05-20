@@ -9,6 +9,16 @@ const OUTPUT_FILE = join(PUBLIC_DIR, 'asset-manifest.json');
 const BASE_PATH = '/ygocarder/';
 /** 16 is quite enough for a unique identifier */
 const HASH_LENGTH = 16;
+const IGNORED_NAMES = new Set([
+    '.DS_Store',       // macOS Finder
+    'Thumbs.db',       // Windows Explorer
+    'desktop.ini',     // Windows
+    '.gitkeep',        // Git placeholder
+]);
+
+const IGNORED_PATTERNS = [
+    /^\./,             // any hidden file/folder
+];
 // ────────────────────────────────────────────────────────────────────────────
 
 interface AssetManifest {
@@ -30,6 +40,8 @@ async function walk(dir: string): Promise<string[]> {
     const entries = await readdir(dir, { withFileTypes: true });
     const files = await Promise.all(
         entries.map(async (entry) => {
+            if (shouldIgnore(entry.name)) return [];
+
             const full = join(dir, entry.name);
             if (entry.isDirectory()) return walk(full);
             if (entry.isFile()) return [full];
@@ -37,7 +49,7 @@ async function walk(dir: string): Promise<string[]> {
         })
     );
     return files.flat();
-}
+};
 
 function toUrlPath(filePath: string): string {
     // public/asset/image/foo.png → /ygocarder/asset/image/foo.png
@@ -50,6 +62,11 @@ async function hashFile(filePath: string): Promise<AssetEntry> {
     const buf = await readFile(filePath);
     const hash = createHash('sha256').update(buf).digest('hex').slice(0, HASH_LENGTH);
     return { hash, size: buf.byteLength };
+};
+
+function shouldIgnore(name: string): boolean {
+    if (IGNORED_NAMES.has(name)) return true;
+    return IGNORED_PATTERNS.some((pattern) => pattern.test(name));
 }
 
 async function build(): Promise<void> {
@@ -118,7 +135,7 @@ async function build(): Promise<void> {
     console.log(`[asset-manifest] wrote ${files.length} assets (${mb} MB)`);
     console.log(`[asset-manifest] version: ${version}`);
     console.log(`[asset-manifest] → ${OUTPUT_FILE}`);
-}
+};
 
 build().catch((err) => {
     console.error('[asset-manifest] failed:', err);
