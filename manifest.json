@@ -22,5 +22,12 @@
   "scope": "/ygocarder/",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://lauqerm.github.io/ygocarder/manifest.webmanifest"
+    }
+  ],
+  "prefer_related_applications": false
 }

@@ -72,6 +72,12 @@ self.addEventListener('fetch', (event) => {
  * @returns {Promise<Response>}
  */
 async function handleNavigation(request) {
+    // Fast path: if we know we're offline, go straight to cache
+    if (!self.navigator.onLine) {
+        const cached = await caches.match(SHELL_URL);
+        if (cached) return cached;
+        // No cache — try network anyway, it'll fail and we'll throw
+    }
     try {
         const response = await fetch(request);
         // Cache the latest shell for offline use
@@ -171,5 +177,5 @@ async function syncManifest(newManifest) {
         });
     }
 }
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="604dd295-593b-51d9-91c0-a2b29351a13a")}catch(e){}}();
-//# debugId=604dd295-593b-51d9-91c0-a2b29351a13a
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="bcbefee2-6d0c-51b9-b935-3968541d4fcc")}catch(e){}}();
+//# debugId=bcbefee2-6d0c-51b9-b935-3968541d4fcc

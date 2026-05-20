@@ -1,14 +1,10 @@
 {
-  "version": "bcc80a8b2dead09a",
-  "generatedAt": "2026-05-20T11:49:27.218Z",
+  "version": "96ca00242a63ecc1",
+  "generatedAt": "2026-05-20T12:14:57.662Z",
   "basePath": "/ygocarder/",
-  "assetCount": 666,
-  "totalBytes": 79987586,
+  "assetCount": 662,
+  "totalBytes": 79952754,
   "assets": {
-    "/ygocarder/asset/.DS_Store": {
-      "hash": "d2c5d8692701722a",
-      "size": 8196
-    },
     "/ygocarder/asset/font.css": {
       "hash": "62e6b4a8a85c0c1b",
       "size": 2627
@@ -128,14 +124,6 @@
     "/ygocarder/asset/i18n/vie.json": {
       "hash": "fac4ea24348bae25",
       "size": 41175
-    },
-    "/ygocarder/asset/image/.DS_Store": {
-      "hash": "4663a3e632cf3c6d",
-      "size": 14340
-    },
-    "/ygocarder/asset/image/attribute/.DS_Store": {
-      "hash": "d65165279105ca67",
-      "size": 6148
     },
     "/ygocarder/asset/image/attribute/attr-ch-dark.png": {
       "hash": "4bdad1239b4dd115",
@@ -776,10 +764,6 @@
     "/ygocarder/asset/image/finish-name/finish-name-type9.png": {
       "hash": "8dfe52633a19fb81",
       "size": 10047
-    },
-    "/ygocarder/asset/image/finish/.DS_Store": {
-      "hash": "d04753959cfb606a",
-      "size": 6148
     },
     "/ygocarder/asset/image/finish/art-finish-type1-pendulum-medium.png": {
       "hash": "eb5ef4a9c032c8d9",
