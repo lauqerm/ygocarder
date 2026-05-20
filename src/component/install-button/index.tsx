@@ -244,14 +244,24 @@ export function InstallButton({
     const [cacheProgress, setCacheProgress] = useState('');
     const [cachedAssetCount, setCachedAssetCount] = useState(0);
     useEffect(() => {
-        (async () => {
+        // 1. Define the async function inside
+        const cacheHeartbeat = async () => {
             const {
                 cacheCompletion,
                 cachedAssetCount,
             } = await getFullDiagnostics();
             setCacheProgress(`${Math.round(cacheCompletion * 100)}% cached`);
             setCachedAssetCount(cachedAssetCount);
-        })();
+        };
+
+        // 2. Call it immediately
+        cacheHeartbeat();
+
+        // 3. Optional: Setup interval for recurring heartbeat
+        const intervalId = setInterval(cacheHeartbeat, 10000);
+
+        // 4. Cleanup function to clear interval
+        return () => clearInterval(intervalId);
     }, [])
 
     const mountModal = pwaState.kind !== 'sw-not-ready' && pwaState.kind !== 'not-supported';
