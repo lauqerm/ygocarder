@@ -43,9 +43,9 @@ export async function isAppAlreadyInstalled(): Promise<boolean> {
     const nav = navigator as any;
     if (typeof nav.getInstalledRelatedApps === 'function') {
         try {
-        const apps = await nav.getInstalledRelatedApps();
-        // Empty array means "not installed"; populated means installed
-        if (apps.length > 0) return true;
+            const apps = await nav.getInstalledRelatedApps();
+            // Empty array means "not installed"; populated means installed
+            if (apps.length > 0) return true;
         } catch {
         // API exists but call failed — treat as unknown
         }

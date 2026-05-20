@@ -24,6 +24,7 @@ import {
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
 import * as Sentry from '@sentry/react';
+import { PUBLIC_PATH } from 'src/model';
 
 const { Text, Paragraph } = Typography;
 const StyledProgressModal = styled(Modal)``;
@@ -309,7 +310,11 @@ export function InstallButton({
     </Popover>;
     if (alreadyInstalled) {
         return (
-            <Popover content="The app is already installed. Open it from your home screen or app drawer.">
+            <Popover content={
+                <StyledPopMarkdown>
+                    <div>The app is already installed. Open it from your home screen or app drawer.</div>
+                </StyledPopMarkdown>
+            }>
                 <div className={className} onClick={callback}>
                     <CheckCircleOutlined />
                     <label>Installed</label>
@@ -366,13 +371,13 @@ function UnsupportedHint({ reason, className }: { reason: NotSupportedReason, cl
         >
             <div className={className}>
                 <QuestionCircleOutlined />
-                <label>Can't Install</label>
+                <label>Unavailable</label>
             </div>
         </Popover>
     );
 }
 
-function unsupportedMessage(reason: NotSupportedReason): { title: string; content: string } {
+function unsupportedMessage(reason: NotSupportedReason): { title: string; content: React.ReactNode } {
     switch (reason) {
         case 'dev-mode':
             return {
@@ -402,7 +407,18 @@ function unsupportedMessage(reason: NotSupportedReason): { title: string; conten
         default:
             return {
                 title: 'Install not available',
-                content: 'Your browser doesn\'t support installing this app right now. Check that you\'re on the latest version, in a regular (non-private) window, have access to internet, and using HTTPS.',
+                content: <div>
+                    Check your URL bar to see if you have already installed the app.
+                    <br />
+                    <img
+                        alt="pwa-installed-hint"
+                        width={80}
+                        src={`${PUBLIC_PATH}/asset/image/syntax/pwa-installed-hint.png`}
+                    />
+                    <br />
+                    <br />
+                    Otherwise, ensure that you\'re on the latest version, in a regular (non-private) window, have access to internet, and using HTTPS.
+                </div>,
             };
     }
 }
