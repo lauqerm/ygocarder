@@ -1,11 +1,11 @@
-import { Checkbox, Input, Popover } from 'antd';
+import { Checkbox, Input, Modal, Popover } from 'antd';
 import { CardLayoutPreview, InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent } from 'src/model';
-import { CaretDownOutlined, ApartmentOutlined } from '@ant-design/icons';
+import { ApartmentOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
@@ -24,6 +24,11 @@ type BottomFrameOptionGridRef = {
     focus: () => void,
 };
 
+const StyledFrameBlenderModal = styled(Modal)`
+    .ant-modal-content .ant-modal-body {
+        padding: 0;
+    }
+`;
 const StyledPendulumFrameInputContainer = styled.div`
     display: inline-flex;
     cursor: pointer;
@@ -32,18 +37,9 @@ const StyledPendulumFrameInputContainer = styled.div`
     box-shadow: var(--bs-button);
     border-radius: var(--br-lg);
     background-color: var(--main-level-4);
+    padding-right: var(--spacing-xs);
     &:focus-visible {
         outline: 2px solid var(--focus);
-    }
-    .pendulum-frame-info-block {
-        border-radius: 0 var(--br-lg) var(--br-lg) 0;
-        line-height: 2; // Alignment
-        min-width: 110px;
-        overflow: hidden;
-        border: var(--bw) solid var(--sub-level-1);
-        .frame-info-block-label {
-            padding: var(--spacing-px) var(--spacing-xs);
-        }
     }
     .pendulum-frame-label {
         display: inline-block;
@@ -62,13 +58,6 @@ const StyledPendulumFrameInputContainer = styled.div`
         line-height: 0;
         border: var(--bw) solid var(--sub-level-1);
         overflow: hidden;
-    }
-    .anticon {
-        align-content: center;
-        padding: 0 var(--spacing-xs);
-        border: var(--bw) solid var(--sub-level-1);
-        border-left: none;
-        border-radius: 0 var(--br-lg) var(--br-lg) 0;
     }
 `;
 const StyledPendulumInputContainer = styled.div`
@@ -228,8 +217,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const containerRef = useRef<HTMLDivElement>(null);
     const bottomFrameOptionGridRef = useRef<BottomFrameOptionGridRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
-    const [frameDropdownVisible, setFrameDropdownVisible] = useState(true);
-    const [frameDropdownHidden, setFrameDropdownHidden] = useState(true);
+    const [frameDropdownVisible, setFrameDropdownVisible] = useState(false);
     const changeToPendulum = (e: CheckboxChangeEvent) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
         /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it looks closer to real card */
@@ -256,15 +244,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         }),
         [showExtraDecorativeOption],
     );
-
-    useEffect(() => {
-        /** Force render, otherwise we will miss the image */
-        setFrameDropdownVisible(false);
-        /** Avoid consecutive render here, so the popover does not "flashing" when close */
-        setTimeout(() => {
-            setFrameDropdownHidden(false);
-        }, 250);
-    }, []);
 
     useImperativeHandle(ref, () => ({
         setValue: ({ pendulumEffect }) => {
@@ -303,77 +282,76 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 >{language['input.pendulum.label']}</Checkbox>
             </div>
             <div className="pendulum-option-container">
-                {showCreativeOption && <Popover
+                <StyledFrameBlenderModal
                     visible={frameDropdownVisible}
-                    onVisibleChange={setFrameDropdownVisible}
-                    trigger={['click']}
-                    placement="bottom"
-                    overlayClassName={[
-                        'pendulum-frame-picker-overlay layout-picker-overlay',
-                        frameDropdownVisible ? 'picker-visible' : '',
-                        frameDropdownHidden ? 'picker-hidden' : '',
+                    onCancel={() => setFrameDropdownVisible(false)}
+                    forceRender
+                    closable={false}
+                    footer={() => null}
+                    className={[
+                        'global-input-overlay frame-blender-overlay layout-picker-overlay',
+                        // frameDropdownVisible ? 'picker-visible' : '',
+                        // frameDropdownHidden ? 'picker-hidden' : '',
                     ].join(' ')}
-                    content={<div className="overlay-event-absorber">
-                        <FrameLayoutSettingPanel ref={bottomFrameOptionGridRef}
-                            isPendulum={isPendulum}
-                            frameList={frameList}
-                            pendulumFrame={pendulumFrame}
-                            onTainted={onTainted}
-                            onCropChange={onCropChange}
-                            onSourceLoaded={onSourceLoaded}
-                            receivingCanvas={receivingCanvas}
-                            onFrameChange={onFrameChange}
-                            onCancel={() => {
-                                setFrameDropdownVisible(false);
-                                containerRef.current?.focus();
-                            }}
-                        />
-                        <FrameBehaviorSettingPanel />
-                    </div>}
                 >
-                    <StyledPendulumFrameInputContainer ref={containerRef}
-                        className="pendulum-frame-input"
-                        tabIndex={0}
-                        onKeyDown={e => {
-                            if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
-                                setFrameDropdownVisible(true);
-                                /** Popover takes time to mount / become visible */
-                                setTimeout(() => {
-                                    bottomFrameOptionGridRef.current?.focus();
-                                }, 200);
-
-                                return false;
-                            }
+                    <FrameLayoutSettingPanel ref={bottomFrameOptionGridRef}
+                        isPendulum={isPendulum}
+                        frameList={frameList}
+                        pendulumFrame={pendulumFrame}
+                        onTainted={onTainted}
+                        onCropChange={onCropChange}
+                        onSourceLoaded={onSourceLoaded}
+                        receivingCanvas={receivingCanvas}
+                        onFrameChange={onFrameChange}
+                        onCancel={() => {
+                            setFrameDropdownVisible(false);
+                            containerRef.current?.focus();
                         }}
-                    >
-                        <span className="pendulum-frame-label">
-                            {language['input.advanced-frame.label']}
-                        </span>
-                        <div className="card-layout-preview-container">
-                            <CardLayoutPreview
-                                width={Math.round(advanceLayoutPreviewHeight * width / height)}
-                                height={advanceLayoutPreviewHeight}
-                                isPendulum={isPendulum}
-                                resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
-                                tabIndex={-1}
-                                dyeList={dyeList}
-                                foil={foil}
-                                language={language}
-                            />
-                        </div>
-                        {flagList.length > 0
-                            ? <InternalPopover
-                                content={<StyledPopMarkdown>
-                                    {language['input.flag.effective.label']}
-                                    <ul>{flagList}</ul>
-                                </StyledPopMarkdown>}
-                            >
-                                <ApartmentOutlined />
-                            </InternalPopover>
-                            : null}
-                        <CaretDownOutlined />
-                    </StyledPendulumFrameInputContainer>
-                </Popover>}
+                    />
+                    <FrameBehaviorSettingPanel />
+                </StyledFrameBlenderModal>
+                {showCreativeOption && <StyledPendulumFrameInputContainer ref={containerRef}
+                    className="pendulum-frame-input"
+                    tabIndex={0}
+                    onClick={() => setFrameDropdownVisible(true)}
+                    onKeyDown={e => {
+                        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
+                            setFrameDropdownVisible(true);
+                            /** Popover takes time to mount / become visible */
+                            setTimeout(() => {
+                                bottomFrameOptionGridRef.current?.focus();
+                            }, 200);
+
+                            return false;
+                        }
+                    }}
+                >
+                    <span className="pendulum-frame-label">
+                        {language['input.advanced-frame.label']}
+                    </span>
+                    <div className="card-layout-preview-container">
+                        <CardLayoutPreview
+                            width={Math.round(advanceLayoutPreviewHeight * width / height)}
+                            height={advanceLayoutPreviewHeight}
+                            isPendulum={isPendulum}
+                            resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
+                            tabIndex={-1}
+                            dyeList={dyeList}
+                            foil={foil}
+                            language={language}
+                        />
+                    </div>
+                    {flagList.length > 0
+                        ? <InternalPopover
+                            content={<StyledPopMarkdown>
+                                {language['input.flag.effective.label']}
+                                <ul>{flagList}</ul>
+                            </StyledPopMarkdown>}
+                        >
+                            <ApartmentOutlined />
+                        </InternalPopover>
+                        : null}
+                </StyledPendulumFrameInputContainer>}
                 {(isPendulum && showCreativeOption) && <div className="pendulum-size">
                     <Popover key="color-picker"
                         overlayClassName="global-input-overlay font-picker-overlay"
