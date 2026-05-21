@@ -48,7 +48,7 @@ export const ResolutionPicker = ({
         <StyledDownloadDropdownLabel disabled onClick={e => e.domEvent.stopPropagation()}>
             {language['setting.option.resolution.label']}
         </StyledDownloadDropdownLabel>
-        {ResolutionList.map(({ width, height, label, scale }) => {
+        {ResolutionList.map(({ width, height, scale }) => {
             return <StyledDownloadDropdownOption key={`${width}-${height}`}
                 className={resolution[0] === width && resolution[1] === height ? 'active-setting' : ''}
                 onClick={() => {

@@ -1,5 +1,4 @@
-import { Drawer, Popover } from 'antd';
-import React from 'react';
+import { Drawer } from 'antd';
 import styled, { css, keyframes } from 'styled-components';
 
 export const StyledMarkdown = styled.div`
@@ -23,22 +22,11 @@ export const StyledMarkdown = styled.div`
     }
 `;
 
-export const StyledPopMarkdown = styled(StyledMarkdown)<{ $width?: number }>`
+export const StyledPopMarkdown = styled(StyledMarkdown) <{ $width?: number }>`
     ${({ $width = 550 }) => `max-width: ${$width}px;`}
     border-radius: var(--br-lg);
     border: var(--bw) solid var(--sub-level-1);
 `;
-
-export const InternalPopover = ({
-    content,
-    children,
-    ...rest
-}: React.ComponentProps<typeof Popover>) => {
-    if (content) {
-        return <Popover content={content} {...rest}>{children}</Popover>;
-    }
-    return <>{children}</>;
-};
 
 export const CardActionButton = styled.button`
     --overlay-size: 36px;
@@ -158,34 +146,6 @@ export const PopoverButton = styled.div<{ $active?: boolean, $softMode: boolean 
     }
 `;
 
-const ResolutionLabelContainer = styled.div<{ $warning: boolean }>`
-    display: grid;
-    grid-template-columns: 3em max-content 3em;
-    gap: var(--spacing-xs);
-    .left-part {
-        text-align: right;
-    }
-    .right-part {
-        text-align: left;
-    }
-    ${({ $warning }) => $warning
-        ? `
-            color: var(--main-warning);
-        `
-        : ''}
-`;
-export type ResolutionLabel = {
-    warning?: boolean,
-    width: number,
-    height: number,
-} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-export const ResolutionLabel = ({ width, height, warning = false, ...rest }: ResolutionLabel) => {
-    return <ResolutionLabelContainer $warning={warning} {...rest}>
-        <span className="left-part">{width}</span>
-        <span>×</span>
-        <span className="right-part">{height}</span>
-    </ResolutionLabelContainer>;
-};
 
 const backgroundMarch = keyframes`
 	0% {
@@ -218,7 +178,6 @@ export const DropZone = styled.div<{ $visible: boolean }>`
     }
     ${css`animation: ${backgroundMarch} 6s linear infinite;`}
 `;
-
 
 export const ManagerDrawer = styled(Drawer)`
     .ant-drawer-header {
@@ -255,5 +214,38 @@ export const SingleSliderContainer = styled.div`
     }
 `;
 
-export * from './color';
-export * from './copiable';
+export const StyledCode = styled.span`
+    background: var(--main-level-1);
+    padding: var(--spacing-px) var(--spacing-xxs);
+    border: var(--bw) solid #4e84a4;
+    border-radius: var(--br);
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+`;
+
+export const CopiableOverlayStyle = css`
+    position: relative;
+    .copiable-overlay {
+        align-items: center;
+        background-color: var(--color-contrast);
+        font-size: var(--fs);
+        font-weight: bold;
+        border-radius: var(--br);
+        color: var(--color);
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 999;
+    }
+`;
+export const StyledMono = styled(StyledCode)`
+    display: inline-block;
+    font-size: var(--fs-sm);
+    border-color: var(--sub-level-1);
+    line-height: 1;
+    cursor: pointer;
+    ${CopiableOverlayStyle}
+`;

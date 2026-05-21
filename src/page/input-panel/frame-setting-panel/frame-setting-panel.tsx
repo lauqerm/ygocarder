@@ -122,14 +122,14 @@ const FrameLayoutContainer = styled.div`
 type FramelayoutSettingPanelRef = {
     focus: () => void,
 };
-export type FramelayoutSettingPanel = {
+export type FrameLayoutSettingPanel = {
     isPendulum: boolean,
     pendulumFrame: string,
     frameList: ReturnType<typeof getFrameButtonList>,
     onFrameChange: (frame: string) => void,
     onCancel: () => void,
 } & Pick<ImageCropper, 'receivingCanvas' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
-export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, FramelayoutSettingPanel>(({
+export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, FrameLayoutSettingPanel>(({
     receivingCanvas,
     onSourceLoaded,
     onTainted,
@@ -488,6 +488,3 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
         />
     </FrameLayoutContainer>;
 });
-
-export * from './frame-behavior-setting-panel';
-export * from '../../../component/card-layout-preview';

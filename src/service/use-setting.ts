@@ -31,7 +31,7 @@ export const useSetting = create<SettingStore>((set) => {
         showExtraAttribute,
         showExtraDecorativeOption,
         slidingType,
-    } = ((): Record<string, any> => {
+    } = ((): Record<string, unknown> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
 

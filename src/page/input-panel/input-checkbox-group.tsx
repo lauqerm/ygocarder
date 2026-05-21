@@ -3,8 +3,7 @@ import { Checkbox, Tooltip } from 'antd';
 import { useCard, useLanguage } from '../../service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { Card } from 'src/model';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { Card, CheckboxChangeEvent } from 'src/model';
 
 const StyledCheckboxGroup = styled.div`
     align-self: center;
@@ -14,8 +13,12 @@ const StyledCheckboxGroup = styled.div`
     }
 `;
 
-export type CardCheckboxGroupRef = {};
-export type CardCheckboxGroup = {};
+export type CardCheckboxGroupRef = {
+    debug: () => void,
+};
+export type CardCheckboxGroup = {
+    debug?: boolean,
+};
 export const CardCheckboxGroup = forwardRef<CardCheckboxGroupRef, CardCheckboxGroup>((_, ref) => {
     const language = useLanguage();
     const {
@@ -35,7 +38,17 @@ export const CardCheckboxGroup = forwardRef<CardCheckboxGroupRef, CardCheckboxGr
         setCard,
     })));
 
-    useImperativeHandle(ref, () => ({}));
+    useImperativeHandle(ref, () => ({
+        debug: () => {
+            console.info(
+                isDuelTerminalCard,
+                isSpeedCard,
+                isLimitedEdition,
+                isLegacyCard,
+                setCard,
+            );
+        },
+    }));
 
     const onLimitedEditionChange = useCallback((e: CheckboxChangeEvent) => setCard(currentCard => {
         const nextValue = e.target.checked;

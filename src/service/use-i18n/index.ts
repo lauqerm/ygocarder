@@ -12,7 +12,7 @@ export type I18NStore = {
     languageInfo: LanguageMetadata,
     languageMetadataMap: Record<string, LanguageMetadata>,
     language: LanguageData['dictionary'],
-    error: any,
+    error: unknown,
     isLoading: boolean,
     isMetadataReady: boolean,
     isInitiating: boolean,

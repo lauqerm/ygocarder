@@ -19,7 +19,7 @@ export const EffectInputGroup = forwardRef<EffectInputGroupRef, EffectInputGroup
 
         if (pickerRef) onTakePicker?.(pickerRef);
     /** No need to depend on handler */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     }, []);
 
     useImperativeHandle(ref, () => ({

@@ -95,7 +95,7 @@ const CardDataCopyButton = ({
 };
 
 type ExportMode = 'ygocarder' | 'other';
-export const getExportModeDataList = (language: LanguageDataDictionary) => [
+const getExportModeDataList = (language: LanguageDataDictionary) => [
     {
         label: language['button.import.for-ygocarder.label'],
         value: 'ygocarder' as const,
@@ -104,10 +104,7 @@ export const getExportModeDataList = (language: LanguageDataDictionary) => [
     {
         label: language['button.import.for-other.label'],
         value: 'other' as const,
-        converter: ygoCarderToCardMakerData as (card: Card, _artRef?: HTMLCanvasElement | null) => {
-            isPartial: boolean;
-            result: Record<string, any>;
-        },
+        converter: ygoCarderToCardMakerData,
     },
 ];
 

@@ -29,7 +29,7 @@ export const useColorPicker = ({
             onChange?.(normalizedText);
         }
         /** No need to depend on callback */
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [currentText]);
 
     useEffect(() => {

@@ -160,7 +160,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
         return () => {
             relevant = false;
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     }, [internalId, color, angle, verticalAngle, thickness]);
 
     useImperativeHandle(ref, () => ({

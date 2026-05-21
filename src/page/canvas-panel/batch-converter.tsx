@@ -140,7 +140,7 @@ export const BatchConverter = ({
                                 }
 
                                 const isYgoCarderCard = checkCompactYgoCarderCard(resultObject);
-                                let convertedCard: Record<string, any> | null = null;
+                                let convertedCard: Record<string, unknown> | null = null;
                                 if (isReverse) {
                                     /** Ygocarder into other vendor */
                                     convertedCard = isYgoCarderCard

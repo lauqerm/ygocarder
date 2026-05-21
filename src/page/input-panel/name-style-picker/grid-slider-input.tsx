@@ -78,7 +78,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
             relevant = false;
         };
         /** No need to depend on handler */
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [value]);
 
     useImperativeHandle(ref, () => ({

@@ -1,4 +1,4 @@
-import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined, DownloadOutlined } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -9,13 +9,14 @@ import { useShallow } from 'zustand/react/shallow';
 import { mergeClass } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
-import { FAD_BUTTON_ID, QuestionAndFeedback } from './faq';
+import { QuestionAndFeedback } from './faq';
 import { PresetManager } from '../preset-manager';
 import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
-import './app-header.scss';
 import { PUBLIC_PATH } from 'src/model';
 import { InstallButton } from '../install-button';
+import { FAQ_BUTTON_ID } from './model';
+import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">
@@ -128,10 +129,10 @@ export const AppHeader = ({
                         id="sentry-bug-report"
                         className="bug-report"
                         onMouseOver={() => {
-                            document.getElementById(FAD_BUTTON_ID)?.classList.add('js-highlight');
+                            document.getElementById(FAQ_BUTTON_ID)?.classList.add('js-highlight');
                         }}
                         onMouseOut={() => {
-                            document.getElementById(FAD_BUTTON_ID)?.classList.remove('js-highlight');
+                            document.getElementById(FAQ_BUTTON_ID)?.classList.remove('js-highlight');
                         }}
                     >
                         <div>

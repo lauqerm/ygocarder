@@ -1,6 +1,6 @@
 import { LanguageDataDictionary, useCardList, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { CardThumb, THUMB_SIZE } from './card-thumb';
+import { CardThumb } from './card-thumb';
 import { useCallback, useEffect, useState } from 'react';
 import { getEmptyCard, InternalCard, PUBLIC_PATH } from 'src/model';
 import { v4 as uuid } from 'uuid';
@@ -10,6 +10,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, FixedSizeList as List } from 'react-window';
 import { BatchDownloadButton } from './batch-download-button';
 import { CaretDownFilled } from '@ant-design/icons';
+import { THUMB_SIZE } from './model';
 
 const StyledMenuItem = styled(Menu.Item)`
     &.menu-active {

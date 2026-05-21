@@ -237,10 +237,9 @@ const analyzeExportHeader = CsvStandardFieldList.reduce((acc, field, index) => {
     return acc;
 }, {} as Record<CsvField, number | undefined>);
 
-const normalizeCsvData = (data: any) => {
-    if (data == null) return '';
-    if (data === '') return '';
-    return `"${data.replace(/"/g, '""')}"`;
+const normalizeCsvData = (data: unknown) => {
+    if (typeof data === 'string' && data !== '') return `"${data.replace(/"/g, '""')}"`;
+    return '';
 };
 export const cardListToCsv = (cardList: Card[]) => {
     const valueList: string[] = [];
@@ -250,7 +249,7 @@ export const cardListToCsv = (cardList: Card[]) => {
     for (let cnt = 0; cnt < cardList.length; cnt++) {
         const write = (key: CsvField, value: boolean | string | number | undefined) => {
             const index = analyzeExportHeader[key];
-    
+
             if (typeof index === 'number') {
                 if (typeof value === 'string') rowValue[index] = value;
                 if (typeof value === 'number') rowValue[index] = `${value}`;
@@ -550,7 +549,7 @@ const getCsvFieldReader = (row: (string | undefined)[], headerIndexMap: Record<C
             : value;
     };
 };
-const normalizeBoolean = (value: any, fallback: boolean) => {
+const normalizeBoolean = (value: unknown, fallback: boolean) => {
     if (typeof value === 'boolean') return value;
     if (typeof value === 'string') {
         const normalizedValue = value.toLowerCase();
@@ -562,17 +561,17 @@ const normalizeBoolean = (value: any, fallback: boolean) => {
     }
     return fallback;
 };
-const normalizeInt = (value: any, fallback: number) => {
+const normalizeInt = (value: unknown, fallback: number) => {
     if (typeof value === 'number') return isFinite(value) ? value : fallback;
     if (typeof value === 'string') return isFinite(parseInt(value)) ? parseInt(value) : fallback;
     return fallback;
 };
-const normalizeFloat = (value: any, fallback: number) => {
+const normalizeFloat = (value: unknown, fallback: number) => {
     if (typeof value === 'number') return isFinite(value) ? value : fallback;
     if (typeof value === 'string') return isFinite(parseFloat(value)) ? parseFloat(value) : fallback;
     return fallback;
 };
-const normalizeColor = (value: any, fallback: string) => {
+const normalizeColor = (value: unknown, fallback: string) => {
     if (typeof value === 'string') {
         if (value.startsWith('#')) return value;
         return `#${value}`;
@@ -972,7 +971,7 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     pendulumSize,
                     pendulumStyle: {
                         upSize: pendulumEffectUpSize,
-                        fontStyle: pendulumEffectFontStyle, 
+                        fontStyle: pendulumEffectFontStyle,
                         background: pendulumEffectBackground,
                         minLine: pendulumEffectMinLine,
                         justifyRatio: pendulumEffectJustifyRatio,

@@ -16,7 +16,7 @@ declare module 'react-linear-gradient-picker' {
         stopRemovalDrop?: number;
         minStops?: number;
         maxStops?: number;
-        children: any;
+        children: React.ReactNode;
         flatStyle?: boolean;
         onPaletteChange: (colorList: ColorPoint[]) => void;
         onColorStopSelect?: (stopColor: InternalColorPoint) => void;
@@ -30,4 +30,4 @@ declare module 'react-linear-gradient-picker' {
         snap?: number;
     };
     export function AnglePicker(props: AnglePicker): JSX.Element;
-}
+};

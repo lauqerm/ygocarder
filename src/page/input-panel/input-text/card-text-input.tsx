@@ -43,7 +43,7 @@ export const CardTextInput = forwardRef<CardTextInputRef, CardTextInput>(({
     useEffect(() => {
         onChange({ target: { value } });
     /** No need to depend on callback */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     }, [value]);
 
     const externalSetValue = (nextValue: string) => {

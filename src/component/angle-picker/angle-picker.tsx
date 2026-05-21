@@ -1,8 +1,6 @@
 import { AnglePicker } from 'react-linear-gradient-picker';
 import styled from 'styled-components';
 
-/** The container must contain this class to spread inner styling to angle picker component */
-export const ANGLE_PICKER_CLASSNAME = 'controls-wrapper';
 const AnglePickerContainer = styled.div`
     .ap {
         background-color: var(--color-heavy);

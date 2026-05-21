@@ -34,7 +34,7 @@ export const baseDrawLinkArrowMap = async (
 ) => {
     if (!ctx) return;
     ctx.scale(globalScale, globalScale);
-    await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
+    await Promise.all<unknown>([1, 2, 3, 4, 6, 7, 8, 9]
         .map(async entry => {
             const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
             const isActive = linkMap.includes(`${entry}`);
@@ -69,7 +69,7 @@ export const baseDrawLinkMapFoil = async (
         if (withBorder) {
             await drawAsset(ctx, `link/link-overlay-arrow-${usedFoil}.png`, 0, 175);
         } else {
-            await Promise.all<any>([1, 2, 3, 4, 6, 7, 8, 9]
+            await Promise.all<unknown>([1, 2, 3, 4, 6, 7, 8, 9]
                 .map(async entry => {
                     const { left, top, height, width } = ArrowPositionMap[positionType][entry - 1];
                     const coordinate = [left, top, width, height] as const;
@@ -169,7 +169,7 @@ export const getLayoutDrawFunction = ({
     loopFinish: (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
-        caller?: (finishType: string) => Promise<any>,
+        caller?: (finishType: string) => Promise<unknown>,
     ) => Promise<void>,
     loopArtFinish: ReturnType<typeof getFinishIterator>,
 } & Pick<Card, 'attributeType'>) => {
@@ -294,13 +294,13 @@ export const getLayoutDrawFunction = ({
             const { ctx: bottomFrameCtx, canvas: bottomFrameCanvas } = createCanvas();
             await drawAsset(bottomFrameCtx, `${legacyTemplate ? 'legacy-' : ''}frame-pendulum/frame-pendulum-${bottomLeftFrame}.png`, 0, 0);
             const { canvas: dyedBottomFrameCanvas, ctx: dyedBottomFrameCtx } = dyeCanvas(
-                    await blendCanvas({
-                        canvas: bottomFrameCanvas,
-                        customFoilCanvas: overlayCanvas,
-                        method: frameOverlayType,
-                    }),
-                    dyeList[2],
-                );
+                await blendCanvas({
+                    canvas: bottomFrameCanvas,
+                    customFoilCanvas: overlayCanvas,
+                    method: frameOverlayType,
+                }),
+                dyeList[2],
+            );
             if (
                 !willReplaceFrame
                 && (bottomLeftFrame !== bottomRightFrame || dyeList[2] !== '' || dyeList[3] !== '')
@@ -695,10 +695,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 operateCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + '-base'
-                    + '-artless'
-                    + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
-                    + '.png',
+                + '-base'
+                + '-artless'
+                + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
+                + '.png',
                 30, topToPendulumStructureFrame,
                 halfPendulumWidth, pendulumFrameHeight,
                 0, 0,
@@ -707,10 +707,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 operateCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + '-base'
-                    + '-artless'
-                    + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
-                    + '.png',
+                + '-base'
+                + '-artless'
+                + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
+                + '.png',
                 30 + halfPendulumWidth, topToPendulumStructureFrame,
                 pendulumFrameWidth - halfPendulumWidth, pendulumFrameHeight,
                 halfPendulumWidth, 0,
@@ -724,8 +724,8 @@ export const getLayoutDrawFunction = ({
                 await drawAsset(
                     operateCtx,
                     `frame-pendulum/border-pendulum-${pendulumSize}`
-                        + '-base'
-                        + '.png',
+                    + '-base'
+                    + '.png',
                     30, topToPendulumStructureFrame,
                 );
             }
@@ -742,10 +742,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 operateCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + `-${foil}`
-                    + '-artless'
-                    + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
-                    + '.png',
+                + `-${foil}`
+                + '-artless'
+                + (pendulumFrameTypeMap.blue === 'scaleless' ? '-scaleless' : '')
+                + '.png',
                 30, topToPendulumStructureFrame,
                 halfPendulumWidth, pendulumFrameHeight,
                 0, 0,
@@ -754,10 +754,10 @@ export const getLayoutDrawFunction = ({
             await drawAssetWithSize(
                 operateCtx,
                 `frame-pendulum/border-pendulum-${pendulumSize}`
-                    + `-${foil}`
-                    + '-artless'
-                    + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
-                    + '.png',
+                + `-${foil}`
+                + '-artless'
+                + (pendulumFrameTypeMap.red === 'scaleless' ? '-scaleless' : '')
+                + '.png',
                 30 + halfPendulumWidth, topToPendulumStructureFrame,
                 pendulumFrameWidth - halfPendulumWidth, pendulumFrameHeight,
                 halfPendulumWidth, 0,
@@ -767,8 +767,8 @@ export const getLayoutDrawFunction = ({
                 await drawAsset(
                     operateCtx,
                     `frame-pendulum/border-pendulum-${pendulumSize}`
-                        + `-${foil}`
-                        + '.png',
+                    + `-${foil}`
+                    + '.png',
                     30, topToPendulumStructureFrame,
                 );
             }

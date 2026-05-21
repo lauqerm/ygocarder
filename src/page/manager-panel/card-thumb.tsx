@@ -21,9 +21,8 @@ import { LanguageDataDictionary } from 'src/service';
 import { useEffect, useRef, useState } from 'react';
 import ReactCrop from 'react-image-crop';
 import copy from 'copy-to-clipboard';
+import { THUMB_ART_SIZE, THUMB_SIZE } from './model';
 
-const THUMB_ART_SIZE = 56;
-export const THUMB_SIZE = 68;
 const {
     height: cardHeight,
     width: cardWidth,
@@ -497,12 +496,12 @@ export const CardThumb = ({
                 ) && <span
                     className={mergeClass('star-content truncate', joinedTypeAbility.toLowerCase().includes('tuner') ? 'tuner' : '')}
                 >
-                    {typeof star === 'number'
-                        ? star
-                        : star !== ''
-                            ? `"${star}"`
-                            : ''}
-                </span>}
+                        {typeof star === 'number'
+                            ? star
+                            : star !== ''
+                                ? `"${star}"`
+                                : ''}
+                    </span>}
             </div>
             <div className="third-row truncate">
                 {statInEffect && <div>

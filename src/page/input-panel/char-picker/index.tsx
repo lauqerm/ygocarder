@@ -3,44 +3,8 @@
 // import { EllipsisOutlined } from '@ant-design/icons';
 import { Explanation, StyledPopMarkdown } from 'src/component';
 import { useLanguage } from 'src/service';
+import { insertAtCursor } from 'src/util';
 import styled from 'styled-components';
-
-export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
-    //IE support
-    if ((document as any).selection) {
-        target.focus();
-        const sel = (document as any).selection.createRange();
-        sel.text = myValue;
-
-        return {
-            value: target.value,
-            position: 0,
-        };
-    }
-    //MOZILLA and others
-    else if (target.selectionStart || target.selectionStart === 0) {
-        const startPos = target.selectionStart;
-        const endPos = target.selectionEnd;
-        target.value = target.value.substring(0, startPos)
-            + myValue
-            + target.value.substring(endPos, target.value.length);
-        target.selectionStart = startPos + myValue.length;
-        target.selectionEnd = startPos + myValue.length;
-        target.focus();
-
-        return {
-            value: target.value,
-            position: startPos + myValue.length,
-        };
-    } else {
-        target.value += myValue;
-
-        return {
-            value: target.value,
-            position: 0,
-        };
-    }
-}
 
 const StyledCharPickerContainer = styled.div`
     z-index: 10;
@@ -106,7 +70,7 @@ export type CharPicker = {
 }
 export const CharPicker = ({
     targetId = '',
-    onPick = () => {},
+    onPick = () => { },
 }: CharPicker) => {
     const language = useLanguage();
     // const [target, setTarget] = useState<HTMLElement | null>(null);

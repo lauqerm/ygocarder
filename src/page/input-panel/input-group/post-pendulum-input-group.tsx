@@ -4,7 +4,7 @@ import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CondenseType, IconTypeMap } from 'src/model';
+import { CondenseType, IconTypeMap, CheckboxChangeEvent } from 'src/model';
 import { CondenseThresholdButtonList } from '../const';
 import styled from 'styled-components';
 import { checkMonster } from 'src/util';
@@ -154,7 +154,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             'debounce',
         );
     }, [getUpdater]);
-    const toggleFuriganaHelper = useCallback((e: any) => setCard(currentCard => {
+    const toggleFuriganaHelper = useCallback((e: CheckboxChangeEvent) => setCard(currentCard => {
         return { ...currentCard, furiganaHelper: e.target.checked };
     }), [setCard]);
     const onCondenseTolerantChange = (value: CondenseType) => {

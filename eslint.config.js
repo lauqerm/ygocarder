@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
 
 /**
  * DISABLED_TYPE_CHECK env cho phép tắt các rule hoặc config liên quan đến type check,
@@ -12,7 +13,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommended],
-        files: ['src/**/*.{ts,tsx}'],
+        files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx}'],
         languageOptions: {
             ecmaVersion: 2020,
             globals: globals.browser,
@@ -23,6 +24,7 @@ export default tseslint.config(
             },
         },
         plugins: {
+            'react-hooks': reactHooks,
             'react-refresh': reactRefresh,
         },
         rules: {
@@ -32,6 +34,7 @@ export default tseslint.config(
             '@typescript-eslint/explicit-function-return-type': [0, {
                 allowTypedFunctionExpressions: true,
             }],
+            '@typescript-eslint/no-unused-vars': ['error', { caughtErrors: 'none', ignoreRestSiblings: true }],
 
             'no-redeclare': 'off',
             '@typescript-eslint/no-redeclare': 'off',
@@ -44,6 +47,9 @@ export default tseslint.config(
                 omitLastInOneLineBlock: true,
             }],
 
+            'no-empty': 0,
+            'no-irregular-whitespace': ['error', { skipComments: true, skipTemplates: true }],
+            'no-useless-assignment': 0,
             'no-use-before-define': [0, {
                 functions: false,
                 classes: false,

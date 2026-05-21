@@ -164,11 +164,7 @@ export const ygoCarderToCardMakerData = (
     const normalizedFrame = frameMap[frame];
     const normalizedRarity = nameStyleType === 'predefined'
         ? rarityMap[
-            [
-                nameStyle.preset,
-                artFinish,
-                finish.join('|'),
-            ].join('-')
+        [nameStyle.preset, artFinish, finish.join('|')].join('-')
         ]
         : 'common';
     const { pendulum, rarity, ...rest } = externalInfo ?? {};
@@ -200,7 +196,7 @@ export const ygoCarderToCardMakerData = (
             red: pendulumScaleRed,
             boxSize: boxSizeMap[pendulumSize],
             boxSizeEnabled: true,
-            ...pendulum,
+            ...(typeof pendulum === 'object' ? pendulum : {}),
         },
         variant: 'Normal',
         link: {

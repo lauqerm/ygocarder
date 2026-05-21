@@ -2,10 +2,11 @@ import { CopiableCode } from 'src/component';
 import { LINK_RATING_ALWAYS_AUTO, LINK_RATING_ALWAYS_SHOW, LINK_RATING_ALWAYS_HIDE, FlagInfoList } from 'src/model';
 import { LanguageDataDictionary } from 'src/service';
 
+export type FlagValueDisplay = (language: LanguageDataDictionary, _value: number) => string;
 export const FlagPresentationList = [
     {
         ...FlagInfoList[0],
-        valueDisplay: (language: LanguageDataDictionary, _value: number) => language['input.flag.mix-def-link'],
+        valueDisplay: ((language: LanguageDataDictionary) => language['input.flag.mix-def-link']) as FlagValueDisplay,
         sampleDisplay: (language: LanguageDataDictionary) => <>
             {language['input.flag.mix-def-link']}:
             <ul>
@@ -16,7 +17,7 @@ export const FlagPresentationList = [
     },
     {
         ...FlagInfoList[2],
-        valueDisplay: (language: LanguageDataDictionary, _value: number) => language['input.flag.hide-deactivated-link'],
+        valueDisplay: ((language: LanguageDataDictionary) => language['input.flag.hide-deactivated-link']) as FlagValueDisplay,
         sampleDisplay: (language: LanguageDataDictionary) => <>
             {language['input.flag.hide-deactivated-link']}:
             <ul>

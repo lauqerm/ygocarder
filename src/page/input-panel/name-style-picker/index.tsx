@@ -69,7 +69,7 @@ export const NameStylePicker = forwardRef(({
             setType('custom');
             onChange('custom', value);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [sendCustomStyleSignal]);
 
     const shadowPickeRef = useRef<GridSliderInputRef>(null);

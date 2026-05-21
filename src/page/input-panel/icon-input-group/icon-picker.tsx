@@ -16,6 +16,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { CloseCircleOutlined, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { StyledDropdown } from 'src/component';
 import { mergeClass, padRight } from 'src/util';
+import { IconDropdownContainer, StyledIconDropdown } from './styled';
 
 const IconDropdownOverlay = styled.div`
     position: absolute;
@@ -25,43 +26,9 @@ const IconDropdownOverlay = styled.div`
     cursor: not-allowed;
     z-index: 2;
 `;
-export const StyledIconDropdown = styled(StyledDropdown.Container)`
-    .anticon-close-circle {
-        font-size: var(--fs-lg);
-    }
-    img.icon-image {
-        width: var(--fs-lg);
-    }
-    > label {
-        margin: 0 var(--spacing-xs);
-    }
-`;
-export const IconDropdownContainer = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 240px;
-    gap: var(--spacing-px);
-    background-color: var(--sub-level-1);
-    border: var(--bw) solid var(--sub-level-1);
-    border-radius: var(--br-lg);
-    overflow: hidden;
-    position: relative;
-    .container-group {
-        box-shadow: none;
-        border: none;
-        border-radius: 0;
-    }
-    .card-image-cropper {
-        width: 230px;
-        grid-template-columns: 1fr;
-        gap: var(--spacing);
-        margin: 0 var(--spacing-xs);
-        --max-image-height: 200px;
-    }
-    &.selector-disabled {
-        filter: opacity(0.65) grayscale(0.85);
-    }
-`;
-export type IconTypePickerRef = {};
+export type IconTypePickerRef = {
+    debug: () => void,
+};
 export type IconTypePicker = {
     disabled?: boolean,
     children?: React.ReactNode,
@@ -82,8 +49,14 @@ export const IconTypePicker = forwardRef<IconTypePickerRef, IconTypePicker>(({
     showRemove = false,
     onChange,
     onRemove,
-}, _ref) => {
+}, ref) => {
     const filterFunction = showMixableOnly ? (entry: IconTypeInfo) => entry.isMixable : () => true;
+
+    useImperativeHandle(ref, () => ({
+        debug: () => {
+            console.info(filterFunction);
+        },
+    }));
 
     return <IconDropdownContainer
         className={mergeClass('icon-dropdown-container overlay-event-absorber', disabled ? 'selector-disabled' : '', className)}

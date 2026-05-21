@@ -155,7 +155,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     flag: getDefaultCardFlag(),
     dyeList: getDefaultDyeList(),
     /** Extra information come from different card source such as YGOPro custom card maker */
-    externalInfo: {} as Record<string, any>,
+    externalInfo: {} as Record<string, unknown>,
 });
 /** We avoid storing unique id for card, as it does not contribute to the card's identity. Id only matter when we are managing the card inside the app. */
 export type InternalCard = ReturnType<typeof getDefaultInternalCard>;
@@ -340,59 +340,6 @@ export const DefaultColorList = [
     '#007F00', '#004000', '#007F7F', '#00007F', '#400040', '#7F007F',
 ];
 
-export const ResolutionMap = {
-    '549x800': {
-        label: '549 × 800',
-        width: 549,
-        height: 800,
-        scale: 1,
-        settingValue: [549, 800] as [number, number],
-    },
-    '561x818': {
-        label: '561 × 818',
-        width: 561,
-        height: 818,
-        scale: 1,
-        settingValue: [561, 818] as [number, number],
-    },
-    '813x1185': {
-        label: '813 × 1185',
-        width: 813,
-        height: 1185,
-        scale: 1,
-        settingValue: [813, 1185] as [number, number],
-    },
-    '1122x1636': {
-        label: <div style={{ color: 'var(--main-warning)' }}>1122 × 1636</div>,
-        width: 1122,
-        height: 1636,
-        scale: 2,
-        settingValue: [1122, 1636] as [number, number],
-    },
-    '1388x2026': {
-        label: <div style={{ color: 'var(--main-warning)' }}>1388 × 2026</div>,
-        width: 1388,
-        height: 2026,
-        scale: 2,
-        settingValue: [1388, 2026] as [number, number],
-    },
-    '1626x2370': {
-        label: <div style={{ color: 'var(--main-warning)' }}>1626 × 2370</div>,
-        width: 1626,
-        height: 2370,
-        scale: 2,
-        settingValue: [1626, 2370] as [number, number],
-    },
-};
-export const ResolutionList = [
-    ResolutionMap['549x800'],
-    ResolutionMap['561x818'],
-    ResolutionMap['813x1185'],
-    ResolutionMap['1122x1636'],
-    ResolutionMap['1388x2026'],
-    ResolutionMap['1626x2370'],
-];
-
 export type ExportFormat = typeof ExportFormatList[0]['value'];
 export const ExportFormatList = [
     {
@@ -418,26 +365,3 @@ export const getSlindingTypeList = (language: LanguageDataDictionary) => [
 ];
 
 export type WritingDirection = 'ltr' | 'rtl';
-
-export * from './app';
-export * from './canvas';
-export * from './compatible-card';
-export * from './condense';
-export * from './coordinate-data';
-export * from './dictionary';
-export * from './draw';
-export * from './flag';
-export * from './foil-finish-dye';
-export * from './font-data-effect';
-export * from './font-data-name';
-export * from './font-data-other';
-export * from './font-data-pendulum-effect';
-export * from './format';
-export * from './frame';
-export * from './icon';
-export * from './image';
-export * from './link';
-export * from './name-preset';
-export * from './pendulum';
-export * from './preset';
-export * from './regex';

@@ -101,7 +101,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
         onClose();
     };
     const startImport = async (
-        cardData: string | Record<string, any> | null,
+        cardData: string | Record<string, unknown> | null,
         imageSurvey = false,
     ) => {
         try {
@@ -197,8 +197,10 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                 let uncrushedValue = '';
                 try {
                     uncrushedValue = JSONUncrush(decodeURIComponent(normalizedValue));
-                } catch (e) {}
-                let cardData: string | null | Record<string, any> = null;
+                } catch (e) {
+                    console.error(e);
+                }
+                let cardData: string | null | Record<string, unknown> = null;
 
                 /** Potential JSON data */
                 if (normalizedValue.startsWith('{') && normalizedValue.endsWith('}')) {
@@ -375,7 +377,7 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
     </>;
 });
 
-export const StyledImportDropdownOverlay = styled(Menu)`
+const StyledImportDropdownOverlay = styled(Menu)`
     .ant-dropdown-menu-item {
         padding: 0;
     }

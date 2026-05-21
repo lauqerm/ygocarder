@@ -1,7 +1,4 @@
-import { Tooltip } from 'antd';
-import { SyncOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
-import React from 'react';
 
 export const StyledIconButtonContainer = styled.span<{ $freeSize: boolean, $size: 'sm' | 'md', $active: boolean }>`
     display: inline-flex;
@@ -37,56 +34,8 @@ export const StyledIconButtonContainer = styled.span<{ $freeSize: boolean, $size
     border: var(--bw) solid var(--sub-level-1);
     border-radius: var(--br-lg);
     box-shadow: var(--bs-button);
-	cursor: pointer;
+    cursor: pointer;
 `;
-
-export type IconButton = {
-    size?: 'sm' | 'md',
-    Icon?: typeof SyncOutlined,
-    active?: boolean,
-    children?: React.ReactNode,
-    onClick?: () => void,
-    iconProps?: React.ComponentProps<typeof SyncOutlined>,
-    tooltipProps?: React.ComponentProps<typeof Tooltip>,
-    containerProps?: React.HTMLAttributes<HTMLSpanElement>,
-}
-export const IconButton = ({
-    size = 'md',
-    active = false,
-    Icon,
-    children,
-    onClick,
-    iconProps,
-    tooltipProps,
-    containerProps,
-}: IconButton) => {
-    const { className, onClick: customOnClick, onKeyDown, ...restContainerProps } = containerProps ?? {};
-
-    return <Tooltip title={null} {...tooltipProps}>
-        <StyledIconButtonContainer
-            $size={size}
-            $active={active}
-            tabIndex={0}
-            {...restContainerProps}
-            onClick={e => {
-                onClick?.();
-                customOnClick?.(e);
-            }}
-            onKeyDown={e => {
-                onKeyDown?.(e);
-                if (e.key === 'Enter') {
-                    onClick?.();
-                }
-            }}
-            className={['icon-button', className ?? ''].join(' ')}
-            $freeSize={!Icon}
-        >
-            <>
-                {Icon && <Icon {...iconProps} />}{children}
-            </>
-        </StyledIconButtonContainer>
-    </Tooltip>;
-};
 
 export const StyledHeaderButtonContainer = styled.div<{ $softMode?: boolean }>`
     cursor: pointer;

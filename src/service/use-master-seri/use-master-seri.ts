@@ -66,7 +66,7 @@ export type ExportCallbackParameter = {
     isPendulum: boolean,
     opacity: Partial<CardOpacity>,
     pendulumSize: PendulumSize,
-    onError: (e: any) => void,
+    onError: (e: unknown) => void,
     onSuccess: () => void,
     isRelevant: () => boolean,
 };
@@ -90,7 +90,7 @@ type DrawingPipeline = {
     name: string,
     order: number,
     rerun: number,
-    instructor: () => Promise<any>,
+    instructor: () => Promise<unknown>,
 };
 /**
  * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline` instead of immediately draw their part, these operations will be iterated sequentially by another effect when export.
@@ -520,7 +520,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 if (keepEffectBox) {
                     await drawEffectBackground({ withPendulum: true });
                 }
-                
+
                 /** Scale and pendulum border frame, these will be covered by extended artwork so we doesn't draw them if the artwork is boundless */
                 await drawPendulumScaleIcon();
                 /** Draw normal border first so we got the shadow ready. Again foiled border DOES NOT have shadow by their own. */
@@ -1161,9 +1161,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const normalizedUpSize = customPendulumStyle ? upSize : 0;
                 const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
                 const fontDataKey = `${format}-${pendulumSize}`;
-                const coordinateList = PendulumEffectCoordinateMap
-                    [(withBlueScale && withRedScale) ? 'normal' : 'scaleless']
-                    [pendulumSize];
+                const coordinateList = PendulumEffectCoordinateMap[
+                    (withBlueScale && withRedScale) ? 'normal' : 'scaleless'
+                ][
+                    pendulumSize
+                ];
                 /** Account for half scaleless frame */
                 const modifiedCoordinateList = (withBlueScale && withRedScale)
                     ? coordinateList
@@ -1253,7 +1255,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     }
                     ctx.scale(globalScale, globalScale);
                     ctx.drawImage(linkArrowCanvas, 0, 0);
-                    ctx.scale(1 / globalScale, 1/ globalScale);
+                    ctx.scale(1 / globalScale, 1 / globalScale);
                 }
             }
 
@@ -1341,7 +1343,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 stickerCanvasRef,
                 finishCanvasRef,
             ];
-            let lastError: { count: number, error: any} = { count: -1, error: null };
+            let lastError: { count: number, error: unknown } = { count: -1, error: null };
             for (let cnt = 0; cnt < layerRefList.length; cnt++) {
                 const result = await generateLayer(layerRefList[cnt], exportCtx, 0);
                 if (result.status === 'error') lastError = { count: cnt, error: result.data };
@@ -1364,20 +1366,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         }
     }, [
         language,
-        cardIconCanvasRef, 
-        creatorCanvasRef, 
-        exportCanvasRef, 
-        effectCanvasRef, 
-        finishCanvasRef, 
-        lightboxRef, 
-        nameCanvasRef, 
-        passwordCanvasRef, 
-        pendulumEffectCanvasRef, 
-        pendulumScaleCanvasRef, 
-        setIdCanvasRef, 
-        frameCanvasRef, 
-        statCanvasRef, 
-        stickerCanvasRef, 
+        cardIconCanvasRef,
+        creatorCanvasRef,
+        exportCanvasRef,
+        effectCanvasRef,
+        finishCanvasRef,
+        lightboxRef,
+        nameCanvasRef,
+        passwordCanvasRef,
+        pendulumEffectCanvasRef,
+        pendulumScaleCanvasRef,
+        setIdCanvasRef,
+        frameCanvasRef,
+        statCanvasRef,
+        stickerCanvasRef,
         typeCanvasRef,
         previewCanvasRef,
     ]);
@@ -1387,5 +1389,3 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         onExport,
     };
 };
-
-export * from './prepare-style';

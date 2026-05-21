@@ -4,7 +4,7 @@ export const generateLayer = (
     exportCtx: CanvasRenderingContext2D | null | undefined,
     delayQueue: number = 0,
 ) => {
-    return new Promise<{ status: 'success' } | { status: 'error', data: any }>(resolve => {
+    return new Promise<{ status: 'success' } | { status: 'error', data: unknown }>(resolve => {
         setTimeout(() => {
             if (!canvasLayer.current || !exportCtx) resolve({ status: 'error', data: new Error('No export canvas') });
             else {

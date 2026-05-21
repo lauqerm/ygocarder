@@ -5,7 +5,7 @@ import { getNavigationProps } from 'src/util';
 import { Tooltip } from 'antd';
 
 declare module 'react' {
-    function forwardRef<T, P = {}>(
+    function forwardRef<T, P = Record<string, unknown>>(
         render: (props: P, ref: React.Ref<T>) => JSX.Element | null
     ): (props: P & React.RefAttributes<T>) => JSX.Element | null;
 }
@@ -65,7 +65,7 @@ const UnrefRadioTrain = <Value extends string | number = string | number>({
             })}
         >
             {optionList.map(({ value, props, label, tooltipProps }, index) => {
-                const { className } = props ?? {};
+                const className = props?.className;
                 const isChecked = strict
                     ? value === activeValue
                     : `${value}` === `${activeValue}`;

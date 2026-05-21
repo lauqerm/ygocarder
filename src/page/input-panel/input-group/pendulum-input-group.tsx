@@ -1,15 +1,18 @@
 import { Checkbox, Input, Popover } from 'antd';
-import { InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } from 'src/component';
+import { CardLayoutPreview, InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap } from 'src/model';
+import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent } from 'src/model';
 import { CaretDownOutlined, ApartmentOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
 import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
-import { CardLayoutPreview, FrameBehaviorSettingPanel, FramelayoutSettingPanel, FrameLayoutSettingPanel } from '../frame-setting-panel';
+import {
+    FrameBehaviorSettingPanel,
+    FrameLayoutSettingPanel,
+} from '../frame-setting-panel';
 import { FlagPresentationList } from '../../common';
 
 const {
@@ -152,7 +155,7 @@ export type PendulumInputGroup = {
     showExtraDecorativeOption: boolean,
 }
     & Pick<CardTextInput, 'onTakePicker'>
-    & Pick<FramelayoutSettingPanel, 'receivingCanvas' | 'onFrameChange' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
+    & Pick<FrameLayoutSettingPanel, 'receivingCanvas' | 'onFrameChange' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
 export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInputGroup>(({
     softMode,
     showCreativeOption,
@@ -227,7 +230,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
     const [frameDropdownVisible, setFrameDropdownVisible] = useState(true);
     const [frameDropdownHidden, setFrameDropdownHidden] = useState(true);
-    const changeToPendulum = (e: any) => setCard(currentCard => {
+    const changeToPendulum = (e: CheckboxChangeEvent) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
         /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it looks closer to real card */
         // const currentOpacity = currentCard.opacity;
@@ -251,9 +254,9 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),
-    [showExtraDecorativeOption],
+        [showExtraDecorativeOption],
     );
-    
+
     useEffect(() => {
         /** Force render, otherwise we will miss the image */
         setFrameDropdownVisible(false);

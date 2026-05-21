@@ -19,6 +19,7 @@ import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
 import XLSX from 'xlsx';
 import { ManagerDrawer } from 'src/component';
+import * as Sentry from '@sentry/react';
 
 const chanceToRemindBackup = getNaivePseudoRandomizer();
 const StyledCardManagerPanel = styled.div`
@@ -69,7 +70,9 @@ const StyledCardManagerDrawer = styled(ManagerDrawer)`
         gap: var(--spacing-sm);
     }
 `;
-export type CardManagerPanelRef = {};
+export type CardManagerPanelRef = {
+    debug: () => void,
+};
 export type CardManagerPanel = {
     language: LanguageDataDictionary,
     onVisibleChange: (status: boolean) => void,
@@ -163,7 +166,23 @@ export const CardManagerPanel = forwardRef(({
     }, []);
 
     /** Currently no need for direct control */
-    useImperativeHandle(ref, () => ({}), []);
+    useImperativeHandle(ref, () => ({
+        debug: () => {
+            console.info({
+                cardList,
+                changeEditStatus,
+                pendingActiveCard,
+                setActiveId,
+                setCardList,
+                setFilterFunction,
+                setListName,
+                setPendingActiveCard,
+                sortList,
+                toggleVisible,
+                visible,
+            });
+        },
+    }), []);
 
     return <StyledCardManagerPanel>
         <StyledCardManagerDrawer
@@ -271,7 +290,9 @@ export const CardManagerPanel = forwardRef(({
                                             }
                                         }
                                         changeEditStatus('download');
-                                    } catch (e) {}
+                                    } catch (e) {
+                                        Sentry.captureException(e);
+                                    }
                                 }
                                 setSavingFile(false);
                             }}
@@ -298,7 +319,7 @@ export const CardManagerPanel = forwardRef(({
                                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                                 ].join(',')}
                                 className="import-upload-input"
-                                onChange={async (e) => {
+                                onChange={async () => {
                                     const fileList = listUploadRef.current?.files;
                                     const { isListDirty } = useCardList.getState();
                                     const announceError = () => {

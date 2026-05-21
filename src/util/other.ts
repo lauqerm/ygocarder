@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react';
 import { useSetting } from 'src/service';
 
-export const isImageData = (data: any) => typeof data === 'string' && data.startsWith('data:image/');
+export const isImageData = (data: unknown) => typeof data === 'string' && data.startsWith('data:image/');
 
 export const downloadBlob = (name: string, blob: Blob, type: string) => {
     const link = document.createElement('a');
@@ -114,3 +114,47 @@ export const isJsonObjectEqual = (payload1: unknown, payload2: unknown, loose = 
      */
     return payload1 === payload2;
 };
+
+type DocumentWithOutdatedFeature = Document & {
+    selection: {
+        createRange: () => ({
+            text: string,
+        }),
+    },
+};
+export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
+    //IE support
+    if ((document as DocumentWithOutdatedFeature).selection) {
+        target.focus();
+        const sel = (document as DocumentWithOutdatedFeature).selection.createRange();
+        sel.text = myValue;
+
+        return {
+            value: target.value,
+            position: 0,
+        };
+    }
+    //MOZILLA and others
+    else if (target.selectionStart || target.selectionStart === 0) {
+        const startPos = target.selectionStart;
+        const endPos = target.selectionEnd;
+        target.value = target.value.substring(0, startPos)
+            + myValue
+            + target.value.substring(endPos, target.value.length);
+        target.selectionStart = startPos + myValue.length;
+        target.selectionEnd = startPos + myValue.length;
+        target.focus();
+
+        return {
+            value: target.value,
+            position: startPos + myValue.length,
+        };
+    } else {
+        target.value += myValue;
+
+        return {
+            value: target.value,
+            position: 0,
+        };
+    }
+}

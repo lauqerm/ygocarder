@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { forceRefocus } from 'src/util';
 import { ResolutionPicker } from 'src/component';
 
-export const ResolutionButton = styled.div`
+const ResolutionButton = styled.div`
     position: absolute;
     right: 0;
     top: 0;
@@ -72,8 +72,8 @@ export type DownloadPanel = {
     onTainted: () => void,
     onExportSucess: () => void,
 } & Pick<UseCardExport, 'isTainted'
-| 'isInitializing'
-| 'onDownloadError'>;
+    | 'isInitializing'
+    | 'onDownloadError'>;
 export const DownloadPanel = forwardRef<DownloadPanelRef, DownloadPanel>(({
     isTainted,
     isInitializing,
@@ -151,7 +151,7 @@ export const DownloadPanel = forwardRef<DownloadPanelRef, DownloadPanel>(({
     />;
 });
 
-export type  DownloadButton = {
+export type DownloadButton = {
     isDownloading: boolean,
     onDownload?: (size?: [number, number]) => void,
 } & Pick<ResolutionPicker, 'onResolutionChange'>;

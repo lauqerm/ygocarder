@@ -24,7 +24,7 @@ import { v4 as uuid } from 'uuid';
  * * Other vendor data
  */
 export const decodeCard = (
-    cardData: Record<string, any> | string | null,
+    cardData: Record<string, unknown> | string | null,
     baseCard?: Card,
 ): {
     card: InternalCard,
@@ -36,12 +36,12 @@ export const decodeCard = (
     if (!cardData) return { isPartial, card: { ...decodedCard, id } };
     try {
         const normalizedCard = typeof cardData === 'string'
-            ? JSON.parse(cardData) as Record<string, any> | { data: Record<string, any>[] }
+            ? JSON.parse(cardData) as Record<string, unknown> | { data: Record<string, unknown>[] }
             : cardData;
 
         /** Merge card */
         if (baseCard) {
-            const fullCard: Record<string, any> = decompressCardData(normalizedCard);
+            const fullCard: Record<string, unknown> = decompressCardData(normalizedCard);
 
             /** First chance, assume it is a partial compressed card */
             if (Object.keys(fullCard).length > 0) {
@@ -56,7 +56,7 @@ export const decodeCard = (
             decodedCard = migrateCardData(normalizedCard);
         }
         else if (checkCompactYgoCarderCard(normalizedCard)) {
-            const fullCard: Record<string, any> = decompressCardData(normalizedCard);
+            const fullCard: Record<string, unknown> = decompressCardData(normalizedCard);
 
             decodedCard = migrateCardData(fullCard);
         }
@@ -160,11 +160,11 @@ export type CardStore = {
         cardTransform: Card | InternalCard | ((currentCard: InternalCard) => InternalCard),
         forcePurityCheck?: boolean,
     ) => void,
-    getUpdater: <Value = any>(
+    getUpdater: <Value = unknown>(
         key: string,
-        valueTransform?: (value: any) => any,
+        valueTransform?: (value: unknown) => unknown,
         variant?: 'throttle' | 'debounce' | { type: 'throttle', wait: number } | { type: 'debounce', wait: number },
-    ) => (e: string | number | any[] | ((card: Card) => Value) | { target: { value: Value } }) => void,
+    ) => (e: string | number | unknown[] | ((card: Card) => Value) | { target: { value: Value } }) => void,
 };
 export const useCard = create<CardStore>((set, get) => {
     return {
@@ -191,13 +191,15 @@ export const useCard = create<CardStore>((set, get) => {
                 set({ card: normalizedCard });
             }
         },
-        getUpdater: <Value = any>(
+        getUpdater: <Value = unknown>(
             key: string,
-            valueTransform: (value: any) => any = (value) => value,
+            valueTransform: (value: unknown) => unknown = (value) => value,
             variant?: 'throttle' | 'debounce' | { type: 'throttle', wait: number } | { type: 'debounce', wait: number },
         ) => {
             const { setCard } = get();
-            const returnFunction = (e: string | number | any[] | ((card: Card) => (Value | boolean)) | { target: { value: (Value | boolean) } }) => {
+            const returnFunction = (
+                e: string | number | unknown[] | ((card: Card) => (Value | boolean)) | { target: { value: (Value | boolean) } }
+            ) => {
                 setCard(current => ({
                     ...current,
                     [key]: valueTransform(typeof e === 'string' || typeof e === 'number' || Array.isArray(e)

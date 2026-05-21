@@ -8,10 +8,9 @@ import { useGlobal, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import { DropZone } from '../atom';
 import { ImageSourceType, ImageStyle, PUBLIC_PATH } from 'src/model';
+import { CROPPER_WIDTH } from './model';
 import 'react-image-crop/dist/ReactCrop.css';
 import './image-cropper.scss';
-
-export const CROPPER_WIDTH = 375;
 
 function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop | null) {
     if (!crop || !canvas) return;
@@ -171,7 +170,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     const [internalSource, setInternalSource] = useState(defaultInternalSource);
     const [isLoading, setLoading] = useState(false);
     const [activeDropzone, setActiveDropzone] = useGlobal('activeDropzone');
-    const [error, setError] = useState<any>(null);
+    const [error, setError] = useState<unknown>(null);
     const [interacted, setInteracted] = useState(false);
     const [externalSource, setExternalSource] = useState(defaultExternalSource);
     const imgRef = useRef<HTMLImageElement | null>(null);
@@ -398,7 +397,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
         if (fitCropData) {
             setCrop(cur => ({ ...cur, current: fitCropData }));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [completedCrop, receivingCanvas, redrawSignal, forceFit, imageStyle]);
 
     useEffect(() => {
@@ -637,7 +636,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                         <div className="image-option alignment-center-option" onClick={() => {
                             setInteracted(true);
                             setCrop(cur => {
-                                const { width, x } = cur.completed ?? {};
+                                const { width, x } = cur.completed ?? { width: undefined, x: undefined };
 
                                 if (typeof width !== 'number' || typeof x !== 'number') return cur;
                                 const newCrop: ReactCrop.Crop = {

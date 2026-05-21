@@ -1,3 +1,5 @@
+import { NavigatorWithLimitedFeature } from 'src/model';
+
 const CACHE_NAME = 'ygocarder-assets-v1';
 const MANIFEST_CACHE = 'ygocarder-manifest-v1';
 const SESSION_START = Date.now();
@@ -109,7 +111,7 @@ export async function getFullDiagnostics(): Promise<FullDiagnostics> {
 // ─── Individual probes ─────────────────────────────────────────────────────
 
 function getDisplayMode(): DisplayMode {
-    if ('standalone' in navigator && (navigator as any).standalone === true) {
+    if ('standalone' in navigator && (navigator as NavigatorWithLimitedFeature).standalone === true) {
         return 'standalone'; // iOS
     }
     if (window.matchMedia('(display-mode: fullscreen)').matches) return 'fullscreen';
@@ -129,12 +131,11 @@ function getPlatform(): Platform {
 }
 
 function getConnectionType(): string | null {
-    const conn = (navigator as any).connection;
-    return conn?.effectiveType ?? null;
+    return (navigator as NavigatorWithLimitedFeature).connection?.effectiveType ?? null;
 }
 
 function getSaveData(): boolean {
-    return Boolean((navigator as any).connection?.saveData);
+    return Boolean((navigator as NavigatorWithLimitedFeature).connection?.saveData);
 }
 
 async function getManifestInfo(): Promise<{

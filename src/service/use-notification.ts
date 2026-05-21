@@ -24,7 +24,7 @@ export const useNotificationMemory = create<NotificationStore>((set) => {
         versionReminder,
         faqReminder,
         feedbackReminder,
-    } = ((): Record<string, any> => {
+    } = ((): Record<string, unknown> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem(notificationLocalStorageKey) ?? '{}');
 

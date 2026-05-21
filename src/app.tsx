@@ -239,7 +239,7 @@ function App() {
         ];
 
         applyList.forEach(styleName => {
-            document.body.style.setProperty(styleName, languageInfo.style?.[styleName] ?? '' as any);
+            document.body.style.setProperty(styleName, languageInfo.style?.[styleName] ?? '');
         });
     }, [languageInfo]);
     /** Fix weird issue when frame layer does not render correctly when manager's visibility is changed. Happens on Opera GX */

@@ -11,7 +11,7 @@ import {
 import { checkExtraDeckMonster } from './categorize';
 import { captureException } from './other';
 
-export const checkYgoproDeckCard = (object: Record<string, any>): object is YgoproDeckCard => {
+export const checkYgoproDeckCard = (object: Record<string, unknown>): object is YgoproDeckCard => {
     try {
         /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
         return 'id' in object
@@ -132,7 +132,11 @@ const reverseLinkMap: Record<string, string> = {
 export const ygoCarderToYgoproDeckData = (
     _card: Card,
     _artRef?: HTMLCanvasElement | null,
-): { result: YgoproDeckCard, isPartial: boolean } => {
+): {
+    result: YgoproDeckCard,
+    isPartial: boolean,
+} => {
+    console.info('ygoCarderToYgoproDeckData', _card, _artRef);
     return {
         isPartial: false,
         result: getDefaultYgoproDeckCard(),

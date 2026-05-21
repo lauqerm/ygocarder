@@ -230,10 +230,10 @@ const cardFieldShortenMap = {
 };
 
 export const compressCardData = (
-    card: Record<string, any>,
-    shortenMap: Record<string, any> = cardFieldShortenMap,
+    card: object,
+    shortenMap: typeof cardFieldShortenMap = cardFieldShortenMap,
 ) => {
-    const condensedCard: Record<string, any> = {};
+    const condensedCard: Record<string, unknown> = {};
     const normalizedCard = { ...card };
 
     Object.keys(normalizedCard).forEach(fieldKey => {
@@ -256,10 +256,10 @@ export const compressCardData = (
 };
 
 export const decompressCardData = (
-    condensedCard: Record<string, any>,
-    shortenMap: Record<string, any> = cardFieldShortenMap,
+    condensedCard: object,
+    shortenMap: typeof cardFieldShortenMap = cardFieldShortenMap,
 ) => {
-    const decompressedCard: Record<string, any> = {};
+    const decompressedCard: Record<string, unknown> = {};
     Object.keys(shortenMap).forEach(fullKey => {
         const shortenKey = shortenMap[fullKey];
 
@@ -278,14 +278,14 @@ export const decompressCardData = (
     return decompressedCard;
 };
 export const legacyReverseCardDataShortener = (
-    condensedCard: Record<string, any> | string,
-    shortenMap: Record<string, any> = cardFieldShortenMap,
+    condensedCard: Record<string, unknown> | string,
+    shortenMap: typeof cardFieldShortenMap = cardFieldShortenMap,
 ) => {
     const normalizedCondensedCard = typeof condensedCard === 'string'
         ? JSON.parse(JSONUncrush(decodeURIComponent(condensedCard)))
         : condensedCard;
 
-    const unshortenedCard: Record<string, any> = {};
+    const unshortenedCard: Record<string, unknown> = {};
     Object.keys(shortenMap).forEach(fullKey => {
         const shortenKey = shortenMap[fullKey];
 
@@ -305,10 +305,10 @@ export const legacyReverseCardDataShortener = (
 };
 
 export const legacyRebuildCardData = (
-    card: Record<string, any> | string,
+    card: Record<string, unknown> | string,
     isCondensed = false,
 ) => {
-    let rebuiltCard: Record<string, any>;
+    let rebuiltCard: Record<string, unknown>;
     if (isCondensed) {
         rebuiltCard = legacyReverseCardDataShortener(card);
     } else {
@@ -321,7 +321,7 @@ export const legacyRebuildCardData = (
 };
 
 /** Migrate old version of card data into the new version without information loss */
-export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCard()): InternalCard => {
+export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmptyCard()): InternalCard => {
     /** Ensure that we detect the actual version from incoming cards. */
     delete (baseCard as Record<string, unknown>).version;
     const migratedCard = {
@@ -456,7 +456,7 @@ export const migrateCardData = (card: Record<string, any>, baseCard = getEmptyCa
     if (typeof migratedCard.isLimitedEdition === 'undefined') migratedCard.isLimitedEdition = false;
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
-    
+
     if (migratedCard.attributeType == null) migratedCard.attributeType = 'custom';
 
     const defaultFlagList = getDefaultCardFlag();
@@ -536,16 +536,19 @@ export const checkCompactYgoCarderCard = (object: Record<string, any>): object i
 
 export const ygoCarderToExportableData = (
     card: Card,
-    _artRef?: HTMLCanvasElement | null,
 ) => {
-    if (card.artSource === 'offline' || (card.hasBackground && card.backgroundSource === 'offline')) {
+    if (card.artSource === 'offline'
+        || (card.hasBackground && card.backgroundSource === 'offline')
+        || (card.overlaySource === 'offline' && card.overlayData.trim() !== '')
+        || (card.iconImageSource === 'offline' && card.iconImageSource.trim() !== '')
+    ) {
         return {
             isPartial: true,
             result: compressCardData(card),
         };
     }
     /** Remove art data here, it will easily exceed the limit of text area */
-    const normalizedCard = { ...card, artData: '', backgroundData: '' };
+    const normalizedCard = { ...card, artData: '', backgroundData: '', overlayData: '', iconImageSource: '' };
 
     return {
         isPartial: false,

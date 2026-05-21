@@ -28,12 +28,12 @@ interface AssetManifest {
     assetCount: number;
     totalBytes: number;
     assets: Record<string, AssetEntry>;
-}
+};
 
-interface AssetEntry {
+type AssetEntry = {
     hash: string;
     size: number;
-}
+};
 
 /** Recursively walk a directory and return all file paths */
 async function walk(dir: string): Promise<string[]> {

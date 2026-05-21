@@ -37,7 +37,7 @@ export const applyEmboss = ({
     minIntensity?: number,
     maxIntensity?: number,
 }) => {
-    const ctx = inputCanvas.getContext('2d');
+    const ctx = inputCanvas.getContext('2d', { willReadFrequently: true });
 
     if (!ctx) return;
 
@@ -45,7 +45,7 @@ export const applyEmboss = ({
     const height = affectedHeight ?? inputCanvas.height;
     const width = affectedWidth ?? inputCanvas.width;
     /** @todo Typescript current does not recognize `willReadFrequently` option yet */
-    const imageData = ctx.getImageData(0, 0, width, height, { willReadFrequently: true } as any);
+    const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
 
     const computedLightAngleVec: [number, number, number] = lightAngleVec

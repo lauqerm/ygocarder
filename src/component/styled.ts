@@ -1,12 +1,4 @@
 import styled from 'styled-components';
-import { Slider } from 'antd';
-import { ErrorBoundary } from './error-boundary';
-
-export const GuardedSlider = (props: React.ComponentProps<typeof Slider>) => {
-    return <ErrorBoundary fallback={<></>}>
-        <Slider {...props} />
-    </ErrorBoundary>;
-};
 
 export const StandaloneLabel = styled.div<{ $fixedSize?: boolean }>`
     font-weight: 500;
@@ -71,24 +63,3 @@ export const StyledDropdown = {
     Container: StyledDropdownContainer,
     Option: StyledDropdownOption,
 };
-
-export * from './angle-picker';
-export * from './app-header';
-export * from './atom';
-export * from './card-layout-preview';
-export * from './error-boundary';
-export * from './explanation';
-export * from './formatting-guide';
-export * from './frame-info-block';
-export * from './icon-button';
-export * from './image-cropper';
-export * from './inline-color-picker';
-export * from './inline-sketch-picker';
-export * from './input-train';
-export * from './lightbox';
-export * from './link-marker';
-export * from './loading';
-export * from './preset-manager';
-export * from './preset-option';
-export * from './setting';
-export * from './setting-panel';

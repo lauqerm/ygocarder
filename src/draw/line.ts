@@ -272,7 +272,7 @@ export const drawLine = async ({
         const renderTagRegex = new RegExp(RENDER_TAG_SOURCE, 'g');
         let renderTagMatchResult: RegExpMatchArray | null;
         let tagListPosition = 0;
-    
+
         while ((renderTagMatchResult = renderTagRegex.exec(potentialTaggedToken)) != null) {
             const regex = /(?<=<.+?)(?<!>) ([\w-]+)(?:=["|'|”|“](.+?)["|'|”|“]|\b)(?!<)(?=.*?>)/gm;
             const tagName = renderTagMatchResult[1];

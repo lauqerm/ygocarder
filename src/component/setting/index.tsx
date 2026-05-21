@@ -106,7 +106,7 @@ export const SettingButton = () => {
                     <RadioTrain
                         className="resolution-list"
                         value={`${resolution[0]}x${resolution[1]}`}
-                        optionList={ResolutionList.map(({ height, width, label, scale }) => ({
+                        optionList={ResolutionList.map(({ height, width, scale }) => ({
                             value: `${width}x${height}`,
                             label: scale > 1
                                 ? <Popover

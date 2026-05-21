@@ -8,8 +8,9 @@ import { StarButtonList, getSTIconButtonList } from '../const';
 import { getCardIconFromFrame } from 'src/util';
 import styled from 'styled-components';
 import { IconTypeAttributeList, IconTypeList, IconTypeStList, TotalIconTypeMap } from 'src/model';
-import { IconPicker, IconPickerRef, IconTypePicker, StyledIconDropdown } from './icon-picker';
+import { IconPicker, IconPickerRef, IconTypePicker } from './icon-picker';
 import { IconImageInput, IconImageInputRef } from './icon-image-input';
+import { StyledIconDropdown } from './styled';
 
 const TypeWithIconContainer = styled.div`
     .icon-image {
@@ -340,7 +341,7 @@ export const IconInputGroup = forwardRef<IconInputGroupRef, IconInputGroup>(({
                                 </div>
                                 : null}
                             <Button
-                                size="small" 
+                                size="small"
                                 onClick={triggerCustomIcon}
                             >{language['generic.edit.label']}</Button>
                         </div>

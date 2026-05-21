@@ -11,7 +11,7 @@ export type BatchDownloadStore = {
     clearQueue: () => void,
     addToBatch: (cardId: string, cardName: string, cardBlob: Blob) => void,
 };
-export const useBatchDownload = create<BatchDownloadStore>((set, get) => {
+export const useBatchDownload = create<BatchDownloadStore>((set) => {
     return {
         batchName: '',
         batch: undefined,

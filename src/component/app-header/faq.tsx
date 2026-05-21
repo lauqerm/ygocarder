@@ -3,8 +3,7 @@ import { FaqButtonLabel, QuoteContainer } from './styled';
 import { useNotification } from 'src/service';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
-export const FAD_BUTTON_ID = 'faq-button';
+import { FAQ_BUTTON_ID } from './model';
 
 type Feedback = {
     author?: string,
@@ -415,7 +414,7 @@ export const QuestionAndFeedback = () => {
     ];
 
     return <>
-        <FaqButtonLabel id={FAD_BUTTON_ID} $animating={animating} onClick={() => setVisible(cur => !cur)}>
+        <FaqButtonLabel id={FAQ_BUTTON_ID} $animating={animating} onClick={() => setVisible(cur => !cur)}>
             {'FAQ'}
         </FaqButtonLabel>
         <Modal width={600} visible={visible} onCancel={() => setVisible(false)} footer={null}>

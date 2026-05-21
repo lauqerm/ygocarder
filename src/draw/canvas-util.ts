@@ -109,7 +109,7 @@ export const getFinishIterator = (
     return async (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
-        caller?: (finishType: string, pendulumSuffix: string) => Promise<any>,
+        caller?: (finishType: string, pendulumSuffix: string) => Promise<unknown>,
         pendulumSize?: PendulumSize,
     ) => {
         if (!ctx || !Array.isArray(finish) || finish.length <= 0) return Promise.resolve();

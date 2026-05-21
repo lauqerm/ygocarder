@@ -10,8 +10,7 @@ import { StickerButtonList } from '../const';
 import styled from 'styled-components';
 import { StyledInputLabelWithButton } from '../input-panel.styled';
 import { Checkbox, Dropdown, Menu, Tooltip } from 'antd';
-import { Card, copyrightMap, editionList, FlagIndexMap } from 'src/model';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { Card, copyrightMap, editionList, FlagIndexMap, CheckboxChangeEvent } from 'src/model';
 
 const StyledFooterInputContainer = styled.div`
     display: grid;
@@ -192,11 +191,12 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     useImperativeHandle(ref, () => ({
         setValue: ({ password, creator, atk, def, linkRating, firstEditionText, cornerText }) => {
             if (typeof atk === 'string') atkInputRef.current?.setValue(atk);
-            if (typeof def === 'string') defInputRef.current?.setValue(def);
-            if (typeof password === 'string') passwordInputRef.current?.setValue(password);
+            if (typeof cornerText === 'string') cornerTextRef.current?.setValue(cornerText);
             if (typeof creator === 'string') creatorInputRef.current?.setValue(creator);
-            if (typeof linkRating === 'string') linkRatingInputRef.current?.setValue(linkRating);
+            if (typeof def === 'string') defInputRef.current?.setValue(def);
             if (typeof firstEditionText === 'string') firstEditionTextRef.current?.setValue(firstEditionText);
+            if (typeof linkRating === 'string') linkRatingInputRef.current?.setValue(linkRating);
+            if (typeof password === 'string') passwordInputRef.current?.setValue(password);
         }
     }));
 
@@ -279,7 +279,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
                 >
                     <div>
                         <IconButton
-                            onClick={() => {}}
+                            onClick={() => { }}
                             Icon={UnorderedListOutlined}
                         />
                     </div>
@@ -319,7 +319,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
                 >
                     <div>
                         <IconButton
-                            onClick={() => {}}
+                            onClick={() => { }}
                             Icon={UnorderedListOutlined}
                         />
                     </div>

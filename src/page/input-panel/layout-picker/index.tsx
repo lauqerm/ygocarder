@@ -11,6 +11,7 @@ import {
     DefaultColorList,
     LayoutSettingList,
     CanvasConst,
+    CheckboxChangeEvent,
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
@@ -249,7 +250,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
 
     const changeBackgroundType = useMemo(() => getUpdater('backgroundType'), [getUpdater]);
     const changeLegacyTemplate = useMemo(() => getUpdater('legacyTemplate'), [getUpdater]);
-    const changeHasBackground = useCallback((e: any) => setCard(currentCard => {
+    const changeHasBackground = useCallback((e: CheckboxChangeEvent) => setCard(currentCard => {
         const nextValue = e.target.checked;
 
         return { ...currentCard, hasBackground: nextValue };
@@ -267,7 +268,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             relevant = false;
         };
         /** No need to depend on callback */
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [opacity]);
 
     useEffect(() => {

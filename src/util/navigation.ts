@@ -13,7 +13,7 @@ export const getNavigationProps = ({
     setFocus: (value: React.SetStateAction<number>) => void,
     onTrigger: () => void,
     onCancel?: () => void,
-    onKeyPress?: (ev: React.KeyboardEvent<any>) => (void | boolean),
+    onKeyPress?: (ev: React.KeyboardEvent<unknown>) => (void | boolean),
 }) => {
     return {
         tabIndex: 0,
@@ -25,7 +25,7 @@ export const getNavigationProps = ({
             if (debug) console.info('Navigation Blur', debug);
             setFocus(-1);
         },
-        onKeyDown: (e: React.KeyboardEvent<any>) => {
+        onKeyDown: (e: React.KeyboardEvent<unknown>) => {
             if (stopPropagation) e.stopPropagation();
             if (debug) console.info('Navigation Keydown', debug, e.key);
             if (onKeyPress?.(e) === false) return;

@@ -1,8 +1,8 @@
 export const normalizeCardName = (name: string) => {
     try {
         return name
-        .replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1')
-        .replaceAll(/(^\[|\[\[|{|{{)([^{}[\]]*)[}\]]{1,2}/gm, '$2');
+            .replaceAll(/\{([^{}|]*)\|+?[^{}|]*\}/g, '$1')
+            .replaceAll(/(^\[|\[\[|{|{{)([^{}[\]]*)[}\]]{1,2}/gm, '$2');
     } catch (e) {
         console.error(e);
         return name;
@@ -63,7 +63,7 @@ export const getCanvasFontDebugger = () => {
     return {
         get: (letter: string) => result[letter],
         test: (
-            context: Record<string, any>,
+            context: Record<string, unknown>,
             {
                 scale,
                 xRatio,
