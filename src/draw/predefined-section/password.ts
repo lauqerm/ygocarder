@@ -75,7 +75,7 @@ export const drawPasswordText = async ({
             defaultSize: `${fontSizeData.fontSize}px`,
             defaultWeight: hasShadow ? 'bold' : '',
         });
-        let internalTextData = {
+        const internalTextData = {
             fontLevel,
             fontData,
             currentFont: fontGetter,

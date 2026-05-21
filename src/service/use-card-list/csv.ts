@@ -245,7 +245,7 @@ const normalizeCsvData = (data: any) => {
 export const cardListToCsv = (cardList: Card[]) => {
     const valueList: string[] = [];
     const rowLength = CsvStandardFieldList.length;
-    let error = '';
+    const error = '';
 
     for (let cnt = 0; cnt < cardList.length; cnt++) {
         const write = (key: CsvField, value: boolean | string | number | undefined) => {

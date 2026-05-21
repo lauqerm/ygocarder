@@ -62,7 +62,7 @@ export const createLineList = ({
                 unCompressedFlag -= 1;
                 xRatio = baseXRatio;
             }
-            let {
+            const {
                 leftMostLetter,
                 totalWidth,
                 rightGap,
@@ -87,7 +87,7 @@ export const createLineList = ({
                 ? (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale / xRatio, leftGap) * -1 : 0)
                     + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0)
                 : 0;
-            let tokenWidth = totalWidth / (unCompressedFlag > 0 ? baseXRatio : 1) + indent;
+            const tokenWidth = totalWidth / (unCompressedFlag > 0 ? baseXRatio : 1) + indent;
             /** Last token is not allowed to become overflow (no known cases said otherwise). */
             if (currentLineWidth + tokenWidth > scaledWidth) {
                 let line = wordList.join('').trim();
@@ -101,7 +101,7 @@ export const createLineList = ({
                     actualLineWidth: currentLineWidth,
                 });
                 /** If the next token is gonna made the line become overflow, we will create a new line with it becoming the first token. We also re-calulate the width of that token since now the right side of it is not the "previous token" anymore, but the edge of a new line. */
-                let {
+                const {
                     totalWidth,
                     rightGap,
                     leftGap,
@@ -120,7 +120,7 @@ export const createLineList = ({
                 /** Of course we also re-calculate overflow possibility. */
                 const indent = (leftGap > 0 ? Math.min(MAX_LINE_REVERSE_INDENT * globalScale / xRatio, leftGap) * -1 : 0)
                     + (OCGAlphabetRegex.test(leftMostLetter) ? START_OF_LINE_ALPHABET_OFFSET * globalScale : 0);
-                let tokenWidth = totalWidth + indent;
+                const tokenWidth = totalWidth + indent;
                 currentLineWidth = tokenWidth;
                 currentGap = rightGap;
                 wordList = [token];

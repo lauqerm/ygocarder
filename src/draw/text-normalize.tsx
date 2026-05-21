@@ -214,7 +214,7 @@ export const normalizeCardText = (
      * * `((()()))` => `()`
      * * `()()()` => `()()()`
      */
-    let textAfterNormalizeBlockWord: string[] = [];
+    const textAfterNormalizeBlockWord: string[] = [];
     let currentDepth = 0;
     for (const letter of textAfterProcessing) {
         if (letter === NB_WORD_OPEN) {

@@ -136,7 +136,7 @@ export const NameStylePresetOption = ({
         className={mergeClass('preset-option', active ? 'menu-active' : '')}
     >
         <StyledPatternOption
-            className={mergeClass('canvas-container', !!onActive ? '' : 'menu-off')}
+            className={mergeClass('canvas-container', onActive ? '' : 'menu-off')}
             onClick={onActive}
             style={{
                 background: labelBackgroundColor,

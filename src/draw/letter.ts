@@ -83,12 +83,12 @@ export const getLetterWidth = ({
         ? 0.046875
         : 0;
     let boundWidth = actualBoundWidth;
-    let offsetRatio = (isLastOfLine
+    const offsetRatio = (isLastOfLine
         ? lastOfLineOffsetMap[letter]
         : offsetMap[letter]) ?? 0;
 
     if (fontStyle === 'tcg') {
-        let letterBoxSpacing = (boxSpacingRatioMap[letter] ?? 0) * width;
+        const letterBoxSpacing = (boxSpacingRatioMap[letter] ?? 0) * width;
 
         return {
             width,
@@ -106,8 +106,8 @@ export const getLetterWidth = ({
                 width * 0.075,
                 Math.max(0.450 * globalScale, width * spacingRatio) * kerningScaleRatio,
             ));
-    let letterRatio = 1;
-    let endLineRatio = 1;
+    const letterRatio = 1;
+    const endLineRatio = 1;
     let standardMetricRatio = 1.000;
     if (OCGDotRegex.test(letter)) {
         boundWidth = metricMethod === 'furigana'

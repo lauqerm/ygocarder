@@ -31,18 +31,6 @@ function generateDownload(canvas: HTMLCanvasElement | null, crop: ReactCrop.Crop
         'image/png',
         1
     );
-}
-
-export const isCropEqual = (cropL: Partial<ReactCrop.Crop>, cropR: Partial<ReactCrop.Crop>) => {
-    const { aspect: aspectL, height: heightL, unit: unitL, width: widthL, x: xL, y: yL } = cropL;
-    const { aspect: aspectR, height: heightR, unit: unitR, width: widthR, x: xR, y: yR } = cropR;
-    if (typeof widthL === 'number' && typeof widthR === 'number' && Math.abs(widthL - widthR) > 0.01) return false;
-    if (typeof heightL === 'number' && typeof heightR === 'number' && Math.abs(heightL - heightR) > 0.01) return false;
-    if (typeof xL === 'number' && typeof xR === 'number' && Math.abs(xL - xR) > 0.01) return false;
-    if (typeof yL === 'number' && typeof yR === 'number' && Math.abs(yL - yR) > 0.01) return false;
-    if (typeof aspectL === 'number' && typeof aspectR === 'number' && Math.abs(aspectL - aspectR) > 0.01) return false;
-    if (unitL !== unitR) return false;
-    return true;
 };
 
 /**
@@ -87,8 +75,8 @@ const normalizeCrop = (crop: Partial<ReactCrop.Crop>, image: HTMLImageElement | 
     const nextHeight = isRatioAcceptable
         ? height
         : width * image.naturalWidth /** Restore original size */
-            / ratio /** Get height with corresponding aspect ratio */
-            / image.naturalHeight /** Convert back to percent */;
+        / ratio /** Get height with corresponding aspect ratio */
+        / image.naturalHeight /** Convert back to percent */;
 
     /** If next height exceed the current image, we resize and center everything so it fit the current image */
     const oversizeRatio = nextHeight / 100;
@@ -291,9 +279,9 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         /** Snap sizing into whole pixel for a more crispy image. */
-        let expectedDrawWidth = Math.floor((completedCrop.width ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100));
+        const expectedDrawWidth = Math.floor((completedCrop.width ?? 0) * (cropUnit === 'px' ? zoomX : naturalWidth / 100));
         let drawWidth = Math.min(naturalWidth, expectedDrawWidth);
-        let expectedDrawHeight = Math.floor(expectedDrawWidth / ratio);
+        const expectedDrawHeight = Math.floor(expectedDrawWidth / ratio);
         let drawHeight = Math.min(naturalHeight, expectedDrawHeight);
         let drawCoordinateX = Math.min(
             naturalWidth,

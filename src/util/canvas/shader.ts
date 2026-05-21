@@ -336,8 +336,8 @@ export class HeightToNormalMap {
     }
     getTexture(image: TexImageSource) {
         const texture = new THREE.Texture(image);
-        texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping; // eslint-disable-line
-        texture.minFilter = texture.magFilter = THREE.NearestFilter; // eslint-disable-line
+        texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+        texture.minFilter = texture.magFilter = THREE.NearestFilter;
         texture.anisotropy = 2;
         texture.needsUpdate = true;
         return texture;
@@ -373,7 +373,7 @@ export class HeightToNormalMap {
     }
 
     setStrengthAndLevel(strength: number, level: number) {
-        this.normalMapUniform.dz.value = 1.0 / strength * (1.0 + Math.pow(2.0, level)); //  eslint-disable-line
+        this.normalMapUniform.dz.value = 1.0 / strength * (1.0 + Math.pow(2.0, level));
     }
 
     setType(type: typeof SHADER_FILTER_TYPE[keyof typeof SHADER_FILTER_TYPE]) {

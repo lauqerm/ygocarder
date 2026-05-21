@@ -9,6 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 const listeners = new Set<(available: boolean) => void>();
+const INSTALLED_KEY = 'pwa.installed';
 
 export function initInstallPrompt(): void {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -18,12 +19,23 @@ export function initInstallPrompt(): void {
     });
 
     window.addEventListener('appinstalled', () => {
+        try {
+            localStorage.setItem(INSTALLED_KEY, new Date().toISOString());
+        } catch { /* private mode etc. */ }
         deferredPrompt = null;
         notify(false);
     });
-}
+};
 
-export function isInstallAvailable(): boolean {
+export function wasInstalledBefore(): boolean {
+    try {
+        return localStorage.getItem(INSTALLED_KEY) !== null;
+    } catch {
+        return false;
+    }
+};
+
+export function isInstallPromptReady(): boolean {
     return deferredPrompt !== null;
 }
 

@@ -173,7 +173,7 @@ export const ygoCarderToCardMakerData = (
         : 'common';
     const { pendulum, rarity, ...rest } = externalInfo ?? {};
 
-    let isPartial = name !== normalizedName
+    const isPartial = name !== normalizedName
         || effect !== normalizedEffect
         || pendulumEffect !== normalizedPendulumEffect
         || normalizedIcon === undefined
@@ -268,7 +268,7 @@ export const cardMakerToYgoCarderData = (card: OtherMakerCard): { result: Card, 
         const levelAsNumber = parseInt(level);
         const normalizedRarity = rarity ? reverseRarityMap[rarity.toLowerCase()] : undefined;
 
-        let isPartial = normalizedIcon === undefined
+        const isPartial = normalizedIcon === undefined
             || normalizedAttribute === undefined
             || normalizedFrame === undefined
             || normalizedRarity === undefined;

@@ -77,7 +77,7 @@ export async function bulkCacheAssets(
             try {
                 const response = await fetchWithRetry(url, options.signal);
                 if (response.ok) {
-                    await cache.put(url, response);
+                    await cache.put(new Request(url), response);
                     progress.bytesDownloaded += manifest.assets[url].size;
                 } else {
                     progress.failed.push(url);

@@ -4,8 +4,6 @@
   "version": "2.4.12",
   "private": true,
   "dependencies": {
-    "@sentry/cli": "^2",
-    "@sentry/react": "^8.42.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
@@ -75,6 +73,9 @@
     ]
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@sentry/cli": "^2",
+    "@sentry/react": "^8.42.0",
     "@sentry/vite-plugin": "^5.3.0",
     "@types/jest": "^26.0.19",
     "@types/lodash.debounce": "^4.0.9",
@@ -92,14 +93,21 @@
     "@types/webfontloader": "^1.6.32",
     "@vitejs/plugin-react": "^6.0.2",
     "dpdm": "^3.14.0",
+    "eslint": "^10.4.0",
+    "eslint-plugin-react-refresh": "^0.5.2",
     "gh-pages": "^3.1.0",
+    "globals": "^17.6.0",
     "sass": "^1.49.9",
     "sass-embedded": "^1.99.0",
     "source-map-loader": "^1.0.0",
     "tsx": "^4.22.1",
+    "typescript-eslint": "^8.59.4",
     "vite": "^8.0.13"
   },
   "optionalDependencies": {
     "@rolldown/binding-linux-x64-musl": "*"
-  }
+  },
+  "description": "Modern YGO Card Maker app",
+  "repository": "git@github.com:lauqerm/ygocarder.git",
+  "author": "lauqerm <mr.equal1996@gmail.com>"
 }

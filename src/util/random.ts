@@ -8,7 +8,7 @@ export const seedDistributionCalculator = (seedIncrement: number) => {
         }
         return count;
     };
-    let distributionMap: Record<string, number> = {};
+    const distributionMap: Record<string, number> = {};
     for (let i = 0; i < 100000; i++) {
         const result = runSeed();
         if (distributionMap[result] !== undefined) distributionMap[result] += 1;

@@ -146,7 +146,7 @@ export const getCanvasFontDebugger = () => {
                         layerData[pixel + 2] = !positive ? 255 : 0;
                         layerData[pixel + 3] = 128 + 40 * intensity;
                     };
-                    let anchorMap: Record<string, { ascent: number, descent: number }> = {};
+                    const anchorMap: Record<string, { ascent: number, descent: number }> = {};
                     for (let cnt = 0; cnt < checkpointList.length; cnt++) {
                         const {
                             anchor,

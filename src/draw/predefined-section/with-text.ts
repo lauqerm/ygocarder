@@ -251,7 +251,7 @@ export const drawStat = (
         ctx.textAlign = 'left';
         const tokenizedText = `${value}`.split('?');
 
-        let totalWidth = tokenizedText.reduce((prev, curr, index) => {
+        const totalWidth = tokenizedText.reduce((prev, curr, index) => {
             ctx.font = `${37 * globalScale}px MatrixBoldSmallCaps`;
             let nextWidth = prev + ctx.measureText(curr).width;
 

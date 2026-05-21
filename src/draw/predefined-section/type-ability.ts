@@ -173,8 +173,8 @@ export const drawTypeAbility = async ({
     });
     resetStyle();
 
-    let offsetY = format === 'ocg' ? -5 : -1;
-    let offsetX = format === 'ocg' ? -3 : 0;
+    const offsetY = format === 'ocg' ? -5 : -1;
+    const offsetX = format === 'ocg' ? -3 : 0;
 
     if (willDrawIcon) {
         const { edge, baseline } = iconPositionList[0];

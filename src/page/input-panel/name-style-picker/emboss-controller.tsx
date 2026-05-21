@@ -186,7 +186,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             </h2>
             {language['input.name-style.emboss.color.alert'](<span
                 key="color-navigate"
-                className={!!onColorTabNavigate ? 'navigate-button' : ''}
+                className={onColorTabNavigate ? 'navigate-button' : ''}
                 onClick={onColorTabNavigate}
             >
                 {language['input.name-style.color.label']}

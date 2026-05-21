@@ -350,7 +350,7 @@ export const drawEffect = async ({
                     };
                 });
 
-            for (let lineDrawInfo of lineDrawInfoList) {
+            for (const lineDrawInfo of lineDrawInfoList) {
                 const {
                     xRatio,
                     tokenList,

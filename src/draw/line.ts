@@ -128,7 +128,7 @@ export const drawLine = async ({
     let textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentFont, globalScale);
 
     let previousTokenGap = 0;
-    let iconPositionList: { edge: number, size: number, baseline: number }[] = [];
+    const iconPositionList: { edge: number, size: number, baseline: number }[] = [];
     let previousTokenRebalanceOffset = 0;
     let tokenEdge = width !== 0 && direction === 'rtl'
         ? trueEdge + width
@@ -342,7 +342,7 @@ export const drawLine = async ({
                 }
 
                 if (src && drawImage) {
-                    let normalizedWidth = typeof width === 'number'
+                    const normalizedWidth = typeof width === 'number'
                         ? width
                         : typeof height === 'number'
                             ? undefined
@@ -690,11 +690,11 @@ export const drawLine = async ({
                 } else {
                     let remainFragment = fragment;
                     while (remainFragment !== '') {
-                        let currentLetter = remainFragment[0];
-                        let nextRemainFragment = remainFragment.slice(1);
+                        const currentLetter = remainFragment[0];
+                        const nextRemainFragment = remainFragment.slice(1);
                         let actualLetterWidth = 0;
                         const { edge } = fontLetterOffsetMap[currentLetter] ?? {};
-                        let offsetedPosition = currentPosition * (edge ?? 1);
+                        const offsetedPosition = currentPosition * (edge ?? 1);
                         const drawLetterofWordParameter = {
                             ...drawLetterParameter,
                             deviation: letterDeviationMap['default'],

@@ -163,6 +163,13 @@ async function getCacheInfo(): Promise<{ cached: number; expected: number | null
         ]);
         const cachedRequests = await assetCache.keys();
 
+        // Count unique pathnames, not raw Request entries.
+        // Safari and some other browsers store multiple Request variants
+        // (different headers, Range requests, etc.) per URL.
+        const uniqueUrls = new Set(
+            cachedRequests.map((r) => new URL(r.url).pathname)
+        );
+
         const manifestResponse = await manifestCache.match('manifest');
         let expected: number | null = null;
         if (manifestResponse) {
@@ -170,7 +177,7 @@ async function getCacheInfo(): Promise<{ cached: number; expected: number | null
             expected = Object.keys(manifest.assets ?? {}).length;
         }
 
-        return { cached: cachedRequests.length, expected };
+        return { cached: uniqueUrls.size, expected };
     } catch {
         return { cached: 0, expected: null };
     }

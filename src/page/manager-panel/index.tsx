@@ -411,7 +411,7 @@ const CardManagerMonitor = ({
     })));
 
     useEffect(() => {
-        let confirmReload = (ev: Event) => {
+        const confirmReload = (ev: Event) => {
             ev.preventDefault();
             return language['prompt.warning.on-leave.label'];
         };

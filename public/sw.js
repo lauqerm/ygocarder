@@ -34,6 +34,19 @@ self.addEventListener('activate', (event) => {
         // Take control of all open tabs right away
         await self.clients.claim();
 
+        const assetCache = await caches.open(CACHE_NAME);
+        const allKeys = await assetCache.keys();
+        const seenUrls = new Map();
+
+        for (const request of allKeys) {
+            const url = new URL(request.url).pathname;
+            if (seenUrls.has(url)) {
+                // Already have an entry for this URL; delete this duplicate
+                await assetCache.delete(request);
+            } else {
+                seenUrls.set(url, request);
+            }
+        }
         // Clean up old cache versions from previous deployments of the SW itself
         const keys = await caches.keys();
         await Promise.all(
@@ -115,13 +128,18 @@ async function handleNavigation(request) {
  */
 async function handleAssetRequest(request) {
     const cache = await caches.open(CACHE_NAME);
-    const cached = await cache.match(request);
+    const cached = await cache.match(request, { ignoreVary: true });
     if (cached) return cached;
 
     try {
         const response = await fetch(request);
         if (response.ok && response.type === 'basic') {
-            cache.put(request, response.clone()).catch((err) => {
+            // Store under a canonical Request to avoid header-variant duplicates
+            const canonicalRequest = new Request(request.url, {
+                method: 'GET',
+                credentials: 'same-origin',
+            });
+            cache.put(canonicalRequest, response.clone()).catch((err) => {
                 console.warn('[sw] cache.put failed', request.url, err);
             });
         }

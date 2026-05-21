@@ -142,7 +142,7 @@ export const resolveNameStyle = ({
     const lightHeader = checkLightHeader(frame);
 
     /** Predefined name style has dynamic font based on format unless explictly stated */
-    let contextualColor = {
+    const contextualColor = {
         fillStyle: lightHeader ? '#ffffff' : DEFAULT_TEXT_COLOR,
         headTextFillStyle: lightHeader ? '#ffffff' : DEFAULT_TEXT_COLOR,
     };
@@ -156,7 +156,7 @@ export const resolveNameStyle = ({
         };
     }
 
-    let contextualOutline = isSpeedSkill
+    const contextualOutline = isSpeedSkill
         ? {
             hasOutline: true,
             lineWidth: 6,

@@ -153,9 +153,9 @@ export const applyEmboss = ({
          */
         const resultData = new Uint8ClampedArray(width * height * 4);
         for (let pixelCnt = 0; pixelCnt < data.length; pixelCnt += 4) {
-            let nx = (filteredData[pixelCnt] / 127.5) - 1.0;
-            let ny = (filteredData[pixelCnt + 1] / 127.5) - 1.0;
-            let nz = (filteredData[pixelCnt + 2] / 127.5) - 1.0;
+            const nx = (filteredData[pixelCnt] / 127.5) - 1.0;
+            const ny = (filteredData[pixelCnt + 1] / 127.5) - 1.0;
+            const nz = (filteredData[pixelCnt + 2] / 127.5) - 1.0;
             const baseIntensity = nx * normalizedLightAngleVec[0]
                 + ny * normalizedLightAngleVec[1]
                 + nz * normalizedLightAngleVec[2];

@@ -7,7 +7,7 @@ import phase2_inf from 'distance-transform/lib/pinf';
 import phase2_p from 'distance-transform/lib/pp';
 
 function phase1(array: Float64Array<ArrayBufferLike>, rowCount: number, colCount: number) {
-    var i: number, j: number, ptr = 0, nextPoint: number, min = Math.min;
+    let i: number, j: number, ptr = 0, nextPoint: number, min = Math.min;
     for (i = 0; i < rowCount; ++i) {
         nextPoint = array[ptr++];
         for (j = 1; j < colCount; ++j) {
@@ -23,7 +23,7 @@ function phase1(array: Float64Array<ArrayBufferLike>, rowCount: number, colCount
 }
 
 export function distanceTransform(array: NdArray, exponent?: 1 | 2 | typeof Infinity) {
-    var dimensionCount = array.shape.length,
+    let dimensionCount = array.shape.length,
         shape = array.shape.slice(0),
         stride = new Array(dimensionCount),
         size = 1,
@@ -44,7 +44,7 @@ export function distanceTransform(array: NdArray, exponent?: 1 | 2 | typeof Infi
     }
 
     // Allocate scratch buffers
-    var phase2ResultAllocation = pool.mallocDouble(size),
+    let phase2ResultAllocation = pool.mallocDouble(size),
         phase2ResultArray = ndarray(phase2ResultAllocation, shape.slice(0), stride.slice(0), 0),
         s_q = pool.mallocUint32(stackSize),
         t_q = pool.mallocUint32(stackSize);
@@ -53,7 +53,7 @@ export function distanceTransform(array: NdArray, exponent?: 1 | 2 | typeof Infi
      * For some insane reason cwise library refuse to run properly on production when it work fine on dev.
      * We have no other choice but to replicate the macro. We know for sure that we only need to deal with 2-dimension array so it will be fine.
      * */
-    var phase1ResultAllocation = pool.mallocDouble(size),
+    let phase1ResultAllocation = pool.mallocDouble(size),
         phase1ResultArray = ndarray(phase1ResultAllocation, shape.slice(0), stride.slice(0), 0);
     for (let rowIndex = 0; rowIndex < array.shape[0]; rowIndex++) {
         for (let columnIndex = 0; columnIndex < array.shape[1]; columnIndex++) {

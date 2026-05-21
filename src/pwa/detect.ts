@@ -14,12 +14,6 @@ export function isIOS(): boolean {
     );
 };
 
-export function isInstallSupported(): boolean {
-    // Chromium-based browsers fire beforeinstallprompt; others don't
-    // (Firefox, Safari, etc.) We still allow manual "add to home screen" flows.
-    return 'BeforeInstallPromptEvent' in window || isIOS();
-};
-
 /** Seriously, what the hell? */
 export const isMobileDevice = () => {
     let check = false;
@@ -33,26 +27,4 @@ export const IS_MOBILE = isMobileDevice();
 
 export const isTouchDevice = () => {
     return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
-};
-
-export async function isAppAlreadyInstalled(): Promise<boolean> {
-    // 1. Currently running standalone? Obviously installed.
-    if (isStandalone()) return true;
-
-    // 2. Chrome's API for checking installation state
-    const nav = navigator as any;
-    if (typeof nav.getInstalledRelatedApps === 'function') {
-        try {
-            const apps = await nav.getInstalledRelatedApps();
-            // Empty array means "not installed"; populated means installed
-            if (apps.length > 0) return true;
-        } catch {
-        // API exists but call failed — treat as unknown
-        }
-    }
-
-    // 3. beforeinstallprompt never fired AND we're in a browser
-    //    that should support it — strong hint the app is installed.
-    //    (Can't be 100% certain — could also be engagement heuristic not met.)
-    return false;
 };

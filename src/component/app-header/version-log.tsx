@@ -54,7 +54,7 @@ const VersionLogStore = (() => {
         }
     };
 })();
-export const VersionLog = () => {
+export const VersionInformation = () => {
     const [log, setLog] = useState<VersionLog>([]);
     const [loading, setLoading] = useState(false);
 
@@ -95,15 +95,15 @@ export const VersionLog = () => {
 const compareSemver = (a: string, b: string): boolean => {
     const [majorA, minorA, patchA] = String(a).split('.').map(Number);
     const [majorB, minorB, patchB] = String(b).split('.').map(Number);
-    
+
     if (majorA !== majorB) {
         return majorA > majorB;
     }
-    
+
     if (minorA !== minorB) {
         return minorA > minorB;
     }
-    
+
     return patchA > patchB;
 };
 
@@ -141,7 +141,7 @@ export const VersionLogButton = memo(() => {
     return <Popover
         placement="bottom"
         content={<StyledVersionLog>
-            <VersionLog />
+            <VersionInformation />
         </StyledVersionLog>}
     >
         <VersionLogButtonLabel $animating={animating} className="app-log" onMouseOver={() => setAnimating(false)}>

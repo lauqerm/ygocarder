@@ -23,8 +23,8 @@ export const StyledMarkdown = styled.div`
     }
 `;
 
-export const StyledPopMarkdown = styled(StyledMarkdown)`
-    max-width: 550px;
+export const StyledPopMarkdown = styled(StyledMarkdown)<{ $width?: number }>`
+    ${({ $width = 550 }) => `max-width: ${$width}px;`}
     border-radius: var(--br-lg);
     border: var(--bw) solid var(--sub-level-1);
 `;

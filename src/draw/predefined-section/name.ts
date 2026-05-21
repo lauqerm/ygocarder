@@ -240,7 +240,7 @@ export const drawName = async (
      * 
      * If we use emboss, additional thickness will be added to the text to increase embossed area. We use stroke text so it can inherit color, gradient and pattern style.
      */
-    let thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
+    const thickenEmboss = hasEmboss && typeof embossThickness === 'number' && embossThickness > 0;
     let resetEmbossStroke = () => { };
     if (thickenEmboss) {
         resetEmbossStroke = setTextStyle({

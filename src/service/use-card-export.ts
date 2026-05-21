@@ -97,7 +97,7 @@ export const useCardExport = ({
             const normalizedName = normalizeCardName(name);
             const cardData = getCardDataUrl(size);
             if (typeof cardData !== 'string') throw new Error('Failed to trigger automatic download');
-            var link = document.createElement('a');
+            const link = document.createElement('a');
             link.download = normalizedName
                 ? `${normalizedName}.png`
                 : 'card.png';
@@ -136,7 +136,7 @@ export const useCardExport = ({
     }, [normalizedName]);
 
     useEffect(() => {
-        let saveBeforeReload = () => {
+        const saveBeforeReload = () => {
             localStorage.setItem('card-data', JSON.stringify(currentCard));
             localStorage.setItem('card-version', import.meta.env.VITE_VERSION ?? 'unknown');
         };
@@ -149,7 +149,7 @@ export const useCardExport = ({
 
     useEffect(() => {
         let relevant = true;
-        let confirmReload = (ev: Event) => {
+        const confirmReload = (ev: Event) => {
             ev.preventDefault();
             return language['prompt.warning.on-leave.label'];
         };

@@ -33,7 +33,7 @@ export const createCondenser = (minThreshold = 0, maxThreshold = MAX_CONDENSER_T
     let lastEffective = median;
     let iterateCount = 30;
     let magnitude = 100;
-    let magnitudeReductionRatio = 10;
+    const magnitudeReductionRatio = 10;
 
     const reverseSearch = () => {
         if (magnitude === 1) finish();

@@ -133,7 +133,7 @@ export const analyzeToken = ({
         applySymbolFont, stopApplySymbolFont,
         applyVietnameseFont, stopApplyVietnameseFont,
     } = getTextWorker(ctx, fontData, fontSizeData, currentFont, globalScale);
-    let potentialTaggedToken = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
+    const potentialTaggedToken = rawToken.replaceAll(new RegExp(NON_BREAKABLE_SYMBOL_SOURCE, 'g'), '');
     let token = potentialTaggedToken;
     const letterSpacingRatio = 1 + letterSpacing / 2;
     let leftMostLetter = '';
@@ -364,8 +364,8 @@ export const analyzeToken = ({
                 stopApplyArabicFont();
             } else {
                 while (remainFragment !== '') {
-                    let currentLetter = remainFragment[0];
-                    let nextRemainFragment = remainFragment.slice(1);
+                    const currentLetter = remainFragment[0];
+                    const nextRemainFragment = remainFragment.slice(1);
                     let actualLetterWidth = ctx.measureText(remainFragment).width - ctx.measureText(nextRemainFragment).width;
                     /** Square brackets ("[" and "]") may have different scaling */
                     if (SquareBracketLetterRegex.test(currentLetter)) {

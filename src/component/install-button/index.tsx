@@ -1,30 +1,24 @@
-import { useEffect, useState, useRef, type ReactNode } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button, Modal, Progress, Alert, Space, Typography, Popover } from 'antd';
 import {
     DownloadOutlined,
     SyncOutlined,
-    CheckCircleOutlined,
-    QuestionCircleOutlined,
-    LoadingOutlined,
     WarningOutlined,
     CloudDownloadOutlined,
-    CarryOutOutlined,
+    AppstoreAddOutlined,
 } from '@ant-design/icons';
 import {
-    usePWAState,
     isIOS,
     triggerInstall,
     bulkCacheAssets,
     type BulkDownloadProgress,
-    NotSupportedReason,
     syncManifestWithWorker,
     getFullDiagnostics,
-    isAppAlreadyInstalled,
+    usePWA,
 } from '../../pwa';
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
 import * as Sentry from '@sentry/react';
-import { PUBLIC_PATH } from 'src/model';
 
 const { Text, Paragraph } = Typography;
 const StyledProgressModal = styled(Modal)``;
@@ -37,20 +31,34 @@ type Phase = 'idle'
     | 'error';
 
 export interface InstallButtonProps {
-    mode?: 'status' | 'install',
     className?: string,
 };
 
 export function InstallButton({
-    mode = 'status',
     className,
 }: InstallButtonProps) {
-    const pwaState = usePWAState();
+    const pwa = usePWA();
     const [phase, setPhase] = useState<Phase>('idle');
     const [progress, setProgress] = useState<BulkDownloadProgress | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [alreadyInstalled, setAlreadyInstalled] = useState(false);
     const abortRef = useRef<AbortController | null>(null);
+    const [cacheProgress, setCacheProgress] = useState(0);
+    const [cachedAssetCount, setCachedAssetCount] = useState(0);
+    const cacheHeartbeat = async () => {
+        const {
+            cacheCompletion,
+            cachedAssetCount,
+        } = await getFullDiagnostics();
+        setCacheProgress(cacheCompletion);
+        setCachedAssetCount(cachedAssetCount);
+    };
+    useEffect(() => {
+        cacheHeartbeat();
+
+        const intervalId = setInterval(cacheHeartbeat, 30000);
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     // Warn before unload while downloading
     useEffect(() => {
@@ -67,10 +75,6 @@ export function InstallButton({
         return () => window.removeEventListener('beforeunload', handler);
     }, [phase]);
 
-    useEffect(() => {
-        isAppAlreadyInstalled().then(setAlreadyInstalled);
-    }, []);
-
     const reset = () => {
         setPhase('idle');
         setProgress(null);
@@ -78,79 +82,101 @@ export function InstallButton({
         abortRef.current = null;
     };
 
-    const startSync = async () => {
-        setError(null);
-        setPhase('downloading');
-        abortRef.current = new AbortController();
+    const {
+        cacheWritable,
+        cacheWritableError,
+        capabilities,
+        installPromptReady,
+    } = pwa;
+    const {
+        alreadyStandalone,
+        canCacheAssets,
+        canInstall,
+        reasons,
+    } = capabilities;
 
+    const validateBeforeDownload = async () => {
+        setError(null);
+
+        if (!cacheWritable) {
+            setError(cacheWritableError);
+            setPhase('error');
+            return;
+        }
+        setPhase('downloading');
+    };
+    const handleDownloadError = (err: unknown, action: string) => {
+        if ((err as Error).name === 'AbortError') {
+            reset();
+        } else {
+            Sentry.captureException(err, {
+                extra: {
+                    type: `Failed when prepare for ${action}`,
+                    ...(typeof err === 'object' ? err : {}),
+                },
+            });
+            setError((err as Error).message);
+            setPhase('error');
+        }
+    };
+    const downloadAsset = async () => {
+        abortRef.current = new AbortController();
+        const result = await bulkCacheAssets({
+            signal: abortRef.current.signal,
+            onProgress: setProgress,
+        });
+        /** Prevent flashing */
+        await new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 1000));
+
+        if (result.failed.length > 0) {
+            setError(`${result.failed.length} files failed to download. You can retry.`);
+            setPhase('error');
+            Sentry.captureException(new Error('PWA: Failed to cache asset'), {
+                extra: {
+                    type: 'Failed to cache asset',
+                    ...result,
+                },
+            });
+        }
+        return result;
+    };
+
+    const startSync = async () => {
+        await validateBeforeDownload();
         try {
             await syncManifestWithWorker();
-            const result = await bulkCacheAssets({
-                signal: abortRef.current.signal,
-                onProgress: setProgress,
-            });
+            const result = await downloadAsset();
 
-            if (result.failed.length > 0) {
-                setError(`${result.failed.length} files failed to update.`);
-                setPhase('error');
-            } else {
+            if (result.failed.length <= 0) {
                 setPhase('done');
             }
+            cacheHeartbeat();
         } catch (err) {
-            if ((err as Error).name === 'AbortError') {
-                reset();
-            } else {
-                setError((err as Error).message);
-                setPhase('error');
-            }
+            handleDownloadError(err, 'sync');
         }
     };
 
     const startInstall = async () => {
-        setError(null);
-        setPhase('downloading');
+        await validateBeforeDownload();
         abortRef.current = new AbortController();
-
         try {
-            const result = await bulkCacheAssets({
-                signal: abortRef.current.signal,
-                onProgress: setProgress,
-            });
+            const result = await downloadAsset();
 
             if (result.failed.length > 0) {
-                setError(`${result.failed.length} files failed to download. You can retry.`);
-                setPhase('error');
-                Sentry.captureException(new Error('PWA: Failed to cache asset'), {
-                    extra: {
-                        type: 'Failed to cache asset',
-                        ...result,
-                    },
-                });
                 return;
             }
 
-            // iOS skips the prompt step entirely
             if (isIOS()) {
+                // iOS skips the prompt step entirely
                 setPhase('done');
-                return;
-            }
-
-            // Don't call prompt() here — gesture is consumed by now.
-            // Wait for the user to click "Install" in the modal.
-            setPhase('ready-to-install');
-        } catch (err) {
-            if ((err as Error).name === 'AbortError') {
-                reset();
             } else {
-                Sentry.captureException(err, {
-                    extra: {
-                        type: 'Failed when prepare for install',
-                        ...err,
-                    },
-                });
-                setError((err as Error).message);
-                setPhase('error');
+                // Don't call prompt() here — gesture is consumed by now.
+                // Wait for the user to click "Install" in the modal.
+                setPhase('ready-to-install');
             }
+            cacheHeartbeat();
+        } catch (err) {
+            handleDownloadError(err, 'install');
         }
     };
 
@@ -176,13 +202,18 @@ export function InstallButton({
         }
     };
 
+    const [installOnlyModalVisible, setInstallOnlyModalVisible] = useState(false);
+    const showInstallOnlyHint = () => {
+        setInstallOnlyModalVisible(true);
+    };
+
     const requestClose = () => {
         if (phase === 'downloading') {
             Modal.confirm({
-                title: 'Cancel installation?',
+                title: 'Cancel download?',
                 content:
                     'Your download progress will be paused. Already-downloaded files stay cached, so resuming later will be faster.',
-                okText: 'Cancel installation',
+                okText: 'Cancel download',
                 okButtonProps: { danger: true },
                 cancelText: 'Keep downloading',
                 onOk: () => {
@@ -200,9 +231,9 @@ export function InstallButton({
         reset();
     };
 
-    const modalOpen = phase !== 'idle';
-    const ModalComponent = <StyledProgressModal
-        visible={modalOpen}
+    const assetDownloadModalVisible = phase !== 'idle';
+    const AssetDownloadModal = <StyledProgressModal
+        visible={assetDownloadModalVisible}
         title={modalTitle(phase)}
         onCancel={requestClose}
         maskClosable={phase !== 'downloading'}
@@ -218,13 +249,13 @@ export function InstallButton({
         {phase === 'downloading' && progress && (
             <DownloadingView progress={progress} />
         )}
-        {phase === 'ready-to-install' && <ReadyToInstallView />}
+        {phase === 'ready-to-install' && <InstallViewChromium fullyCached={true} />}
         {phase === 'installing' && (
             <Paragraph>
                 <Text>Waiting for system install prompt...</Text>
             </Paragraph>
         )}
-        {phase === 'done' && <DoneView />}
+        {phase === 'done' && <DoneView canInstall={canInstall} />}
         {phase === 'error' && error && (
             <Alert
                 type="error"
@@ -237,190 +268,107 @@ export function InstallButton({
 
     let icon: React.ReactNode = null;
     let label: React.ReactNode = null;
+    let tooltip: React.ReactNode = <div>{cachedAssetCount} assets cached</div>;
     let callback: undefined | (() => void) = undefined;
-    switch (pwaState.kind) {
-        case 'sw-not-ready': {
-            icon = <LoadingOutlined />;
-            label = <label>Preparing</label>;
-            break;
-        }
-        case 'not-installed': {
-            icon = <DownloadOutlined />;
-            label = <label>Install</label>;
-            callback = startInstall;
-            break;
-        }
-        case 'installed-fresh': {
-            icon = <CarryOutOutlined />;
-            label = <label>Check</label>;
-            callback = startSync;
-            break;
-        }
-        case 'installed-stale': {
-            icon = <SyncOutlined />;
-            label = <label>Update Now</label>;
-            callback = startSync;
-            break;
-        }
-        case 'installed-broken': {
-            icon = <WarningOutlined />;
-            label = <label>({Math.round(pwaState.cacheCompletion * 100)}%) Finish</label>;
-            callback = startSync;
-            break;
-        }
+    const mountModal = canCacheAssets;
+    if (alreadyStandalone) {
+        /** Even in standalone mode, we still allow them to sync */
+        icon = <SyncOutlined />;
+        label = <label>Check</label>;
+        callback = startSync;
+    } else if (canInstall && canCacheAssets) {
+        icon = <DownloadOutlined />;
+        label = <label>Install</label>;
+        callback = installPromptReady ? startInstall : startSync;
+    } else if (canInstall && !canCacheAssets) {
+        icon = <AppstoreAddOutlined />;
+        /** The label describes the essential of this operation. Without full caching, getting the app is no different than just using the web. */
+        label = <label>Add Shortcut</label>;
+        callback = showInstallOnlyHint;
+    } else if (!canInstall && canCacheAssets) {
+        /** Allow full caching even if they cannot install the app, as installation is just a secondary feature. */
+        icon = <CloudDownloadOutlined />;
+        label = <label>{`${Math.round(cacheProgress * 100)}% cached`}</label>;
+        callback = startSync;
+    } else if (!canInstall && !canCacheAssets) {
+        /** Too bad */
+        icon = <WarningOutlined />;
+        label = <label>Unavailable</label>;
+        tooltip = <div>
+            <b>Install and caching is not possible due to:</b><br />
+            {(reasons.length === 0 ? ['Unknown Reason'] : reasons).map(entry => <div key={entry}>{entry}</div>)}
+        </div>;
     }
-
-    const [cacheProgress, setCacheProgress] = useState('');
-    const [cachedAssetCount, setCachedAssetCount] = useState(0);
-    useEffect(() => {
-        // 1. Define the async function inside
-        const cacheHeartbeat = async () => {
-            const {
-                cacheCompletion,
-                cachedAssetCount,
-            } = await getFullDiagnostics();
-            setCacheProgress(`${Math.round(cacheCompletion * 100)}% cached`);
-            setCachedAssetCount(cachedAssetCount);
-        };
-
-        // 2. Call it immediately
-        cacheHeartbeat();
-
-        // 3. Optional: Setup interval for recurring heartbeat
-        const intervalId = setInterval(cacheHeartbeat, 10000);
-
-        // 4. Cleanup function to clear interval
-        return () => clearInterval(intervalId);
-    }, [])
-
-    const mountModal = pwaState.kind !== 'sw-not-ready' && pwaState.kind !== 'not-supported';
-
-    if (mode === 'status') return <Popover
-        content={
-            <StyledPopMarkdown>
-                <div>{cachedAssetCount} assets cached</div>
-            </StyledPopMarkdown>
-        }
-        placement="topLeft"
-    >
-        <div className={className}>
-            <CloudDownloadOutlined />
-            <label>{cacheProgress}</label>
-        </div>
-    </Popover>;
-    if (alreadyInstalled) {
-        return (
-            <Popover content={
-                <StyledPopMarkdown>
-                    <div>The app is already installed. Open it from your home screen or app drawer.</div>
-                </StyledPopMarkdown>
-            }>
-                <div className={className} onClick={callback}>
-                    <CheckCircleOutlined />
-                    <label>Installed</label>
-                </div>
-            </Popover>
-        );
-    }
-    if (pwaState.kind === 'not-supported') return <UnsupportedHint className={className} reason={pwaState.reason} />;
     return <Popover
         content={
-            <StyledPopMarkdown>
-                <div>{cachedAssetCount} assets cached</div>
+            <StyledPopMarkdown $width={300}>
+                {tooltip}
             </StyledPopMarkdown>
         }
-        placement="topLeft"
+        placement="bottom"
     >
         <div className={className} onClick={callback}>
             {icon}
             {label}
         </div>
-        {mountModal && ModalComponent}
+        {mountModal && AssetDownloadModal}
+        <StyledProgressModal
+            visible={installOnlyModalVisible}
+            title={'Add Shortcut'}
+            onCancel={() => {
+                setInstallOnlyModalVisible(false);
+            }}
+            footer={isIOS()
+                ? null
+                : <Space>
+                    <Button onClick={() => setInstallOnlyModalVisible(false)}>Not now</Button>
+                    <Button type="primary" onClick={handleInstallClick}>Install</Button>
+                </Space>}
+            width={460}
+            className="add-shortcut-modal"
+            centered
+            destroyOnClose
+        >
+            {isIOS()
+                ? <InstallViewIos />
+                : <InstallViewChromium />}
+        </StyledProgressModal>
     </Popover>;
 };
 
-function ReadyToInstallView() {
+type InstallViewChromium = {
+    fullyCached?: boolean,
+};
+const InstallViewChromium = ({
+    fullyCached,
+}: InstallViewChromium) => {
     return (
         <Space direction="vertical" size="middle">
-            <Alert
+            {fullyCached && <Alert
                 type="success"
                 showIcon
                 message="All assets downloaded"
                 description="The app is ready to work fully offline."
-            />
+            />}
             <Paragraph type="secondary" style={{ margin: 0 }}>
                 Click <Text strong>Install</Text> to add the app to your home screen
                 or app drawer. You'll see a system confirmation dialog next.
             </Paragraph>
         </Space>
     );
-}
+};
 
-function UnsupportedHint({ reason, className }: { reason: NotSupportedReason, className?: string }) {
-    const { title, content } = unsupportedMessage(reason);
-
+function InstallViewIos() {
     return (
-        <Popover
-            content={
-                <StyledPopMarkdown>
-                    <strong>{title}</strong>
-                    <div>{content}</div>
-                </StyledPopMarkdown>
-            }
-            placement="topLeft"
-        >
-            <div className={className}>
-                <QuestionCircleOutlined />
-                <label>Unavailable</label>
-            </div>
-        </Popover>
+        <Space direction="vertical" size="middle">
+            <div>To install the app on iOS:</div>
+            <ol>
+                <li>Tap the <Text strong>Share</Text> button in Safari</li>
+                <li>Scroll and tap <Text strong>Add to Home Screen</Text> or <Text strong>Add to Dock</Text></li>
+                <li>Tap <Text strong>Add</Text></li>
+            </ol>
+        </Space>
     );
-}
-
-function unsupportedMessage(reason: NotSupportedReason): { title: string; content: React.ReactNode } {
-    switch (reason) {
-        case 'dev-mode':
-            return {
-                title: 'Install not available: Dev mode',
-                content: 'Run `yarn build && yarn preview` to test it.',
-            };
-        case 'no-service-worker':
-            return {
-                title: 'Install not available: Browser too old',
-                content: 'Your browser doesn\'t support offline web apps. Try a recent version of Chrome, Edge, Firefox, or Safari.',
-            };
-        case 'ios-no-prompt':
-            return {
-                title: 'Install not available: Add to Home Screen on iOS',
-                content: 'Tap the Share button in Safari, then "Add to Home Screen". The app will work offline once installed.',
-            };
-        case 'firefox-desktop':
-            return {
-                title: 'Install not available: Not supported on Firefox desktop',
-                content: 'Firefox on desktop doesn\'t support installing web apps. The app still works in the browser; for offline use, try Chrome, Edge, or use Firefox on mobile.',
-            };
-        case 'in-private-window':
-            return {
-                title: 'Install not available: Private window',
-                content: 'Offline mode doesn\'t work in private/incognito windows. Open the app in a regular window to install.',
-            };
-        default:
-            return {
-                title: 'Install not available',
-                content: <div>
-                    Check your URL bar to see if you have already installed the app.
-                    <br />
-                    <img
-                        alt="pwa-installed-hint"
-                        width={80}
-                        src={`${PUBLIC_PATH}/asset/image/syntax/pwa-installed-hint.png`}
-                    />
-                    <br />
-                    <br />
-                    Otherwise, ensure that you\'re on the latest version, in a regular (non-private) window, have access to internet, and using HTTPS.
-                </div>,
-            };
-    }
 }
 
 function modalTitle(phase: Phase): string {
@@ -472,7 +420,7 @@ function modalFooter(
         );
     }
     return null;
-}
+};
 
 function DownloadingView({ progress }: { progress: BulkDownloadProgress }) {
     const pct = progress.total === 0
@@ -509,25 +457,21 @@ function DownloadingView({ progress }: { progress: BulkDownloadProgress }) {
             )}
         </Space>
     );
-}
+};
 
-function DoneView() {
-    if (isIOS()) {
-        return (
-            <Space direction="vertical">
-                <Paragraph>Assets downloaded. To finish installing on iOS:</Paragraph>
-                <ol style={{ paddingLeft: 20, margin: 0 }}>
-                    <li>Tap the <Text strong>Share</Text> button in Safari</li>
-                    <li>Scroll and tap <Text strong>Add to Home Screen</Text></li>
-                    <li>Tap <Text strong>Add</Text></li>
-                </ol>
-            </Space>
-        );
-    }
-    return (
-        <Paragraph>
+type DoneView = {
+    canInstall: boolean,
+};
+const DoneView = ({
+    canInstall,
+}: DoneView) => {
+    if (isIOS() && canInstall) return <InstallViewIos />;
+    return canInstall
+        ? <Paragraph>
             The app is installed and ready to use offline. You can launch it from
             your home screen or app drawer.
         </Paragraph>
-    );
-}
+        : <Paragraph>
+            The app is fully cached.
+        </Paragraph>;
+};
