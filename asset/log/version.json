@@ -1,5 +1,22 @@
 [
     {
+        "version": "v2.5.0 (2026/05/23)",
+        "logList": [
+            {
+                "content": "Fix: Minor issues for dye features."
+            },
+            {
+                "content": "Fix: Minor scaling issues."
+            },
+            {
+                "content": "Fix: Minor UI issues."
+            },
+            {
+                "content": "Feat: Experimental support for full caching for installable offline app."
+            }
+        ]
+    },
+    {
         "version": "v2.4.12 (2026/05/20)",
         "logList": [
             {

@@ -1,13 +1,13 @@
 {
-  "version": "96ca00242a63ecc1",
-  "generatedAt": "2026-05-20T12:36:59.224Z",
+  "version": "816ece6525cf61ca",
+  "generatedAt": "2026-05-23T06:46:09.560Z",
   "basePath": "/ygocarder/",
-  "assetCount": 662,
-  "totalBytes": 79952754,
+  "assetCount": 663,
+  "totalBytes": 79972501,
   "assets": {
     "/ygocarder/asset/font.css": {
-      "hash": "62e6b4a8a85c0c1b",
-      "size": 2627
+      "hash": "927e46a66e38bcdf",
+      "size": 2720
     },
     "/ygocarder/asset/font/DFHsg3.ttf": {
       "hash": "891be08f88c2c1a9",
@@ -110,20 +110,20 @@
       "size": 24764
     },
     "/ygocarder/asset/i18n/eng.json": {
-      "hash": "3cefa9cfdf9c3c34",
-      "size": 35973
+      "hash": "1044ec7086586444",
+      "size": 36470
     },
     "/ygocarder/asset/i18n/jap.json": {
-      "hash": "d4dcaeb572cf7a1b",
-      "size": 39950
+      "hash": "1723f44909e0e1db",
+      "size": 40448
     },
     "/ygocarder/asset/i18n/metadata.json": {
-      "hash": "e26cc553ebb866b3",
-      "size": 1034
+      "hash": "0159f5cce82d32f2",
+      "size": 1074
     },
     "/ygocarder/asset/i18n/vie.json": {
-      "hash": "fac4ea24348bae25",
-      "size": 41175
+      "hash": "7e4d159bedf538b0",
+      "size": 41672
     },
     "/ygocarder/asset/image/attribute/attr-ch-dark.png": {
       "hash": "4bdad1239b4dd115",
@@ -2509,6 +2509,10 @@
       "hash": "710a2f4898a6fc89",
       "size": 22364
     },
+    "/ygocarder/asset/image/syntax/pwa-installed-hint.png": {
+      "hash": "c3b5acff0857241a",
+      "size": 16729
+    },
     "/ygocarder/asset/image/syntax/syntax-1-preview.jpg": {
       "hash": "ff958dbfb65f3c49",
       "size": 36284
@@ -2642,12 +2646,12 @@
       "size": 198
     },
     "/ygocarder/asset/log/version.json": {
-      "hash": "9a325b74cd902418",
-      "size": 27093
+      "hash": "22df562d6ef2d683",
+      "size": 28456
     },
     "/ygocarder/asset/ocg-font.css": {
-      "hash": "cda77ad46b5c9af7",
-      "size": 723
+      "hash": "6c12cf5956b6a842",
+      "size": 753
     },
     "/ygocarder/asset/script/JSONCrush.min.js": {
       "hash": "5747c2d8a975f968",
