@@ -93,8 +93,8 @@ export const getCanvasFontDebugger = () => {
                     letter: string,
                     x: number,
                     anchor?: string,
-                    compensateTop?: boolean,
-                    compensateBottom?: boolean,
+                    compensateTop?: number | null,
+                    compensateBottom?: number | null,
                 }[]> = {
                     '1': [
                         { letter: 'm', x: Math.round(34 * appliedXRatio) },
@@ -105,14 +105,14 @@ export const getCanvasFontDebugger = () => {
                         { letter: 'I', x: Math.round(188 * appliedXRatio), anchor: 'M' },
                         { letter: 'E', x: Math.round(208 * appliedXRatio), anchor: 'M' },
                         { letter: 'N', x: Math.round(240 * appliedXRatio), anchor: 'M' },
-                        { letter: '1', x: Math.round(290 * appliedXRatio), anchor: 'M', compensateTop: false },
-                        { letter: '2', x: Math.round(326 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '1', x: Math.round(290 * appliedXRatio), anchor: 'M' },
+                        { letter: '2', x: Math.round(326 * appliedXRatio), anchor: 'M' },
                         { letter: '0', x: Math.round(360 * appliedXRatio), anchor: 'M' },
                         { letter: 'O', x: Math.round(400 * appliedXRatio), anchor: 'M' },
-                        { letter: 'Q', x: Math.round(443 * appliedXRatio), anchor: 'M', compensateBottom: false },
+                        { letter: 'Q', x: Math.round(443 * appliedXRatio), anchor: 'M', compensateBottom: null },
                         { letter: 'o', x: Math.round(483 * appliedXRatio), anchor: 'm' },
-                        { letter: 'q', x: Math.round(521 * appliedXRatio), anchor: 'm', compensateBottom: false },
-                        { letter: 'G', x: Math.round(566 * appliedXRatio), anchor: 'M' },
+                        { letter: 'q', x: Math.round(521 * appliedXRatio), anchor: 'm', compensateBottom: null },
+                        { letter: 'G', x: Math.round(565 * appliedXRatio), anchor: 'M' },
                     ],
                     '2': [
                         { letter: 'm', x: Math.round(70 * appliedXRatio) },
@@ -123,13 +123,13 @@ export const getCanvasFontDebugger = () => {
                         { letter: 'I', x: Math.round(376 * appliedXRatio), anchor: 'M' },
                         { letter: 'E', x: Math.round(415 * appliedXRatio), anchor: 'M' },
                         { letter: 'N', x: Math.round(481 * appliedXRatio), anchor: 'M' },
-                        { letter: '1', x: Math.round(585 * appliedXRatio), anchor: 'M', compensateTop: false },
-                        { letter: '2', x: Math.round(654 * appliedXRatio), anchor: 'M', compensateTop: false },
+                        { letter: '1', x: Math.round(585 * appliedXRatio), anchor: 'M' },
+                        { letter: '2', x: Math.round(654 * appliedXRatio), anchor: 'M' },
                         { letter: '0', x: Math.round(723 * appliedXRatio), anchor: 'M' },
                         { letter: 'O', x: Math.round(801 * appliedXRatio), anchor: 'M' },
-                        { letter: 'Q', x: Math.round(888 * appliedXRatio), anchor: 'M', compensateBottom: false },
+                        { letter: 'Q', x: Math.round(888 * appliedXRatio), anchor: 'M', compensateBottom: null },
                         { letter: 'o', x: Math.round(969 * appliedXRatio), anchor: 'm' },
-                        { letter: 'q', x: Math.round(1043 * appliedXRatio), anchor: 'm', compensateBottom: false },
+                        { letter: 'q', x: Math.round(1043 * appliedXRatio), anchor: 'm', compensateBottom: null },
                         { letter: 'G', x: Math.round(1126 * appliedXRatio), anchor: 'M' },
                     ],
                 };
@@ -139,10 +139,10 @@ export const getCanvasFontDebugger = () => {
                 if (checkpointList) {
                     const imageData = ctx.getImageData(0, 0, DebugCanvas.width * appliedScale, DebugCanvas.height);
                     const layerData = imageData.data;
-                    const paintSamplePixel = (pixel: number, positive: boolean, willCompensate: boolean, intensity = 1) => {
+                    const paintSamplePixel = (pixel: number, positive: boolean, willCompensate: null | number = 0, intensity = 1) => {
                         if (!debug) return;
                         layerData[pixel] = positive ? 255 : 0;
-                        layerData[pixel + 1] = !willCompensate ? 255 : 0;
+                        layerData[pixel + 1] = willCompensate === null ? 255 : 0;
                         layerData[pixel + 2] = !positive ? 255 : 0;
                         layerData[pixel + 3] = 128 + 40 * intensity;
                     };
@@ -152,8 +152,8 @@ export const getCanvasFontDebugger = () => {
                             anchor,
                             letter,
                             x,
-                            compensateBottom = true,
-                            compensateTop = true,
+                            compensateBottom,
+                            compensateTop,
                         } = checkpointList[cnt];
                         let trueAscent = -1;
                         let trueDescent = -1;
@@ -216,15 +216,17 @@ export const getCanvasFontDebugger = () => {
                             };
                         } else {
                             const { ascent: anchorAscent, descent: anchorDescent } = anchorMap[anchor];
+                            const baseAscentCompensate = typeof anchorAscent === 'number' && compensateTop !== null
+                                ? trueAscent - anchorAscent + (compensateTop ?? 0)
+                                : 0;
+                            const baseDescentCompensate = typeof anchorDescent === 'number' && compensateBottom !== null
+                                ? anchorDescent - trueDescent + (compensateBottom ?? 0)
+                                : 0;
                             result[letter] = {
                                 trueAscent,
                                 trueDescent,
-                                ascentCompensate: (typeof anchorAscent === 'number' && compensateTop
-                                    ? trueAscent - anchorAscent
-                                    : 0) * 1,
-                                descentCompensate: (typeof anchorDescent === 'number' && compensateBottom
-                                    ? anchorDescent - trueDescent
-                                    : 0) * 1,
+                                ascentCompensate: baseAscentCompensate * 1,
+                                descentCompensate: baseDescentCompensate * 1,
                                 height: trueDescent - trueAscent,
                                 anchorAscent,
                                 anchorDescent,

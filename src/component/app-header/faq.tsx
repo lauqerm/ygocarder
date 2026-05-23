@@ -51,7 +51,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '19/05/2026';
+        const currentReminder = '23/05/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.VITE_VERSION) setMemoizedReminder(currentReminder);
 
@@ -78,6 +78,34 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'RedSupernovaDragon at May 22, 2026',
+            question: 'Correction from my previous report: it was a spoof, adding the letter I forgot (F) brought back the situation I explained yesterday, including the problem of number 2. However, this shows that 1 can appear higher or lower depending on text length.',
+        },
+        {
+            author: 'RedSupernovaDragon at May 22, 2026',
+            question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
+        },
+        {
+            author: 'RedSupernovaDragon at May 21, 2026',
+            question: 'Thank you for fixing the infamous issue of text compression in the name box. As far as I can tell, using the site from my pc, everything now seems fine. The numbers, however, are still troubled by this issue, as you can see from my screenshot. It seems that problems are localized, at least: 1 and 2 refuse to follow the same upper common line as the other letters and numbers, while 3 and 5 go off the lower limit.',
+            answer: 'That\'s true, number 3 and 5 reaching a bit lower than the baseline is a feature of the font, so I have no plan to update that.',
+        },
+        {
+            author: 'Anonmyous at May 22, 2026',
+            question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
+            answer: 'Thanks for your report, I have updated the behavior.'
+        },
+        {
+            author: 'RedSupernovaDragon at May 21, 2026',
+            question: 'Another minor issue that I found involves the question mark in ATK/DEF points. It should have the same height as the digits, but it goes lower. Particularly evident when you test this typing absurd ATK values like "2?".\nThe problem does not affect other strange ATKs like X000, so letters are ok.',
+            answer: 'Yeah, the question mark use a different scale so it doesn\'t align properly. I have adjust it a bit.'
+        },
+        {
+            author: 'RedSupernovaDragon at May 21, 2026',
+            question: 'Also reporting that for some reason I\'m seeing two bars on the right which I can slide. The problem is that If I slide the rightmost one, I end up in a white area, \'below the limit\', while the inner one does its job right, navigating to the bottom of the site and not further. I tried to send you a screenshot, but unfortunately the window cannot capture it. Adding to this strangeness is that right now, as I\'m writing this report, I see only the correct bar, but when I\'ll close the report the "fake" bar will return. Hoping that this will be enough to solve this problem.',
+            answer: 'I think I have some idea about this so I can try, but this can be a result of a lot of factor so not sure if I can fix it consistently.'
+        },
         {
             author: 'TOVYA at May 19, 2026',
             question: 'Hello bạn, khi chạy trên local với Docker thì mình gặp vấn đề:\n```\nerror: Auth token is required for this request. Please run `sentry-cli login` and try again!\n```\nĐồng thời mình thấy cách chạy Docker có phần hơi rối rắm.\nTin vui là bạn không cần phải fix lỗi cũng như refactor lại cho bạn, mình đã làm sẵn rồi. Nhớ check PR #21 nhé.',

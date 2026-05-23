@@ -58,7 +58,7 @@ export const getLetterWidth = ({
         width: 0,
         boundWidth: 0,
     };
-    
+
     const boxSpacingRatioMap = fontStyle === 'tcg'
         ? TCGBoxSpacingRatioMap
         : OCGBoxSpacingRatioMap;

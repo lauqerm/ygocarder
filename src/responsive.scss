@@ -2,9 +2,6 @@
 	.manager_visible .app-container {
 		margin: auto;
 	}
-	.frame-blender-overlay {
-		width: 613px !important;
-	}
 }
 
 @media only screen and (max-width: 1600px) {
@@ -486,7 +483,7 @@
 		}
 	}
 	.frame-blender-overlay {
-		width: unset;
+		width: unset !important;
 	}
 }
 

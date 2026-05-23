@@ -3,7 +3,7 @@ import { CardLayoutPreview, InternalPopover, PopoverButton, StyledDropdown, Styl
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent } from 'src/model';
 import { ApartmentOutlined } from '@ant-design/icons';
 import { getFrameButtonList, getPendulumSizeList } from '../const';
@@ -285,13 +285,12 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 <StyledFrameBlenderModal
                     visible={frameDropdownVisible}
                     onCancel={() => setFrameDropdownVisible(false)}
+                    width={613}
                     forceRender
                     closable={false}
-                    footer={() => null}
+                    footer={null}
                     className={[
                         'global-input-overlay frame-blender-overlay layout-picker-overlay',
-                        // frameDropdownVisible ? 'picker-visible' : '',
-                        // frameDropdownHidden ? 'picker-hidden' : '',
                     ].join(' ')}
                 >
                     <FrameLayoutSettingPanel ref={bottomFrameOptionGridRef}

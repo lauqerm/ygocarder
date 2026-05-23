@@ -593,7 +593,14 @@ export const getLayoutDrawFunction = ({
                     cardWidth,
                     topToPendulumStructure,
                 );
-                const dyedRightNameCanvas = dyeCanvas(nameRightCanvas, dyeList[1]).canvas;
+                const dyedRightNameCanvas = dyeCanvas(
+                    await blendCanvas({
+                        canvas: nameRightCanvas,
+                        customFoilCanvas: overlayCanvas,
+                        method: frameOverlayType,
+                    }),
+                    dyeList[1],
+                ).canvas;
                 dyedLeftNameCtx?.drawImage(dyedRightNameCanvas, 0, 0);
             }
             ctx.globalAlpha = opacityName / 100;

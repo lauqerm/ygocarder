@@ -446,7 +446,6 @@ function App() {
         ) {
             sentryInitialized.current = true;
 
-            Sentry.setUser({ email: 'user@example.com', });
             Sentry.init({
                 dsn: sentryDsn,
                 integrations: [
