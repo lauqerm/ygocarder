@@ -134,7 +134,7 @@ export const retrieveSavedCard = (): InternalCard => {
             if (iconImageSource === 'offline') combinedCard.iconImageData = localCardData?.iconImageData ?? '';
 
             return combinedCard;
-        } else if (localCardData !== null && localCardVersion === import.meta.env.VITE_VERSION) {
+        } else if (localCardData !== null && localCardVersion === import.meta.env.APP_VERSION) {
             return localCardData;
         }
         return getDefaultInternalCard();

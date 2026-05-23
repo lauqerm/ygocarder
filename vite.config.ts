@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
             // By default, Vite doesn't include shims for NodeJS/
             // necessary for segment analytics lib to work
             global: 'window',
+            'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
         },
         plugins: [
             react(),

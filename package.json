@@ -46,7 +46,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'dist/static/js/*.js'",
-    "build": "VITE_VERSION=$npm_package_version vite build",
+    "build": "vite build",
     "build:sentry": "vite build",
     "build:manifest": "tsx scripts/build-asset-manifest.ts",
     "circular-dependency-test": "dpdm ./src/index.js",

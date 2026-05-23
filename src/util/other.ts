@@ -69,7 +69,7 @@ export const padRight = <Value extends (string | undefined | null)[]>(list: Valu
 
 export const captureException = (e: unknown) => {
     const reportedError = {
-        version: import.meta.env.VITE_VERSION ?? '0.0.0',
+        version: import.meta.env.APP_VERSION ?? '0.0.0',
         setting: useSetting.getState(),
         href: window.location.href,
     };

@@ -125,9 +125,9 @@ export const VersionLogButton = memo(() => {
 
     useEffect(() => {
         if (version) {
-            const currentSemver = import.meta.env.VITE_VERSION ?? '0.0.0';
+            const currentSemver = import.meta.env.APP_VERSION ?? '0.0.0';
             const memoizedSemver = version;
-            if (import.meta.env.VITE_VERSION) setMemoizedVersion(import.meta.env.VITE_VERSION);
+            if (import.meta.env.APP_VERSION) setMemoizedVersion(import.meta.env.APP_VERSION);
 
             if (compareSemver(currentSemver, memoizedSemver)) {
                 setAnimating(true);
@@ -145,7 +145,7 @@ export const VersionLogButton = memo(() => {
         </StyledVersionLog>}
     >
         <VersionLogButtonLabel $animating={animating} className="app-log" onMouseOver={() => setAnimating(false)}>
-            v{import.meta.env.VITE_VERSION ?? 'unknown'}
+            v{import.meta.env.APP_VERSION ?? 'unknown'}
         </VersionLogButtonLabel>
     </Popover>;
 });
