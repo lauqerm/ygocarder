@@ -51,7 +51,7 @@
     "build:manifest": "tsx scripts/build-asset-manifest.ts",
     "circular-dependency-test": "dpdm ./src/index.js",
     "compile": "tsc --noEmit",
-    "deploy": "yarn sentry:sourcemaps && gh-pages -d dist",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "prebuild": "yarn build:manifest",
