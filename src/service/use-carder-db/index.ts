@@ -1,10 +1,22 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { useEffect, useState } from 'react';
+import { InternalCard } from 'src/model';
 
+/** Remember to update db in service worker too */
+const YGO_CARDER_DB = 'YgoCarderDb';
+const YGO_CARDER_DB_VERSION = 6;
 export interface YgoCarderDb extends DBSchema {
     messageStore: {
         key: string,
         value: string,
+    },
+    cardStore: {
+        key: string,
+        value: {
+            key: string,
+            version: string,
+            content: InternalCard,
+        },
     },
     presetLayoutStore: {
         key: string,
@@ -29,11 +41,11 @@ export interface YgoCarderDb extends DBSchema {
     },
 };
 
-export async function setupYgoCarderDb() {
+export async function getCarderDb() {
     try {
         const db = await openDB<YgoCarderDb>(
-            'YgoCarderDb',
-            4,
+            YGO_CARDER_DB,
+            YGO_CARDER_DB_VERSION,
             {
                 upgrade(db, _oldVersion, newVersion) {
                     if (!db.objectStoreNames.contains('messageStore')) {
@@ -50,6 +62,9 @@ export async function setupYgoCarderDb() {
                             db.createObjectStore('presetImageStore', { keyPath: 'key' });
                         }
                     }
+                    if (!db.objectStoreNames.contains('cardStore')) {
+                        db.createObjectStore('cardStore', { keyPath: 'key' });
+                    }
                     console.info('YgoCarderDb ready');
                 },
             }
@@ -57,7 +72,7 @@ export async function setupYgoCarderDb() {
 
         return db;
     } catch (e) {
-        console.error('setupYgoCarderDb', e);
+        console.error('getCarderDb', e);
         return null;
     }
 };
@@ -68,7 +83,7 @@ export const useCarderDb = () => {
 
     useEffect(() => {
         (async () => {
-            const db = await setupYgoCarderDb();
+            const db = await getCarderDb();
             setDb(db);
             setDbReady(true);
         })();

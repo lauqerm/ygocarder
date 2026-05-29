@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { compressCardData, insertUrlParam, normalizeCardName } from 'src/util';
-import { useCard } from './use-card';
+import { saveCardLocally, useCard } from './use-card';
 import { useSetting } from './use-setting';
-import { notification } from 'antd';
 import { useLanguage } from './use-i18n';
 import { useBatchDownload } from './use-batch-download';
 import { ExportCallbackParameter } from './use-master-seri';
@@ -136,16 +135,17 @@ export const useCardExport = ({
     }, [normalizedName]);
 
     useEffect(() => {
-        const saveBeforeReload = () => {
-            localStorage.setItem('card-data', JSON.stringify(currentCard));
-            localStorage.setItem('card-version', import.meta.env.APP_VERSION ?? 'unknown');
+        const saveCardToLocalForPagehide = (event: PageTransitionEvent) => {
+            if (event.persisted) return; // bfcache
+            saveCardLocally(useCard.getState().card);
         };
-        window.addEventListener('beforeunload', saveBeforeReload);
+
+        window.addEventListener('pagehide', saveCardToLocalForPagehide);
 
         return () => {
-            window.removeEventListener('beforeunload', saveBeforeReload);
+            window.removeEventListener('pagehide', saveCardToLocalForPagehide);
         };
-    });
+    }, []);
 
     useEffect(() => {
         let relevant = true;
@@ -154,26 +154,6 @@ export const useCardExport = ({
             return language['prompt.warning.on-leave.label'];
         };
         if (isInitializing === false) {
-            try {
-                localStorage.setItem('card-data', JSON.stringify(currentCard));
-                localStorage.setItem('card-version', import.meta.env.APP_VERSION ?? 'unknown');
-            } catch (e) {
-                try {
-                    const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = currentCard;
-                    localStorage.setItem('card-data', JSON.stringify(shortenedCard));
-                    localStorage.setItem('card-version', import.meta.env.APP_VERSION ?? 'unknown');
-                } catch (e) {
-                    /** Ensure it does not fire repeatedly */
-                    const key = 'fail-to-set-storage-notification';
-                    notification.close(key);
-                    notification.info({
-                        key,
-                        message: language['error.card-max-size.message'],
-                        description: language['error.card-max-size.description'],
-                    });
-                }
-            }
-
             /**
              * Run export pipeline:
              * - Immediately mark the pipeline as running, then run wait for the current pipeline (1).

@@ -56,6 +56,42 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
         'error.max-size.description': (fileSize: number) => {
             return getDictionaryEntry('error.max-size.description').replaceAll('{fileSize}', `${fileSize}`);
         },
+        'cache-install.button.cache-only.label': (cachedPercent: number) => {
+            return getDictionaryEntry('cache-install.button.cache-only.label').replaceAll('{cachedPercent}', `${cachedPercent}`);
+        },
+        'cache-install.modal.downloading.error': (failedFile: number) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.modal.downloading.error'),
+                { failedFile },
+            );
+        },
+        'cache-install.modal.result.chromium-instruction.content': (installButton: React.ReactNode) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.modal.result.chromium-instruction.content'),
+                { installButton },
+            );
+        },
+        'cache-install.modal.result.ios-instruction.first-line': (shareButton: React.ReactNode) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.modal.result.ios-instruction.first-line'),
+                { shareButton },
+            );
+        },
+        'cache-install.modal.result.ios-instruction.second-line': (
+            addButton1: React.ReactNode,
+            addButton2: React.ReactNode,
+        ) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.modal.result.ios-instruction.second-line'),
+                { addButton1, addButton2 },
+            );
+        },
+        'cache-install.modal.result.ios-instruction.third-line': (addButton: React.ReactNode) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.modal.result.ios-instruction.third-line'),
+                { addButton },
+            );
+        },
         'contributor.disclaimer.line-1': (siteLink: React.ReactNode) => {
             return applyTemplateNode(
                 getDictionaryEntry('contributor.disclaimer.line-1'),

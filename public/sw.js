@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 
+/** WORKER: Asset caching */
 const CACHE_NAME = 'ygocarder-assets-v1';
 const MANIFEST_CACHE = 'ygocarder-manifest-v1';
 const SHELL_CACHE = 'ygocarder-shell-v1';
@@ -150,7 +151,7 @@ async function handleAssetRequest(request) {
     }
 }
 
-// ─── Manifest-driven invalidation ───────────────────────────────────────────
+// Manifest-driven invalidation
 
 self.addEventListener('message', (event) => {
     const data = event.data;
@@ -203,5 +204,75 @@ async function syncManifest(newManifest) {
             removed,
             version: newManifest.version,
         });
+    }
+};
+
+/** WORKER: Interact with IndexedDB */
+/** Remember to update the use-carder-db as well */
+const YGO_CARDER_DB = 'YgoCarderDb';
+const YGO_CARDER_DB_VERSION = 6;
+function getDb() {
+    let resolveDbPromise;
+    let rejectDbPromise;
+    const dbPromise = new Promise((resolve, reject) => {
+        resolveDbPromise = resolve;
+        rejectDbPromise = reject;
+    });
+    const DbOpenRequest = self.indexedDB.open(YGO_CARDER_DB, YGO_CARDER_DB_VERSION);
+    DbOpenRequest.onupgradeneeded = event => {
+        const db = event.target.result;
+        const newVersion = event.newVersion;
+        if (!db.objectStoreNames.contains('messageStore')) {
+            db.createObjectStore('messageStore', { keyPath: 'key' });
+        }
+        if (!db.objectStoreNames.contains('presetLayoutStore')) {
+            db.createObjectStore('presetLayoutStore', { keyPath: 'key' });
+        }
+        if (!db.objectStoreNames.contains('presetNameStyleStore')) {
+            db.createObjectStore('presetNameStyleStore', { keyPath: 'key' });
+        }
+        if (newVersion === 4) {
+            if (!db.objectStoreNames.contains('presetImageStore')) {
+                db.createObjectStore('presetImageStore', { keyPath: 'key' });
+            }
+        }
+        if (!db.objectStoreNames.contains('cardStore')) {
+            db.createObjectStore('cardStore', { keyPath: 'key' });
+        }
+        console.info('YgoCarderDb ready');
+    };
+    DbOpenRequest.onsuccess = () => {
+        resolveDbPromise(DbOpenRequest.result);
+    };
+    DbOpenRequest.onerror = () => {
+        rejectDbPromise();
+    };
+    return dbPromise;
+}
+
+self.addEventListener('message', (event) => {
+    if (event.data?.type !== 'SAVE_LATEST') return;
+
+    // Use waitUntil to keep the SW alive until the write finishes.
+    // event.waitUntil isn't on message events directly, but you can wrap
+    // the work in a promise the SW won't kill mid-flight.
+    event.waitUntil(handleSaveLatest(event.data));
+});
+
+async function handleSaveLatest({ content, version }) {
+    try {
+        const db = await getDb();
+        if (db) {
+            const tx = db.transaction('cardStore', 'readwrite');
+            const objectStore = tx.objectStore('cardStore');
+            await objectStore.put({ key: 'latest', content, version });
+
+            await tx.commit();
+        }
+    } catch (err) {
+        // SW has no UI, so just log. You could also broadcast back to any
+        // remaining open clients via clients.matchAll() + postMessage if you
+        // want to surface errors.
+        console.error('[SW] SAVE_LATEST failed:', err);
     }
 }

@@ -143,7 +143,7 @@ export const ImagePresetForm = forwardRef<ImagePresetFormRef, ImagePresetForm>((
                 </Row>
                 <ImagePresetFormContainer>
                     <Button onClick={() => turnOffForm()}>
-                        {language['form.dismiss']}
+                        {language['generic.dismiss.label']}
                     </Button>
                     <Button type="primary" htmlType="submit">
                         {language['form.submit']}

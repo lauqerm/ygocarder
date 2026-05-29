@@ -6,8 +6,8 @@ export interface PWACapabilities {
     // Core capabilities
     secureContext: boolean;
     serviceWorker: boolean;
-    cacheStorage: boolean;
-    storageEstimate: boolean;
+    supportCacheStorage: boolean;
+    supportStorageEstimate: boolean;
     persistentStorage: Tristate; // async, may be unknown until requested
 
     // Install flow
@@ -44,13 +44,13 @@ export function detectCapabilities(): PWACapabilities {
     }
 
     // Cache API
-    const cacheStorage = 'caches' in self && typeof caches?.open === 'function';
-    if (!cacheStorage && secureContext) {
+    const supportCacheStorage = 'caches' in self && typeof caches?.open === 'function';
+    if (!supportCacheStorage && secureContext) {
         reasons.push('This browser does not support the Cache API.');
     }
 
     // Storage estimate API (for quota reporting in UI)
-    const storageEstimate = 'storage' in navigator && typeof navigator.storage?.estimate === 'function';
+    const supportStorageEstimate = 'storage' in navigator && typeof navigator.storage?.estimate === 'function';
 
     // Install prompts
     const beforeInstallPrompt = 'BeforeInstallPromptEvent' in window;
@@ -66,7 +66,7 @@ export function detectCapabilities(): PWACapabilities {
 
     // ─── Derived states ────────────────────────────────────────────────────
 
-    const canCacheAssets = !import.meta.env.DEV && secureContext && serviceWorker && cacheStorage;
+    const canCacheAssets = !import.meta.env.DEV && secureContext && serviceWorker && supportCacheStorage;
     if (canCacheAssets && !reasons.length) {
         // No problems; nothing to add
     }
@@ -88,7 +88,7 @@ export function detectCapabilities(): PWACapabilities {
         pwaSupport = 'full';
     } else if (canCacheAssets && !canInstall) {
         pwaSupport = 'cache-only';
-    } else if (cacheStorage && !serviceWorker) {
+    } else if (supportCacheStorage && !serviceWorker) {
         pwaSupport = 'partial';
     } else {
         pwaSupport = 'none';
@@ -115,8 +115,8 @@ export function detectCapabilities(): PWACapabilities {
     return {
         secureContext,
         serviceWorker,
-        cacheStorage,
-        storageEstimate,
+        supportCacheStorage,
+        supportStorageEstimate,
         persistentStorage,
         beforeInstallPrompt,
         manualInstall,

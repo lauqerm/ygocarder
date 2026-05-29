@@ -90,7 +90,7 @@ export const ManagerSample = ({
                     display: 'none',
                 },
             }}
-            cancelText={language['manager.template.button.cancel.label']}
+            cancelText={language['generic.dismiss.label']}
         >
             <div className="sample-modal-container">
                 <div>

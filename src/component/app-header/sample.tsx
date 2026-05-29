@@ -64,7 +64,7 @@ export const SampleCard = forwardRef<SampleCardRef, SampleCard>(({ language, app
                 display: 'none',
             },
         }}
-        cancelText={language['form.dismiss']}
+        cancelText={language['generic.dismiss.label']}
     >
         <div>
             {language['sample.manager.creative-requires.label']}

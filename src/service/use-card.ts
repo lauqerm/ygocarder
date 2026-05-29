@@ -16,6 +16,7 @@ import { notification } from 'antd';
 import { getLanguage } from './use-i18n';
 import { useCardList } from './use-card-list';
 import { v4 as uuid } from 'uuid';
+import { getCarderDb } from './use-carder-db';
 
 /** This method decode the following data into ygocarder uncompress data:
  * * Compressed legacy ygocarder data
@@ -102,12 +103,14 @@ export const decodeCard = (
 /**
  * Acquire saved card when the session is just initialized. URL source is preferred over local storage source.
  */
-export const retrieveSavedCard = (): InternalCard => {
+export const retrieveSavedCard = async (): Promise<InternalCard> => {
     try {
-        const localCardVersion = localStorage.getItem('card-version');
-        const stringifedLocalCardData = localStorage.getItem('card-data');
-        const localCardData = stringifedLocalCardData
-            ? migrateCardData(JSON.parse(stringifedLocalCardData))
+        const {
+            card: localSavedCard,
+            version: localCardVersion,
+        } = await getCardLocally() ?? {};
+        const localCardData = localSavedCard
+            ? migrateCardData(localSavedCard)
             : null;
 
         const urlCardData = (new URLSearchParams(window.location.search)).get('data');
@@ -123,7 +126,12 @@ export const retrieveSavedCard = (): InternalCard => {
             const { card: decodedCard } = decodeCard(urlCardData);
             const card = migrateCardData(decodedCard);
             const { artSource, backgroundSource, overlaySource, iconImageSource } = card;
-            if (artSource === 'online' && backgroundSource === 'online' && overlaySource === 'online' && iconImageSource === 'online') {
+            if (
+                artSource === 'online'
+                && backgroundSource === 'online'
+                && overlaySource === 'online'
+                && iconImageSource === 'online'
+            ) {
                 return decodeCard(urlCardData).card;
             }
 
@@ -225,3 +233,62 @@ export const useCard = create<CardStore>((set, get) => {
         }
     };
 });
+
+export const getCardLocally = async (): Promise<{ version: string, card: InternalCard } | null> => {
+    const db = await getCarderDb();
+    if (db) {
+        const cardStoreTx = db.transaction('cardStore', 'readonly');
+        const latestCard = await cardStoreTx.store.get('latest');
+        if (latestCard) return {
+            version: latestCard.version,
+            card: latestCard.content,
+        };
+        await cardStoreTx.done;
+    }
+
+    const localCardVersion = localStorage.getItem('card-version');
+    const stringifedLocalCardData = localStorage.getItem('card-data');
+
+    return stringifedLocalCardData
+        ? {
+            version: localCardVersion ?? 'unknown',
+            card: JSON.parse(stringifedLocalCardData),
+        }
+        : null;
+};
+
+export const saveCardLocally = (card: InternalCard) => {
+    const language = getLanguage();
+    // No need to wait for service worker to be ready here, we trust it to be ready at the time
+    const sw = 'serviceWorker' in navigator
+        ? navigator.serviceWorker.controller
+        : null;
+    const version = import.meta.env.APP_VERSION ?? 'unknown';
+    try {
+        if (sw) {
+            sw.postMessage({
+                type: 'SAVE_LATEST',
+                content: card,
+                version,
+            });
+        } else {
+            try {
+                localStorage.setItem('card-data', JSON.stringify(card));
+                localStorage.setItem('card-version', version);
+            } catch (e) {
+                const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = card;
+                localStorage.setItem('card-data', JSON.stringify(shortenedCard));
+                localStorage.setItem('card-version', version);
+            }
+        }
+    } catch (e) {
+        /** Ensure it does not fire repeatedly */
+        const key = 'fail-to-set-storage-notification';
+        notification.close(key);
+        notification.info({
+            key,
+            message: language['error.card-max-size.message'],
+            description: language['error.card-max-size.description'],
+        });
+    }
+};

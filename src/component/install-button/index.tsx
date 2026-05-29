@@ -19,6 +19,7 @@ import {
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
 import * as Sentry from '@sentry/react';
+import { LanguageDataDictionary, useLanguage } from 'src/service';
 
 const { Text, Paragraph } = Typography;
 const StyledProgressModal = styled(Modal)``;
@@ -37,6 +38,7 @@ export interface InstallButtonProps {
 export function InstallButton({
     className,
 }: InstallButtonProps) {
+    const language = useLanguage();
     const pwa = usePWA();
     const [phase, setPhase] = useState<Phase>('idle');
     const [progress, setProgress] = useState<BulkDownloadProgress | null>(null);
@@ -87,6 +89,7 @@ export function InstallButton({
         cacheWritableError,
         capabilities,
         installPromptReady,
+        diagnostics,
     } = pwa;
     const {
         alreadyStandalone,
@@ -94,6 +97,10 @@ export function InstallButton({
         canInstall,
         reasons,
     } = capabilities;
+    const {
+        storageUsageBytes,
+        storageQuotaBytes,
+    } = diagnostics ?? {};
 
     const validateBeforeDownload = async () => {
         setError(null);
@@ -174,6 +181,7 @@ export function InstallButton({
                 // Wait for the user to click "Install" in the modal.
                 setPhase('ready-to-install');
             }
+            Sentry.captureException(new Error('Not-error: Pull assets success'));
             cacheHeartbeat();
         } catch (err) {
             handleDownloadError(err, 'install');
@@ -186,6 +194,7 @@ export function InstallButton({
             const outcome = await triggerInstall();
             if (outcome === 'accepted') {
                 setPhase('done');
+                Sentry.captureException(new Error('Not-error: Install success'));
             } else {
                 // Dismissed the OS prompt; cache is preserved
                 reset();
@@ -234,25 +243,24 @@ export function InstallButton({
     const assetDownloadModalVisible = phase !== 'idle';
     const AssetDownloadModal = <StyledProgressModal
         visible={assetDownloadModalVisible}
-        title={modalTitle(phase)}
+        title={modalTitle(language, phase)}
         onCancel={requestClose}
         maskClosable={phase !== 'downloading'}
         keyboard={phase !== 'downloading'}
         closable={phase !== 'installing'}
-        footer={modalFooter(phase, requestClose, startInstall, reset, handleInstallClick)}
-        width={460}
+        footer={modalFooter(language, phase, requestClose, startInstall, reset, handleInstallClick)}
         className="install-modal"
         centered
         destroyOnClose
     >
-        Checking for available assets.
+        {language['cache-install.modal.content.lead']}
         {phase === 'downloading' && progress && (
             <DownloadingView progress={progress} />
         )}
         {phase === 'ready-to-install' && <InstallViewChromium fullyCached={true} />}
         {phase === 'installing' && (
             <Paragraph>
-                <Text>Waiting for system install prompt...</Text>
+                <Text>{language['cache-install.modal.content.waiting']}</Text>
             </Paragraph>
         )}
         {phase === 'done' && <DoneView canInstall={canInstall} />}
@@ -260,42 +268,63 @@ export function InstallButton({
             <Alert
                 type="error"
                 showIcon
-                message="Installation failed"
+                message={language['cache-install.modal.content.failed']}
                 description={error}
             />
         )}
     </StyledProgressModal>;
 
+    const storageUsedByPercentage = (typeof storageUsageBytes === 'number' && typeof storageQuotaBytes === 'number')
+        ? Math.round(storageUsageBytes / storageQuotaBytes * 10000) / 100
+        : null;
+    const quotaByMb = (typeof storageUsageBytes === 'number' && typeof storageQuotaBytes === 'number')
+        ? Math.round((storageQuotaBytes - storageUsageBytes) / 1024 / 1024)
+        : null;
+    const verdict = typeof storageUsedByPercentage !== 'number'
+        ? 'var(--color)'
+        : storageUsedByPercentage < 60
+            ? 'var(--main-online)'
+            : storageUsedByPercentage < 80
+                ? 'var(--main-warning)'
+                : 'var(--main-danger)';
     let icon: React.ReactNode = null;
     let label: React.ReactNode = null;
-    let tooltip: React.ReactNode = <div>{cachedAssetCount} assets cached</div>;
+    let tooltip: React.ReactNode = <div>
+        {cachedAssetCount} assets cached
+        {(storageUsedByPercentage != null && quotaByMb != null)
+            ? <>
+                <br />
+                <span style={{ color: verdict }}>{storageUsedByPercentage}% quota used</span> ({quotaByMb} MB available)
+            </>
+            : <></>}
+    </div>;
     let callback: undefined | (() => void) = undefined;
     const mountModal = canCacheAssets;
     if (alreadyStandalone) {
         /** Even in standalone mode, we still allow them to sync */
         icon = <SyncOutlined />;
-        label = <label>Check</label>;
+        label = <label>{language['cache-install.button.already-standalone.label']}</label>;
         callback = startSync;
     } else if (canInstall && canCacheAssets) {
         icon = <DownloadOutlined />;
-        label = <label>Install</label>;
+        label = <label>{language['cache-install.button.cache-install.label']}</label>;
         callback = installPromptReady ? startInstall : startSync;
     } else if (canInstall && !canCacheAssets) {
         icon = <AppstoreAddOutlined />;
         /** The label describes the essential of this operation. Without full caching, getting the app is no different than just using the web. */
-        label = <label>Add Shortcut</label>;
+        label = <label>{language['cache-install.button.install-only.label']}</label>;
         callback = showInstallOnlyHint;
     } else if (!canInstall && canCacheAssets) {
         /** Allow full caching even if they cannot install the app, as installation is just a secondary feature. */
         icon = <CloudDownloadOutlined />;
-        label = <label>{`${Math.round(cacheProgress * 100)}% cached`}</label>;
+        label = <label>{language['cache-install.button.cache-only.label'](Math.round(cacheProgress * 100))}</label>;
         callback = startSync;
     } else if (!canInstall && !canCacheAssets) {
         /** Too bad */
         icon = <WarningOutlined />;
-        label = <label>Unavailable</label>;
+        label = <label>{language['cache-install.button.unavailable.label']}</label>;
         tooltip = <div>
-            <b>Install and caching is not possible due to:</b><br />
+            <b>{language['cache-install.button.unavailable.tooltip']}</b><br />
             {(reasons.length === 0 ? ['Unknown Reason'] : reasons).map(entry => <div key={entry}>{entry}</div>)}
         </div>;
     }
@@ -321,10 +350,13 @@ export function InstallButton({
             footer={isIOS()
                 ? null
                 : <Space>
-                    <Button onClick={() => setInstallOnlyModalVisible(false)}>Not now</Button>
-                    <Button type="primary" onClick={handleInstallClick}>Install</Button>
+                    <Button onClick={() => setInstallOnlyModalVisible(false)}>
+                        {language['cache-install.modal.later.label']}
+                    </Button>
+                    <Button type="primary" onClick={handleInstallClick}>
+                        {language['cache-install.modal.install.label']}
+                    </Button>
                 </Space>}
-            width={460}
             className="add-shortcut-modal"
             centered
             destroyOnClose
@@ -342,47 +374,63 @@ type InstallViewChromium = {
 const InstallViewChromium = ({
     fullyCached,
 }: InstallViewChromium) => {
+    const language = useLanguage();
     return (
         <Space direction="vertical" size="middle">
             {fullyCached && <Alert
                 type="success"
                 showIcon
-                message="All assets downloaded"
-                description="The app is ready to work fully offline."
+                message={language['cache-install.modal.result.chromium-instruction.lead']}
+                description={language['cache-install.modal.result.chromium-instruction.message']}
             />}
             <Paragraph type="secondary" style={{ margin: 0 }}>
-                Click <Text strong>Install</Text> to add the app to your home screen
-                or app drawer. You'll see a system confirmation dialog next.
+                {language['cache-install.modal.result.chromium-instruction.content'](<Text strong>
+                    {language['cache-install.modal.install.label']}
+                </Text>)}
             </Paragraph>
         </Space>
     );
 };
 
 function InstallViewIos() {
+    const language = useLanguage();
     return (
         <Space direction="vertical" size="middle">
-            <div>To install the app on iOS:</div>
+            <div>{language['cache-install.modal.result.ios-instruction.lead']}</div>
             <ol>
-                <li>Tap the <Text strong>Share</Text> button in Safari</li>
-                <li>Scroll and tap <Text strong>Add to Home Screen</Text> or <Text strong>Add to Dock</Text></li>
-                <li>Tap <Text strong>Add</Text></li>
+                <li>
+                    {language['cache-install.modal.result.ios-instruction.first-line'](
+                        <Text strong>Share</Text>
+                    )}
+                </li>
+                <li>
+                    {language['cache-install.modal.result.ios-instruction.second-line'](
+                        <Text strong>Add to Home Screen</Text>,
+                        <Text strong>Add to Dock</Text>
+                    )}</li>
+                <li>
+                    {language['cache-install.modal.result.ios-instruction.third-line'](
+                        <Text strong>Add</Text>
+                    )}
+                </li>
             </ol>
         </Space>
     );
 }
 
-function modalTitle(phase: Phase): string {
+function modalTitle(language: LanguageDataDictionary, phase: Phase): string {
     switch (phase) {
-        case 'downloading': return 'Downloading assets';
-        case 'ready-to-install': return 'Ready to install';
-        case 'installing': return 'Confirm installation';
-        case 'done': return isIOS() ? 'Almost done' : 'Installed';
-        case 'error': return 'Something went wrong';
+        case 'downloading': return language['cache-install.modal.title.downloading'];
+        case 'ready-to-install': return language['cache-install.modal.title.ready'];
+        case 'installing': return language['cache-install.modal.title.installing'];
+        case 'done': return language[isIOS() ? 'cache-install.modal.title.almost-done' : 'cache-install.modal.title.installed'];
+        case 'error': return language['cache-install.modal.title.error'];
         default: return '';
     }
 }
 
 function modalFooter(
+    language: LanguageDataDictionary,
     phase: Phase,
     requestClose: () => void,
     retry: () => void,
@@ -392,30 +440,30 @@ function modalFooter(
     if (phase === 'downloading') {
         return (
             <Button onClick={requestClose} danger>
-                Cancel
+                {language['generic.cancel.label']}
             </Button>
         );
     }
     if (phase === 'ready-to-install') {
         return (
             <Space>
-                <Button onClick={reset}>Not now</Button>
-                <Button type="primary" onClick={installNow}>Install</Button>
+                <Button onClick={reset}>{language['cache-install.modal.later.label']}</Button>
+                <Button type="primary" onClick={installNow}>{language['cache-install.modal.install.label']}</Button>
             </Space>
         );
     }
     if (phase === 'error') {
         return (
             <Space>
-                <Button onClick={reset}>Close</Button>
-                <Button type="primary" onClick={retry}>Retry</Button>
+                <Button onClick={reset}>{language['generic.close.label']}</Button>
+                <Button type="primary" onClick={retry}>{language['cache-install.modal.retry.label']}</Button>
             </Space>
         );
     }
     if (phase === 'done') {
         return (
             <Button type="primary" onClick={reset}>
-                Done
+                {language['generic.done.label']}
             </Button>
         );
     }
@@ -423,6 +471,7 @@ function modalFooter(
 };
 
 function DownloadingView({ progress }: { progress: BulkDownloadProgress }) {
+    const language = useLanguage();
     const pct = progress.total === 0
         ? 100
         : Math.round((progress.completed / progress.total) * 100);
@@ -432,8 +481,7 @@ function DownloadingView({ progress }: { progress: BulkDownloadProgress }) {
     return (
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             <Paragraph type="secondary" style={{ margin: 0 }}>
-                Downloading assets so the app works without an internet connection.
-                You can keep using the app in another tab — just don't close this one.
+                {language['cache-install.modal.downloading.content']}
             </Paragraph>
             <Progress
                 percent={pct}
@@ -442,17 +490,14 @@ function DownloadingView({ progress }: { progress: BulkDownloadProgress }) {
             />
             <Space style={{ justifyContent: 'space-between', width: '100%' }}>
                 <Text type="secondary">
-                    {progress.completed} / {progress.total} files
-                </Text>
-                <Text type="secondary">
-                    {mb} / {totalMb} MB
+                    {progress.completed} / {progress.total} ({mb} / {totalMb} MB)
                 </Text>
             </Space>
             {progress.failed.length > 0 && (
                 <Alert
                     type="warning"
                     showIcon
-                    message={`${progress.failed.length} files failed — will retry at the end`}
+                    message={language['cache-install.modal.downloading.error'](progress.failed.length)}
                 />
             )}
         </Space>
@@ -465,13 +510,13 @@ type DoneView = {
 const DoneView = ({
     canInstall,
 }: DoneView) => {
+    const language = useLanguage();
     if (isIOS() && canInstall) return <InstallViewIos />;
     return canInstall
         ? <Paragraph>
-            The app is installed and ready to use offline. You can launch it from
-            your home screen or app drawer.
+            {language['cache-install.modal.result.installed-cached']}
         </Paragraph>
         : <Paragraph>
-            The app is fully cached.
+            {language['cache-install.modal.result.cached']}
         </Paragraph>;
 };

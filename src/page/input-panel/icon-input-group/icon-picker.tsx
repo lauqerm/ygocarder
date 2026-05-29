@@ -266,7 +266,7 @@ export const IconPicker = forwardRef<IconPickerRef, IconPicker>(({
         onCancel={() => setVisible(false)}
         onOk={() => setVisible(false)}
         afterClose={() => setHidden(false)}
-        cancelText={language['manager.template.button.cancel.label']}
+        cancelText={language['generic.dismiss.label']}
     >
         <IconListSelectPanel className="star-list-control-panel">
             <Checkbox

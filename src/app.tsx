@@ -342,12 +342,14 @@ function App() {
                 ],
                 urls: ['asset/font.css'],
             },
-            active: () => {
-                const retrievedCard = retrieveSavedCard();
+            active: async () => {
+                (async () => {
+                    const retrievedCard = await retrieveSavedCard();
 
-                setCard(retrievedCard);
-                useCardList.getState().setCardList([retrievedCard], retrievedCard.id);
-                setInitializing(false);
+                    setCard(retrievedCard);
+                    useCardList.getState().setCardList([retrievedCard], retrievedCard.id);
+                    setInitializing(false);
+                })();
             },
             fontinactive(familyName, fvd) {
                 console.error('TCG fontinactive', familyName, fvd);
