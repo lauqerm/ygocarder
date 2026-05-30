@@ -1,3 +1,4 @@
+import { getLanguage } from 'src/service';
 import { isIOS, isStandalone } from './detect';
 
 export type Tristate = 'yes' | 'no' | 'unknown';
@@ -24,29 +25,30 @@ export interface PWACapabilities {
 }
 
 export function detectCapabilities(): PWACapabilities {
+    const language = getLanguage();
     const reasons: string[] = [];
 
     // Secure context — gate on everything else
     const secureContext = window.isSecureContext === true;
     if (!secureContext) {
-        reasons.push('Insecure context — service workers and Cache API are disabled.');
+        reasons.push(language['error.pwa.reason.insecure']);
     }
 
     // Do not install SW on DEV
     if (import.meta.env.DEV) {
-        reasons.push('Install not available on Dev mode - Run `yarn build && yarn preview` to test it.');
+        reasons.push(language['error.pwa.reason.dev-mode']);
     }
 
     // Service worker presence (already implies secure context if true)
     const serviceWorker = 'serviceWorker' in navigator;
     if (!serviceWorker && secureContext) {
-        reasons.push('This browser does not support service workers.');
+        reasons.push(language['error.pwa.reason.no-sw']);
     }
 
     // Cache API
     const supportCacheStorage = 'caches' in self && typeof caches?.open === 'function';
     if (!supportCacheStorage && secureContext) {
-        reasons.push('This browser does not support the Cache API.');
+        reasons.push(language['error.pwa.reason.no-cache']);
     }
 
     // Storage estimate API (for quota reporting in UI)
@@ -97,19 +99,13 @@ export function detectCapabilities(): PWACapabilities {
     if (pwaSupport === 'cache-only' && !isIOSDevice) {
         const ua = navigator.userAgent;
         if (/Firefox/.test(ua) && !/Mobile/.test(ua)) {
-            reasons.push(
-                'Firefox on desktop doesn\'t support installing web apps. The app still works in the browser; for offline use, try Chrome, Edge, or use Firefox on mobile.'
-            );
+            reasons.push(language['error.pwa.reason.firefox']);
         } else {
-            reasons.push(
-                'Browser supports offline caching but cannot prompt for installation.'
-            );
+            reasons.push(language['error.pwa.reason.no-install']);
         };
     }
     if (pwaSupport === 'cache-only' && isIOSDevice) {
-        reasons.push(
-            'On iOS, install via Safari\'s Share menu → Add to Home Screen.'
-        );
+        reasons.push(language['error.pwa.reason.ios']);
     }
 
     return {

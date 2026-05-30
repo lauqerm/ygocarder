@@ -219,12 +219,11 @@ export function InstallButton({
     const requestClose = () => {
         if (phase === 'downloading') {
             Modal.confirm({
-                title: 'Cancel download?',
-                content:
-                    'Your download progress will be paused. Already-downloaded files stay cached, so resuming later will be faster.',
-                okText: 'Cancel download',
+                title: language['cache-install.modal.cancel-downloading.title'],
+                content: language['cache-install.modal.cancel-downloading.content'],
+                okText: language['cache-install.modal.cancel-downloading.cancel.title'],
                 okButtonProps: { danger: true },
-                cancelText: 'Keep downloading',
+                cancelText: language['cache-install.modal.cancel-downloading.resume.title'],
                 onOk: () => {
                     abortRef.current?.abort();
                 },
@@ -290,11 +289,13 @@ export function InstallButton({
     let icon: React.ReactNode = null;
     let label: React.ReactNode = null;
     let tooltip: React.ReactNode = <div>
-        {cachedAssetCount} assets cached
+        {language['cache-install.button.tooltip.first-line'](cachedAssetCount)}
         {(storageUsedByPercentage != null && quotaByMb != null)
             ? <>
                 <br />
-                <span style={{ color: verdict }}>{storageUsedByPercentage}% quota used</span> ({quotaByMb} MB available)
+                <span style={{ color: verdict }}>
+                    {language['cache-install.button.tooltip.second-line-former'](storageUsedByPercentage)}
+                </span> {language['cache-install.button.tooltip.second-line-latter'](quotaByMb)}
             </>
             : <></>}
     </div>;
@@ -343,7 +344,7 @@ export function InstallButton({
         {mountModal && AssetDownloadModal}
         <StyledProgressModal
             visible={installOnlyModalVisible}
-            title={'Add Shortcut'}
+            title={language['cache-install.button.install-only.label']}
             onCancel={() => {
                 setInstallOnlyModalVisible(false);
             }}

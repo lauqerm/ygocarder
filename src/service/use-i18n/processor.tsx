@@ -56,6 +56,24 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
         'error.max-size.description': (fileSize: number) => {
             return getDictionaryEntry('error.max-size.description').replaceAll('{fileSize}', `${fileSize}`);
         },
+        'cache-install.button.tooltip.first-line': (cachedAssetCount: React.ReactNode) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.button.tooltip.first-line'),
+                { cachedAssetCount },
+            );
+        },
+        'cache-install.button.tooltip.second-line-former': (storageUsedByPercentage: React.ReactNode) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.button.tooltip.second-line-former'),
+                { storageUsedByPercentage },
+            );
+        },
+        'cache-install.button.tooltip.second-line-latter': (quotaByMb: React.ReactNode) => {
+            return applyTemplateNode(
+                getDictionaryEntry('cache-install.button.tooltip.second-line-latter'),
+                { quotaByMb },
+            );
+        },
         'cache-install.button.cache-only.label': (cachedPercent: number) => {
             return getDictionaryEntry('cache-install.button.cache-only.label').replaceAll('{cachedPercent}', `${cachedPercent}`);
         },
