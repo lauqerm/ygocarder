@@ -1,5 +1,19 @@
 [
     {
+        "version": "v2.5.1 (2026/05/30)",
+        "logList": [
+            {
+                "content": "Fix: Various minor issues."
+            },
+            {
+                "content": "Feat: Experimental new saving method, remove the 4 MB image limit of the app."
+            },
+            {
+                "content": "Feat: Update translation."
+            }
+        ]
+    },
+    {
         "version": "v2.5.0 (2026/05/23)",
         "logList": [
             {
