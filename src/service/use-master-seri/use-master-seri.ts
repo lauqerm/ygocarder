@@ -578,6 +578,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         await drawPendulumBorder(false);
                         await drawPendulumBorderFoil(false);
                         await drawBorderPendulumFinish();
+                    } else {
+                        await drawPendulumScaleIcon();
                     }
                 } else if (keepEffectBox) {
                     await drawEffectBackground({});
@@ -688,9 +690,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
             const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
-            const scaleColor = resolvedPendulumEffectTextStyle.color;
-            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale, scaleColor);
-            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale, scaleColor);
+            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale, resolvedPendulumEffectTextStyle);
+            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale, resolvedPendulumEffectTextStyle);
         }
     }, [
         readyToDraw,

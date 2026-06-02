@@ -51,7 +51,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '23/05/2026';
+        const currentReminder = '01/06/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -78,6 +78,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'No name hack at Jun 01, 2026',
+            question: 'I want made card overframe without frame pendulum effect, only scale pendulum appear, must options',
+            answer: 'Hi, based on what you are describing, I\'m assuming you want the result to look something like this? If you confirm it, I can start working.',
+            image: ['https://i.postimg.cc/SRkXcBb6/Untitled.jpg'],
+        },
         {
             author: 'RedSupernovaDragon at May 22, 2026',
             question: 'Correction from my previous report: it was a spoof, adding the letter I forgot (F) brought back the situation I explained yesterday, including the problem of number 2. However, this shows that 1 can appear higher or lower depending on text length.',

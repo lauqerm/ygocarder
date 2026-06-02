@@ -38,6 +38,7 @@ const StyledPendulumFrameInputContainer = styled.div`
     border-radius: var(--br-lg);
     background-color: var(--main-level-4);
     padding-right: var(--spacing-xs);
+    align-items: center;
     &:focus-visible {
         outline: 2px solid var(--focus);
     }

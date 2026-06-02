@@ -9,7 +9,7 @@ export const drawScale = (
     _baseline: number,
     _fontSize: number,
     globalScale: number,
-    color = DEFAULT_TEXT_COLOR,
+    textStyle: CanvasTextStyle,
 ) => {
     const edge = _edge * globalScale;
     const baseline = _baseline * globalScale;
@@ -17,7 +17,7 @@ export const drawScale = (
         const fontSize = _fontSize * globalScale;
         ctx.font = `${fontSize}px MatrixBoldSmallCaps, Times New Roman`;
         ctx.textAlign = 'left';
-        ctx.fillStyle = color;
+        const resetStyle = setTextStyle({ ctx, color: DEFAULT_TEXT_COLOR, ...textStyle, globalScale });
 
         const digitList = Array.from(`${value}`);
 
@@ -73,6 +73,7 @@ export const drawScale = (
                 accLeft += ctx.measureText(digit).width * (digit === '1' ? 0.7 : 1);
             });
         }
+        resetStyle();
     }
 };
 
