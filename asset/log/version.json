@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.5.2 (2026/06/02)",
+        "logList": [
+            {
+                "content": "Fix: Does not display pendulum scale correctly (missing style and pendulum icons) when combining boundless artwork with best effort render off."
+            },
+            {
+                "content": "Fix: Various UI issues."
+            }
+        ]
+    },
+    {
         "version": "v2.5.1 (2026/05/30)",
         "logList": [
             {
