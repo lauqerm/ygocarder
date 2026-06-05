@@ -4,7 +4,9 @@ export const StyledIconButtonContainer = styled.span<{ $freeSize: boolean, $size
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-left: var(--spacing-xs);
+    &:not(:first-child) {
+        margin-left: var(--spacing-xs);
+    }
     ${({ $freeSize, $size }) => $freeSize
         ? 'padding: 0 var(--spacing-xxs);'
         : $size === 'sm' ? 'width: 18px;' : 'width: 24px;'

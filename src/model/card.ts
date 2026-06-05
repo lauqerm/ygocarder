@@ -1,4 +1,4 @@
-import { BackgroundType, CardOpacity, getDefaultCardOpacity } from './canvas';
+import { BackgroundType, CanvasConst, CardOpacity, compileCoordinate, getDefaultCardOpacity, MoveableRegionMap } from './canvas';
 import { Foil, getDefaultDyeList, OtherFinish } from './foil-finish-dye';
 import { CondenseType } from './condense';
 import { AttributeType, NO_ATTRIBUTE, NO_ICON, NO_STICKER } from './icon';
@@ -33,6 +33,10 @@ export const getDefaultIconCrop = () => ({
     height: 100,
     unit: '%' as '%' | 'px',
     aspect: 1,
+});
+export const getDefaultCoordinateMap = (): Record<keyof typeof MoveableRegionMap, string | undefined> => ({
+    effectBox: compileCoordinate(CanvasConst.effectBox),
+    starBox: compileCoordinate(CanvasConst.starBox),
 });
 
 /**
@@ -154,6 +158,7 @@ Each time an opponent's monster activates its effect, place 1 Pure Counter on th
     otherTextStyle: getDefaultTextStyle(),
     flag: getDefaultCardFlag(),
     dyeList: getDefaultDyeList(),
+    coordinateMap: getDefaultCoordinateMap(),
     /** Extra information come from different card source such as YGOPro custom card maker */
     externalInfo: {} as Record<string, unknown>,
 });
@@ -285,6 +290,7 @@ export const getEmptyCard = (): Card => ({
     pendulumTextStyle: getDefaultTextStyle(),
     otherTextStyle: getDefaultTextStyle(),
     dyeList: getDefaultDyeList(),
+    coordinateMap: getDefaultCoordinateMap(),
     flag: getDefaultCardFlag(),
     externalInfo: {},
 });

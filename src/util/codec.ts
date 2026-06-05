@@ -17,6 +17,7 @@ import {
     getDefaultOverlayCrop,
     getDefaultIconCrop,
     ImageSourceType,
+    getDefaultCoordinateMap,
 } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
@@ -209,6 +210,11 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     otherTextStyle: 'ots',
     dyeList: 'dl',
     flag: 'fl',
+    coordinateMap: {
+        _newKey: 'cm',
+        effectBox: 'cmeb',
+        starBox: 'cmsb',
+    },
     externalInfo: 'ei',
 };
 const legacyCardFieldShortenMap = {
@@ -320,6 +326,7 @@ export const legacyRebuildCardData = (
     return migrateCardData(rebuiltCard);
 };
 
+type AnyCard = Record<string, any>;
 /** Migrate old version of card data into the new version without information loss */
 export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmptyCard()): InternalCard => {
     /** Ensure that we detect the actual version from incoming cards. */
@@ -379,11 +386,11 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     ) {
         migratedCard.otherFinish[3] = getEmptyCard().otherFinish[3];
     }
-    if ((migratedCard as any).picture && !card.art) migratedCard.art = (migratedCard as any).picture;
-    delete (migratedCard as any).picture;
+    if ((migratedCard as AnyCard).picture && !card.art) migratedCard.art = (migratedCard as AnyCard).picture;
+    delete (migratedCard as AnyCard).picture;
 
-    if ((migratedCard as any).pictureCrop && !card.artCrop) migratedCard.artCrop = (migratedCard as any).pictureCrop;
-    delete (migratedCard as any).pictureCrop;
+    if ((migratedCard as AnyCard).pictureCrop && !card.artCrop) migratedCard.artCrop = (migratedCard as AnyCard).pictureCrop;
+    delete (migratedCard as AnyCard).pictureCrop;
 
     /** Seems like no image is fine for now. */
     // if ((migratedCard.art ?? '') === '') migratedCard.art = 'https://i.imgur.com/jjtCuG5.png';
@@ -393,13 +400,13 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     if (migratedCard.artFit == null) migratedCard.artFit = false;
     migratedCard.artStyle = { ...getDefaultImageStyle(), ...migratedCard.artStyle };
 
-    if (typeof (migratedCard.opacity as any).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
-        migratedCard.opacity.boundless = !(migratedCard.opacity as any).artFrame;
-        delete (migratedCard.opacity as any).artFrame;
+    if (typeof (migratedCard.opacity as AnyCard).artFrame === 'boolean' && migratedCard.opacity.boundless == null) {
+        migratedCard.opacity.boundless = !(migratedCard.opacity as AnyCard).artFrame;
+        delete (migratedCard.opacity as AnyCard).artFrame;
     }
     if (typeof migratedCard.opacity.frameBorder !== 'boolean') migratedCard.opacity.frameBorder = false;
     migratedCard.opacity = { ...getDefaultCardOpacity(), ...migratedCard.opacity };
-    delete (migratedCard.opacity as any).artFrame;
+    delete (migratedCard.opacity as AnyCard).artFrame;
 
     if ((migratedCard.background ?? '') === '') migratedCard.background = '';
     if ((migratedCard.backgroundData ?? '') === '') migratedCard.backgroundData = '';
@@ -441,12 +448,12 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     }
     if (migratedCard.linkRating == null) migratedCard.linkRating = '';
 
-    if ((migratedCard as any).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as any).kanjiHelper;
-    delete (migratedCard as any).kanjiHelper;
+    if ((migratedCard as AnyCard).kanjiHelper && !card.furiganaHelper) migratedCard.furiganaHelper = (migratedCard as AnyCard).kanjiHelper;
+    delete (migratedCard as AnyCard).kanjiHelper;
     if (migratedCard.furiganaHelper === undefined) migratedCard.furiganaHelper = true;
 
-    if ((migratedCard as any).passcode && !card.password) migratedCard.password = (migratedCard as any).passcode;
-    delete (migratedCard as any).passcode;
+    if ((migratedCard as AnyCard).passcode && !card.password) migratedCard.password = (migratedCard as AnyCard).passcode;
+    delete (migratedCard as AnyCard).passcode;
 
     if (!migratedCard.effectTextStyle) migratedCard.effectTextStyle = getDefaultTextStyle();
     if (!migratedCard.pendulumTextStyle) migratedCard.pendulumTextStyle = getDefaultTextStyle();
@@ -481,6 +488,11 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     /** In older version, we always apply dye to gold / platinum foil, and turn non-foil into platinum foil, this is no longer the case in newer version as we can dye non-foil as well */
     if (HexColorRegex.test(migratedCard.dyeList[6]) && migratedCard.foil === 'normal') migratedCard.foil = 'platinum';
 
+    migratedCard.coordinateMap = {
+        ...getDefaultCoordinateMap(),
+        ...migratedCard.coordinateMap
+    };
+
     if (migratedCard.version === 0 || migratedCard.version === 1) {
         migratedCard.version = 2;
 
@@ -512,7 +524,7 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     return migratedCard;
 };
 
-export const checkYgoCarderCard = (object: Record<string, any>): object is Card => {
+export const checkYgoCarderCard = (object: Record<string, unknown>): object is Card => {
     try {
         /** No need to check the whole object (we mainly want to distinguish this with YGOPro structure), so just need a few presentative fields */
         return 'isFirstEdition' in object
@@ -523,7 +535,7 @@ export const checkYgoCarderCard = (object: Record<string, any>): object is Card 
         return false;
     }
 };
-export const checkCompactYgoCarderCard = (object: Record<string, any>): object is Card => {
+export const checkCompactYgoCarderCard = (object: Record<string, unknown>): object is Card => {
     try {
         return 'ife' in object
             && 'ta' in object
@@ -557,7 +569,7 @@ export const ygoCarderToExportableData = (
 };
 
 const ROUNDING_THRESHOLD = 0.1;
-const isPartialNumberEqual = (numberLeft: any, numberRight: any) => {
+const isPartialNumberEqual = (numberLeft: unknown, numberRight: unknown) => {
     if (typeof numberLeft !== typeof numberRight) return false;
     if (typeof numberLeft === 'number' && typeof numberRight === 'number') return Math.abs(numberLeft - numberRight) <= ROUNDING_THRESHOLD;
     return numberLeft === numberRight;

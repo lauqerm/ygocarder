@@ -10,6 +10,8 @@ import {
     FULL_LINE_PLACEHOLDER,
     FLAVOR_LINE_PLACEHOLDER,
     DrawMemory,
+    parseOffset,
+    CanvasConst,
 } from '../../model';
 import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
@@ -67,6 +69,7 @@ export const drawEffect = async ({
     fontData = EffectFontData[fontDataKey],
     textStyle,
     region,
+    coordinateOffset,
     sizeList = EffectCoordinateData['tcg-type'],
     condenseTolerant = 'strict',
     format,
@@ -81,6 +84,7 @@ export const drawEffect = async ({
     fontDataKey?: string,
     textStyle?: CanvasTextStyle,
     sizeList?: CoordinateData[],
+    coordinateOffset?: string,
     condenseTolerant?: CondenseType,
     region: string,
     format: string,
@@ -144,12 +148,21 @@ export const drawEffect = async ({
                     '2': 800,
                     '3': 800,
                 });
+        const appliedSizeData = sizeList[appliedSizeLevel] ?? sizeList[sizeList.length - 1];
+        const sizeOffsetData = parseOffset(coordinateOffset, CanvasConst.effectBox);
         const {
             trueEdge,
             trueWidth: trueWidthStart,
             trueBaseline: trueBaselineStart,
             trueHeightCap,
-        } = scaleCoordinateData(sizeList[appliedSizeLevel] ?? sizeList[sizeList.length - 1], globalScale);
+        } = scaleCoordinateData({
+            trueEdge: appliedSizeData.trueEdge - sizeOffsetData.x,
+            trueWidth: appliedSizeData.trueWidth - sizeOffsetData.width,
+            trueBaseline: appliedSizeData.trueBaseline - sizeOffsetData.y,
+            trueHeightCap: appliedSizeData.trueHeightCap == null
+                ? undefined
+                : appliedSizeData.trueHeightCap - (sizeOffsetData.height ?? 0),
+        }, globalScale);
         const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 * globalScale : trueWidthStart;
 
         const useDynamicSize = requireDynamicSize && typeof trueHeightCap === 'number';
@@ -242,7 +255,7 @@ export const drawEffect = async ({
                     if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
                         const { line = '', alignment } = fullLineListOption.shift() ?? {};
                         const isLast = alignment === 'justify' ? false : true;
-                        xRatio = 1/1000 * condense(
+                        xRatio = 1 / 1000 * condense(
                             median => {
                                 const { currentLineCount } = createLineList({
                                     ctx,
@@ -293,7 +306,7 @@ export const drawEffect = async ({
                             fontLevel: dynamicSizeLevel,
                             currentFont: flavorTextCurrentFont,
                         };
-                        xRatio = 1/1000 * condense(
+                        xRatio = 1 / 1000 * condense(
                             median => {
                                 const { currentLineCount } = createLineList({
                                     ctx,

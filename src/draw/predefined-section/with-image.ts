@@ -21,6 +21,7 @@ export const drawStarContent = async ({
     starList,
     starAlignment = 'auto',
     style,
+    coordinate = CanvasConst.starBox,
     onStarDraw,
     loopStarFinish,
 }: {
@@ -33,10 +34,12 @@ export const drawStarContent = async ({
     starList: string[],
     starAlignment: string,
     style?: CanvasTextStyle,
+    coordinate?: { x: number, y: number },
     onStarDraw: (coordinate: [number, number]) => Promise<void>,
     loopStarFinish?: ReturnType<typeof getFinishIterator>,
 }) => {
     /** We filter out all undefined star only at the trail of the star list */
+    const { x, y } = coordinate;
     const normalizedStarList = Array.isArray(starList)
         ? starList
         : [];
@@ -48,7 +51,7 @@ export const drawStarContent = async ({
             ? star === '' ? 0 : 1
             : typeof star === 'number' ? star : 0;
     let totalWidth = starWidth * normalizedStarCount + starSpacing * (normalizedStarCount - 1);
-    const baseline = 145;
+    const baseline = y;
 
     let alignment = 'right';
     if (['rank', 'negative-level'].includes(cardIcon)) alignment = 'left';
@@ -64,10 +67,10 @@ export const drawStarContent = async ({
 
     /** Level / Rank 13 is center-aligned. */
     const leftEdge = alignment === 'center'
-        ? (CanvasWidth + totalWidth) / 2
+        ? x + (CanvasWidth + totalWidth) / 2
         : alignment === 'left'
-            ? 85.9125 + totalWidth
-            : 728.775;
+            ? x + 86 + totalWidth
+            : x + 729;
 
     let offset = 0 - (starWidth + starSpacing);
 

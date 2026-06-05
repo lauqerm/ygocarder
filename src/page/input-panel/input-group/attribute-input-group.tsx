@@ -26,6 +26,7 @@ const AttributeRegionTrain = styled.div`
     }
 `;
 const AttributeOption = styled.div`
+    margin-left: var(--spacing-xs);
     .icon-button {
         margin-top: var(--spacing-xxs);
         margin-bottom: var(--spacing-xxs);

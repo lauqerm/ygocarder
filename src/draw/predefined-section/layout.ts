@@ -17,6 +17,8 @@ import {
     AttributeOffsetMap,
     ExtraAttributeMap,
     OverlayComposite,
+    getDefaultCoordinateMap,
+    parseCoordinate,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawFromWithSizeAndFallback, drawWithStyle } from '../image';
 import { blendCanvas, createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
@@ -137,6 +139,7 @@ export const getLayoutDrawFunction = ({
     pendulumFrameTypeMap,
     otherFinish,
     controlString,
+    coordinateMap,
     loopFinish,
     loopArtFinish,
 }: {
@@ -166,6 +169,7 @@ export const getLayoutDrawFunction = ({
     pendulumFrameTypeMap: { blue: 'normal' | 'scaleless', red: 'normal' | 'scaleless' },
     otherFinish: OtherFinish,
     controlString?: string,
+    coordinateMap: ReturnType<typeof getDefaultCoordinateMap>,
     loopFinish: (
         ctx?: CanvasRenderingContext2D | null,
         name?: string,
@@ -203,7 +207,12 @@ export const getLayoutDrawFunction = ({
     } = PendulumSizeMap[pendulumSize];
     const artBorder = opacityBody > 0 ? true : keepArtBorder;
     const artBoxY = 170, artBoxX = 60;
-    const effectBoxY = 860, effectBoxX = 35;
+    const {
+        effectBox: effectBoxCoordinate,
+        starBox: starBoxCoordinate,
+    } = coordinateMap;
+    const normalizedEffectBoxCoordinate = parseCoordinate(effectBoxCoordinate, CanvasConst.effectBox);
+    const effectBoxY = normalizedEffectBoxCoordinate.y, effectBoxX = normalizedEffectBoxCoordinate.x;
     const backgroundEffectBoxY = effectBoxY + 24, backgroundEffectBoxX = effectBoxX + 19;
     const backgroundEffectBoxWidth = 705, backgroundEffectBoxHeight = 231;
     const overlayMethodList = overlayType.split('|');
@@ -521,6 +530,7 @@ export const getLayoutDrawFunction = ({
                 starAlignment,
                 style,
                 globalScale,
+                coordinate: parseCoordinate(starBoxCoordinate, CanvasConst['starBox']),
                 onStarDraw: async coordinate => {
                     return normalizedCardIcon === 'st'
                         ? Promise.resolve()

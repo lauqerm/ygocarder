@@ -11,6 +11,8 @@ import styled from 'styled-components';
 import { resolveFrameStyle } from 'src/util';
 import {
     FrameBehaviorSettingPanel,
+    FrameCoordinatePanel,
+    FrameCoordinatePanelRef,
     FrameLayoutSettingPanel,
 } from '../frame-setting-panel';
 import { FlagPresentationList } from '../../common';
@@ -24,7 +26,7 @@ type BottomFrameOptionGridRef = {
     focus: () => void,
 };
 
-const StyledFrameBlenderModal = styled(Modal)`
+const StyledFrameSettingModal = styled(Modal)`
     .ant-modal-content .ant-modal-body {
         padding: 0;
     }
@@ -216,9 +218,11 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         updateSetting,
     })));
     const containerRef = useRef<HTMLDivElement>(null);
-    const bottomFrameOptionGridRef = useRef<BottomFrameOptionGridRef>(null);
+    const frameBlenderRef = useRef<BottomFrameOptionGridRef>(null);
+    const frameCoordinateRef = useRef<FrameCoordinatePanelRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
-    const [frameDropdownVisible, setFrameDropdownVisible] = useState(false);
+    const [frameBlenderVisible, setFrameBlenderVisible] = useState(false);
+    const [frameCoordinateVisible, setFrameCoordinateVisible] = useState(false);
     const changeToPendulum = (e: CheckboxChangeEvent) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
         /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it looks closer to real card */
@@ -283,18 +287,16 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 >{language['input.pendulum.label']}</Checkbox>
             </div>
             <div className="pendulum-option-container">
-                <StyledFrameBlenderModal
-                    visible={frameDropdownVisible}
-                    onCancel={() => setFrameDropdownVisible(false)}
+                <StyledFrameSettingModal
+                    visible={frameBlenderVisible}
+                    onCancel={() => setFrameBlenderVisible(false)}
                     width={613}
                     forceRender
                     closable={false}
                     footer={null}
-                    className={[
-                        'global-input-overlay frame-blender-overlay layout-picker-overlay',
-                    ].join(' ')}
+                    className="global-input-overlay frame-blender-overlay layout-picker-overlay"
                 >
-                    <FrameLayoutSettingPanel ref={bottomFrameOptionGridRef}
+                    <FrameLayoutSettingPanel ref={frameBlenderRef}
                         isPendulum={isPendulum}
                         frameList={frameList}
                         pendulumFrame={pendulumFrame}
@@ -304,22 +306,34 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         receivingCanvas={receivingCanvas}
                         onFrameChange={onFrameChange}
                         onCancel={() => {
-                            setFrameDropdownVisible(false);
+                            setFrameBlenderVisible(false);
                             containerRef.current?.focus();
                         }}
                     />
                     <FrameBehaviorSettingPanel />
-                </StyledFrameBlenderModal>
+                </StyledFrameSettingModal>
+                <Modal
+                    visible={frameCoordinateVisible}
+                    onCancel={() => setFrameCoordinateVisible(false)}
+                    width={380}
+                    closable={false}
+                    footer={null}
+                    className="global-input-overlay frame-coordinate-overlay layout-picker-overlay"
+                >
+                    <FrameCoordinatePanel
+                        ref={frameCoordinateRef}
+                    />
+                </Modal>
                 {showCreativeOption && <StyledPendulumFrameInputContainer ref={containerRef}
                     className="pendulum-frame-input"
                     tabIndex={0}
-                    onClick={() => setFrameDropdownVisible(true)}
+                    onClick={() => setFrameBlenderVisible(true)}
                     onKeyDown={e => {
                         if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
-                            setFrameDropdownVisible(true);
+                            setFrameBlenderVisible(true);
                             /** Popover takes time to mount / become visible */
                             setTimeout(() => {
-                                bottomFrameOptionGridRef.current?.focus();
+                                frameBlenderRef.current?.focus();
                             }, 200);
 
                             return false;
@@ -352,6 +366,25 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         </InternalPopover>
                         : null}
                 </StyledPendulumFrameInputContainer>}
+                {showCreativeOption && <div
+                    tabIndex={0}
+                    onClick={() => setFrameCoordinateVisible(true)}
+                    onKeyDown={e => {
+                        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
+                            setFrameCoordinateVisible(true);
+                            /** Popover takes time to mount / become visible */
+                            setTimeout(() => {
+                                frameBlenderRef.current?.focus();
+                            }, 200);
+
+                            return false;
+                        }
+                    }}
+                >
+                    <span className="pendulum-frame-label">
+                        Card Coordinate
+                    </span>
+                </div>}
                 {(isPendulum && showCreativeOption) && <div className="pendulum-size">
                     <Popover key="color-picker"
                         overlayClassName="global-input-overlay font-picker-overlay"

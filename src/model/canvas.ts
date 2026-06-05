@@ -7,23 +7,23 @@ export const getBackgroundTypeList = (dictionary?: {
     frame: string,
     strict: string,
 }) => [
-    {
-        value: 'strict' as const,
-        label: dictionary?.strict,
-    },
-    {
-        value: 'fit' as const,
-        label: dictionary?.fit,
-    },
-    {
-        value: 'full' as const,
-        label: dictionary?.full,
-    },
-    {
-        value: 'frame' as const,
-        label: dictionary?.frame,
-    },
-];
+        {
+            value: 'strict' as const,
+            label: dictionary?.strict,
+        },
+        {
+            value: 'fit' as const,
+            label: dictionary?.fit,
+        },
+        {
+            value: 'full' as const,
+            label: dictionary?.full,
+        },
+        {
+            value: 'frame' as const,
+            label: dictionary?.frame,
+        },
+    ];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];
 
 export const getOverlayCompositeList = (dictionary: LanguageDataDictionary) => [
@@ -123,6 +123,74 @@ export const CanvasConst = {
     stickerY: 1110.938,
     iconWidth: 43,
     iconHeight: 44,
+    effectBox: {
+        name: 'effectBox' as const,
+        x: 35, y: 860,
+        width: 743, height: 280,
+    },
+    starBox: {
+        name: 'starBox' as const,
+        x: 0, y: 145,
+        width: 813, height: 50,
+    },
+};
+export const MoveableRegionMap = {
+    effectBox: CanvasConst.effectBox,
+    starBox: CanvasConst.starBox,
+};
+export const MoveableRegionList = Object.values(MoveableRegionMap);
+export const parseCoordinate = (
+    stringifiedCoordinate: unknown,
+    defaultCoordinate: {
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+    },
+) => {
+    if (typeof stringifiedCoordinate !== 'string') return defaultCoordinate;
+    const [x, y, width, height] = stringifiedCoordinate.split('|')
+        .map(entry => entry === undefined ? undefined : parseInt(entry));
+    const resultCoordinate = { ...defaultCoordinate };
+    if (typeof x === 'number') resultCoordinate.x = x;
+    if (typeof y === 'number') resultCoordinate.y = y;
+    if (typeof width === 'number') resultCoordinate.width = width;
+    if (typeof height === 'number') resultCoordinate.height = height;
+
+    return resultCoordinate;
+};
+export const parseOffset = (
+    stringifiedCoordinate: unknown,
+    defaultCoordinate: {
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+    },
+) => {
+    const [x, y, width, height] = (typeof stringifiedCoordinate === 'string' ? stringifiedCoordinate : '').split('|')
+        .map(entry => entry === undefined || entry === '' ? undefined : parseInt(entry));
+    const resultOffset = { ...defaultCoordinate };
+    if (typeof x === 'number') resultOffset.x = defaultCoordinate.x - x;
+    else resultOffset.x = 0;
+    if (typeof y === 'number') resultOffset.y = defaultCoordinate.y - y;
+    else resultOffset.y = 0;
+    if (typeof width === 'number') resultOffset.width = defaultCoordinate.width - width;
+    else resultOffset.width = 0;
+    if (typeof height === 'number') resultOffset.height = defaultCoordinate.height - height;
+    else resultOffset.height = 0;
+
+    return resultOffset;
+};
+export const compileCoordinate = (
+    coordinate: { x: number, y: number, width: number, height: number },
+) => {
+    return [
+        coordinate.x,
+        coordinate.y,
+        coordinate.width,
+        coordinate.height,
+    ].join('|');
 };
 
 export const DEFAULT_BASE_FILL_COLOR = '#404040';
@@ -431,7 +499,7 @@ export const getArtCanvasCoordinate = (
         normalizedOpacity.text = 100;
         normalizedOpacity.pendulum = 100;
     }
-    
+
     const {
         boundless,
         body,
