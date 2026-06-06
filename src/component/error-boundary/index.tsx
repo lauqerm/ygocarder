@@ -1,5 +1,5 @@
 import React, { ErrorInfo } from 'react';
-import * as Sentry from '@sentry/react';
+import { captureException } from 'src/util/sentry';
 
 export type ErrorBoundaryProps = {
     fallback?: React.ReactChild,
@@ -12,28 +12,28 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         super(props);
         this.state = { hasError: false };
     }
-  
+
     static getDerivedStateFromError(error: unknown) {
         console.error('Boundary', error);
         // Update state so the next render will show the fallback UI.
         return { hasError: true };
     }
-  
+
     componentDidCatch(error: Error, info: ErrorInfo) {
         // Example "componentStack":
         //   in ComponentThatThrows (created by App)
         //   in ErrorBoundary (created by App)
         //   in div (created by App)
         //   in App
-        Sentry.captureException(error, { data: info.componentStack });
+        captureException(error, undefined, { data: info.componentStack });
     }
-  
+
     render() {
         if (this.state.hasError) {
             // You can render any custom fallback UI
             return this.props.fallback;
         }
-    
+
         return this.props.children;
     }
 }

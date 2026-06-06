@@ -66,10 +66,8 @@ import {
 } from './app.styled';
 import { configure, HotKeys } from 'react-hotkeys';
 import { useShallow } from 'zustand/react/shallow';
-import * as Sentry from '@sentry/react';
 import Moveable from 'react-moveable';
 import {
-    getFullDiagnostics,
     IS_MOBILE,
     isTouchDevice,
 } from './pwa';
@@ -418,109 +416,6 @@ function App() {
     const displayFitLightbox = useCallback((status?: boolean) => {
         lightboxRef.current?.setVisible(cur => typeof status === 'boolean' ? status : !cur);
     }, []);
-
-    /** Analytic and report */
-    const sentryInitialized = useRef(false);
-    const reportTarget = document.getElementById('sentry-bug-report');
-    useEffect(() => {
-        window.addEventListener('online', () => {
-            Sentry.setTag('pwa_online', true);
-        });
-        window.addEventListener('offline', () => {
-            Sentry.setTag('pwa_online', false);
-        });
-        if (navigator) navigator.serviceWorker?.addEventListener('message', (event) => {
-            if (event.data?.type === 'MANIFEST_SYNCED') {
-                Sentry.setTag('pwa_manifest_version', event.data.version);
-            }
-        });
-        window.addEventListener('appinstalled', () => {
-            Sentry.setTag('pwa_just_installed', true);
-        });
-    }, []);
-    useEffect(() => {
-        const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
-        if (reportTarget
-            && sentryDsn
-            && language
-            && sentryInitialized.current === false
-            && Sentry.isInitialized() === false
-        ) {
-            sentryInitialized.current = true;
-
-            Sentry.init({
-                dsn: sentryDsn,
-                integrations: [
-                    Sentry.browserTracingIntegration(),
-                    Sentry.replayIntegration(),
-                    Sentry.feedbackIntegration({
-                        colorScheme: 'system',
-                        autoInject: false,
-                        onSubmitSuccess: async ({
-                            name,
-                            message,
-                        }: {
-                            name: string;
-                            email: string;
-                            message: string;
-                            attachments: unknown[] | undefined;
-                        }) => {
-                            const diagnostics = await getFullDiagnostics();
-
-                            Sentry.captureMessage('User feedback', {
-                                level: 'info',
-                                contexts: {
-                                    pwa_diagnostics: JSON.parse(JSON.stringify(diagnostics)),
-                                },
-                                extra: {
-                                    feedback_name: name,
-                                    feedback_message: message,
-                                    cache_completion_pct: Math.round(diagnostics.cacheCompletion * 100),
-                                    storage_used_mb: diagnostics.storageUsageBytes
-                                        ? (diagnostics.storageUsageBytes / 1024 / 1024).toFixed(1)
-                                        : null,
-                                },
-                            });
-                        },
-                    }).attachTo(reportTarget, {
-                        formTitle: language['contributor.bug-report.tooltip'],
-                        nameLabel: language['contributor.bug-report.name.label'],
-                        namePlaceholder: language['contributor.bug-report.name.placeholder'],
-                        isEmailRequired: false,
-                        showEmail: false,
-                        messageLabel: language['contributor.bug-report.message.label'],
-                        messagePlaceholder: language['contributor.bug-report.message.placeholder'],
-                        addScreenshotButtonLabel: language['contributor.bug-report.screenshot.label'],
-                        removeScreenshotButtonLabel: language['contributor.bug-report.remove-screenshot.label'],
-                        cancelButtonLabel: language['contributor.bug-report.cancel.label'],
-                        submitButtonLabel: language['contributor.bug-report.submit.label'],
-                        isRequiredLabel: language['contributor.bug-report.required.label'],
-                        successMessageText: language['contributor.bug-report.success.label'],
-                    }),
-                ],
-                /** @todo Should we enable dialog here? Because there is no way for us to contact the user back, we will have a very hard time fighting against false positive error. */
-                // beforeSend(event) {
-                //     // Check if it is an exception, and if so, show the report dialog
-                //     if (event.exception && event.event_id) {
-                //         Sentry.showReportDialog({
-                //             eventId: event.event_id,
-                //         });
-                //     }
-                //     return event;
-                // },
-                // Tracing
-                tracesSampleRate: 1.0, //  Capture 100% of the transactions
-                // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-                tracePropagationTargets: ['lauqerm.github.io'],
-                // Session Replay
-                replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-                replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-            });
-        }
-        if (!sentryDsn && reportTarget) {
-            reportTarget.style.display = 'none';
-        }
-    }, [language, reportTarget]);
 
     const treatNewCard = useCallback((
         decodedCard: Card,

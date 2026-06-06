@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, applyEmboss, fontMeasurer, normalizeCardName } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, fontMeasurer, normalizeCardName, applyEmboss } from 'src/util';
 import { getWritingDirection, tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
@@ -307,7 +307,7 @@ export const drawName = async (
     /** Third iteration: Apply emboss effect */
     if (hasEmboss) {
         const affectedWidthExtraPadding = 10;
-        const embossedImageData = applyEmboss({
+        const embossedImageData = await applyEmboss({
             inputCanvas: canvas,
             lightPitch: embossPitch,
             lightYaw: embossYaw,

@@ -18,8 +18,8 @@ import {
 } from '../../pwa';
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
-import * as Sentry from '@sentry/react';
 import { LanguageDataDictionary, useLanguage } from 'src/service';
+import { captureException } from 'src/util/sentry';
 
 const { Text, Paragraph } = Typography;
 const StyledProgressModal = styled(Modal)``;
@@ -112,11 +112,11 @@ export function InstallButton({
         }
         setPhase('downloading');
     };
-    const handleDownloadError = (err: unknown, action: string) => {
+    const handleDownloadError = async (err: unknown, action: string) => {
         if ((err as Error).name === 'AbortError') {
             reset();
         } else {
-            Sentry.captureException(err, {
+            await captureException(err, {
                 extra: {
                     type: `Failed when prepare for ${action}`,
                     ...(typeof err === 'object' ? err : {}),
@@ -138,7 +138,7 @@ export function InstallButton({
         if (result.failed.length > 0) {
             setError(`${result.failed.length} files failed to download. You can retry.`);
             setPhase('error');
-            Sentry.captureException(new Error('PWA: Failed to cache asset'), {
+            await captureException(new Error('PWA: Failed to cache asset'), {
                 extra: {
                     type: 'Failed to cache asset',
                     ...result,
@@ -159,7 +159,7 @@ export function InstallButton({
             }
             cacheHeartbeat();
         } catch (err) {
-            handleDownloadError(err, 'sync');
+            await handleDownloadError(err, 'sync');
         }
     };
 
@@ -181,7 +181,7 @@ export function InstallButton({
                 // Wait for the user to click "Install" in the modal.
                 setPhase('ready-to-install');
             }
-            Sentry.captureException(new Error('Not-error: Pull assets success'));
+            await captureException(new Error('Not-error: Pull assets success'));
             cacheHeartbeat();
         } catch (err) {
             handleDownloadError(err, 'install');
@@ -194,13 +194,13 @@ export function InstallButton({
             const outcome = await triggerInstall();
             if (outcome === 'accepted') {
                 setPhase('done');
-                Sentry.captureException(new Error('Not-error: Install success'));
+                await captureException(new Error('Not-error: Install success'));
             } else {
                 // Dismissed the OS prompt; cache is preserved
                 reset();
             }
         } catch (err) {
-            Sentry.captureException(err, {
+            await captureException(err, {
                 extra: {
                     type: 'Failed to install',
                     ...err,

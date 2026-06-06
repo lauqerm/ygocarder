@@ -110,6 +110,5 @@
   },
   "description": "Modern YGO Card Maker app",
   "repository": "git@github.com:lauqerm/ygocarder.git",
-  "author": "lauqerm <mr.equal1996@gmail.com>",
-  "type": "module"
+  "author": "lauqerm <mr.equal1996@gmail.com>"
 }

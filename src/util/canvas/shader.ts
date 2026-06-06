@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import { getDefaultHeightToNormalMapOption, SHADER_FILTER_TYPE } from './model';
 
 const HorizontalBlurShader = {
     uniforms: {
@@ -241,19 +242,6 @@ const NormalMapShader = {
     ].join('\n')
 };
 
-export const SHADER_FILTER_TYPE = {
-    SOBEL: 'sobel' as const,
-    SCHARR: 'scharr' as const,
-};
-export const getDefaultHeightToNormalMapOption = () => ({
-    invertedRed: false,
-    invertedGreen: false,
-    invertedSource: false,
-    blurSharp: 0,
-    strength: 1,
-    level: 8.5,
-    type: SHADER_FILTER_TYPE.SOBEL,
-});
 type HeightToNormalMapOption = Partial<ReturnType<typeof getDefaultHeightToNormalMapOption>>;
 
 export class HeightToNormalMap {
@@ -281,9 +269,13 @@ export class HeightToNormalMap {
         this.effectComposer.setSize(width, height);
         this.effectComposer.reset(this.getRenderTarget(width, height));
 
+        const normalizedOption = {
+            type: SHADER_FILTER_TYPE.SOBEL,
+            ...option,
+        };
         const { invertedRed, invertedGreen, invertedSource, blurSharp, strength, level, type } = {
             ...this.option,
-            ...option,
+            ...normalizedOption,
         };
 
         this.invertRed(invertedRed);

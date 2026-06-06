@@ -1,6 +1,3 @@
-import * as Sentry from '@sentry/react';
-import { useSetting } from 'src/service';
-
 export const isImageData = (data: unknown) => typeof data === 'string' && data.startsWith('data:image/');
 
 export const downloadBlob = (name: string, blob: Blob, type: string) => {
@@ -65,16 +62,6 @@ export const padRight = <Value extends (string | undefined | null)[]>(list: Valu
     }
 
     return nextList;
-};
-
-export const captureException = (e: unknown) => {
-    const reportedError = {
-        version: import.meta.env.APP_VERSION ?? '0.0.0',
-        setting: useSetting.getState(),
-        href: window.location.href,
-    };
-    Sentry.captureException(e, { extra: reportedError });
-    console.error(e);
 };
 
 export const isJsonObjectEqual = (payload1: unknown, payload2: unknown, loose = false) => {

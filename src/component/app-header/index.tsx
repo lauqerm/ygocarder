@@ -12,7 +12,7 @@ import { StyledPopMarkdown } from '../atom';
 import { QuestionAndFeedback } from './faq';
 import { PresetManager } from '../preset-manager';
 import { SampleCard, SampleCardRef } from './sample';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { PUBLIC_PATH } from 'src/model';
 import { InstallButton } from '../install-button';
 import { FAQ_BUTTON_ID } from './model';
@@ -106,6 +106,35 @@ export const AppHeader = ({
         visible,
     })));
     const sampleCardRef = useRef<SampleCardRef>(null);
+
+    /** Analytic and report */
+    const sentryInitialized = useRef(false);
+    const reportTarget = document.getElementById('sentry-bug-report');
+    useEffect(() => {
+        if (language) import('../../util/sentry').then(({ setupSentry }) => {
+            if (sentryInitialized.current === false) {
+                sentryInitialized.current = true;
+                setupSentry(
+                    reportTarget,
+                    {
+                        formTitle: language['contributor.bug-report.tooltip'],
+                        nameLabel: language['contributor.bug-report.name.label'],
+                        namePlaceholder: language['contributor.bug-report.name.placeholder'],
+                        messageLabel: language['contributor.bug-report.message.label'],
+                        messagePlaceholder: language['contributor.bug-report.message.placeholder'],
+                        addScreenshotButtonLabel: language['contributor.bug-report.screenshot.label'],
+                        removeScreenshotButtonLabel: language['contributor.bug-report.remove-screenshot.label'],
+                        cancelButtonLabel: language['contributor.bug-report.cancel.label'],
+                        submitButtonLabel: language['contributor.bug-report.submit.label'],
+                        isRequiredLabel: language['contributor.bug-report.required.label'],
+                        successMessageText: language['contributor.bug-report.success.label'],
+                    }
+                );
+            } else if (reportTarget) {
+                reportTarget.style.display = 'none';
+            }
+        });
+    }, [language, reportTarget]);
 
     return <div className="app-header">
         <img className="app-logo" alt="app-logo" src={`${PUBLIC_PATH}/logo192.png`} width={35} />

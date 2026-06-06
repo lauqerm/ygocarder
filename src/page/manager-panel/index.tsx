@@ -17,9 +17,8 @@ import { downloadBlob, getNaivePseudoRandomizer } from 'src/util';
 import { InternalCard } from 'src/model';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
-import XLSX from 'xlsx';
 import { ManagerDrawer } from 'src/component';
-import * as Sentry from '@sentry/react';
+import { captureException } from 'src/util/sentry';
 
 const chanceToRemindBackup = getNaivePseudoRandomizer();
 const StyledCardManagerPanel = styled.div`
@@ -277,6 +276,7 @@ export const CardManagerPanel = forwardRef(({
                                         }
                                         switch (exportFormat) {
                                             case 'xlsx': {
+                                                const XLSX = await import('xlsx');
                                                 const exportWorkbook = XLSX.read(csvdata, { type: 'string' });
                                                 XLSX.writeFile(exportWorkbook, `${useCardList.getState().listName}.xlsx`);
                                                 break;
@@ -291,7 +291,7 @@ export const CardManagerPanel = forwardRef(({
                                         }
                                         changeEditStatus('download');
                                     } catch (e) {
-                                        Sentry.captureException(e);
+                                        await captureException(e);
                                     }
                                 }
                                 setSavingFile(false);
@@ -343,6 +343,7 @@ export const CardManagerPanel = forwardRef(({
 
                                             /** Assume data from only the very first sheet */
                                             /** 65001 codepage allow display unicode characters such as Japanese */
+                                            const XLSX = await import('xlsx');
                                             const workbook = XLSX.read(file, { codepage: 65001 });
                                             const csvBook = XLSX.utils.sheet_to_json<string[]>(
                                                 workbook.Sheets[workbook.SheetNames[0]],

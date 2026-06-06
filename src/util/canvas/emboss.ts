@@ -1,8 +1,8 @@
 // import distanceTransform from 'distance-transform';
 import ndarray from 'ndarray';
-import { getDefaultHeightToNormalMapOption, HeightToNormalMap, SHADER_FILTER_TYPE } from './shader';
 import { bilateralFilter } from './bilateral-filter';
 import { distanceTransform } from './distance-transform';
+import { getDefaultHeightToNormalMapOption } from './model';
 
 export const angleToVector = (lightYaw: number, lightPitch: number) => {
     const angleRadian = (lightYaw + 90) * Math.PI / 180;
@@ -13,7 +13,7 @@ export const angleToVector = (lightYaw: number, lightPitch: number) => {
 
     return [Math.round(x * 100) / 100, Math.round(y * 100) / 100, Math.round(z * 100) / 100] as [number, number, number];
 };
-export const applyEmboss = ({
+export const applyEmboss = async ({
     inputCanvas,
     affectedHeight,
     affectedWidth,
@@ -109,6 +109,7 @@ export const applyEmboss = ({
         const normalMapCanvas = document.createElement('canvas');
         normalMapCanvas.width = width;
         normalMapCanvas.height = height;
+        const { HeightToNormalMap } = await import('./shader');
         const heightToNormalMapConverter = new HeightToNormalMap(getDefaultHeightToNormalMapOption(), normalMapCanvas);
         heightToNormalMapConverter.apply(heightmapCanvas, {
             blurSharp: 0,
@@ -117,7 +118,6 @@ export const applyEmboss = ({
             invertedRed: false,
             invertedGreen: false,
             invertedSource: true,
-            type: SHADER_FILTER_TYPE.SOBEL,
         });
 
         /**
