@@ -1,13 +1,13 @@
 {
-  "version": "7825bdf3b300c404",
-  "generatedAt": "2026-06-02T11:52:04.523Z",
+  "version": "c55d5a93a3d50096",
+  "generatedAt": "2026-06-06T07:24:40.704Z",
   "basePath": "/ygocarder/",
   "assetCount": 663,
-  "totalBytes": 79990496,
+  "totalBytes": 79993223,
   "assets": {
     "/ygocarder/asset/font.css": {
-      "hash": "62e6b4a8a85c0c1b",
-      "size": 2627
+      "hash": "927e46a66e38bcdf",
+      "size": 2720
     },
     "/ygocarder/asset/font/DFHsg3.ttf": {
       "hash": "891be08f88c2c1a9",
@@ -110,20 +110,20 @@
       "size": 24764
     },
     "/ygocarder/asset/i18n/eng.json": {
-      "hash": "05b7c83ca4aab701",
-      "size": 40886
+      "hash": "f6e3cf3bfbaa8e21",
+      "size": 41436
     },
     "/ygocarder/asset/i18n/jap.json": {
-      "hash": "a9018657347b66c4",
-      "size": 48949
+      "hash": "b31cde1d1ef58b5a",
+      "size": 49500
     },
     "/ygocarder/asset/i18n/metadata.json": {
-      "hash": "e26cc553ebb866b3",
-      "size": 1034
+      "hash": "0159f5cce82d32f2",
+      "size": 1074
     },
     "/ygocarder/asset/i18n/vie.json": {
-      "hash": "495dccf46f662ac7",
-      "size": 47042
+      "hash": "b2f697e8fee7004e",
+      "size": 47592
     },
     "/ygocarder/asset/image/attribute/attr-ch-dark.png": {
       "hash": "4bdad1239b4dd115",
@@ -2646,12 +2646,12 @@
       "size": 198
     },
     "/ygocarder/asset/log/version.json": {
-      "hash": "16506877eeda08cc",
-      "size": 28327
+      "hash": "8f194744945039d8",
+      "size": 29240
     },
     "/ygocarder/asset/ocg-font.css": {
-      "hash": "cda77ad46b5c9af7",
-      "size": 723
+      "hash": "6c12cf5956b6a842",
+      "size": 753
     },
     "/ygocarder/asset/script/JSONCrush.min.js": {
       "hash": "5747c2d8a975f968",
