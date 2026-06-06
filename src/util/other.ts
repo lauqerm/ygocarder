@@ -157,4 +157,27 @@ export function insertAtCursor(target: HTMLTextAreaElement, myValue: string) {
             position: 0,
         };
     }
+};
+
+export async function parallelLimit<T>(
+    tasks: (() => Promise<T>)[],
+    maxConcurrent: number
+): Promise<T[]> {
+    const results: T[] = new Array(tasks.length);
+    let nextIndex = 0;
+
+    async function worker(): Promise<void> {
+        while (nextIndex < tasks.length) {
+            const index = nextIndex++;
+            results[index] = await tasks[index]();
+        }
+    }
+
+    const workers = Array.from(
+        { length: Math.min(maxConcurrent, tasks.length) },
+        () => worker()
+    );
+
+    await Promise.all(workers);
+    return results;
 }

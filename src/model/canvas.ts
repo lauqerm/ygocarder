@@ -90,6 +90,7 @@ export type MasterSeriesCanvas = {
     previewCanvasRef: React.RefObject<HTMLCanvasElement>,
     lightboxRef: React.RefObject<{
         draw: (exportCanvas: HTMLCanvasElement) => void,
+        setBusy: (dispatcher: (cur: boolean) => boolean) => void,
     }>,
 };
 

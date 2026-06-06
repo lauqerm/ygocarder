@@ -47,15 +47,18 @@ const Quote = ({
 export const QuestionAndFeedback = () => {
     const [visible, setVisible] = useState(false);
     const [animating, setAnimating] = useState(false);
+    const [highlighting, setHighlighting] = useState(false);
     const [faqReminder, setMemoizedReminder] = useNotification('faqReminder');
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '01/06/2026';
+        const currentReminder = '06/06/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.APP_VERSION) setMemoizedReminder(currentReminder);
 
             setAnimating(true);
+            /** Retain the highlighting for a whole session */
+            setHighlighting(true);
             setTimeout(() => {
                 setAnimating(false);
             }, 8000);
@@ -79,6 +82,16 @@ export const QuestionAndFeedback = () => {
 
     const feedbackList: Feedback[] = [
         {
+            author: 'Anonymous at Jun 05, 2026',
+            question: 'Can you let us export to MSE as well?\nMSE would be Magic Set Editor',
+            answer: 'Could you elaborate your request a bit more? Do you want to export the card data in a format that can be imported by MSE (.mse-set file)? Or are you using the Manager function and want to export the whole list of card data to MSE?',
+        },
+        {
+            author: 'Anonymous at Jun 05, 2026',
+            question: 'I just like to tell you that there\'s a delay between inputting the text or changing the template and the result updating, please fix',
+            answer: 'Hi, unfortunately this is a technical limitation of the current implementation, as the card rendering process is quite heavy and it can cause some delay. I have updated the app to show a loading indicator when the app is busy rendering, so you can at least know that the app is working on it. I will keep trying to optimize the performance to reduce the delay as much as possible.',
+        },
+        {
             author: 'No name hack at Jun 01, 2026',
             question: 'I want made card overframe without frame pendulum effect, only scale pendulum appear, must options',
             answer: 'Hi, based on what you are describing, I\'m assuming you want the result to look something like this? If you confirm it, I can start working.',
@@ -98,7 +111,7 @@ export const QuestionAndFeedback = () => {
             answer: 'That\'s true, number 3 and 5 reaching a bit lower than the baseline is a feature of the font, so I have no plan to update that.',
         },
         {
-            author: 'Anonmyous at May 22, 2026',
+            author: 'Anonymous at May 22, 2026',
             question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
             answer: 'Thanks for your report, I have updated the behavior.'
         },
@@ -448,7 +461,15 @@ export const QuestionAndFeedback = () => {
     ];
 
     return <>
-        <FaqButtonLabel id={FAQ_BUTTON_ID} $animating={animating} onClick={() => setVisible(cur => !cur)}>
+        <FaqButtonLabel
+            id={FAQ_BUTTON_ID}
+            $animating={animating}
+            $highlighting={highlighting}
+            onClick={() => {
+                setVisible(cur => !cur);
+                setHighlighting(false);
+            }}
+        >
             {'FAQ'}
         </FaqButtonLabel>
         <Modal width={600} visible={visible} onCancel={() => setVisible(false)} footer={null}>
