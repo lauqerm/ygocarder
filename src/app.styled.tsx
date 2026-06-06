@@ -154,18 +154,6 @@ export const CardCanvasGroupContainer = styled.div`
         .anticon {
             font-size: var(--fs-4xl);
         }
-        .canvas-guard-alert {
-            position: absolute;
-            top: 0;
-            right: 0;
-            color: white;
-            padding: var(--spacing-xs) var(--spacing);
-            border-radius: 0 0 0 var(--br-lg);
-            background-color: var(--main-active);
-            box-shadow:
-                0 3px 6px rgba(0, 0, 0, 0.16),
-                0 3px 6px rgba(0, 0, 0, 0.23);
-        }
         &.guard-on {
             display: flex !important;   // Override js-controlled inline style
         }

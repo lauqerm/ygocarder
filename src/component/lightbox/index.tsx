@@ -14,6 +14,21 @@ const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 const StyledLightboxContainer = styled.div`
     position: relative;
     line-height: 0;
+    .lightbox-guard {
+        display: flex;
+        position: absolute;
+        left: 0;
+        top: 0;
+        align-items: center;
+        justify-content: center;
+        z-index: 101;
+        background-color: #ffffff33;
+        width: 100%;
+        height: 100%;
+        .anticon {
+            font-size: var(--fs-4xl);
+        }
+    }
     .card-lightbox-control {
         user-select: none;
         text-align: right;
@@ -38,7 +53,7 @@ const StyledLightboxContainer = styled.div`
         }
     }
     .lightbox-children-container {
-        margin-top: var(--spacing);
+        margin-bottom: var(--spacing);
     }
     .card-lightbox-content {
         cursor: grab;
@@ -102,6 +117,7 @@ export type Lightbox = {
     children?: React.ReactNode,
 };
 export type LightboxRef = {
+    setBusy: (dispatcher: (cur: boolean) => boolean) => void,
     setVisible: (dispatcher: (cur: boolean) => boolean) => void,
     draw: (targetCanvas: HTMLCanvasElement) => void,
     refresh: () => void,
@@ -113,6 +129,7 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
     children,
 }, ref) => {
     const [lightboxVisible, setLightboxVisible] = useState(false);
+    const [lightboxBusy, setLightboxBusy] = useState(false);
     const [canvasKey, setCanvasKey] = useState(0);
     const lightboxCanvasRef = useRef<HTMLCanvasElement>(null);
     const lightboxRef = useRef<ReactZoomPanPinchContentRef>(null);
@@ -126,6 +143,9 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
             setTimeout(() => {
                 lightboxRef.current?.resetTransform();
             }, 200);
+        },
+        setBusy: status => {
+            setLightboxBusy(status);
         },
         draw: targetCanvas => {
             lightboxCanvasRef.current?.getContext('2d')?.drawImage(
@@ -174,6 +194,9 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
         <StyledLightboxContainer
             className="card-lightbox-container"
         >
+            <div className="lightbox-children-container">
+                {children}
+            </div>
             <TransformWrapper ref={lightboxRef}
                 initialScale={neutralScale}
                 initialPositionX={0}
@@ -211,9 +234,9 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
                     </>;
                 }}
             </TransformWrapper>
-            <div className="lightbox-children-container">
-                {children}
-            </div>
+            {lightboxBusy && <div className="lightbox-guard" onContextMenu={e => e.preventDefault()}>
+                <div className="canvas-guard-alert">Generating...</div>
+            </div>}
         </StyledLightboxContainer>
     </Modal>;
 });

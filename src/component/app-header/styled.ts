@@ -31,7 +31,7 @@ export const VersionLogButtonLabel = styled.div<{ $animating: boolean }>`
         background-color: var(--main-level-3);
     }
 `;
-export const FaqButtonLabel = styled(VersionLogButtonLabel)`
+export const FaqButtonLabel = styled(VersionLogButtonLabel) <{ $highlighting: boolean }>`
     box-shadow: none;
     border: var(--bw) solid var(--sub-level-1);
     background-color: var(--main-level-4);
@@ -42,6 +42,14 @@ export const FaqButtonLabel = styled(VersionLogButtonLabel)`
         text-shadow: none;
         box-shadow: 0 0 2px 0 #333333;
     }
+    ${({ $highlighting }) => $highlighting
+        ? `
+            border: var(--bw) solid var(--sub-level-1);
+            background: var(--main-info);
+            text-shadow: none;
+            color: var(--color-contrast);
+            box-shadow: 0 0 2px 0 #333333;
+        ` : ''}
     ${({ $animating }) => $animating
         ? `
             background: var(--main-info);

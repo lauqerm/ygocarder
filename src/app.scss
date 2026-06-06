@@ -359,6 +359,7 @@ input:-internal-autofill-selected {
 .card-lightbox-overlay {
     .ant-modal {
         max-width: unset;
+        top: var(--spacing-lg);
     }
     .ant-modal-close-x {
         display: none;
@@ -367,6 +368,18 @@ input:-internal-autofill-selected {
         --lightbox-padding: var(--spacing-lg);
         padding: var(--lightbox-padding);
     }
+}
+
+.canvas-guard-alert {
+    color: var(--color-heavy);
+    padding: var(--spacing-xs) var(--spacing);
+    border-radius: var(--br-lg);
+    background-color: var(--main-active);
+    box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.16),
+        0 3px 6px rgba(0, 0, 0, 0.23);
+    font-size: var(--fs-lg);
+    line-height: 2;
 }
 
 #sentry-feedback {

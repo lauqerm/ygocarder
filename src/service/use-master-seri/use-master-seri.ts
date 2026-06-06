@@ -1291,7 +1291,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useCallback(async (exportProps: ExportCallbackParameter) => {
         const {
-            //     isRelevant,
+            // isRelevant,
             //     pendulumSize,
             //     isPendulum = false,
             //     opacity,
@@ -1302,6 +1302,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         const exportCtx = exportCanvas?.getContext('2d');
 
         if (exportCanvas && exportCtx) {
+            lightboxRef.current?.setBusy(() => true);
             clearCanvas(exportCtx);
             await Promise.all(Object
                 .values(drawingPipeline.current)
@@ -1346,12 +1347,20 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             ];
             let lastError: { count: number, error: unknown } = { count: -1, error: null };
             for (let cnt = 0; cnt < layerRefList.length; cnt++) {
-                const result = await generateLayer(layerRefList[cnt], exportCtx, 0);
-                if (result.status === 'error') lastError = { count: cnt, error: result.data };
+                const {
+                    error,
+                    status,
+                    draw,
+                } = await generateLayer(layerRefList[cnt], 0, `${cnt}`);
+                if (status === 'error') lastError = { count: cnt, error };
+                if (draw) {
+                    draw(exportCtx);
+                }
             }
             if (lastError.error) onError(lastError.error);
 
             lightboxRef.current?.draw(exportCanvas);
+            lightboxRef.current?.setBusy(() => false);
             previewCanvasRef.current?.getContext('2d')?.drawImage(
                 exportCanvas,
                 0,
