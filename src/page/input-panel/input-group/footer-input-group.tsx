@@ -30,6 +30,12 @@ const StyledFooterInputContainer = styled.div`
         padding-left: var(--spacing-sm);
         padding-right: var(--spacing-sm);
     }
+    .creator-input,
+    .first-edition-text {
+        .input-label-with-button {
+            gap: var(--spacing-xs);
+        }
+    }
 `;
 const StyledLinkRatingInputContainer = styled(StyledInputLabelWithButton)`
     .auto-link-rating-input {
@@ -294,7 +300,6 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
             className="first-edition-text"
             addonBefore={<StyledInputLabelWithButton className="input-label-with-button">
                 <div className="input-label">{language['input.1st-edition.label']}</div>
-                &nbsp;
                 <Checkbox
                     className="input-1st"
                     onChange={onFirstEditionChange}

@@ -19,6 +19,7 @@ import {
     OverlayComposite,
     getDefaultCoordinateMap,
     parseCoordinate,
+    parseOffset,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawFromWithSizeAndFallback, drawWithStyle } from '../image';
 import { blendCanvas, createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
@@ -258,6 +259,7 @@ export const getLayoutDrawFunction = ({
         effectBackground: resolvedEffectBackground,
         pendulumEffectBackground: resolvedPendulumEffectBackground,
     } = resolvedLayoutStyle;
+    const effectBoxOffsetData = parseOffset(coordinateMap.effectBox, CanvasConst.effectBox);
 
     const resultAPI = {
         /** Main frame consists of top half and bottom half (for pendulum-like) card. */
@@ -560,7 +562,7 @@ export const getLayoutDrawFunction = ({
             }
 
             ctx.scale(globalScale, globalScale);
-            ctx.drawImage(pendulumIconCanvas, 0, 750);
+            ctx.drawImage(pendulumIconCanvas, 0 - effectBoxOffsetData.x, 750 - effectBoxOffsetData.y);
             ctx.resetTransform();
         },
         drawStatBorder: async (style: CanvasTextStyle) => {
@@ -569,7 +571,7 @@ export const getLayoutDrawFunction = ({
             await drawWithStyle(
                 canvas,
                 'frame/frame-stat-border.png',
-                0, 1070,
+                0 - effectBoxOffsetData.x, 1070 - effectBoxOffsetData.y,
                 813, 20,
                 globalScale,
                 style,
@@ -654,7 +656,7 @@ export const getLayoutDrawFunction = ({
                 await drawAssetWithSize(
                     pendulumEffectBackgroundCtx,
                     `${legacyTemplate ? 'legacy-' : ''}background/background-${exceptionFrameType}-${resolvedPendulumEffectBackground}.png`,
-                    pendulumBoxX, pendulumBoxY + pendulumBoxOffsetY,
+                    pendulumBoxX - effectBoxOffsetData.x, pendulumBoxY + pendulumBoxOffsetY - effectBoxOffsetData.y,
                     pendulumBoxWidth, pendulumBoxHeight,
                     0, pendulumBoxOffsetY + exceptionPendulumBoxOffsetHeight,
                     pendulumBoxWidth, pendulumBoxHeight + exceptionPendulumBoxOffsetHeight,
@@ -748,7 +750,7 @@ export const getLayoutDrawFunction = ({
             }
 
             ctx.scale(globalScale, globalScale);
-            ctx.drawImage(operateCanvas, 0, 0);
+            ctx.drawImage(operateCanvas, 0 - effectBoxOffsetData.x, 0 - effectBoxOffsetData.y);
             ctx.resetTransform();
         },
         drawPendulumBorderFoil: async (artBorder: boolean) => {
@@ -800,7 +802,7 @@ export const getLayoutDrawFunction = ({
             ).canvas;
 
             ctx.scale(globalScale, globalScale);
-            ctx.drawImage(operateCanvasAfterDye, 0, 0);
+            ctx.drawImage(operateCanvasAfterDye, 0 - effectBoxOffsetData.x, 0 - effectBoxOffsetData.y);
             ctx.resetTransform();
         },
         /** Usually we can draw foil on top of effect border, but speed skill's effect border is thicker so foil cannot cover it properly, in this case we will not draw the effect border knowing foil will be applied.
@@ -846,7 +848,12 @@ export const getLayoutDrawFunction = ({
             if (artBorder) {
                 const { ctx: operateCtx, canvas: operateCanvas } = createCanvas();
 
-                await drawAsset(operateCtx, `frame/art-border-${foil}.png`, artBoxX, artBoxY);
+                const assetName = foil === 'normal'
+                    ? bottomLeftFrame === 'speed-skill'
+                        ? 'speed-skill'
+                        : 'normal'
+                    : foil;
+                await drawAsset(operateCtx, `frame/art-border-${assetName}.png`, artBoxX, artBoxY);
                 const operateCanvasAfterCustom = await blendCanvas({
                     canvas: operateCanvas,
                     customFoilCanvas: overlayCanvas,
@@ -865,7 +872,12 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             const { ctx: operateCtx, canvas: operateCanvas } = createCanvas();
 
-            await drawAsset(operateCtx, `frame/effect-border-${foil}.png`, effectBoxX, effectBoxY);
+            const assetName = foil === 'normal'
+                ? bottomLeftFrame === 'speed-skill'
+                    ? 'speed-skill'
+                    : 'normal'
+                : foil;
+            await drawAsset(operateCtx, `frame/effect-border-${assetName}.png`, effectBoxX, effectBoxY);
             const operateCanvasAfterCustom = await blendCanvas({
                 canvas: operateCanvas,
                 customFoilCanvas: overlayCanvas,

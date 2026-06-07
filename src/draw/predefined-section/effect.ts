@@ -10,8 +10,7 @@ import {
     FULL_LINE_PLACEHOLDER,
     FLAVOR_LINE_PLACEHOLDER,
     DrawMemory,
-    parseOffset,
-    CanvasConst,
+    RegionOffset,
 } from '../../model';
 import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';
@@ -69,7 +68,7 @@ export const drawEffect = async ({
     fontData = EffectFontData[fontDataKey],
     textStyle,
     region,
-    coordinateOffset,
+    offsetData,
     sizeList = EffectCoordinateData['tcg-type'],
     condenseTolerant = 'strict',
     format,
@@ -84,7 +83,7 @@ export const drawEffect = async ({
     fontDataKey?: string,
     textStyle?: CanvasTextStyle,
     sizeList?: CoordinateData[],
-    coordinateOffset?: string,
+    offsetData: RegionOffset,
     condenseTolerant?: CondenseType,
     region: string,
     format: string,
@@ -149,19 +148,18 @@ export const drawEffect = async ({
                     '3': 800,
                 });
         const appliedSizeData = sizeList[appliedSizeLevel] ?? sizeList[sizeList.length - 1];
-        const sizeOffsetData = parseOffset(coordinateOffset, CanvasConst.effectBox);
         const {
             trueEdge,
             trueWidth: trueWidthStart,
             trueBaseline: trueBaselineStart,
             trueHeightCap,
         } = scaleCoordinateData({
-            trueEdge: appliedSizeData.trueEdge - sizeOffsetData.x,
-            trueWidth: appliedSizeData.trueWidth - sizeOffsetData.width,
-            trueBaseline: appliedSizeData.trueBaseline - sizeOffsetData.y,
+            trueEdge: appliedSizeData.trueEdge - offsetData.x,
+            trueWidth: appliedSizeData.trueWidth - offsetData.width,
+            trueBaseline: appliedSizeData.trueBaseline - offsetData.y,
             trueHeightCap: appliedSizeData.trueHeightCap == null
                 ? undefined
-                : appliedSizeData.trueHeightCap - (sizeOffsetData.height ?? 0),
+                : appliedSizeData.trueHeightCap - (offsetData.height ?? 0),
         }, globalScale);
         const width = (isNormal && format === 'tcg') ? trueWidthStart - 2 * globalScale : trueWidthStart;
 

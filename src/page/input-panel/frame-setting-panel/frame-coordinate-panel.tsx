@@ -3,7 +3,7 @@ import { forwardRef, Fragment, useEffect, useRef, useState } from 'react';
 import Moveable from 'react-moveable';
 import { IconButton } from 'src/component';
 import { CanvasConst, MoveableRegionList, MoveableRegionMap, parseCoordinate } from 'src/model';
-import { useCard } from 'src/service';
+import { useCard, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
@@ -45,8 +45,13 @@ const FrameCoordinatePanelContainer = styled.div`
         }
         .control-panel-button {
             display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
             > * {
                 min-width: 24px; // Alignment
+            }
+            .icon-button {
+                margin: 0;
             }
         }
         .action-vertical-align {
@@ -68,8 +73,11 @@ const MoveableTarget = styled.div`
         background-color: var(--main-active);
     }
 `;
+/** Ensure that the region never completely out of the card frame */
+const BOUND_PADDING = 80;
 export type FrameCoordinatePanelRef = Record<string, never>;
 export const FrameCoordinatePanel = forwardRef(() => {
+    const language = useLanguage();
     const [currentCoordinate, setCurrentCoordinate] = useState({
         name: 'none' as 'none' | keyof typeof MoveableRegionMap,
         x: 0,
@@ -141,7 +149,6 @@ export const FrameCoordinatePanel = forwardRef(() => {
         throttleDrag: 1,
         startDragRotate: 0,
         throttleDragRotate: 0,
-        bounds: { 'left': -20, 'top': -20, 'right': -20, 'bottom': -20, 'position': 'css' } as const,
     };
     return (
         <FrameCoordinatePanelContainer className="frame-coordinate-panel">
@@ -154,6 +161,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
                         {MoveableRegionList.map(({
                             name,
                         }) => {
+                            const { width, height } = CanvasConst[name];
                             return <Fragment key={name}>
                                 <MoveableTarget
                                     className={mergeClass(
@@ -179,6 +187,13 @@ export const FrameCoordinatePanel = forwardRef(() => {
                                     edgeDraggable={false}
                                     {...commonProps}
                                     edge={[]}
+                                    bounds={{
+                                        'left': -width + BOUND_PADDING,
+                                        'top': -height + BOUND_PADDING,
+                                        'right': -width + BOUND_PADDING,
+                                        'bottom': -height + BOUND_PADDING,
+                                        'position': 'css',
+                                    }}
                                     onDrag={e => {
                                         setCurrentCoordinate(cur => ({ ...cur, x: e.translate[0], y: e.translate[1], useDefault: false }));
                                         e.target.style.transform = e.transform;
@@ -196,9 +211,9 @@ export const FrameCoordinatePanel = forwardRef(() => {
                 </div>
             </div>
             <div className="control-panel">
-                <h3>Card Layout</h3>
+                <h3>{language['input.frame-coordinate.label']}</h3>
                 <div>
-                    <label>Top</label>
+                    <label>{language['input.frame-coordinate.top']}</label>
                     <InputNumber
                         value={currentCoordinate.x}
                         onChange={value => {
@@ -210,7 +225,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
                     />
                 </div>
                 <div>
-                    <label>Left</label>
+                    <label>{language['input.frame-coordinate.left']}</label>
                     <InputNumber
                         value={currentCoordinate.y}
                         onChange={value => {
@@ -222,8 +237,11 @@ export const FrameCoordinatePanel = forwardRef(() => {
                     />
                 </div>
                 <div className="control-panel-action">
-                    <div className="control-panel-button">
+                    {currentCoordinate.name !== 'none' && <div className="control-panel-button">
                         <IconButton
+                            tooltipProps={{
+                                title: language['image-cropper.button.center-horizontal.tooltip'],
+                            }}
                             containerProps={{ className: 'action-horizontal-align' }}
                             onClick={() => {
                                 const name = currentCoordinate.name;
@@ -243,6 +261,9 @@ export const FrameCoordinatePanel = forwardRef(() => {
                             <VerticalAlignMiddleOutlined />
                         </IconButton>
                         <IconButton
+                            tooltipProps={{
+                                title: language['image-cropper.button.center-vertical.tooltip'],
+                            }}
                             containerProps={{ className: 'action-vertical-align' }}
                             onClick={() => {
                                 const name = currentCoordinate.name;
@@ -278,8 +299,8 @@ export const FrameCoordinatePanel = forwardRef(() => {
                                     moveableMapRef.current[name]?.updateRect();
                                 }
                             }}
-                        >Reset</IconButton>
-                    </div>
+                        >{language['generic.reset.label']}</IconButton>
+                    </div>}
                 </div>
             </div>
         </FrameCoordinatePanelContainer>

@@ -42,6 +42,7 @@ import {
     PendulumSize,
     HALF_SCALE_WIDTH_OFFSET,
     ArrowPositionMap,
+    parseOffset,
 } from 'src/model';
 import {
     checkDiplayLinkRating,
@@ -281,6 +282,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         typeTextStyle,
     ]);
     const foilDyeColor = dyeList[6];
+    const effectBoxOffsetData = useMemo(() => parseOffset(coordinateMap.effectBox, CanvasConst.effectBox), [coordinateMap.effectBox]);
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
@@ -613,17 +615,25 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const normalizedLinkRating = typeof linkRating === 'string' && linkRating.length > 0
                     ? linkRating
                     : `${(Array.isArray(linkMap) ? linkMap.length : 0)}`;
-                await drawLinkRatingText(frameCanvasRef.current, normalizedLinkRating, resolvedStatTextStyle, !hideStatLabel, globalScale);
+                await drawLinkRatingText(
+                    frameCanvasRef.current,
+                    normalizedLinkRating,
+                    resolvedStatTextStyle,
+                    coordinateMap.effectBox ?? '',
+                    !hideStatLabel,
+                    globalScale,
+                );
                 resetStyle();
             }
             await drawPredefinedMark({
+                bordered: (opacityBody < 50 || boundless) && !isPendulum,
                 canvas: frameCanvasRef.current,
                 globalScale,
-                type: (lightFooter && !isPendulum) ? 'white' : 'black',
-                bordered: (opacityBody < 50 || boundless) && !isPendulum,
                 isDuelTerminalCard, isSpeedCard,
                 isLink, isPendulum,
+                offsetData: effectBoxOffsetData,
                 textStyle: resolvedOtherEffectTextStyle,
+                type: (lightFooter && !isPendulum) ? 'white' : 'black',
             });
             await drawOverlayFinish();
         };
@@ -693,17 +703,21 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         if (!clearCanvas(ctx)) return;
         if (isPendulum) {
             const { numberBlueX, numberRedX, numberY, fontSize } = PendulumSizeMap[pendulumSize];
-            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, numberBlueX, numberY, fontSize, globalScale, resolvedPendulumEffectTextStyle);
-            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, numberRedX, numberY, fontSize, globalScale, resolvedPendulumEffectTextStyle);
+            const offsetedBlueX = numberBlueX - effectBoxOffsetData.x;
+            const offsetedRedX = numberRedX - effectBoxOffsetData.x;
+            const restArgumentList = [numberY - effectBoxOffsetData.y, fontSize, globalScale, resolvedPendulumEffectTextStyle] as const;
+            if ((pendulumScaleBlue ?? '') !== '') drawScale(ctx, pendulumScaleBlue, offsetedBlueX, ...restArgumentList);
+            if ((pendulumScaleRed ?? '') !== '') drawScale(ctx, pendulumScaleRed, offsetedRedX, ...restArgumentList);
         }
     }, [
         readyToDraw,
         globalScale,
+        effectBoxOffsetData,
         isPendulum,
-        pendulumSize,
         pendulumScaleBlue,
-        pendulumScaleRed,
         pendulumScaleCanvasRef,
+        pendulumScaleRed,
+        pendulumSize,
         resolvedPendulumEffectTextStyle,
     ]);
 
@@ -757,26 +771,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             : !!def;
         const hasLink = showLinkRating;
         if (atk) {
-            const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0);
-            if (!hideStatLabel) drawStatText(ctx, 'ATK', 600.85 - offset, 1106, globalScale);
-            drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5, globalScale);
+            const offset = (hasDef ? 168.75 : 0) + (hasLink ? 168.75 : 0) + effectBoxOffsetData.x;
+            if (!hideStatLabel) drawStatText(ctx, 'ATK', 600.85 - offset, 1106 - effectBoxOffsetData.y, globalScale);
+            drawStat(ctx, atk.trim(), 677.574 - offset, 1106.5 - effectBoxOffsetData.y, globalScale);
         }
         if (def && (!showLinkRating || showDefAndLink)) {
-            const offset = hasLink ? 168.75 : 0;
-            if (!hideStatLabel) drawStatText(ctx, 'DEF', 600.85 - offset, 1106, globalScale);
-            drawStat(ctx, def.trim(), 673.865 - offset, 1106.5, globalScale);
+            const offset = (hasLink ? 168.75 : 0) + effectBoxOffsetData.x;
+            if (!hideStatLabel) drawStatText(ctx, 'DEF', 600.85 - offset, 1106 - effectBoxOffsetData.y, globalScale);
+            drawStat(ctx, def.trim(), 673.865 - offset, 1106.5 - effectBoxOffsetData.y, globalScale);
         }
         resetStyle();
     }, [
         atk,
         def,
+        effectBoxOffsetData,
         globalScale,
+        hideStatLabel,
         isMonster,
         readyToDraw,
         resolvedStatTextStyle,
         showDefAndLink,
         showLinkRating,
-        hideStatLabel,
         statCanvasRef,
         statInEffect,
     ]);
@@ -788,19 +803,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (!clearCanvas(ctx)) return;
 
-        drawSetId(
+        drawSetId({
             ctx,
-            setId,
-            {
-                globalScale,
-                isLink,
-                isPendulum,
-                withShadow: requireShadow && !isPendulum,
-                format,
-                lightFooter: lightRightFooter,
-                textStyle: resolvedOtherEffectTextStyle,
-            }
-        );
+            value: setId,
+            globalScale,
+            isLink,
+            isPendulum,
+            withShadow: requireShadow && !isPendulum,
+            offsetData: effectBoxOffsetData,
+            format,
+            lightFooter: lightRightFooter,
+            textStyle: resolvedOtherEffectTextStyle,
+        });
     }, [
         readyToDraw,
         globalScale,
@@ -808,6 +822,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         isLink,
         isPendulum,
         lightRightFooter,
+        effectBoxOffsetData,
         setIdCanvasRef,
         setId,
         isSpeedSkill,
@@ -1088,7 +1103,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 condenseTolerant,
                 format,
                 furiganaHelper,
-                coordinateOffset: coordinateMap.effectBox,
+                offsetData: effectBoxOffsetData,
                 ...getEffectFontAndCoordinate({
                     format,
                     statInEffect,
@@ -1115,6 +1130,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 furiganaHelper,
                 isMonster,
                 textStyle: resolvedTypeTextStyle,
+                offsetData: typeInEffect
+                    ? effectBoxOffsetData
+                    : parseOffset(coordinateMap.starBox, CanvasConst.starBox),
                 size: !typeInEffect
                     ? 'large'
                     : (isPendulum && pendulumSize === 'large')
@@ -1128,7 +1146,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     }, [
         readyToDraw,
         globalScale,
-        coordinateMap.effectBox,
+        effectBoxOffsetData,
+        coordinateMap.starBox,
         effect,
         effectCanvasRef,
         effectJustifyRatio,
@@ -1199,6 +1218,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     condenseTolerant,
                     format,
                     furiganaHelper,
+                    offsetData: effectBoxOffsetData,
                     option: {
                         forceRelaxCondenseLimit: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
                         defaultSizeLevel: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE - normalizedUpSize,
@@ -1213,7 +1233,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         readyToDraw,
         globalScale,
         condenseTolerant,
-        coordinateMap.effectBox,
+        effectBoxOffsetData,
         format,
         furiganaHelper,
         isPendulum,

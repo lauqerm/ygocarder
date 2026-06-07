@@ -34,7 +34,6 @@ const StyledFrameSettingModal = styled(Modal)`
 const StyledPendulumFrameInputContainer = styled.div`
     display: inline-flex;
     cursor: pointer;
-    box-shadow: var(--bs-input);
     vertical-align: bottom;
     box-shadow: var(--bs-button);
     border-radius: var(--br-lg);
@@ -91,6 +90,12 @@ const StyledPendulumInputContainer = styled.div`
             }
         }
     }
+    .frame-layout-button {
+        vertical-align: bottom;
+        flex: 0 0 auto;
+        margin: 0;
+        margin-right: var(--spacing);
+    }
     .joined-row {
         position: relative;
         grid-column: span 2;
@@ -123,8 +128,10 @@ const StyledPendulumInputContainer = styled.div`
         }
         .pendulum-size {
             display: inline-block;
-            line-height: 1.15; // Alignment
             margin-right: var(--spacing);
+            .pendulum-size-button {
+                margin: 0;
+            }
         }
         .ant-checkbox-wrapper + .ant-checkbox-wrapper {
             margin-left: 0;
@@ -366,25 +373,23 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         </InternalPopover>
                         : null}
                 </StyledPendulumFrameInputContainer>}
-                {showCreativeOption && <div
+                {showCreativeOption && <PopoverButton
                     tabIndex={0}
+                    $softMode={softMode}
+                    className="frame-layout-button"
                     onClick={() => setFrameCoordinateVisible(true)}
                     onKeyDown={e => {
                         if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
                             setFrameCoordinateVisible(true);
-                            /** Popover takes time to mount / become visible */
-                            setTimeout(() => {
-                                frameBlenderRef.current?.focus();
-                            }, 200);
 
                             return false;
                         }
                     }}
                 >
-                    <span className="pendulum-frame-label">
-                        Card Coordinate
-                    </span>
-                </div>}
+                    <div className="button-label">
+                        {language['input.frame-coordinate.label']}
+                    </div>
+                </PopoverButton>}
                 {(isPendulum && showCreativeOption) && <div className="pendulum-size">
                     <Popover key="color-picker"
                         overlayClassName="global-input-overlay font-picker-overlay"
@@ -405,6 +410,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                         placement="bottomLeft"
                     >
                         <PopoverButton
+                            className="pendulum-size-button"
                             $softMode={softMode}
                             $active={pendulumSize !== DEFAULT_PENDULUM_SIZE}
                         >

@@ -1,5 +1,5 @@
 
-import { CanvasConst, IconWithGlowMap, NO_STICKER } from 'src/model';
+import { CanvasConst, IconWithGlowMap, NO_STICKER, parseOffset, RegionOffset } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { CanvasTextStyle } from 'src/service';
@@ -175,25 +175,27 @@ export const drawSticker = async ({
 
 /** Duel terminal mark and Speed card mark. */
 export const drawPredefinedMark = async ({
+    bordered,
     canvas,
     globalScale,
-    type,
-    isPendulum,
-    isLink,
     isDuelTerminalCard,
+    isLink,
+    isPendulum,
     isSpeedCard,
-    bordered,
+    offsetData,
     textStyle,
+    type,
 }: {
     canvas: HTMLCanvasElement,
-    globalScale: number,
-    type: string,
-    isPendulum: boolean,
-    isLink: boolean,
-    isDuelTerminalCard: boolean,
-    isSpeedCard: boolean,
     bordered: boolean,
+    globalScale: number,
+    isDuelTerminalCard: boolean,
+    isLink: boolean,
+    isPendulum: boolean,
+    isSpeedCard: boolean,
+    offsetData: RegionOffset,
     textStyle?: CanvasTextStyle,
+    type: string,
 }) => {
     const ctx = canvas?.getContext('2d');
 
@@ -209,7 +211,12 @@ export const drawPredefinedMark = async ({
         await drawWithStyle(
             canvas,
             `text/text-duel-terminal-${type}${bordered ? '-bordered' : ''}.png`,
-            ...scaleDrawCoordinate(coordinate, globalScale),
+            ...scaleDrawCoordinate([
+                coordinate[0] - offsetData.x,
+                coordinate[1] - offsetData.y,
+                coordinate[2],
+                coordinate[3],
+            ], globalScale),
             globalScale,
             textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
         );
@@ -224,7 +231,12 @@ export const drawPredefinedMark = async ({
         await drawWithStyle(
             canvas,
             `text/text-speed-duel-${type}${bordered ? '-bordered' : ''}.png`,
-            ...scaleDrawCoordinate(coordinate, globalScale),
+            ...scaleDrawCoordinate([
+                coordinate[0] - offsetData.x,
+                coordinate[1] - offsetData.y,
+                coordinate[2],
+                coordinate[3],
+            ], globalScale),
             globalScale,
             textStyle?.shadowColor ? { ...textStyle, blur: 3, x: 0, y: 0 } : textStyle,
         );
@@ -275,6 +287,7 @@ export const drawLinkRatingText = async (
     canvas: HTMLCanvasElement,
     rating: string,
     style: CanvasTextStyle,
+    coordinateOffset: string,
     showStatLabelFlag: boolean,
     globalScale: number,
 ) => {
@@ -282,10 +295,11 @@ export const drawLinkRatingText = async (
 
     if (!ctx || typeof rating !== 'string') return;
 
+    const sizeOffsetData = parseOffset(coordinateOffset, CanvasConst.effectBox);
     if (showStatLabelFlag) await drawWithStyle(
         canvas,
         'link/link-text.png',
-        ...scaleDrawCoordinate([600, 1080, 120, 30], globalScale),
+        ...scaleDrawCoordinate([600 - sizeOffsetData.x, 1080 - sizeOffsetData.y, 120, 30], globalScale),
         globalScale,
         style,
     );
@@ -296,7 +310,7 @@ export const drawLinkRatingText = async (
     ctx.textAlign = 'right';
     ctx.scale(1.2, 1);
     ctx.font = `bold ${24 * globalScale}px RoGSanSrfStd-Bd`;
-    ctx.fillText(`${rating}`, 622.75 * globalScale, baseline * globalScale);
+    ctx.fillText(`${rating}`, (622.75 - sizeOffsetData.x / 1.2) * globalScale, (baseline - sizeOffsetData.y) * globalScale);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.textAlign = 'left';
     resetStyle();

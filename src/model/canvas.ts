@@ -139,15 +139,16 @@ export const MoveableRegionMap = {
     effectBox: CanvasConst.effectBox,
     starBox: CanvasConst.starBox,
 };
+export type RegionOffset = {
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+};
 export const MoveableRegionList = Object.values(MoveableRegionMap);
 export const parseCoordinate = (
     stringifiedCoordinate: unknown,
-    defaultCoordinate: {
-        x: number,
-        y: number,
-        width: number,
-        height: number,
-    },
+    defaultCoordinate: RegionOffset,
 ) => {
     if (typeof stringifiedCoordinate !== 'string') return defaultCoordinate;
     const [x, y, width, height] = stringifiedCoordinate.split('|')
@@ -162,12 +163,7 @@ export const parseCoordinate = (
 };
 export const parseOffset = (
     stringifiedCoordinate: unknown,
-    defaultCoordinate: {
-        x: number,
-        y: number,
-        width: number,
-        height: number,
-    },
+    defaultCoordinate: RegionOffset,
 ) => {
     const [x, y, width, height] = (typeof stringifiedCoordinate === 'string' ? stringifiedCoordinate : '').split('|')
         .map(entry => entry === undefined || entry === '' ? undefined : parseInt(entry));

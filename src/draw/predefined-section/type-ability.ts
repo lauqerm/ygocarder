@@ -1,6 +1,16 @@
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
-import { condense, createFontGetter , checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData, createCanvas } from 'src/util';
-import { ST_ICON_SYMBOL, FontData, TypeAbilityCoordinateMap, getTypeAbilityFontData, NO_ICON, TypeAbilityCoordinateType, CanvasConst, DEFAULT_TEXT_COLOR } from 'src/model';
+import { condense, createFontGetter, checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData, createCanvas } from 'src/util';
+import {
+    CanvasConst,
+    DEFAULT_TEXT_COLOR,
+    FontData,
+    NO_ICON,
+    RegionOffset,
+    ST_ICON_SYMBOL,
+    TypeAbilityCoordinateMap,
+    TypeAbilityCoordinateType,
+    getTypeAbilityFontData,
+} from 'src/model';
 import { getWritingDirection, tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
@@ -18,28 +28,39 @@ const sizeMap: Record<TypeAbilityCoordinateType, number> = {
 };
 export const drawTypeAbilityText = async ({
     ctx,
-    value,
     format,
-    metricMethod,
-    size,
     furiganaHelper,
     globalScale,
+    metricMethod,
+    offsetData,
+    size,
+    value,
 }: {
     ctx: CanvasRenderingContext2D,
-    value: string,
     format: string,
-    metricMethod?: FontData['metricMethod'],
-    size: TypeAbilityCoordinateType,
     furiganaHelper: boolean,
     globalScale: number,
+    metricMethod?: FontData['metricMethod'],
+    offsetData: RegionOffset,
+    size: TypeAbilityCoordinateType,
+    value: string,
 }) => {
+    const appliedSizeData = TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'];
     const {
         edgeAlignment = 'left',
         trueEdge,
         trueBaseline,
         trueWidth: width,
     } = scaleCoordinateData(
-        TypeAbilityCoordinateMap[format]?.[size] ?? TypeAbilityCoordinateMap['tcg']['medium'],
+        {
+            edgeAlignment: appliedSizeData.edgeAlignment,
+            trueBaseline: appliedSizeData.trueBaseline - offsetData.y,
+            trueEdge: appliedSizeData.trueEdge - offsetData.x,
+            trueWidth: appliedSizeData.trueWidth - offsetData.width,
+            trueHeightCap: appliedSizeData.trueHeightCap == null
+                ? undefined
+                : appliedSizeData.trueHeightCap - offsetData.height,
+        },
         globalScale,
     );
     const direction = getWritingDirection(value);
@@ -77,7 +98,7 @@ export const drawTypeAbilityText = async ({
                 lineHeight,
                 globalScale,
             });
-    
+
             if (currentLineCount > 1) return false;
             actualLineWidth = currentLineList[0].actualLineWidth;
             return true;
@@ -117,29 +138,31 @@ const {
     iconWidth,
 } = CanvasConst;
 export const drawTypeAbility = async ({
+    offsetData,
     ctx,
-    globalScale,
-    typeAbility,
-    subFamily,
     format,
     frame,
-    size,
-    isMonster,
-    textStyle,
     furiganaHelper,
+    globalScale,
+    isMonster,
+    size,
+    subFamily,
+    textStyle,
+    typeAbility,
     loopIconFinish,
 }: {
     ctx?: CanvasRenderingContext2D | null,
-    globalScale: number,
-    typeAbility: string,
-    subFamily: string,
     format: string,
     frame: string,
-    size: TypeAbilityCoordinateType,
-    isMonster: boolean,
-    textStyle: CanvasTextStyle,
     furiganaHelper: boolean,
+    globalScale: number,
+    isMonster: boolean,
     loopIconFinish?: ReturnType<typeof getFinishIterator>,
+    offsetData: RegionOffset,
+    size: TypeAbilityCoordinateType,
+    subFamily: string,
+    textStyle: CanvasTextStyle,
+    typeAbility: string,
 }) => {
     if (!clearCanvas(ctx)) return;
 
@@ -163,13 +186,14 @@ export const drawTypeAbility = async ({
     const normalizedStyle = { color: defaultFillStyle, ...textStyle };
     const resetStyle = setTextStyle({ ctx, ...normalizedStyle, globalScale });
     const { iconPositionList, xRatio } = await drawTypeAbilityText({
+        offsetData,
         ctx,
         format,
-        size,
-        value: normalizedTypeAbilityText,
-        metricMethod: !isMonster ? 'compact' : undefined,
         furiganaHelper,
         globalScale,
+        metricMethod: !isMonster ? 'compact' : undefined,
+        size,
+        value: normalizedTypeAbilityText,
     });
     resetStyle();
 

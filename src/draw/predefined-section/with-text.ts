@@ -1,6 +1,6 @@
 import { CanvasTextStyle } from 'src/service';
 import { fillTextLeftWithSpacing, fillTextRightWithSpacing, setTextStyle } from '../canvas-util';
-import { DEFAULT_TEXT_COLOR, NB_WORD_CLOSE, NB_WORD_OPEN } from 'src/model';
+import { DEFAULT_TEXT_COLOR, NB_WORD_CLOSE, NB_WORD_OPEN, RegionOffset } from 'src/model';
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,
@@ -290,30 +290,39 @@ export const drawStat = (
         }
 };
 
-export const drawSetId = (
+export const drawSetId = ({
+    ctx,
+    format,
+    globalScale,
+    isLink,
+    isPendulum,
+    lightFooter,
+    offsetData,
+    textStyle,
+    value,
+    withShadow,
+}: {
     ctx: CanvasRenderingContext2D | null | undefined,
+    format: string,
+    globalScale: number,
+    isLink: boolean,
+    isPendulum: boolean,
+    lightFooter: boolean,
+    offsetData: RegionOffset,
+    textStyle?: CanvasTextStyle,
     value: string,
-    option: {
-        globalScale: number,
-        isPendulum: boolean,
-        isLink: boolean,
-        withShadow: boolean,
-        format: string,
-        lightFooter: boolean,
-        textStyle?: CanvasTextStyle,
-    }
-) => {
+    withShadow: boolean,
+}) => {
     if (!ctx) return;
 
-    const { globalScale, isPendulum, isLink, withShadow, format, lightFooter, textStyle } = option;
     let spacing = 0.125;
-    let offsetY = 0;
+    let yOffset = 0;
     let xOffset = 0;
     ctx.font = `${withShadow ? 'bold' : ''} ${22 * globalScale}px stone-serif-regular, Times New Roman`;
     if (format === 'ocg') {
         spacing = 0.145;
-        offsetY = -1;
-        xOffset = -3;
+        yOffset = 1;
+        xOffset = 3;
     }
     const resetTextStyle = setTextStyle({
         ctx,
@@ -328,13 +337,15 @@ export const drawSetId = (
         ...textStyle,
         ...(textStyle?.shadowColor ? { x: 0, y: 0, blur: 3 } : {}),
     });
+    xOffset += offsetData.x;
+    yOffset += offsetData.y;
 
     if (isPendulum) {
-        fillTextLeftWithSpacing(ctx, value, spacing, (66.65 + xOffset) * globalScale, (1105.01 + offsetY) * globalScale);
+        fillTextLeftWithSpacing(ctx, value, spacing, (66.65 - xOffset) * globalScale, (1105.01 - yOffset) * globalScale);
     } else if (isLink) {
-        fillTextRightWithSpacing(ctx, value, spacing, (666.56 + xOffset) * globalScale, (872.94 + offsetY) * globalScale);
+        fillTextRightWithSpacing(ctx, value, spacing, (666.56 - xOffset) * globalScale, (872.94 - yOffset) * globalScale);
     } else {
-        fillTextRightWithSpacing(ctx, value, spacing, (728.78 + xOffset) * globalScale, (871.50 + offsetY) * globalScale);
+        fillTextRightWithSpacing(ctx, value, spacing, (728.78 - xOffset) * globalScale, (871.50 - yOffset) * globalScale);
     }
     resetTextStyle();
 };

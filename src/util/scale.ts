@@ -17,7 +17,7 @@ export const scaleCoordinateData = (coordinateData: CoordinateData, scale: numbe
     };
 };
 
-export const scaleDrawCoordinate = (coordinate: [number, number, number, number], scale: number) => {
+export const scaleDrawCoordinate = (coordinate: [x: number, y: number, width: number, height: number], scale: number) => {
     return coordinate.map(value => value * scale) as [number, number, number, number];
 };
 

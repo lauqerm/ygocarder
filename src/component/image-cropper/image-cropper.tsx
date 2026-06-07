@@ -467,7 +467,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 >
                     <div className="card-image-source-input-title">
                         <span className="field-title">
-                            {title}
+                            <span>{title}</span>
                             <IconButton
                                 Icon={DownloadOutlined}
                                 containerProps={{ className: isDownloadable ? '' : 'disabled' }}
