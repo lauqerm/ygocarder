@@ -1,11 +1,10 @@
-import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData } from 'src/model';
+import { CreatorFontData, CreatorCoordinateMap, DefaultFontSizeData, CanvasTextStyle } from 'src/model';
 import { condense, createFontGetter, scaleCoordinateData, scaleFontData, scaleFontSizeData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { clearCanvas, setTextStyle } from '../canvas-util';
-import { CanvasTextStyle } from 'src/service';
 
 export const drawCreatorText = async ({
     ctx,
@@ -93,7 +92,7 @@ export const drawCreatorText = async ({
                     width: normalizedWidth,
                     lineHeight,
                 });
-        
+
                 if (currentLineCount > 1) return false;
                 internalTrueWidth = currentLineList[0].actualLineWidth;
                 return true;

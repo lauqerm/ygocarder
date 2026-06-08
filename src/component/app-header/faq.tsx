@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '06/06/2026';
+        const currentReminder = '08/06/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -81,6 +81,20 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'RedSupernovaDragon at Jun 08, 2026',
+            question: 'I tried the full caching option and it worked just fine. I specify my question from yesterday: I was wondering if you plan to eventually release this app as an .exe file that can be downloaded and installed through a wizard, in order to be executed completely outside of Chrome. Something like MSE, but better and ygo-only: Magic Set Editor is provided on their official site as a zip folder containing the app and all the assets (card frames, etc.) you need. This would truly be helpful, but if you don\'t have such plans, I\'ll keep using the site or the cached version.',
+        },
+        {
+            author: 'RedSupernovaDragon at Jun 07, 2026',
+            question: 'Hello,\njust a simple question: are you planning to release an installable offline app? I mean something like MSE, an app that can be installed on a computer with all the assets you need to create cards. I was wondering about this because, while the site is fine for me, being able to create hundreds of cards without the necessity of a wi-fi connection would truly be awesome.',
+            answer: 'Right now the install option is my solution for the app to work offline. Not only does it work on both mobile and desktop, it also doesn\'t require me to modify the codebase much (besides, from the outside it is no different than your everyday apps anyway, just click the icon and start working). Creating an executable version of the app requires a completely different skill set than I have, so I\'ll only do it if there\'s a really (and I mean really) convenient way to convert. Otherwise, managing two different codebases will quickly destroy the project.',
+        },
+        {
+            author: 'Anonymous at Jun 07, 2026',
+            question: 'I think a little of both, make the manager function export in mse-set',
+            answer: 'Got it, let\'s me examine the format first and I will see what I can do.'
+        },
         {
             author: 'Anonymous at Jun 05, 2026',
             question: 'Can you let us export to MSE as well?\nMSE would be Magic Set Editor',

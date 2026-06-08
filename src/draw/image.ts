@@ -1,6 +1,5 @@
-import { CanvasTextStyle } from 'src/service';
 import { setTextStyle } from './canvas-util';
-import { PUBLIC_PATH } from 'src/model';
+import { CanvasTextStyle, PUBLIC_PATH } from 'src/model';
 
 const imageCacheMap: Record<string, {
     image: HTMLImageElement,

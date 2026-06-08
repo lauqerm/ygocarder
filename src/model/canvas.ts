@@ -1,5 +1,14 @@
-import { LanguageDataDictionary } from 'src/service';
 import { PendulumSize } from './pendulum';
+
+export type CanvasTextStyle = {
+    x?: number,
+    y?: number,
+    blur?: number,
+    color?: string,
+    shadowColor?: string,
+    lineWidth?: number,
+    lineColor?: string,
+};
 
 export const getBackgroundTypeList = (dictionary?: {
     fit: string,
@@ -26,7 +35,7 @@ export const getBackgroundTypeList = (dictionary?: {
     ];
 export type BackgroundType = ReturnType<typeof getBackgroundTypeList>[0]['value'];
 
-export const getOverlayCompositeList = (dictionary: LanguageDataDictionary) => [
+export const getOverlayCompositeList = (dictionary: Record<string, string>) => [
     {
         value: 'none' as const,
         label: dictionary['input.advanced-frame.overlay-blend-type.none.label'],
@@ -49,7 +58,7 @@ export const getOverlayCompositeList = (dictionary: LanguageDataDictionary) => [
     },
 ];
 export type OverlayComposite = ReturnType<typeof getOverlayCompositeList>[0]['value'];
-export const getOverlayTargetList = (dictionary: LanguageDataDictionary) => [
+export const getOverlayTargetList = (dictionary: Record<string, string>) => [
     {
         value: 'border' as const,
         label: dictionary['input.advanced-frame.overlay-blend.border.label'],

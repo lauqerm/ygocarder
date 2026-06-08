@@ -46,7 +46,7 @@ import {
 import { getTextWorker, analyzeHeadText, tokenizeText, getLostLeftWidth, splitPlaceholder } from './text-util';
 import { createFontGetter, scaleFontSizeData, swapTextData } from 'src/util';
 import { getLetterWidth } from './letter';
-import { useGlobalMemory } from 'src/service';
+import { useGlobalMemory } from 'src/service/use-global';
 
 /** 
  * Return information of a token.

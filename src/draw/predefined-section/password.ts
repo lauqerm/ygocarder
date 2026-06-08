@@ -1,11 +1,10 @@
-import { PasswordFontData, PasswordCoordinateMap, DefaultFontSizeData } from 'src/model';
+import { PasswordFontData, PasswordCoordinateMap, DefaultFontSizeData, CanvasTextStyle } from 'src/model';
 import { condense, createFontGetter, scaleCoordinateData, scaleFontData, scaleFontSizeData } from 'src/util';
 import { tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { clearCanvas, setTextStyle } from '../canvas-util';
-import { CanvasTextStyle } from 'src/service';
 
 export const drawPasswordText = async ({
     ctx,
@@ -94,7 +93,7 @@ export const drawPasswordText = async ({
                     lineHeight,
                     globalScale,
                 });
-        
+
                 if (currentLineCount > 1) return false;
                 internalTrueWidth = currentLineList[0].actualLineWidth;
                 return true;

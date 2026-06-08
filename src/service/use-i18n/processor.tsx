@@ -48,13 +48,16 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
     };
     const specializedDictionary = {
         'error.load.font.tcg': (familyName: string) => {
-            return getDictionaryEntry('error.load.font.tcg').replaceAll('{familyName}', familyName);
+            return getDictionaryEntry('error.load.font.tcg')
+                .replaceAll('{familyName}', familyName);
         },
         'error.load.font.ocg': (familyName: string) => {
-            return getDictionaryEntry('error.load.font.ocg').replaceAll('{familyName}', familyName);
+            return getDictionaryEntry('error.load.font.ocg')
+                .replaceAll('{familyName}', familyName);
         },
         'error.max-size.description': (fileSize: number) => {
-            return getDictionaryEntry('error.max-size.description').replaceAll('{fileSize}', `${fileSize}`);
+            return getDictionaryEntry('error.max-size.description')
+                .replaceAll('{fileSize}', `${fileSize}`);
         },
         'cache-install.button.tooltip.first-line': (cachedAssetCount: React.ReactNode) => {
             return applyTemplateNode(
@@ -75,7 +78,8 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
             );
         },
         'cache-install.button.cache-only.label': (cachedPercent: number) => {
-            return getDictionaryEntry('cache-install.button.cache-only.label').replaceAll('{cachedPercent}', `${cachedPercent}`);
+            return getDictionaryEntry('cache-install.button.cache-only.label')
+                .replaceAll('{cachedPercent}', `${cachedPercent}`);
         },
         'cache-install.modal.downloading.error': (failedFile: number) => {
             return applyTemplateNode(

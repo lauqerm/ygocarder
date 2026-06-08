@@ -20,11 +20,11 @@ import {
     getDefaultCoordinateMap,
     parseCoordinate,
     parseOffset,
+    CanvasTextStyle,
 } from 'src/model';
 import { drawAsset, drawAssetWithSize, drawFromWithSizeAndFallback, drawWithStyle } from '../image';
 import { blendCanvas, createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
-import { CanvasTextStyle } from 'src/service';
 import { getFinishIterator } from '../canvas-util';
 import { applyAlphaMask, MaskPromise } from './mask';
 

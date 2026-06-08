@@ -1,14 +1,4 @@
-import { DEFAULT_TEXT_COLOR, TextStyle } from 'src/model';
-
-export type CanvasTextStyle = {
-    x?: number,
-    y?: number,
-    blur?: number,
-    color?: string,
-    shadowColor?: string,
-    lineWidth?: number,
-    lineColor?: string,
-};
+import { CanvasTextStyle, DEFAULT_TEXT_COLOR, TextStyle } from 'src/model';
 
 export const prepareStyle = ({
     // lightFooter,

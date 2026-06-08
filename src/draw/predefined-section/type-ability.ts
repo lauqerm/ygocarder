@@ -2,6 +2,7 @@ import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
 import { condense, createFontGetter, checkLightFrame, checkSpeedSkill, scaleCoordinateData, scaleFontData, createCanvas } from 'src/util';
 import {
     CanvasConst,
+    CanvasTextStyle,
     DEFAULT_TEXT_COLOR,
     FontData,
     NO_ICON,
@@ -16,7 +17,6 @@ import { drawLine } from '../line';
 import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
-import { CanvasTextStyle } from 'src/service';
 
 /** Small and medium size are used for type / ability text in effect box. Large type is used for "Spell/Trap type" under card's name. */
 const sizeMap: Record<TypeAbilityCoordinateType, number> = {

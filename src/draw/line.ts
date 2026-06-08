@@ -56,7 +56,7 @@ import { fillHeadText } from './text-overhead';
 import { drawMarker } from './canvas-util';
 import { scaleFontSizeData, swapTextData } from 'src/util';
 import { drawFromWithSizeAndFallback } from './image';
-import { useGlobalMemory } from 'src/service';
+import { useGlobalMemory } from 'src/service/use-global';
 import { normalizeCardText } from './text-normalize';
 
 /**

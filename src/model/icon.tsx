@@ -1,5 +1,4 @@
 import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import { WithLanguage } from 'src/service';
 import { PUBLIC_PATH } from './app';
 
 export const DEFAULT_EXTERNAL_ATTRIBUTE = 'https://i.postimg.cc/3w5ZQ2rt/attr-custom-void.png';
@@ -271,7 +270,7 @@ export const StickerList = [
 
 export type IconTypeInfo = {
     value: string,
-    labelKey: string | ((language: WithLanguage) => React.ReactNode),
+    labelKey: string | ((language: { language: Record<string, string> }) => React.ReactNode),
     fullLabelKey: string,
     icon: React.ReactNode,
     isOption: boolean,
@@ -681,7 +680,7 @@ export const TotalIconTypeMap = {
     ...IconTypeMap,
     ...IconTypeAttributeMap,
     ...IconTypeStMap,
-    'user-defined':{
+    'user-defined': {
         value: 'user-defined',
         labelKey: 'input.icon-type.user-defined.label',
         fullLabelKey: 'input.icon-type.user-defined.label',

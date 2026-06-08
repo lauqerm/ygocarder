@@ -1,6 +1,5 @@
-import { CanvasTextStyle } from 'src/service';
 import { fillTextLeftWithSpacing, fillTextRightWithSpacing, setTextStyle } from '../canvas-util';
-import { DEFAULT_TEXT_COLOR, NB_WORD_CLOSE, NB_WORD_OPEN, RegionOffset } from 'src/model';
+import { CanvasTextStyle, DEFAULT_TEXT_COLOR, NB_WORD_CLOSE, NB_WORD_OPEN, RegionOffset } from 'src/model';
 
 export const drawScale = (
     ctx: CanvasRenderingContext2D | null | undefined,

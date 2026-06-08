@@ -11,6 +11,7 @@ export const setupSentry = async (
 ) => {
     const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
     const Sentry = await import('@sentry/react');
+    if (!sentryDsn && reportTarget) reportTarget.style.display = 'none';
     if (reportTarget
         && sentryDsn
         && Sentry.isInitialized() === false

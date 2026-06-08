@@ -1,5 +1,4 @@
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, DEFAULT_TEXT_COLOR, FinishInformation, FinishMap, PendulumSize } from 'src/model';
-import { CanvasTextStyle } from 'src/service';
+import { CanvasConst, CanvasTextStyle, DEFAULT_PENDULUM_SIZE, DEFAULT_TEXT_COLOR, FinishInformation, FinishMap, PendulumSize } from 'src/model';
 
 const { height: CanvasHeight, width: CanvasWidth, maximumScale } = CanvasConst;
 

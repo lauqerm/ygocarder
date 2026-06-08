@@ -1,4 +1,3 @@
-import { CanvasTextStyle } from 'src/service';
 import {
     CondenseType,
     EffectFontData,
@@ -11,6 +10,7 @@ import {
     FLAVOR_LINE_PLACEHOLDER,
     DrawMemory,
     RegionOffset,
+    CanvasTextStyle,
 } from '../../model';
 import { condense, createFontGetter, injectDynamicFont, scaleCoordinateData, scaleFontData } from '../../util';
 import { clearCanvas, setTextStyle } from '../canvas-util';

@@ -115,7 +115,7 @@ export const AppHeader = ({
             if (sentryInitialized.current === false) {
                 sentryInitialized.current = true;
                 setupSentry(
-                    reportTarget,
+                    document.getElementById('sentry-bug-report'),
                     {
                         formTitle: language['contributor.bug-report.tooltip'],
                         nameLabel: language['contributor.bug-report.name.label'],
@@ -130,8 +130,6 @@ export const AppHeader = ({
                         successMessageText: language['contributor.bug-report.success.label'],
                     }
                 );
-            } else if (reportTarget) {
-                reportTarget.style.display = 'none';
             }
         });
     }, [language, reportTarget]);

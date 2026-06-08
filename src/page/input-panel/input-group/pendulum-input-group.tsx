@@ -73,6 +73,11 @@ const StyledPendulumInputContainer = styled.div`
     .blue-scale {
         color: var(--sub-blue-scale);
     }
+    .pendulum-option-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
     .pendulum-option {
         display: grid;
         grid-template-columns: var(--width-label) 1fr;
@@ -177,6 +182,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumScaleBlue,
         pendulumScaleRed,
         pendulumSize,
+        coordinateMap,
         dyeList,
         flag,
         setCard,
@@ -193,6 +199,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             pendulumSize,
             effectStyle,
             pendulumStyle,
+            coordinateMap,
             dyeList,
             flag,
         },
@@ -209,6 +216,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         pendulumSize,
         effectBackground: effectStyle.background,
         pendulumEffectBackground: pendulumStyle.background,
+        coordinateMap,
         dyeList,
         flag,
         setCard,
@@ -376,6 +384,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 {showCreativeOption && <PopoverButton
                     tabIndex={0}
                     $softMode={softMode}
+                    $active={Object.keys(coordinateMap ?? {}).length > 0}
                     className="frame-layout-button"
                     onClick={() => setFrameCoordinateVisible(true)}
                     onKeyDown={e => {

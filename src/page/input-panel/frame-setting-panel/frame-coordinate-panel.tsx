@@ -215,10 +215,12 @@ export const FrameCoordinatePanel = forwardRef(() => {
                 <div>
                     <label>{language['input.frame-coordinate.top']}</label>
                     <InputNumber
-                        value={currentCoordinate.x}
+                        value={currentCoordinate.y}
                         onChange={value => {
                             setCurrentCoordinate(cur => {
-                                if (typeof value === 'number' && cur.x !== value) return { ...cur, x: value, useDefault: false };
+                                if (typeof value === 'number' && cur.y !== value) {
+                                    return { ...cur, y: value, useDefault: false };
+                                }
                                 return cur;
                             });
                         }}
@@ -227,10 +229,12 @@ export const FrameCoordinatePanel = forwardRef(() => {
                 <div>
                     <label>{language['input.frame-coordinate.left']}</label>
                     <InputNumber
-                        value={currentCoordinate.y}
+                        value={currentCoordinate.x}
                         onChange={value => {
                             setCurrentCoordinate(cur => {
-                                if (typeof value === 'number' && cur.y !== value) return { ...cur, y: value, useDefault: false };
+                                if (typeof value === 'number' && cur.x !== value) {
+                                    return { ...cur, x: value, useDefault: false };
+                                }
                                 return cur;
                             });
                         }}

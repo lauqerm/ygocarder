@@ -1,8 +1,7 @@
 
-import { CanvasConst, IconWithGlowMap, NO_STICKER, parseOffset, RegionOffset } from 'src/model';
+import { CanvasConst, CanvasTextStyle, IconWithGlowMap, NO_STICKER, parseOffset, RegionOffset } from 'src/model';
 import { drawAsset, drawWithStyle } from '../image';
 import { clearCanvas, getFinishIterator, setTextStyle } from '../canvas-util';
-import { CanvasTextStyle } from 'src/service';
 import { createCanvas, scaleDrawCoordinate } from 'src/util';
 
 const {

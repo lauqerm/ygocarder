@@ -1,6 +1,6 @@
 import { CanvasConst, OverlayComposite } from 'src/model';
 import { createCanvas } from './create';
-import { HexColorRegex } from '..';
+import { HexColorRegex } from '../color';
 
 const {
     width: cardWidth,
