@@ -21,4 +21,5 @@ export * from './navigation';
 export * from './normalize';
 export * from './other';
 export * from './random';
+export * from './report';
 export * from './scale';

@@ -9,7 +9,7 @@ import {
     getDefaultCard,
 } from 'src/model';
 import { checkExtraDeckMonster } from './categorize';
-import { captureException } from './sentry';
+import { captureException } from './report';
 
 export const checkYgoproDeckCard = (object: Record<string, unknown>): object is YgoproDeckCard => {
     try {

@@ -18,7 +18,7 @@ import { InternalCard } from 'src/model';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
 import { ManagerDrawer } from 'src/component';
-import { captureException } from 'src/util/sentry';
+import { captureException } from 'src/util';
 
 const chanceToRemindBackup = getNaivePseudoRandomizer();
 const StyledCardManagerPanel = styled.div`

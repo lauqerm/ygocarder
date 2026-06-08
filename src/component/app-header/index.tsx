@@ -1,4 +1,4 @@
-import { GithubFilled, DatabaseFilled, AuditOutlined, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, AuditFilled, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -6,7 +6,7 @@ import { useCardList, useI18N, useLanguage, usePresetManager } from 'src/service
 import { Radio, Tooltip } from 'antd';
 import { StyledHeaderButtonContainer } from '../icon-button';
 import { useShallow } from 'zustand/react/shallow';
-import { mergeClass } from 'src/util';
+import { captureException, mergeClass } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
 import { QuestionAndFeedback } from './faq';
@@ -20,7 +20,9 @@ import './app-header.scss';
 
 export const Affiliation = () => {
     return <div className="affiliation">
-        <div className="affiliation-link">
+        <div className="affiliation-link" onClick={() => {
+            captureException(new Error('Not-error: Affiliation link clicked'));
+        }}>
             <a href="https://github.com/lauqerm/ygocarder" target="_blank" rel="noreferrer">
                 <GithubFilled />
             </a>
@@ -276,7 +278,7 @@ export const AppHeader = ({
                 onClick={() => setPresetManagerVisible()}
             >
                 <div className="button-label">
-                    <AuditOutlined />
+                    <AuditFilled />
                     <label>{language['preset.manager.label']}</label>
                 </div>
             </StyledHeaderButtonContainer>

@@ -19,7 +19,7 @@ import {
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
 import { LanguageDataDictionary, useLanguage } from 'src/service';
-import { captureException } from 'src/util/sentry';
+import { captureException } from 'src/util';
 
 const { Text, Paragraph } = Typography;
 const StyledProgressModal = styled(Modal)``;

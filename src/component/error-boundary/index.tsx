@@ -1,5 +1,5 @@
 import React, { ErrorInfo } from 'react';
-import { captureException } from 'src/util/sentry';
+import { captureException } from 'src/util';
 
 export type ErrorBoundaryProps = {
     fallback?: React.ReactChild,
