@@ -1,4 +1,4 @@
-import { GithubFilled, DatabaseFilled, AuditFilled, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { GithubFilled, DatabaseFilled, BookFilled, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { SettingButton } from '../setting';
@@ -278,7 +278,7 @@ export const AppHeader = ({
                 onClick={() => setPresetManagerVisible()}
             >
                 <div className="button-label">
-                    <AuditFilled />
+                    <BookFilled />
                     <label>{language['preset.manager.label']}</label>
                 </div>
             </StyledHeaderButtonContainer>
