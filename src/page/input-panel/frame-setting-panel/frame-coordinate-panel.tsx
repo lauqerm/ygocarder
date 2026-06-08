@@ -69,6 +69,10 @@ const CardMovableContainer = styled.div`
 const MoveableTarget = styled.div`
     position: absolute;
     border: var(--bw-lg) solid var(--sub-active);
+    cursor: pointer;
+    &:hover {
+        background-color: var(--sub-active);
+    }
     &.active-target {
         background-color: var(--main-active);
     }
@@ -215,6 +219,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
                 <div>
                     <label>{language['input.frame-coordinate.top']}</label>
                     <InputNumber
+                        disabled={currentCoordinate.name === 'none'}
                         value={currentCoordinate.y}
                         onChange={value => {
                             setCurrentCoordinate(cur => {
@@ -229,6 +234,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
                 <div>
                     <label>{language['input.frame-coordinate.left']}</label>
                     <InputNumber
+                        disabled={currentCoordinate.name === 'none'}
                         value={currentCoordinate.x}
                         onChange={value => {
                             setCurrentCoordinate(cur => {

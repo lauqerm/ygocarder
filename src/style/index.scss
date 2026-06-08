@@ -101,6 +101,15 @@
     input[type="file"] {
         overflow: hidden;
     }
+
+    .ant-input-number-disabled {
+        background-color: var(--sub-level-3);
+        color: var(--color-dim);
+        border-color: transparent;
+        &:hover {
+            border-color: transparent;
+        }
+    }
 }
 
 span.ant-input-affix-wrapper {
