@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, lazy, Suspense, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
     Card,
     CardOpacity,
@@ -20,7 +20,7 @@ import {
 } from '../../util';
 import { ClearOutlined } from '@ant-design/icons';
 import { CharPicker } from './char-picker';
-import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
+import { type NameStylePickerRef } from './name-style-picker';
 import { CheckboxTrain, FrameTrain, FrameTrainRef } from './input-train';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
@@ -54,6 +54,7 @@ import { IconInputGroup, IconInputGroupRef } from './icon-input-group';
 import './input-panel.scss';
 import { getFoilButtonList } from './const';
 
+const NameStylePicker = lazy(() => import('./name-style-picker').then(({ NameStylePicker }) => ({ default: NameStylePicker })));
 const FormatButtonList = [
     {
         label: 'OCG',
@@ -301,13 +302,15 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             <NameSetInputGroup ref={nameSetIdInputGroupRef}
                 onTakePicker={setPickerTarget}
             />
-            <NameStylePicker key={stylePickerResetCount} ref={stylePickerRef}
-                frameInfo={FrameInfoMap[frame as keyof typeof FrameInfoMap]}
-                defaultType={nameStyleType}
-                defaultValue={nameStyle}
-                showExtraDecorativeOption={showExtraDecorativeOption}
-                onChange={changeNameStyle}
-            />
+            <Suspense fallback={<div className="name-style-picker-placeholder" />}>
+                <NameStylePicker key={stylePickerResetCount} ref={stylePickerRef}
+                    frameInfo={FrameInfoMap[frame as keyof typeof FrameInfoMap]}
+                    defaultType={nameStyleType}
+                    defaultValue={nameStyle}
+                    showExtraDecorativeOption={showExtraDecorativeOption}
+                    onChange={changeNameStyle}
+                />
+            </Suspense>
             <IconInputGroup ref={iconInputGroupRef}
                 showCreativeOption={showCreativeOption}
                 receivingCanvas={iconImageCanvas}

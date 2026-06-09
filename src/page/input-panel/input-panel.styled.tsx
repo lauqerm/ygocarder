@@ -60,6 +60,10 @@ export const StyledNameSetIdInputContainer = styled.div`
     margin-top: var(--spacing-sm);
     flex-wrap: wrap;
     row-gap: var(--spacing-sm);
+    .name-style-picker-placeholder {
+        flex: 0 0 100%;
+        height: 32px; // Alignment
+    }
 `;
 
 export const StyledFormatRadioTrain = styled(RadioTrain)`

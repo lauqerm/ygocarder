@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
         build: {
             target: 'es2020',
             sourcemap: true, // equivalent to webpack's devtool: 'source-map'
+            chunkSizeWarningLimit: 1000, // increase chunk size warning limit to 1000kb, double the default of 500kb, since our chunks are often large due to the nature of the app
             rolldownOptions: {
                 output: {
                     codeSplitting: {
