@@ -1,6 +1,5 @@
 import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CompactPicker } from 'react-color';
+import { forwardRef, lazy, Suspense, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
     BackgroundType,
     getBackgroundTypeList,
@@ -15,12 +14,13 @@ import {
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
-import { CombinedSliderContainer, GuardedSlider, ImageCropper, RadioTrain, SolidLabel } from 'src/component';
+import { CombinedSliderContainer, GuardedSlider, ImageCropper, LoadingLabel, RadioTrain, SolidLabel } from 'src/component';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
 import './layout-picker.scss';
 
+const CompactPicker = lazy(() => import('react-color').then(({ CompactPicker }) => ({ default: CompactPicker })));
 const {
     width,
     height,
@@ -427,13 +427,15 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                             <div className="layout-picker-panel">
                                 <div className="layout-picker-subpanel color-section">
                                     <h2>{language['input.background-color.label']}</h2>
-                                    <CompactPicker
-                                        colors={DefaultColorList}
-                                        color={opacity.baseFill}
-                                        onChangeComplete={color => {
-                                            setOpacity(cur => ({ ...cur, baseFill: color.hex }));
-                                        }}
-                                    />
+                                    <Suspense fallback={<LoadingLabel />}>
+                                        <CompactPicker
+                                            colors={DefaultColorList}
+                                            color={opacity.baseFill}
+                                            onChangeComplete={color => {
+                                                setOpacity(cur => ({ ...cur, baseFill: color.hex }));
+                                            }}
+                                        />
+                                    </Suspense>
                                 </div>
                                 {!noBackground && <div className="layout-picker-subpanel type-section">
                                     <h2>{language['input.background-type.label']}</h2>

@@ -1,12 +1,13 @@
 import { Checkbox, Popover } from 'antd';
-import { CompactPicker } from 'react-color';
 import { useCard, useLanguage } from 'src/service';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
 import { DefaultColorList } from 'src/model';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { InlineColorPicker, RadioTrain } from 'src/component';
+import { InlineColorPicker, LoadingLabel, RadioTrain } from 'src/component';
+import { lazy, Suspense } from 'react';
 
+const CompactPicker = lazy(() => import('react-color').then(({ CompactPicker }) => ({ default: CompactPicker })));
 const StyledTextStyleContainer = styled.div`
     display: inline-grid;
     grid-template-columns: 1fr max-content;
@@ -293,18 +294,20 @@ export const TextStylePicker = () => {
                                 })}
                             />}
                             <h2>{language['input.text-style.color.label']}</h2>
-                            <CompactPicker
-                                colors={DefaultColorList}
-                                color={fillStyle ?? ''}
-                                onChangeComplete={color => {
-                                    setCard(currentCard => {
-                                        return {
-                                            ...currentCard,
-                                            [keyName]: [value[0], color.hex, ...value.slice(2, 4)],
-                                        };
-                                    });
-                                }}
-                            />
+                            <Suspense fallback={<LoadingLabel margin="all" />}>
+                                <CompactPicker
+                                    colors={DefaultColorList}
+                                    color={fillStyle ?? ''}
+                                    onChangeComplete={color => {
+                                        setCard(currentCard => {
+                                            return {
+                                                ...currentCard,
+                                                [keyName]: [value[0], color.hex, ...value.slice(2, 4)],
+                                            };
+                                        });
+                                    }}
+                                />
+                            </Suspense>
                         </div>}
                     </div>;
                 })}

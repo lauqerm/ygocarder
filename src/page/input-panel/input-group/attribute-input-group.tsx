@@ -1,13 +1,22 @@
 import { IconButton, RadioTrain } from 'src/component';
 import { useCard, useGlobal, useSetting, WithLanguage } from 'src/service';
-import { UpOutlined, BookOutlined, EditOutlined } from '@ant-design/icons';
+import { UpOutlined, BookOutlined, EditOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { getAttributeList, getExtraAttributeList } from '../const';
-import { AttributeType, DEFAULT_EXTERNAL_ATTRIBUTE, ExtraAttributeMap, RegionMap } from 'src/model';
+import { getExtraAttributeList } from '../const';
+import {
+    AttributeList,
+    AttributeType,
+    DEFAULT_EXTERNAL_ATTRIBUTE,
+    ExtraAttributeMap,
+    NO_ATTRIBUTE,
+    PUBLIC_PATH,
+    RegionMap,
+} from 'src/model';
 import styled from 'styled-components';
 import { mergeClass } from 'src/util';
 import { CardTextInput, CardTextInputRef } from '../input-text';
+import { Tooltip } from 'antd';
 
 const AttributeRegionTrain = styled.div`
     align-self: flex-end;
@@ -74,7 +83,22 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
     const changeAttributeType = useMemo(() => getUpdater('attributeType'), [getUpdater]);
     const changeRegion = useMemo(() => getUpdater('region'), [getUpdater]);
 
-    const attributeList = useMemo(() => getAttributeList(region, language, showCreativeOption), [region, language, showCreativeOption]);
+    const attributeList = useMemo(() => AttributeList
+        .map(({ name, nameKey, isCreative }) => ({
+            label: name === NO_ATTRIBUTE
+                ? <CloseCircleOutlined />
+                : <Tooltip overlay={language[nameKey]}>
+                    <img
+                        alt={language[nameKey]}
+                        src={`${PUBLIC_PATH}/asset/image/attribute/attr-${RegionMap[region]?.fileKey}-${name.toLowerCase()}.png`}
+                    />
+                </Tooltip>,
+            value: name,
+            isCreative,
+        }))
+        .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption),
+        [region, language, showCreativeOption],
+    );
     const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
 
     const lastKnownCustomAttributeRef = useRef(DEFAULT_EXTERNAL_ATTRIBUTE);

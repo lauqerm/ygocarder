@@ -10,10 +10,10 @@ import {
     StyledDropdownLabel,
 } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
-import { ArtFinishButtonList, getOtherFinishList } from '../const';
-import { getArtCanvasCoordinate, ImageSourceType, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
+import { getOtherFinishList } from '../const';
+import { ArtFinishMap, getArtCanvasCoordinate, ImageSourceType, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
 import styled from 'styled-components';
-import { CaretDownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { notification, Popover } from 'antd';
 import { mergeClass } from 'src/util';
 
@@ -60,7 +60,13 @@ const FinishLabel = styled(StyledDropdown.Option)`
         }
     }
 `;
-
+const ArtFinishButtonList = [
+    { value: 'normal', label: <CloseCircleOutlined /> },
+    ...Object.values(ArtFinishMap).map(({ value, label }) => ({
+        label,
+        value,
+    })),
+];
 type OtherFinishPicker = {
     finishValueList: [art: string, ...OtherFinish],
     changeFinish: (valueMap: Record<keyof typeof OtherFinishTypeMap, string>) => void,

@@ -1,3 +1,4 @@
+/** Code split component, do not import this file into barrel. */
 import { Modal } from 'antd';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { CanvasConst } from 'src/model';

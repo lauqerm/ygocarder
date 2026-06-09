@@ -1,3 +1,4 @@
+/** Code split component, do not import this file into barrel. */
 import { Input } from 'antd';
 import { CustomPicker, InjectedColorProps } from 'react-color';
 import { Saturation } from 'react-color/lib/components/common';

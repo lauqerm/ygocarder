@@ -4,11 +4,11 @@ import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent } from 'src/model';
+import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent, getDefaultCoordinateMap } from 'src/model';
 import { ApartmentOutlined } from '@ant-design/icons';
-import { getFrameButtonList, getPendulumSizeList } from '../const';
+import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
-import { resolveFrameStyle } from 'src/util';
+import { isJsonObjectEqual, resolveFrameStyle } from 'src/util';
 import {
     FrameBehaviorSettingPanel,
     FrameCoordinatePanel,
@@ -38,10 +38,17 @@ const StyledPendulumFrameInputContainer = styled.div`
     box-shadow: var(--bs-button);
     border-radius: var(--br-lg);
     background-color: var(--main-level-4);
-    padding-right: var(--spacing-xs);
     align-items: center;
     &:focus-visible {
         outline: 2px solid var(--focus);
+    }
+    .flag-list-indicator {
+        box-shadow: 0 0 0 var(--bw) var(--sub-level-1) inset;
+        padding: var(--spacing-xs);
+        border-radius: 0 var(--br-lg) var(--br-lg) 0;
+        &:empty:before {
+            content: "\\200B";
+        }
     }
     .pendulum-frame-label {
         display: inline-block;
@@ -257,7 +264,10 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
     const onPendulumSizeChange = useMemo(() => getUpdater('pendulumSize'), [getUpdater]);
     const changePendulumEffect = useMemo(() => getUpdater('pendulumEffect', undefined, 'debounce'), [getUpdater]);
 
-    const pendulumSizeList = useMemo(() => getPendulumSizeList(language), [language]);
+    const pendulumSizeList = useMemo(() => Object.values(PendulumSizeMap).map(({ key, labelKey }) => ({
+        label: language[labelKey],
+        value: key,
+    })), [language]);
     const frameList = useMemo(() => getFrameButtonList('both')
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
@@ -291,6 +301,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
             return null;
         })
         .filter(entry => entry != null);
+
     return <StyledPendulumInputContainer
         className="pendulum-input"
     >
@@ -370,21 +381,23 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                             language={language}
                         />
                     </div>
-                    {flagList.length > 0
-                        ? <InternalPopover
-                            content={<StyledPopMarkdown>
-                                {language['input.flag.effective.label']}
-                                <ul>{flagList}</ul>
-                            </StyledPopMarkdown>}
-                        >
-                            <ApartmentOutlined />
-                        </InternalPopover>
-                        : null}
+                    <div className="flag-list-indicator">
+                        {flagList.length > 0
+                            ? <InternalPopover
+                                content={<StyledPopMarkdown>
+                                    {language['input.flag.effective.label']}
+                                    <ul>{flagList}</ul>
+                                </StyledPopMarkdown>}
+                            >
+                                <ApartmentOutlined />
+                            </InternalPopover>
+                            : null}
+                    </div>
                 </StyledPendulumFrameInputContainer>}
                 {showCreativeOption && <PopoverButton
                     tabIndex={0}
                     $softMode={softMode}
-                    $active={Object.keys(coordinateMap ?? {}).length > 0}
+                    $active={!isJsonObjectEqual(coordinateMap, getDefaultCoordinateMap())}
                     className="frame-layout-button"
                     onClick={() => setFrameCoordinateVisible(true)}
                     onKeyDown={e => {

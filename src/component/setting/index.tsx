@@ -2,11 +2,11 @@ import { useLanguage, useSetting } from 'src/service';
 import { SettingFilled } from '@ant-design/icons';
 import styled, { css, keyframes } from 'styled-components';
 import { Checkbox, Popover, Tooltip } from 'antd';
-import { StyledHeaderButtonContainer } from '../icon-button';
 import { RadioTrain } from '../input-train';
 import { ExportFormatList, getSlindingTypeList, ResolutionList, ResolutionMap } from 'src/model';
 import { ResolutionLabel, StyledPopMarkdown } from '../atom';
 import { ResetOfflineDataButton } from './reset-button';
+import { StyledHeaderButtonContainer } from '../icon-button';
 
 const rotate = keyframes`
     to {

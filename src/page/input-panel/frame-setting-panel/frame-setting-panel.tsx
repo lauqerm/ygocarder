@@ -1,10 +1,10 @@
 import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
 import { StyledFrameMixer } from '../input-panel.styled';
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, lazy, Suspense, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage, useSetting } from 'src/service';
 import { getFoilButtonList, getFrameButtonList } from '../const';
 import { Button, Checkbox } from 'antd';
-import { CardLayoutPreview, FrameInfoBlock, HorizontalSketchPicker, ImageCropper, RadioTrain, StandaloneLabel } from 'src/component';
+import { CardLayoutPreview, FrameInfoBlock, ImageCropper, LoadingLabel, RadioTrain, StandaloneLabel } from 'src/component';
 import styled from 'styled-components';
 import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultCard, getDefaultDyeList, getOverlayCompositeList, OverlayComposite } from 'src/model';
 import { useShallow } from 'zustand/react/shallow';
@@ -12,6 +12,9 @@ import { FramePresetPanel } from './frame-preset-panel';
 import { v4 as uuid } from 'uuid';
 import { OverlayInputGroup, OverlayInputGroupRef } from './overlay-input-group';
 
+const HorizontalSketchPicker = lazy(() => import('src/component/inline-sketch-picker').then(({ HorizontalSketchPicker }) => {
+    return { default: HorizontalSketchPicker };
+}));
 const {
     width,
     height,
@@ -422,14 +425,16 @@ export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, Fr
                         </div>}
                     </OverlayInputGroup>
                 </div>
-                {typeof dyeColor === 'number' && <HorizontalSketchPicker
-                    value={dyeList[dyeColor]}
-                    onChange={color => {
-                        if (color !== dyeList[dyeColor]) changeDye(color, activeLayout);
-                    }}
-                >
-                    <StandaloneLabel $fixedSize={false}>{language['input.advanced-frame.dye']}</StandaloneLabel>
-                </HorizontalSketchPicker>}
+                {typeof dyeColor === 'number' && <Suspense fallback={<LoadingLabel />}>
+                    <HorizontalSketchPicker
+                        value={dyeList[dyeColor]}
+                        onChange={color => {
+                            if (color !== dyeList[dyeColor]) changeDye(color, activeLayout);
+                        }}
+                    >
+                        <StandaloneLabel $fixedSize={false}>{language['input.advanced-frame.dye']}</StandaloneLabel>
+                    </HorizontalSketchPicker>
+                </Suspense>}
             </StyledFrameMixer>
         </div>
         <FramePresetPanel

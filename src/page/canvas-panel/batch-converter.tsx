@@ -12,7 +12,6 @@ import {
     compressCardData,
     checkCompactYgoCarderCard,
 } from 'src/util';
-import JSZip from 'jszip';
 
 const StyledBatchConverterModal = styled(Modal)`
     .controller {
@@ -167,6 +166,7 @@ export const BatchConverter = ({
                         });
                     }));
 
+                    const JSZip = (await import('jszip')).default;
                     const zipObject = new JSZip();
                     convertedFileList.forEach(({ blob, name }) => {
                         zipObject.file(name, blob);

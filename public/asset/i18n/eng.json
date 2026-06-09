@@ -137,6 +137,7 @@
         "generic.export.tooltip": "Export",
         "generic.import.label": "Import",
         "generic.import.tooltip": "Import",
+        "generic.loading.label": "Loading...",
         "generic.no.label": "No",
         "generic.overwrite.label": "Overwrite?",
         "generic.reset.label": "Reset",

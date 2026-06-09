@@ -1,20 +1,15 @@
-import { GithubFilled, DatabaseFilled, BookFilled, SnippetsFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { GithubFilled, InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
-import { SettingButton } from '../setting';
-import { useCardList, useI18N, useLanguage, usePresetManager } from 'src/service';
+import { useI18N, useLanguage } from 'src/service';
 import { Radio, Tooltip } from 'antd';
-import { StyledHeaderButtonContainer } from '../icon-button';
-import { useShallow } from 'zustand/react/shallow';
-import { captureException, mergeClass } from 'src/util';
+import { captureException } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
 import { QuestionAndFeedback } from './faq';
-import { PresetManager } from '../preset-manager';
-import { SampleCard, SampleCardRef } from './sample';
-import { useEffect, useRef } from 'react';
+import { type SampleCard } from './sample';
+import React, { lazy, useEffect, useRef } from 'react';
 import { PUBLIC_PATH } from 'src/model';
-import { InstallButton } from '../install-button';
 import { FAQ_BUTTON_ID } from './model';
 import './app-header.scss';
 
@@ -30,6 +25,90 @@ export const Affiliation = () => {
     </div>;
 };
 
+const AppHeaderContainer = styled.div`
+    display: inline-grid;
+    grid-template-columns: max-content 1fr max-content max-content max-content max-content 85px;
+    margin-bottom: var(--spacing-sm);
+    background-color: var(--main-level-3);
+    padding: 3px; // Alignment
+    padding-right: var(--spacing);
+    border-radius: var(--br);
+    box-shadow: var(--bs-block);
+    transition: width linear 2s;
+    img {
+        margin: 3px 0; // Alignment
+    }
+    .header-language {
+        display: inline-flex;
+        flex-wrap: wrap;
+        column-gap: var(--spacing-sm);
+        row-gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-xxs);
+        .ant-radio-button-wrapper {
+            > span:nth-child(2) {
+                font-size: 0.85em;
+                letter-spacing: 0.02em;
+            }
+        }
+        .bug-report {
+            text-align: center;
+            border: var(--bw) solid var(--sub-level-1);
+            background-color: var(--main-level-4);
+            border-radius: var(--br-lg);
+            padding: 0 var(--spacing-xs);
+            cursor: pointer;
+            &:hover {
+                background: var(--sub-danger);
+            }
+            a {
+                display: block;
+            }
+        }
+    }
+    .app-description {
+        border-left: var(--bw) dashed #b1b1b1;
+        padding-left: var(--spacing);
+        margin-left: var(--spacing-xs);
+        h1 {
+            font-family: MatrixBoldSmallCaps;
+            margin: 0;
+            line-height: 1;
+            font-size: var(--fs-2xl);
+            letter-spacing: 1px;
+            color: var(--color-heavy);
+            text-shadow: -1px 1px 2px #1b1b1b;
+            transform: translateY(2px); // Alignment
+            small {
+                font-size: var(--fs-xl);
+            }
+        }
+    }
+    .app-contribution {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        column-gap: var(--spacing-sm);
+        font-size: var(--fs-sm);
+        line-height: 1.25;
+        b {
+            font-size: var(--fs-sm);
+        }
+        > * {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            min-width: 0;
+        }
+    }
+    .header-panel-fallback {
+        grid-column: auto / -1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        .anticon-spin {
+            font-size: var(--fs-xl);
+        }
+    }
+`;
 const AdditionalContributorIcon = styled(InfoCircleOutlined)`
     font-size: var(--fs);
     color: var(--color-heavy);
@@ -39,27 +118,7 @@ const AdditionalContributorIcon = styled(InfoCircleOutlined)`
 const AdditionalContributorContainer = styled(StyledPopMarkdown)`
     font-size: var(--fs-sm);
 `;
-const StyledAppHeaderButtonContainer = styled.div`
-    align-content: center;
-    align-self: center;
-    border-left: var(--bw) dashed #b1b1b1;
-    padding-left: var(--spacing);
-    margin-left: var(--spacing);
-    height: 100%;
-    label {
-        text-align: center;
-    }
-    .button-label {
-        position: relative;
-    }
-    .manager-notice {
-        position: absolute;
-        color: var(--main-danger);
-        right: 0;
-        top: 0;
-        line-height: 1;
-    }
-`;
+const HeaderPanel = lazy(() => import('./header-panel').then(({ HeaderPanel }) => ({ default: HeaderPanel })));
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
 export type AppHeader = {} & Pick<SampleCard, 'applyCardData'>;
 export const AppHeader = ({
@@ -81,33 +140,6 @@ export const AppHeader = ({
         languageMetadataMap,
         changeLanguage,
     }));
-    const {
-        cardList,
-        isListDirty,
-        toggleVisible,
-        visible,
-    } = useCardList(useShallow(({
-        cardList,
-        isListDirty,
-        toggleVisible,
-        visible,
-    }) => ({
-        cardList,
-        isListDirty,
-        toggleVisible,
-        visible,
-    })));
-    const {
-        setVisible: setPresetManagerVisible,
-        visible: presetManagerVisible,
-    } = usePresetManager(useShallow(({
-        setVisible,
-        visible,
-    }) => ({
-        setVisible,
-        visible,
-    })));
-    const sampleCardRef = useRef<SampleCardRef>(null);
 
     /** Analytic and report */
     const sentryInitialized = useRef(false);
@@ -136,7 +168,7 @@ export const AppHeader = ({
         });
     }, [language, reportTarget]);
 
-    return <div className="app-header">
+    return <AppHeaderContainer className="app-header">
         <img className="app-logo" alt="app-logo" src={`${PUBLIC_PATH}/logo192.png`} width={35} />
         <div className="app-description">
             <div className="header-language">
@@ -257,59 +289,16 @@ export const AppHeader = ({
                 </span>
             </div>
         </div>
-        <StyledAppHeaderButtonContainer className="app-header-button app-setting">
-            <SettingButton />
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="app-header-button card-manager">
-            <StyledHeaderButtonContainer
-                className={mergeClass('manager-button-label', visible ? 'manager-active' : '')}
-                onClick={() => toggleVisible()}
-            >
-                <div className="button-label">
-                    <DatabaseFilled />
-                    <label>{language['manager.icon.title']}</label>
-                    {(isListDirty && cardList.length > 1) && <div className="manager-notice">*</div>}
+        <React.Suspense
+            fallback={<div className="header-panel-fallback">
+                <div>
+                    <LoadingOutlined />
                 </div>
-            </StyledHeaderButtonContainer>
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="app-header-button preset-manager">
-            <StyledHeaderButtonContainer
-                className={mergeClass('preset-manager-button-label', presetManagerVisible ? 'preset-manager-active' : '')}
-                onClick={() => setPresetManagerVisible()}
-            >
-                <div className="button-label">
-                    <BookFilled />
-                    <label>{language['preset.manager.label']}</label>
-                </div>
-            </StyledHeaderButtonContainer>
-            <PresetManager language={language} />
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="app-header-button sample-card">
-            <StyledHeaderButtonContainer
-                className={mergeClass('preset-sample-button-label')}
-                onClick={() => {
-                    sampleCardRef.current?.open();
-                }}
-            >
-                <div className="button-label">
-                    <SnippetsFilled />
-                    <label>{language['sample.manager.label']}</label>
-                </div>
-            </StyledHeaderButtonContainer>
-            <SampleCard
-                ref={sampleCardRef}
-                language={language}
-                applyCardData={applyCardData}
-            />
-        </StyledAppHeaderButtonContainer>
-        <StyledAppHeaderButtonContainer className="app-header-button install-app">
-            <StyledHeaderButtonContainer
-                className={mergeClass('install-button-label')}
-            >
-                <InstallButton className="button-label" />
-            </StyledHeaderButtonContainer>
-        </StyledAppHeaderButtonContainer>
-    </div>;
+            </div>}
+        >
+            <HeaderPanel applyCardData={applyCardData} />
+        </React.Suspense>
+    </AppHeaderContainer>;
 };
 
 export const TaintedCanvasPanel = () => {

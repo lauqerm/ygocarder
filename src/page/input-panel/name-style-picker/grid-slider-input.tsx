@@ -1,11 +1,11 @@
 import { InputNumber } from 'antd';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { CompactPicker } from 'react-color';
+import { forwardRef, lazy, Suspense, useEffect, useImperativeHandle, useState } from 'react';
 import PowerSlider from 'react-input-slider';
-import { GuardedSlider, SingleSliderContainer } from 'src/component';
+import { GuardedSlider, LoadingLabel, SingleSliderContainer } from 'src/component';
 import { DefaultColorList, NameStyle } from 'src/model';
 import { useLanguage } from 'src/service';
 
+const CompactPicker = lazy(() => import('react-color').then(({ CompactPicker }) => ({ default: CompactPicker })));
 export type GridSliderInputRef = {
     setValue: (value: Partial<{
         x: number;
@@ -78,7 +78,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
             relevant = false;
         };
         /** No need to depend on handler */
-         
+
     }, [value]);
 
     useImperativeHandle(ref, () => ({
@@ -144,10 +144,12 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
             </div>
         </div>
         <h2>{language['input.name-style.slider.color.label']}</h2>
-        <CompactPicker
-            colors={DefaultColorList}
-            color={color}
-            onChangeComplete={color => setValue(cur => ({ ...cur, color: color.hex }))}
-        />
+        <Suspense fallback={<LoadingLabel margin="all" />}>
+            <CompactPicker
+                colors={DefaultColorList}
+                color={color}
+                onChangeComplete={color => setValue(cur => ({ ...cur, color: color.hex }))}
+            />
+        </Suspense>
     </div>;
 });

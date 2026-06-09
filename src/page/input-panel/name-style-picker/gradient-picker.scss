@@ -55,6 +55,10 @@
             box-shadow: none;
         }
     }
+    .loading-label {
+        text-align: left;
+        height: 206px; // Alignment
+    }
     .ant-btn-primary {
         width: 100%;
     }

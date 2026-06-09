@@ -47,7 +47,7 @@ export async function getCarderDb() {
             YGO_CARDER_DB,
             YGO_CARDER_DB_VERSION,
             {
-                upgrade(db, _oldVersion, newVersion) {
+                upgrade(db) {
                     if (!db.objectStoreNames.contains('messageStore')) {
                         db.createObjectStore('messageStore', { keyPath: 'key' });
                     }
@@ -57,10 +57,8 @@ export async function getCarderDb() {
                     if (!db.objectStoreNames.contains('presetNameStyleStore')) {
                         db.createObjectStore('presetNameStyleStore', { keyPath: 'key' });
                     }
-                    if (newVersion === 4) {
-                        if (!db.objectStoreNames.contains('presetImageStore')) {
-                            db.createObjectStore('presetImageStore', { keyPath: 'key' });
-                        }
+                    if (!db.objectStoreNames.contains('presetImageStore')) {
+                        db.createObjectStore('presetImageStore', { keyPath: 'key' });
                     }
                     if (!db.objectStoreNames.contains('cardStore')) {
                         db.createObjectStore('cardStore', { keyPath: 'key' });

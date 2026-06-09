@@ -1,13 +1,13 @@
 import { InputNumber } from 'antd';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { ChromePicker } from 'react-color';
-import { ANGLE_PICKER_CLASSNAME, GuardedSlider, CircularAnglePicker, CombinedSliderContainer } from 'src/component';
+import React, { forwardRef, lazy, Suspense, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { ANGLE_PICKER_CLASSNAME, GuardedSlider, CircularAnglePicker, CombinedSliderContainer, LoadingLabel } from 'src/component';
 import { angleToVector, mergeClass, useRefresh } from 'src/util';
 import styled from 'styled-components';
 import { SyncOutlined } from '@ant-design/icons';
 import { LanguageDataDictionary } from 'src/service';
 import { getDefaultNameStyle } from 'src/model';
 
+const ChromePicker = lazy(() => import('react-color').then(({ ChromePicker }) => ({ default: ChromePicker })));
 const MaterialColor = styled.div<{ $color?: string }>`
     border: var(--bw) solid var(--sub-level-2);
     display: inline-block;
@@ -70,6 +70,9 @@ const EmbossControlContainer = styled.div`
             margin-bottom: var(--spacing-xs);
         }
     }
+    .chrome-picker {
+        margin: 0 var(--spacing-sm);
+    }
 `;
 
 const VECTOR_VALUE_EPSILON = 0.01;
@@ -85,7 +88,7 @@ function hexToRgb(hex: string) {
             parseInt(result[3], 16)
         ]
         : [0, 0, 0]) as [number, number, number];
-  }
+}
 
 export type EmbossControllerRef = {
     setValue: (value: {
@@ -160,7 +163,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
         return () => {
             relevant = false;
         };
-     
+
     }, [internalId, color, angle, verticalAngle, thickness]);
 
     useImperativeHandle(ref, () => ({
@@ -257,30 +260,32 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
         </div>
         {allowPickColor && <div className="emboss-control-right">
             <h2>Light color</h2>
-            <ChromePicker
-                styles={{
-                    default: {
-                        picker: {
-                            color: '#000000',
-                            background: 'var(--main-level-3)',
-                            boxShadow: 'none',
+            <Suspense fallback={<LoadingLabel margin="hor" />}>
+                <ChromePicker
+                    styles={{
+                        default: {
+                            picker: {
+                                color: '#000000',
+                                background: 'var(--main-level-3)',
+                                boxShadow: 'none',
+                            },
+                            body: {
+                                padding: 'var(--spacing) var(--spacing)',
+                            }
                         },
-                        body: {
-                            padding: 'var(--spacing) var(--spacing)',
-                        }
-                    },
-                }}
-                disableAlpha={true}
-                color={color}
-                onChange={color => {
-                    setColor(color.hex);
-                    requestUpdate();
-                }}
-                onChangeComplete={color => {
-                    setColor(color.hex);
-                    requestUpdate();
-                }}
-            />
+                    }}
+                    disableAlpha={true}
+                    color={color}
+                    onChange={color => {
+                        setColor(color.hex);
+                        requestUpdate();
+                    }}
+                    onChangeComplete={color => {
+                        setColor(color.hex);
+                        requestUpdate();
+                    }}
+                />
+            </Suspense>
         </div>}
     </EmbossControlContainer>;
 });

@@ -1,3 +1,4 @@
+import { useLanguage } from 'src/service';
 import styled from 'styled-components';
 
 const ResolutionLabelContainer = styled.div<{ $warning: boolean }>`
@@ -27,4 +28,32 @@ export const ResolutionLabel = ({ width, height, warning = false, ...rest }: Res
         <span>×</span>
         <span className="right-part">{height}</span>
     </ResolutionLabelContainer>;
+};
+
+type Margin = 'hor' | 'ver' | 'all';
+const LoadingLabelContainer = styled.div<{ $margin: Margin }>`
+    ${({ $margin }) => $margin === 'hor' || $margin === 'all'
+        ? `
+            margin-left: var(--spacing-xs);
+            margin-right: var(--spacing-xs);
+        `
+        : ''}
+    ${({ $margin }) => $margin === 'ver' || $margin === 'all'
+        ? `
+            margin-top: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+        `
+        : ''}
+`;
+export type LoadingLabel = {
+    margin?: Margin;
+};
+export const LoadingLabel = ({
+    margin = 'ver',
+}: LoadingLabel) => {
+    const language = useLanguage();
+
+    return <LoadingLabelContainer className="loading-label" $margin={margin}>
+        {language['generic.loading.label']}
+    </LoadingLabelContainer>;
 };

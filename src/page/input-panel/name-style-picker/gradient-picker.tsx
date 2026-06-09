@@ -1,14 +1,14 @@
 import { Button, InputNumber } from 'antd';
-import { ForwardedRef, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { ChromePicker } from 'react-color';
+import { ForwardedRef, forwardRef, lazy, Suspense, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { ColorPoint, GradientPicker } from 'react-linear-gradient-picker';
 import { getDefaultGradientPalette, mergeClass, parsePalette, stringifyPalette } from 'src/util';
 import debounce from 'lodash.debounce';
 import { useLanguage } from 'src/service';
-import { ANGLE_PICKER_CLASSNAME, CircularAnglePicker } from 'src/component';
+import { ANGLE_PICKER_CLASSNAME, CircularAnglePicker, LoadingLabel } from 'src/component';
 import 'react-linear-gradient-picker/dist/index.css';
 import './gradient-picker.scss';
 
+const ChromePicker = lazy(() => import('react-color').then(({ ChromePicker }) => ({ default: ChromePicker })));
 type WrappedColorPicker = {
     disabled?: boolean,
     color?: string,
@@ -39,7 +39,7 @@ const WrappedColorPicker = forwardRef(({
             if (colorInfo) {
                 const { color, offset, id } = colorInfo;
                 const { min, max, round } = Math;
-    
+
                 setInternalColor(color);
                 setInternalOffset(max(0, min(100, round(parseFloat(offset) * 100))));
                 setInternalId(id);
@@ -70,27 +70,29 @@ const WrappedColorPicker = forwardRef(({
                 {language['input.name-style.gradient.color-remove.label']}
             </Button>
         </div>
-        <ChromePicker
-            styles={{
-                default: {
-                    picker: {
-                        color: '#000000',
-                        background: 'var(--main-level-3)',
-                        boxShadow: 'none',
+        <Suspense fallback={<LoadingLabel />}>
+            <ChromePicker
+                styles={{
+                    default: {
+                        picker: {
+                            color: '#000000',
+                            background: 'var(--main-level-3)',
+                            boxShadow: 'none',
+                        },
+                        body: {
+                            padding: 'var(--spacing) var(--spacing)',
+                        }
                     },
-                    body: {
-                        padding: 'var(--spacing) var(--spacing)',
-                    }
-                },
-            }}
-            disableAlpha={true}
-            color={internalColor}
-            onChange={color => setInternalColor(color.hex)}
-            onChangeComplete={color => {
-                setInternalColor(color.hex);
-                onSelect?.(color.hex);
-            }}
-        />
+                }}
+                disableAlpha={true}
+                color={internalColor}
+                onChange={color => setInternalColor(color.hex)}
+                onChangeComplete={color => {
+                    setInternalColor(color.hex);
+                    onSelect?.(color.hex);
+                }}
+            />
+        </Suspense>
     </div>;
 });
 

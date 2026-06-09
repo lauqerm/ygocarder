@@ -1,6 +1,5 @@
 import { Button, Checkbox, Empty, Popover } from 'antd';
-import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, useMemo } from 'react';
-import { CompactPicker } from 'react-color';
+import { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle, ForwardedRef, useMemo, lazy, Suspense } from 'react';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import {
     PresetNameStyleMap,
@@ -15,7 +14,7 @@ import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
 import { getNameFontOptionList } from '../const';
-import { StyledDropdown, PopoverButton, StyledPatternOption, NameStylePresetOption } from 'src/component';
+import { StyledDropdown, PopoverButton, StyledPatternOption, NameStylePresetOption, LoadingLabel } from 'src/component';
 import {
     StyledPatternContainer,
     StyledPresetContainer,
@@ -28,6 +27,7 @@ import { TextColorPicker } from './text-color-picker';
 import { v4 as uuid } from 'uuid';
 import './style-picker.scss';
 
+const CompactPicker = lazy(() => import('react-color').then(({ CompactPicker }) => ({ default: CompactPicker })));
 export type NameStylePickerRef = {
     setValue: (value: Partial<NameStyle>) => void,
 };
@@ -69,7 +69,7 @@ export const NameStylePicker = forwardRef(({
             setType('custom');
             onChange('custom', value);
         }
-         
+
     }, [sendCustomStyleSignal]);
 
     const shadowPickeRef = useRef<GridSliderInputRef>(null);
@@ -271,15 +271,17 @@ export const NameStylePicker = forwardRef(({
                                     <h3>
                                         {language['input.name-style.color.ruby.label']}
                                     </h3>
-                                    <CompactPicker
-                                        colors={DefaultColorList}
-                                        color={headTextFillStyle}
-                                        onChangeComplete={color => {
-                                            setType('custom');
-                                            setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
-                                            requestUpdateCustomStyle();
-                                        }}
-                                    />
+                                    <Suspense fallback={<LoadingLabel margin="all" />}>
+                                        <CompactPicker
+                                            colors={DefaultColorList}
+                                            color={headTextFillStyle}
+                                            onChangeComplete={color => {
+                                                setType('custom');
+                                                setValue(cur => ({ ...cur, headTextFillStyle: color.hex }));
+                                                requestUpdateCustomStyle();
+                                            }}
+                                        />
+                                    </Suspense>
                                 </div>
                             </div>
                         </div>}

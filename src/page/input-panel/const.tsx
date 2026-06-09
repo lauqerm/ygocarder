@@ -1,20 +1,15 @@
 import {
     frameList,
     IconList,
-    AttributeList,
     StickerList,
     getFoilList,
     CondenseTolerantLabelMap,
     NameFontDataMap,
-    NO_ATTRIBUTE,
     NO_ICON,
-    ArtFinishMap,
     FinishMap,
     NO_STICKER,
-    PendulumSizeMap,
     OtherFinishTypeMap,
     ExtraAttributeList,
-    RegionMap,
     AUTO_FONT,
     PUBLIC_PATH,
 } from '../../model';
@@ -81,14 +76,6 @@ export const getNameFontOptionList = (dictionary: Record<string, string>) => [
     })),
 ];
 
-export const ArtFinishButtonList = [
-    { value: 'normal', label: <CloseCircleOutlined /> },
-    ...Object.values(ArtFinishMap).map(({ value, label }) => ({
-        label,
-        value,
-    })),
-];
-
 export const getFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 'official') => frameList
     .filter(({ isOfficial }) => origin === 'both'
         ? true
@@ -106,21 +93,6 @@ export const getFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 
         value: name,
         edition,
     }));
-
-export const getAttributeList = (region: string, dictionary: Record<string, string>, showCreativeOption: boolean) => AttributeList
-    .map(({ name, nameKey, isCreative }) => ({
-        label: name === NO_ATTRIBUTE
-            ? <CloseCircleOutlined />
-            : <Tooltip overlay={dictionary[nameKey]}>
-                <img
-                    alt={dictionary[nameKey]}
-                    src={`${PUBLIC_PATH}/asset/image/attribute/attr-${RegionMap[region]?.fileKey}-${name.toLowerCase()}.png`}
-                />
-            </Tooltip>,
-        value: name,
-        isCreative,
-    }))
-    .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption);
 
 export const getExtraAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => ExtraAttributeList
     .map(({ name, nameKey, isCreative }) => ({
@@ -166,8 +138,3 @@ export const CondenseThresholdButtonList = Object
         };
     })
     .sort((l, r) => l.order - r.order);
-
-export const getPendulumSizeList = (dictionary: Record<string, string>) => Object.values(PendulumSizeMap).map(({ key, labelKey }) => ({
-    label: dictionary[labelKey],
-    value: key,
-}));

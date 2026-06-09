@@ -1,5 +1,4 @@
 import { Button, Modal } from 'antd';
-import JSZip from 'jszip';
 import { useEffect, useRef } from 'react';
 import { InternalCard } from 'src/model';
 import { useBatchDownload, useCardList, WithLanguage } from 'src/service';
@@ -81,6 +80,7 @@ export const BatchDownloadButton = ({
         let relevant = true;
         if (isReady) {
             (async () => {
+                const JSZip = (await import('jszip')).default;
                 const { batchName, batchDataMap } = useBatchDownload.getState();
                 const zipObject = new JSZip();
                 const batchDataList = Object.values(batchDataMap);

@@ -12,6 +12,20 @@ export default defineConfig(({ mode }) => {
         build: {
             target: 'es2020',
             sourcemap: true, // equivalent to webpack's devtool: 'source-map'
+            rolldownOptions: {
+                output: {
+                    codeSplitting: {
+                        groups: [
+                            {
+                                // react-moveable gets its own isolated chunk
+                                name: 'vendor-moveable',
+                                test: /node_modules[\\/]react-moveable/,
+                                priority: 20,
+                            },
+                        ],
+                    },
+                },
+            },
         },
         define: {
             // By default, Vite doesn't include shims for NodeJS/

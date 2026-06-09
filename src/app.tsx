@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'antd/dist/antd.css';
 import './app.scss';
 import './style/index.scss';
@@ -50,7 +50,7 @@ import {
     useSetting,
 } from './service';
 import { notification, Tooltip } from 'antd';
-import { CROPPER_WIDTH, Lightbox, LightboxRef, TaintedCanvasWarning } from './component';
+import { CROPPER_WIDTH, LightboxRef, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined, FileImageOutlined } from '@ant-design/icons';
 import {
@@ -72,6 +72,7 @@ import {
     isTouchDevice,
 } from './pwa';
 
+const Lightbox = lazy(() => import('./component/lightbox').then(({ Lightbox }) => ({ default: Lightbox })));
 /** React hotkey setup */
 configure({
     ignoreTags: [],
@@ -846,23 +847,25 @@ function App() {
                     }}
                 />
                 {/** Pixel perfect for card image */}
-                <Lightbox
-                    ref={lightboxRef}
-                    globalScale={globalScale}
-                >
-                    <DownloadButton
-                        onDownload={() => {
-                            setDownloading(true);
-                            downloadButtonRef.current?.download();
-                        }}
-                        onResolutionChange={() => {
-                            setTimeout(() => {
-                                lightboxRef.current?.resetTransform();
-                            }, 200);
-                        }}
-                        isDownloading={isDownloading}
-                    />
-                </Lightbox>
+                <Suspense fallback={null}>
+                    <Lightbox
+                        ref={lightboxRef}
+                        globalScale={globalScale}
+                    >
+                        <DownloadButton
+                            onDownload={() => {
+                                setDownloading(true);
+                                downloadButtonRef.current?.download();
+                            }}
+                            onResolutionChange={() => {
+                                setTimeout(() => {
+                                    lightboxRef.current?.resetTransform();
+                                }, 200);
+                            }}
+                            isDownloading={isDownloading}
+                        />
+                    </Lightbox>
+                </Suspense>
                 <FarSightButton className="far-sight-button" onClick={() => displayFitLightbox()}>
                     <FileImageOutlined /><br /><div>{language['button.far-sight.label']}</div>
                 </FarSightButton>
