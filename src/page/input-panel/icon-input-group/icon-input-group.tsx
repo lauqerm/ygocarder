@@ -1,17 +1,17 @@
-import { Button, Input, Popover } from 'antd';
+import { Button, Input, Popover, Tooltip } from 'antd';
 import { PopoverButton, RadioTrain, StyledDropdown } from 'src/component';
 import { useCard, useCardCanvas, useLanguage, useSetting, WithLanguage } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { CaretDownOutlined, AlignCenterOutlined, AlignLeftOutlined, AlignRightOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { StarButtonList, getSTIconButtonList } from '../const';
 import { getCardIconFromFrame } from 'src/util';
 import styled from 'styled-components';
-import { IconTypeAttributeList, IconTypeList, IconTypeStList, TotalIconTypeMap } from 'src/model';
+import { IconList, IconTypeAttributeList, IconTypeList, IconTypeStList, NO_ICON, PUBLIC_PATH, TotalIconTypeMap } from 'src/model';
 import { IconPicker, IconPickerRef, IconTypePicker } from './icon-picker';
 import { IconImageInput, IconImageInputRef } from './icon-image-input';
 import { StyledIconDropdown } from './styled';
 
+const StarButtonList = [...Array(14)].map((_, index) => ({ label: index, value: index }));
 const TypeWithIconContainer = styled.div`
     .icon-image {
         width: 26px;
@@ -158,6 +158,20 @@ export const IconInputGroup = forwardRef<IconInputGroupRef, IconInputGroup>(({
     const changeSubFamily = useMemo(() => getUpdater('subFamily'), [getUpdater]);
     const changeStar = useMemo(() => getUpdater('star'), [getUpdater]);
     const changeStarAlignment = useMemo(() => getUpdater('starAlignment'), [getUpdater]);
+    const stIconButtonList = useMemo(
+        () => IconList.map(({ value, nameKey }) => ({
+            label: value === NO_ICON
+                ? <CloseCircleOutlined />
+                : <Tooltip overlay={language[nameKey]}>
+                    <img
+                        alt={language[nameKey]}
+                        src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`}
+                    />
+                </Tooltip>,
+            value,
+        })),
+        [language],
+    );
 
     useImperativeHandle(ref, () => ({
         setValue: ({ iconImage, iconImageCrop, iconImageData, iconImageSource }) => {
@@ -318,7 +332,12 @@ export const IconInputGroup = forwardRef<IconInputGroupRef, IconInputGroup>(({
                 </>
                 : null
             : iconType === 'st'
-                ? <RadioTrain className="fill-input-train" value={subFamily} onChange={changeSubFamily} optionList={getSTIconButtonList(language)}>
+                ? <RadioTrain
+                    className="fill-input-train"
+                    value={subFamily}
+                    onChange={changeSubFamily}
+                    optionList={stIconButtonList}
+                >
                     {DropdownChildren}
                 </RadioTrain>
                 : iconType === 'custom'

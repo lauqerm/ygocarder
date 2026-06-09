@@ -10,7 +10,6 @@ import {
     StyledDropdownLabel,
 } from 'src/component';
 import { useShallow } from 'zustand/react/shallow';
-import { getOtherFinishList } from '../const';
 import { ArtFinishMap, getArtCanvasCoordinate, ImageSourceType, ImageStyle, OtherFinish, OtherFinishTypeMap } from 'src/model';
 import styled from 'styled-components';
 import { CaretDownOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -89,7 +88,13 @@ const OtherFinishPicker = ({
         [OtherFinishTypeMap['art'].key]: finishValueList[0],
     };
     const activeWidget = Object.values(valueMap).some(entry => entry !== 'normal');
-    const finishList = useMemo(() => getOtherFinishList(language), [language]);
+    const finishList = useMemo(
+        () => Object.values(OtherFinishTypeMap).map(({ key, labelKey }) => ({
+            label: language[labelKey],
+            value: key,
+        })),
+        [language],
+    );
 
     const IconDropdownLabel = showCreativeOption
         ? <>

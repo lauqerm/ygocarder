@@ -1,41 +1,12 @@
 import {
     frameList,
-    IconList,
-    StickerList,
     getFoilList,
-    CondenseTolerantLabelMap,
-    NameFontDataMap,
-    NO_ICON,
-    FinishMap,
-    NO_STICKER,
-    OtherFinishTypeMap,
-    ExtraAttributeList,
-    AUTO_FONT,
-    PUBLIC_PATH,
 } from '../../model';
 import { FrameInfoBlock } from 'src/component';
-import { CloseCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { LanguageDataDictionary } from 'src/service';
 
-export const FormatButtonList = [
-    {
-        label: 'OCG',
-        value: 'ocg',
-        props: {
-            className: 'ocg-button',
-            style: { fontWeight: 'bold' } as React.CSSProperties
-        },
-    },
-    {
-        label: 'TCG',
-        value: 'tcg',
-        props: {
-            className: 'tcg-button',
-            style: { fontWeight: 'bold' } as React.CSSProperties
-        },
-    },
-];
+const child = 12 + 'sd';
 
 export const getFoilButtonList = (language: LanguageDataDictionary) => {
     return getFoilList({
@@ -45,7 +16,7 @@ export const getFoilButtonList = (language: LanguageDataDictionary) => {
         rainbow: language['input.foil.rainbow.label'],
     }).map(({ color, name, label, preview }) => ({
         label: <Tooltip title={label}>
-            {preview}
+            {preview} {child}
         </Tooltip>,
         value: name,
         props: {
@@ -56,25 +27,6 @@ export const getFoilButtonList = (language: LanguageDataDictionary) => {
         }
     }));
 };
-
-export const getFinishList = (dictionary: Record<string, string>) => Object.values(FinishMap).map(({ value, label, labelKey, tooltipKey }) => ({
-    label: labelKey ? dictionary[labelKey] : label,
-    tooltip: tooltipKey ? dictionary[tooltipKey] : undefined,
-    value,
-}));
-
-export const getOtherFinishList = (dictionary: Record<string, string>) => Object.values(OtherFinishTypeMap).map(({ key, labelKey }) => ({
-    label: dictionary[labelKey],
-    value: key,
-}));
-
-export const getNameFontOptionList = (dictionary: Record<string, string>) => [
-    { label: dictionary['input.name-style.type.auto.label'], value: AUTO_FONT },
-    ...Object.values(NameFontDataMap).map(({ value, labelKey }) => ({
-        label: dictionary[labelKey],
-        value,
-    })),
-];
 
 export const getFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 'official') => frameList
     .filter(({ isOfficial }) => origin === 'both'
@@ -93,48 +45,3 @@ export const getFrameButtonList = (origin: 'official' | 'unofficial' | 'both' = 
         value: name,
         edition,
     }));
-
-export const getExtraAttributeList = (format: string, dictionary: Record<string, string>, showCreativeOption: boolean) => ExtraAttributeList
-    .map(({ name, nameKey, isCreative }) => ({
-        label: <Tooltip overlay={dictionary[nameKey]}>
-            <img
-                alt={dictionary[nameKey]}
-                src={`${PUBLIC_PATH}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
-            />
-        </Tooltip>,
-        value: name,
-        isCreative,
-    }))
-    .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption);
-
-export const getSTIconButtonList = (dictionary: Record<string, string>) => IconList.map(({ value, nameKey }) => ({
-    label: value === NO_ICON
-        ? <CloseCircleOutlined />
-        : <Tooltip overlay={dictionary[nameKey]}>
-            <img
-                alt={dictionary[nameKey]}
-                src={`${PUBLIC_PATH}/asset/image/subfamily/subfamily-${value.toLowerCase()}.png`}
-            />
-        </Tooltip>,
-    value,
-}));
-
-export const StarButtonList = [...Array(14)].map((_, index) => ({ label: index, value: index }));
-
-export const StickerButtonList = StickerList.map(({ value }) => ({
-    label: value === NO_STICKER
-        ? <CloseCircleOutlined />
-        : <img alt={value} src={`${PUBLIC_PATH}/asset/image/sticker/sticker-${value.toLowerCase()}.png`} />,
-    value,
-}));
-
-export const CondenseThresholdButtonList = Object
-    .entries(CondenseTolerantLabelMap)
-    .map(([key, { label, order }]) => {
-        return {
-            label,
-            value: key,
-            order
-        };
-    })
-    .sort((l, r) => l.order - r.order);

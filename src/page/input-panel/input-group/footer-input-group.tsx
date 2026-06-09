@@ -4,14 +4,19 @@ import { useCard, useLanguage } from 'src/service';
 import { IconButton, RadioTrain } from 'src/component';
 import { CardCheckboxGroup } from '../input-checkbox-group';
 import { checkDiplayLinkRating, randomPassword } from 'src/util';
-import { SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useShallow } from 'zustand/react/shallow';
-import { StickerButtonList } from '../const';
 import styled from 'styled-components';
 import { StyledInputLabelWithButton } from '../input-panel.styled';
 import { Checkbox, Dropdown, Menu, Tooltip } from 'antd';
-import { Card, copyrightMap, editionList, FlagIndexMap, CheckboxChangeEvent } from 'src/model';
+import { Card, copyrightMap, editionList, FlagIndexMap, CheckboxChangeEvent, NO_STICKER, PUBLIC_PATH, StickerList } from 'src/model';
 
+const StickerButtonList = StickerList.map(({ value }) => ({
+    label: value === NO_STICKER
+        ? <CloseCircleOutlined />
+        : <img alt={value} src={`${PUBLIC_PATH}/asset/image/sticker/sticker-${value.toLowerCase()}.png`} />,
+    value,
+}));
 const StyledFooterInputContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;

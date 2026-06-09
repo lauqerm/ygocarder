@@ -3,11 +3,11 @@ import { useCard, useGlobal, useSetting, WithLanguage } from 'src/service';
 import { UpOutlined, BookOutlined, EditOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { getExtraAttributeList } from '../const';
 import {
     AttributeList,
     AttributeType,
     DEFAULT_EXTERNAL_ATTRIBUTE,
+    ExtraAttributeList,
     ExtraAttributeMap,
     NO_ATTRIBUTE,
     PUBLIC_PATH,
@@ -99,7 +99,21 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
         .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption),
         [region, language, showCreativeOption],
     );
-    const extraAttributeList = useMemo(() => getExtraAttributeList(format, language, showCreativeOption), [format, language, showCreativeOption]);
+    const extraAttributeList = useMemo(
+        () => ExtraAttributeList
+            .map(({ name, nameKey, isCreative }) => ({
+                label: <Tooltip overlay={language[nameKey]}>
+                    <img
+                        alt={language[nameKey]}
+                        src={`${PUBLIC_PATH}/asset/image/attribute/attr-${format}-${name.toLowerCase()}.png`}
+                    />
+                </Tooltip>,
+                value: name,
+                isCreative,
+            }))
+            .filter(({ isCreative }) => isCreative === false || isCreative === showCreativeOption),
+        [format, language, showCreativeOption],
+    );
 
     const lastKnownCustomAttributeRef = useRef(DEFAULT_EXTERNAL_ATTRIBUTE);
 

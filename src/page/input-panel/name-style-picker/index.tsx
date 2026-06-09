@@ -9,11 +9,12 @@ import {
     FrameInfo,
     DefaultColorList,
     PUBLIC_PATH,
+    NameFontDataMap,
+    AUTO_FONT,
 } from '../../../model';
 import debounce from 'lodash.debounce';
 import { getNavigationProps, mergeClass, stringifyPalette, useRefresh } from 'src/util';
 import { TextGradientPicker } from './gradient-picker';
-import { getNameFontOptionList } from '../const';
 import { StyledDropdown, PopoverButton, StyledPatternOption, NameStylePresetOption, LoadingLabel } from 'src/component';
 import {
     StyledPatternContainer,
@@ -62,7 +63,13 @@ export const NameStylePicker = forwardRef(({
     }, [requestUpdateCustomStyle]);
     const reduceMotionColor = useSetting(state => state.setting.reduceMotionColor);
 
-    const fontList = useMemo(() => getNameFontOptionList(language), [language]);
+    const fontList = useMemo(() => [
+        { label: language['input.name-style.type.auto.label'], value: AUTO_FONT },
+        ...Object.values(NameFontDataMap).map(({ value, labelKey }) => ({
+            label: language[labelKey],
+            value,
+        })),
+    ], [language]);
 
     useEffect(() => {
         if (sendCustomStyleSignal !== 0) {

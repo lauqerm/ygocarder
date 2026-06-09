@@ -5,6 +5,7 @@ import {
     NameStyle,
     NameStyleType,
     FrameInfoMap,
+    FinishMap,
 } from '../../model';
 import {
     Affiliation,
@@ -19,8 +20,6 @@ import {
 } from '../../util';
 import {
     getFoilButtonList,
-    getFinishList,
-    FormatButtonList,
 } from './const';
 import { ClearOutlined } from '@ant-design/icons';
 import { CharPicker } from './char-picker';
@@ -57,6 +56,24 @@ import {
 import { IconInputGroup, IconInputGroupRef } from './icon-input-group';
 import './input-panel.scss';
 
+const FormatButtonList = [
+    {
+        label: 'OCG',
+        value: 'ocg',
+        props: {
+            className: 'ocg-button',
+            style: { fontWeight: 'bold' } as React.CSSProperties
+        },
+    },
+    {
+        label: 'TCG',
+        value: 'tcg',
+        props: {
+            className: 'tcg-button',
+            style: { fontWeight: 'bold' } as React.CSSProperties
+        },
+    },
+];
 export type CardInputPanelRef = {
     forceCardData: (card: Card) => void,
     isLoading: () => boolean,
@@ -123,7 +140,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
     const [pickerTarget, setPickerTarget] = useState<{ id: string, setValue: (nextValue: string) => void }>({
         id: '',
-        setValue: () => {},
+        setValue: () => { },
     });
 
     const changeFormat = (formatValue: string | number) => {
@@ -154,7 +171,14 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         });
     }, [setCard]);
 
-    const finishList = useMemo(() => getFinishList(language), [language]);
+    const finishList = useMemo(
+        () => Object.values(FinishMap).map(({ value, label, labelKey, tooltipKey }) => ({
+            label: labelKey ? language[labelKey] : label,
+            tooltip: tooltipKey ? language[tooltipKey] : undefined,
+            value,
+        })),
+        [language],
+    );
 
     useEffect(() => {
         stylePickerRef.current?.setValue({ font: nameStyle.font });

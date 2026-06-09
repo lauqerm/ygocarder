@@ -4,11 +4,20 @@ import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CondenseType, IconTypeMap, CheckboxChangeEvent } from 'src/model';
-import { CondenseThresholdButtonList } from '../const';
+import { CondenseType, IconTypeMap, CheckboxChangeEvent, CondenseTolerantLabelMap } from 'src/model';
 import styled from 'styled-components';
 import { checkMonster } from 'src/util';
 
+const CondenseThresholdButtonList = Object
+    .entries(CondenseTolerantLabelMap)
+    .map(([key, { label, order }]) => {
+        return {
+            label,
+            value: key,
+            order
+        };
+    })
+    .sort((l, r) => l.order - r.order);
 const PostPendulumFirstLineContainer = styled.div`
     &.first-line,
     &.second-line {
