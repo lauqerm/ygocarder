@@ -16,16 +16,20 @@ const StyledRadioTrainContainer = styled.div`
 export type RadioTrainRef = {
     focus: () => void,
 }
-export type RadioTrain<Value = string | number> = {
+export type RadioTrain<Value = string | number, LabelComponent extends React.ComponentType<Record<string, unknown>> = React.ComponentType<Record<string, unknown>>> = {
     className?: string,
     strict?: boolean,
     value: Value,
-    optionList: {
-        label: React.ReactNode,
+    optionList: ({
         value: Value,
         tooltipProps?: React.ComponentProps<typeof Tooltip>,
         props?: React.LabelHTMLAttributes<HTMLLabelElement>,
-    }[],
+    } & ({
+        labelComponent: LabelComponent,
+        labelProps: React.ComponentProps<LabelComponent>,
+    } | {
+        label: React.ReactNode,
+    }))[],
     onChange: (value: Value) => void,
     children?: React.ReactNode,
     suffix?: React.ReactNode,
@@ -64,11 +68,18 @@ const UnrefRadioTrain = <Value extends string | number = string | number>({
                 },
             })}
         >
-            {optionList.map(({ value, props, label, tooltipProps }, index) => {
+            {optionList.map((entry, index) => {
+                const { value, props, tooltipProps } = entry;
                 const className = props?.className;
                 const isChecked = strict
                     ? value === activeValue
                     : `${value}` === `${activeValue}`;
+                const labelNode = 'label' in entry
+                    ? entry.label
+                    : (() => {
+                        const LabelComponent = entry.labelComponent;
+                        return <LabelComponent {...entry.labelProps} />;
+                    })();
 
                 return <Tooltip key={value} overlay={null} {...tooltipProps}>
                     <label
@@ -84,7 +95,7 @@ const UnrefRadioTrain = <Value extends string | number = string | number>({
                         <span className={`ant-radio-button ${isChecked ? 'ant-radio-button-checked' : ''}`}>
                             <span className="ant-radio-button-inner"></span>
                         </span>
-                        <span className="label">{label}</span>
+                        <span className="label">{labelNode}</span>
                     </label>
                 </Tooltip>;
             })}

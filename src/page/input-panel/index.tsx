@@ -18,9 +18,6 @@ import {
 import {
     checkMonster,
 } from '../../util';
-import {
-    getFoilButtonList,
-} from './const';
 import { ClearOutlined } from '@ant-design/icons';
 import { CharPicker } from './char-picker';
 import { NameStylePicker, NameStylePickerRef } from './name-style-picker';
@@ -55,6 +52,7 @@ import {
 } from './input-panel.styled';
 import { IconInputGroup, IconInputGroupRef } from './icon-input-group';
 import './input-panel.scss';
+import { getFoilButtonList } from './const';
 
 const FormatButtonList = [
     {

@@ -307,7 +307,8 @@ export const FoilMap = {
     rainbow: {
         name: 'rainbow' as const,
         color: '#f3a486',
-        preview: <FoilPreview style={{ background: `linear-gradient(
+        preview: <FoilPreview style={{
+            background: `linear-gradient(
             135deg,
             rgba(255, 80, 80, 1) 0%,
             rgba(255, 194, 40, 1) 10%,
@@ -324,19 +325,19 @@ export const FoilMap = {
 };
 export const getFoilList = (dictionary?: FoilDictionary) => [
     {
-        label: dictionary?.normal,
+        tooltip: dictionary?.normal,
         ...FoilMap.normal,
     },
     {
-        label: dictionary?.gold,
+        tooltip: dictionary?.gold,
         ...FoilMap.gold,
     },
     {
-        label: dictionary?.platinum,
+        tooltip: dictionary?.platinum,
         ...FoilMap.platinum,
     },
     // {
-    //     label: dictionary?.rainbow,
+    //     tooltip: dictionary?.rainbow,
     //     ...FoilMap.rainbow,
     // },
 ];
