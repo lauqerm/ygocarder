@@ -26,6 +26,7 @@ public/asset-manifest.json
 .env.test.local
 .eslintcache
 Thumbs.db
+.vscode
 
 npm-debug.log*
 yarn-debug.log*

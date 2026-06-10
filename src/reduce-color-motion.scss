@@ -65,6 +65,9 @@
             transform: translateY(1px); // Alignment
             border: none;
         }
+        .flag-list-indicator {
+            box-shadow: none;
+        }
     }
     .link-marker-picker {
         &.chooser-active {

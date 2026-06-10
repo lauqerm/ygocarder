@@ -50,7 +50,7 @@ import {
     useSetting,
 } from './service';
 import { notification, Tooltip } from 'antd';
-import { CROPPER_WIDTH, LightboxRef, TaintedCanvasWarning } from './component';
+import { CROPPER_WIDTH, TaintedCanvasWarning } from './component';
 import { clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined, FileImageOutlined } from '@ant-design/icons';
 import {
@@ -71,6 +71,7 @@ import {
     IS_MOBILE,
     isTouchDevice,
 } from './pwa';
+import { type LightboxRef } from './component/lightbox';
 
 const Lightbox = lazy(() => import('./component/lightbox').then(({ Lightbox }) => ({ default: Lightbox })));
 /** React hotkey setup */
