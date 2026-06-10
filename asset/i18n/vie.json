@@ -138,6 +138,7 @@
         "generic.export.tooltip": "Lưu",
         "generic.import.label": "Mở",
         "generic.import.tooltip": "Mở",
+        "generic.loading.label": "Đang tải chức năng",
         "generic.no.label": "Không",
         "generic.overwrite.label": "Ghi đè?",
         "generic.reset.label": "Đặt lại",
