@@ -486,7 +486,11 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
         }) as FrameDyeList;
     }
     /** In older version, we always apply dye to gold / platinum foil, and turn non-foil into platinum foil, this is no longer the case in newer version as we can dye non-foil as well */
-    if (HexColorRegex.test(migratedCard.dyeList[6]) && migratedCard.foil === 'normal') migratedCard.foil = 'platinum';
+    if (
+        HexColorRegex.test(migratedCard.dyeList[6])
+        && typeof card.overlayType !== 'string'
+        && migratedCard.foil === 'normal'
+    ) migratedCard.foil = 'platinum';
 
     migratedCard.coordinateMap = {
         ...getDefaultCoordinateMap(),

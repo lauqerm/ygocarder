@@ -239,11 +239,11 @@ export const getCardLocally = async (): Promise<{ version: string, card: Interna
     if (db) {
         const cardStoreTx = db.transaction('cardStore', 'readonly');
         const latestCard = await cardStoreTx.store.get('latest');
+        await cardStoreTx.done;
         if (latestCard) return {
             version: latestCard.version,
             card: latestCard.content,
         };
-        await cardStoreTx.done;
     }
 
     const localCardVersion = localStorage.getItem('card-version');
@@ -271,15 +271,15 @@ export const saveCardLocally = (card: InternalCard) => {
                 content: card,
                 version,
             });
-        } else {
-            try {
-                localStorage.setItem('card-data', JSON.stringify(card));
-                localStorage.setItem('card-version', version);
-            } catch (e) {
-                const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = card;
-                localStorage.setItem('card-data', JSON.stringify(shortenedCard));
-                localStorage.setItem('card-version', version);
-            }
+        }
+        /** Also save to localStorage just in case */
+        try {
+            localStorage.setItem('card-data', JSON.stringify(card));
+            localStorage.setItem('card-version', version);
+        } catch (e) {
+            const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = card;
+            localStorage.setItem('card-data', JSON.stringify(shortenedCard));
+            localStorage.setItem('card-version', version);
         }
     } catch (e) {
         /** Ensure it does not fire repeatedly */

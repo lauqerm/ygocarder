@@ -195,6 +195,7 @@ export const useCardExport = ({
                             document.getElementById('preview-canvas')?.classList.add('js-export-available');
                             document.getElementById('export-canvas-guard')?.setAttribute('style', 'display: none');
                             document.getElementById('save-button-waiting')?.setAttribute('style', 'display: none');
+                            saveCardLocally(useCard.getState().card);
                             window.removeEventListener('beforeunload', confirmReload);
                             exportRef.current.pipelineRunning = false;
 

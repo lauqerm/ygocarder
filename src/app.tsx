@@ -870,7 +870,7 @@ function App() {
                 <FarSightButton className="far-sight-button" onClick={() => displayFitLightbox()}>
                     <FileImageOutlined /><br /><div>{language['button.far-sight.label']}</div>
                 </FarSightButton>
-                <StyledByMe className="by-me">
+                <StyledByMe className="by-me" id="hash-2">
                     Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                 </StyledByMe>
             </div>
