@@ -111,3 +111,26 @@ export const getDefaultYgoproDeckCard = () => ({
     ],
     misc_info: getDefaultYgoproDeckCardMisc() as YgoproDeckCardMisc,
 });
+
+export type MseCard = ReturnType<typeof getDefaultMseCard>;
+export const getDefaultMseCard = () => ({
+});
+
+export type MseFile = ReturnType<typeof getDefaultMseFile>;
+export const getDefaultMseFile = () => ({
+    mse_version: '2.0.1',
+    game: 'yugioh',
+    stylesheet: 'series10',
+    set_info: {
+        title: 'MSE',
+        gods_have_effects: false
+    },
+    styling: {
+
+    },
+    card: [] as MseCard[],
+    version_control: {
+        type: 'none'
+    },
+    apprentice_code: {},
+});

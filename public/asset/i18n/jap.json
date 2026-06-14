@@ -551,6 +551,8 @@
         "setting.option.sliding-type.auto.label": "自動",
         "setting.option.sliding-type.label": "プレビューのドラッグ移動（デスクトップ版のみ）",
         "setting.option.sliding-type.manual.label": "手動ドラッグ",
-        "setting.option.soft-mode.label": "色と動き減少"
+        "setting.option.soft-mode.label": "色と動き減少",
+        "manager.header.button.convert.tooltip": "Convert",
+        "manager.header.button.convert.alert": "Remember, converting is not the same as saving. You still must export your list afterward, or you'll lose progress."
     }
 }

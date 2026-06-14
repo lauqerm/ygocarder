@@ -1,6 +1,6 @@
 import { Dropdown, Input, Menu, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
+import { cardListToMse, csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
@@ -10,17 +10,20 @@ import {
     CloseOutlined,
     UnorderedListOutlined,
     LoadingOutlined,
+    RetweetOutlined,
     // FilterOutlined,
 } from '@ant-design/icons';
 import { cardListToCsv } from 'src/service';
-import { downloadBlob, getNaivePseudoRandomizer } from 'src/util';
-import { InternalCard } from 'src/model';
+import { downloadBlob } from 'src/util';
+import { ExportFormatList, InternalCard } from 'src/model';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
 import { ManagerDrawer } from 'src/component';
 import { captureException } from 'src/util';
 
-const chanceToRemindBackup = getNaivePseudoRandomizer();
+const StyledConvertMenu = styled(Menu)`
+    width: 225px;
+`;
 const StyledCardManagerPanel = styled.div`
     position: absolute;
     right: 0;
@@ -135,6 +138,102 @@ export const CardManagerPanel = forwardRef(({
         onSelect(card);
         setActiveId(card.id);
     }, [onSelect, setActiveId]);
+    const downloadList = async (type: 'xlsx' | 'csv' = exportFormat) => {
+        setSavingFile(true);
+
+        try {
+            const {
+                error,
+                value: csvdata,
+            } = cardListToCsv(useCardList.getState().cardList);
+
+            if (error) {
+                let errorMessage = '';
+                let errorDescription = '';
+                switch (error) {
+                    case 'offline-data': {
+                        errorMessage = language['error.export.offline-data.message'];
+                        errorDescription = language['error.export.offline-data.description'];
+                        break;
+                    }
+                }
+
+                if (errorMessage || errorDescription) {
+                    notification.error({
+                        message: errorMessage,
+                        description: errorDescription,
+                    });
+                }
+            }
+            switch (type) {
+                case 'xlsx': {
+                    const XLSX = await import('xlsx');
+                    const exportWorkbook = XLSX.read(csvdata, { type: 'string' });
+                    XLSX.writeFile(exportWorkbook, `${useCardList.getState().listName}.xlsx`);
+                    break;
+                }
+                default: {
+                    downloadBlob(
+                        useCardList.getState().listName,
+                        new Blob([csvdata], { type: 'text/csv' }),
+                        'text/csv',
+                    );
+                }
+            }
+            changeEditStatus('download');
+        } catch (e) {
+            await captureException(e);
+        }
+        setSavingFile(false);
+    };
+    const convertList = async () => {
+        setSavingFile(true);
+
+        try {
+            const {
+                error,
+                set,
+                imageList,
+            } = cardListToMse(useCardList.getState().cardList);
+
+            if (error) {
+                let errorMessage = '';
+                let errorDescription = '';
+                switch (error) {
+                    case 'offline-data': {
+                        errorMessage = language['error.export.offline-data.message'];
+                        errorDescription = language['error.export.offline-data.description'];
+                        break;
+                    }
+                }
+
+                if (errorMessage || errorDescription) {
+                    notification.error({
+                        message: errorMessage,
+                        description: errorDescription,
+                    });
+                }
+            }
+            // const JSZip = (await import('jszip')).default;
+            // const zipObject = new JSZip();
+            // zipObject.file('set', set);
+            // imageList.forEach(({ blob, name }) => {
+            //     zipObject.file(name, blob);
+            // });
+            // const zipBlob = await zipObject.generateAsync({
+            //     type: 'blob',
+            // });
+            // downloadBlob(
+            //     'convert-result.mse-set',
+            //     zipBlob,
+            //     'application/zip',
+            // );
+            changeEditStatus('download');
+        } catch (e) {
+            await captureException(e);
+        }
+        setSavingFile(false);
+    };
 
     useEffect(() => {
         if (pendingActiveCard) {
@@ -239,67 +338,54 @@ export const CardManagerPanel = forwardRef(({
                             <FilterOutlined />
                         </div>
                     </Tooltip> */}
-                    <Tooltip title={language['manager.header.button.download.tooltip']}>
+                    <Dropdown
+                        visible={true}
+                        overlay={<StyledConvertMenu className="convert-menu">
+                            <Menu.ItemGroup title={<div>
+                                {language['manager.header.button.convert.tooltip']}
+                                <br />
+                                <small><i>{language['manager.header.button.convert.alert']}</i></small>
+                            </div>}>
+                                {[
+                                    {
+                                        value: 'Magic Set Editor',
+                                        label: 'Magic Set Editor',
+                                    },
+                                ].map(({ value, label }) => {
+                                    return <Menu.Item key={value} onClick={async () => await convertList()}>
+                                        {label}
+                                    </Menu.Item>;
+                                })}
+                            </Menu.ItemGroup>
+                        </StyledConvertMenu>}
+                    >
                         <div
                             className="manager-button"
-                            onClick={async () => {
-                                let wouldDownload = true;
-                                setSavingFile(true);
-                                if (chanceToRemindBackup.check()) {
-                                    wouldDownload = window.confirm(language['prompt.remind.backup.label']);
-                                }
-
-                                if (wouldDownload) {
-                                    try {
-                                        const {
-                                            error,
-                                            value: csvdata,
-                                        } = cardListToCsv(useCardList.getState().cardList);
-
-                                        if (error) {
-                                            let errorMessage = '';
-                                            let errorDescription = '';
-                                            switch (error) {
-                                                case 'offline-data': {
-                                                    errorMessage = language['error.export.offline-data.message'];
-                                                    errorDescription = language['error.export.offline-data.description'];
-                                                    break;
-                                                }
-                                            }
-
-                                            if (errorMessage || errorDescription) {
-                                                notification.error({
-                                                    message: errorMessage,
-                                                    description: errorDescription,
-                                                });
-                                            }
-                                        }
-                                        switch (exportFormat) {
-                                            case 'xlsx': {
-                                                const XLSX = await import('xlsx');
-                                                const exportWorkbook = XLSX.read(csvdata, { type: 'string' });
-                                                XLSX.writeFile(exportWorkbook, `${useCardList.getState().listName}.xlsx`);
-                                                break;
-                                            }
-                                            default: {
-                                                downloadBlob(
-                                                    useCardList.getState().listName,
-                                                    new Blob([csvdata], { type: 'text/csv' }),
-                                                    'text/csv',
-                                                );
-                                            }
-                                        }
-                                        changeEditStatus('download');
-                                    } catch (e) {
-                                        await captureException(e);
-                                    }
-                                }
-                                setSavingFile(false);
-                            }}
+                        >
+                            {savingFile ? <LoadingOutlined /> : <RetweetOutlined />}
+                        </div>
+                    </Dropdown>
+                    <Dropdown
+                        overlay={<StyledConvertMenu className="convert-menu">
+                            <Menu.ItemGroup title={<div>
+                                {language['manager.header.button.download.tooltip']}
+                                <br />
+                                <small><i>{language['prompt.remind.backup.label']}</i></small>
+                            </div>}>
+                                {ExportFormatList.map(({ value, label }) => {
+                                    return <Menu.Item key={value} onClick={async () => await downloadList(value)}>
+                                        {label}
+                                    </Menu.Item>;
+                                })}
+                            </Menu.ItemGroup>
+                        </StyledConvertMenu>}
+                    >
+                        <div
+                            className="manager-button"
                         >
                             {savingFile ? <LoadingOutlined /> : <DownloadOutlined />}
                         </div>
-                    </Tooltip>
+                    </Dropdown>
                     <Tooltip key={`${readingFile}`} overlay={language['manager.header.button.upload.tooltip']}>
                         <div
                             className="manager-button"

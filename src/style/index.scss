@@ -538,3 +538,12 @@ button.ant-btn {
         color: var(--color);
     }
 }
+
+.ant-dropdown-menu-item-group {
+    .ant-dropdown-menu-item-group-title {
+        color: var(--color);
+    }
+    .ant-dropdown-menu-item-group-list {
+        margin: 0;
+    }
+}
