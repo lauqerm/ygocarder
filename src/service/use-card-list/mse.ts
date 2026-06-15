@@ -1,36 +1,30 @@
 import { Card } from 'src/model';
+import { base64ToBlob, imageLinkToBlob, stringifyMseData, ygoCarderToMseData } from 'src/util';
 
-
-export const cardListToMse = (cardList: Card[]) => {
+export const cardListToMse = async (cardList: Card[]) => {
     const imageList: { blob: Blob, name: string }[] = [];
-    const stringifiedCardList: string[][] = [[
-        'has_styling: false',
-        'notes: ',
-        'time_created: 2020-12-19 12:07:03',
-        'time_modified: 2026-06-14 11:26:51',
-        'extra_data:',
-        '	yugioh-series10:',
-        '		mse_version: 2.0.1',
-        'card_type: "pendulum synchro monster"',
-        'name: "Balogar, Blinded by Fate"',
-        'attribute: "light"',
-        'level: "<sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto>"',
-        'image: local_image_file("image1")',
-        'type_1: "<word-list-monster>Psychic</word-list-monster>"',
-        'type_2: "<word-list-card>Effect</word-list-card>"',
-        'type_3: "<word-list-card></word-list-card>"',
-        'type_4: "<word-list-card></word-list-card>"',
-        'type_5: "<word-list-card></word-list-card>"',
-        'monster_type: "<prefix>[</prefix><word-list-monster>Psychic</word-list-monster><sep><test>/</test></sep><word-list-card>Effect</word-list-card><sep-soft></sep-soft><word-list-card></word-list-card><sep-soft></sep-soft><word-list-card></word-list-card><sep>]<soft></soft></sep><word-list-card></word-list-card>"',
-        'rule_text: "If your opponent have more cards in their GY than you do, you can Special Summon this card from your hand. Cannot be destroyed by Spell/Trap effects. While your opponent have more cards in their GY than you do, monsters they control lose ATK/DEF equal to the difference x 200 during your turn only. Monsters with 0 ATK cannot activate their effects, also their effects on the field are negated."',
-        'attack: "2000"',
-        'defense: "2000"',
-        'blue_scale: "4"',
-        'red_scale: "3"',
-        'pendulum_text: "Balogar"',
-        'gamecode: "01"',
-        'rarity: "ultra rare"',
-    ]];
+    const stringifiedCardList: string[] = [];
+    for (let cnt = 0; cnt < cardList.length; cnt++) {
+        const card = cardList[cnt];
+        const code = `${cnt}`;
+        const {
+            art,
+            artData,
+            artSource,
+            artCrop,
+        } = card;
+        const artBlob = artSource === 'offline'
+            ? await base64ToBlob(artData)
+            : await imageLinkToBlob(art, artCrop);
+        stringifiedCardList.push(stringifyMseData(ygoCarderToMseData(card, undefined, {
+            gamecode: code,
+            imageName: code,
+        }).result));
+        imageList.push({
+            blob: artBlob,
+            name: `image${code}`,
+        });
+    }
     const resultList = [
         'mse_version: 2.0.1',
         'game: yugioh',
@@ -67,13 +61,12 @@ export const cardListToMse = (cardList: Card[]) => {
         '		pendulum_text_centering: false',
         '		is_ZARC_card: false',
         '		is_link_card: false',
-        stringifiedCardList.map(entry => 'card:\n' + entry.map(entry => '	' + entry).join('\n')).join('\n'),
+        stringifiedCardList.map(entry => 'card:\n' + entry).join('\n'),
         'version_control:',
         '	type: none',
         'apprentice_code: ',
     ];
-
-    console.log('🚀 ~ cardListToMse ~ resultList.join(\'\n\'):', resultList.join('\n'));
+    console.log('resultList', resultList.join('\n'));
     return {
         error: null,
         set: new Blob([resultList.join('\n')], { type: 'text/plain' }),

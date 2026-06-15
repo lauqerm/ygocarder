@@ -105,4 +105,14 @@ export function evictCacheByAge(maxAgeMs: number): void {
 /** Wipe the entire cache */
 export function clearCache(): void {
     cache.clear();
-}
+};
+
+export async function base64ToBlob(base64Data: string, contentType = '') {
+    // If it's a raw base64 string, wrap it in a data URL format
+    const dataUrl = base64Data.startsWith('data:')
+        ? base64Data
+        : `data:${contentType};base64,${base64Data}`;
+
+    const response = await fetch(dataUrl);
+    return await response.blob();
+};

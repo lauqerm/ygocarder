@@ -87,7 +87,7 @@ export const getDefaultYgoproDeckCard = () => ({
     frameType: 'effect',
     desc: '\'\'The ultimate wizard in terms of attack and defense.\'\'',
     pend_desc: '',
-    monster_desc: 'You can Ritual Summon this card with "Odd-Eyes Advent".',
+    monster_desc: 'The ultimate wizard in terms of attack and defense.',
     race: 'Warrior',
     atk: 0,
     def: 0 as number | undefined,
@@ -114,6 +114,34 @@ export const getDefaultYgoproDeckCard = () => ({
 
 export type MseCard = ReturnType<typeof getDefaultMseCard>;
 export const getDefaultMseCard = () => ({
+    has_styling: false,
+    notes: '',
+    time_created: '2026-06-14 12:00:00',
+    time_modified: '2026-06-14 12:00:00',
+    extra_data: {
+        yugiohseries10: {
+            mse_version: '2.0.1',
+        },
+    },
+    card_type: 'effect monster',
+    name: 'Card Name',
+    attribute: 'light',
+    level: '<sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto><sym-auto>*</sym-auto>',
+    image: 'local_image_file("image1")',
+    type_1: '<word-list-monster>Machine</word-list-monster>',
+    type_2: '<word-list-card>Effect</word-list-card>',
+    type_3: '<word-list-card></word-list-card>',
+    type_4: '<word-list-card></word-list-card>',
+    type_5: '<word-list-card></word-list-card>',
+    monster_type: '<prefix>[</prefix><word-list-monster>Machine</word-list-monster><sep><test>/</test></sep><word-list-card>Effect</word-list-card><sep-soft></sep-soft><word-list-card></word-list-card><sep-soft></sep-soft><word-list-card></word-list-card><sep>]<soft></soft></sep><word-list-card></word-list-card>',
+    rule_text: 'Placeholder Effect',
+    attack: '2000',
+    defense: '2000',
+    blue_scale: '4',
+    red_scale: '3',
+    pendulum_text: 'Balogar',
+    gamecode: '01',
+    rarity: 'ultra rare',
 });
 
 export type MseFile = ReturnType<typeof getDefaultMseFile>;

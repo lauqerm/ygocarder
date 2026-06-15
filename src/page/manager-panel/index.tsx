@@ -188,13 +188,14 @@ export const CardManagerPanel = forwardRef(({
     };
     const convertList = async () => {
         setSavingFile(true);
+        const debugMode = true;
 
         try {
             const {
                 error,
                 set,
                 imageList,
-            } = cardListToMse(useCardList.getState().cardList);
+            } = await cardListToMse(useCardList.getState().cardList);
 
             if (error) {
                 let errorMessage = '';
@@ -214,20 +215,20 @@ export const CardManagerPanel = forwardRef(({
                     });
                 }
             }
-            // const JSZip = (await import('jszip')).default;
-            // const zipObject = new JSZip();
-            // zipObject.file('set', set);
-            // imageList.forEach(({ blob, name }) => {
-            //     zipObject.file(name, blob);
-            // });
-            // const zipBlob = await zipObject.generateAsync({
-            //     type: 'blob',
-            // });
-            // downloadBlob(
-            //     'convert-result.mse-set',
-            //     zipBlob,
-            //     'application/zip',
-            // );
+            const JSZip = (await import('jszip')).default;
+            const zipObject = new JSZip();
+            zipObject.file('set' + (debugMode ? '.txt' : ''), set);
+            imageList.forEach(({ blob, name }) => {
+                zipObject.file(name + (debugMode ? '.png' : ''), blob);
+            });
+            const zipBlob = await zipObject.generateAsync({
+                type: 'blob',
+            });
+            downloadBlob(
+                'convert-result' + (debugMode ? '.zip' : '.mse-set'),
+                zipBlob,
+                'application/zip',
+            );
             changeEditStatus('download');
         } catch (e) {
             await captureException(e);
