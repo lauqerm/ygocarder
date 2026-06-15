@@ -48,6 +48,7 @@ export type AttributeImageInputRef = {
 export type AttributeImageInput = {
     children?: React.ReactNode,
     onUserChange?: () => void,
+    onSourceTypeChange?: (sourceType: ImageSourceType) => void,
 } & Pick<ImageCropper, 'receivingCanvas' | 'onTainted' | 'onSourceLoaded' | 'onCropChange'>;
 export const AttributeImageInput = forwardRef<AttributeImageInputRef, AttributeImageInput>(({
     children,
@@ -56,6 +57,7 @@ export const AttributeImageInput = forwardRef<AttributeImageInputRef, AttributeI
     onCropChange,
     onSourceLoaded,
     onTainted,
+    onSourceTypeChange,
 }, ref) => {
     const language = useLanguage();
     const {
@@ -161,6 +163,7 @@ export const AttributeImageInput = forwardRef<AttributeImageInputRef, AttributeI
         imageStyle={attributeImageStyle}
         onSourceChange={(type, data) => {
             changeAttributeImageSource(type);
+            onSourceTypeChange?.(type);
             if (type === 'offline') changeAttributeImageData(data);
             else changeAttributeImage(data);
         }}

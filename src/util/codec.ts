@@ -172,7 +172,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         shadowOffsetY: 'nssoy',
     },
     attribute: 'at',
-    attributeImageSource: 'att',
+    attributeImageSource: 'ats',
     attributeImage: 'atg',
     attributeImageFit: 'atf',
     attributeImageStyle: {
@@ -236,6 +236,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     externalInfo: 'ei',
 };
 const legacyCardFieldShortenMap = {
+    attributeType: 'att',
     passcode: 'pc',
     picture: 'pt',
     pictureCrop: {
@@ -578,6 +579,7 @@ export const ygoCarderToExportableData = (
 ) => {
     if (card.artSource === 'offline'
         || (card.hasBackground && card.backgroundSource === 'offline')
+        || (card.attributeImageSource === 'offline' && card.attributeImageData.trim() !== '')
         || (card.overlaySource === 'offline' && card.overlayData.trim() !== '')
         || (card.iconImageSource === 'offline' && card.iconImageSource.trim() !== '')
     ) {
