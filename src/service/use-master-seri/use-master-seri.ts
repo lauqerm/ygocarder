@@ -101,26 +101,27 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         card,
     } = useCard();
     const {
-        exportCanvasRef,
         artworkCanvasRef,
+        attributeCanvasRef,
         backgroundCanvasRef,
-        overlayCanvasRef,
-        iconImageCanvasRef,
-        frameCanvasRef,
+        cardIconCanvasRef,
         creatorCanvasRef,
         effectCanvasRef,
+        exportCanvasRef,
+        finishCanvasRef,
+        frameCanvasRef,
+        iconImageCanvasRef,
+        lightboxRef,
         nameCanvasRef,
+        overlayCanvasRef,
         passwordCanvasRef,
         pendulumEffectCanvasRef,
         pendulumScaleCanvasRef,
+        previewCanvasRef,
         setIdCanvasRef,
         statCanvasRef,
         stickerCanvasRef,
-        cardIconCanvasRef,
         typeCanvasRef,
-        finishCanvasRef,
-        lightboxRef,
-        previewCanvasRef,
     } = canvasMap;
     const {
         format, region,
@@ -141,7 +142,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         dyeList,
         atk, def, linkMap, linkRating,
         attribute,
-        attributeType,
+        attributeImageSource,
         cardIcon, subFamily, star, starAlignment, starList,
         setId,
         password, creator, sticker,
@@ -327,6 +328,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             const ctx = frameCanvasRef.current?.getContext('2d');
             const artworkCanvas = artworkCanvasRef.current;
             const backgroundCanvas = backgroundCanvasRef.current;
+            const attributeCanvas = attributeCanvasRef.current;
             const overlayCanvas = overlayCanvasRef.current;
 
             if (!clearCanvas(ctx) || !frameCanvasRef.current) return;
@@ -423,7 +425,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawCardBorderFinish,
             } = getLayoutDrawFunction({
                 canvas: frameCanvasRef.current,
-                artworkCanvas, backgroundCanvas, overlayCanvas,
+                artworkCanvas, backgroundCanvas, overlayCanvas, attributeCanvas,
                 globalScale,
                 coordinateMap,
                 region,
@@ -435,7 +437,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 hasOverlay, overlayType,
                 backgroundType,
                 attribute,
-                attributeType,
+                attributeImageSource,
                 cardIcon, star, starList,
                 foil,
                 pendulumSize,
@@ -642,9 +644,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         globalScale,
         artworkCanvasRef,
         attribute,
-        attributeType,
+        attributeImageSource,
         backgroundCanvasRef,
         backgroundType,
+        attributeCanvasRef,
         cardIcon,
         coordinateMap,
         dyeList,

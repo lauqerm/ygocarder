@@ -2,7 +2,7 @@ import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { PUBLIC_PATH } from './app';
 
 export const DEFAULT_EXTERNAL_ATTRIBUTE = 'https://i.postimg.cc/3w5ZQ2rt/attr-custom-void.png';
-export type AttributeType = 'auto' | 'custom';
+export type AttributeType = 'auto' | 'online' | 'offline';
 export const NO_ATTRIBUTE = 'NONE';
 export const AttributeList = [
     {

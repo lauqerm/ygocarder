@@ -22,7 +22,7 @@ import {
     parseOffset,
     CanvasTextStyle,
 } from 'src/model';
-import { drawAsset, drawAssetWithSize, drawFromWithSizeAndFallback, drawWithStyle } from '../image';
+import { drawAsset, drawAssetWithSize, drawWithStyle } from '../image';
 import { blendCanvas, createCanvas, dyeCanvas, getCardIconFromFrame, HexColorRegex, resolveFrameStyle } from 'src/util';
 import { drawStarContent } from './with-image';
 import { getFinishIterator } from '../canvas-util';
@@ -117,6 +117,7 @@ export const getLayoutDrawFunction = ({
     artworkCanvas,
     backgroundCanvas,
     overlayCanvas,
+    attributeCanvas,
     globalScale,
     region,
     legacyTemplate,
@@ -129,7 +130,7 @@ export const getLayoutDrawFunction = ({
     backgroundType,
     cardIcon,
     attribute,
-    attributeType,
+    attributeImageSource,
     star,
     starList,
     foil,
@@ -148,6 +149,7 @@ export const getLayoutDrawFunction = ({
     artworkCanvas: HTMLCanvasElement | null,
     backgroundCanvas: HTMLCanvasElement | null,
     overlayCanvas: HTMLCanvasElement | null,
+    attributeCanvas: HTMLCanvasElement | null,
     globalScale: number,
     region: string,
     legacyTemplate: boolean,
@@ -177,7 +179,7 @@ export const getLayoutDrawFunction = ({
         caller?: (finishType: string) => Promise<unknown>,
     ) => Promise<void>,
     loopArtFinish: ReturnType<typeof getFinishIterator>,
-} & Pick<Card, 'attributeType'>) => {
+} & Pick<Card, 'attributeImageSource'>) => {
     const ctx = canvas.getContext('2d');
     const {
         artBorder: keepArtBorder,
@@ -444,27 +446,10 @@ export const getLayoutDrawFunction = ({
             if (!ctx) return;
             ctx.scale(globalScale, globalScale);
             const {
-                canvas: attributeCanvas,
-                ctx: attributeCtx,
+                canvas: operateCanvas,
+                ctx: operateCtx,
             } = createCanvas(cardWidth * globalScale, (attributeY + attributeSize) * globalScale);
-            if (attributeType === 'custom') {
-                await drawFromWithSizeAndFallback(
-                    attributeCtx,
-                    attribute,
-                    image => {
-                        const { naturalWidth, naturalHeight } = image;
-                        const actualWidth = attributeSize / naturalHeight * naturalWidth;
-                        const offsetX = (actualWidth - attributeSize) / 2;
-
-                        return attributeX - offsetX;
-                    },
-                    attributeY,
-                    undefined, attributeSize,
-                    undefined, undefined,
-                    undefined, undefined,
-                    { internalImage: false, crossorigin: 'anonymous' },
-                );
-            } else {
+            if (attributeImageSource === 'auto') {
                 const offsetX = AttributeOffsetMap[region]?.[attribute]?.offsetX ?? 0;
                 const isExtraAttribute = ExtraAttributeMap[attribute];
                 const attributeName = isExtraAttribute
@@ -472,11 +457,23 @@ export const getLayoutDrawFunction = ({
                     : RegionMap[region].fileKey;
 
                 await drawAssetWithSize(
-                    attributeCtx,
+                    operateCtx,
                     `attribute/attr-${attributeName}-${attribute.toLowerCase()}.png`,
                     attributeX + offsetX, attributeY,
                     undefined, attributeSize,
                 );
+            } else {
+                if (attributeCanvas) {
+                    const { width: attributeWidth, height: attributeHeight } = attributeCanvas;
+                    const heightRatio = attributeHeight / attributeSize;
+                    const widthRatio = attributeWidth / attributeSize;
+                    const ratio = Math.max(heightRatio, widthRatio);
+                    operateCtx?.drawImage(
+                        attributeCanvas,
+                        attributeX, attributeY,
+                        Math.round(attributeWidth / ratio), Math.round(attributeHeight / ratio),
+                    );
+                }
             }
             const attributeFinish = otherFinish[0] ?? 'normal';
             if (attributeFinish !== 'normal') {
@@ -485,7 +482,7 @@ export const getLayoutDrawFunction = ({
                     canvas: attributeFinishCanvas,
                     ctx: attributeFinishCtx,
                 } = createCanvas(cardWidth, (attributeY + attributeSize));
-                attributeFinishCtx?.drawImage(attributeCanvas, 0, 0);
+                attributeFinishCtx?.drawImage(operateCanvas, 0, 0);
                 await loopAttributeFinish(
                     attributeFinishCtx,
                     'art',
@@ -497,13 +494,13 @@ export const getLayoutDrawFunction = ({
                         );
                     },
                 );
-                if (attributeCtx) {
-                    attributeCtx.globalCompositeOperation = 'source-in';
-                    attributeCtx.drawImage(attributeFinishCanvas, 0, 0);
+                if (operateCtx) {
+                    operateCtx.globalCompositeOperation = 'source-in';
+                    operateCtx.drawImage(attributeFinishCanvas, 0, 0);
                 }
-                ctx.drawImage(attributeCanvas, 0, 0);
+                ctx.drawImage(operateCanvas, 0, 0);
             } else {
-                ctx.drawImage(attributeCanvas, 0, 0);
+                ctx.drawImage(operateCanvas, 0, 0);
             }
             ctx.resetTransform();
         },

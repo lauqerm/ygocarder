@@ -112,6 +112,7 @@ export type ImageCropper = {
     title?: React.ReactNode,
     backgroundColor?: string,
     className?: string,
+    disabled?: boolean,
     /** Stretch or squeeze image so it fit with the provided ratio */
     forceFit?: boolean,
     defaultSourceType?: string,
@@ -136,6 +137,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
     title,
     backgroundColor,
     className,
+    disabled,
     forceFit,
     defaultSourceType,
     defaultInternalSource = '',
@@ -587,7 +589,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                     <label>{language['image-cropper.drop.tooltip']}</label>
                 </DropZone>
                 {isLoading && <Loading.FullView />}
-                {(hasImage && !error) && <div className="card-image-option">
+                {(hasImage && !disabled && !error) && <div className="card-image-option">
                     <Tooltip
                         placement="left"
                         overlay={language['image-cropper.button.flip-horizontal.tooltip']}
@@ -683,8 +685,8 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                 />}
                 <ReactCrop key={`${sourceType}-${isMigrated}-${redrawSignal}`}
                     src={sourceType === 'offline' ? internalSource : externalSource}
-                    disabled={forceFit}
-                    className={forceFit ? 'force-fitted' : ''}
+                    disabled={(forceFit || disabled)}
+                    className={(forceFit || disabled) ? 'force-fitted' : ''}
                     imageStyle={backgroundColor
                         ? {
                             backgroundColor,

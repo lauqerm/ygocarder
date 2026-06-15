@@ -222,6 +222,7 @@
         "input.attribute.spell": "Spell",
         "input.attribute.trap": "Trap",
         "input.attribute.type-custom": "Use custom attribute",
+        "input.attribute.type-auto": "Use auto attribute",
         "input.attribute.type-extra": "Use extra attributes",
         "input.attribute.water": "Water",
         "input.attribute.wind": "Wind",

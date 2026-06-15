@@ -26,8 +26,6 @@ import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
 import { LayoutPicker, OpacityPickerRef } from './layout-picker';
 import {
-    AttributeInputGroup,
-    AttributeInputGroupRef,
     EffectInputGroup,
     EffectInputGroupRef,
     FooterInputGroup,
@@ -53,6 +51,7 @@ import {
 import { IconInputGroup, IconInputGroupRef } from './icon-input-group';
 import './input-panel.scss';
 import { getFoilButtonList } from './const';
+import { AttributeInputGroup, AttributeInputGroupRef } from './attribute-input-group';
 
 const NameStylePicker = lazy(() => import('./name-style-picker').then(({ NameStylePicker }) => ({ default: NameStylePicker })));
 const FormatButtonList = [
@@ -79,9 +78,10 @@ export type CardInputPanelRef = {
 };
 export type CardInputPanel = {
     artworkCanvas: ImageInputGroup['receivingCanvas'],
+    attributeCanvas: ImageInputGroup['receivingCanvas'],
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
-    overlayCanvas: ImageInputGroup['receivingCanvas'],
     iconImageCanvas: ImageInputGroup['receivingCanvas'],
+    overlayCanvas: ImageInputGroup['receivingCanvas'],
 } & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData'>;
 export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     applyCardData,
@@ -89,6 +89,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     backgroundCanvas,
     overlayCanvas,
     iconImageCanvas,
+    attributeCanvas,
     onCropChange,
     onTainted,
     onSourceLoaded,
@@ -201,7 +202,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 iconImage, iconImageCrop, iconImageData, iconImageSource,
                 overlay, overlayCrop, overlayData, overlaySource,
                 opacity,
-                attribute, attributeType,
+                attribute, attributeImageSource, attributeImage, attributeImageCrop, attributeImageData,
                 setId,
                 pendulumEffect,
                 typeAbility,
@@ -219,7 +220,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
                 background, backgroundCrop, backgroundData, backgroundSource,
             });
             attributeInputGroupRef.current?.setValue({
-                attribute, attributeType,
+                attribute, attributeImageSource, attributeImage, attributeImageCrop, attributeImageData,
             });
             nameSetIdInputGroupRef.current?.setValue({ name, setId });
             pendulumInputGroupRef.current?.setValue({
@@ -320,7 +321,13 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         </StyledNameSetIdInputContainer>
         <div className="main-info">
             <div className="main-info-first">
-                <AttributeInputGroup ref={attributeInputGroupRef} language={language} />
+                <AttributeInputGroup ref={attributeInputGroupRef}
+                    language={language}
+                    receivingCanvas={attributeCanvas}
+                    onTainted={onTainted}
+                    onSourceLoaded={onSourceLoaded}
+                    onCropChange={onCropChange}
+                />
 
                 <PendulumInputGroup ref={pendulumInputGroupRef}
                     showCreativeOption={showCreativeOption}

@@ -280,7 +280,8 @@ export const CardThumb = ({
         artStyle,
         atk,
         attribute,
-        attributeType,
+        attributeImageData,
+        attributeImageSource,
         background,
         backgroundCrop,
         backgroundData,
@@ -474,14 +475,16 @@ export const CardThumb = ({
                 {normalizedCardName}
             </div>
             <div className="second-row truncate">
-                {(attributeType === 'custom' && attribute.length > 0)
+                {(attributeImageSource === 'online' && attribute.length > 0)
                     ? <img className="attribute-icon" src={attribute} alt="Attribute" />
-                    : attribute === 'NONE'
-                        ? null
-                        : <img className="attribute-icon"
-                            src={`${PUBLIC_PATH}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
-                            alt="Attribute"
-                        />}
+                    : (attributeImageSource === 'online' && attribute.length > 0)
+                        ? <img className="attribute-icon" src={attributeImageData} alt="Attribute" />
+                        : attribute === 'NONE'
+                            ? null
+                            : <img className="attribute-icon"
+                                src={`${PUBLIC_PATH}/asset/image/attribute/attr-${format}-${attribute.toLowerCase()}.png`}
+                                alt="Attribute"
+                            />}
                 {typeAbility.length > 0 && <div className="truncate">{joinedTypeAbility}</div>}
                 {normalizedCardIconType !== 'st' && <div className="padding" />}
                 {(normalizedCardIcon !== NO_ICON && normalizedCardIconType !== 'none') && <img

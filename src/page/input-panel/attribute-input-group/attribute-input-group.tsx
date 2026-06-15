@@ -15,8 +15,9 @@ import {
 } from 'src/model';
 import styled from 'styled-components';
 import { mergeClass } from 'src/util';
-import { CardTextInput, CardTextInputRef } from '../input-text';
-import { Tooltip } from 'antd';
+import { CardTextInputRef } from '../input-text';
+import { Button, Modal, Tooltip } from 'antd';
+import { AttributeImageInput, AttributeImageInputRef } from './attribute-image-input';
 
 const AttributeRegionTrain = styled.div`
     align-self: flex-end;
@@ -43,18 +44,29 @@ const AttributeOption = styled.div`
 `;
 
 export type AttributeInputGroupRef = {
-    setValue: (value: { attribute: string, attributeType: AttributeType }) => void,
+    setValue: (value: {
+        attribute?: string,
+        attributeImage?: string,
+        attributeImageData?: string,
+        attributeImageSource?: AttributeType,
+        attributeImageCrop?: Partial<ReactCrop.Crop>,
+    }) => void,
 };
-export type AttributeInputGroup = {
-} & WithLanguage;
+export type AttributeInputGroup = {}
+    & AttributeImageInput
+    & WithLanguage;
 export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeInputGroup>(({
+    onTainted,
+    onSourceLoaded,
+    onCropChange,
+    receivingCanvas,
     language,
 }, ref) => {
     const {
         format,
         region,
         attribute,
-        attributeType,
+        attributeImageSource,
         getUpdater,
     } = useCard(useShallow(({
         card: {
@@ -62,7 +74,7 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
             region,
             isLink,
             attribute,
-            attributeType,
+            attributeImageSource,
         },
         getUpdater,
     }) => ({
@@ -70,17 +82,18 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
         region,
         isLink,
         attribute,
-        attributeType,
+        attributeImageSource,
         getUpdater,
     })));
+    const [attributeModalVisible, setAttributeModalVisible] = useState(true);
+    const attributeImageInputInDropdownRef = useRef<AttributeImageInputRef>(null);
     const linkAttributeRef = useRef<CardTextInputRef>(null);
     const { setting, updateSetting } = useSetting();
     const [, setResetCanvasCounter] = useGlobal('resetCanvasCounter');
     const { showCreativeOption, showExtraDecorativeOption, showExtraAttribute } = setting;
-    const [showLinkAttribute, setShowLinkAttribute] = useState(attributeType === 'custom');
 
     const changeAttribute = useMemo(() => getUpdater('attribute'), [getUpdater]);
-    const changeAttributeType = useMemo(() => getUpdater('attributeType'), [getUpdater]);
+    const changeAttributeType = useMemo(() => getUpdater('attributeImageSource'), [getUpdater]);
     const changeRegion = useMemo(() => getUpdater('region'), [getUpdater]);
 
     const attributeList = useMemo(() => AttributeList
@@ -118,15 +131,13 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
     const lastKnownCustomAttributeRef = useRef(DEFAULT_EXTERNAL_ATTRIBUTE);
 
     useImperativeHandle(ref, () => ({
-        setValue: ({ attribute, attributeType }) => {
-            if (!attribute) return;
-            if (attributeType === 'custom') {
-                setShowLinkAttribute(true);
-                updateSetting({ showExtraAttribute: false });
-                changeAttribute(attribute);
-                changeAttributeType('custom');
-                linkAttributeRef.current?.setValue(attribute);
+        setValue: ({ attributeImage, attributeImageCrop, attributeImageData, attributeImageSource }) => {
+            if (attributeImageSource !== 'auto') {
+                attributeImageInputInDropdownRef.current?.setValue({ attributeImage, attributeImageCrop, attributeImageData, attributeImageSource });
             }
+        },
+        isLoading: () => {
+            return attributeImageInputInDropdownRef.current?.isLoading() ?? false;
         },
     }));
 
@@ -160,18 +171,17 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
                 ? <AttributeOption>
                     <IconButton
                         onClick={() => {
-                            setShowLinkAttribute(true);
-                            updateSetting({ showExtraAttribute: false });
                             changeAttribute(linkAttributeRef.current?.getValue() ?? lastKnownCustomAttributeRef.current);
                             changeAttributeType('custom');
+                            setAttributeModalVisible(true);
+                            attributeImageInputInDropdownRef.current?.syncValue();
                         }}
-                        active={attributeType === 'custom'}
+                        active={attributeImageSource !== 'auto'}
                         Icon={EditOutlined}
                         tooltipProps={{ overlay: language['input.attribute.type-custom'] }}
                     />
                     <IconButton
                         onClick={() => {
-                            setShowLinkAttribute(false);
                             updateSetting({ showExtraAttribute: true });
                         }}
                         active={!!(ExtraAttributeMap[attribute])}
@@ -203,13 +213,13 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
         >
             &nbsp;
         </RadioTrain>}
-        {showLinkAttribute && <div className="link-attribute-input">
+        {/* {showLinkAttribute && <div className="link-attribute-input">
             <label className="standalone-addon ant-input-group-addon">&nbsp;</label>
             <CardTextInput ref={linkAttributeRef}
                 placeholder={language['input.link.custom.placeholder']}
-                defaultValue={attributeType === 'custom' ? attribute : lastKnownCustomAttributeRef.current}
+                defaultValue={attributeImageSource === 'custom' ? attribute : lastKnownCustomAttributeRef.current}
                 onChange={e => {
-                    if (attributeType === 'custom') {
+                    if (attributeImageSource === 'custom') {
                         lastKnownCustomAttributeRef.current = e.target.value;
                         changeAttribute(e.target.value);
                         setResetCanvasCounter(cnt => cnt + 1);
@@ -221,6 +231,32 @@ export const AttributeInputGroup = forwardRef<AttributeInputGroupRef, AttributeI
                 Icon={UpOutlined}
                 tooltipProps={{ overlay: language['button.less.label'] }}
             />
-        </div>}
+        </div>} */}
+        <Modal
+            forceRender
+            width={500}
+            visible={attributeModalVisible}
+            className="global-input-overlay"
+            onCancel={() => setAttributeModalVisible(false)}
+            footer={null}
+        >
+            <AttributeImageInput
+                ref={attributeImageInputInDropdownRef}
+                receivingCanvas={receivingCanvas}
+                onTainted={onTainted}
+                onSourceLoaded={onSourceLoaded}
+                onCropChange={onCropChange}
+            >
+                <Button onClick={() => {
+                    changeAttributeType('auto');
+                    changeAttribute(attribute);
+                }}>
+                    {language['input.attribute.type-auto']}
+                </Button>
+                <Button onClick={() => changeAttributeType('custom')}>
+                    {language['input.attribute.type-custom']}
+                </Button>
+            </AttributeImageInput>
+        </Modal>
     </>;
 });

@@ -18,6 +18,7 @@ import {
     getDefaultIconCrop,
     ImageSourceType,
     getDefaultCoordinateMap,
+    NO_ATTRIBUTE,
 } from '../model';
 import { v4 as uuid } from 'uuid';
 import { checkMonster } from './categorize';
@@ -171,7 +172,24 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         shadowOffsetY: 'nssoy',
     },
     attribute: 'at',
-    attributeType: 'att',
+    attributeImageSource: 'att',
+    attributeImage: 'atg',
+    attributeImageFit: 'atf',
+    attributeImageStyle: {
+        _newKey: 'atst',
+        flipX: 'atsfx',
+        flipY: 'atsfy',
+    },
+    attributeImageData: 'atgd',
+    attributeImageCrop: {
+        _newKey: 'atgc',
+        x: 'atgx',
+        y: 'atgy',
+        width: 'atgw',
+        height: 'atgh',
+        unit: 'atgu',
+        aspect: 'atga',
+    },
     subFamily: 'sf',
     starList: 'stl',
     star: 'st',
@@ -464,7 +482,12 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     if (typeof migratedCard.isLegacyCard === 'undefined') migratedCard.isLegacyCard = false;
     if (!migratedCard.starAlignment) migratedCard.starAlignment = 'auto';
 
-    if (migratedCard.attributeType == null) migratedCard.attributeType = 'custom';
+    if ((migratedCard as AnyCard).attributeType == 'custom') {
+        migratedCard.attributeImageSource = 'online';
+        migratedCard.attributeImage = migratedCard.attribute;
+        migratedCard.attribute = NO_ATTRIBUTE;
+    }
+    if ((migratedCard as AnyCard).attributeType == 'auto') migratedCard.attributeImageSource = 'auto';
 
     const defaultFlagList = getDefaultCardFlag();
     if (!Array.isArray(migratedCard.flag)) migratedCard.flag = defaultFlagList;

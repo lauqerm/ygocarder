@@ -225,6 +225,7 @@
         "input.attribute.trap": "Trap",
         "input.attribute.type-custom": "Dùng link ngoài",
         "input.attribute.type-extra": "Dùng thuộc tính đặc thù",
+        "input.attribute.type-auto": "Dùng thuộc tính tự động",
         "input.attribute.water": "Water",
         "input.attribute.wind": "Wind",
         "input.background-color.label": "Màu nền",

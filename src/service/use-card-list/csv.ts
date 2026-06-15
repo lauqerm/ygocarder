@@ -15,6 +15,7 @@ import {
     getArtCanvasCoordinate,
     getDefaultCardFlag,
     getDefaultCardOpacity,
+    getDefaultCoordinateMap,
     getDefaultCrop,
     getDefaultDyeList,
     getDefaultIconCrop,
@@ -185,6 +186,16 @@ const CsvStandardFieldList = [
     'Overlay Crop - Y (%)',
     'Overlay Crop - Width (%)',
     'Overlay Crop - Height (%)',
+    'Attribute Link',
+    'Attribute Data',
+    'Attribute Source',
+    'Is Using Full Attribute',
+    'Attribute Style',
+    'Attribute Type',
+    'Attribute Crop - X (%)',
+    'Attribute Crop - Y (%)',
+    'Attribute Crop - Width (%)',
+    'Attribute Crop - Height (%)',
     'Icon Link',
     'Icon Data',
     'Icon Source',
@@ -199,6 +210,7 @@ const CsvStandardFieldList = [
     'Bottom Right Frame',
     'Dye List',
     'Star List',
+    'Region Coordinate Map',
     'Flag',
     'Legacy Template',
     'External Info (JSON)',
@@ -269,7 +281,12 @@ export const cardListToCsv = (cardList: Card[]) => {
             artStyle,
             atk,
             attribute,
-            attributeType,
+            attributeImage,
+            attributeImageCrop,
+            attributeImageData,
+            attributeImageFit,
+            attributeImageSource,
+            attributeImageStyle,
             background,
             backgroundCrop,
             backgroundData,
@@ -278,6 +295,7 @@ export const cardListToCsv = (cardList: Card[]) => {
             backgroundStyle,
             backgroundType,
             cardIcon,
+            coordinateMap,
             cornerText,
             creator,
             def,
@@ -356,7 +374,6 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Frame', frame);
         write('Name', name);
         write('Attribute', attribute);
-        write('Attribute Type', attributeType);
         write('Star', `${star}`);
         write('Spell/Trap Icon', subFamily);
         write('Art Link', art);
@@ -496,6 +513,15 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Overlay Crop - Y (%)', overlayCrop.y);
         write('Overlay Crop - Width (%)', overlayCrop.width);
         write('Overlay Crop - Height (%)', overlayCrop.height);
+        write('Attribute Link', attributeImage);
+        write('Attribute Data', attributeImageData);
+        write('Attribute Source', attributeImageSource);
+        write('Is Using Full Attribute', attributeImageFit);
+        write('Attribute Style', JSON.stringify(attributeImageStyle));
+        write('Attribute Crop - X (%)', attributeImageCrop.x);
+        write('Attribute Crop - Y (%)', attributeImageCrop.y);
+        write('Attribute Crop - Width (%)', attributeImageCrop.width);
+        write('Attribute Crop - Height (%)', attributeImageCrop.height);
         write('Icon Link', iconImage);
         write('Icon Data', iconImageData);
         write('Icon Source', iconImageSource);
@@ -510,6 +536,7 @@ export const cardListToCsv = (cardList: Card[]) => {
         write('Bottom Right Frame', pendulumRightFrame);
         write('Dye List', stringifedDyeList);
         write('Star List', stringifedSubFamilyList);
+        write('Region Coordinate Map', JSON.stringify(coordinateMap));
         write('Flag', stringifedFlag);
         write('Legacy Template', legacyTemplate);
         write('External Info (JSON)', stringifedExternalInfo === '{}' ? '' : stringifedExternalInfo);
@@ -606,17 +633,35 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const rawFoil = (reader('Foil') ?? reader('Rarity') ?? 'normal').toLowerCase() as Foil;
                 const foil = FoilMap[rawFoil] ? rawFoil : 'normal';
 
-                const attributeType = (reader('Attribute Type')?.toLowerCase() ?? 'auto') as AttributeType;
                 const rawAttribute = reader('Attribute')?.toUpperCase();
-                const attribute = (rawAttribute || attributeType === 'custom')
-                    ? rawAttribute === 'NONE'
-                        ? NO_ATTRIBUTE
-                        : rawAttribute ?? NO_ATTRIBUTE
-                    : frame === 'spell'
+                const emptyAttributeCrop = getDefaultIconCrop();
+                const attributeImage = reader('Attribute Link') ?? emptyCard.attributeImage;
+                const attributeImageData = reader('Attribute Data') ?? emptyCard.attributeImageData;
+                const attributeImageSource = (reader('Attribute Source') ?? emptyCard.attributeImageSource) as AttributeType;
+                const attributeImageFit = normalizeBoolean(reader('Is Using Full Attribute'), emptyCard.attributeImageFit);
+                const attributeImageCrop: Crop = {
+                    aspect: 1,
+                    height: normalizeFloat(reader('Attribute Crop - Height (%)'), emptyAttributeCrop.height),
+                    width: normalizeFloat(reader('Attribute Crop - Width (%)'), emptyAttributeCrop.width),
+                    x: normalizeFloat(reader('Attribute Crop - X (%)'), emptyAttributeCrop.x),
+                    y: normalizeFloat(reader('Attribute Crop - Y (%)'), emptyAttributeCrop.y),
+                    unit: '%',
+                };
+                let attributeImageStyle = getDefaultImageStyle();
+                try {
+                    attributeImageStyle = JSON.parse(reader('Attribute Style') ?? '{}');
+                } catch (e) {
+                    console.error('csvToCardList', e);
+                }
+                const attribute = attributeImageSource === 'auto'
+                    ? frame === 'spell'
                         ? 'SPELL'
                         : frame === 'trap'
                             ? 'TRAP'
-                            : emptyCard.attribute;
+                            : frame === 'speed-skill'
+                                ? NO_ATTRIBUTE
+                                : emptyCard.attribute
+                    : rawAttribute ?? NO_ATTRIBUTE;
 
                 const artFinish = (reader('Art Finish') ?? (reader('Art_Finish') ? `type${reader('Art_Finish')}` : ''));
                 const finishAttribute = reader('Other Finish - Attribute') ?? '';
@@ -872,6 +917,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 } catch (e) {
                     console.error('csvToCardList', e);
                 }
+                let coordinateMap: Card['coordinateMap'] = getDefaultCoordinateMap();
+                try {
+                    coordinateMap = JSON.parse(reader('Region Coordinate Map') ?? JSON.stringify(getDefaultCoordinateMap()));
+                } catch (e) {
+                    coordinateMap = getDefaultCoordinateMap();
+                    console.error('csvToCardList', e);
+                }
                 const baseFlag = (reader('Flag') ?? '').split('|').map(Number).slice(0, FLAG_LENGTH) as CardFlag;
                 const flag = getDefaultCardFlag().map((entry, index) => {
                     if (typeof baseFlag[index] === 'number') return baseFlag[index];
@@ -890,26 +942,32 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                     id: uuid(),
                     ...emptyCard,
                     art,
-                    artData,
                     artCrop,
+                    artData,
                     artFinish,
-                    artSource,
                     artFit,
+                    artSource,
                     artStyle,
                     atk,
                     attribute,
-                    attributeType,
+                    attributeImage,
+                    attributeImageCrop,
+                    attributeImageData,
+                    attributeImageFit,
+                    attributeImageSource,
+                    attributeImageStyle,
                     background,
-                    backgroundData,
                     backgroundCrop,
+                    backgroundData,
                     backgroundFit,
-                    backgroundStyle,
                     backgroundSource,
+                    backgroundStyle,
                     backgroundType,
                     cardIcon,
                     condenseTolerant,
                     cornerText,
                     creator,
+                    coordinateMap,
                     def,
                     dyeList,
                     effect,

@@ -159,6 +159,7 @@ function App() {
     const typeCanvasRef = useRef<HTMLCanvasElement>(null);
     const effectCanvasRef = useRef<HTMLCanvasElement>(null);
     const nameCanvasRef = useRef<HTMLCanvasElement>(null);
+    const attributeCanvasRef = useRef<HTMLCanvasElement>(null);
     const statCanvasRef = useRef<HTMLCanvasElement>(null);
     const setIdCanvasRef = useRef<HTMLCanvasElement>(null);
     const passwordCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -168,25 +169,26 @@ function App() {
     const lightboxRef = useRef<LightboxRef>(null);
     const [canvasMap] = useState({
         artworkCanvasRef,
+        attributeCanvasRef,
         backgroundCanvasRef,
-        overlayCanvasRef,
-        iconImageCanvasRef,
-        exportCanvasRef,
-        frameCanvasRef,
         cardIconCanvasRef,
-        pendulumScaleCanvasRef,
-        pendulumEffectCanvasRef,
-        typeCanvasRef,
-        effectCanvasRef,
-        nameCanvasRef,
-        statCanvasRef,
-        setIdCanvasRef,
-        passwordCanvasRef,
         creatorCanvasRef,
-        stickerCanvasRef,
+        effectCanvasRef,
+        exportCanvasRef,
         finishCanvasRef,
+        frameCanvasRef,
+        iconImageCanvasRef,
         lightboxRef,
+        nameCanvasRef,
+        overlayCanvasRef,
+        passwordCanvasRef,
+        pendulumEffectCanvasRef,
+        pendulumScaleCanvasRef,
         previewCanvasRef,
+        setIdCanvasRef,
+        statCanvasRef,
+        stickerCanvasRef,
+        typeCanvasRef,
     });
     const {
         updateCanvasRenderCount,
@@ -800,6 +802,9 @@ function App() {
                                         <canvas className="crop-canvas"
                                             ref={iconImageCanvasRef}
                                         />
+                                        <canvas className="crop-canvas"
+                                            ref={attributeCanvasRef}
+                                        />
                                     </CardCanvasGroupContainer>
                                 </CardPreviewContainer>
                             </div>
@@ -832,12 +837,13 @@ function App() {
                             ref={cardInputRef}
                             applyCardData={treatNewCard}
                             artworkCanvas={artworkCanvasRef.current}
+                            attributeCanvas={attributeCanvasRef.current}
                             backgroundCanvas={backgroundCanvasRef.current}
-                            overlayCanvas={overlayCanvasRef.current}
                             iconImageCanvas={iconImageCanvasRef.current}
-                            onSourceLoaded={rerenderAllImage}
                             onCropChange={rerenderCardImage}
+                            onSourceLoaded={rerenderAllImage}
                             onTainted={markTaintedImage}
+                            overlayCanvas={overlayCanvasRef.current}
                         />}
                     </div>
                     <CardManagerPanel

@@ -1,4 +1,3 @@
-export * from './attribute-input-group';
 export * from './effect-input-group';
 export * from './footer-input-group';
 export * from './image-input-group';

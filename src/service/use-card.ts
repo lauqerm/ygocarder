@@ -125,12 +125,13 @@ export const retrieveSavedCard = async (): Promise<InternalCard> => {
              */
             const { card: decodedCard } = decodeCard(urlCardData);
             const card = migrateCardData(decodedCard);
-            const { artSource, backgroundSource, overlaySource, iconImageSource } = card;
+            const { artSource, backgroundSource, overlaySource, iconImageSource, attributeImageSource } = card;
             if (
                 artSource === 'online'
                 && backgroundSource === 'online'
                 && overlaySource === 'online'
                 && iconImageSource === 'online'
+                && attributeImageSource === 'online'
             ) {
                 return decodeCard(urlCardData).card;
             }
@@ -138,6 +139,7 @@ export const retrieveSavedCard = async (): Promise<InternalCard> => {
             const combinedCard = { ...card };
             if (artSource === 'offline') combinedCard.artData = localCardData?.artData ?? '';
             if (backgroundSource === 'offline') combinedCard.backgroundData = localCardData?.backgroundData ?? '';
+            if (attributeImageSource === 'offline') combinedCard.attributeImageData = localCardData?.attributeImageData ?? '';
             if (overlaySource === 'offline') combinedCard.overlayData = localCardData?.overlayData ?? '';
             if (iconImageSource === 'offline') combinedCard.iconImageData = localCardData?.iconImageData ?? '';
 
@@ -277,7 +279,7 @@ export const saveCardLocally = (card: InternalCard) => {
             localStorage.setItem('card-data', JSON.stringify(card));
             localStorage.setItem('card-version', version);
         } catch (e) {
-            const { artData, backgroundData, overlayData, iconImageData, ...shortenedCard } = card;
+            const { artData, backgroundData, overlayData, iconImageData, attributeImageData, ...shortenedCard } = card;
             localStorage.setItem('card-data', JSON.stringify(shortenedCard));
             localStorage.setItem('card-version', version);
         }
