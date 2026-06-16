@@ -34,7 +34,14 @@ export default tseslint.config(
             '@typescript-eslint/explicit-function-return-type': [0, {
                 allowTypedFunctionExpressions: true,
             }],
-            '@typescript-eslint/no-unused-vars': ['error', { caughtErrors: 'none', ignoreRestSiblings: true }],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    caughtErrors: 'none',
+                    argsIgnorePattern: '^_',
+                    ignoreRestSiblings: true,
+                },
+            ],
 
             'no-redeclare': 'off',
             '@typescript-eslint/no-redeclare': 'off',

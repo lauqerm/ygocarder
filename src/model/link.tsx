@@ -47,3 +47,13 @@ export const LinkIconMap: Record<string, string> = {
     '8': '🡓',
     '9': '🡖',
 };
+export const LinkLabelMap: Record<string, string> = {
+    '1': 'Top-Left',
+    '2': 'Top',
+    '3': 'Top-Right',
+    '4': 'Left',
+    '6': 'Right',
+    '7': 'Bottom-Left',
+    '8': 'Bottom',
+    '9': 'Bottom-Right',
+};

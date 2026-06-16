@@ -552,7 +552,6 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
         if (font === 'Default' || font === 'OCG') migratedCard.nameStyle.font = 'Auto';
     }
 
-    console.log('🚀 ~ migrateCardData ~ migratedCard:', migratedCard);
     return migratedCard;
 };
 

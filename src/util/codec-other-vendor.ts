@@ -180,7 +180,7 @@ export const ygoCarderToCardMakerData = (
         version: '1.0.0',
         name: normalizedName,
         level: `${star}`,
-        type: typeAbility.join('/'),
+        type: typeAbility.map(normalizeCardEffect).join('/'),
         icon: normalizedIcon ?? '',
         effect: normalizedEffect,
         atk,

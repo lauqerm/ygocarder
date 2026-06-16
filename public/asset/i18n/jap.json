@@ -556,6 +556,10 @@
         "prompt.new-version.description": "Save your work and reload the app to get the newest version and avoid potential errors.",
         "prompt.new-version.ok": "Reload now",
         "prompt.new-version.dismiss": "Do it later",
-        "input.attribute.type-auto": "Use auto attribute"
+        "input.attribute.type-auto": "Use auto attribute",
+        "manager.header.button.convert.tooltip": "Convert",
+        "generic.copy.label": "Copy",
+        "generic.download.label": "Download",
+        "manager.header.button.convert.alert": "Remember, converting is not the same as saving. You still must export your list afterward, or you'll lose progress."
     }
 }

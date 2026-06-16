@@ -218,6 +218,12 @@ export const IconList = [
         isOption: true,
     },
 ];
+export const IconMap = (() => {
+    return IconList.reduce((acc, cur) => {
+        acc[cur.value] = cur;
+        return acc;
+    }, {} as Record<string, typeof IconList[0]>);
+})();
 
 export const NO_STICKER = 'no-sticker';
 export const StickerList = [

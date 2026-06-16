@@ -1,6 +1,6 @@
-import { Dropdown, Input, Menu, notification, Tooltip } from 'antd';
+import { Button, Dropdown, Input, Menu, Modal, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
+import { cardListToMse, csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
@@ -10,17 +10,21 @@ import {
     CloseOutlined,
     UnorderedListOutlined,
     LoadingOutlined,
+    RetweetOutlined,
     // FilterOutlined,
 } from '@ant-design/icons';
 import { cardListToCsv } from 'src/service';
-import { downloadBlob, getNaivePseudoRandomizer } from 'src/util';
-import { InternalCard } from 'src/model';
+import { downloadBlob, ygoCarderToTextData } from 'src/util';
+import { ExportFormatList, InternalCard } from 'src/model';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
 import { ManagerDrawer } from 'src/component';
 import { captureException } from 'src/util';
+import copy from 'copy-to-clipboard';
 
-const chanceToRemindBackup = getNaivePseudoRandomizer();
+const StyledConvertMenu = styled(Menu)`
+    width: 225px;
+`;
 const StyledCardManagerPanel = styled.div`
     position: absolute;
     right: 0;
@@ -69,6 +73,20 @@ const StyledCardManagerDrawer = styled(ManagerDrawer)`
         gap: var(--spacing-sm);
     }
 `;
+const CardTextContainer = styled.div`
+    .action-bar {
+        display: inline-flex;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+    .content {
+        background-color: var(--main-level-1);
+        padding: var(--spacing-sm);
+        box-shadow: var(--bs-1-inset);
+        border-radius: var(--br);
+        white-space: pre-wrap;
+    }
+`;
 export type CardManagerPanelRef = {
     debug: () => void,
 };
@@ -87,6 +105,7 @@ export const CardManagerPanel = forwardRef(({
     const listUploadId = 'list-upload-id';
     const listUploadRef = useRef<HTMLInputElement>(null);
     const {
+        listName,
         cardList,
         changeEditStatus,
         pendingActiveCard,
@@ -99,6 +118,7 @@ export const CardManagerPanel = forwardRef(({
         toggleVisible,
         visible,
     } = useCardList(useShallow(({
+        listName,
         cardList,
         changeEditStatus,
         pendingActiveCard,
@@ -111,6 +131,7 @@ export const CardManagerPanel = forwardRef(({
         toggleVisible,
         visible,
     }) => ({
+        listName,
         cardList,
         changeEditStatus,
         pendingActiveCard,
@@ -135,6 +156,115 @@ export const CardManagerPanel = forwardRef(({
         onSelect(card);
         setActiveId(card.id);
     }, [onSelect, setActiveId]);
+    const downloadList = async (type: 'xlsx' | 'csv' = exportFormat) => {
+        setSavingFile(true);
+
+        try {
+            const {
+                error,
+                value: csvdata,
+            } = cardListToCsv(useCardList.getState().cardList);
+
+            if (error) {
+                let errorMessage = '';
+                let errorDescription = '';
+                switch (error) {
+                    case 'offline-data': {
+                        errorMessage = language['error.export.offline-data.message'];
+                        errorDescription = language['error.export.offline-data.description'];
+                        break;
+                    }
+                }
+
+                if (errorMessage || errorDescription) {
+                    notification.error({
+                        message: errorMessage,
+                        description: errorDescription,
+                    });
+                }
+            }
+            switch (type) {
+                case 'xlsx': {
+                    const XLSX = await import('xlsx');
+                    const exportWorkbook = XLSX.read(csvdata, { type: 'string' });
+                    XLSX.writeFile(exportWorkbook, `${useCardList.getState().listName}.xlsx`);
+                    break;
+                }
+                default: {
+                    downloadBlob(
+                        useCardList.getState().listName,
+                        new Blob([csvdata], { type: 'text/csv' }),
+                        'text/csv',
+                    );
+                }
+            }
+            changeEditStatus('download');
+        } catch (e) {
+            await captureException(e);
+        }
+        setSavingFile(false);
+    };
+    const convertToMse = async () => {
+        setSavingFile(true);
+        const debugMode = true;
+
+        try {
+            const {
+                error,
+                set,
+                imageList,
+            } = await cardListToMse(useCardList.getState().cardList);
+
+            if (error) {
+                let errorMessage = '';
+                let errorDescription = '';
+                switch (error) {
+                    case 'offline-data': {
+                        errorMessage = language['error.export.offline-data.message'];
+                        errorDescription = language['error.export.offline-data.description'];
+                        break;
+                    }
+                }
+
+                if (errorMessage || errorDescription) {
+                    notification.error({
+                        message: errorMessage,
+                        description: errorDescription,
+                    });
+                }
+            }
+            const JSZip = (await import('jszip')).default;
+            const zipObject = new JSZip();
+            zipObject.file('set' + (debugMode ? '.txt' : ''), set);
+            imageList.forEach(({ blob, name }) => {
+                zipObject.file(name + (debugMode ? '.png' : ''), blob);
+            });
+            const zipBlob = await zipObject.generateAsync({
+                type: 'blob',
+            });
+            downloadBlob(
+                'convert-result' + (debugMode ? '.zip' : '.mse-set'),
+                zipBlob,
+                'application/zip',
+            );
+            changeEditStatus('download');
+        } catch (e) {
+            await captureException(e);
+        }
+        setSavingFile(false);
+    };
+    const [textModalVisible, setTextModalVisible] = useState(false);
+    const [textModalContent, setTextModalContent] = useState('');
+    const convertToText = async () => {
+        try {
+            const cardTextList = useCardList.getState().cardList.map(entry => ygoCarderToTextData(entry));
+
+            setTextModalContent(cardTextList.map(entry => entry.result).join('\n\n'));
+            setTextModalVisible(true);
+        } catch (e) {
+            await captureException(e);
+        }
+    };
 
     useEffect(() => {
         if (pendingActiveCard) {
@@ -184,6 +314,30 @@ export const CardManagerPanel = forwardRef(({
     }), []);
 
     return <StyledCardManagerPanel>
+        <Modal
+            visible={textModalVisible}
+            onCancel={() => setTextModalVisible(false)}
+            footer={null}
+            className="global-input-overlay"
+        >
+            <CardTextContainer className="card-text-container">
+                <div className="action-bar">
+                    <Button onClick={() => copy(textModalContent)}>
+                        {language['generic.copy.label']}
+                    </Button>
+                    <Button onClick={() => downloadBlob(
+                        `${listName}.txt`,
+                        new Blob([textModalContent], { type: 'text/plain;charset=utf-8' }),
+                        'text',
+                    )}>
+                        {language['generic.download.label']}
+                    </Button>
+                </div>
+                <div className="content">
+                    {textModalContent}
+                </div>
+            </CardTextContainer>
+        </Modal>
         <StyledCardManagerDrawer
             className="card-manager-panel"
             title={<div className="card-manager-header truncate">
@@ -239,67 +393,63 @@ export const CardManagerPanel = forwardRef(({
                             <FilterOutlined />
                         </div>
                     </Tooltip> */}
-                    <Tooltip title={language['manager.header.button.download.tooltip']}>
+                    <Dropdown
+                        // visible={true}
+                        overlay={<StyledConvertMenu className="convert-menu">
+                            <Menu.ItemGroup title={<div>
+                                {language['manager.header.button.convert.tooltip']}
+                                <br />
+                                <small><i>{language['manager.header.button.convert.alert']}</i></small>
+                            </div>}>
+                                {[
+                                    {
+                                        value: 'mse',
+                                        label: 'Magic Set Editor',
+                                        converter: convertToMse,
+                                        active: false,
+                                    },
+                                    {
+                                        value: 'text',
+                                        label: 'Raw text',
+                                        converter: convertToText,
+                                        active: true,
+                                    },
+                                ].filter(({ active }) => active)
+                                    .map(({ value, label, converter }) => {
+                                        return <Menu.Item key={value} onClick={async () => await converter()}>
+                                            {label}
+                                        </Menu.Item>;
+                                    })}
+                            </Menu.ItemGroup>
+                        </StyledConvertMenu>}
+                    >
                         <div
                             className="manager-button"
-                            onClick={async () => {
-                                let wouldDownload = true;
-                                setSavingFile(true);
-                                if (chanceToRemindBackup.check()) {
-                                    wouldDownload = window.confirm(language['prompt.remind.backup.label']);
-                                }
-
-                                if (wouldDownload) {
-                                    try {
-                                        const {
-                                            error,
-                                            value: csvdata,
-                                        } = cardListToCsv(useCardList.getState().cardList);
-
-                                        if (error) {
-                                            let errorMessage = '';
-                                            let errorDescription = '';
-                                            switch (error) {
-                                                case 'offline-data': {
-                                                    errorMessage = language['error.export.offline-data.message'];
-                                                    errorDescription = language['error.export.offline-data.description'];
-                                                    break;
-                                                }
-                                            }
-
-                                            if (errorMessage || errorDescription) {
-                                                notification.error({
-                                                    message: errorMessage,
-                                                    description: errorDescription,
-                                                });
-                                            }
-                                        }
-                                        switch (exportFormat) {
-                                            case 'xlsx': {
-                                                const XLSX = await import('xlsx');
-                                                const exportWorkbook = XLSX.read(csvdata, { type: 'string' });
-                                                XLSX.writeFile(exportWorkbook, `${useCardList.getState().listName}.xlsx`);
-                                                break;
-                                            }
-                                            default: {
-                                                downloadBlob(
-                                                    useCardList.getState().listName,
-                                                    new Blob([csvdata], { type: 'text/csv' }),
-                                                    'text/csv',
-                                                );
-                                            }
-                                        }
-                                        changeEditStatus('download');
-                                    } catch (e) {
-                                        await captureException(e);
-                                    }
-                                }
-                                setSavingFile(false);
-                            }}
+                        >
+                            {savingFile ? <LoadingOutlined /> : <RetweetOutlined />}
+                        </div>
+                    </Dropdown>
+                    <Dropdown
+                        overlay={<StyledConvertMenu className="convert-menu">
+                            <Menu.ItemGroup title={<div>
+                                {language['manager.header.button.download.tooltip']}
+                                <br />
+                                <small><i>{language['prompt.remind.backup.label']}</i></small>
+                            </div>}>
+                                {ExportFormatList.map(({ value, label }) => {
+                                    return <Menu.Item key={value} onClick={async () => await downloadList(value)}>
+                                        {label}
+                                    </Menu.Item>;
+                                })}
+                            </Menu.ItemGroup>
+                        </StyledConvertMenu>}
+                    >
+                        <div
+                            className="manager-button"
                         >
                             {savingFile ? <LoadingOutlined /> : <DownloadOutlined />}
                         </div>
-                    </Tooltip>
+                    </Dropdown>
                     <Tooltip key={`${readingFile}`} overlay={language['manager.header.button.upload.tooltip']}>
                         <div
                             className="manager-button"
