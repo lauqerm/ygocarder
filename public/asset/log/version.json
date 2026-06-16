@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.5.4 (2026/06/16)",
+        "logList": [
+            {
+                "content": "Feat: Experimental feature for offline custom attribute."
+            }
+        ]
+    },
+    {
         "version": "v2.5.3 (2026/06/08)",
         "logList": [
             {
