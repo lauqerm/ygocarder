@@ -552,6 +552,10 @@
         "setting.option.sliding-type.label": "プレビューのドラッグ移動（デスクトップ版のみ）",
         "setting.option.sliding-type.manual.label": "手動ドラッグ",
         "setting.option.soft-mode.label": "色と動き減少",
+        "prompt.new-version.message": "A new version of the app is available",
+        "prompt.new-version.description": "Save your work and reload the app to get the newest version and avoid potential errors.",
+        "prompt.new-version.ok": "Reload now",
+        "prompt.new-version.dismiss": "Do it later",
         "input.attribute.type-auto": "Use auto attribute"
     }
 }

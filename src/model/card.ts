@@ -70,7 +70,7 @@ export const getDefaultCard = () => ({
     attributeImageData: '',
     attributeImageFit: true,
     attributeImageStyle: getDefaultImageStyle(),
-    attributeImageSource: 'online' as AttributeType,
+    attributeImageSource: 'auto' as AttributeType,
     attributeImageCrop: getDefaultIconCrop() as Partial<ReactCrop.Crop>,
     subFamily: NO_ICON,
     cardIcon: 'auto',

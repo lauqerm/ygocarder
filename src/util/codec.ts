@@ -488,7 +488,10 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
         migratedCard.attributeImage = migratedCard.attribute;
         migratedCard.attribute = NO_ATTRIBUTE;
     }
-    if ((migratedCard as AnyCard).attributeType == 'auto') migratedCard.attributeImageSource = 'auto';
+    if ((migratedCard as AnyCard).attributeType == 'auto') {
+        migratedCard.attributeImageSource = 'auto';
+    }
+    delete (migratedCard as AnyCard).attributeType;
 
     const defaultFlagList = getDefaultCardFlag();
     if (!Array.isArray(migratedCard.flag)) migratedCard.flag = defaultFlagList;
@@ -549,6 +552,7 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
         if (font === 'Default' || font === 'OCG') migratedCard.nameStyle.font = 'Auto';
     }
 
+    console.log('🚀 ~ migrateCardData ~ migratedCard:', migratedCard);
     return migratedCard;
 };
 

@@ -280,6 +280,7 @@ export const CardThumb = ({
         artStyle,
         atk,
         attribute,
+        attributeImage,
         attributeImageData,
         attributeImageSource,
         background,
@@ -476,8 +477,8 @@ export const CardThumb = ({
             </div>
             <div className="second-row truncate">
                 {(attributeImageSource === 'online' && attribute.length > 0)
-                    ? <img className="attribute-icon" src={attribute} alt="Attribute" />
-                    : (attributeImageSource === 'online' && attribute.length > 0)
+                    ? <img className="attribute-icon" src={attributeImage} alt="Attribute" />
+                    : (attributeImageSource === 'offline' && attributeImageData.length > 0)
                         ? <img className="attribute-icon" src={attributeImageData} alt="Attribute" />
                         : attribute === 'NONE'
                             ? null

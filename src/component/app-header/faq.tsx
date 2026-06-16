@@ -52,7 +52,7 @@ export const QuestionAndFeedback = () => {
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
 
     useEffect(() => {
-        const currentReminder = '14/06/2026';
+        const currentReminder = '16/06/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.APP_VERSION) setMemoizedReminder(currentReminder);
 
@@ -81,6 +81,12 @@ export const QuestionAndFeedback = () => {
     }, [feedbackReminder, setFeedbackReminder]);
 
     const feedbackList: Feedback[] = [
+        {
+            author: 'Lucky Zaneabane at Jun 15, 2026',
+            question: 'I honestly may just be messing something up somehow, But is there a way to upload custom attributes? Ive uploaded an attribute image and it pops up in the level area but i dont see a way to possibly move it to the attribute area',
+            answer: 'Hi, you may have mistakenly used the custom level/rank feature. You can find the custom attribute feature here.',
+            image: ['https://i.postimg.cc/tCdSzpB8/Screenshot-2026-06-16-at-15-37-23.png']
+        },
         {
             author: 'Anonymous at Jun 14, 2026',
             question: '"If you want to modify card layers, or use it in any public project, please contact Grezar or 9558able directly." there\'s an issue there in that they seem to be pretty stuck up and condesending people who don\'t reply to others. This project has potential to be alot better and overtake all other competition in its field, but idk how you expect to gain from outside opinion and improve it when there\'s no way to contact you and the people you have put up to be contacted are stuck up and condesending.',
