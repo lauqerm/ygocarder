@@ -552,14 +552,15 @@
         "setting.option.sliding-type.label": "プレビューのドラッグ移動（デスクトップ版のみ）",
         "setting.option.sliding-type.manual.label": "手動ドラッグ",
         "setting.option.soft-mode.label": "色と動き減少",
-        "prompt.new-version.message": "A new version of the app is available",
-        "prompt.new-version.description": "Save your work and reload the app to get the newest version and avoid potential errors.",
-        "prompt.new-version.ok": "Reload now",
-        "prompt.new-version.dismiss": "Do it later",
-        "input.attribute.type-auto": "Use auto attribute",
-        "manager.header.button.convert.tooltip": "Convert",
-        "generic.copy.label": "Copy",
-        "generic.download.label": "Download",
-        "manager.header.button.convert.alert": "Remember, converting is not the same as saving. You still must export your list afterward, or you'll lose progress."
+        "prompt.new-version.message": "新しいバージョンのアプリが利用可能です",
+        "prompt.new-version.description": "予期せぬエラーを防ぐため、作業を保存してアプリを再読み込みし、最新バージョンを適用してください。",
+        "prompt.new-version.ok": "今すぐ再読み込み",
+        "prompt.new-version.dismiss": "後で行う",
+        "input.attribute.type-auto": "自動属性を使用",
+        "manager.header.button.convert.tooltip": "変換",
+        "generic.copy.label": "コピー",
+        "generic.download.label": "ダウンロード",
+        "input.flag.name-star-below-image": "枠なしモードでイラストをカード名やレベル・ランクより前面に描画",
+        "manager.header.button.convert.alert": "変換は保存とは異なります。作業内容を失わないよう、変換後に必ずリストをエクスポートしてください。"
     }
 }

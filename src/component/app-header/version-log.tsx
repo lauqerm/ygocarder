@@ -92,7 +92,7 @@ export const VersionInformation = () => {
     </div>;
 };
 
-const compareSemver = (a: string, b: string): boolean => {
+const isSemverHigher = (a: string, b: string): boolean => {
     const [majorA, minorA, patchA] = String(a).split('.').map(Number);
     const [majorB, minorB, patchB] = String(b).split('.').map(Number);
 
@@ -117,26 +117,25 @@ const StyledVersionLog = styled(StyledPopMarkdown)`
     }
 `;
 export const VersionLogButton = memo(() => {
-    const [animating, setAnimating] = useState(false);
     const [
         version,
         setMemoizedVersion,
     ] = useNotification('versionReminder');
+    const [animating, setAnimating] = useState(() => {
+        const currentSemver = import.meta.env.APP_VERSION ?? '0.0.0';
+        if (version && isSemverHigher(currentSemver, version)) {
+            return true;
+        }
+        return false;
+    });
 
     useEffect(() => {
-        if (version) {
-            const currentSemver = import.meta.env.APP_VERSION ?? '0.0.0';
-            const memoizedSemver = version;
-            if (import.meta.env.APP_VERSION) setMemoizedVersion(import.meta.env.APP_VERSION);
+        if (import.meta.env.APP_VERSION) setMemoizedVersion(import.meta.env.APP_VERSION);
 
-            if (compareSemver(currentSemver, memoizedSemver)) {
-                setAnimating(true);
-                setTimeout(() => {
-                    setAnimating(false);
-                }, 8000);
-            }
-        }
-    }, [setMemoizedVersion, version]);
+        setTimeout(() => {
+            setAnimating(false);
+        }, 8000);
+    }, [setMemoizedVersion]);
 
     return <Popover
         placement="bottom"

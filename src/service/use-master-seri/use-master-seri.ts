@@ -283,7 +283,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         typeTextStyle,
     ]);
     const foilDyeColor = dyeList[6];
-    const effectBoxOffsetData = useMemo(() => parseOffset(coordinateMap.effectBox, CanvasConst.effectBox), [coordinateMap.effectBox]);
+    const effectBoxOffsetData = useMemo(
+        () => parseOffset(coordinateMap.effectBox, CanvasConst.effectBox),
+        [coordinateMap.effectBox],
+    );
 
     const normalizedSubFamily = subFamily.toUpperCase();
     const normalizedTypeAbility = typeAbility.map(text => text.trim()).join(format === 'ocg' ? '／' : ' / ');
@@ -292,6 +295,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         linkRatingDisplayMode,
         hideDeactivatedLinkMarker,
         hideStatLabel,
+        nameStarBelowImage,
     ] = flag;
 
     /** One special case where we do not show link rating */
@@ -320,6 +324,76 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const loopArtFinish = useMemo(() => getFinishIterator([artFinish], ArtFinishMap), [artFinish]);
     const [, iconFinish, stickerFinish] = otherFinish;
 
+    /** DRAW NAME */
+    useEffect(() => {
+        if (!readyToDraw) return;
+        drawingPipeline.current.name.rerun += 1;
+        drawingPipeline.current.name.instructor = async () => {
+            const ctx = nameCanvasRef.current?.getContext('2d');
+
+            if (!clearCanvas(ctx) || !nameCanvasRef.current) return;
+
+            await drawName(
+                nameCanvasRef.current,
+                ctx,
+                name,
+                format === 'tcg' ? 63 : 68, 116,
+                attribute === NO_ATTRIBUTE
+                    ? (format === 'tcg' ? 688 : 674)
+                    : (format === 'tcg' ? 608 : 598),
+                resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
+                { isSpeedSkill, format, frame, furiganaHelper, globalScale },
+            );
+        };
+    }, [
+        readyToDraw,
+        globalScale,
+        attribute,
+        foil,
+        format,
+        frame,
+        furiganaHelper,
+        isSpeedSkill,
+        name,
+        nameCanvasRef,
+        nameStyle,
+        nameStyleType,
+    ]);
+    const triggerDrawNameEagerly = useMemo(
+        () => {
+            if (nameStarBelowImage) return [
+                readyToDraw,
+                globalScale,
+                nameStarBelowImage,
+                attribute,
+                foil,
+                format,
+                frame,
+                furiganaHelper,
+                isSpeedSkill,
+                name,
+                JSON.stringify(nameStyle),
+                nameStyleType,
+            ].join(' ');
+            return 0;
+        },
+        [
+            readyToDraw,
+            globalScale,
+            nameStarBelowImage,
+            attribute,
+            foil,
+            format,
+            frame,
+            furiganaHelper,
+            isSpeedSkill,
+            name,
+            nameStyle,
+            nameStyleType,
+        ]
+    );
+
+    const eagerlyDrawHistory = useRef(-1);
     /** DRAW CARD STRUCTURE */
     useEffect(() => {
         if (!readyToDraw) return;
@@ -452,6 +526,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 loopFinish,
                 loopArtFinish,
             });
+            const callDrawStar = async () => await drawStar({
+                style: levelStyle,
+                starAlignment,
+                iconImage: hasIconImage ? iconImageCanvasRef.current : undefined,
+            });
 
             /** Fill color background so the card is not see-through even with transparent artwork */
             await fillBaseColor(ctx, 0, 0, globalScale * CanvasWidth, globalScale * CanvasHeight);
@@ -549,6 +628,18 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawNameBackground();
                 await drawNameFinish();
                 await drawNameBorder();
+
+                /**
+                 * Draw card name and stars eagerly here, so they lie below the boundless image
+                 */
+                if (triggerDrawNameEagerly) {
+                    if (eagerlyDrawHistory.current !== drawingPipeline.current.name.rerun) {
+                        eagerlyDrawHistory.current = drawingPipeline.current.name.rerun;
+                        await drawingPipeline.current.name.instructor();
+                    }
+                    if (nameCanvasRef.current) ctx.drawImage(nameCanvasRef.current, 0, 0);
+                    await callDrawStar();
+                }
                 if (isLink && !isPendulum) {
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
                     await drawArtBorderFinish();
@@ -610,7 +701,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 console.error('drawAttribute error', e);
             }
             await drawAttributeFinish();
-            await drawStar({ style: levelStyle, starAlignment, iconImage: hasIconImage ? iconImageCanvasRef.current : undefined });
+            if (!triggerDrawNameEagerly) await callDrawStar();
 
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
@@ -644,14 +735,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         globalScale,
         artworkCanvasRef,
         attribute,
+        attributeCanvasRef,
         attributeImageSource,
         backgroundCanvasRef,
         backgroundType,
-        attributeCanvasRef,
         cardIcon,
         coordinateMap,
         dyeList,
         effectBackground,
+        effectBoxOffsetData,
         finish,
         foil,
         format,
@@ -676,6 +768,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         linkRating,
         loopArtFinish,
         loopFinish,
+        nameCanvasRef,
         opacity,
         otherFinish,
         overlayCanvasRef,
@@ -693,6 +786,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         starAlignment,
         starList,
         statInEffect,
+        triggerDrawNameEagerly,
         withBlueScale,
         withRedScale,
         imageChangeCount, // Special dependency, do not remove even though it is not used in the effect itself
@@ -722,42 +816,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         pendulumScaleRed,
         pendulumSize,
         resolvedPendulumEffectTextStyle,
-    ]);
-
-    /** DRAW NAME */
-    useEffect(() => {
-        if (!readyToDraw) return;
-        drawingPipeline.current.name.rerun += 1;
-        drawingPipeline.current.name.instructor = async () => {
-            const ctx = nameCanvasRef.current?.getContext('2d');
-
-            if (!clearCanvas(ctx) || !nameCanvasRef.current) return;
-
-            await drawName(
-                nameCanvasRef.current,
-                ctx,
-                name,
-                format === 'tcg' ? 63 : 68, 116,
-                attribute === NO_ATTRIBUTE
-                    ? (format === 'tcg' ? 688 : 674)
-                    : (format === 'tcg' ? 608 : 598),
-                resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
-                { isSpeedSkill, format, frame, furiganaHelper, globalScale },
-            );
-        };
-    }, [
-        readyToDraw,
-        globalScale,
-        attribute,
-        foil,
-        format,
-        frame,
-        furiganaHelper,
-        isSpeedSkill,
-        name,
-        nameCanvasRef,
-        nameStyle,
-        nameStyleType,
     ]);
 
     /** DRAW STAT (ATK / DEF / LINK RATING) */
@@ -1359,30 +1417,32 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 });
             /** It is not worth to use promise all here, just let them go sequentially to avoid too many blob generating calls. */
             const layerRefList = [
-                frameCanvasRef,
-                nameCanvasRef,
-                cardIconCanvasRef,
-                pendulumScaleCanvasRef,
-                pendulumEffectCanvasRef,
-                typeCanvasRef,
-                effectCanvasRef,
-                statCanvasRef,
-                setIdCanvasRef,
-                passwordCanvasRef,
-                creatorCanvasRef,
-                stickerCanvasRef,
-                finishCanvasRef,
+                { name: 'frameLayer', canvas: frameCanvasRef },
+                { name: 'nameLayer', canvas: nameCanvasRef },
+                { name: 'cardIconLayer', canvas: cardIconCanvasRef },
+                { name: 'pendulumScaleLayer', canvas: pendulumScaleCanvasRef },
+                { name: 'pendulumEffectLayer', canvas: pendulumEffectCanvasRef },
+                { name: 'typeLayer', canvas: typeCanvasRef },
+                { name: 'effectLayer', canvas: effectCanvasRef },
+                { name: 'statLayer', canvas: statCanvasRef },
+                { name: 'setIdLayer', canvas: setIdCanvasRef },
+                { name: 'passwordLayer', canvas: passwordCanvasRef },
+                { name: 'creatorLayer', canvas: creatorCanvasRef },
+                { name: 'stickerLayer', canvas: stickerCanvasRef },
+                { name: 'finishLayer', canvas: finishCanvasRef },
             ];
             let lastError: { count: number, error: unknown } = { count: -1, error: null };
             for (let cnt = 0; cnt < layerRefList.length; cnt++) {
+                const { canvas, name } = layerRefList[cnt];
                 const {
                     error,
                     status,
                     draw,
-                } = await generateLayer(layerRefList[cnt], 0, `${cnt}`);
+                } = await generateLayer(canvas, 0, `${name}`);
                 if (status === 'error') lastError = { count: cnt, error };
                 if (draw) {
-                    draw(exportCtx);
+                    const willDraw = !(nameStarBelowImage && ['nameLayer'].includes(name));
+                    if (willDraw) draw(exportCtx);
                 }
             }
             if (lastError.error) onError(lastError.error);
@@ -1406,20 +1466,21 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         language,
         cardIconCanvasRef,
         creatorCanvasRef,
-        exportCanvasRef,
         effectCanvasRef,
+        exportCanvasRef,
         finishCanvasRef,
+        frameCanvasRef,
         lightboxRef,
         nameCanvasRef,
+        nameStarBelowImage,
         passwordCanvasRef,
         pendulumEffectCanvasRef,
         pendulumScaleCanvasRef,
+        previewCanvasRef,
         setIdCanvasRef,
-        frameCanvasRef,
         statCanvasRef,
         stickerCanvasRef,
         typeCanvasRef,
-        previewCanvasRef,
     ]);
 
     return {

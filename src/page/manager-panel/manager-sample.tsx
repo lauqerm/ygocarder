@@ -58,7 +58,7 @@ const StyledManagerSample = styled(Modal)`
             border: var(--bw) solid var(--sub-level-4);
             padding: var(--spacing-xs) var(--spacing-sm);
             &:nth-child(1) {
-                width: 170px;
+                width: 140px;
             }
             &:nth-child(2) {
                 ${StyledMono} {

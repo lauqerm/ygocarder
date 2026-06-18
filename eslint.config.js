@@ -28,6 +28,7 @@ export default tseslint.config(
             'react-refresh': reactRefresh,
         },
         rules: {
+            ...reactHooks.configs.recommended.rules,
             '@typescript-eslint/explicit-member-accessibility': 0,
             '@typescript-eslint/camelcase': 0,
 

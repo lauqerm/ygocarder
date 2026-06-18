@@ -44,21 +44,446 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
+
+const feedbackList: Feedback[] = [
+    {
+        author: 'Vendoz at Jun 18, 2026',
+        question: 'Hello, First thing first.. Thank you for all the works you\'ve been doing and to keep improving the plugin. I have a suggestion, Is it possible to make the art to be on top of level icons and card name?. Or, make the card name and level icons kinda blending in into the art if the art is on top of them. Thank You ^_^',
+        answer: 'Hi, you can use the feature in the Blending menu. The result will be like below.',
+        image: [
+            'https://i.postimg.cc/4NwYM2Lz/Screenshot-2026-06-18-at-19-59-18.png',
+            'https://i.postimg.cc/nzQ7fKj8/image.png',
+            'https://i.postimg.cc/Xvb6ksV9/image.png',
+        ],
+    },
+    {
+        author: 'Lucky Zaneabane at Jun 15, 2026',
+        question: 'I honestly may just be messing something up somehow, But is there a way to upload custom attributes? Ive uploaded an attribute image and it pops up in the level area but i dont see a way to possibly move it to the attribute area',
+        answer: 'Hi, you may have mistakenly used the custom level/rank feature. You can find the custom attribute feature here.',
+        image: ['https://i.postimg.cc/tCdSzpB8/Screenshot-2026-06-16-at-15-37-23.png']
+    },
+    {
+        author: 'Anonymous at Jun 14, 2026',
+        question: '"If you want to modify card layers, or use it in any public project, please contact Grezar or 9558able directly." there\'s an issue there in that they seem to be pretty stuck up and condesending people who don\'t reply to others. This project has potential to be alot better and overtake all other competition in its field, but idk how you expect to gain from outside opinion and improve it when there\'s no way to contact you and the people you have put up to be contacted are stuck up and condesending.',
+        answer: <div>
+            Hi there. As mentioned, you only need to contact grezar/9558able if you <span style={{ color: 'lightgreen' }}>want to do something with the card template itself</span>, since they own the templates and only lend them to me for this app.
+            <br />
+            You can still send questions, feedback, or feature requests to me directly. In fact, you're doing it right now through the Report function as you can see 😅.
+            <br />
+            As for the artists, they are friendly and generous enough to allow me to use their work for free, so I'm not sure what your experience with them was. Neither of them visits their DeviantArt page regularly, so it's normal if they don't reply promptly.
+        </div>,
+    },
+    {
+        author: 'RedSupernovaDragon at Jun 08, 2026',
+        question: 'I tried the full caching option and it worked just fine. I specify my question from yesterday: I was wondering if you plan to eventually release this app as an .exe file that can be downloaded and installed through a wizard, in order to be executed completely outside of Chrome. Something like MSE, but better and ygo-only: Magic Set Editor is provided on their official site as a zip folder containing the app and all the assets (card frames, etc.) you need. This would truly be helpful, but if you don\'t have such plans, I\'ll keep using the site or the cached version.',
+    },
+    {
+        author: 'RedSupernovaDragon at Jun 07, 2026',
+        question: 'Hello,\njust a simple question: are you planning to release an installable offline app? I mean something like MSE, an app that can be installed on a computer with all the assets you need to create cards. I was wondering about this because, while the site is fine for me, being able to create hundreds of cards without the necessity of a wi-fi connection would truly be awesome.',
+        answer: 'Right now the install option is my solution for the app to work offline. Not only does it work on both mobile and desktop, it also doesn\'t require me to modify the codebase much (besides, from the outside it is no different than your everyday apps anyway, just click the icon and start working). Creating an executable version of the app requires a completely different skill set than I have, so I\'ll only do it if there\'s a really (and I mean really) convenient way to convert. Otherwise, managing two different codebases will quickly destroy the project.',
+    },
+    {
+        author: 'Anonymous at Jun 07, 2026',
+        question: 'I think a little of both, make the manager function export in mse-set',
+        answer: 'Got it, let\'s me examine the format first and I will see what I can do.'
+    },
+    {
+        author: 'Anonymous at Jun 05, 2026',
+        question: 'Can you let us export to MSE as well?\nMSE would be Magic Set Editor',
+        answer: 'Could you elaborate your request a bit more? Do you want to export the card data in a format that can be imported by MSE (.mse-set file)? Or are you using the Manager function and want to export the whole list of card data to MSE?',
+    },
+    {
+        author: 'Anonymous at Jun 05, 2026',
+        question: 'I just like to tell you that there\'s a delay between inputting the text or changing the template and the result updating, please fix',
+        answer: 'Hi, unfortunately this is a technical limitation of the current implementation, as the card rendering process is quite heavy and it can cause some delay. I have updated the app to show a loading indicator when the app is busy rendering, so you can at least know that the app is working on it. I will keep trying to optimize the performance to reduce the delay as much as possible.',
+    },
+    {
+        author: 'No name hack at Jun 01, 2026',
+        question: 'I want made card overframe without frame pendulum effect, only scale pendulum appear, must options',
+        answer: 'Hi, based on what you are describing, I\'m assuming you want the result to look something like this? If you confirm it, I can start working.',
+        image: ['https://i.postimg.cc/SRkXcBb6/Untitled.jpg'],
+    },
+    {
+        author: 'RedSupernovaDragon at May 22, 2026',
+        question: 'Correction from my previous report: it was a spoof, adding the letter I forgot (F) brought back the situation I explained yesterday, including the problem of number 2. However, this shows that 1 can appear higher or lower depending on text length.',
+    },
+    {
+        author: 'RedSupernovaDragon at May 22, 2026',
+        question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
+    },
+    {
+        author: 'RedSupernovaDragon at May 21, 2026',
+        question: 'Thank you for fixing the infamous issue of text compression in the name box. As far as I can tell, using the site from my pc, everything now seems fine. The numbers, however, are still troubled by this issue, as you can see from my screenshot. It seems that problems are localized, at least: 1 and 2 refuse to follow the same upper common line as the other letters and numbers, while 3 and 5 go off the lower limit.',
+        answer: 'That\'s true, number 3 and 5 reaching a bit lower than the baseline is a feature of the font, so I have no plan to update that.',
+    },
+    {
+        author: 'Anonymous at May 22, 2026',
+        question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
+        answer: 'Thanks for your report, I have updated the behavior.'
+    },
+    {
+        author: 'RedSupernovaDragon at May 21, 2026',
+        question: 'Another minor issue that I found involves the question mark in ATK/DEF points. It should have the same height as the digits, but it goes lower. Particularly evident when you test this typing absurd ATK values like "2?".\nThe problem does not affect other strange ATKs like X000, so letters are ok.',
+        answer: 'Yeah, the question mark use a different scale so it doesn\'t align properly. I have adjust it a bit.'
+    },
+    {
+        author: 'RedSupernovaDragon at May 21, 2026',
+        question: 'Also reporting that for some reason I\'m seeing two bars on the right which I can slide. The problem is that If I slide the rightmost one, I end up in a white area, \'below the limit\', while the inner one does its job right, navigating to the bottom of the site and not further. I tried to send you a screenshot, but unfortunately the window cannot capture it. Adding to this strangeness is that right now, as I\'m writing this report, I see only the correct bar, but when I\'ll close the report the "fake" bar will return. Hoping that this will be enough to solve this problem.',
+        answer: 'I think I have some idea about this so I can try, but this can be a result of a lot of factor so not sure if I can fix it consistently.'
+    },
+    {
+        author: 'TOVYA at May 19, 2026',
+        question: 'Hello bạn, khi chạy trên local với Docker thì mình gặp vấn đề:\n```\nerror: Auth token is required for this request. Please run `sentry-cli login` and try again!\n```\nĐồng thời mình thấy cách chạy Docker có phần hơi rối rắm.\nTin vui là bạn không cần phải fix lỗi cũng như refactor lại cho bạn, mình đã làm sẵn rồi. Nhớ check PR #21 nhé.',
+        answer: 'Ok nha bạn, mình sẽ review PR của bạn sớm.',
+    },
+    {
+        author: 'Knezzo at May 18, 2026',
+        question: 'Hi , I am unsure if this has been asked already, but I want to qsk nonetheless. Are you planning on adding the "Grandmaster Rare" styled outline for the cards (with the hieroglyphs) as well as (an optional?) series tracker on the bottom left like the Grandmaster Rares have? I\'d really appreciate it! Thank you very much for making this Card maker',
+        answer: 'Of course! I am waiting for high quality assets to implement these new rarities, including rainbow colored frame and hieroglyph pattern for Grandmaster Rare. I will add them as soon as I can get the assets ready, hopefully I won\'t need to wait too long.',
+    },
+    {
+        author: 'RedSupernovaDragon at May 16, 2026',
+        question: 'Test with capital letters: G, O, Q with height issue, along with the numbers. Also reporting that the N may occasionally appear lower than it should be in long names (C62), similarly to its lowercase counterpart.',
+    },
+    {
+        author: 'RedSupernovaDragon at May 16, 2026',
+        question: 'Hello again, Lauqerm\nI went off for almost two months, but now I\'m back. Glad to see that you are working hard trying to find a solution for the text compression issue in the name box. I\'ve seen that others have reported similar issues in these past months, so I\'m adding my screenshots as well. For starters, letter O can also go off in the other direction, below the line, as seen in this picture, Italian name for Purplish Armageddon. Even before finding this site back in February, I had the intention to create Italian proxies of the heroes and rivals ace cards (from DM to VRAINS), along with their forms, of course. I prefer the 813x1185 resolution, btw. Your site is just what I need, so I\'m hoping that you\'ll eventually fix the text at all scales.',
+        answer: 'Thank you for helping me find these cases, I will try to adapt my fix accordingly.'
+    },
+    {
+        author: 'Anonymous at April 30, 2026',
+        question: 'Now the image just literally goes over the frame, like literally I can\'t see the effect box',
+        answer: <div>Well from your attached screenshot I thought the transparent effect box was intentional 😅. But regardless, just pull up the effect opacity back to 100. <a href='https://lauqerm.github.io/ygocarder/?data=%7B%22fm%22%3A%22tcg%22%2C%22rg%22%3A%22en%22%2C%22fr%22%3A%22fusion%22%2C%22lt%22%3Afalse%2C%22lf%22%3A%22auto%22%2C%22rf%22%3A%22auto%22%2C%22rpf%22%3A%22auto%22%2C%22fo%22%3A%22normal%22%2C%22op%22%3A%7B%22opbd%22%3A100%2C%22oppd%22%3A100%2C%22optx%22%3A100%2C%22opnm%22%3A0%2C%22opbf%22%3A%22%23404040%22%2C%22opab%22%3Atrue%2C%22opnb%22%3Atrue%2C%22opeb%22%3Afalse%2C%22opfb%22%3Atrue%2C%22opbl%22%3Afalse%7D%2C%22fn%22%3A%5B%5D%2C%22afn%22%3A%22normal%22%2C%22of%22%3A%5B%22normal%22%2C%22normal%22%2C%22normal%22%2C%22normal%22%5D%2C%22na%22%3A%22Junko%22%2C%22nst%22%3A%22predefined%22%2C%22ns%22%3A%7B%22nsep%22%3A90%2C%22nset%22%3A0%2C%22nsey%22%3A90%2C%22nsfs%22%3A%22%23cfc6de%22%2C%22nsft%22%3A%22Auto%22%2C%22nsgd%22%3A0%2C%22nscg%22%3A%220.000%7C%23eef10b%2C0.5%7C%23d78025%2C1.000%7C%237e20cf%22%2C%22nshe%22%3Afalse%2C%22nshg%22%3Afalse%2C%22nshl%22%3Afalse%2C%22nshs%22%3Afalse%2C%22nshfs%22%3A%22%23010101%22%2C%22nslc%22%3A%22%23000000%22%2C%22nslox%22%3A0%2C%22nsloy%22%3A0%2C%22nslw%22%3A0%2C%22nspt%22%3A%22none%22%2C%22nspr%22%3A%22rare%22%2C%22nssb%22%3A0%2C%22nssc%22%3A%22%23000000%22%2C%22nssox%22%3A0%2C%22nssoy%22%3A0%7D%2C%22at%22%3A%22LIGHT%22%2C%22att%22%3A%22auto%22%2C%22sf%22%3A%22NO+ICON%22%2C%22it%22%3A%22auto%22%2C%22st%22%3A6%2C%22stl%22%3A%5B%5D%2C%22sa%22%3A%22auto%22%2C%22ar%22%3A%22https%3A%2F%2Fi.imgur.com%2Fh5kXZeC.png%22%2C%22ad%22%3A%22%22%2C%22as%22%3A%22online%22%2C%22af%22%3Afalse%2C%22ast%22%3A%7B%22asfx%22%3Afalse%2C%22asfy%22%3Afalse%7D%2C%22arc%22%3A%7B%22aru%22%3A%22%25%22%2C%22ara%22%3A1%2C%22arx%22%3A0%2C%22ary%22%3A4%2C%22arw%22%3A100%2C%22arh%22%3A89.5%7D%2C%22hbg%22%3Atrue%2C%22bg%22%3A%22https%3A%2F%2Fi.postimg.cc%2FncXnFCGh%2FConstellation-Monster.webp%22%2C%22bgd%22%3A%22%22%2C%22bf%22%3Atrue%2C%22bst%22%3A%7B%22bsfx%22%3Afalse%2C%22bsfy%22%3Afalse%7D%2C%22bgs%22%3A%22online%22%2C%22bgt%22%3A%22frame%22%2C%22bgc%22%3A%7B%22bgu%22%3A%22%25%22%2C%22bga%22%3A0.685%2C%22bgx%22%3A0.0910746812386094%2C%22bgy%22%3A0%2C%22bgw%22%3A99.81785063752277%2C%22bgh%22%3A100%7D%2C%22ovg%22%3A%22%22%2C%22ovgd%22%3A%22%22%2C%22ovf%22%3Atrue%2C%22ovt%22%3A%22border%2Csource-in%7Cframe%2Cnone%22%2C%22ovst%22%3A%7B%22ovsfx%22%3Afalse%2C%22ovsfy%22%3Afalse%7D%2C%22ovgs%22%3A%22online%22%2C%22ovgc%22%3A%7B%22ovgx%22%3A0%2C%22ovgy%22%3A0%2C%22ovgw%22%3A100%2C%22ovgh%22%3A100%2C%22ovgu%22%3A%22%25%22%2C%22ovga%22%3A0.685%7D%2C%22sivg%22%3A%22%22%2C%22sivgd%22%3A%22%22%2C%22sivf%22%3Atrue%2C%22sivst%22%3A%7B%22sivsfx%22%3Afalse%2C%22sivsfy%22%3Afalse%7D%2C%22sivgs%22%3A%22online%22%2C%22sivgc%22%3A%7B%22sivgx%22%3A0%2C%22sivgy%22%3A0%2C%22sivgw%22%3A100%2C%22sivgh%22%3A100%2C%22sivgu%22%3A%22%25%22%2C%22sivga%22%3A1%7D%2C%22lm%22%3A%5B%221%22%2C%223%22%2C%227%22%2C%229%22%5D%2C%22lr%22%3A%22%22%2C%22il%22%3Afalse%2C%22ip%22%3Afalse%2C%22pf%22%3A%22auto%22%2C%22pe%22%3A%22Once+per+turn%3A+You+can+pay+800+LP%2C+increase+this+card%27s+Pendulum+Scale+by+1.%22%2C%22rs%22%3A%224%22%2C%22bs%22%3A%224%22%2C%22psi%22%3A%22medium%22%2C%22ta%22%3A%5B%22Fairy%22%2C%22Fusion%22%2C%22Effect%22%5D%2C%22es%22%3A%7B%22cdtl%22%3A%22strict%22%2C%22efs%22%3A%22auto%22%2C%22eus%22%3A0%2C%22ebg%22%3A%22auto%22%2C%22eml%22%3A0%2C%22ejr%22%3A100%7D%2C%22ps%22%3A%7B%22pfs%22%3A%22auto%22%2C%22pus%22%3A0%2C%22pbg%22%3A%22auto%22%2C%22pml%22%3A0%2C%22pjr%22%3A100%7D%2C%22ef%22%3A%22%5B2%2B+Effect+Monsters+on+your+field%5D%5CnEach+time+an+opponent%27s+monster+activates+its+effect%2C+place+1+Pure+Counter+on+that+opponent%27s+monster+%28max.+1%29+after+that+effect+resolves.+Unaffected+by+activated+effects+from+monster+with+a+Pure+Counter.+Cannot+be+destroyed+by+battle+with+monsters+with+a+Pure+Counter.%22%2C%22si%22%3A%22YGOC-EN001%22%2C%22atk%22%3A%222000%22%2C%22def%22%3A%222000%22%2C%22pw%22%3A%2218199611%22%2C%22sti%22%3A%22holo5%22%2C%22fe%22%3A%221%3Cst%3E+Edition%22%2C%22ife%22%3Atrue%2C%22act%22%3A%22%22%2C%22hct%22%3Afalse%2C%22isp%22%3Afalse%2C%22ile%22%3Afalse%2C%22idt%22%3Afalse%2C%22ilc%22%3Afalse%2C%22cr%22%3A%22%C2%A92020+Studio+Dice%2FSHUEISHA%2C+TV+TOKYO%2C+KONAMI%22%2C%22fh%22%3Atrue%2C%22sts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22tts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22ets%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22pts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22ots%22%3A%5Btrue%2C%22%23ffffff%22%2Ctrue%2C%22%23000000%22%5D%2C%22dl%22%3A%5B%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%5D%2C%22fl%22%3A%5B0%2C0%2C0%2C1%5D%2C%22ve%22%3A3%7D' target='_blank' rel='noreferrer'>This link</a> contains a sample card with your frame already applied, you can work from here if you still have trouble adjusting the config.</div>,
+        image: ['https://i.postimg.cc/cJCJnXQR/image.png'],
+    },
+    {
+        author: 'Anonymous at April 30, 2026',
+        question: 'That didnt work, even though i did everything you told me, is there smth im missing?',
+        answer: 'Your frame crop is a bit off so it does not align with other elements on the card. You can use the "Use whole image" option to ignore manual crop and use the full image instead. Let me know if there is still any issue after that.',
+        image: ['https://i.postimg.cc/Dfqqd5VQ/image.png'],
+    },
+    {
+        author: 'Anonymous at April 29, 2026',
+        question: 'this is the frame i want \nhttps://static.wikia.nocookie.net/ycm/images/4/46/Constellation_Monster.png/revision/latest?cb=20180202161511\n\nif we can pull it off thats good, but if we cant then can i get a feature that lets me add custom templates like this one to your app?',
+        answer: 'Hi, it takes a bit of set up but you can certainly apply your template in the app. Below is a step-by-step guide and the end result.',
+        image: [
+            'https://i.postimg.cc/HL4PXZjw/test.png',
+            'https://i.postimg.cc/Z5gyj4v0/download-(2).png',
+        ],
+    },
+    {
+        author: 'Anonymous at April 28, 2026',
+        question: 'I saw a card template once and thought "wow it would be rly cool if i made a card outta this", then i realised i couldn\'t, so could you give us the feature to upload our own custom templates without needing to use the default ones??\n\nOh, and by templates i mean the Monster templates',
+        answer: 'Hi, what does your template look like? The app supports customizing a variety of card components, including background layer, foil, etc. If you can provide more details about your template and which part you want to customize, I may be able to suggest how to achieve that with current features or by adding new ones if needed.',
+    },
+    {
+        author: 'Ryan at April 24, 2026',
+        question: 'Importing a Spell Card (haven\'t tried on Traps) don\'t auto attach the Spell Attribute and show ATK/DEF like a Monster card.',
+        answer: 'Thanks for your report, I have fixed the issue.',
+    },
+    {
+        author: 'Anonymous at April 18, 2026',
+        question: 'I want to remove the pendulum effect frame, as it\'s already available on the overframe card',
+        answer: 'Do you want to be able to remove the effect background as well? I may give it a try.',
+    },
+    {
+        author: 'Anonymous at April 14, 2026',
+        question: 'Hey it\'s me again, i see that the issue wasnt fixed, ik if the issue lasts more than 2 weeks then you are unable to fix it, but pls reconsider.\nheres a screenshot for reference',
+        answer: 'I have update the formatting in card name and effects to adapt with Arabic, you may try it now.'
+    },
+    {
+        author: 'Anonymous at April 12, 2026',
+        question: 'Hi Lauqerm, have you fix the issue of G and S leeters😭😭 i think the height issue cameback maybe came from the shrinkage of the attribute icons in the name box 🤔🤔',
+    },
+    {
+        author: 'Anonymous at April 09, 2026',
+        question: 'The S and G letter now are lower than other letters Lauqerm, i tried on Slifer the Sky Dragon, its same as the N letter issue before you fixed for me 😭😭😭',
+        answer: 'Can you provide some images / screenshots to help me visualize the issue better? It\'s pretty weird because I never adjust the letter S so it very unlikely that it bugged out right now when it is not before.'
+    },
+    {
+        author: 'Anonymous at April 09, 2026',
+        question: 'Hello, its me again.\nThe same issue is back with G letter again Lauqerm, please fix it 😭😭😭',
+        answer: 'Oh man 😭.'
+    },
+    {
+        author: 'Anonymous at April 09, 2026',
+        question: '"From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page."\n\nI don\'t know what to say. It simply is not stored as a saved toggle feature whenever I import the card list. It\'s a very minor thing and a peeve at worst. I cannot say it\'s exclusively a me thing, but if you say it should work that way, then it just doesn\'t do it for me.',
+        answer: 'I see. I have tried apply a fix for this, hopefully this will resolve the issue. But if it still persists, could you send me a part of your card list as well? (not the whole thing, just the first few lines are enough). It will help me a lot to investigate the problem. Thanks for your help.'
+    },
+    {
+        author: 'Anonymous at April 09, 2026',
+        question: 'I\'m an Arab and love Yu-Gi-Oh, but your card maker doesn\'t support the Arabic language and I really want to make Arabic Yu-Gi-Oh cards becuz my friends can\'t understand english to read the cards I maker',
+    },
+    {
+        author: 'Anonymous at April 09, 2026',
+        question: 'If I wasn\'t clear before, the Arabic text is supposed to look like this\n أهلا، انا اتحدث العربية\nInstead it looks like this\nة ي ب ر ل أ  ث د ح ت ا، أ ل ه ا \nPlease fix this\n(Btw the translation is "Hello, I speak Arabic")',
+        answer: 'I will try my best. But I don\'t know Arabic and its writing system so it may take sometime 😭. Thanks for your patience.'
+    },
+    {
+        author: 'Anonymous at April 05, 2026',
+        question: 'OCG Series 1 and 2 only button from change setting.',
+        answer: 'Sorry, I do not have access to the template for older series.'
+    },
+    {
+        author: 'Anonymous at April 05, 2026',
+        question: 'Any reason in particular why the Condense tet in the paragraph style tab isn\'t saved or at least defaulted like almost everything else is? It\'s pretty convenient as a feature, or rather I\'ve yet to encounter the use case where less condensation is better.\n\nWhat isn\'t convenient however is how you have to toggle it each time when your load your save file.',
+        answer: 'Hi there, I\'m not sure if I fully understand your problem. Do you mean the condense option is not saved when you export the card? From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page. If you could provide the steps to reproduce the issue (and explain what you expect to happen), it would help me resolve the problem.'
+    },
+    {
+        author: 'Lukas at March 27, 2026',
+        question: 'Thanks to the new Utopia overframe card I noticed that the attributes of both spells/ traps aren\'t aligned like the monsters attributes. Is that intentional or an error? (I reported before without the screenshot, sorry).',
+        answer: 'Hi there, I\'m not sure I fully understand your feedback, as all attributes (both monsters and spells/traps) appear to be aligned the same way from what I can see. Compared to the Utopia Overframe card, the attribute is slightly larger and misaligned however, which I have already made some updates to it.'
+    },
+    {
+        author: 'Yugiohfann at March 20, 2026',
+        question: 'Hello again Lauqerm\nI forgot to mention that the letter "q" also has a similar height issue compared to other letters like the letter "n" while it is in a long card\'s name 😅😅😅',
+    },
+    {
+        author: 'Yugiohfann at March 20, 2026',
+        question: 'Hello again Lauqerm, \nThank you for fixing the height issue of the letter "i" before, but now the issue is back with the letter "n" while it is shifted further down the line compared to the other letters in some long card\'s name such as "Gandora-G the Dragon of Destruction", "Dark Magician the Magician of Black Magic", "Dark Magician Girl the Magician\'s Apprentice".... 😭😭😭',
+        answer: 'My bad, I have updated the caliberation rule for the letter (again) 😭😭.'
+    },
+    {
+        author: 'Anonymous at March 19, 2026',
+        question: 'I am not sure if this is even feasible, but I think it\'d be mighty convenient if there was a feature that allowed you to display the submitted card art mirrored in the card display, to save the bother of mirroring it beforehand.',
+        answer: 'Hi, now card artwork / background will allow you to flip the image horizontally / vertically.',
+        image: ['https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png'],
+    },
+    {
+        author: 'RedSupernovaDragon at March 17, 2026',
+        question: 'Hello again, I have some news that could help you in fixing the "name box shrinking issue". I tried to see if it was a common problem on similar sites; I typed the whole alphabet and the numbers on YGOPro and found out that it does not have such a defect: letters in the name box shrink normally, keeping their ratio and heights. As your site is objectively superior to YGOpro in terms of card making, image quality and UI, I was wondering if you could try something more to fix the issue, particularly on pc but mobile version would be nice too.\nNamely, you could do 3 things:\n1. Taking inspiration by how YGOpro managed to code the compression. To be clear, this is *not* an incitation to plagiarism, just a small comparison; maybe DevTools can show you how they coded that specific feature, so you can see if there is any substantial difference in the lines. IDK, but there must be a reason why their carder displays the right text at any length.\n2. You could simply try a different font file. I assume you uploaded fonts on this site, perhaps the rendering problem is due to the otf / ttf / whatever file itself.\n3. Finally, you could focus on mastering the manipulation of curved strokes, what is currently difficult for you. You managed to fix basically every other letter, at least on PC; on mobile there are still some issues even with E and I, but that may be related to my browser.\n\nI regard this issue as much more fundamental than it seems, since it affects basically every card with a (not so) long name created with your site.\nThere has to be a solution, otherwise it would be really sad to keep this defect. I think that details like this matter, even more than other features. A realistic proxy can have some defects that are not visibile at first glance; those defects do not include a letter O that goes Over the top in the name box, which is one of the first things you read on a card.\n\nI tried to give some suggestions, hoping that my words didn\'t sound too bad or out of place. And I also hope that this problem will be solved sooner or later.\nLooking forward to the next updates!',
+        answer: 'Thanks, I know how irritating this problem is, and believe me, I\'ve spent quite a while trying to figure something out over the past years. The cause is very clear, rendering the font in large size causes the problem to appear when they are condensed. I just can\'t find a way to effectively solve it.\nI appreciate your suggestions though, here is what I have done:\n1. Unfortunately, all other card makers (as far as I know) are closed-source, which means I basically cannot access their codebase to see what they are doing at all.\n2. I did try the font from YGOPro card maker and ygocardmaker.net before, but to no avail.\n3. This is my only tactic right now: keep throwing fixes at the wall to see what sticks 😭.\nAnyway, I have issued another experimental fix for now. If you encounter the problem again (which unfortunately is likely), please attach an image of the app (the report dialog has a screencapture function). It may help me a bit when evaluating any future fixes. Appreciate your help.'
+    },
+    {
+        author: 'MaSaHo at March 11, 2026',
+        question: 'I recently noticed that Yu-Gi-Oh cards have had several small reformulations throughout the life of the game, which they call “Series”, and your model is equivalent to Series 10 (the current one). Do you have plans to add the older series layouts at some point in the future?',
+        answer: 'Hi there, unfortunately that will require access to old series templates as well as a list of changes made over time, which I currently do not have. The app can only support a few limited options (for example, "small" and "large" pendulum frames, or the old position for the "1st Edition" text), but that is about it.',
+    },
+    {
+        author: 'Seamornf at March 09, 2026',
+        question: 'Hi! Love the work. I found that because traps in portuguese have the longest name of any attribute currently, the last "A" is getting the shadow from the name border.',
+        answer: 'I have updated the issue, thanks for your report.',
+    },
+    {
+        author: 'RedSupernovaDragon at March 07, 2026',
+        question: 'Well, it\'s really unlucky for the name box to have those shrinking issues that you cannot fix at the moment. At least the problem was noticed.\nAside from this issue, there is a (very) small UI update you could make: in the frame panel, "Ritual" is currently placed after "Link"; a better position would be between "Effect" and "Fusion", since\n1) Rituals are Main Deck monsters;\n2) they were introduced early along with Fusions;\n3) this "R, F, S, X" order is the most natural, and it\'s found in some cards like the Firewall upgrades..',
+        answer: 'Yeah, I\'m not the font maker so I can only have limited control over the font rendering. About your recommendation for the ritual frame, it should have been updated now.',
+    },
+    {
+        author: 'RedSupernovaDragon at March 05, 2026',
+        question: 'Thank you very much for making the paragraph box static.\nWonderful fix for the letters! Unfortunately, there are other similar height issue: on "o"/"O", "q", and some of the numbers (namely 1, 2, and 0). When compression is necessary to fit longer names in the box, all of these characters are taller than they should be to fit on a common line.\nIt\'s a really frustrating issue, I know, especially since the font is supposed to be Regular. Thanks in advance for your working on this issue.',
+        answer: 'Right now, it is quite difficult for me to handle characters with curved strokes (like the letters O, Q, and the numbers 0, 3, 6, 9), because they actually protrude slightly beyond the normal top/bottom baselines as far as I can investigate. I might double check the bases of numbers 1 and 2, and that may be it. Sorry for the inconvenience.',
+    },
+    {
+        author: 'RedSupernovaDragon at March 04, 2026',
+        question: 'Hello again, about the "i"/"I" issue, I tried to write the whole alphabet (upper and lower case) in the name box and I have to report the same issue for "E" and "N", at least from pc version.',
+        answer: 'Now this is really getting out of hand 😭. I have issued another fix for this.',
+    },
+    {
+        author: 'RedSupernovaDragon at March 03, 2026',
+        question: 'Hello! First off, thank you very much for this cardmaker, I\'m new to custom cards but this  carder has already become my favourite.\nI\'m using the site on pc, and noticed that when you open the "Paragraph Style" section, its width does not stay fixed like the other settings, but it slides to the right until it eventually stops. I was wondering if you could fix this by making it static, since it\'s kind of difficult to select the things you want while they\'re moving.\nThank you again for your work!',
+        answer: 'The paragraph panel should have fixed width now.',
+    },
+    {
+        author: 'Yugiohfann at March 03, 2026',
+        question: 'Thank you so much for fixing the "i" letter for me, but it seems the issue has been fixed in the Android version, and the PC version still has the "i" letter sometimes positioned higher and sometimes lower 😭😭.',
+        answer: 'It\'s okay, at least something is working 😭. If possible, please also send me the report from the app on the bugged browser (it seems you send most of your reports from Chrome on a mobile device). The report will include additional information about your browser that may help me investigate further. Sorry for the inconvenience.',
+    },
+    {
+        author: 'Yugiohfann at March 02, 2026',
+        question: 'I use 813x1185 resolution, can you adjust the height of the letter "i" so that it\'s the same height as the other letters in the name box? Thank you.',
+        answer: 'I have updated the font a bit, if this does not improve your issue I\'m sorry I cannot do much more to help.',
+    },
+    {
+        author: 'MaSaHo at March 01, 2026',
+        question: 'Is there a plan to update the foil border? I mean, adding the rainbow pattern of the new Overframe cards, as well as the assets from the Grand Master version?',
+        answer: 'I would love to but right now I am entirely depend on other artists to provide the assets for those first, so I cannot give a clear ETA on that.',
+    },
+    {
+        author: 'LigerrFanArt at Feb 24, 2026',
+        question: 'Hello,\nI noticed a formatting issue with italic text in the effect box (Normal Monster text).\nWhen a line starts directly with a parenthesis, for example:\n"(This card is always treated as an "Archfiend" card.)"\nthe italic formatting does not activate properly.\nTo make the italics work, I have to manually add a space before the "(" at the beginning of the line. However, adding this space causes the text to shift\nslightly and the font size to shrink, as the entire text box appears to be recalculated and resized.\nIt seems like the issue may be related to how the parser handles lines beginning with a parenthesis.\nJust reporting it in case it helps improve the tool.\nThanks for your work!\n\nLigerrFanArt',
+        answer: 'I have fixed the issue T.T',
+    },
+    {
+        author: 'TheTonyB at Feb 23, 2026',
+        question: 'Spell/Trap icon finishes not working with high-res cards.',
+        answer: 'I have fixed the issue.',
+    },
+    {
+        author: 'El Kebabini at Feb 17, 2026',
+        question: 'The german Attribute for Dark Finsternis is wrong. It\'s too condensed.',
+        answer: 'I am sorry but that is the only one that I have access to, I will update it if I can but right now it\'s really hard to get access to attributes for other languages.',
+    },
+    {
+        author: 'Long at Feb 16, 2026',
+        question: 'Why did you change the font color? The default text used to be black, but now it’s gray, and I don’t think this change was necessary.',
+        answer: 'I am experimenting with a new color based on high-res official proxy from Konami site, so it may get further adjusted to fit the nature of the app. But you can always change it to pure black in Effect > Text Style. Sorry for the inconvenience.',
+    },
+    {
+        author: 'LigerrFanArt at Feb 14, 2026',
+        question: 'Hi,\nWhen I disable “best effort render” to get the rainbow effect on my card, it disables ATK / and DEF / in your menu.\nWould it be possible to add a new section next to Foil, with a Rainbow version alongside Gold and Platinum — unless you’re already working on that?\nI had to manually add ATK / and DEF / in Photoshop myself.\n\nThx\nLigerrFanArt',
+        answer: 'Now best effort render option will no longer affect ATK / DEF texts (always display as long as there are values).\nFor rainbow foil unfortunately I am entirely dependent on the assets I can find, and currently I have no access to the frame assets needed for it.',
+    },
+    {
+        author: 'Anonymous at Jan 25, 2026',
+        question: 'I was thinking it would be nice to have the Rainbow border similar to the Prismatic SR OCG Proxies and the Maximum Gold Premium Rare ones',
+        answer: 'I would love to do that, unfortunately I have no access to the frame assets needed.',
+    },
+    {
+        author: 'Gio at Jan 05, 2026',
+        question: 'In Trap cards, the words for the card type are very close together because there isn’t enough spacing between the letters (this doesn’t happen in Spell cards). Also, the letter A is slightly taller than the other letters (I haven’t checked if this happens with other letters as well), and the words look a bit uneven.\nIn Monster cards, the line that is right above ATK and DEF is thicker than in the original cards.\nRegards!',
+        answer: 'I have updated the font and spacing, as well as reduced the line thickness for ATK/DEF separator for a bit.',
+    },
+    {
+        author: 'TheTonyB at Jan 04, 2026',
+        question: 'Hey, it\'s me again.\n\nSorry. I noticed the positioning of the edition text is off and the font is slightly wrong. \n\nWhen comparing to a real card, the edition text is too much to the right, it should be shifted to the left closer to the passcode.\n\nAbout the font being slightly off, It\'s more noticeable in the Italian, Portuguese and Spanish presets of the edition text. Compared to my real PT cards, the "ª" is wrong, it should be higher and be bold and underlined (it\'s not a problem with the text of the presets, it seems to be the font itself).\n\nLooking closer the font actually seems to be different from the real cards. It looks like the shapes of the letters is slightly different. As examples, the top stroke of the loop of the "d" in the real card seems to match the height of the gap betweeen the base of the "i" and the dot, the current font has that stroke matching the height of the base of the "i" right below the gap, making the "d" appear "taller". The shape of the serif of the "c" also looks diferent, but that\'s about what I could notice comparing this to the microscopic text on an actual TCG card\n\nAnd maybe, I\'m not so sure, but in the real cards the font looks slightly thicker too? I might be wrong about this though as it might be the lighting in my room.\n\nThanks in advance!',
+        answer: 'I have updated the edition text offset and fix the ordinal letter "ª". As for the font itself, currently there is not much I could do right now as finding another font that matches perfectly is quite hard (at least from what I have access to), so I must leave it as is.',
+    },
+    {
+        author: 'TheTonyB at Dec 30, 2025',
+        question: 'Hey, Lauqerm! Thanks for adding the Portuguese atributes and custom edition text! (Korean coming soon? :))\n\nAnyway, I have another suggestion:\nSince there\'s already a legacy placement option in adition to regular placement of the edition text, what if we could have two different edition texts simultaneously, one in each position?\n\nI imagine this may be more complicated to implement, but it would open up more customization potential. I don\'t mind if this feature isn\'t added though. I can just edit the card in photoshop if I want both texts, this is more of a suggestion than a feature request.\n\nAs always, keep up the good work. Your card maker is absolutely GOATED.',
+        answer: 'I have received an asset donation for PT attributes; hopefully, there will be another one for KR soon.\nI have also added an option for text below the image\'s left corner. Choosing legacy display will simply switch the positions between it and the edition text.',
+    },
+    {
+        author: 'Anonymous at Dec 30, 2025',
+        question: 'I’d like to use the original attributes in Spanish, where the word extends beyond the limits of the sphere, but when I upload my custom attribute the icon gets compressed and flattened. I designed the attributes from the original Spanish cards in case you’d like to replace them. I’ve also noticed that the Effect Monster card color is a slightly darker shade than the original ones. Here is the link with the attribute icons and the different card frame types, in case you’d like to review it. Thank you, and congratulations—this is the best Card Maker I’ve tried: \nhttps://we.tl/t-niKReItUvF\n\n*If you would like me to modify the attributes to a specific resolution or dimensions, or help you with others languages you can write to me at giohesse7@gmail.com',
+        answer: 'Custom attribute will now respect the image\'s ratio when resizing so it no longer get stretched, I also tried some heuristic approach to ensure that it will be at correct position to avoid more complicated manual placement.\nFor the effect monster background though currently I must leave it as is, but thanks for your report.',
+    },
+    {
+        author: 'Anonymous at Dec 26, 2025',
+        question: 'There is an error with the vowel accent marks in Spanish (e.g., á, é, í, ó, ú). It appears that the font does not support the Spanish language, as the accented characters look completely different from the original font. Could you please fix the font for this language?',
+        answer: 'I have tweaked the font a bit, hopefully it looks better now.',
+    },
+    {
+        author: 'Ebrahim at Dec 24, 2025',
+        question: 'An option to maybe reduce the size of the "Edition" section similarly the LIMITED EDITION tag.',
+        answer: 'It is a bit cumbersome so for now I will just limit the section\'s maximum width, the text should auto compress if it is too long.',
+    },
+    {
+        author: 'Blake at Dec 23, 2025',
+        question: 'Did you use boundless cause I’m trying to make the object the image go over the card.',
+        answer: 'Yeah boundless layout is the main option to use. But the hard thing here is that you need a transparent artwork to combine with it to make a proper overframe card, which the app cannot help.\nIn any case I plan to readjust the option a bit for more clarity, and also add sample cards for easy demonstration.',
+    },
+    {
+        author: 'Ebrahim at Dec 23, 2025',
+        question: 'when I click on the xyz background template the 1st Edition text is in black not white and it\'s hard to see please fix immediately.',
+        answer: 'It\'s done, the text should display properly now.',
+    },
+    {
+        author: 'A-Rex at Dec 22, 2025',
+        question: 'Me gustaría poder colocar 1a edición\nPero en su lugar aparece 1st Edition\nQuisiera poder poner manualmente eso.',
+    },
+    {
+        author: 'Ralph at Dec 22, 2025',
+        question: 'quisiera poner la marca 1a edición\npero en su lugar pone 1st edition\nme gustaría poder al menos colocarla manualmente.',
+        answer: 'I have implemented a customizable edition text with predefined options, you may try it now.',
+    },
+    {
+        author: 'Blake at Dec 21, 2025',
+        question: 'When are you going to be adding the overframe rare?',
+        answer: 'With Layout options the app is already able to create cards with extended art (see attached image), but I will need to tweak some behaviors so it looks more correct.\nGrandmaster Rare however is a different story, as it use an entirely different set of layers and I can only wait for talented artists to extract them.',
+        image: ['https://i.imgur.com/a6ZlmEg.png'],
+    },
+    {
+        author: 'Blake at Dec 18, 2025',
+        question: 'I can’t download the card with a new attribute.',
+    },
+    {
+        author: 'Blake at Dec 18, 2025',
+        question: 'It won’t let me upload the card with a custom attribute.',
+        answer: 'Hi there, the app will now correctly show what is happening. In short, this is a security feature of your browser (not the app) that protect you from potential dangers of the image link, so you must manually download the image.',
+    },
+    {
+        author: 'TOVYA at Dec 13, 2025',
+        question: 'Chào bạn, bạn có thể thêm vào hướng dẫn cách chạy project này của bạn bằng Docker trong README.md không á?',
+        answer: 'Done nha.',
+    },
+    {
+        author: 'Anonymous User at Dec 13, 2025',
+        question: 'would it be possible to add the ability to upload custom attribute icons?',
+        answer: 'Right now I can only support using external link for attribute, so you can upload your custom attribute icon to an image hosting service (e.g., imgur) and use the link in the attribute input box.',
+        image: ['https://i.postimg.cc/cJMFW3M1/image.png'],
+    },
+    {
+        author: 'TheTonyB at Dec 12, 2025',
+        question: 'I noticed Korean and Portuguese are missing from Attributes languages. Can you add those? Specially portuguese which is my main language.\nCould you also add other language options to the "1st Edition"/"Limited Edition" text or allow for a custom text?\nThanks and keep up the great work!',
+        answer: 'Hi there, unfortunately I have no access to those language sprites, so I cannot add them at the moment (somehow Yugipedia does not have attributes in Portugese and Korean even though they have the rest of official supported languages).',
+    },
+    {
+        author: 'Anonymous User at Dec 04, 2025',
+        question: 'Hello! I\'ve noticed there\'s a problem with these 3 new cards :\nMagnet Warrior Σ－\nMagnet Warrior Σ＋\nMagnet Warrior Ω+\n\nI\'ve noticed that Konami is using new characters, and unfortunately, they\'re not displaying correctly for creating cards. Could you please fix this?\nThanks in advance.\nLigerrFanArt',
+        answer: 'Because those cards do not have an offical TCG version yet, so I will just import OCG font for this case.',
+    },
+    {
+        author: 'I have assets to donate! at Oct 23, 2025',
+        question: 'Konami\'s new Genesys card searcher initially had high-resolution renders of all cards. I snagged a few before they "fixed" it (now their images are low-res again...) and used them to correct all the card frames, bevels, level stars, text boxes, fonts, and even text colors. I\'m talking major corrections that took me hours since I\'m not very efficient in Photoshop.\nAt the very least, your current Spell and Synchro frames need updating. Not only are the colors off, but there\'s actually an artifactual defect running across the entire right edge that you inherited from 9558able\'s frames (it\'s actually on all of them, but most visible on the Spell frame).\nAs far as I can tell, my updated assets now produce the most accurate proxies anywhere. I would like to donate them! I don\'t see a way to email you, but please email me at *******88@gmail.com if you\'re interested.\nI can reply with specifics and send you some comparisons.',
+        answer: 'Hi there, thanks for your generosity. I have already emailed you at Oct 24, hopefully I can make some good use out of it.',
+    },
+    {
+        author: 'Anonymous User at Oct 08, 2025',
+        question: 'Missed you so much bro its been a month',
+        answer: 'Me too, me too.',
+    },
+    {
+        author: 'Anonymous User at Sep 28, 2025',
+        question: 'For some reason, the border changes depending on the card type even though it\'s set to Default',
+        answer: 'It seems like the card border is not loaded yet, so it exposes the underlying frame. I have replicate your card but does not see the same issue, does the problem still persist?',
+    },
+    {
+        author: 'Anonymous User at Sep 26, 2025',
+        question: 'hi m8. luv your work. i was thinking about two things. maybe 1 option for anime cards like in Vrains. another option to adjust the colour and saturation of the card frame. thks again for your work',
+        answer: 'Hi there, currently I do not have time needed for new templates, but for the color option, have you checking out the Advanced Layout option? If will allow you to change current frame\'s color at will, which seem suitable for your use-case.'
+    },
+    {
+        author: 'Elttaest the Master of Duels at Sep 18, 2025',
+        question: 'Hi. Love your work, just wondering - with Elttaes, the Master of Duels and Dragon of Illumination, Sanctuary\'s Shield, shouldn\'t we have enough data to make Rush Duel cards in English as well? The font seems the same in both English and Japanese. And the card name seems the same used in TCG, although I can\'t really make out what the Japanese font is. Sorry again for this. Just curious. Thanks for your time',
+        answer: 'Hi there, you are right that both cards can be used as a template for Rush Duel cards, but the main problem before the template itself is that currently I don\'t have enough resources for such project right now, so I can\'t promise anything at this moment. I will keep this in mind and see if I can do it in the future.',
+    },
+    {
+        author: 'Armando Giordano at Sep 06, 2025',
+        question: 'Thank you for your quick response and for your astonishing work with the Carder. Yes, I am using an iPad and a phone, and, with both devices, when I click on the Download button, it just shows "Saving..." for a second, then no Download starts. I am now on a computer and it works great with left click and "Save as", though it would be nice to be able to use it on mobile.',
+    },
+    {
+        author: 'Armando Giordano at Sep 06, 2025',
+        question: 'Sorry for second report in a row! I noticed you asked me specific questions. 1 The App does NOT freeze when trying to download on iPad and Android phone. Just no download starts. 2 The problem was immediately experienced because I discovered the Carder just yesterday.',
+        answer: 'Now it\'s a bit strange; usually, if the export process encounters an error, an explicit message will be displayed. In this case, if the download process is already running but no files are downloaded, it could be that your mobile browser is blocking the automatic download due to some advance security settings. All mobile devices I have tested so far do not exhibit the same issue. I will try to investigate this further, but chances are I won\'t be able to resolve it if I cannot reproduce the issue. Sorry for the inconvenience.',
+    },
+    {
+        author: 'Armando Giordano at Sep 06, 2025',
+        question: 'Hello! I am loving your work. I hope my issue is not because of ignorance, but it seems like it\'s not possible to download cards as images.',
+        answer: 'Hi there, based on the report it seems that you are using an iPad. I don\'t have an iPad to test right now, but could you please provide me some more information?\n1. When you click the Download button, does anything happen? Does the app freeze or it just not doing anything?\n2. Is the problem just appear recently, or it never worked in the first place?',
+        image: ['https://i.postimg.cc/Y2fjyvV2/image.png'],
+    },
+    {
+        author: 'Rush Duel at Jun 22, 2025',
+        question: 'This card maker is amazing! Have you ever consider doing a rush duel section as well?',
+        answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
+    },
+    {
+        author: 'Maya at May 23, 2025',
+        question: 'I\'d like to make a request, is it possible to put a SPEED DUEL watermark in EVERY card types in the description area like the Speed Skill type when it is set to speed duel? thank you so much. Appreciate your lovely cardmaker',
+        answer: 'I will try, but this is pretty hard to do to be honest, don\'t keep your hope up.',
+    },
+];
 export const QuestionAndFeedback = () => {
+    const currentReminder = '13/06/2026';
     const [visible, setVisible] = useState(false);
-    const [animating, setAnimating] = useState(false);
-    const [highlighting, setHighlighting] = useState(false);
     const [faqReminder, setMemoizedReminder] = useNotification('faqReminder');
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
+    const [animating, setAnimating] = useState(() => {
+        if (faqReminder !== currentReminder || feedbackReminder !== true) return true;
+        return false;
+    });
+    /** Retain the highlighting for a whole session */
+    const [highlighting, setHighlighting] = useState(() => {
+        if (faqReminder !== currentReminder) return true;
+        return false;
+    });
 
     useEffect(() => {
-        const currentReminder = '16/06/2026';
         if (faqReminder !== currentReminder) {
             if (import.meta.env.APP_VERSION) setMemoizedReminder(currentReminder);
 
-            setAnimating(true);
-            /** Retain the highlighting for a whole session */
-            setHighlighting(true);
             setTimeout(() => {
                 setAnimating(false);
             }, 8000);
@@ -68,7 +493,6 @@ export const QuestionAndFeedback = () => {
     useEffect(() => {
         if (feedbackReminder !== true) {
             setFeedbackReminder(true);
-            setAnimating(true);
             notification.info({
                 message: 'Feedback Reminder',
                 description: 'If you have any feedback or suggestion, please check the FAQ button first to see if your feedback has been addressed.',
@@ -79,417 +503,6 @@ export const QuestionAndFeedback = () => {
             });
         }
     }, [feedbackReminder, setFeedbackReminder]);
-
-    const feedbackList: Feedback[] = [
-        {
-            author: 'Lucky Zaneabane at Jun 15, 2026',
-            question: 'I honestly may just be messing something up somehow, But is there a way to upload custom attributes? Ive uploaded an attribute image and it pops up in the level area but i dont see a way to possibly move it to the attribute area',
-            answer: 'Hi, you may have mistakenly used the custom level/rank feature. You can find the custom attribute feature here.',
-            image: ['https://i.postimg.cc/tCdSzpB8/Screenshot-2026-06-16-at-15-37-23.png']
-        },
-        {
-            author: 'Anonymous at Jun 14, 2026',
-            question: '"If you want to modify card layers, or use it in any public project, please contact Grezar or 9558able directly." there\'s an issue there in that they seem to be pretty stuck up and condesending people who don\'t reply to others. This project has potential to be alot better and overtake all other competition in its field, but idk how you expect to gain from outside opinion and improve it when there\'s no way to contact you and the people you have put up to be contacted are stuck up and condesending.',
-            answer: <div>
-                Hi there. As mentioned, you only need to contact grezar/9558able if you <span style={{ color: 'lightgreen' }}>want to do something with the card template itself</span>, since they own the templates and only lend them to me for this app.
-                <br />
-                You can still send questions, feedback, or feature requests to me directly. In fact, you're doing it right now through the Report function as you can see 😅.
-                <br />
-                As for the artists, they are friendly and generous enough to allow me to use their work for free, so I'm not sure what your experience with them was. Neither of them visits their DeviantArt page regularly, so it's normal if they don't reply promptly.
-            </div>,
-        },
-        {
-            author: 'RedSupernovaDragon at Jun 08, 2026',
-            question: 'I tried the full caching option and it worked just fine. I specify my question from yesterday: I was wondering if you plan to eventually release this app as an .exe file that can be downloaded and installed through a wizard, in order to be executed completely outside of Chrome. Something like MSE, but better and ygo-only: Magic Set Editor is provided on their official site as a zip folder containing the app and all the assets (card frames, etc.) you need. This would truly be helpful, but if you don\'t have such plans, I\'ll keep using the site or the cached version.',
-        },
-        {
-            author: 'RedSupernovaDragon at Jun 07, 2026',
-            question: 'Hello,\njust a simple question: are you planning to release an installable offline app? I mean something like MSE, an app that can be installed on a computer with all the assets you need to create cards. I was wondering about this because, while the site is fine for me, being able to create hundreds of cards without the necessity of a wi-fi connection would truly be awesome.',
-            answer: 'Right now the install option is my solution for the app to work offline. Not only does it work on both mobile and desktop, it also doesn\'t require me to modify the codebase much (besides, from the outside it is no different than your everyday apps anyway, just click the icon and start working). Creating an executable version of the app requires a completely different skill set than I have, so I\'ll only do it if there\'s a really (and I mean really) convenient way to convert. Otherwise, managing two different codebases will quickly destroy the project.',
-        },
-        {
-            author: 'Anonymous at Jun 07, 2026',
-            question: 'I think a little of both, make the manager function export in mse-set',
-            answer: 'Got it, let\'s me examine the format first and I will see what I can do.'
-        },
-        {
-            author: 'Anonymous at Jun 05, 2026',
-            question: 'Can you let us export to MSE as well?\nMSE would be Magic Set Editor',
-            answer: 'Could you elaborate your request a bit more? Do you want to export the card data in a format that can be imported by MSE (.mse-set file)? Or are you using the Manager function and want to export the whole list of card data to MSE?',
-        },
-        {
-            author: 'Anonymous at Jun 05, 2026',
-            question: 'I just like to tell you that there\'s a delay between inputting the text or changing the template and the result updating, please fix',
-            answer: 'Hi, unfortunately this is a technical limitation of the current implementation, as the card rendering process is quite heavy and it can cause some delay. I have updated the app to show a loading indicator when the app is busy rendering, so you can at least know that the app is working on it. I will keep trying to optimize the performance to reduce the delay as much as possible.',
-        },
-        {
-            author: 'No name hack at Jun 01, 2026',
-            question: 'I want made card overframe without frame pendulum effect, only scale pendulum appear, must options',
-            answer: 'Hi, based on what you are describing, I\'m assuming you want the result to look something like this? If you confirm it, I can start working.',
-            image: ['https://i.postimg.cc/SRkXcBb6/Untitled.jpg'],
-        },
-        {
-            author: 'RedSupernovaDragon at May 22, 2026',
-            question: 'Correction from my previous report: it was a spoof, adding the letter I forgot (F) brought back the situation I explained yesterday, including the problem of number 2. However, this shows that 1 can appear higher or lower depending on text length.',
-        },
-        {
-            author: 'RedSupernovaDragon at May 22, 2026',
-            question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
-        },
-        {
-            author: 'RedSupernovaDragon at May 21, 2026',
-            question: 'Thank you for fixing the infamous issue of text compression in the name box. As far as I can tell, using the site from my pc, everything now seems fine. The numbers, however, are still troubled by this issue, as you can see from my screenshot. It seems that problems are localized, at least: 1 and 2 refuse to follow the same upper common line as the other letters and numbers, while 3 and 5 go off the lower limit.',
-            answer: 'That\'s true, number 3 and 5 reaching a bit lower than the baseline is a feature of the font, so I have no plan to update that.',
-        },
-        {
-            author: 'Anonymous at May 22, 2026',
-            question: 'Currently, the right half of the Name field cannot have dye and a custom foil applied to it at the same time: The custom foil will only render without any dye applied, otherwise only the dye is shown. The left half of the Name field does not have that limitation.',
-            answer: 'Thanks for your report, I have updated the behavior.'
-        },
-        {
-            author: 'RedSupernovaDragon at May 21, 2026',
-            question: 'Another minor issue that I found involves the question mark in ATK/DEF points. It should have the same height as the digits, but it goes lower. Particularly evident when you test this typing absurd ATK values like "2?".\nThe problem does not affect other strange ATKs like X000, so letters are ok.',
-            answer: 'Yeah, the question mark use a different scale so it doesn\'t align properly. I have adjust it a bit.'
-        },
-        {
-            author: 'RedSupernovaDragon at May 21, 2026',
-            question: 'Also reporting that for some reason I\'m seeing two bars on the right which I can slide. The problem is that If I slide the rightmost one, I end up in a white area, \'below the limit\', while the inner one does its job right, navigating to the bottom of the site and not further. I tried to send you a screenshot, but unfortunately the window cannot capture it. Adding to this strangeness is that right now, as I\'m writing this report, I see only the correct bar, but when I\'ll close the report the "fake" bar will return. Hoping that this will be enough to solve this problem.',
-            answer: 'I think I have some idea about this so I can try, but this can be a result of a lot of factor so not sure if I can fix it consistently.'
-        },
-        {
-            author: 'TOVYA at May 19, 2026',
-            question: 'Hello bạn, khi chạy trên local với Docker thì mình gặp vấn đề:\n```\nerror: Auth token is required for this request. Please run `sentry-cli login` and try again!\n```\nĐồng thời mình thấy cách chạy Docker có phần hơi rối rắm.\nTin vui là bạn không cần phải fix lỗi cũng như refactor lại cho bạn, mình đã làm sẵn rồi. Nhớ check PR #21 nhé.',
-            answer: 'Ok nha bạn, mình sẽ review PR của bạn sớm.',
-        },
-        {
-            author: 'Knezzo at May 18, 2026',
-            question: 'Hi , I am unsure if this has been asked already, but I want to qsk nonetheless. Are you planning on adding the "Grandmaster Rare" styled outline for the cards (with the hieroglyphs) as well as (an optional?) series tracker on the bottom left like the Grandmaster Rares have? I\'d really appreciate it! Thank you very much for making this Card maker',
-            answer: 'Of course! I am waiting for high quality assets to implement these new rarities, including rainbow colored frame and hieroglyph pattern for Grandmaster Rare. I will add them as soon as I can get the assets ready, hopefully I won\'t need to wait too long.',
-        },
-        {
-            author: 'RedSupernovaDragon at May 16, 2026',
-            question: 'Test with capital letters: G, O, Q with height issue, along with the numbers. Also reporting that the N may occasionally appear lower than it should be in long names (C62), similarly to its lowercase counterpart.',
-        },
-        {
-            author: 'RedSupernovaDragon at May 16, 2026',
-            question: 'Hello again, Lauqerm\nI went off for almost two months, but now I\'m back. Glad to see that you are working hard trying to find a solution for the text compression issue in the name box. I\'ve seen that others have reported similar issues in these past months, so I\'m adding my screenshots as well. For starters, letter O can also go off in the other direction, below the line, as seen in this picture, Italian name for Purplish Armageddon. Even before finding this site back in February, I had the intention to create Italian proxies of the heroes and rivals ace cards (from DM to VRAINS), along with their forms, of course. I prefer the 813x1185 resolution, btw. Your site is just what I need, so I\'m hoping that you\'ll eventually fix the text at all scales.',
-            answer: 'Thank you for helping me find these cases, I will try to adapt my fix accordingly.'
-        },
-        {
-            author: 'Anonymous at April 30, 2026',
-            question: 'Now the image just literally goes over the frame, like literally I can\'t see the effect box',
-            answer: <div>Well from your attached screenshot I thought the transparent effect box was intentional 😅. But regardless, just pull up the effect opacity back to 100. <a href='https://lauqerm.github.io/ygocarder/?data=%7B%22fm%22%3A%22tcg%22%2C%22rg%22%3A%22en%22%2C%22fr%22%3A%22fusion%22%2C%22lt%22%3Afalse%2C%22lf%22%3A%22auto%22%2C%22rf%22%3A%22auto%22%2C%22rpf%22%3A%22auto%22%2C%22fo%22%3A%22normal%22%2C%22op%22%3A%7B%22opbd%22%3A100%2C%22oppd%22%3A100%2C%22optx%22%3A100%2C%22opnm%22%3A0%2C%22opbf%22%3A%22%23404040%22%2C%22opab%22%3Atrue%2C%22opnb%22%3Atrue%2C%22opeb%22%3Afalse%2C%22opfb%22%3Atrue%2C%22opbl%22%3Afalse%7D%2C%22fn%22%3A%5B%5D%2C%22afn%22%3A%22normal%22%2C%22of%22%3A%5B%22normal%22%2C%22normal%22%2C%22normal%22%2C%22normal%22%5D%2C%22na%22%3A%22Junko%22%2C%22nst%22%3A%22predefined%22%2C%22ns%22%3A%7B%22nsep%22%3A90%2C%22nset%22%3A0%2C%22nsey%22%3A90%2C%22nsfs%22%3A%22%23cfc6de%22%2C%22nsft%22%3A%22Auto%22%2C%22nsgd%22%3A0%2C%22nscg%22%3A%220.000%7C%23eef10b%2C0.5%7C%23d78025%2C1.000%7C%237e20cf%22%2C%22nshe%22%3Afalse%2C%22nshg%22%3Afalse%2C%22nshl%22%3Afalse%2C%22nshs%22%3Afalse%2C%22nshfs%22%3A%22%23010101%22%2C%22nslc%22%3A%22%23000000%22%2C%22nslox%22%3A0%2C%22nsloy%22%3A0%2C%22nslw%22%3A0%2C%22nspt%22%3A%22none%22%2C%22nspr%22%3A%22rare%22%2C%22nssb%22%3A0%2C%22nssc%22%3A%22%23000000%22%2C%22nssox%22%3A0%2C%22nssoy%22%3A0%7D%2C%22at%22%3A%22LIGHT%22%2C%22att%22%3A%22auto%22%2C%22sf%22%3A%22NO+ICON%22%2C%22it%22%3A%22auto%22%2C%22st%22%3A6%2C%22stl%22%3A%5B%5D%2C%22sa%22%3A%22auto%22%2C%22ar%22%3A%22https%3A%2F%2Fi.imgur.com%2Fh5kXZeC.png%22%2C%22ad%22%3A%22%22%2C%22as%22%3A%22online%22%2C%22af%22%3Afalse%2C%22ast%22%3A%7B%22asfx%22%3Afalse%2C%22asfy%22%3Afalse%7D%2C%22arc%22%3A%7B%22aru%22%3A%22%25%22%2C%22ara%22%3A1%2C%22arx%22%3A0%2C%22ary%22%3A4%2C%22arw%22%3A100%2C%22arh%22%3A89.5%7D%2C%22hbg%22%3Atrue%2C%22bg%22%3A%22https%3A%2F%2Fi.postimg.cc%2FncXnFCGh%2FConstellation-Monster.webp%22%2C%22bgd%22%3A%22%22%2C%22bf%22%3Atrue%2C%22bst%22%3A%7B%22bsfx%22%3Afalse%2C%22bsfy%22%3Afalse%7D%2C%22bgs%22%3A%22online%22%2C%22bgt%22%3A%22frame%22%2C%22bgc%22%3A%7B%22bgu%22%3A%22%25%22%2C%22bga%22%3A0.685%2C%22bgx%22%3A0.0910746812386094%2C%22bgy%22%3A0%2C%22bgw%22%3A99.81785063752277%2C%22bgh%22%3A100%7D%2C%22ovg%22%3A%22%22%2C%22ovgd%22%3A%22%22%2C%22ovf%22%3Atrue%2C%22ovt%22%3A%22border%2Csource-in%7Cframe%2Cnone%22%2C%22ovst%22%3A%7B%22ovsfx%22%3Afalse%2C%22ovsfy%22%3Afalse%7D%2C%22ovgs%22%3A%22online%22%2C%22ovgc%22%3A%7B%22ovgx%22%3A0%2C%22ovgy%22%3A0%2C%22ovgw%22%3A100%2C%22ovgh%22%3A100%2C%22ovgu%22%3A%22%25%22%2C%22ovga%22%3A0.685%7D%2C%22sivg%22%3A%22%22%2C%22sivgd%22%3A%22%22%2C%22sivf%22%3Atrue%2C%22sivst%22%3A%7B%22sivsfx%22%3Afalse%2C%22sivsfy%22%3Afalse%7D%2C%22sivgs%22%3A%22online%22%2C%22sivgc%22%3A%7B%22sivgx%22%3A0%2C%22sivgy%22%3A0%2C%22sivgw%22%3A100%2C%22sivgh%22%3A100%2C%22sivgu%22%3A%22%25%22%2C%22sivga%22%3A1%7D%2C%22lm%22%3A%5B%221%22%2C%223%22%2C%227%22%2C%229%22%5D%2C%22lr%22%3A%22%22%2C%22il%22%3Afalse%2C%22ip%22%3Afalse%2C%22pf%22%3A%22auto%22%2C%22pe%22%3A%22Once+per+turn%3A+You+can+pay+800+LP%2C+increase+this+card%27s+Pendulum+Scale+by+1.%22%2C%22rs%22%3A%224%22%2C%22bs%22%3A%224%22%2C%22psi%22%3A%22medium%22%2C%22ta%22%3A%5B%22Fairy%22%2C%22Fusion%22%2C%22Effect%22%5D%2C%22es%22%3A%7B%22cdtl%22%3A%22strict%22%2C%22efs%22%3A%22auto%22%2C%22eus%22%3A0%2C%22ebg%22%3A%22auto%22%2C%22eml%22%3A0%2C%22ejr%22%3A100%7D%2C%22ps%22%3A%7B%22pfs%22%3A%22auto%22%2C%22pus%22%3A0%2C%22pbg%22%3A%22auto%22%2C%22pml%22%3A0%2C%22pjr%22%3A100%7D%2C%22ef%22%3A%22%5B2%2B+Effect+Monsters+on+your+field%5D%5CnEach+time+an+opponent%27s+monster+activates+its+effect%2C+place+1+Pure+Counter+on+that+opponent%27s+monster+%28max.+1%29+after+that+effect+resolves.+Unaffected+by+activated+effects+from+monster+with+a+Pure+Counter.+Cannot+be+destroyed+by+battle+with+monsters+with+a+Pure+Counter.%22%2C%22si%22%3A%22YGOC-EN001%22%2C%22atk%22%3A%222000%22%2C%22def%22%3A%222000%22%2C%22pw%22%3A%2218199611%22%2C%22sti%22%3A%22holo5%22%2C%22fe%22%3A%221%3Cst%3E+Edition%22%2C%22ife%22%3Atrue%2C%22act%22%3A%22%22%2C%22hct%22%3Afalse%2C%22isp%22%3Afalse%2C%22ile%22%3Afalse%2C%22idt%22%3Afalse%2C%22ilc%22%3Afalse%2C%22cr%22%3A%22%C2%A92020+Studio+Dice%2FSHUEISHA%2C+TV+TOKYO%2C+KONAMI%22%2C%22fh%22%3Atrue%2C%22sts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22tts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22ets%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22pts%22%3A%5Bfalse%2C%22%23010101%22%2Cfalse%2C%22%23000000%22%5D%2C%22ots%22%3A%5Btrue%2C%22%23ffffff%22%2Ctrue%2C%22%23000000%22%5D%2C%22dl%22%3A%5B%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%2C%22%22%5D%2C%22fl%22%3A%5B0%2C0%2C0%2C1%5D%2C%22ve%22%3A3%7D' target='_blank' rel='noreferrer'>This link</a> contains a sample card with your frame already applied, you can work from here if you still have trouble adjusting the config.</div>,
-            image: ['https://i.postimg.cc/cJCJnXQR/image.png'],
-        },
-        {
-            author: 'Anonymous at April 30, 2026',
-            question: 'That didnt work, even though i did everything you told me, is there smth im missing?',
-            answer: 'Your frame crop is a bit off so it does not align with other elements on the card. You can use the "Use whole image" option to ignore manual crop and use the full image instead. Let me know if there is still any issue after that.',
-            image: ['https://i.postimg.cc/Dfqqd5VQ/image.png'],
-        },
-        {
-            author: 'Anonymous at April 29, 2026',
-            question: 'this is the frame i want \nhttps://static.wikia.nocookie.net/ycm/images/4/46/Constellation_Monster.png/revision/latest?cb=20180202161511\n\nif we can pull it off thats good, but if we cant then can i get a feature that lets me add custom templates like this one to your app?',
-            answer: 'Hi, it takes a bit of set up but you can certainly apply your template in the app. Below is a step-by-step guide and the end result.',
-            image: [
-                'https://i.postimg.cc/HL4PXZjw/test.png',
-                'https://i.postimg.cc/Z5gyj4v0/download-(2).png',
-            ],
-        },
-        {
-            author: 'Anonymous at April 28, 2026',
-            question: 'I saw a card template once and thought "wow it would be rly cool if i made a card outta this", then i realised i couldn\'t, so could you give us the feature to upload our own custom templates without needing to use the default ones??\n\nOh, and by templates i mean the Monster templates',
-            answer: 'Hi, what does your template look like? The app supports customizing a variety of card components, including background layer, foil, etc. If you can provide more details about your template and which part you want to customize, I may be able to suggest how to achieve that with current features or by adding new ones if needed.',
-        },
-        {
-            author: 'Ryan at April 24, 2026',
-            question: 'Importing a Spell Card (haven\'t tried on Traps) don\'t auto attach the Spell Attribute and show ATK/DEF like a Monster card.',
-            answer: 'Thanks for your report, I have fixed the issue.',
-        },
-        {
-            author: 'Anonymous at April 18, 2026',
-            question: 'I want to remove the pendulum effect frame, as it\'s already available on the overframe card',
-            answer: 'Do you want to be able to remove the effect background as well? I may give it a try.',
-        },
-        {
-            author: 'Anonymous at April 14, 2026',
-            question: 'Hey it\'s me again, i see that the issue wasnt fixed, ik if the issue lasts more than 2 weeks then you are unable to fix it, but pls reconsider.\nheres a screenshot for reference',
-            answer: 'I have update the formatting in card name and effects to adapt with Arabic, you may try it now.'
-        },
-        {
-            author: 'Anonymous at April 12, 2026',
-            question: 'Hi Lauqerm, have you fix the issue of G and S leeters😭😭 i think the height issue cameback maybe came from the shrinkage of the attribute icons in the name box 🤔🤔',
-        },
-        {
-            author: 'Anonymous at April 09, 2026',
-            question: 'The S and G letter now are lower than other letters Lauqerm, i tried on Slifer the Sky Dragon, its same as the N letter issue before you fixed for me 😭😭😭',
-            answer: 'Can you provide some images / screenshots to help me visualize the issue better? It\'s pretty weird because I never adjust the letter S so it very unlikely that it bugged out right now when it is not before.'
-        },
-        {
-            author: 'Anonymous at April 09, 2026',
-            question: 'Hello, its me again.\nThe same issue is back with G letter again Lauqerm, please fix it 😭😭😭',
-            answer: 'Oh man 😭.'
-        },
-        {
-            author: 'Anonymous at April 09, 2026',
-            question: '"From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page."\n\nI don\'t know what to say. It simply is not stored as a saved toggle feature whenever I import the card list. It\'s a very minor thing and a peeve at worst. I cannot say it\'s exclusively a me thing, but if you say it should work that way, then it just doesn\'t do it for me.',
-            answer: 'I see. I have tried apply a fix for this, hopefully this will resolve the issue. But if it still persists, could you send me a part of your card list as well? (not the whole thing, just the first few lines are enough). It will help me a lot to investigate the problem. Thanks for your help.'
-        },
-        {
-            author: 'Anonymous at April 09, 2026',
-            question: 'I\'m an Arab and love Yu-Gi-Oh, but your card maker doesn\'t support the Arabic language and I really want to make Arabic Yu-Gi-Oh cards becuz my friends can\'t understand english to read the cards I maker',
-        },
-        {
-            author: 'Anonymous at April 09, 2026',
-            question: 'If I wasn\'t clear before, the Arabic text is supposed to look like this\n أهلا، انا اتحدث العربية\nInstead it looks like this\nة ي ب ر ل أ  ث د ح ت ا، أ ل ه ا \nPlease fix this\n(Btw the translation is "Hello, I speak Arabic")',
-            answer: 'I will try my best. But I don\'t know Arabic and its writing system so it may take sometime 😭. Thanks for your patience.'
-        },
-        {
-            author: 'Anonymous at April 05, 2026',
-            question: 'OCG Series 1 and 2 only button from change setting.',
-            answer: 'Sorry, I do not have access to the template for older series.'
-        },
-        {
-            author: 'Anonymous at April 05, 2026',
-            question: 'Any reason in particular why the Condense tet in the paragraph style tab isn\'t saved or at least defaulted like almost everything else is? It\'s pretty convenient as a feature, or rather I\'ve yet to encounter the use case where less condensation is better.\n\nWhat isn\'t convenient however is how you have to toggle it each time when your load your save file.',
-            answer: 'Hi there, I\'m not sure if I fully understand your problem. Do you mean the condense option is not saved when you export the card? From my tests, the condense option is still saved correctly when you export the card, then re-import it later or refresh the page. If you could provide the steps to reproduce the issue (and explain what you expect to happen), it would help me resolve the problem.'
-        },
-        {
-            author: 'Lukas at March 27, 2026',
-            question: 'Thanks to the new Utopia overframe card I noticed that the attributes of both spells/ traps aren\'t aligned like the monsters attributes. Is that intentional or an error? (I reported before without the screenshot, sorry).',
-            answer: 'Hi there, I\'m not sure I fully understand your feedback, as all attributes (both monsters and spells/traps) appear to be aligned the same way from what I can see. Compared to the Utopia Overframe card, the attribute is slightly larger and misaligned however, which I have already made some updates to it.'
-        },
-        {
-            author: 'Yugiohfann at March 20, 2026',
-            question: 'Hello again Lauqerm\nI forgot to mention that the letter "q" also has a similar height issue compared to other letters like the letter "n" while it is in a long card\'s name 😅😅😅',
-        },
-        {
-            author: 'Yugiohfann at March 20, 2026',
-            question: 'Hello again Lauqerm, \nThank you for fixing the height issue of the letter "i" before, but now the issue is back with the letter "n" while it is shifted further down the line compared to the other letters in some long card\'s name such as "Gandora-G the Dragon of Destruction", "Dark Magician the Magician of Black Magic", "Dark Magician Girl the Magician\'s Apprentice".... 😭😭😭',
-            answer: 'My bad, I have updated the caliberation rule for the letter (again) 😭😭.'
-        },
-        {
-            author: 'Anonymous at March 19, 2026',
-            question: 'I am not sure if this is even feasible, but I think it\'d be mighty convenient if there was a feature that allowed you to display the submitted card art mirrored in the card display, to save the bother of mirroring it beforehand.',
-            answer: 'Hi, now card artwork / background will allow you to flip the image horizontally / vertically.',
-            image: ['https://i.postimg.cc/fT68pVrZ/Screenshot-2026-03-19-at-11-44-37.png'],
-        },
-        {
-            author: 'RedSupernovaDragon at March 17, 2026',
-            question: 'Hello again, I have some news that could help you in fixing the "name box shrinking issue". I tried to see if it was a common problem on similar sites; I typed the whole alphabet and the numbers on YGOPro and found out that it does not have such a defect: letters in the name box shrink normally, keeping their ratio and heights. As your site is objectively superior to YGOpro in terms of card making, image quality and UI, I was wondering if you could try something more to fix the issue, particularly on pc but mobile version would be nice too.\nNamely, you could do 3 things:\n1. Taking inspiration by how YGOpro managed to code the compression. To be clear, this is *not* an incitation to plagiarism, just a small comparison; maybe DevTools can show you how they coded that specific feature, so you can see if there is any substantial difference in the lines. IDK, but there must be a reason why their carder displays the right text at any length.\n2. You could simply try a different font file. I assume you uploaded fonts on this site, perhaps the rendering problem is due to the otf / ttf / whatever file itself.\n3. Finally, you could focus on mastering the manipulation of curved strokes, what is currently difficult for you. You managed to fix basically every other letter, at least on PC; on mobile there are still some issues even with E and I, but that may be related to my browser.\n\nI regard this issue as much more fundamental than it seems, since it affects basically every card with a (not so) long name created with your site.\nThere has to be a solution, otherwise it would be really sad to keep this defect. I think that details like this matter, even more than other features. A realistic proxy can have some defects that are not visibile at first glance; those defects do not include a letter O that goes Over the top in the name box, which is one of the first things you read on a card.\n\nI tried to give some suggestions, hoping that my words didn\'t sound too bad or out of place. And I also hope that this problem will be solved sooner or later.\nLooking forward to the next updates!',
-            answer: 'Thanks, I know how irritating this problem is, and believe me, I\'ve spent quite a while trying to figure something out over the past years. The cause is very clear, rendering the font in large size causes the problem to appear when they are condensed. I just can\'t find a way to effectively solve it.\nI appreciate your suggestions though, here is what I have done:\n1. Unfortunately, all other card makers (as far as I know) are closed-source, which means I basically cannot access their codebase to see what they are doing at all.\n2. I did try the font from YGOPro card maker and ygocardmaker.net before, but to no avail.\n3. This is my only tactic right now: keep throwing fixes at the wall to see what sticks 😭.\nAnyway, I have issued another experimental fix for now. If you encounter the problem again (which unfortunately is likely), please attach an image of the app (the report dialog has a screencapture function). It may help me a bit when evaluating any future fixes. Appreciate your help.'
-        },
-        {
-            author: 'MaSaHo at March 11, 2026',
-            question: 'I recently noticed that Yu-Gi-Oh cards have had several small reformulations throughout the life of the game, which they call “Series”, and your model is equivalent to Series 10 (the current one). Do you have plans to add the older series layouts at some point in the future?',
-            answer: 'Hi there, unfortunately that will require access to old series templates as well as a list of changes made over time, which I currently do not have. The app can only support a few limited options (for example, "small" and "large" pendulum frames, or the old position for the "1st Edition" text), but that is about it.',
-        },
-        {
-            author: 'Seamornf at March 09, 2026',
-            question: 'Hi! Love the work. I found that because traps in portuguese have the longest name of any attribute currently, the last "A" is getting the shadow from the name border.',
-            answer: 'I have updated the issue, thanks for your report.',
-        },
-        {
-            author: 'RedSupernovaDragon at March 07, 2026',
-            question: 'Well, it\'s really unlucky for the name box to have those shrinking issues that you cannot fix at the moment. At least the problem was noticed.\nAside from this issue, there is a (very) small UI update you could make: in the frame panel, "Ritual" is currently placed after "Link"; a better position would be between "Effect" and "Fusion", since\n1) Rituals are Main Deck monsters;\n2) they were introduced early along with Fusions;\n3) this "R, F, S, X" order is the most natural, and it\'s found in some cards like the Firewall upgrades..',
-            answer: 'Yeah, I\'m not the font maker so I can only have limited control over the font rendering. About your recommendation for the ritual frame, it should have been updated now.',
-        },
-        {
-            author: 'RedSupernovaDragon at March 05, 2026',
-            question: 'Thank you very much for making the paragraph box static.\nWonderful fix for the letters! Unfortunately, there are other similar height issue: on "o"/"O", "q", and some of the numbers (namely 1, 2, and 0). When compression is necessary to fit longer names in the box, all of these characters are taller than they should be to fit on a common line.\nIt\'s a really frustrating issue, I know, especially since the font is supposed to be Regular. Thanks in advance for your working on this issue.',
-            answer: 'Right now, it is quite difficult for me to handle characters with curved strokes (like the letters O, Q, and the numbers 0, 3, 6, 9), because they actually protrude slightly beyond the normal top/bottom baselines as far as I can investigate. I might double check the bases of numbers 1 and 2, and that may be it. Sorry for the inconvenience.',
-        },
-        {
-            author: 'RedSupernovaDragon at March 04, 2026',
-            question: 'Hello again, about the "i"/"I" issue, I tried to write the whole alphabet (upper and lower case) in the name box and I have to report the same issue for "E" and "N", at least from pc version.',
-            answer: 'Now this is really getting out of hand 😭. I have issued another fix for this.',
-        },
-        {
-            author: 'RedSupernovaDragon at March 03, 2026',
-            question: 'Hello! First off, thank you very much for this cardmaker, I\'m new to custom cards but this  carder has already become my favourite.\nI\'m using the site on pc, and noticed that when you open the "Paragraph Style" section, its width does not stay fixed like the other settings, but it slides to the right until it eventually stops. I was wondering if you could fix this by making it static, since it\'s kind of difficult to select the things you want while they\'re moving.\nThank you again for your work!',
-            answer: 'The paragraph panel should have fixed width now.',
-        },
-        {
-            author: 'Yugiohfann at March 03, 2026',
-            question: 'Thank you so much for fixing the "i" letter for me, but it seems the issue has been fixed in the Android version, and the PC version still has the "i" letter sometimes positioned higher and sometimes lower 😭😭.',
-            answer: 'It\'s okay, at least something is working 😭. If possible, please also send me the report from the app on the bugged browser (it seems you send most of your reports from Chrome on a mobile device). The report will include additional information about your browser that may help me investigate further. Sorry for the inconvenience.',
-        },
-        {
-            author: 'Yugiohfann at March 02, 2026',
-            question: 'I use 813x1185 resolution, can you adjust the height of the letter "i" so that it\'s the same height as the other letters in the name box? Thank you.',
-            answer: 'I have updated the font a bit, if this does not improve your issue I\'m sorry I cannot do much more to help.',
-        },
-        {
-            author: 'MaSaHo at March 01, 2026',
-            question: 'Is there a plan to update the foil border? I mean, adding the rainbow pattern of the new Overframe cards, as well as the assets from the Grand Master version?',
-            answer: 'I would love to but right now I am entirely depend on other artists to provide the assets for those first, so I cannot give a clear ETA on that.',
-        },
-        {
-            author: 'LigerrFanArt at Feb 24, 2026',
-            question: 'Hello,\nI noticed a formatting issue with italic text in the effect box (Normal Monster text).\nWhen a line starts directly with a parenthesis, for example:\n"(This card is always treated as an "Archfiend" card.)"\nthe italic formatting does not activate properly.\nTo make the italics work, I have to manually add a space before the "(" at the beginning of the line. However, adding this space causes the text to shift\nslightly and the font size to shrink, as the entire text box appears to be recalculated and resized.\nIt seems like the issue may be related to how the parser handles lines beginning with a parenthesis.\nJust reporting it in case it helps improve the tool.\nThanks for your work!\n\nLigerrFanArt',
-            answer: 'I have fixed the issue T.T',
-        },
-        {
-            author: 'TheTonyB at Feb 23, 2026',
-            question: 'Spell/Trap icon finishes not working with high-res cards.',
-            answer: 'I have fixed the issue.',
-        },
-        {
-            author: 'El Kebabini at Feb 17, 2026',
-            question: 'The german Attribute for Dark Finsternis is wrong. It\'s too condensed.',
-            answer: 'I am sorry but that is the only one that I have access to, I will update it if I can but right now it\'s really hard to get access to attributes for other languages.',
-        },
-        {
-            author: 'Long at Feb 16, 2026',
-            question: 'Why did you change the font color? The default text used to be black, but now it’s gray, and I don’t think this change was necessary.',
-            answer: 'I am experimenting with a new color based on high-res official proxy from Konami site, so it may get further adjusted to fit the nature of the app. But you can always change it to pure black in Effect > Text Style. Sorry for the inconvenience.',
-        },
-        {
-            author: 'LigerrFanArt at Feb 14, 2026',
-            question: 'Hi,\nWhen I disable “best effort render” to get the rainbow effect on my card, it disables ATK / and DEF / in your menu.\nWould it be possible to add a new section next to Foil, with a Rainbow version alongside Gold and Platinum — unless you’re already working on that?\nI had to manually add ATK / and DEF / in Photoshop myself.\n\nThx\nLigerrFanArt',
-            answer: 'Now best effort render option will no longer affect ATK / DEF texts (always display as long as there are values).\nFor rainbow foil unfortunately I am entirely dependent on the assets I can find, and currently I have no access to the frame assets needed for it.',
-        },
-        {
-            author: 'Anonymous at Jan 25, 2026',
-            question: 'I was thinking it would be nice to have the Rainbow border similar to the Prismatic SR OCG Proxies and the Maximum Gold Premium Rare ones',
-            answer: 'I would love to do that, unfortunately I have no access to the frame assets needed.',
-        },
-        {
-            author: 'Gio at Jan 05, 2026',
-            question: 'In Trap cards, the words for the card type are very close together because there isn’t enough spacing between the letters (this doesn’t happen in Spell cards). Also, the letter A is slightly taller than the other letters (I haven’t checked if this happens with other letters as well), and the words look a bit uneven.\nIn Monster cards, the line that is right above ATK and DEF is thicker than in the original cards.\nRegards!',
-            answer: 'I have updated the font and spacing, as well as reduced the line thickness for ATK/DEF separator for a bit.',
-        },
-        {
-            author: 'TheTonyB at Jan 04, 2026',
-            question: 'Hey, it\'s me again.\n\nSorry. I noticed the positioning of the edition text is off and the font is slightly wrong. \n\nWhen comparing to a real card, the edition text is too much to the right, it should be shifted to the left closer to the passcode.\n\nAbout the font being slightly off, It\'s more noticeable in the Italian, Portuguese and Spanish presets of the edition text. Compared to my real PT cards, the "ª" is wrong, it should be higher and be bold and underlined (it\'s not a problem with the text of the presets, it seems to be the font itself).\n\nLooking closer the font actually seems to be different from the real cards. It looks like the shapes of the letters is slightly different. As examples, the top stroke of the loop of the "d" in the real card seems to match the height of the gap betweeen the base of the "i" and the dot, the current font has that stroke matching the height of the base of the "i" right below the gap, making the "d" appear "taller". The shape of the serif of the "c" also looks diferent, but that\'s about what I could notice comparing this to the microscopic text on an actual TCG card\n\nAnd maybe, I\'m not so sure, but in the real cards the font looks slightly thicker too? I might be wrong about this though as it might be the lighting in my room.\n\nThanks in advance!',
-            answer: 'I have updated the edition text offset and fix the ordinal letter "ª". As for the font itself, currently there is not much I could do right now as finding another font that matches perfectly is quite hard (at least from what I have access to), so I must leave it as is.',
-        },
-        {
-            author: 'TheTonyB at Dec 30, 2025',
-            question: 'Hey, Lauqerm! Thanks for adding the Portuguese atributes and custom edition text! (Korean coming soon? :))\n\nAnyway, I have another suggestion:\nSince there\'s already a legacy placement option in adition to regular placement of the edition text, what if we could have two different edition texts simultaneously, one in each position?\n\nI imagine this may be more complicated to implement, but it would open up more customization potential. I don\'t mind if this feature isn\'t added though. I can just edit the card in photoshop if I want both texts, this is more of a suggestion than a feature request.\n\nAs always, keep up the good work. Your card maker is absolutely GOATED.',
-            answer: 'I have received an asset donation for PT attributes; hopefully, there will be another one for KR soon.\nI have also added an option for text below the image\'s left corner. Choosing legacy display will simply switch the positions between it and the edition text.',
-        },
-        {
-            author: 'Anonymous at Dec 30, 2025',
-            question: 'I’d like to use the original attributes in Spanish, where the word extends beyond the limits of the sphere, but when I upload my custom attribute the icon gets compressed and flattened. I designed the attributes from the original Spanish cards in case you’d like to replace them. I’ve also noticed that the Effect Monster card color is a slightly darker shade than the original ones. Here is the link with the attribute icons and the different card frame types, in case you’d like to review it. Thank you, and congratulations—this is the best Card Maker I’ve tried: \nhttps://we.tl/t-niKReItUvF\n\n*If you would like me to modify the attributes to a specific resolution or dimensions, or help you with others languages you can write to me at giohesse7@gmail.com',
-            answer: 'Custom attribute will now respect the image\'s ratio when resizing so it no longer get stretched, I also tried some heuristic approach to ensure that it will be at correct position to avoid more complicated manual placement.\nFor the effect monster background though currently I must leave it as is, but thanks for your report.',
-        },
-        {
-            author: 'Anonymous at Dec 26, 2025',
-            question: 'There is an error with the vowel accent marks in Spanish (e.g., á, é, í, ó, ú). It appears that the font does not support the Spanish language, as the accented characters look completely different from the original font. Could you please fix the font for this language?',
-            answer: 'I have tweaked the font a bit, hopefully it looks better now.',
-        },
-        {
-            author: 'Ebrahim at Dec 24, 2025',
-            question: 'An option to maybe reduce the size of the "Edition" section similarly the LIMITED EDITION tag.',
-            answer: 'It is a bit cumbersome so for now I will just limit the section\'s maximum width, the text should auto compress if it is too long.',
-        },
-        {
-            author: 'Blake at Dec 23, 2025',
-            question: 'Did you use boundless cause I’m trying to make the object the image go over the card.',
-            answer: 'Yeah boundless layout is the main option to use. But the hard thing here is that you need a transparent artwork to combine with it to make a proper overframe card, which the app cannot help.\nIn any case I plan to readjust the option a bit for more clarity, and also add sample cards for easy demonstration.',
-        },
-        {
-            author: 'Ebrahim at Dec 23, 2025',
-            question: 'when I click on the xyz background template the 1st Edition text is in black not white and it\'s hard to see please fix immediately.',
-            answer: 'It\'s done, the text should display properly now.',
-        },
-        {
-            author: 'A-Rex at Dec 22, 2025',
-            question: 'Me gustaría poder colocar 1a edición\nPero en su lugar aparece 1st Edition\nQuisiera poder poner manualmente eso.',
-        },
-        {
-            author: 'Ralph at Dec 22, 2025',
-            question: 'quisiera poner la marca 1a edición\npero en su lugar pone 1st edition\nme gustaría poder al menos colocarla manualmente.',
-            answer: 'I have implemented a customizable edition text with predefined options, you may try it now.',
-        },
-        {
-            author: 'Blake at Dec 21, 2025',
-            question: 'When are you going to be adding the overframe rare?',
-            answer: 'With Layout options the app is already able to create cards with extended art (see attached image), but I will need to tweak some behaviors so it looks more correct.\nGrandmaster Rare however is a different story, as it use an entirely different set of layers and I can only wait for talented artists to extract them.',
-            image: ['https://i.imgur.com/a6ZlmEg.png'],
-        },
-        {
-            author: 'Blake at Dec 18, 2025',
-            question: 'I can’t download the card with a new attribute.',
-        },
-        {
-            author: 'Blake at Dec 18, 2025',
-            question: 'It won’t let me upload the card with a custom attribute.',
-            answer: 'Hi there, the app will now correctly show what is happening. In short, this is a security feature of your browser (not the app) that protect you from potential dangers of the image link, so you must manually download the image.',
-        },
-        {
-            author: 'TOVYA at Dec 13, 2025',
-            question: 'Chào bạn, bạn có thể thêm vào hướng dẫn cách chạy project này của bạn bằng Docker trong README.md không á?',
-            answer: 'Done nha.',
-        },
-        {
-            author: 'Anonymous User at Dec 13, 2025',
-            question: 'would it be possible to add the ability to upload custom attribute icons?',
-            answer: 'Right now I can only support using external link for attribute, so you can upload your custom attribute icon to an image hosting service (e.g., imgur) and use the link in the attribute input box.',
-            image: ['https://i.postimg.cc/cJMFW3M1/image.png'],
-        },
-        {
-            author: 'TheTonyB at Dec 12, 2025',
-            question: 'I noticed Korean and Portuguese are missing from Attributes languages. Can you add those? Specially portuguese which is my main language.\nCould you also add other language options to the "1st Edition"/"Limited Edition" text or allow for a custom text?\nThanks and keep up the great work!',
-            answer: 'Hi there, unfortunately I have no access to those language sprites, so I cannot add them at the moment (somehow Yugipedia does not have attributes in Portugese and Korean even though they have the rest of official supported languages).',
-        },
-        {
-            author: 'Anonymous User at Dec 04, 2025',
-            question: 'Hello! I\'ve noticed there\'s a problem with these 3 new cards :\nMagnet Warrior Σ－\nMagnet Warrior Σ＋\nMagnet Warrior Ω+\n\nI\'ve noticed that Konami is using new characters, and unfortunately, they\'re not displaying correctly for creating cards. Could you please fix this?\nThanks in advance.\nLigerrFanArt',
-            answer: 'Because those cards do not have an offical TCG version yet, so I will just import OCG font for this case.',
-        },
-        {
-            author: 'I have assets to donate! at Oct 23, 2025',
-            question: 'Konami\'s new Genesys card searcher initially had high-resolution renders of all cards. I snagged a few before they "fixed" it (now their images are low-res again...) and used them to correct all the card frames, bevels, level stars, text boxes, fonts, and even text colors. I\'m talking major corrections that took me hours since I\'m not very efficient in Photoshop.\nAt the very least, your current Spell and Synchro frames need updating. Not only are the colors off, but there\'s actually an artifactual defect running across the entire right edge that you inherited from 9558able\'s frames (it\'s actually on all of them, but most visible on the Spell frame).\nAs far as I can tell, my updated assets now produce the most accurate proxies anywhere. I would like to donate them! I don\'t see a way to email you, but please email me at *******88@gmail.com if you\'re interested.\nI can reply with specifics and send you some comparisons.',
-            answer: 'Hi there, thanks for your generosity. I have already emailed you at Oct 24, hopefully I can make some good use out of it.',
-        },
-        {
-            author: 'Anonymous User at Oct 08, 2025',
-            question: 'Missed you so much bro its been a month',
-            answer: 'Me too, me too.',
-        },
-        {
-            author: 'Anonymous User at Sep 28, 2025',
-            question: 'For some reason, the border changes depending on the card type even though it\'s set to Default',
-            answer: 'It seems like the card border is not loaded yet, so it exposes the underlying frame. I have replicate your card but does not see the same issue, does the problem still persist?',
-        },
-        {
-            author: 'Anonymous User at Sep 26, 2025',
-            question: 'hi m8. luv your work. i was thinking about two things. maybe 1 option for anime cards like in Vrains. another option to adjust the colour and saturation of the card frame. thks again for your work',
-            answer: 'Hi there, currently I do not have time needed for new templates, but for the color option, have you checking out the Advanced Layout option? If will allow you to change current frame\'s color at will, which seem suitable for your use-case.'
-        },
-        {
-            author: 'Elttaest the Master of Duels at Sep 18, 2025',
-            question: 'Hi. Love your work, just wondering - with Elttaes, the Master of Duels and Dragon of Illumination, Sanctuary\'s Shield, shouldn\'t we have enough data to make Rush Duel cards in English as well? The font seems the same in both English and Japanese. And the card name seems the same used in TCG, although I can\'t really make out what the Japanese font is. Sorry again for this. Just curious. Thanks for your time',
-            answer: 'Hi there, you are right that both cards can be used as a template for Rush Duel cards, but the main problem before the template itself is that currently I don\'t have enough resources for such project right now, so I can\'t promise anything at this moment. I will keep this in mind and see if I can do it in the future.',
-        },
-        {
-            author: 'Armando Giordano at Sep 06, 2025',
-            question: 'Thank you for your quick response and for your astonishing work with the Carder. Yes, I am using an iPad and a phone, and, with both devices, when I click on the Download button, it just shows "Saving..." for a second, then no Download starts. I am now on a computer and it works great with left click and "Save as", though it would be nice to be able to use it on mobile.',
-        },
-        {
-            author: 'Armando Giordano at Sep 06, 2025',
-            question: 'Sorry for second report in a row! I noticed you asked me specific questions. 1 The App does NOT freeze when trying to download on iPad and Android phone. Just no download starts. 2 The problem was immediately experienced because I discovered the Carder just yesterday.',
-            answer: 'Now it\'s a bit strange; usually, if the export process encounters an error, an explicit message will be displayed. In this case, if the download process is already running but no files are downloaded, it could be that your mobile browser is blocking the automatic download due to some advance security settings. All mobile devices I have tested so far do not exhibit the same issue. I will try to investigate this further, but chances are I won\'t be able to resolve it if I cannot reproduce the issue. Sorry for the inconvenience.',
-        },
-        {
-            author: 'Armando Giordano at Sep 06, 2025',
-            question: 'Hello! I am loving your work. I hope my issue is not because of ignorance, but it seems like it\'s not possible to download cards as images.',
-            answer: 'Hi there, based on the report it seems that you are using an iPad. I don\'t have an iPad to test right now, but could you please provide me some more information?\n1. When you click the Download button, does anything happen? Does the app freeze or it just not doing anything?\n2. Is the problem just appear recently, or it never worked in the first place?',
-            image: ['https://i.postimg.cc/Y2fjyvV2/image.png'],
-        },
-        {
-            author: 'Rush Duel at Jun 22, 2025',
-            question: 'This card maker is amazing! Have you ever consider doing a rush duel section as well?',
-            answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
-        },
-        {
-            author: 'Maya at May 23, 2025',
-            question: 'I\'d like to make a request, is it possible to put a SPEED DUEL watermark in EVERY card types in the description area like the Speed Skill type when it is set to speed duel? thank you so much. Appreciate your lovely cardmaker',
-            answer: 'I will try, but this is pretty hard to do to be honest, don\'t keep your hope up.',
-        },
-    ];
 
     return <>
         <FaqButtonLabel

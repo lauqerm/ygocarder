@@ -10,19 +10,8 @@ export const FlagPresentationList = [
         sampleDisplay: (language: LanguageDataDictionary) => <>
             {language['input.flag.mix-def-link']}:
             <ul>
-                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.true']}</li>
-                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.false']}</li>
-            </ul>
-        </>,
-    },
-    {
-        ...FlagInfoList[2],
-        valueDisplay: ((language: LanguageDataDictionary) => language['input.flag.hide-deactivated-link']) as FlagValueDisplay,
-        sampleDisplay: (language: LanguageDataDictionary) => <>
-            {language['input.flag.hide-deactivated-link']}:
-            <ul>
-                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.true']}</li>
-                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.false']}</li>
+                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.false']}</li>
+                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.true']}</li>
             </ul>
         </>,
     },
@@ -51,6 +40,39 @@ export const FlagPresentationList = [
                         {LINK_RATING_ALWAYS_HIDE}
                     </CopiableCode>: {language['input.flag.link-rating-behavior.hide']}
                 </li>
+            </ul>
+        </>,
+    },
+    {
+        ...FlagInfoList[2],
+        valueDisplay: ((language: LanguageDataDictionary) => language['input.flag.hide-deactivated-link']) as FlagValueDisplay,
+        sampleDisplay: (language: LanguageDataDictionary) => <>
+            {language['input.flag.hide-deactivated-link']}:
+            <ul>
+                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.false']}</li>
+                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.true']}</li>
+            </ul>
+        </>,
+    },
+    {
+        ...FlagInfoList[3],
+        valueDisplay: ((language: LanguageDataDictionary) => language['input.flag.stat-label']) as FlagValueDisplay,
+        sampleDisplay: (language: LanguageDataDictionary) => <>
+            {language['input.flag.stat-label']}:
+            <ul>
+                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.false']}</li>
+                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.true']}</li>
+            </ul>
+        </>,
+    },
+    {
+        ...FlagInfoList[4],
+        valueDisplay: ((language: LanguageDataDictionary) => language['input.flag.name-star-below-image']) as FlagValueDisplay,
+        sampleDisplay: (language: LanguageDataDictionary) => <>
+            {language['input.flag.name-star-below-image']}:
+            <ul>
+                <li><CopiableCode data={0}>0</CopiableCode>: {language['manager.template.description.false']}</li>
+                <li><CopiableCode data={1}>1</CopiableCode>: {language['manager.template.description.true']}</li>
             </ul>
         </>,
     },

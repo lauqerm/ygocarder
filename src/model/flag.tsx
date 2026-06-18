@@ -3,13 +3,14 @@ export type CardFlag = [
     LinkRating: number,
     HideDeactivatedLink: number,
     HideStatLabel: number,
+    NameAndStarBelowImage: number,
 ];
 /**
  * Remember, 0 is ALWAYS the default state.
  * 
  * Remember, this is an array, the order of these values are absolute.
  */
-export const getDefaultCardFlag = (): CardFlag => [0, 0, 0, 0];
+export const getDefaultCardFlag = (): CardFlag => [0, 0, 0, 0, 0];
 
 export const LINK_RATING_ALWAYS_AUTO = 0;
 export const LINK_RATING_ALWAYS_SHOW = 1;
@@ -40,11 +41,18 @@ export const FlagInfoList = [
         type: 'checkbox' as const,
         order: 2,
     },
+    {
+        index: 4,
+        labelKey: 'input.flag.name-star-below-image',
+        type: 'checkbox' as const,
+        order: 4,
+    },
 ];
 export const FlagIndexMap = {
     showDefAndLink: 0,
     linkRating: 1,
     hideDeactivatedLink: 2,
     hideStatLabel: 3,
+    nameStarBelowImage: 3,
 };
 export const FLAG_LENGTH = FlagInfoList.length;
