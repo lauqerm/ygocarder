@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.5.5 (2026/06/18)",
+        "logList": [
+            {
+                "content": "Feat: Experimental feature to overlay boundless artwork above card name and stars."
+            }
+        ]
+    },
+    {
         "version": "v2.5.4 (2026/06/16)",
         "logList": [
             {
