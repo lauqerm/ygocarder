@@ -239,7 +239,6 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                             return rMisc.views - lMisc.views;
                         })[0];
                 }
-
                 await startImport(cardData, true);
             }
         } catch (e) {

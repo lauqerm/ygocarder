@@ -634,10 +634,13 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 const foil = FoilMap[rawFoil] ? rawFoil : 'normal';
 
                 const rawAttribute = reader('Attribute')?.toUpperCase();
+                const attributeType = reader('Attribute Type')?.toLowerCase();
                 const emptyAttributeCrop = getDefaultIconCrop();
                 const attributeImage = reader('Attribute Link') ?? emptyCard.attributeImage;
                 const attributeImageData = reader('Attribute Data') ?? emptyCard.attributeImageData;
-                const attributeImageSource = (reader('Attribute Source') ?? emptyCard.attributeImageSource) as AttributeType;
+                const attributeImageSource = (reader('Attribute Source')
+                    ?? (attributeType === 'custom' ? 'online' : attributeType) // Legacy
+                    ?? emptyCard.attributeImageSource) as AttributeType;
                 const attributeImageFit = normalizeBoolean(reader('Is Using Full Attribute'), emptyCard.attributeImageFit);
                 const attributeImageCrop: Crop = {
                     aspect: 1,
@@ -653,15 +656,15 @@ export const csvToCardList = (data: (string | undefined)[][]): InternalCard[] =>
                 } catch (e) {
                     console.error('csvToCardList', e);
                 }
-                const attribute = attributeImageSource === 'auto'
-                    ? frame === 'spell'
-                        ? 'SPELL'
-                        : frame === 'trap'
-                            ? 'TRAP'
-                            : frame === 'speed-skill'
-                                ? NO_ATTRIBUTE
-                                : emptyCard.attribute
-                    : rawAttribute ?? NO_ATTRIBUTE;
+                let attribute = rawAttribute ?? NO_ATTRIBUTE;
+                if (attributeImageSource === 'auto') {
+                    switch (frame) {
+                        case 'spell': attribute = 'SPELL'; break;
+                        case 'trap': attribute = 'TRAP'; break;
+                        case 'speed-skill': attribute = 'NO_ATTRIBUTE'; break;
+                    }
+                    attribute = !rawAttribute || rawAttribute === '' ? NO_ATTRIBUTE : rawAttribute;
+                }
 
                 const artFinish = (reader('Art Finish') ?? (reader('Art_Finish') ? `type${reader('Art_Finish')}` : ''));
                 const finishAttribute = reader('Other Finish - Attribute') ?? '';

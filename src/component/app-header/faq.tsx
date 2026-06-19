@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-
+const currentReminder = '19/06/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Lukas at Jun 19, 2026',
+        question: 'Now when I load my cardlists all the monsters lose their attributes, that didn\'t happened before',
+        answer: 'I have issued a fix. If you haven\'t overwritten the list yet, it should display attributes properly now.',
+    },
     {
         author: 'Vendoz at Jun 18, 2026',
         question: 'Hello, First thing first.. Thank you for all the works you\'ve been doing and to keep improving the plugin. I have a suggestion, Is it possible to make the art to be on top of level icons and card name?. Or, make the card name and level icons kinda blending in into the art if the art is on top of them. Thank You ^_^',
@@ -466,7 +471,6 @@ const feedbackList: Feedback[] = [
     },
 ];
 export const QuestionAndFeedback = () => {
-    const currentReminder = '13/06/2026';
     const [visible, setVisible] = useState(false);
     const [faqReminder, setMemoizedReminder] = useNotification('faqReminder');
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
