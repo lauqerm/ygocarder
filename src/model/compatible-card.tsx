@@ -142,6 +142,10 @@ export const getDefaultMseCard = () => ({
     pendulum_text: 'Balogar',
     gamecode: '01',
     rarity: 'ultra rare',
+    pendulum: 'none',
+    number: '',
+    edition: '',
+    copyright: '',
 });
 
 export type MseFile = ReturnType<typeof getDefaultMseFile>;

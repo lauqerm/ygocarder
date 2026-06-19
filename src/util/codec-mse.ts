@@ -1,6 +1,6 @@
-import { Card, getDefaultMseCard, MseCard } from 'src/model';
-import { checkMonster } from './categorize';
-import { normalizeCardEffect, normalizeCardName } from './normalize';
+import { Card, getDefaultMseCard, MseCard, NO_ATTRIBUTE, NO_ICON } from 'src/model';
+import { checkMonster, checkSpeedSkill, getCardIconFromFrame } from './categorize';
+import { normalizeCardEffect, normalizeCardName, normalizeOtherText } from './normalize';
 
 // const parseMse = <Result extends Record<string, unknown> = MseFile>(text: string): Result => {
 //     const lines = text.split(/\r?\n/);
@@ -107,19 +107,45 @@ const frameMap: Record<string, string> = {
     zarc: 'unity',
     'speed-skill': 'skill',
 };
+const iconMap: Record<string, string> = {
+    CONTINUOUS: '%',
+    COUNTER: '!',
+    EQUIP: '+',
+    FIELD: '&',
+    'QUICK-PLAY': '$',
+    RITUAL: '#',
+    NORMAL: '^',
+    [NO_ICON]: '',
+};
+const linkTextMap: Record<string, string> = {
+    '1': 'linkul',
+    '2': 'linku',
+    '3': 'linkur',
+    '4': 'linkl',
+    '6': 'linkr',
+    '7': 'linkbl',
+    '8': 'linkb',
+    '9': 'linkbr',
+};
+const starIconMap: Record<string, string> = {
+    'none': '*',
+    'st': '*',
+    'rank': '*',
+    'negative-level': '*',
+    'grade': '*',
+    'level': '*',
+};
 export const ygoCarderToMseData = (
     card: Card,
     _artRef?: HTMLCanvasElement | null,
     option?: {
         imageName: string,
-        gamecode: string,
     },
 ): {
     result: MseCard,
     isPartial: boolean,
 } => {
     const {
-        gamecode,
         imageName,
     } = option ?? {};
     const {
@@ -135,12 +161,23 @@ export const ygoCarderToMseData = (
         pendulumScaleRed,
         star,
         typeAbility,
+        setId,
+        firstEditionText,
+        isFirstEdition,
+        password,
+        cardIcon,
+        creator,
+        subFamily,
+        linkMap,
+        isLink,
     } = card;
     const defaultMseCard = getDefaultMseCard();
+    const isMonster = checkMonster(card);
+    const isSpeedSkill = checkSpeedSkill(card);
     const cardType = [
         isPendulum ? 'pendulum' : '',
         frameMap[frame] ?? '',
-        checkMonster(card) ? 'monster' : frame,
+        isMonster ? 'monster' : frame,
     ].filter(entry => entry !== '').join(' ');
     const date = new Date();
     const pad = (num: number) => String(num).padStart(2, '0');
@@ -151,29 +188,41 @@ export const ygoCarderToMseData = (
         }:${pad(date.getMinutes())
         }:${pad(date.getSeconds())
         }`;
+    const icon = getCardIconFromFrame(frame);
+    const normalizedSubFamily = subFamily.toUpperCase();
+    const typeInEffect = typeAbility.length > 0
+        ? cardIcon === 'auto'
+            ? (isMonster || isSpeedSkill)
+            : cardIcon !== 'st'
+        : false;
+    const normalizedName = normalizeCardName(name);
     return {
         result: {
-            attack: atk,
-            attribute: attribute.toLowerCase(),
+            attack: `${parseInt(atk)}` === atk ? atk : `<sym-auto>${atk}</sym-auto>`,
+            attribute: attribute === NO_ATTRIBUTE ? 'none' : attribute.toLowerCase(),
             blue_scale: pendulumScaleBlue,
             card_type: cardType,
-            defense: def,
+            defense: `${parseInt(def)}` === def ? def : `<sym-auto>${def}</sym-auto>`,
             extra_data: defaultMseCard.extra_data,
-            gamecode: gamecode ?? '',
+            gamecode: password,
             has_styling: defaultMseCard.has_styling,
             image: `local_image_file("${imageName ?? ''}")`,
-            level: (typeof star === 'number' ? new Array(star).fill(0) : []).map(() => '<sym-auto>*</sym-auto>').join(''),
+            level: typeInEffect
+                ? typeof star === 'number'
+                    ? new Array(star).fill(0).map(() => `<sym-auto>${starIconMap[icon]}</sym-auto>`).join('')
+                    : ''
+                : `[${typeAbility.map(text => text.trim()).join('/')}<sym-auto>${iconMap[normalizedSubFamily]}</sym-auto>]`,
             monster_type: '<prefix>[</prefix>' + typeAbility.map((entry, index) => {
                 return index === 0
                     ? `<word-list-monster>${entry}</word-list-monster>`
                     : `<word-list-card>${entry}</word-list-card>`;
-            }).join('') + '<sep>]<soft></soft></sep>',
-            name: normalizeCardName(name),
+            }).join('<sep><test>/</test></sep>') + '<sep>]<soft></soft></sep>',
+            name: normalizedName.length === 0 ? 'no-name' : normalizedName,
             notes: '',
-            pendulum_text: normalizeCardEffect(pendulumEffect),
+            pendulum_text: normalizeCardEffect(pendulumEffect).split('\n').join('\\r\\n'),
             rarity: 'common',
             red_scale: pendulumScaleRed,
-            rule_text: normalizeCardEffect(effect),
+            rule_text: normalizeCardEffect(effect).split('\n').join('\\r\\n'),
             time_created: time,
             time_modified: time,
             type_1: `<word-list-monster>${typeAbility[0] ?? ''}</word-list-monster>`,
@@ -181,6 +230,17 @@ export const ygoCarderToMseData = (
             type_3: `<word-list-card>${typeAbility[2] ?? ''}</word-list-card>`,
             type_4: `<word-list-card>${typeAbility[3] ?? ''}</word-list-card>`,
             type_5: `<word-list-card>${typeAbility[4] ?? ''}</word-list-card>`,
+            pendulum: isPendulum ? 'pendulum' : 'none',
+            number: setId,
+            edition: isFirstEdition ? normalizeOtherText(firstEditionText) : '',
+            copyright: normalizeOtherText(creator),
+            ...(isLink
+                ? linkMap.reduce((acc, cur) => {
+                    acc[linkTextMap[cur]] = 'on';
+                    return acc;
+                }, {})
+                : {}
+            )
         },
         isPartial: false,
     };

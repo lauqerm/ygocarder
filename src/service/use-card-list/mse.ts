@@ -17,7 +17,6 @@ export const cardListToMse = async (cardList: Card[]) => {
             ? await base64ToBlob(artData)
             : await imageLinkToBlob(art, artCrop);
         stringifiedCardList.push(stringifyMseData(ygoCarderToMseData(card, undefined, {
-            gamecode: code,
             imageName: code,
         }).result));
         imageList.push({

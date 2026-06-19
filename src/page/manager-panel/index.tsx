@@ -311,7 +311,7 @@ export const CardManagerPanel = forwardRef(({
                 visible,
             });
         },
-    }), []);
+    }));
 
     return <StyledCardManagerPanel>
         <Modal

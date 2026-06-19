@@ -196,9 +196,10 @@ export const ImportPanel = forwardRef<ImportPanelRef, ImportPanel>(({
                 const normalizedValue = value.trim() ?? '';
                 let uncrushedValue = '';
                 try {
+                    /** Test for v1 card here */
                     uncrushedValue = JSONUncrush(decodeURIComponent(normalizedValue));
                 } catch (e) {
-                    console.error(e);
+                    /** Not v1 card, nothing to do here */
                 }
                 let cardData: string | null | Record<string, unknown> = null;
 
