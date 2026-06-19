@@ -47,7 +47,7 @@ export const LinkIconMap: Record<string, string> = {
     '8': '🡓',
     '9': '🡖',
 };
-export const LinkLabelMap: Record<string, string> = {
+export const tcgLinkLabelMap: Record<string, string> = {
     '1': 'Top-Left',
     '2': 'Top',
     '3': 'Top-Right',
@@ -56,4 +56,14 @@ export const LinkLabelMap: Record<string, string> = {
     '7': 'Bottom-Left',
     '8': 'Bottom',
     '9': 'Bottom-Right',
+};
+export const ocgLinkLabelMap: Record<string, string> = {
+    '1': '左上',
+    '2': '上',
+    '3': '右上',
+    '4': '左',
+    '6': '右',
+    '7': '左下',
+    '8': '下',
+    '9': '右下',
 };

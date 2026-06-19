@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { SyncOutlined } from '@ant-design/icons';
 import { PUBLIC_PATH } from './app';
 
 export type AttributeType = 'auto' | 'online' | 'offline';
@@ -170,49 +170,57 @@ export const DefaultFormatAttribute: Record<string, string> = {
 export const NO_ICON = 'NO ICON';
 export const IconList = [
     {
-        label: <CloseCircleOutlined />,
+        label: 'None',
+        ocgLabel: 'なし',
         value: NO_ICON,
         nameKey: 'input.icon.none',
         isOption: false,
     },
     {
         label: 'Field',
+        ocgLabel: 'フィールド',
         value: 'FIELD',
         nameKey: 'input.icon.field',
         isOption: true,
     },
     {
         label: 'Continuous',
+        ocgLabel: '永続',
         value: 'CONTINUOUS',
         nameKey: 'input.icon.continuous',
         isOption: true,
     },
     {
         label: 'Quick-Play',
+        ocgLabel: '速攻',
         value: 'QUICK-PLAY',
         nameKey: 'input.icon.quick-play',
         isOption: true,
     },
     {
         label: 'Ritual',
+        ocgLabel: '儀式',
         value: 'RITUAL',
         nameKey: 'input.icon.ritual',
         isOption: true,
     },
     {
         label: 'Equip',
+        ocgLabel: '装備',
         value: 'EQUIP',
         nameKey: 'input.icon.equip',
         isOption: true,
     },
     {
         label: 'Counter',
+        ocgLabel: 'カウンター',
         value: 'COUNTER',
         nameKey: 'input.icon.counter',
         isOption: true,
     },
     {
         label: 'Normal',
+        ocgLabel: '通常',
         value: 'NORMAL',
         nameKey: 'input.icon.normal',
         isOption: true,

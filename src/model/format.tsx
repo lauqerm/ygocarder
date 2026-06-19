@@ -331,6 +331,16 @@ export const ocgToTCGTermMap: Record<string, string> = {
     'トゥーン': 'Toon',
     'スピリット': 'Spirit',
     'ユニオン': 'Union',
+    /** attribute */
+    '光': 'LIGHT',
+    '闇': 'DARK',
+    '水': 'WATER',
+    '炎': 'FIRE',
+    '地': 'EARTH',
+    '風': 'WIND',
+    '神': 'DIVINE',
+    '魔法': 'SPELL',
+    '罠': 'TRAP',
     /** creator copyright */
     [copyrightMap.ocg[2]]: copyrightMap.tcg[2],
     [copyrightMap.ocg[1]]: copyrightMap.tcg[1],

@@ -1,4 +1,4 @@
-import { Card, IconMap, LinkLabelMap, NO_ATTRIBUTE, NO_ICON } from 'src/model';
+import { Card, IconMap, tcgLinkLabelMap, NO_ATTRIBUTE, tcgToOCGTermMap, ocgLinkLabelMap } from 'src/model';
 import { normalizeCardEffect, normalizeCardName } from './normalize';
 import { checkDiplayLinkRating, checkMonster, getCardIconFromFrame } from './categorize';
 import { capitalizeFirstLetter } from './other';
@@ -12,26 +12,27 @@ export const ygoCarderToTextData = (
 } => {
     const lineList: string[] = [];
     const {
+        atk,
+        attribute,
+        attributeImageSource,
+        cardIcon,
+        def,
+        effect,
+        flag,
+        format,
+        frame,
+        isLink,
+        isPendulum,
+        linkMap,
         name,
+        pendulumEffect,
+        pendulumScaleBlue,
+        pendulumScaleRed,
+        setId,
         star,
         starList,
         subFamily,
-        frame,
-        cardIcon,
-        attribute,
-        attributeImageSource,
         typeAbility,
-        isPendulum,
-        pendulumScaleBlue,
-        pendulumScaleRed,
-        atk,
-        def,
-        linkMap,
-        flag,
-        isLink,
-        setId,
-        pendulumEffect,
-        effect,
     } = card;
     const normalizedCardIconType = cardIcon === 'auto' ? getCardIconFromFrame(frame) : cardIcon;
     const [
@@ -49,14 +50,27 @@ export const ygoCarderToTextData = (
     const statInEffect = !!(atk || def)
         || showLinkRating
         || !!(isPendulum && setId);
+    const slash = format === 'tcg' ? ' / ' : '／';
 
     let levelPart = '';
-    if (cardIcon === 'user-defined') levelPart = `${star} Stars`;
-    else if (cardIcon === 'custom') levelPart = `[${starList.join(' | ')}]`;
+    if (normalizedCardIconType === 'none') levelPart = '';
+    else if (normalizedCardIconType === 'user-defined') levelPart = `${star} ${format === 'tcg' ? 'Stars' : '星'}`;
+    else if (normalizedCardIconType === 'custom') levelPart = `[${starList.join(' | ')}]`;
     else if (typeof star === 'string') levelPart = `${capitalizeFirstLetter(normalizedCardIconType)} ${star}`;
     else if (['rank', 'negative-level'].includes(normalizedCardIconType)) levelPart = `*${star}`;
     else if (['st'].includes(normalizedCardIconType)) {
-        levelPart = `${subFamily === NO_ICON ? 'Normal' : IconMap[subFamily].label} ${frame === 'spell' ? 'Spell' : 'Trap'}`;
+        if (format === 'tcg') {
+            const subFamilyLabel = IconMap[subFamily].label;
+            const familyLabel = frame === 'spell' ? 'Spell' : 'Trap';
+            levelPart = `${subFamilyLabel} ${familyLabel}`;
+        } else {
+            const subFamilyLabel = IconMap[subFamily].ocgLabel;
+            const familyLabel = frame === 'spell' ? '魔法カード' : '罠カード';
+            const customTypeAbility = typeAbility.map(normalizeCardEffect).join(slash);
+            levelPart = customTypeAbility !== familyLabel
+                ? customTypeAbility
+                : `${subFamilyLabel}${familyLabel}`;
+        }
     }
     else if (['level', 'grade'].includes(normalizedCardIconType)) levelPart = `${star}*`;
     else {
@@ -65,37 +79,39 @@ export const ygoCarderToTextData = (
 
     let attributePart = '';
     if (isMonster) attributePart = `${attributeImageSource === 'auto'
-        ? attribute === NO_ATTRIBUTE ? '' : attribute
-        : 'Custom Attribute'}`;
+        ? attribute === NO_ATTRIBUTE ? '' : (format === 'tcg' ? attribute : tcgToOCGTermMap[attribute])
+        : format === 'tcg' ? 'Custom Attribute' : 'カスタム属性'}`;
 
     lineList.push(normalizeCardName(name));
     lineList.push([
         levelPart,
-        attributePart,
+        isMonster ? attributePart : '',
     ].filter(entry => typeof entry === 'string' && entry.length > 0).join(' '));
-    lineList.push(typeAbility.map(normalizeCardEffect).join(' / '));
-    if (isPendulum) lineList.push(`Pendulum Scale: ${pendulumScaleBlue === pendulumScaleRed
+    if (isMonster) lineList.push(typeAbility.map(normalizeCardEffect).join(slash));
+    if (isPendulum) lineList.push(`${format === 'tcg' ? 'Pendulum Scale' : 'ペンデュラムスケール'}: ${pendulumScaleBlue === pendulumScaleRed
         ? pendulumScaleBlue
         : `${pendulumScaleBlue} - ${pendulumScaleRed}`}`);
     if (statInEffect) lineList.push([
         atk,
         hasDef ? def : '',
         hasLink ? `LINK-${linkMap.length}` : ''
-    ].filter(entry => typeof entry === 'string' && entry.length > 0).join(' / '));
+    ].filter(entry => typeof entry === 'string' && entry.length > 0).join(slash));
     if (isLink && linkMap.length > 0) {
         const sortedLinkList = linkMap.sort((l, r) => parseInt(l) - parseInt(r));
         /** Should we count from top or top-left? */
         const normalizedLinkList = sortedLinkList[0] === '1'
             ? [...sortedLinkList.slice(1), '1']
             : sortedLinkList;
-        lineList.push(`Link Markers: ${normalizedLinkList.map(entry => LinkLabelMap[entry]).join(', ')}`);
+        lineList.push(`${format === 'tcg' ? 'Link Markers' : 'リンクマーカー'}: ${normalizedLinkList.map(entry => {
+            return format === 'tcg' ? tcgLinkLabelMap[entry] : ocgLinkLabelMap[entry];
+        }).join(format === 'tcg' ? ', ' : '、')}`);
     }
-    if (isPendulum) lineList.push(`[PENDULUM EFFECT]\n${normalizeCardEffect(pendulumEffect)}`);
-    if (isPendulum) lineList.push(`[MONSTER EFFECT]\n${normalizeCardEffect(effect)}`);
+    if (isPendulum) lineList.push(`${format === 'tcg' ? '[PENDULUM EFFECT]' : '【ペンデュラム効果】'}\n${normalizeCardEffect(pendulumEffect)}`);
+    if (isPendulum) lineList.push(`${format === 'tcg' ? '[MONSTER EFFECT]' : '【効果】'}\n${normalizeCardEffect(effect)}`);
     else lineList.push(normalizeCardEffect(effect));
 
     return {
-        result: lineList.join('\n'),
+        result: lineList.filter(entry => entry.length !== 0).join('\n'),
         isPartial: false,
     };
 };
