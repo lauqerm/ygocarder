@@ -1,9 +1,9 @@
 {
-  "version": "1eb02c3afea866e1",
-  "generatedAt": "2026-06-18T13:24:26.617Z",
+  "version": "fa27bf11db4b5203",
+  "generatedAt": "2026-06-19T09:54:25.985Z",
   "basePath": "/ygocarder/",
   "assetCount": 663,
-  "totalBytes": 79993102,
+  "totalBytes": 79993312,
   "assets": {
     "/ygocarder/asset/font.css": {
       "hash": "62e6b4a8a85c0c1b",
@@ -2646,8 +2646,8 @@
       "size": 198
     },
     "/ygocarder/asset/log/version.json": {
-      "hash": "0a27b73dfdcd7c8d",
-      "size": 29064
+      "hash": "ab2d410ef06e2743",
+      "size": 29274
     },
     "/ygocarder/asset/ocg-font.css": {
       "hash": "cda77ad46b5c9af7",

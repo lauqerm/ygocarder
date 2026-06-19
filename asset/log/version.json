@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.5.6 (2026/06/19)",
+        "logList": [
+            {
+                "content": "Fix: Attributes do not display correctly when importing card list."
+            }
+        ]
+    },
+    {
         "version": "v2.5.5 (2026/06/18)",
         "logList": [
             {
