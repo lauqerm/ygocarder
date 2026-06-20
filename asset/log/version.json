@@ -1,5 +1,16 @@
 [
     {
+        "version": "v2.5.7 (2026/06/20)",
+        "logList": [
+            {
+                "content": "Feat: Experimental export function for Magic Set Editor's format (series 10 template)."
+            },
+            {
+                "content": "Fix: Attempt to fix issue that cannot export card artwork in YGOPro format."
+            }
+        ]
+    },
+    {
         "version": "v2.5.6 (2026/06/19)",
         "logList": [
             {
