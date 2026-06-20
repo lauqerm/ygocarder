@@ -1,6 +1,7 @@
-import { Card, getDefaultMseCard, MseCard, NO_ATTRIBUTE, NO_ICON } from 'src/model';
+import { Card, CardArtCanvasCoordinateMap, getDefaultMseCard, MseCard, NO_ATTRIBUTE, NO_ICON } from 'src/model';
 import { checkMonster, checkSpeedSkill, getCardIconFromFrame } from './categorize';
-import { normalizeCardEffect, normalizeCardName, normalizeOtherText } from './normalize';
+import { normalizeCardEffect, normalizeCardName, normalizeOtherText, transformQuote } from './normalize';
+import { base64ToBlob, imageLinkToBlob } from './image';
 
 // const parseMse = <Result extends Record<string, unknown> = MseFile>(text: string): Result => {
 //     const lines = text.split(/\r?\n/);
@@ -135,9 +136,30 @@ const starIconMap: Record<string, string> = {
     'grade': '*',
     'level': '*',
 };
+export const getMseImage = async (card: Card, imageName: string) => {
+    const {
+        art,
+        artData,
+        artSource,
+        artCrop,
+        artFit,
+        isPendulum,
+    } = card;
+    const desiredRatio = isPendulum ? CardArtCanvasCoordinateMap.truePendulum.artRatio : 1;
+    const artBlob = artFit
+        ? artSource === 'offline'
+            ? await base64ToBlob(artData)
+            : await imageLinkToBlob(art)
+        : artSource === 'offline'
+            ? await base64ToBlob(artData, artCrop, desiredRatio)
+            : await imageLinkToBlob(art, artCrop, desiredRatio);
+    return {
+        blob: artBlob,
+        name: imageName,
+    };
+};
 export const ygoCarderToMseData = (
     card: Card,
-    _artRef?: HTMLCanvasElement | null,
     option?: {
         imageName: string,
     },
@@ -177,7 +199,11 @@ export const ygoCarderToMseData = (
     const cardType = [
         isPendulum ? 'pendulum' : '',
         frameMap[frame] ?? '',
-        isMonster ? 'monster' : frame,
+        isMonster
+            ? 'monster'
+            : ['spell', 'trap'].includes(frame)
+                ? `${frame} card`
+                : frame,
     ].filter(entry => entry !== '').join(' ');
     const date = new Date();
     const pad = (num: number) => String(num).padStart(2, '0');
@@ -195,7 +221,7 @@ export const ygoCarderToMseData = (
             ? (isMonster || isSpeedSkill)
             : cardIcon !== 'st'
         : false;
-    const normalizedName = normalizeCardName(name);
+    const normalizedName = transformQuote(normalizeCardName(name));
     return {
         result: {
             attack: `${parseInt(atk)}` === atk ? atk : `<sym-auto>${atk}</sym-auto>`,
@@ -219,10 +245,10 @@ export const ygoCarderToMseData = (
             }).join('<sep><test>/</test></sep>') + '<sep>]<soft></soft></sep>',
             name: normalizedName.length === 0 ? 'no-name' : normalizedName,
             notes: '',
-            pendulum_text: normalizeCardEffect(pendulumEffect).split('\n').join('\\r\\n'),
+            pendulum_text: transformQuote(normalizeCardEffect(pendulumEffect)).split('\n').join('\\r\\n'),
             rarity: 'common',
             red_scale: pendulumScaleRed,
-            rule_text: normalizeCardEffect(effect).split('\n').join('\\r\\n'),
+            rule_text: transformQuote(normalizeCardEffect(effect)).split('\n').join('\\r\\n'),
             time_created: time,
             time_modified: time,
             type_1: `<word-list-monster>${typeAbility[0] ?? ''}</word-list-monster>`,

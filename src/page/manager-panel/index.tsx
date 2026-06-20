@@ -1,6 +1,6 @@
 import { Button, Dropdown, Input, Menu, Modal, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { cardListToMse, csvToCardList, LanguageDataDictionary, SortFunctionMap, useCardList, useSetting } from 'src/service';
+import { csvToCardList, LanguageDataDictionary, mseDataToDownloadable, SortFunctionMap, useCardList, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { ManagerCardList } from './card-list';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,7 +23,7 @@ import { captureException } from 'src/util';
 import copy from 'copy-to-clipboard';
 
 const StyledConvertMenu = styled(Menu)`
-    width: 225px;
+    width: 260px;
 `;
 const StyledCardManagerPanel = styled.div`
     position: absolute;
@@ -206,46 +206,12 @@ export const CardManagerPanel = forwardRef(({
     };
     const convertToMse = async () => {
         setSavingFile(true);
-        const debugMode = true;
-
         try {
-            const {
-                error,
-                set,
-                imageList,
-            } = await cardListToMse(useCardList.getState().cardList);
-
-            if (error) {
-                let errorMessage = '';
-                let errorDescription = '';
-                switch (error) {
-                    case 'offline-data': {
-                        errorMessage = language['error.export.offline-data.message'];
-                        errorDescription = language['error.export.offline-data.description'];
-                        break;
-                    }
-                }
-
-                if (errorMessage || errorDescription) {
-                    notification.error({
-                        message: errorMessage,
-                        description: errorDescription,
-                    });
-                }
-            }
-            const JSZip = (await import('jszip')).default;
-            const zipObject = new JSZip();
-            zipObject.file('set' + (debugMode ? '.txt' : ''), set);
-            imageList.forEach(({ blob, name }) => {
-                zipObject.file(name + (debugMode ? '.png' : ''), blob);
-            });
-            const zipBlob = await zipObject.generateAsync({
-                type: 'blob',
-            });
+            const { name, blob, type } = await mseDataToDownloadable(useCardList.getState().cardList);
             downloadBlob(
-                'convert-result' + (debugMode ? '.zip' : '.mse-set'),
-                zipBlob,
-                'application/zip',
+                name,
+                blob,
+                type,
             );
             changeEditStatus('download');
         } catch (e) {
@@ -404,9 +370,9 @@ export const CardManagerPanel = forwardRef(({
                                 {[
                                     {
                                         value: 'mse',
-                                        label: 'Magic Set Editor',
+                                        label: 'Magic Set Editor (may take a while)',
                                         converter: convertToMse,
-                                        active: false,
+                                        active: true,
                                     },
                                     {
                                         value: 'text',

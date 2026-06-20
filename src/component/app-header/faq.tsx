@@ -44,8 +44,18 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '19/06/2026';
+const currentReminder = '20/06/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Anonymous at Jun 07, 2026',
+        question: 'I think a little of both, make the manager function export in mse-set',
+    },
+    {
+        author: 'Anonymous at Jun 05, 2026',
+        question: 'Can you let us export to MSE as well?\nMSE would be Magic Set Editor',
+        answer: 'I have updated the export feature for single cards and the convert feature for card lists (be careful that you still need to save your list as a CSV later). You may try it now. There are a bunch of templates and I\'m not really sure which to use, so I\'m trying to convert it to the standard Series 10 template first.',
+        image: ['https://i.postimg.cc/V6h88gB0/image.png'],
+    },
     {
         author: 'Lukas at Jun 19, 2026',
         question: 'Now when I load my cardlists all the monsters lose their attributes, that didn\'t happened before',
@@ -86,16 +96,6 @@ const feedbackList: Feedback[] = [
         author: 'RedSupernovaDragon at Jun 07, 2026',
         question: 'Hello,\njust a simple question: are you planning to release an installable offline app? I mean something like MSE, an app that can be installed on a computer with all the assets you need to create cards. I was wondering about this because, while the site is fine for me, being able to create hundreds of cards without the necessity of a wi-fi connection would truly be awesome.',
         answer: 'Right now the install option is my solution for the app to work offline. Not only does it work on both mobile and desktop, it also doesn\'t require me to modify the codebase much (besides, from the outside it is no different than your everyday apps anyway, just click the icon and start working). Creating an executable version of the app requires a completely different skill set than I have, so I\'ll only do it if there\'s a really (and I mean really) convenient way to convert. Otherwise, managing two different codebases will quickly destroy the project.',
-    },
-    {
-        author: 'Anonymous at Jun 07, 2026',
-        question: 'I think a little of both, make the manager function export in mse-set',
-        answer: 'Got it, let\'s me examine the format first and I will see what I can do.'
-    },
-    {
-        author: 'Anonymous at Jun 05, 2026',
-        question: 'Can you let us export to MSE as well?\nMSE would be Magic Set Editor',
-        answer: 'Could you elaborate your request a bit more? Do you want to export the card data in a format that can be imported by MSE (.mse-set file)? Or are you using the Manager function and want to export the whole list of card data to MSE?',
     },
     {
         author: 'Anonymous at Jun 05, 2026',

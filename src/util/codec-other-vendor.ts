@@ -10,9 +10,11 @@ import {
     PendulumSize,
     getDefaultPendulumOtherMakerCard,
     getDefaultCard,
+    CardArtCanvasCoordinateMap,
 } from 'src/model';
 import { normalizeCardEffect, normalizeCardName } from './normalize';
 import { isImageData } from './other';
+import { cropBase64, imageLinkToBase64 } from './image';
 
 const cardIconMap: Record<string, string> = {
     CONTINUOUS: 'Continuous',
@@ -113,6 +115,28 @@ const rarityMap = Object.entries(reverseRarityMap).reduce<Record<string, string>
 
     return acc;
 }, {});
+export const getCardMakerImage = async (card: Card, imageName: string) => {
+    const {
+        art,
+        artData,
+        artSource,
+        artCrop,
+        artFit,
+        isPendulum,
+    } = card;
+    const desiredRatio = isPendulum ? CardArtCanvasCoordinateMap.truePendulum.artRatio : 1;
+    const imageData = artFit
+        ? artSource === 'offline'
+            ? await cropBase64(artData)
+            : await imageLinkToBase64(art)
+        : artSource === 'offline'
+            ? await cropBase64(artData, artCrop, desiredRatio)
+            : await imageLinkToBase64(art, artCrop, desiredRatio);
+    return {
+        data: imageData,
+        name: imageName,
+    };
+};
 
 /**
  * Why does artRef here?
@@ -123,10 +147,10 @@ const rarityMap = Object.entries(reverseRarityMap).reduce<Record<string, string>
  * 
  * That means the crop and full image information only matter for ygocarder data, as other vendor does not support any operation regarding the full image, and only care about the cropped part. So when we export ygocarder data, we will retain full image information / image link, but when export other vendor data, we only get the cropped part of the image, hence while we need the ref here.
  */
-export const ygoCarderToCardMakerData = (
+export const ygoCarderToCardMakerData = async (
     card: Card,
-    artRef?: HTMLCanvasElement | null,
-): { result: OtherMakerCard, isPartial: boolean } => {
+    _option?: Record<string, unknown>,
+): Promise<{ result: OtherMakerCard, isPartial: boolean }> => {
     const {
         name,
         star,
@@ -135,9 +159,6 @@ export const ygoCarderToCardMakerData = (
         effect,
         atk,
         def,
-        art,
-        artData,
-        artSource,
         password,
         creator,
         attribute,
@@ -163,12 +184,10 @@ export const ygoCarderToCardMakerData = (
     const normalizedAttribute = attributeImageSource === 'auto' ? attributeMap[attribute] : attributeMap['LIGHT'];
     const normalizedFrame = frameMap[frame];
     const normalizedRarity = nameStyleType === 'predefined'
-        ? rarityMap[
-        [nameStyle.preset, artFinish, finish.join('|')].join('-')
-        ]
+        ? rarityMap[[nameStyle.preset, artFinish, finish.join('|')].join('-')]
         : 'common';
     const { pendulum, rarity, ...rest } = externalInfo ?? {};
-
+    const imageData = await getCardMakerImage(card, 'image0');
     const isPartial = name !== normalizedName
         || effect !== normalizedEffect
         || pendulumEffect !== normalizedPendulumEffect
@@ -213,11 +232,7 @@ export const ygoCarderToCardMakerData = (
         boxSize: pendulumSize === 'large' ? 'Small' : 'Normal',
         rarity: normalizedRarity ?? rarity,
         /** For other card maker, inline art data is preferred over art link */
-        image: artRef
-            ? artRef.toDataURL('image/jpeg')
-            : artSource === 'offline'
-                ? artData
-                : art,
+        image: imageData.data,
         ...rest,
     };
 

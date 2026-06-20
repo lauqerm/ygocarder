@@ -1,7 +1,7 @@
 import { Dropdown, Input, Menu, Modal, notification, Tooltip } from 'antd';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Copiable, CopiableOverlayStyle, InternalPopover, RadioTrain, ResolutionPicker, StyledPopMarkdown, TaintedCanvasPanel } from 'src/component';
-import { LanguageDataDictionary, useCard, useLanguage, useSetting } from 'src/service';
+import { LanguageDataDictionary, mseDataToDownloadable, useCard, useLanguage, useSetting } from 'src/service';
 import styled from 'styled-components';
 import { StyledActionIconButton } from './styled';
 import { downloadBlob, mergeClass, normalizeCardName, ygoCarderToCardMakerData, ygoCarderToExportableData } from 'src/util';
@@ -33,7 +33,8 @@ const StyledExportContainer = styled.div`
         gap: var(--spacing-lg);
         align-items: center;
         grid-template-columns: 1fr 1fr 1fr 1fr;
-        &.mode_other {
+        &.mode_other,
+        &.mode_mse {
             grid-template-columns: 1fr 1fr;
         }
         button {
@@ -94,17 +95,75 @@ const CardDataCopyButton = ({
     >{children}</Copiable>;
 };
 
-type ExportMode = 'ygocarder' | 'other';
+type ExportMode = 'ygocarder' | 'other' | 'mse';
+type ExportData = {
+    data: Blob | undefined,
+    isPartial: boolean,
+    name: string,
+    textData?: string,
+    type: string,
+    typeLabel: string,
+    value: ExportMode,
+};
 const getExportModeDataList = (language: LanguageDataDictionary) => [
     {
         label: language['button.import.for-ygocarder.label'],
         value: 'ygocarder' as const,
-        converter: ygoCarderToExportableData,
+        converter: async (card: Card) => {
+            const {
+                isPartial,
+                result,
+            } = ygoCarderToExportableData(card);
+            const textData = `${JSON.stringify(result)}`;
+
+            return {
+                value: 'ygocarder' as const,
+                isPartial,
+                name: normalizeCardName(card.name),
+                textData,
+                data: new Blob([textData], { type: 'application/json' }),
+                type: 'application/json',
+                typeLabel: '.json',
+            };
+        },
     },
     {
         label: language['button.import.for-other.label'],
         value: 'other' as const,
-        converter: ygoCarderToCardMakerData,
+        converter: async (card: Card) => {
+            const {
+                isPartial,
+                result,
+            } = await ygoCarderToCardMakerData(card);
+            const textData = `${JSON.stringify(result)}`;
+
+            return {
+                value: 'other' as const,
+                isPartial,
+                name: normalizeCardName(card.name),
+                textData,
+                data: new Blob([textData], { type: 'application/json' }),
+                type: 'application/json',
+                typeLabel: '.json',
+            };
+        },
+    },
+    {
+        label: language['button.import.for-mse.label'],
+        value: 'mse' as const,
+        converter: async (card: Card) => {
+            const { blob, type, name } = await mseDataToDownloadable([card]);
+
+            return {
+                value: 'mse' as const,
+                isPartial: true,
+                name,
+                data: blob,
+                textData: undefined,
+                type,
+                typeLabel: '.mse-set',
+            };
+        },
     },
 ];
 
@@ -113,23 +172,22 @@ export type ExportPanelRef = {
 };
 export type ExportPanel = {
     tainted: boolean,
-    artworkCanvas: HTMLCanvasElement | null,
     onRequireExportData: () => void,
     onRequireDownload: () => void,
     onClose: () => void,
 };
 export const ExportPanel = forwardRef(({
     tainted,
-    artworkCanvas,
     onRequireExportData,
     onRequireDownload,
     onClose,
 }: ExportPanel, ref: React.ForwardedRef<ExportPanelRef>) => {
     const [visible, setVisible] = useState(false);
     const [mode, setMode] = useState<ExportMode>('ygocarder');
-    const [internalCardData, setInternalCardData] = useState<Record<ExportMode, { name: string, data: string, isPartial: boolean }>>({
-        other: { name: '', data: '', isPartial: false },
-        ygocarder: { name: '', data: '', isPartial: false },
+    const [internalCardData, setInternalCardData] = useState<Record<ExportMode, ExportData>>({
+        other: { value: 'other', name: '', isPartial: false, data: undefined, type: '', typeLabel: '.json' },
+        ygocarder: { value: 'ygocarder', name: '', isPartial: false, data: undefined, type: '', typeLabel: '.json' },
+        mse: { value: 'mse', name: '', isPartial: false, data: undefined, type: '', typeLabel: '.mse-set' },
     });
     const {
         allowHotkey,
@@ -149,47 +207,34 @@ export const ExportPanel = forwardRef(({
             target.select();
         }
     }, []);
-    const downloadAsFile = (name: string, rawData: string) => {
-        const blob = new Blob([rawData], { type: 'application/json' });
-        downloadBlob(
-            normalizeCardName(name),
-            blob,
-            'application/json',
-        );
-    };
 
+    const counter = useRef(0);
     useImperativeHandle(ref, () => ({
-        setCardData: (card: Card, openModal = true) => {
+        setCardData: async (card: Card, openModal = true) => {
             if (openModal) setVisible(true);
-            setInternalCardData(getExportModeDataList(language)
-                .map(({ value, converter }) => {
+            counter.current += 1;
+            const internalCounter = counter.current;
+            const exportDataList: ExportData[] = await Promise.all(getExportModeDataList(language)
+                .map(async ({ value, converter }) => {
                     try {
-                        const {
-                            isPartial,
-                            result,
-                        } = converter(card, artworkCanvas);
-
-                        return {
-                            value,
-                            isPartial,
-                            name: normalizeCardName(card.name),
-                            data: `${JSON.stringify(result)}`,
-                        };
+                        return await converter(card);
                     } catch (e) {
                         console.error(e);
-
                         return {
                             value,
                             isPartial: false,
                             name: 'Unknown',
-                            data: '',
+                            data: undefined,
+                            type: '',
+                            typeLabel: '',
                         };
                     }
-                })
-                .reduce<Record<ExportMode, { name: string, data: string, isPartial: boolean }>>((prev, { data, isPartial, value, name }) => {
-                    prev[value] = { name, data, isPartial };
+                }));
+            if (internalCounter === counter.current) setInternalCardData(exportDataList
+                .reduce<Record<ExportMode, ExportData>>((acc, exportData) => {
+                    acc[exportData.value] = exportData;
 
-                    return prev;
+                    return acc;
                 }, { ...internalCardData })
             );
         },
@@ -205,6 +250,9 @@ export const ExportPanel = forwardRef(({
         data,
         isPartial,
         name,
+        textData,
+        type,
+        typeLabel,
     } = internalCardData[mode];
     return <>
         <Modal
@@ -239,17 +287,12 @@ export const ExportPanel = forwardRef(({
                             <StyledActionIconButton
                                 disabled={tainted && mode === 'other'}
                                 onClick={() => {
-                                    const blob = new Blob([data], { type: 'application/json' });
-                                    downloadBlob(
-                                        normalizeCardName(name),
-                                        blob,
-                                        'application/json',
-                                    );
+                                    if (data) downloadBlob(name, data, type);
                                 }}
                             >
                                 <div className="icon"><DownloadOutlined /></div>
                                 <div className="label">
-                                    {language['button.export-modal.download-button.label']}
+                                    {language['button.export-modal.download-button.label']}{typeLabel.length > 0 ? ` ${typeLabel}` : ''}
                                 </div>
                             </StyledActionIconButton>
                         </div>
@@ -265,7 +308,7 @@ export const ExportPanel = forwardRef(({
                         <div>
                             <CardDataCopyButton
                                 disabled={false}
-                                data={internalCardData.ygocarder.data}
+                                data={textData || ''}
                                 withText
                             >
                                 <div className="icon"><CopyOutlined /></div>
@@ -321,7 +364,7 @@ export const ExportPanel = forwardRef(({
                         id={inputId}
                         className="export-input-raw"
                         size="small"
-                        value={internalCardData.ygocarder.data}
+                        value={textData || ''}
                         rows={5}
                     />}
                 </div>
@@ -339,17 +382,12 @@ export const ExportPanel = forwardRef(({
             overlay={<Menu onClick={e => e.domEvent.stopPropagation()}>
                 {getExportModeDataList(language).map(({ converter, label }, index) => {
                     return <Menu.Item key={`${index}`}
-                        onClick={() => {
+                        onClick={async () => {
                             try {
                                 const card = useCard.getState().card;
-                                const {
-                                    result,
-                                } = converter(card, artworkCanvas);
+                                const { name, data, type } = await converter(card);
 
-                                downloadAsFile(
-                                    normalizeCardName(card.name),
-                                    `${JSON.stringify(result)}`,
-                                );
+                                downloadBlob(name, data, type);
                             } catch (e) {
                                 console.error(e);
                                 notification.error({

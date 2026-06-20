@@ -106,9 +106,12 @@ export const ygoCarderToTextData = (
             return format === 'tcg' ? tcgLinkLabelMap[entry] : ocgLinkLabelMap[entry];
         }).join(format === 'tcg' ? ', ' : '、')}`);
     }
-    if (isPendulum) lineList.push(`${format === 'tcg' ? '[PENDULUM EFFECT]' : '【ペンデュラム効果】'}\n${normalizeCardEffect(pendulumEffect)}`);
-    if (isPendulum) lineList.push(`${format === 'tcg' ? '[MONSTER EFFECT]' : '【効果】'}\n${normalizeCardEffect(effect)}`);
-    else lineList.push(normalizeCardEffect(effect));
+    if (isPendulum) {
+        lineList.push(`${format === 'tcg' ? '[PENDULUM EFFECT]' : '【ペンデュラム効果】'}\n${normalizeCardEffect(pendulumEffect).replace(/^\s*[\r\n]/gm, '')}`);
+    }
+    const cardEffect = normalizeCardEffect(effect).replace(/^\s*[\r\n]/gm, '');
+    if (isPendulum) lineList.push(`${format === 'tcg' ? '[MONSTER EFFECT]' : '【効果】'}\n${cardEffect}`);
+    else lineList.push(cardEffect);
 
     return {
         result: lineList.filter(entry => entry.length !== 0).join('\n'),

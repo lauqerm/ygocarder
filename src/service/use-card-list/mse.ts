@@ -1,5 +1,7 @@
+import { notification } from 'antd';
 import { Card } from 'src/model';
-import { base64ToBlob, imageLinkToBlob, stringifyMseData, ygoCarderToMseData } from 'src/util';
+import { getMseImage, stringifyMseData, ygoCarderToMseData } from 'src/util';
+import { getLanguage } from '../use-i18n';
 
 export const cardListToMse = async (cardList: Card[]) => {
     const imageList: { blob: Blob, name: string }[] = [];
@@ -7,22 +9,11 @@ export const cardListToMse = async (cardList: Card[]) => {
     for (let cnt = 0; cnt < cardList.length; cnt++) {
         const card = cardList[cnt];
         const code = `${cnt}`;
-        const {
-            art,
-            artData,
-            artSource,
-            artCrop,
-        } = card;
-        const artBlob = artSource === 'offline'
-            ? await base64ToBlob(artData)
-            : await imageLinkToBlob(art, artCrop);
-        stringifiedCardList.push(stringifyMseData(ygoCarderToMseData(card, undefined, {
-            imageName: code,
+        const imageName = `image${code}`;
+        stringifiedCardList.push(stringifyMseData(ygoCarderToMseData(card, {
+            imageName,
         }).result));
-        imageList.push({
-            blob: artBlob,
-            name: `image${code}`,
-        });
+        imageList.push(await getMseImage(card, imageName));
     }
     const resultList = [
         'mse_version: 2.0.1',
@@ -65,10 +56,52 @@ export const cardListToMse = async (cardList: Card[]) => {
         '	type: none',
         'apprentice_code: ',
     ];
-    console.log('resultList', resultList.join('\n'));
     return {
         error: null,
         set: new Blob([resultList.join('\n')], { type: 'text/plain' }),
         imageList,
+    };
+};
+
+export const mseDataToDownloadable = async (cardList: Card[]) => {
+    const debugMode = false;
+    const language = getLanguage();
+    const {
+        error,
+        set,
+        imageList,
+    } = await cardListToMse(cardList);
+
+    if (error) {
+        let errorMessage = '';
+        let errorDescription = '';
+        switch (error) {
+            case 'offline-data': {
+                errorMessage = language['error.export.offline-data.message'];
+                errorDescription = language['error.export.offline-data.description'];
+                break;
+            }
+        }
+
+        if (errorMessage || errorDescription) {
+            notification.error({
+                message: errorMessage,
+                description: errorDescription,
+            });
+        }
+    }
+    const JSZip = (await import('jszip')).default;
+    const zipObject = new JSZip();
+    zipObject.file('set' + (debugMode ? '.txt' : ''), set);
+    imageList.forEach(({ blob, name }) => {
+        zipObject.file(name + (debugMode ? '.png' : ''), blob);
+    });
+    const blob = await zipObject.generateAsync({
+        type: 'blob',
+    });
+    return {
+        name: 'convert-result' + (debugMode ? '.zip' : '.mse-set'),
+        blob,
+        type: 'application/zip',
     };
 };

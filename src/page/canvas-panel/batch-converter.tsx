@@ -117,54 +117,49 @@ export const BatchConverter = ({
                 try {
                     setRunning(true);
                     /** Convert here */
-                    const convertedFileList = await Promise.all(fileList.map(({ file, name }) => {
-                        return new Promise<{ blob: Blob, name: string }>((resolve, reject) => {
+                    const readFileAsText = (file: File): Promise<string> =>
+                        new Promise((resolve, reject) => {
                             const reader = new FileReader();
                             reader.onload = ({ target }) => {
-                                if (!target) {
-                                    reject('Not a valid target');
-                                    return;
-                                }
-
-                                const { result } = target;
-                                if (typeof result !== 'string') {
-                                    reject('Not a valid result');
-                                    return;
-                                }
-
-                                let resultObject = JSON.parse(result);
-                                /** Ensure compact mode, remember we only accept non-compress card data as a quality-of-life. Normal card data should always be in compact mode */
-                                if (checkYgoCarderCard(resultObject)) {
-                                    resultObject = compressCardData(resultObject);
-                                }
-
-                                const isYgoCarderCard = checkCompactYgoCarderCard(resultObject);
-                                let convertedCard: Record<string, unknown> | null = null;
-                                if (isReverse) {
-                                    /** Ygocarder into other vendor */
-                                    convertedCard = isYgoCarderCard
-                                        ? ygoCarderToCardMakerData(decodeCard(resultObject).card).result
-                                        : resultObject;
-                                } else {
-                                    /** Other vendor into ygocarder */
-                                    convertedCard = isYgoCarderCard
-                                        ? resultObject
-                                        : compressCardData(decodeCard(resultObject).card);
-                                }
-
-                                if (!convertedCard) {
-                                    reject('Not a valid converted result');
-                                    return;
-                                }
-                                const blob = new Blob(
-                                    [`${JSON.stringify(convertedCard)}`],
-                                    { type: 'application/json' },
-                                );
-                                resolve({ blob, name });
+                                if (!target) return reject('Not a valid target');
+                                if (typeof target.result !== 'string') return reject('Not a valid result');
+                                resolve(target.result);
                             };
+                            reader.onerror = () => reject(reader.error);
                             reader.readAsText(file);
                         });
-                    }));
+
+                    const convertFile = async ({ file, name }: { file: File; name: string }): Promise<{ blob: Blob; name: string }> => {
+                        const text = await readFileAsText(file);
+                        let resultObject = JSON.parse(text);
+
+                        /** Ensure compact mode, remember we only accept non-compress card data as a quality-of-life. Normal card data should always be in compact mode */
+                        if (checkYgoCarderCard(resultObject)) {
+                            resultObject = compressCardData(resultObject);
+                        }
+
+                        const isYgoCarderCard = checkCompactYgoCarderCard(resultObject);
+                        let convertedCard: Record<string, unknown> | null = null;
+
+                        if (isReverse) {
+                            /** Ygocarder into other vendor */
+                            convertedCard = isYgoCarderCard
+                                ? (await ygoCarderToCardMakerData(decodeCard(resultObject).card)).result
+                                : resultObject;
+                        } else {
+                            /** Other vendor into ygocarder */
+                            convertedCard = isYgoCarderCard
+                                ? resultObject
+                                : compressCardData(decodeCard(resultObject).card);
+                        }
+
+                        if (!convertedCard) throw new Error('Not a valid converted result');
+
+                        const blob = new Blob([JSON.stringify(convertedCard)], { type: 'application/json' });
+                        return { blob, name };
+                    };
+
+                    const convertedFileList = await Promise.all(fileList.map(convertFile));
 
                     const JSZip = (await import('jszip')).default;
                     const zipObject = new JSZip();

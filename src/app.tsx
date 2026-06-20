@@ -628,7 +628,6 @@ function App() {
                                     <div className="imexport">
                                         <ExportPanel ref={exportPanelRef}
                                             tainted={isTainted}
-                                            artworkCanvas={artworkCanvasRef.current}
                                             onRequireExportData={exportData}
                                             onRequireDownload={() => downloadButtonRef.current?.download()}
                                             onClose={forceRefocus}

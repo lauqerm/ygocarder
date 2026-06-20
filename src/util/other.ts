@@ -173,3 +173,36 @@ export function capitalizeFirstLetter(str: string) {
     if (!str) return ''; // Handle empty strings safely
     return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+export function updateCropRatio(
+    crop: Partial<ReactCrop.Crop>,
+    image: { width: number, height: number },
+    r: number,
+): Partial<ReactCrop.Crop> {
+    if (typeof crop.width !== 'number' || typeof crop.y !== 'number' || typeof crop.x !== 'number') {
+        return crop;
+    }
+    // The crop percentage ratio that produces the target pixel ratio r.
+    // Derivation: (w% * imgW) / (h% * imgH) = r  =>  w%/h% = r * imgH / imgW
+    const cropRatio = r * image.height / image.width;
+
+    // Try to keep width — derive height from it
+    const heightFromWidth = crop.width / cropRatio;
+    if (crop.y + heightFromWidth <= 100) {
+        return { ...crop, height: heightFromWidth };
+    }
+
+    // Try to keep y — clamp height, derive width from clamped height
+    const maxHeightFromY = 100 - crop.y;
+    const widthFromY = maxHeightFromY * cropRatio;
+    if (crop.x + widthFromY <= 100) {
+        return { ...crop, width: widthFromY, height: maxHeightFromY };
+    }
+
+    // Try to keep x — reset y to 0, fit largest possible crop from x
+    const maxWidth = 100 - crop.x;
+    const maxHeight = 100;
+    const widthFromX = Math.min(maxWidth, maxHeight * cropRatio);
+    const heightFromX = widthFromX / cropRatio;
+    return { ...crop, y: 0, width: widthFromX, height: heightFromX };
+}
