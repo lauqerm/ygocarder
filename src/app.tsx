@@ -503,6 +503,22 @@ function App() {
         downloadButtonRef.current?.download();
     }, [allowHotkey]);
 
+    const resetCardData = useCallback(() => {
+        const consent = window.confirm(language['prompt.reset.message']);
+
+        if (consent) {
+            const { setCard, card } = useCard.getState();
+            const defaultCard = { id: card.id, ...getDefaultCard() };
+            const contextualDefaultCardData = card.format === 'tcg'
+                ? defaultCard
+                : changeCardFormat(defaultCard, 'ocg');
+
+            setCard(contextualDefaultCardData, true);
+            setImageChangeCount(cnt => cnt + 1);
+            cardInputRef.current?.forceCardData(contextualDefaultCardData);
+        }
+    }, [language]);
+
     const hotkeyHandlerMap = useMemo(() => {
         return {
             IMPORT: (event?: { preventDefault: () => void }) => importData(event, true),
@@ -665,21 +681,7 @@ function App() {
                                     <Tooltip title={language['generic.reset.tooltip']}>
                                         <ResetButton
                                             className="reset-button"
-                                            onClick={() => {
-                                                const consent = window.confirm(language['prompt.reset.message']);
-
-                                                if (consent) {
-                                                    const { setCard, card } = useCard.getState();
-                                                    const defaultCard = { id: card.id, ...getDefaultCard() };
-                                                    const contextualDefaultCardData = card.format === 'tcg'
-                                                        ? defaultCard
-                                                        : changeCardFormat(defaultCard, 'ocg');
-
-                                                    setCard(contextualDefaultCardData, true);
-                                                    setImageChangeCount(cnt => cnt + 1);
-                                                    cardInputRef.current?.forceCardData(contextualDefaultCardData);
-                                                }
-                                            }}
+                                            onClick={resetCardData}
                                         >
                                             <ClearOutlined />
                                         </ResetButton>
@@ -834,15 +836,16 @@ function App() {
                         </div>
                         {isLoading === false && <CardInputPanel
                             ref={cardInputRef}
+                            resetCardData={resetCardData}
                             applyCardData={treatNewCard}
                             artworkCanvas={artworkCanvasRef.current}
                             attributeCanvas={attributeCanvasRef.current}
                             backgroundCanvas={backgroundCanvasRef.current}
                             iconImageCanvas={iconImageCanvasRef.current}
+                            overlayCanvas={overlayCanvasRef.current}
                             onCropChange={rerenderCardImage}
                             onSourceLoaded={rerenderAllImage}
                             onTainted={markTaintedImage}
-                            overlayCanvas={overlayCanvasRef.current}
                         />}
                     </div>
                     <CardManagerPanel

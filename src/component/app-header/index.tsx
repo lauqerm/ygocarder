@@ -35,8 +35,13 @@ const AppHeaderContainer = styled.div`
     border-radius: var(--br);
     box-shadow: var(--bs-block);
     transition: width linear 2s;
-    img {
-        margin: 3px 0; // Alignment
+    .app-logo {
+        cursor: pointer;
+        padding: 3px 0; // Alignment
+        border-radius: var(--br);
+        &:hover {
+            background-color: var(--main-active);
+        }
     }
     .header-language {
         display: inline-flex;
@@ -120,9 +125,12 @@ const AdditionalContributorContainer = styled(StyledPopMarkdown)`
 `;
 const HeaderPanel = lazy(() => import('./header-panel').then(({ HeaderPanel }) => ({ default: HeaderPanel })));
 /** @summary If possible, please don't remove this credit box. Show these artists the appreciation they deserve for their hard works. */
-export type AppHeader = {} & Pick<SampleCard, 'applyCardData'>;
+export type AppHeader = {
+    resetCardData: () => void,
+} & Pick<SampleCard, 'applyCardData'>;
 export const AppHeader = ({
     applyCardData,
+    resetCardData,
 }: AppHeader) => {
     const {
         language,
@@ -169,7 +177,9 @@ export const AppHeader = ({
     }, [language, reportTarget]);
 
     return <AppHeaderContainer className="app-header">
-        <img className="app-logo" alt="app-logo" src={`${PUBLIC_PATH}/logo192.png`} width={35} />
+        <Tooltip title={language['generic.reset.label']}>
+            <img className="app-logo" alt="app-logo" src={`${PUBLIC_PATH}/logo192.png`} width={35} onClick={() => resetCardData()} />
+        </Tooltip>
         <div className="app-description">
             <div className="header-language">
                 <h1>Yugioh Carder</h1>

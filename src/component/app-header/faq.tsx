@@ -44,8 +44,14 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '20/06/2026';
+const currentReminder = '21/06/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Snow at Jun 19, 2026',
+        question: 'Hi! Sorry to disturb you guys, this card maker is amazing!!!!! Its the best I\'ve used. I would like to know if it\'s possible to remove the effect textbox and write on the place it originally it was, like the image on the card. Also, does the card maker have a full reset button? Like one that undo everything I\'ve selected previously and make the settings go back to how it was when I\'ve oppened de card maker (even advanced options, like "boundless" or "keep art border"). Sorry for the questions, thx for the card maker!!!!!!',
+        answer: 'Hi there, when you move your mouse over the card, you will see two additional options appearing on the top right of them, including the full reset option, or you can also press the app\'s logo on the header. For your request about removing effect textbox, let\'s me check my assets to see if it is possible first, then I will get back to it later.',
+        image: ['https://i.postimg.cc/RFRQNt5m/image.png'],
+    },
     {
         author: 'Anonymous at Jun 07, 2026',
         question: 'I think a little of both, make the manager function export in mse-set',

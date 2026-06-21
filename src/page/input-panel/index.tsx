@@ -82,8 +82,9 @@ export type CardInputPanel = {
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
     iconImageCanvas: ImageInputGroup['receivingCanvas'],
     overlayCanvas: ImageInputGroup['receivingCanvas'],
-} & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData'>;
+} & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData' | 'resetCardData'>;
 export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
+    resetCardData,
     applyCardData,
     artworkCanvas,
     backgroundCanvas,
@@ -246,6 +247,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         className={['card-info-panel', format === 'ocg' ? 'input-ocg' : 'input-tcg'].join(' ')}
     >
         <AppHeader
+            resetCardData={resetCardData}
             applyCardData={applyCardData}
         />
         <br />
