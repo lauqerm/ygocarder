@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '21/06/2026';
+const currentReminder = '22/06/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'xMiraiMeteor at Jun 21, 2026',
+        question: 'Hi!\nAs I was making Link Overframes, I noticed that the art is not covering the Link Arrows. Is it possible for it to be added as a separate option like how you can optionally overlap the art above the name and Level/Rank? Do let me know if this was already reported as I only skimmed through the feedbacks. (typical Yu-Gi-Oh player behavior)',
+        answer: 'Hi, the option now also supports link markers. So checking the box will make the artwork goes above the card name, stars and link arrows.'
+    },
     {
         author: 'Snow at Jun 19, 2026',
         question: 'Hi! Sorry to disturb you guys, this card maker is amazing!!!!! Its the best I\'ve used. I would like to know if it\'s possible to remove the effect textbox and write on the place it originally it was, like the image on the card. Also, does the card maker have a full reset button? Like one that undo everything I\'ve selected previously and make the settings go back to how it was when I\'ve oppened de card maker (even advanced options, like "boundless" or "keep art border"). Sorry for the questions, thx for the card maker!!!!!!',

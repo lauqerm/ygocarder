@@ -323,6 +323,33 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const loopFinish = useMemo(() => getFinishIterator(finish, FinishMap), [finish]);
     const loopArtFinish = useMemo(() => getFinishIterator([artFinish], ArtFinishMap), [artFinish]);
     const [, iconFinish, stickerFinish] = otherFinish;
+    const getLinkLayer = useCallback(async () => {
+        if (isLink) {
+            console.log('draw');
+            const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
+            const {
+                artBorder: keepArtBorder,
+                body: opacityBody,
+                boundless,
+            } = normalizedOpacity;
+            const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
+            const { ctx: linkArrowCtx, canvas: linkArrowCanvas } = createCanvas(CanvasWidth, CanvasHeight);
+            if (linkArrowCtx) {
+                await baseDrawLinkArrowMap(linkArrowCtx, 1, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
+                await baseDrawLinkMapFoil(linkArrowCtx, 1, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
+                const deactivatedMarkerList = hideDeactivatedLinkMarker
+                    ? ['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(entry => !linkMap.includes(entry))
+                    : [];
+                for (let cnt = 0; cnt < deactivatedMarkerList.length; cnt++) {
+                    const targetIndex = parseInt(deactivatedMarkerList[cnt]);
+                    const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][targetIndex - 1];
+                    if (target) linkArrowCtx.clearRect(target.left, target.top, target.width, target.height);
+                }
+                return linkArrowCanvas;
+            }
+        }
+        return null;
+    }, [foil, foilDyeColor, hideDeactivatedLinkMarker, isLink, isPendulum, linkMap, opacity]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -359,9 +386,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         nameStyle,
         nameStyleType,
     ]);
-    const triggerDrawNameEagerly = useMemo(
+    const normalizedBoundless = { ...getDefaultCardOpacity(), ...opacity }.boundless;
+    const drawNameStarBelowImage = useMemo(
         () => {
-            if (nameStarBelowImage) return [
+            if (nameStarBelowImage && normalizedBoundless) return [
                 readyToDraw,
                 globalScale,
                 nameStarBelowImage,
@@ -380,6 +408,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         [
             readyToDraw,
             globalScale,
+            normalizedBoundless,
             nameStarBelowImage,
             attribute,
             foil,
@@ -392,6 +421,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             nameStyleType,
         ]
     );
+    const drawEagerly = normalizedBoundless && drawNameStarBelowImage;
 
     const eagerlyDrawHistory = useRef(-1);
     /** DRAW CARD STRUCTURE */
@@ -632,13 +662,19 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 /**
                  * Draw card name and stars eagerly here, so they lie below the boundless image
                  */
-                if (triggerDrawNameEagerly) {
+                if (drawEagerly) {
                     if (eagerlyDrawHistory.current !== drawingPipeline.current.name.rerun) {
                         eagerlyDrawHistory.current = drawingPipeline.current.name.rerun;
                         await drawingPipeline.current.name.instructor();
                     }
                     if (nameCanvasRef.current) ctx.drawImage(nameCanvasRef.current, 0, 0);
                     await callDrawStar();
+                    const linkArrowCanvas = await getLinkLayer();
+                    if (linkArrowCanvas) {
+                        ctx.scale(globalScale, globalScale);
+                        ctx.drawImage(linkArrowCanvas, 0, 0);
+                        ctx.scale(1 / globalScale, 1 / globalScale);
+                    }
                 }
                 if (isLink && !isPendulum) {
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
@@ -701,7 +737,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 console.error('drawAttribute error', e);
             }
             await drawAttributeFinish();
-            if (!triggerDrawNameEagerly) await callDrawStar();
+            if (!drawEagerly) await callDrawStar();
 
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
@@ -786,8 +822,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         starAlignment,
         starList,
         statInEffect,
-        triggerDrawNameEagerly,
+        drawEagerly,
         withBlueScale,
+        getLinkLayer,
         withRedScale,
         imageChangeCount, // Special dependency, do not remove even though it is not used in the effect itself
     ]);
@@ -1320,26 +1357,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
 
-            if (isLink) {
-                const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
-                const {
-                    artBorder: keepArtBorder,
-                    body: opacityBody,
-                    boundless,
-                } = normalizedOpacity;
-                const hasArtBorder = opacityBody > 0 ? true : keepArtBorder;
-                const { ctx: linkArrowCtx, canvas: linkArrowCanvas } = createCanvas(CanvasWidth, CanvasHeight);
-                if (linkArrowCtx) {
-                    await baseDrawLinkArrowMap(linkArrowCtx, 1, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
-                    await baseDrawLinkMapFoil(linkArrowCtx, 1, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
-                    const deactivatedMarkerList = hideDeactivatedLinkMarker
-                        ? ['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(entry => !linkMap.includes(entry))
-                        : [];
-                    for (let cnt = 0; cnt < deactivatedMarkerList.length; cnt++) {
-                        const targetIndex = parseInt(deactivatedMarkerList[cnt]);
-                        const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][targetIndex - 1];
-                        if (target) linkArrowCtx.clearRect(target.left, target.top, target.width, target.height);
-                    }
+            if (!drawEagerly) {
+                const linkArrowCanvas = await getLinkLayer();
+                if (linkArrowCanvas) {
                     ctx.scale(globalScale, globalScale);
                     ctx.drawImage(linkArrowCanvas, 0, 0);
                     ctx.scale(1 / globalScale, 1 / globalScale);
@@ -1354,42 +1374,26 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             );
             ctx.resetTransform();
         };
-    }, [
-        readyToDraw,
-        globalScale,
-        finishCanvasRef,
-        loopFinish,
-        foilDyeColor,
-        name,
-        isLink,
-        isPendulum,
-        linkMap,
-        opacity,
-        boundless,
-        foil,
-        resolvedStatTextStyle,
-        statInEffect,
-        hideDeactivatedLinkMarker,
-        frameCanvasRef,
-    ]);
+    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, getLinkLayer, drawEagerly]);
 
 
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useCallback(async (exportProps: ExportCallbackParameter) => {
         const {
-            // isRelevant,
+            isRelevant,
             //     pendulumSize,
             //     isPendulum = false,
             //     opacity,
             onError,
             onSuccess,
         } = exportProps;
-        const exportCanvas = exportCanvasRef.current;
-        const exportCtx = exportCanvas?.getContext('2d');
+        const {
+            canvas: operateCanvas,
+            ctx: operateContext,
+        } = createCanvas(CanvasWidth * globalScale, CanvasHeight * globalScale);
 
-        if (exportCanvas && exportCtx) {
+        if (operateCanvas && operateContext) {
             lightboxRef.current?.setBusy(() => true);
-            clearCanvas(exportCtx);
             await Promise.all(Object
                 .values(drawingPipeline.current)
                 .sort((l, r) => l.order - r.order)
@@ -1441,29 +1445,39 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 } = await generateLayer(canvas, 0, `${name}`);
                 if (status === 'error') lastError = { count: cnt, error };
                 if (draw) {
-                    const willDraw = !(nameStarBelowImage && ['nameLayer'].includes(name));
-                    if (willDraw) draw(exportCtx);
+                    const willDraw = drawEagerly
+                        ? !(['nameLayer'].includes(name))
+                        : true;
+                    if (willDraw) draw(operateContext);
                 }
             }
             if (lastError.error) onError(lastError.error);
 
-            lightboxRef.current?.draw(exportCanvas);
-            lightboxRef.current?.setBusy(() => false);
-            previewCanvasRef.current?.getContext('2d')?.drawImage(
-                exportCanvas,
-                0,
-                0,
-                exportCanvas.width,
-                exportCanvas.height,
-                0,
-                0,
-                CanvasWidth,
-                CanvasHeight,
-            );
+
+            const exportCanvas = exportCanvasRef.current;
+            const exportCtx = exportCanvas?.getContext('2d');
+            if (exportCanvas && exportCtx && isRelevant()) {
+                clearCanvas(exportCtx);
+                exportCtx.drawImage(operateCanvas, 0, 0);
+                lightboxRef.current?.draw(operateCanvas);
+                lightboxRef.current?.setBusy(() => false);
+                previewCanvasRef.current?.getContext('2d')?.drawImage(
+                    exportCanvas,
+                    0,
+                    0,
+                    exportCanvas.width,
+                    exportCanvas.height,
+                    0,
+                    0,
+                    CanvasWidth,
+                    CanvasHeight,
+                );
+            }
             if (!lastError.error) onSuccess();
         }
     }, [
         language,
+        globalScale,
         cardIconCanvasRef,
         creatorCanvasRef,
         effectCanvasRef,
@@ -1472,7 +1486,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         frameCanvasRef,
         lightboxRef,
         nameCanvasRef,
-        nameStarBelowImage,
+        drawEagerly,
         passwordCanvasRef,
         pendulumEffectCanvasRef,
         pendulumScaleCanvasRef,

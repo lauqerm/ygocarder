@@ -261,7 +261,7 @@
         "input.flag.link-rating-behavior.show": "Always show",
         "input.flag.mix-def-link": "Display both DEF and Link Rating",
         "input.flag.stat-label": "Hide stat (ATK/DEF/Link) labels",
-        "input.flag.name-star-below-image": "Artwork over card name and stars in boundless mode",
+        "input.flag.name-star-below-image": "Artwork over card name, stars and link arrows in boundless mode",
         "input.foil.gold.label": "Gold",
         "input.foil.label": "Foil",
         "input.foil.normal.label": "Normal",

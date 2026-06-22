@@ -561,7 +561,7 @@
         "manager.header.button.convert.tooltip": "変換",
         "generic.copy.label": "コピー",
         "generic.download.label": "ダウンロード",
-        "input.flag.name-star-below-image": "枠なしモードでイラストをカード名やレベル・ランクより前面に描画",
+        "input.flag.name-star-below-image": "枠なしモードでイラストをカード名やレベル・ランク・リンクマーカーより前面に描画",
         "manager.header.button.convert.alert": "変換は保存とは異なります。作業内容を失わないよう、変換後に必ずリストをエクスポートしてください。"
     }
 }
