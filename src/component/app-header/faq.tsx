@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '26/06/2026';
+const currentReminder = '07/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'xMiraiMeteor at Jun 27, 2026',
+        question: 'Regarding the report I sent last time, yes, I have found said option. But is it possible to separate them, one for each? Also, the art also covers lit Link Arrows as well. I know I have no position to say this, but how about making each Link Arrow an independent object where you can modify if they should appear on top of the artwork or not. If it\'s not possible, then I\'ll just find another way to fix it myself. Sorry and thanks.',
+        answer: 'I have split the feature and also adjusted the layer so only inactive markers are placed below the art. Individual control for each marker is a bit too "granular" right now, so I will not implement it anytime soon.'
+    },
     {
         author: 'Vendoz at Jun 25, 2026',
         question: 'Hi! It\'s me again :) Is it possible to make "Background" and "Replace Frame" be 2 different tools? because i want to replace the frame but keep the original background intact within card frame. the way i usually do is to edit them separately in Photoshop, however it would be nice if the card maker itself has these features as their own tool. Thanks!! ^_^',

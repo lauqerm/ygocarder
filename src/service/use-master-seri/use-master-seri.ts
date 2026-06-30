@@ -302,7 +302,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const [
         showDefAndLinkFlag,
         linkRatingDisplayMode,
-        hideDeactivatedLinkMarker,
+        hideInactiveLinkMarker,
         hideStatLabel,
         nameStarBelowImage,
         linkMarkerBelowImage,
@@ -333,7 +333,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const loopFinish = useMemo(() => getFinishIterator(finish, FinishMap), [finish]);
     const loopArtFinish = useMemo(() => getFinishIterator([artFinish], ArtFinishMap), [artFinish]);
     const [, iconFinish, stickerFinish] = otherFinish;
-    const getLinkLayer = useCallback(async () => {
+    const getLinkLayer = useCallback(async (
+        hideMarker: 'active' | 'inactive' | undefined,
+    ) => {
         if (isLink) {
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
@@ -346,11 +348,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (linkArrowCtx) {
                 await baseDrawLinkArrowMap(linkArrowCtx, 1, linkMap, isPendulum ? 'pendulum' : 'normal', boundless || !hasArtBorder);
                 await baseDrawLinkMapFoil(linkArrowCtx, 1, foil, false, isPendulum ? 'pendulum' : 'normal', foilDyeColor);
-                const deactivatedMarkerList = hideDeactivatedLinkMarker
-                    ? ['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(entry => !linkMap.includes(entry))
-                    : [];
-                for (let cnt = 0; cnt < deactivatedMarkerList.length; cnt++) {
-                    const targetIndex = parseInt(deactivatedMarkerList[cnt]);
+                const removeMarkerList = ['1', '2', '3', '4', '5', '6', '7', '8', '9'].filter(entry => {
+                    if (hideInactiveLinkMarker || hideMarker === 'inactive') return !linkMap.includes(entry);
+                    if (hideMarker === 'active') return linkMap.includes(entry);
+                    return false;
+                });
+                for (let cnt = 0; cnt < removeMarkerList.length; cnt++) {
+                    const targetIndex = parseInt(removeMarkerList[cnt]);
                     const target = ArrowPositionMap[isPendulum ? 'pendulum' : 'normal'][targetIndex - 1];
                     if (target) linkArrowCtx.clearRect(target.left, target.top, target.width, target.height);
                 }
@@ -358,7 +362,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             }
         }
         return null;
-    }, [foil, foilDyeColor, hideDeactivatedLinkMarker, isLink, isPendulum, linkMap, opacity]);
+    }, [foil, foilDyeColor, hideInactiveLinkMarker, isLink, isPendulum, linkMap, opacity]);
 
     /** DRAW NAME */
     useEffect(() => {
@@ -680,14 +684,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     if (nameCanvasRef.current) ctx.drawImage(nameCanvasRef.current, 0, 0);
                     await callDrawStar();
                 }
-                if (drawLinkMarkerEagerly) {
-                    const linkArrowCanvas = await getLinkLayer();
-                    if (linkArrowCanvas) {
-                        ctx.scale(globalScale, globalScale);
-                        ctx.drawImage(linkArrowCanvas, 0, 0);
-                        ctx.scale(1 / globalScale, 1 / globalScale);
-                    }
-                }
                 if (isLink && !isPendulum) {
                     /** For link layout, the artwork is above the art border, but still below the link arrows */
                     await drawArtBorderFinish();
@@ -697,6 +693,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         await drawPendulumBorderFoil(hasArtBorder);
                     }
                     await drawPendulumArtBorderFinish();
+                }
+                if (drawLinkMarkerEagerly) {
+                    const linkArrowCanvas = await getLinkLayer('active');
+                    if (linkArrowCanvas) {
+                        ctx.scale(globalScale, globalScale);
+                        ctx.drawImage(linkArrowCanvas, 0, 0);
+                        ctx.scale(1 / globalScale, 1 / globalScale);
+                    }
                 }
 
                 const {
@@ -1370,13 +1374,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
 
-            if (!drawLinkMarkerEagerly) {
-                const linkArrowCanvas = await getLinkLayer();
-                if (linkArrowCanvas) {
-                    ctx.scale(globalScale, globalScale);
-                    ctx.drawImage(linkArrowCanvas, 0, 0);
-                    ctx.scale(1 / globalScale, 1 / globalScale);
-                }
+            const linkArrowCanvas = await getLinkLayer(drawLinkMarkerEagerly ? 'inactive' : undefined);
+            if (linkArrowCanvas) {
+                ctx.scale(globalScale, globalScale);
+                ctx.drawImage(linkArrowCanvas, 0, 0);
+                ctx.scale(1 / globalScale, 1 / globalScale);
             }
 
             ctx.scale(globalScale, globalScale);
