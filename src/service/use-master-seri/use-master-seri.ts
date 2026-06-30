@@ -54,7 +54,6 @@ import {
     checkSpeedSkill,
     checkXyz,
     createCanvas,
-    generateLayer,
     resolveFrameStyle,
     resolveNameStyle,
 } from 'src/util';
@@ -92,6 +91,7 @@ type DrawingPipeline = {
     order: number,
     rerun: number,
     instructor: () => Promise<unknown>,
+    result: Promise<unknown>,
 };
 /**
  * To ensure correct layer order, each efffect that involve asynchronous image drawing will register an operation in `drawingPipeline` instead of immediately draw their part, these operations will be iterated sequentially by another effect when export.
@@ -164,54 +164,63 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             order: 1,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         attribute: {
             name: 'attribute',
             order: 2,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         sticker: {
             name: 'sticker',
             order: 3,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         creator: {
             name: 'creator',
             order: 4,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         name: {
             name: 'name',
             order: 5,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         effect: {
             name: 'effect',
             order: 6,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         pendulumEffect: {
             name: 'pendulumEffect',
             order: 7,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         otherText: {
             name: 'otherText',
             order: 7,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
         overlay: {
             name: 'overlay',
             order: 9,
             rerun: 0,
             instructor: () => Promise.resolve(),
+            result: Promise.resolve(),
         },
     });
 
@@ -325,7 +334,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const [, iconFinish, stickerFinish] = otherFinish;
     const getLinkLayer = useCallback(async () => {
         if (isLink) {
-            console.log('draw');
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
                 artBorder: keepArtBorder,
@@ -1377,6 +1385,14 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, getLinkLayer, drawEagerly]);
 
 
+    /**
+     * How it works:
+     * * Individual effect add an instruction that promises to return the newest value, and a rerun count as its identifier.
+     * * When the export actually run, it checks the history list.
+     *  * If the history identifier is the same as the newest instruction, simply return the promise.
+     *  * Else, run the instruction with the newest identifer, and write that identifier in history.
+     * * Afteward, await for all the promises. Then process to draw.
+     */
     const drawHistory = useRef<Record<string, number>>({});
     const onExport = useCallback(async (exportProps: ExportCallbackParameter) => {
         const {
@@ -1394,19 +1410,25 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
         if (operateCanvas && operateContext) {
             lightboxRef.current?.setBusy(() => true);
-            await Promise.all(Object
+            /** Check for new instructions and run them */
+            Object
                 .values(drawingPipeline.current)
                 .sort((l, r) => l.order - r.order)
-                .map(({ instructor, rerun, name }) => {
+                .forEach(({ instructor, rerun, name }) => {
                     if (
                         (rerun !== 0 && drawHistory.current[name] !== rerun)
                         || !drawHistory.current[name]
                     ) {
                         drawHistory.current[name] = rerun;
 
-                        return instructor();
+                        drawingPipeline.current[name].result = instructor();
                     }
-                    return Promise.resolve();
+                });
+            /** Await for all instruction results, including the new just-ran instructions above and old results that haven't changed. */
+            await Promise.all(Object
+                .values(drawingPipeline.current)
+                .map(({ result }) => {
+                    return result;
                 }))
                 .catch(e => {
                     console.error(e);
@@ -1419,50 +1441,43 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                         description: language['error.draw.error.description'],
                     });
                 });
-            /** It is not worth to use promise all here, just let them go sequentially to avoid too many blob generating calls. */
-            const layerRefList = [
-                { name: 'frameLayer', canvas: frameCanvasRef },
-                { name: 'nameLayer', canvas: nameCanvasRef },
-                { name: 'cardIconLayer', canvas: cardIconCanvasRef },
-                { name: 'pendulumScaleLayer', canvas: pendulumScaleCanvasRef },
-                { name: 'pendulumEffectLayer', canvas: pendulumEffectCanvasRef },
-                { name: 'typeLayer', canvas: typeCanvasRef },
-                { name: 'effectLayer', canvas: effectCanvasRef },
-                { name: 'statLayer', canvas: statCanvasRef },
-                { name: 'setIdLayer', canvas: setIdCanvasRef },
-                { name: 'passwordLayer', canvas: passwordCanvasRef },
-                { name: 'creatorLayer', canvas: creatorCanvasRef },
-                { name: 'stickerLayer', canvas: stickerCanvasRef },
-                { name: 'finishLayer', canvas: finishCanvasRef },
-            ];
-            let lastError: { count: number, error: unknown } = { count: -1, error: null };
-            for (let cnt = 0; cnt < layerRefList.length; cnt++) {
-                const { canvas, name } = layerRefList[cnt];
-                const {
-                    error,
-                    status,
-                    draw,
-                } = await generateLayer(canvas, 0, `${name}`);
-                if (status === 'error') lastError = { count: cnt, error };
-                if (draw) {
-                    const willDraw = drawEagerly
-                        ? !(['nameLayer'].includes(name))
-                        : true;
-                    if (willDraw) draw(operateContext);
-                }
-            }
-            if (lastError.error) onError(lastError.error);
-
 
             const exportCanvas = exportCanvasRef.current;
             const exportCtx = exportCanvas?.getContext('2d');
+            const lastError: { count: number, error: unknown } = { count: -1, error: null };
             if (exportCanvas && exportCtx && isRelevant()) {
+                /** It is not worth to use promise all here, just let them go sequentially to avoid too many blob generating calls. */
+                const layerRefList = [
+                    { name: 'frameCanvas', canvas: frameCanvasRef },
+                    { name: 'nameCanvas', canvas: nameCanvasRef },
+                    { name: 'cardIconCanvas', canvas: cardIconCanvasRef },
+                    { name: 'pendulumScaleCanvas', canvas: pendulumScaleCanvasRef },
+                    { name: 'pendulumEffectCanvas', canvas: pendulumEffectCanvasRef },
+                    { name: 'typeCanvas', canvas: typeCanvasRef },
+                    { name: 'effectCanvas', canvas: effectCanvasRef },
+                    { name: 'statCanvas', canvas: statCanvasRef },
+                    { name: 'setIdCanvas', canvas: setIdCanvasRef },
+                    { name: 'passwordCanvas', canvas: passwordCanvasRef },
+                    { name: 'creatorCanvas', canvas: creatorCanvasRef },
+                    { name: 'stickerCanvas', canvas: stickerCanvasRef },
+                    { name: 'finishCanvas', canvas: finishCanvasRef },
+                ];
+                for (let cnt = 0; cnt < layerRefList.length; cnt++) {
+                    const { canvas, name } = layerRefList[cnt];
+                    const willDraw = drawEagerly
+                        ? !(['nameLayer'].includes(name))
+                        : true;
+                    if (canvas.current && willDraw) {
+                        operateContext.drawImage(canvas.current, 0, 0);
+                    }
+                }
+                if (lastError.error) onError(lastError.error);
                 clearCanvas(exportCtx);
                 exportCtx.drawImage(operateCanvas, 0, 0);
                 lightboxRef.current?.draw(operateCanvas);
                 lightboxRef.current?.setBusy(() => false);
                 previewCanvasRef.current?.getContext('2d')?.drawImage(
-                    exportCanvas,
+                    operateCanvas,
                     0,
                     0,
                     exportCanvas.width,

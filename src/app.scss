@@ -397,3 +397,13 @@ input:-internal-autofill-selected {
         visibility: hidden;
     }
 }
+
+#debug-container {
+    transform: scale(0.25);
+    transform-origin: 0 0;
+    width: calc(813px * 8);
+    background: var(--main-level-1);
+    canvas {
+        background: var(--main-level-3);
+    }
+}
