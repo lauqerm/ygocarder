@@ -147,8 +147,10 @@ export const useCardExport = ({
         };
     }, []);
 
+    const drawCounter = useRef(0);
     useEffect(() => {
-        let relevant = true;
+        drawCounter.current += 1;
+        const thisCounter = drawCounter.current;
         const confirmReload = (ev: Event) => {
             ev.preventDefault();
             return language['prompt.warning.on-leave.label'];
@@ -176,18 +178,28 @@ export const useCardExport = ({
                     // await new Promise(resolve => setTimeout(() => resolve(true), 3000));
                     await exportRef.current.currentPipeline;
 
-                    if (relevant) {
+                    console.log(thisCounter, drawCounter.current);
+                    if (thisCounter === drawCounter.current) {
                         exportRef.current.currentPipeline = onExport({
                             isPendulum,
                             opacity,
                             pendulumSize,
-                            isRelevant: () => relevant,
+                            isRelevant: () => {
+                                return thisCounter === drawCounter.current;
+                            },
                         });
 
                         await exportRef.current.currentPipeline;
-                        if (relevant) {
+                        if (thisCounter === drawCounter.current) {
                             /** Never include art data here, it will easily exceed the limit of url length */
-                            const normalizedCard = { ...currentCard, artData: '', backgroundData: '', overlayData: '', iconImageData: '', attributeImageData: '' };
+                            const normalizedCard = {
+                                ...currentCard,
+                                artData: '',
+                                backgroundData: '',
+                                overlayData: '',
+                                iconImageData: '',
+                                attributeImageData: '',
+                            };
                             const condensedCard = JSON.stringify(compressCardData(normalizedCard));
                             if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
 
@@ -221,7 +233,6 @@ export const useCardExport = ({
 
         return () => {
             window.removeEventListener('beforeunload', confirmReload);
-            relevant = false;
         };
     });
 

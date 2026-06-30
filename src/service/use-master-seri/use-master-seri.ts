@@ -296,6 +296,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         hideDeactivatedLinkMarker,
         hideStatLabel,
         nameStarBelowImage,
+        linkMarkerBelowImage,
     ] = flag;
 
     /** One special case where we do not show link rating */
@@ -325,7 +326,6 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     const [, iconFinish, stickerFinish] = otherFinish;
     const getLinkLayer = useCallback(async () => {
         if (isLink) {
-            console.log('draw');
             const normalizedOpacity = { ...getDefaultCardOpacity(), ...opacity };
             const {
                 artBorder: keepArtBorder,
@@ -421,7 +421,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             nameStyleType,
         ]
     );
-    const drawEagerly = normalizedBoundless && drawNameStarBelowImage;
+    const drawNameStarEagerly = normalizedBoundless && drawNameStarBelowImage;
+    const drawLinkMarkerEagerly = normalizedBoundless && linkMarkerBelowImage;
 
     const eagerlyDrawHistory = useRef(-1);
     /** DRAW CARD STRUCTURE */
@@ -662,13 +663,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 /**
                  * Draw card name and stars eagerly here, so they lie below the boundless image
                  */
-                if (drawEagerly) {
+                if (drawNameStarEagerly) {
                     if (eagerlyDrawHistory.current !== drawingPipeline.current.name.rerun) {
                         eagerlyDrawHistory.current = drawingPipeline.current.name.rerun;
                         await drawingPipeline.current.name.instructor();
                     }
                     if (nameCanvasRef.current) ctx.drawImage(nameCanvasRef.current, 0, 0);
                     await callDrawStar();
+                }
+                if (drawLinkMarkerEagerly) {
                     const linkArrowCanvas = await getLinkLayer();
                     if (linkArrowCanvas) {
                         ctx.scale(globalScale, globalScale);
@@ -737,7 +740,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 console.error('drawAttribute error', e);
             }
             await drawAttributeFinish();
-            if (!drawEagerly) await callDrawStar();
+            if (!drawNameStarEagerly) await callDrawStar();
 
             if (showLinkRating && statInEffect) {
                 const resetStyle = setTextStyle({ ctx, ...resolvedStatTextStyle, globalScale });
@@ -822,7 +825,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         starAlignment,
         starList,
         statInEffect,
-        drawEagerly,
+        drawNameStarEagerly,
+        drawLinkMarkerEagerly,
         withBlueScale,
         getLinkLayer,
         withRedScale,
@@ -1357,7 +1361,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
 
-            if (!drawEagerly) {
+            if (!drawLinkMarkerEagerly) {
                 const linkArrowCanvas = await getLinkLayer();
                 if (linkArrowCanvas) {
                     ctx.scale(globalScale, globalScale);
@@ -1374,7 +1378,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             );
             ctx.resetTransform();
         };
-    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, getLinkLayer, drawEagerly]);
+    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, getLinkLayer, drawLinkMarkerEagerly]);
 
 
     const drawHistory = useRef<Record<string, number>>({});
@@ -1445,7 +1449,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 } = await generateLayer(canvas, 0, `${name}`);
                 if (status === 'error') lastError = { count: cnt, error };
                 if (draw) {
-                    const willDraw = drawEagerly
+                    const willDraw = drawNameStarEagerly
                         ? !(['nameLayer'].includes(name))
                         : true;
                     if (willDraw) draw(operateContext);
@@ -1486,7 +1490,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         frameCanvasRef,
         lightboxRef,
         nameCanvasRef,
-        drawEagerly,
+        drawNameStarEagerly,
         passwordCanvasRef,
         pendulumEffectCanvasRef,
         pendulumScaleCanvasRef,

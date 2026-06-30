@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '22/06/2026';
+const currentReminder = '26/06/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Vendoz at Jun 25, 2026',
+        question: 'Hi! It\'s me again :) Is it possible to make "Background" and "Replace Frame" be 2 different tools? because i want to replace the frame but keep the original background intact within card frame. the way i usually do is to edit them separately in Photoshop, however it would be nice if the card maker itself has these features as their own tool. Thanks!! ^_^',
+        answer: 'Yeah, it\'s a nice idea actually. I will implement this when I have time.'
+    },
     {
         author: 'xMiraiMeteor at Jun 21, 2026',
         question: 'Hi!\nAs I was making Link Overframes, I noticed that the art is not covering the Link Arrows. Is it possible for it to be added as a separate option like how you can optionally overlap the art above the name and Level/Rank? Do let me know if this was already reported as I only skimmed through the feedbacks. (typical Yu-Gi-Oh player behavior)',

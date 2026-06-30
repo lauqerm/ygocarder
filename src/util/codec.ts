@@ -497,6 +497,11 @@ export const migrateCardData = (card: Record<string, unknown>, baseCard = getEmp
     if (!Array.isArray(migratedCard.flag)) migratedCard.flag = defaultFlagList;
     else if (migratedCard.flag.length < defaultFlagList.length) {
         const currentFlagList = [...migratedCard.flag];
+        const nameStarBelowImage = currentFlagList[4];
+        /** If linkMarkerBelowImage flag is not set but nameStarBelowImage is set, migrate them so both flags are set */
+        if (typeof currentFlagList[5] !== 'number' && nameStarBelowImage === 1) {
+            currentFlagList[5] = 1;
+        };
         migratedCard.flag = defaultFlagList.map((entry, index) => {
             if (typeof currentFlagList[index] === 'number') return currentFlagList[index];
             return entry;
