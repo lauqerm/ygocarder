@@ -1,5 +1,5 @@
 import { InputNumber } from 'antd';
-import { forwardRef, Fragment, useEffect, useRef, useState } from 'react';
+import { forwardRef, Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Moveable from 'react-moveable';
 import { IconButton } from 'src/component';
 import { CanvasConst, MoveableRegionList, MoveableRegionMap, parseCoordinate } from 'src/model';
@@ -103,7 +103,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
         coordinateMap,
         setCard,
     })));
-    const changeCoordinate = (coordinate: typeof currentCoordinate) => {
+    const changeCoordinate = useCallback((coordinate: typeof currentCoordinate) => {
         setCard(currentCard => {
             const nextCoordinate = [
                 coordinate.x,
@@ -119,7 +119,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
                 coordinateMap: nextCoordinateMap,
             };
         });
-    };
+    }, [setCard]);
 
     useEffect(() => {
         let relevant = true;
@@ -130,7 +130,7 @@ export const FrameCoordinatePanel = forwardRef(() => {
         return () => {
             relevant = false;
         };
-    }, [currentCoordinate]);
+    }, [changeCoordinate, currentCoordinate]);
 
     useEffect(() => {
         for (const target of MoveableRegionList) {

@@ -358,6 +358,7 @@ input:-internal-autofill-selected {
 }
 
 .card-lightbox-overlay {
+    z-index: 1002; // On top of every other modals
     .ant-modal {
         max-width: unset;
         top: var(--spacing-lg);
