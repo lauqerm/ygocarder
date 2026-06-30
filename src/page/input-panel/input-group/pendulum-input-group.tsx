@@ -84,6 +84,7 @@ const StyledPendulumInputContainer = styled.div`
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        row-gap: var(--spacing);
     }
     .pendulum-option {
         display: grid;

@@ -184,7 +184,7 @@ export const ygoproDeckToYgoCarderData = (card: YgoproDeckCard): { result: Card,
         const normalizedPendulumEffect = pend_desc
             ? pend_desc.replaceAll(/^''|''$/g, '')
             : '';
-        const cardImage = card_images[0].image_url_cropped;
+        const cardImage = card_images?.[0].image_url_cropped ?? '';
         const hasStat = !['spell', 'trap', 'skill'].includes(frameType);
 
         const baseCard = getEmptyCard();

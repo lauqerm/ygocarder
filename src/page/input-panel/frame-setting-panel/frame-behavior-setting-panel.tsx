@@ -18,6 +18,11 @@ const FrameBehaviorSettingPanelContainer = styled.div`
     > * + * {
         margin-top: var(--spacing-xs);
     }
+    .checkbox-widget .ant-checkbox-wrapper {
+        display: inline-grid;
+        grid-template-columns: max-content 1fr;
+        align-items: center;
+    }
     .link-rating-behavior-panel {
         .radio-train-input-group {
             flex: 0 0 auto;
@@ -70,7 +75,7 @@ export const FrameBehaviorSettingPanel = () => {
                 const { labelKey, type } = component ?? {};
 
                 if (type === 'checkbox') {
-                    return <div key={labelKey}>
+                    return <div key={labelKey} className="checkbox-widget">
                         <Checkbox
                             checked={value !== 0}
                             onChange={e => {

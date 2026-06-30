@@ -703,6 +703,24 @@
 			grid-column: 1;
 		}
 	}
+	.ant-modal.frame-coordinate-overlay {
+		--moveable-scale-external: 0.3;
+		width: calc(var(--moveable-scale-external) * 813px + 2 * var(--spacing-lg)) !important; // Overwrite inline
+		.frame-coordinate-panel {
+			grid-template-columns: calc(var(--moveable-scale-external) * 813px);
+			.control-panel {
+				order: 1;
+				grid-template-columns: 1fr 1fr;
+				h3,
+				.control-panel-action {
+					grid-column: span 2;
+				}
+			}
+			.moveable-area-container {
+				order: 2;
+			}
+		}
+	}
 }
 
 @media only screen and (max-width: 360px) {

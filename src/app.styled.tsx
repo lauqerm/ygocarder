@@ -227,6 +227,7 @@ export const FarSightButton = styled(OverlayButton)`
     font-size: 15px;
     line-height: 18px;
     text-align: center;
+    z-index: 1001; // On top of any modal, except the preview modal
     .anticon {
         font-size: 36px;
     }

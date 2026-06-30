@@ -358,6 +358,7 @@ input:-internal-autofill-selected {
 }
 
 .card-lightbox-overlay {
+    z-index: 1002; // On top of every other modals
     .ant-modal {
         max-width: unset;
         top: var(--spacing-lg);
@@ -395,5 +396,15 @@ input:-internal-autofill-selected {
     .moveable-line,
     .moveable-control {
         visibility: hidden;
+    }
+}
+
+#debug-container {
+    transform: scale(0.25);
+    transform-origin: 0 0;
+    width: calc(813px * 8);
+    background: var(--main-level-1);
+    canvas {
+        background: var(--main-level-3);
     }
 }
