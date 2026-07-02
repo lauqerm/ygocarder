@@ -44,12 +44,12 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '07/07/2026';
+const currentReminder = '02/07/2026';
 const feedbackList: Feedback[] = [
     {
-        author: 'xMiraiMeteor at Jun 27, 2026',
-        question: 'Regarding the report I sent last time, yes, I have found said option. But is it possible to separate them, one for each? Also, the art also covers lit Link Arrows as well. I know I have no position to say this, but how about making each Link Arrow an independent object where you can modify if they should appear on top of the artwork or not. If it\'s not possible, then I\'ll just find another way to fix it myself. Sorry and thanks.',
-        answer: 'I have split the feature and also adjusted the layer so only inactive markers are placed below the art. Individual control for each marker is a bit too "granular" right now, so I will not implement it anytime soon.'
+        author: 'Anonymous at Jul 1, 2026',
+        question: 'The text seems to be cropped at the bottom',
+        answer: 'Hi there, I\'m well aware of the problem, unfortunately this is a bug with Chrome on Windows that I\'m unable to fix :\'(.'
     },
     {
         author: 'Vendoz at Jun 25, 2026',
