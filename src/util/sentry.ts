@@ -1,4 +1,5 @@
 import { getFullDiagnostics } from 'src/pwa/diagnostic';
+import { getLocalSetting } from './other';
 
 /** This file is specifically designed for code splitting:
  * * Dynamic import sentry.
@@ -52,9 +53,12 @@ export const setupSentry = async (
                         Sentry.captureMessage('User feedback', {
                             level: 'info',
                             contexts: {
+                                setting: getLocalSetting(),
                                 pwa_diagnostics: JSON.parse(JSON.stringify(diagnostics)),
                             },
                             extra: {
+                                version: import.meta.env.APP_VERSION ?? '0.0.0',
+                                href: window.location.href,
                                 feedback_name: name,
                                 feedback_message: message,
                                 cache_completion_pct: Math.round(diagnostics.cacheCompletion * 100),

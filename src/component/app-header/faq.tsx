@@ -44,8 +44,19 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '02/07/2026';
+const currentReminder = '06/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Vendoz at Jul 6, 2026',
+        question: 'Hello again!, I don\'t know if it just me.. but i encountered some problems. First, the Art over link arrows seems broken, it just doesn\'t work at all. Second, It\'s lagging every time i try to input ATK/DEF. Thanks! ^_^',
+        answer: 'Hi, I tested the card with the same settings and haven\'t encountered any issues (you can see the result below). Are you using a large image (over ~5 MB) or has the app been running for a very long time? Have you tried refreshing the page yet? That info will help me diagnose the problem further.',
+        image: ['https://i.postimg.cc/L4YFd03J/download.png'],
+    },
+    {
+        author: 'Anonymous at Jul 3, 2026',
+        question: 'Can you add these 2 mechanics into your card maker\nill send links to what each monster looks like \nhttps://www.mediafire.com/file/7suafoa2zsd220q/Nexus+Core+Kernel+Dragon.png/file\nhttps://www.mediafire.com/file/wtxj50r2vjjc1k8/Julius+Caesar+The+Eternal+Dictator.png/file\n\nplease add',
+        answer: 'Hi, do you have a textless version of these? (no name, no effect, no stats, etc.) If you do, please send them to me and I will add them to the app.',
+    },
     {
         author: 'Anonymous at Jul 1, 2026',
         question: 'The text seems to be cropped at the bottom',

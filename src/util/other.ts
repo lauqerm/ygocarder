@@ -205,4 +205,17 @@ export function updateCropRatio(
     const widthFromX = Math.min(maxWidth, maxHeight * cropRatio);
     const heightFromX = widthFromX / cropRatio;
     return { ...crop, y: 0, width: widthFromX, height: heightFromX };
-}
+};
+
+export const getLocalSetting = () => {
+    let setting: Record<string, unknown> = {};
+    try {
+        const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
+
+        if (cachedStore && typeof cachedStore === 'object' && !Array.isArray(cachedStore)) setting = cachedStore;
+    } catch (e) {
+        console.error('useSetting: Error when getting cached setting', e);
+    }
+
+    return setting;
+};

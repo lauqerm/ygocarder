@@ -232,7 +232,7 @@ export const useCard = create<CardStore>((set, get) => {
             if (type === 'throttle') return throttle(returnFunction, wait);
 
             return returnFunction;
-        }
+        },
     };
 });
 
