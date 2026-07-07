@@ -258,6 +258,9 @@
         "input.flag.link-rating-behavior.auto": "自動",
         "input.flag.link-rating-behavior.hide": "常に非表示",
         "input.flag.link-rating-behavior.show": "常に表示",
+        "input.flag.link-on-top.activate-above": "有効化すると",
+        "input.flag.link-on-top.always-above": "常に",
+        "input.flag.link-on-top.always-below": "決して",
         "input.flag.mix-def-link": "守備力とリンク数を両方表示",
         "input.flag.stat-label": "ステータス（攻撃力/守備力/リンク）のラベルを非表示",
         "input.foil.gold.label": "ゴールド",
@@ -562,7 +565,7 @@
         "generic.copy.label": "コピー",
         "generic.download.label": "ダウンロード",
         "input.flag.name-star-below-image": "枠なしモードでイラストをカード名やレベル・ランクより前面に描画",
-        "input.flag.marker-below-image": "枠なしモードでイラストをカード名やリンクマーカーより前面に描画",
+        "input.flag.link-on-top": "無制限モードでカードアートワークの上にリンクマーカーを表示する",
         "manager.header.button.convert.alert": "変換は保存とは異なります。作業内容を失わないよう、変換後に必ずリストをエクスポートしてください。"
     }
 }
