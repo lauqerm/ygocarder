@@ -1,21 +1,25 @@
 export type CardFlag = [
     ShowDefAndLink: number,
-    LinkRating: number,
+    LinkRatingBehavior: number,
     HideDeactivatedLink: number,
     HideStatLabel: number,
     NameAndStarBelowImage: number,
-    LinkMarkerBelowImage: number,
+    LinkOnTop: number,
 ];
 /**
  * Remember, 0 is ALWAYS the default state.
  * 
  * Remember, this is an array, the order of these values are absolute.
  */
-export const getDefaultCardFlag = (): CardFlag => [0, 0, 0, 0, 0, 0];
+export const getDefaultCardFlag = (): CardFlag => [0, LINK_RATING_BEHAVIOR_ALWAYS_AUTO, 0, 0, 0, LINK_ON_TOP_ALWAYS];
 
-export const LINK_RATING_ALWAYS_AUTO = 0;
-export const LINK_RATING_ALWAYS_SHOW = 1;
-export const LINK_RATING_ALWAYS_HIDE = 2;
+export const LINK_RATING_BEHAVIOR_ALWAYS_AUTO = 0;
+export const LINK_RATING_BEHAVIOR_ALWAYS_SHOW = 1;
+export const LINK_RATING_BEHAVIOR_ALWAYS_HIDE = 2;
+
+export const LINK_ON_TOP_ALWAYS = 0;
+export const LINK_ON_TOP_ACTIVATED_ONLY = 1;
+export const LINK_ON_TOP_NEVER = 2;
 
 export const FlagInfoList = [
     {
@@ -50,17 +54,17 @@ export const FlagInfoList = [
     },
     {
         index: 5,
-        labelKey: 'input.flag.marker-below-image',
-        type: 'checkbox' as const,
+        labelKey: 'input.flag.link-on-top',
+        type: 'link-on-top' as const,
         order: 5,
     },
 ];
 export const FlagIndexMap = {
     showDefAndLink: 0,
-    linkRating: 1,
+    linkRatingBehavior: 1,
     hideDeactivatedLink: 2,
     hideStatLabel: 3,
     nameStarBelowImage: 4,
-    linkMarkerBelowImage: 5,
+    linkOnTop: 5,
 };
 export const FLAG_LENGTH = FlagInfoList.length;

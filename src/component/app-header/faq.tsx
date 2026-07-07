@@ -44,8 +44,36 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '06/07/2026';
+const currentReminder = '08/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Anonymous at Jul 7, 2026',
+        question: 'RE: Oh okay, My bad.. I just realized that Art over link arrows only affected deactivate arrows, i didn\'t notice cuz i always hide them (－‸ლ). For my 2nd problem tho.. it only occured after the minor fix on the last patch. i tried using different browser and refresh the pages, the problem still persist. I guess it\'s only on my end then.. however, it\'s only a minor problem, it isn\'t a bother at all. Thanks for the recognition as always ^_^',
+        answer: 'Well, there is some conflict about how the feature should behave among different people, so I will expand the options a little so you can have more control. Now you can choose between always putting arrows on top (default), always putting arrows on bottom, or putting only activated arrows on top.'
+    },
+    {
+        author: 'Anonymous at Jul 7, 2026',
+        question: 'https://www.mediafire.com/file/da55eqj9x1jjyi7/no-name.png/file\nhttps://www.mediafire.com/file/hoakmbyp0n9nz7f/kernel.png/file\n\nthe no-name file is a mechanic called Animus, the file named kernel is a mechanic called, well, Kernel',
+        answer: 'I\'ve checked your files, and those icons inside the artwork are part of the mechanic and can be toggled on/off, right? That\'s much more complex than normal frames, and unfortunately I can\'t afford to implement them right now.'
+    },
+    {
+        author: 'Anonymous at Jul 7, 2026',
+        question: 'Artwork over Name/Arrows doesn\'t work',
+        answer: 'Hi, I\'ve checked your card data. Please make sure the following options (see attached image) are enabled in the Blending button.',
+        image: ['https://i.postimg.cc/63Ln6ch3/image.png'],
+    },
+    {
+        author: 'Vendoz at Jul 6, 2026',
+        question: 'Hello again!, I don\'t know if it just me.. but i encountered some problems. First, the Art over link arrows seems broken, it just doesn\'t work at all. Second, It\'s lagging every time i try to input ATK/DEF. Thanks! ^_^',
+        answer: 'Hi, I tested the card with the same settings and haven\'t encountered any issues (you can see the result below). Are you using a large image (over ~5 MB) or has the app been running for a very long time? Have you tried refreshing the page yet? That info will help me diagnose the problem further.',
+        image: ['https://i.postimg.cc/L4YFd03J/download.png'],
+    },
+    {
+        author: 'Vendoz at Jul 6, 2026',
+        question: 'Hello again!, I don\'t know if it just me.. but i encountered some problems. First, the Art over link arrows seems broken, it just doesn\'t work at all. Second, It\'s lagging every time i try to input ATK/DEF. Thanks! ^_^',
+        answer: 'Hi, I tested the card with the same settings and haven\'t encountered any issues (you can see the result below). Are you using a large image (over ~5 MB) or has the app been running for a very long time? Have you tried refreshing the page yet? That info will help me diagnose the problem further.',
+        image: ['https://i.postimg.cc/L4YFd03J/download.png'],
+    },
     {
         author: 'Vendoz at Jul 6, 2026',
         question: 'Hello again!, I don\'t know if it just me.. but i encountered some problems. First, the Art over link arrows seems broken, it just doesn\'t work at all. Second, It\'s lagging every time i try to input ATK/DEF. Thanks! ^_^',

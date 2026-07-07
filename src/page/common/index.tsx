@@ -1,5 +1,5 @@
 import { CopiableCode } from 'src/component';
-import { LINK_RATING_ALWAYS_AUTO, LINK_RATING_ALWAYS_SHOW, LINK_RATING_ALWAYS_HIDE, FlagInfoList } from 'src/model';
+import { LINK_RATING_BEHAVIOR_ALWAYS_AUTO, LINK_RATING_BEHAVIOR_ALWAYS_SHOW, LINK_RATING_BEHAVIOR_ALWAYS_HIDE, FlagInfoList } from 'src/model';
 import { LanguageDataDictionary } from 'src/service';
 
 export type FlagValueDisplay = (language: LanguageDataDictionary, _value: number) => string;
@@ -26,18 +26,18 @@ export const FlagPresentationList = [
             {language['input.flag.link-rating-behavior']}:
             <ul>
                 <li>
-                    <CopiableCode data={LINK_RATING_ALWAYS_AUTO}>
-                        {LINK_RATING_ALWAYS_AUTO}
+                    <CopiableCode data={LINK_RATING_BEHAVIOR_ALWAYS_AUTO}>
+                        {LINK_RATING_BEHAVIOR_ALWAYS_AUTO}
                     </CopiableCode>: {language['input.flag.link-rating-behavior.auto']}
                 </li>
                 <li>
-                    <CopiableCode data={LINK_RATING_ALWAYS_SHOW}>
-                        {LINK_RATING_ALWAYS_SHOW}
+                    <CopiableCode data={LINK_RATING_BEHAVIOR_ALWAYS_SHOW}>
+                        {LINK_RATING_BEHAVIOR_ALWAYS_SHOW}
                     </CopiableCode>: {language['input.flag.link-rating-behavior.show']}
                 </li>
                 <li>
-                    <CopiableCode data={LINK_RATING_ALWAYS_HIDE}>
-                        {LINK_RATING_ALWAYS_HIDE}
+                    <CopiableCode data={LINK_RATING_BEHAVIOR_ALWAYS_HIDE}>
+                        {LINK_RATING_BEHAVIOR_ALWAYS_HIDE}
                     </CopiableCode>: {language['input.flag.link-rating-behavior.hide']}
                 </li>
             </ul>

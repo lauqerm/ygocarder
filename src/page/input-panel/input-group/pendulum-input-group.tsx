@@ -66,6 +66,8 @@ const StyledPendulumFrameInputContainer = styled.div`
     .card-layout-preview-container {
         line-height: 0;
         border: var(--bw) solid var(--sub-level-1);
+        border-left: none;
+        border-right: none;
         overflow: hidden;
     }
 `;

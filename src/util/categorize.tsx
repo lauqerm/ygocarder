@@ -4,9 +4,9 @@ import {
     DEFAULT_TEXT_COLOR,
     Foil,
     frameList,
-    LINK_RATING_ALWAYS_AUTO,
-    LINK_RATING_ALWAYS_HIDE,
-    LINK_RATING_ALWAYS_SHOW,
+    LINK_RATING_BEHAVIOR_ALWAYS_AUTO,
+    LINK_RATING_BEHAVIOR_ALWAYS_HIDE,
+    LINK_RATING_BEHAVIOR_ALWAYS_SHOW,
     NameStyle,
     NameStyleType,
     PresetNameStyleMap,
@@ -68,9 +68,9 @@ export const checkLightFrame = (frame: string) => {
 export const checkDiplayLinkRating = (displayMode: number, isLink: boolean | null) => {
     let showLinkRating = false;
     switch (displayMode) {
-        case LINK_RATING_ALWAYS_SHOW: showLinkRating = true; break;
-        case LINK_RATING_ALWAYS_HIDE: showLinkRating = false; break;
-        case LINK_RATING_ALWAYS_AUTO: showLinkRating = isLink ?? false; break;
+        case LINK_RATING_BEHAVIOR_ALWAYS_SHOW: showLinkRating = true; break;
+        case LINK_RATING_BEHAVIOR_ALWAYS_HIDE: showLinkRating = false; break;
+        case LINK_RATING_BEHAVIOR_ALWAYS_AUTO: showLinkRating = isLink ?? false; break;
     }
 
     return showLinkRating;

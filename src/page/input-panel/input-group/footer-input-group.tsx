@@ -89,7 +89,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         isLegacyCard,
         isLink,
         linkRating,
-        linkRatingDisplayMode,
+        linkRatingBehavior,
         showDefAndLink,
         sticker,
         getUpdater,
@@ -116,7 +116,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
         isLegacyCard,
         isLink,
         linkRating,
-        linkRatingDisplayMode: flag[FlagIndexMap['linkRating']],
+        linkRatingBehavior: flag[FlagIndexMap['linkRatingBehavior']],
         showDefAndLink: flag[FlagIndexMap['showDefAndLink']] === 1,
         sticker,
         getUpdater,
@@ -131,7 +131,7 @@ export const FooterInputGroup = forwardRef<FooterInputGroupRef, FooterInputGroup
     const cornerTextRef = useRef<CardTextInputRef>(null);
 
     const showAtkInput = true;
-    const showLinkInput = checkDiplayLinkRating(linkRatingDisplayMode, isLink);
+    const showLinkInput = checkDiplayLinkRating(linkRatingBehavior, isLink);
     const showDefInput = showLinkInput
         ? showDefAndLink
         : true;

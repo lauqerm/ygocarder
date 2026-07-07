@@ -43,6 +43,9 @@ import {
     HALF_SCALE_WIDTH_OFFSET,
     ArrowPositionMap,
     parseOffset,
+    LINK_ON_TOP_ALWAYS,
+    LINK_ON_TOP_ACTIVATED_ONLY,
+    LINK_ON_TOP_NEVER,
 } from 'src/model';
 import {
     checkDiplayLinkRating,
@@ -305,7 +308,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         hideInactiveLinkMarker,
         hideStatLabel,
         nameStarBelowImage,
-        linkMarkerBelowImage,
+        linkOnTop,
     ] = flag;
 
     /** One special case where we do not show link rating */
@@ -435,7 +438,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         ]
     );
     const drawNameStarEagerly = normalizedBoundless && drawNameStarBelowImage;
-    const drawLinkMarkerEagerly = normalizedBoundless && linkMarkerBelowImage;
+    const drawLinkPosition = normalizedBoundless
+        ? linkOnTop
+        : LINK_ON_TOP_ALWAYS;
 
     const eagerlyDrawHistory = useRef(-1);
     /** DRAW CARD STRUCTURE */
@@ -694,8 +699,10 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     }
                     await drawPendulumArtBorderFinish();
                 }
-                if (drawLinkMarkerEagerly) {
-                    const linkArrowCanvas = await getLinkLayer('active');
+                if (drawLinkPosition === LINK_ON_TOP_NEVER || drawLinkPosition === LINK_ON_TOP_ACTIVATED_ONLY) {
+                    const linkArrowCanvas = await getLinkLayer(drawLinkPosition === LINK_ON_TOP_NEVER
+                        ? undefined
+                        : 'active');
                     if (linkArrowCanvas) {
                         ctx.scale(globalScale, globalScale);
                         ctx.drawImage(linkArrowCanvas, 0, 0);
@@ -839,7 +846,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         starList,
         statInEffect,
         drawNameStarEagerly,
-        drawLinkMarkerEagerly,
+        drawLinkPosition,
         withBlueScale,
         getLinkLayer,
         withRedScale,
@@ -1374,11 +1381,13 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         drawingPipeline.current.overlay.instructor = async () => {
             if (!clearCanvas(ctx)) return;
 
-            const linkArrowCanvas = await getLinkLayer(drawLinkMarkerEagerly ? 'inactive' : undefined);
-            if (linkArrowCanvas) {
-                ctx.scale(globalScale, globalScale);
-                ctx.drawImage(linkArrowCanvas, 0, 0);
-                ctx.scale(1 / globalScale, 1 / globalScale);
+            if (drawLinkPosition === LINK_ON_TOP_ALWAYS || drawLinkPosition === LINK_ON_TOP_ACTIVATED_ONLY) {
+                const linkArrowCanvas = await getLinkLayer(drawLinkPosition ? 'inactive' : undefined);
+                if (linkArrowCanvas) {
+                    ctx.scale(globalScale, globalScale);
+                    ctx.drawImage(linkArrowCanvas, 0, 0);
+                    ctx.scale(1 / globalScale, 1 / globalScale);
+                }
             }
 
             ctx.scale(globalScale, globalScale);
@@ -1389,7 +1398,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             );
             ctx.resetTransform();
         };
-    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, getLinkLayer, drawLinkMarkerEagerly]);
+    }, [readyToDraw, globalScale, finishCanvasRef, loopFinish, getLinkLayer, drawLinkPosition]);
 
 
     /**

@@ -3,9 +3,12 @@ import { RadioTrain } from 'src/component';
 import {
     CardFlag,
     FlagInfoList,
-    LINK_RATING_ALWAYS_AUTO,
-    LINK_RATING_ALWAYS_HIDE,
-    LINK_RATING_ALWAYS_SHOW,
+    LINK_ON_TOP_ACTIVATED_ONLY,
+    LINK_ON_TOP_ALWAYS,
+    LINK_ON_TOP_NEVER,
+    LINK_RATING_BEHAVIOR_ALWAYS_AUTO,
+    LINK_RATING_BEHAVIOR_ALWAYS_HIDE,
+    LINK_RATING_BEHAVIOR_ALWAYS_SHOW,
 } from 'src/model';
 import { useCard, useLanguage } from 'src/service';
 import styled from 'styled-components';
@@ -15,7 +18,7 @@ const FrameBehaviorSettingPanelContainer = styled.div`
     background-color: var(--main-level-3);
     padding: var(--spacing-sm);
     border-top: var(--bw) solid var(--sub-level-3);
-    > * + * {
+    > .checkbox-widget:not(:first-child) {
         margin-top: var(--spacing-xs);
     }
     .checkbox-widget .ant-checkbox-wrapper {
@@ -23,7 +26,7 @@ const FrameBehaviorSettingPanelContainer = styled.div`
         grid-template-columns: max-content 1fr;
         align-items: center;
     }
-    .link-rating-behavior-panel {
+    .radio-train-widget {
         .radio-train-input-group {
             flex: 0 0 auto;
             margin-right: var(--spacing-sm);
@@ -88,12 +91,27 @@ export const FrameBehaviorSettingPanel = () => {
                 }
                 if (type === 'link-rating-behavior') {
                     return <RadioTrain key={labelKey}
-                        className="link-rating-behavior-panel"
+                        className="radio-train-widget link-rating-behavior-panel"
                         onChange={(value) => updateFlag(Number(value), index)}
                         optionList={[
-                            { label: language['input.flag.link-rating-behavior.auto'], value: LINK_RATING_ALWAYS_AUTO },
-                            { label: language['input.flag.link-rating-behavior.show'], value: LINK_RATING_ALWAYS_SHOW },
-                            { label: language['input.flag.link-rating-behavior.hide'], value: LINK_RATING_ALWAYS_HIDE },
+                            { label: language['input.flag.link-rating-behavior.auto'], value: LINK_RATING_BEHAVIOR_ALWAYS_AUTO },
+                            { label: language['input.flag.link-rating-behavior.show'], value: LINK_RATING_BEHAVIOR_ALWAYS_SHOW },
+                            { label: language['input.flag.link-rating-behavior.hide'], value: LINK_RATING_BEHAVIOR_ALWAYS_HIDE },
+                        ]}
+                        value={value}
+                        suffix={<label>
+                            {language[labelKey]}
+                        </label>}
+                    />;
+                }
+                if (type === 'link-on-top') {
+                    return <RadioTrain key={labelKey}
+                        className="radio-train-widget link-on-top-panel"
+                        onChange={(value) => updateFlag(Number(value), index)}
+                        optionList={[
+                            { label: language['input.flag.link-on-top.always-above'], value: LINK_ON_TOP_ALWAYS },
+                            { label: language['input.flag.link-on-top.activate-above'], value: LINK_ON_TOP_ACTIVATED_ONLY },
+                            { label: language['input.flag.link-on-top.always-below'], value: LINK_ON_TOP_NEVER },
                         ]}
                         value={value}
                         suffix={<label>
