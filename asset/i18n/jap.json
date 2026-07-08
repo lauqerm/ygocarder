@@ -566,6 +566,9 @@
         "generic.download.label": "ダウンロード",
         "input.flag.name-star-below-image": "枠なしモードでイラストをカード名やレベル・ランクより前面に描画",
         "input.flag.link-on-top": "無制限モードでカードアートワークの上にリンクマーカーを表示する",
-        "manager.header.button.convert.alert": "変換は保存とは異なります。作業内容を失わないよう、変換後に必ずリストをエクスポートしてください。"
+        "manager.header.button.convert.alert": "変換は保存とは異なります。作業内容を失わないよう、変換後に必ずリストをエクスポートしてください。",
+        "error.export.too-long.description": "Card data exceeding the current limit, try exporting as CSV format instead.",
+        "error.export.too-long.message": "Data exceeded limit",
+        "generic.recommended.label": "Recommended"
     }
 }
