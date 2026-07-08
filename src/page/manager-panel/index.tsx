@@ -18,7 +18,7 @@ import { downloadBlob, ygoCarderToTextData } from 'src/util';
 import { ExportFormatList, InternalCard } from 'src/model';
 import { ManagerSample } from './manager-sample';
 import debounce from 'lodash.debounce';
-import { ManagerDrawer } from 'src/component';
+import { ManagerDrawer, RecommendedLabel } from 'src/component';
 import { captureException } from 'src/util';
 import copy from 'copy-to-clipboard';
 
@@ -166,22 +166,7 @@ export const CardManagerPanel = forwardRef(({
             } = cardListToCsv(useCardList.getState().cardList);
 
             if (error) {
-                let errorMessage = '';
-                let errorDescription = '';
-                switch (error) {
-                    case 'offline-data': {
-                        errorMessage = language['error.export.offline-data.message'];
-                        errorDescription = language['error.export.offline-data.description'];
-                        break;
-                    }
-                }
-
-                if (errorMessage || errorDescription) {
-                    notification.error({
-                        message: errorMessage,
-                        description: errorDescription,
-                    });
-                }
+                throw new Error(error);
             }
             switch (type) {
                 case 'xlsx': {
@@ -199,8 +184,25 @@ export const CardManagerPanel = forwardRef(({
                 }
             }
             changeEditStatus('download');
-        } catch (e) {
-            await captureException(e);
+        } catch (error) {
+            await captureException(error);
+            const errorType = typeof error === 'string' ? error : `${error.message}`;
+            let errorMessage = '';
+            let errorDescription = '';
+            if (errorType === 'offline-data') {
+                errorMessage = language['error.export.offline-data.message'];
+                errorDescription = language['error.export.offline-data.description'];
+            } else if (errorType.includes('Text length must not exceed')) {
+                errorMessage = language['error.export.too-long.message'];
+                errorDescription = language['error.export.too-long.description'];
+            }
+
+            if (errorMessage || errorDescription) {
+                notification.error({
+                    message: errorMessage,
+                    description: errorDescription,
+                });
+            }
         }
         setSavingFile(false);
     };
@@ -402,9 +404,9 @@ export const CardManagerPanel = forwardRef(({
                                 <br />
                                 <small><i>{language['prompt.remind.backup.label']}</i></small>
                             </div>}>
-                                {ExportFormatList.map(({ value, label }) => {
+                                {ExportFormatList.map(({ value, label, recommended }) => {
                                     return <Menu.Item key={value} onClick={async () => await downloadList(value)}>
-                                        {label}
+                                        {label}{recommended ? <RecommendedLabel /> : null}
                                     </Menu.Item>;
                                 })}
                             </Menu.ItemGroup>

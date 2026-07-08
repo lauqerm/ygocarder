@@ -189,7 +189,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
 
     const applyOfflineSource = (fileList: FileList) => {
         const targetFile = fileList[0];
-        if (!targetFile) return;
+        if (!targetFile || !targetFile.type.includes('image')) return;
         const maxFileSize = 16;
 
         if (targetFile.size >= maxFileSize * 1024 * 1024) {
@@ -549,7 +549,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                     <div className={['card-image-input', inputMode === 'offline' ? '' : 'input-inactive'].join(' ')}>
                         <Input ref={fileInputRef}
                             type="file"
-                            accept="image/*"
+                            accept="image/*,application/octet-stream"
                             onChange={e => {
                                 if (e.target.files && e.target.files.length > 0) {
                                     applyOfflineSource(e.target.files);

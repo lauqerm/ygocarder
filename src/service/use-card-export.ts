@@ -178,7 +178,6 @@ export const useCardExport = ({
                     // await new Promise(resolve => setTimeout(() => resolve(true), 3000));
                     await exportRef.current.currentPipeline;
 
-                    console.log(thisCounter, drawCounter.current);
                     if (thisCounter === drawCounter.current) {
                         exportRef.current.currentPipeline = onExport({
                             isPendulum,
@@ -201,7 +200,12 @@ export const useCardExport = ({
                                 attributeImageData: '',
                             };
                             const condensedCard = JSON.stringify(compressCardData(normalizedCard));
-                            if (typeof condensedCard === 'string') insertUrlParam('data', condensedCard);
+                            const maxDataLength = 8192;
+                            if (typeof condensedCard === 'string' && condensedCard.length <= maxDataLength) {
+                                insertUrlParam([{ key: 'data', value: condensedCard }]);
+                            } else {
+                                insertUrlParam([{ key: 'data-type', value: 'local' }], 'replace');
+                            }
 
                             document.getElementById('export-canvas')?.classList.add('js-export-available');
                             document.getElementById('preview-canvas')?.classList.add('js-export-available');

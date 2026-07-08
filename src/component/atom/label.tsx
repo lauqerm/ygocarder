@@ -31,7 +31,7 @@ export const ResolutionLabel = ({ width, height, warning = false, ...rest }: Res
 };
 
 type Margin = 'hor' | 'ver' | 'all';
-const LoadingLabelContainer = styled.div<{ $margin: Margin }>`
+const LabelContainer = styled.div<{ $margin?: Margin }>`
     ${({ $margin }) => $margin === 'hor' || $margin === 'all'
         ? `
             margin-left: var(--spacing-xs);
@@ -53,7 +53,29 @@ export const LoadingLabel = ({
 }: LoadingLabel) => {
     const language = useLanguage();
 
-    return <LoadingLabelContainer className="loading-label" $margin={margin}>
+    return <LabelContainer className="loading-label" $margin={margin}>
         {language['generic.loading.label']}
-    </LoadingLabelContainer>;
+    </LabelContainer>;
+};
+
+const RecommendedLabelContainer = styled(LabelContainer)`
+    display: inline-block;
+    font-size: var(--fs-sm);
+    padding: var(--spacing-xxs) var(--spacing-xs);
+    background-color: var(--main-active);
+    border-radius: var(--br);
+    color: var(--color-heavy);
+    line-height: 1;
+`;
+export type RecommendedLabel = {
+    margin?: Margin;
+};
+export const RecommendedLabel = ({
+    margin = 'hor',
+}: RecommendedLabel) => {
+    const language = useLanguage();
+
+    return <RecommendedLabelContainer className="recommended-label" $margin={margin}>
+        {language['generic.recommended.label']}
+    </RecommendedLabelContainer>;
 };

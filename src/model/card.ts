@@ -360,10 +360,12 @@ export const ExportFormatList = [
     {
         value: 'csv' as const,
         label: '.csv',
+        recommended: true,
     },
     {
         value: 'xlsx' as const,
         label: '.xlsx',
+        recommended: false,
     },
 ];
 

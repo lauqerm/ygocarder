@@ -23,10 +23,12 @@ export const nextChar = (c: string) => {
     return String.fromCharCode(c.charCodeAt(0) + 1);
 };
 
-export function insertUrlParam(key: string, value: string) {
+export function insertUrlParam(paramList: { key: string, value: string }[], type: 'add' | 'replace' = 'add') {
     if (window.history.pushState) {
-        const searchParams = new URLSearchParams(window.location.search);
-        searchParams.set(key, value);
+        const searchParams = new URLSearchParams(type === 'add'
+            ? window.location.search
+            : '');
+        paramList.forEach(({ key, value }) => searchParams.set(key, value));
         const newurl = window.location.protocol
             + '//'
             + window.location.host

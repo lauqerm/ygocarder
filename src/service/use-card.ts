@@ -107,7 +107,6 @@ export const retrieveSavedCard = async (): Promise<InternalCard> => {
     try {
         const {
             card: localSavedCard,
-            version: localCardVersion,
         } = await getCardLocally() ?? {};
         const localCardData = localSavedCard
             ? migrateCardData(localSavedCard)
@@ -144,8 +143,8 @@ export const retrieveSavedCard = async (): Promise<InternalCard> => {
             if (iconImageSource === 'offline') combinedCard.iconImageData = localCardData?.iconImageData ?? '';
 
             return combinedCard;
-        } else if (localCardData !== null && localCardVersion === import.meta.env.APP_VERSION) {
-            return localCardData;
+        } else if (localCardData !== null) {
+            return migrateCardData(localCardData);
         }
         return getDefaultInternalCard();
     } catch (e) {
@@ -238,7 +237,11 @@ export const useCard = create<CardStore>((set, get) => {
 
 export const getCardLocally = async (): Promise<{ version: string, card: InternalCard } | null> => {
     const db = await getCarderDb();
-    if (db) {
+    /** Without service worker to set newest card, db will always return stale card, so we rather get incomplete card info from local storage */
+    const sw = 'serviceWorker' in navigator
+        ? navigator.serviceWorker.controller
+        : null;
+    if (db && sw) {
         const cardStoreTx = db.transaction('cardStore', 'readonly');
         const latestCard = await cardStoreTx.store.get('latest');
         await cardStoreTx.done;
