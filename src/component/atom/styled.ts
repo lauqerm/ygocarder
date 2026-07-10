@@ -58,6 +58,7 @@ export const CardActionButton = styled.button`
 
 export const Label = styled.div`
     display: inline-flex;
+    align-items: center;
     background-color: var(--main-level-4);
     padding: var(--spacing-xxs) var(--spacing-xs);
 `;

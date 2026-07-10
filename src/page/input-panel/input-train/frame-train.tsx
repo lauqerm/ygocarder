@@ -6,10 +6,10 @@ import { useShallow } from 'zustand/react/shallow';
 import { FrameInfoMap, NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap } from 'src/model';
 import { TrainGridStyle } from './input-train.styled';
 import { PopoverButton, RadioTrain } from 'src/component';
-import { BookOutlined } from '@ant-design/icons'; 
+import { BookOutlined } from '@ant-design/icons';
 import { Popover, Tooltip } from 'antd';
 
-const StyledPopoverButton = styled(PopoverButton)<{ $inline?: boolean }>`
+const StyledPopoverButton = styled(PopoverButton) <{ $inline?: boolean }>`
     ${({ $inline }) => $inline ? 'margin-left: var(--spacing-xs);' : 'margin-top: var(--spacing);'}
     .custom-frame-label {
         display: none;
@@ -56,7 +56,9 @@ export const UnofficialFrameTrain = ({ inline, changeFrame }: UnofficialFrameTra
                     $active={FrameInfoMap[frame]?.isOfficial === false}
                     className="picker-dropdown custom-frame-dropdown"
                 >
-                    <BookOutlined /><div className="custom-frame-label">&nbsp;{language['input.frame.unofficial.label']}</div>
+                    <BookOutlined />&#8203;<div className="custom-frame-label">
+                        &nbsp;{language['input.frame.unofficial.label']}
+                    </div>
                 </StyledPopoverButton>
             </Tooltip>
         </Popover>
@@ -93,7 +95,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
         .filter(entry => {
             return showExtraDecorativeOption || entry.edition === 'normal';
         }),
-    [showExtraDecorativeOption],
+        [showExtraDecorativeOption],
     );
 
     const {
