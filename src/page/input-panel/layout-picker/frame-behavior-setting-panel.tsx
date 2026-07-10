@@ -1,0 +1,125 @@
+import { Checkbox } from 'antd';
+import { RadioTrain } from 'src/component';
+import {
+    CardFlag,
+    FlagInfoList,
+    LINK_ON_TOP_ACTIVATED_ONLY,
+    LINK_ON_TOP_ALWAYS,
+    LINK_ON_TOP_NEVER,
+    LINK_RATING_BEHAVIOR_ALWAYS_AUTO,
+    LINK_RATING_BEHAVIOR_ALWAYS_HIDE,
+    LINK_RATING_BEHAVIOR_ALWAYS_SHOW,
+} from 'src/model';
+import { useCard, useLanguage } from 'src/service';
+import styled from 'styled-components';
+import { useShallow } from 'zustand/react/shallow';
+
+const FrameBehaviorSettingPanelContainer = styled.div`
+    background-color: var(--main-level-3);
+    padding: var(--spacing-sm);
+    border-top: var(--bw) solid var(--sub-level-3);
+    > .checkbox-widget:not(:first-child) {
+        margin-top: var(--spacing-xs);
+    }
+    .checkbox-widget .ant-checkbox-wrapper {
+        display: inline-grid;
+        grid-template-columns: max-content 1fr;
+        align-items: center;
+    }
+    .radio-train-widget {
+        .radio-train-input-group {
+            flex: 0 0 auto;
+            margin-right: var(--spacing-sm);
+        }
+        label {
+            flex: 1 1 auto;
+            text-align: left;
+            font-size: var(--fs);
+            color: var(--color);
+        }
+    }
+`;
+
+export type FrameBehaviorSettingPanel = {
+    debug?: boolean,
+};
+export const FrameBehaviorSettingPanel = () => {
+    const language = useLanguage();
+    const {
+        flag,
+        setCard,
+    } = useCard(useShallow(({
+        card: {
+            flag,
+        },
+        setCard,
+        getUpdater,
+    }) => ({
+        flag,
+        setCard,
+        getUpdater,
+    })));
+
+    const updateFlag = (value: number, index: number) => setCard(currentCard => {
+        const nextFlagList: CardFlag = [...currentCard.flag];
+        nextFlagList[index] = value;
+
+        return {
+            ...currentCard,
+            flag: nextFlagList,
+        };
+    });
+
+    return <FrameBehaviorSettingPanelContainer className="frame-behavior-setting-panel">
+        {flag
+            .map((value, index) => ({ component: FlagInfoList[index], value, index }))
+            .sort((l, r) => l.component.order - r.component.order)
+            .map(({ component, value, index }) => {
+                const { labelKey, type } = component ?? {};
+
+                if (type === 'checkbox') {
+                    return <div key={labelKey} className="checkbox-widget">
+                        <Checkbox
+                            checked={value !== 0}
+                            onChange={e => {
+                                const value = e.target.checked ? 1 : 0;
+
+                                updateFlag(value, index);
+                            }}
+                        >{language[labelKey]}</Checkbox>
+                    </div>;
+                }
+                if (type === 'link-rating-behavior') {
+                    return <RadioTrain key={labelKey}
+                        className="radio-train-widget link-rating-behavior-panel"
+                        onChange={(value) => updateFlag(Number(value), index)}
+                        optionList={[
+                            { label: language['input.flag.link-rating-behavior.auto'], value: LINK_RATING_BEHAVIOR_ALWAYS_AUTO },
+                            { label: language['input.flag.link-rating-behavior.show'], value: LINK_RATING_BEHAVIOR_ALWAYS_SHOW },
+                            { label: language['input.flag.link-rating-behavior.hide'], value: LINK_RATING_BEHAVIOR_ALWAYS_HIDE },
+                        ]}
+                        value={value}
+                        suffix={<label>
+                            {language[labelKey]}
+                        </label>}
+                    />;
+                }
+                if (type === 'link-on-top') {
+                    return <RadioTrain key={labelKey}
+                        className="radio-train-widget link-on-top-panel"
+                        onChange={(value) => updateFlag(Number(value), index)}
+                        optionList={[
+                            { label: language['input.flag.link-on-top.always-above'], value: LINK_ON_TOP_ALWAYS },
+                            { label: language['input.flag.link-on-top.activate-above'], value: LINK_ON_TOP_ACTIVATED_ONLY },
+                            { label: language['input.flag.link-on-top.always-below'], value: LINK_ON_TOP_NEVER },
+                        ]}
+                        value={value}
+                        suffix={<label>
+                            {language[labelKey]}
+                        </label>}
+                    />;
+                }
+                return null;
+            })}
+    </FrameBehaviorSettingPanelContainer>;
+};

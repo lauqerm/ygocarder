@@ -186,9 +186,9 @@ export const TextGradientPicker = ({
 
     return <div className={mergeClass(ANGLE_PICKER_CLASSNAME, 'gradient-picker-container')}>
         <div className="gradient-angle-control">
-            <h2>
+            <h3>
                 {language['input.name-style.gradient.color-point.label']}
-            </h2>
+            </h3>
             <Button
                 size="small"
                 className="add-stop-color"
@@ -208,7 +208,7 @@ export const TextGradientPicker = ({
                 }}
             >{language['input.name-style.gradient.add-point.label']} ({palette.colorList.length}/{MAX_STOP_POINT})</Button>
             <CircularAnglePicker angle={angle} size={120} setAngle={setAngle}>
-                <h2>{language['input.name-style.gradient.gradient-direction.label']}</h2>
+                <h3>{language['input.name-style.gradient.gradient-direction.label']}</h3>
             </CircularAnglePicker>
         </div>
         <div className="stop-color-picker-container">

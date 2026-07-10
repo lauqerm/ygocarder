@@ -26,7 +26,7 @@ const EmbossControlContainer = styled.div`
         padding: var(--spacing-sm);
         padding-bottom: 0;
     }
-    .emboss-control-left h2 {
+    .emboss-control-left h3 {
         padding: var(--spacing-sm) 0;
     }
     .angle-picker-container {
@@ -44,7 +44,7 @@ const EmbossControlContainer = styled.div`
         border: none;
     }
     .vertical-angle-control {
-        grid-template-columns: max-content 60px 85px 12px;
+        grid-template-columns: 0 60px 85px 12px;
     }
     .reset-button {
         cursor: pointer;
@@ -180,13 +180,13 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             {children}
         </div>
         <div className="emboss-control-left">
-            <h2>
+            <h3>
                 {language['input.name-style.emboss.color.label']}&nbsp;&nbsp;<MaterialColor
                     className="material-color"
                     onClick={onColorTabNavigate}
                     $color={materialColor}
                 />
-            </h2>
+            </h3>
             {language['input.name-style.emboss.color.alert'](<span
                 key="color-navigate"
                 className={onColorTabNavigate ? 'navigate-button' : ''}
@@ -194,7 +194,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             >
                 {language['input.name-style.color.label']}
             </span>)}
-            <h2 className="thickness-row">
+            <h3 className="thickness-row">
                 <span>{language['input.name-style.emboss.thickness.label']}</span>
                 <GuardedSlider
                     value={thickness}
@@ -207,8 +207,8 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                         }
                     }}
                 />
-            </h2>
-            <h2>
+            </h3>
+            <h3>
                 {language['input.name-style.emboss.pitch.label']}&nbsp;&nbsp;<SyncOutlined
                     className="reset-button"
                     onClick={() => {
@@ -216,7 +216,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                         requestUpdate();
                     }}
                 />
-            </h2>
+            </h3>
             <CombinedSliderContainer className="vertical-angle-control">
                 <div className="slider-label" />
                 <InputNumber
@@ -240,13 +240,15 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
                 />
                 <div className="slider-padding" />
             </CombinedSliderContainer>
-            <h2>{language['input.name-style.emboss.yaw.label']}&nbsp;&nbsp;<SyncOutlined
-                className="reset-button"
-                onClick={() => {
-                    setAngle(DEFAULT_YAW);
-                    requestUpdate();
-                }}
-            /></h2>
+            <h3>
+                {language['input.name-style.emboss.yaw.label']}&nbsp;&nbsp;<SyncOutlined
+                    className="reset-button"
+                    onClick={() => {
+                        setAngle(DEFAULT_YAW);
+                        requestUpdate();
+                    }}
+                />
+            </h3>
             <div className="horizontal-angle-contorl">
                 <CircularAnglePicker
                     angle={angle}
@@ -259,7 +261,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             </div>
         </div>
         {allowPickColor && <div className="emboss-control-right">
-            <h2>Light color</h2>
+            <h3>Light color</h3>
             <Suspense fallback={<LoadingLabel margin="hor" />}>
                 <ChromePicker
                     styles={{

@@ -56,14 +56,17 @@ export const CardActionButton = styled.button`
     }
 `;
 
-export const SolidLabel = styled.div`
+export const Label = styled.div`
     display: inline-flex;
-    column-gap: var(--spacing-xs);
-    border: var(--bw) solid var(--sub-level-1);
     background-color: var(--main-level-4);
     padding: var(--spacing-xxs) var(--spacing-xs);
+`;
+export const SolidLabel = styled(Label) <{ $clickable?: boolean }>`
+    column-gap: var(--spacing-xs);
+    border: var(--bw) solid var(--sub-level-1);
     border-radius: var(--br);
     box-shadow: var(--bs-input);
+    ${({ $clickable }) => $clickable ? 'cursor: pointer;' : ''}
     .button-label {
         position: relative;
         display: flex;
@@ -78,7 +81,8 @@ export const SolidLabel = styled.div`
 `;
 export const CombinedSliderContainer = styled.div`
     display: grid;
-    grid-template-columns: max-content 57px 36px 6px;
+    grid-template-columns: 140px 57px 50px 6px;
+    align-items: center;
     &.inactive {
         .slider-label,
         .ant-slider,
@@ -86,22 +90,16 @@ export const CombinedSliderContainer = styled.div`
             background-color: var(--main-level-3);
         }
     }
-    .slider-label,
-    .ant-slider,
-    .slider-padding {
-        border: var(--bw) solid var(--sub-level-1);
-        background-color: var(--main-level-4);
-    }
+    .ant-input-number,
     .slider-label {
-        border-right: none;
-        border-radius: var(--br) 0 0 var(--br);
+        margin-right: var(--spacing-xs);
     }
     .ant-slider {
         margin: 0;
         border-left: none;
         border-right: none;
         height: 28px; // Alignment
-        padding-top: 11px; // Alignment
+        padding: var(--spacing) 0;
     }
     .slider-padding {
         border-left: none;
@@ -122,11 +120,8 @@ export const CombinedSliderContainer = styled.div`
     }
 `;
 
-export const PopoverButton = styled.div<{ $active?: boolean, $softMode: boolean }>`
-    display: inline-block;
-    background-color: var(--main-level-4);
+export const PopoverButton = styled(Label) <{ $active?: boolean, $softMode: boolean }>`
     ${({ $active }) => $active ? 'border: var(--bw) solid var(--main-active);' : 'border: var(--bw) solid var(--sub-level-1);'}
-    padding: var(--spacing-xxs) var(--spacing-xs);
     margin: calc(-1 * var(--spacing-xxs)) 0;
     border-radius: var(--br-lg);
     box-shadow: var(--bs-button);

@@ -95,7 +95,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
     }));
 
     return <div className={className}>
-        <h2>{language['input.name-style.slider.position.label']}</h2>
+        <h3>{language['input.name-style.slider.position.label']}</h3>
         <div className="line-position">
             <PowerSlider axis="xy"
                 styles={{
@@ -103,7 +103,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                         backgroundColor: 'var(--main-slider)',
                         width: 100,
                         height: 100,
-                        gridRow: 'span 3',
+                        gridRow: 'span 2',
                         position: 'relative',
                     },
                     thumb: {
@@ -143,7 +143,7 @@ export const GridSliderInput = forwardRef<GridSliderInputRef, GridSliderInput>((
                 />
             </div>
         </div>
-        <h2>{language['input.name-style.slider.color.label']}</h2>
+        <h3>{language['input.name-style.slider.color.label']}</h3>
         <Suspense fallback={<LoadingLabel margin="all" />}>
             <CompactPicker
                 colors={DefaultColorList}

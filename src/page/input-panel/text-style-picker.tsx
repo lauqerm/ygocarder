@@ -54,8 +54,9 @@ const StyledTextStylePicker = styled.div`
     }
     .style-picker-section {
         overflow: hidden;
-        h2.size-picker,
-        h2.font-style-picker {
+        h3.size-picker,
+        h3.shadow-picker,
+        h3.font-style-picker {
             padding: var(--spacing-xs);
         }
         .inline-radio-train {
@@ -194,7 +195,7 @@ export const TextStylePicker = () => {
                     const { upSize, fontStyle } = extraValue ?? {};
 
                     return <div key={keyName} className="style-section">
-                        <h3 className={`custom-style-expand ${custom ? '' : 'inactive'}`}>
+                        <h2 className={`custom-style-expand ${custom ? '' : 'inactive'}`}>
                             <span>
                                 {language[labelKey]}
                             </span>
@@ -211,10 +212,10 @@ export const TextStylePicker = () => {
                                     });
                                 }}
                             >{language['input.text-style.custom.label']}</Checkbox>
-                        </h3>
+                        </h2>
                         {custom && <div className="style-picker-section">
                             {(typeof fontStyle === 'string' && format === 'tcg') && <>
-                                <h2 className="font-style-picker">
+                                <h3 className="font-style-picker">
                                     <span className="label">{language['input.text-style.font-style.label']}</span>
                                     <RadioTrain
                                         className="inline-radio-train"
@@ -237,10 +238,10 @@ export const TextStylePicker = () => {
                                             });
                                         }}
                                     />
-                                </h2>
+                                </h3>
                             </>}
                             {typeof upSize === 'number' && <>
-                                <h2 className="size-picker">
+                                <h3 className="size-picker">
                                     <span className="label">{language['input.text-style.extra-size.label']}</span>
                                     <RadioTrain
                                         className="inline-radio-train"
@@ -264,9 +265,9 @@ export const TextStylePicker = () => {
                                             });
                                         }}
                                     />
-                                </h2>
+                                </h3>
                             </>}
-                            <h2>
+                            <h3 className="shadow-picker">
                                 <Checkbox
                                     className="shadow-checkbox"
                                     checked={hasShadow}
@@ -283,7 +284,7 @@ export const TextStylePicker = () => {
                                 >
                                     <span className="label">{language['input.text-style.shadow.label']}</span>
                                 </Checkbox>
-                            </h2>
+                            </h3>
                             {hasShadow && <InlineColorPicker
                                 value={shadow}
                                 onChange={shadowValue => setCard(currentCard => {
@@ -293,7 +294,7 @@ export const TextStylePicker = () => {
                                     };
                                 })}
                             />}
-                            <h2>{language['input.text-style.color.label']}</h2>
+                            <h3>{language['input.text-style.color.label']}</h3>
                             <Suspense fallback={<LoadingLabel margin="all" />}>
                                 <CompactPicker
                                     colors={DefaultColorList}

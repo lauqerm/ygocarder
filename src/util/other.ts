@@ -66,6 +66,19 @@ export const padRight = <Value extends (string | undefined | null)[]>(list: Valu
     return nextList;
 };
 
+export function isKeyListEqual<Payload = Record<string, never>>(
+    payload1: Payload,
+    payload2: unknown,
+    keyList: (keyof Payload)[],
+) {
+    if (!payload1 || !payload2) return false;
+    if (typeof payload1 !== 'object' || typeof payload2 !== 'object') return false;
+    for (const key of keyList) {
+        if (payload1[key] !== (payload2 as Payload)[key]) return false;
+    }
+    return true;
+};
+
 export const isJsonObjectEqual = (payload1: unknown, payload2: unknown, loose = false) => {
     /**
      * Check `array`, `object` và `null`

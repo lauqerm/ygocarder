@@ -24,7 +24,7 @@ import { type NameStylePickerRef } from './name-style-picker';
 import { CheckboxTrain, FrameTrain, FrameTrainRef } from './input-train';
 import { Explanation } from 'src/component/explanation';
 import { changeCardFormat, useCard, useLanguage, useSetting } from '../../service';
-import { LayoutPicker, OpacityPickerRef } from './layout-picker';
+import { LayoutPicker, LayoutPickerRef } from './layout-picker';
 import {
     EffectInputGroup,
     EffectInputGroupRef,
@@ -132,7 +132,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);
     const iconInputGroupRef = useRef<IconInputGroupRef>(null);
     const imageInputGroupRef = useRef<ImageInputGroupRef>(null);
-    const layoutPickerRef = useRef<OpacityPickerRef>(null);
+    const layoutPickerRef = useRef<LayoutPickerRef>(null);
     const nameSetIdInputGroupRef = useRef<NameSetInputGroupRef>(null);
     const pendulumInputGroupRef = useRef<PendulumInputGroupRef>(null);
     const effectInputGroupRef = useRef<EffectInputGroupRef>(null);
@@ -287,11 +287,13 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             </label>
             <LayoutPicker ref={layoutPickerRef}
                 defaultValue={opacity}
-                receivingCanvas={backgroundCanvas}
+                backgroundReceivingCanvas={backgroundCanvas}
+                overlayReceivingCanvas={overlayCanvas}
                 onChange={changeOpacity}
                 onTainted={onTainted}
                 onCropChange={onCropChange}
                 onSourceLoaded={onSourceLoaded}
+                onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
             />
         </div>}
 
@@ -333,14 +335,8 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
                 <PendulumInputGroup ref={pendulumInputGroupRef}
                     showCreativeOption={showCreativeOption}
-                    showExtraDecorativeOption={showExtraDecorativeOption}
                     softMode={reduceMotionColor}
-                    receivingCanvas={overlayCanvas}
-                    onTainted={onTainted}
-                    onSourceLoaded={onSourceLoaded}
-                    onCropChange={onCropChange}
                     onTakePicker={setPickerTarget}
-                    onFrameChange={frame => frameTrainRef.current?.changeFrame(frame)}
                 />
 
                 <PostPendulumInputGroup ref={postPendulumInputGroupRef} onTakePicker={setPickerTarget} />

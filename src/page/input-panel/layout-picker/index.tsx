@@ -1,24 +1,28 @@
-import { Checkbox, InputNumber, Popover, Tooltip } from 'antd';
+import { Checkbox, Modal, Popover, Tooltip } from 'antd';
 import { forwardRef, lazy, Suspense, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
     BackgroundType,
     getBackgroundTypeList,
     CardOpacity,
     DEFAULT_BASE_FILL_COLOR,
-    OpacityList,
     getDefaultCardOpacity,
     DefaultColorList,
     LayoutSettingList,
     CanvasConst,
     CheckboxChangeEvent,
+    getDefaultCoordinateMap,
 } from 'src/model';
 import styled from 'styled-components';
 import { BackgroundInputGroup, BackgroundInputGroupRef } from './background-input-group';
-import { CombinedSliderContainer, GuardedSlider, ImageCropper, LoadingLabel, RadioTrain, SolidLabel } from 'src/component';
+import { ImageCropper, LoadingLabel, PopoverButton, RadioTrain, SolidLabel } from 'src/component';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { BorderOuterOutlined } from '@ant-design/icons';
+import { OpacityPicker } from './opacity-picker';
+import { FrameCoordinatePanel, FrameCoordinatePanelRef } from './frame-coordinate-panel';
 import './layout-picker.scss';
+import { FrameBlendingPanel } from './frame-blending-panel';
+import { isKeyListEqual } from 'src/util';
 
 const CompactPicker = lazy(() => import('react-color').then(({ CompactPicker }) => ({ default: CompactPicker })));
 const {
@@ -65,6 +69,12 @@ const StyledLayoutPickerContainer = styled.div`
             }
         }
     }
+    .frame-layout-button {
+        vertical-align: bottom;
+        flex: 0 0 auto;
+        margin: 0;
+        margin-right: var(--spacing);
+    }
     .background-preview {
         display: inline-block;
         line-height: 0;
@@ -74,6 +84,7 @@ const StyledLayoutPickerContainer = styled.div`
         border: 1px solid #333333;
         text-align: center;
         user-select: none;
+        margin-right: var(--spacing-xs);
         .background-preview-callback-passer {
             width: 100%;
             height: 100%;
@@ -183,8 +194,12 @@ const LayoutSettingContainer = styled.div`
 export type LayoutPicker = {
     defaultValue: Partial<CardOpacity>,
     onChange: (opacity: CardOpacity) => void,
-} & Pick<ImageCropper, 'receivingCanvas' | 'onTainted' | 'onCropChange' | 'onSourceLoaded'>;
-export type OpacityPickerRef = {
+    backgroundReceivingCanvas: ImageCropper['receivingCanvas'],
+    overlayReceivingCanvas: ImageCropper['receivingCanvas'],
+}
+    & Pick<ImageCropper, 'onTainted' | 'onCropChange' | 'onSourceLoaded'>
+    & Pick<FrameBlendingPanel, 'onFrameChange'>;
+export type LayoutPickerRef = {
     setValue: (opacity: Partial<CardOpacity> & {
         background?: string,
         backgroundData?: string,
@@ -194,9 +209,11 @@ export type OpacityPickerRef = {
     }) => void,
     isLoading: () => boolean,
 };
-export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
-    receivingCanvas,
+export const LayoutPicker = forwardRef<LayoutPickerRef, LayoutPicker>(({
+    backgroundReceivingCanvas,
+    overlayReceivingCanvas,
     defaultValue,
+    onFrameChange,
     onTainted,
     onChange,
     onSourceLoaded,
@@ -208,10 +225,10 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         backgroundData,
         backgroundSource,
         backgroundType,
-        getUpdater,
+        coordinateMap,
         hasBackground,
-        isPendulum,
         legacyTemplate,
+        getUpdater,
         setCard,
     } = useCard(useShallow(({
         card: {
@@ -219,8 +236,8 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             backgroundData,
             backgroundSource,
             backgroundType,
+            coordinateMap,
             hasBackground,
-            isPendulum,
             legacyTemplate,
         },
         setCard,
@@ -230,23 +247,31 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         backgroundData,
         backgroundSource,
         backgroundType,
-        getUpdater,
+        coordinateMap,
         hasBackground,
-        isPendulum,
         legacyTemplate,
+        getUpdater,
         setCard,
     })));
     const {
         globalScale,
+        showCreativeOption,
+        softMode,
     } = useSetting(useShallow(({ setting: {
         globalScale,
+        showCreativeOption,
+        reduceMotionColor: softMode,
     } }) => ({
         globalScale,
+        showCreativeOption,
+        softMode,
     })));
     const [backgroundInputVisible, setBackgroundInputVisible] = useState(true);
     const [backgroundInputHidden, setBackgroundInputHidden] = useState(true);
     const [opacity, setOpacity] = useState(() => ({ ...getDefaultCardOpacity(), ...defaultValue }));
+    const [frameCoordinateVisible, setFrameCoordinateVisible] = useState(false);
     const backgroundInputRef = useRef<BackgroundInputGroupRef>(null);
+    const frameCoordinateRef = useRef<FrameCoordinatePanelRef>(null);
 
     const changeBackgroundType = useMemo(() => getUpdater('backgroundType'), [getUpdater]);
     const changeLegacyTemplate = useMemo(() => getUpdater('legacyTemplate'), [getUpdater]);
@@ -256,11 +281,15 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         return { ...currentCard, hasBackground: nextValue };
     }), [setCard]);
 
+    const onChangeRef = useRef(onChange);
+    useEffect(() => {
+        onChangeRef.current = onChange;
+    }, [onChange]);
     useEffect(() => {
         let relevant = true;
         setTimeout(() => {
             if (relevant) {
-                onChange(opacity);
+                onChangeRef.current(opacity);
             }
         }, 500);
 
@@ -268,7 +297,6 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             relevant = false;
         };
         /** No need to depend on callback */
-
     }, [opacity]);
 
     useEffect(() => {
@@ -296,11 +324,15 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
         },
     }));
 
+    const isCustomCardLayout = Object.entries(getDefaultCoordinateMap()).reduce((acc, [key, value]) => {
+        if (typeof coordinateMap[key] === 'string' && coordinateMap[key] !== value) return true;
+        return acc;
+    }, false);
     const noBackground = (background ?? '').length === 0
         && (backgroundInputRef.current?.hasImage() !== true);
     return <StyledLayoutPickerContainer className="card-opacity-slider-container">
         <Tooltip title={language['input.opacity.legacy.tooltip']}>
-            <SolidLabel className="background-label" onClick={() => changeLegacyTemplate(cur => !cur.legacyTemplate)}>
+            <SolidLabel onClick={() => changeLegacyTemplate(cur => !cur.legacyTemplate)}>
                 <div className="button-label">
                     <Checkbox checked={legacyTemplate} />
                     &nbsp;{language['input.opacity.legacy.label']}
@@ -372,11 +404,18 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                 </LayoutSettingContainer>
             </div>}
         >
-            <SolidLabel className="background-label">
+            <PopoverButton
+                $softMode={softMode}
+                $active={!isKeyListEqual(
+                    opacity,
+                    getDefaultCardOpacity(),
+                    ['frameBorder', 'boundless', ...LayoutSettingList.map(entry => entry.subType)],
+                )}
+            >
                 <div className="button-label">
                     {language['input.opacity.setting.label']}
                 </div>
-            </SolidLabel>
+            </PopoverButton>
         </Popover>
         <Popover
             visible={backgroundInputVisible}
@@ -395,7 +434,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         noBackground ? 'overlay-no-background-image' : ''
                     ].join(' ')}
                 >
-                    <h3 className={`custom-style-expand ${hasBackground ? '' : 'inactive'}`}>
+                    <h2 className={`custom-style-expand ${hasBackground ? '' : 'inactive'}`}>
                         <Checkbox
                             checked={hasBackground}
                             onChange={e => {
@@ -404,7 +443,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         >{language['input.background.toggle-label']}</Checkbox>
                         <br />
                         <i>{language['input.background.description']}</i>
-                    </h3>
+                    </h2>
                     <div
                         className={`background-picker ${hasBackground ? '' : 'overlay-no-background'}`}
                         style={{
@@ -418,7 +457,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                     >
                         <BackgroundInputGroup
                             ref={backgroundInputRef}
-                            receivingCanvas={receivingCanvas}
+                            receivingCanvas={backgroundReceivingCanvas}
                             onSourceLoaded={onSourceLoaded}
                             onTainted={onTainted}
                             onCropChange={onCropChange}
@@ -426,7 +465,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                         >
                             <div className="layout-picker-panel">
                                 <div className="layout-picker-subpanel color-section">
-                                    <h2>{language['input.background-color.label']}</h2>
+                                    <h3>{language['input.background-color.label']}</h3>
                                     <Suspense fallback={<LoadingLabel />}>
                                         <CompactPicker
                                             colors={DefaultColorList}
@@ -438,7 +477,7 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                                     </Suspense>
                                 </div>
                                 {!noBackground && <div className="layout-picker-subpanel type-section">
-                                    <h2>{language['input.background-type.label']}</h2>
+                                    <h3>{language['input.background-type.label']}</h3>
                                     <RadioTrain
                                         className="background-type-picker"
                                         onChange={changeBackgroundType}
@@ -458,7 +497,11 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
             </div>}
             placement="bottom"
         >
-            <SolidLabel className="background-label">
+            <PopoverButton
+                className="background-label"
+                $softMode={softMode}
+                $active={hasBackground}
+            >
                 <div
                     className="background-preview"
                     style={{ backgroundColor: hasBackground ? opacity.baseFill : DEFAULT_BASE_FILL_COLOR }}
@@ -475,35 +518,49 @@ export const LayoutPicker = forwardRef<OpacityPickerRef, LayoutPicker>(({
                             : null
                         : <BorderOuterOutlined className="no-background-icon" />}
                 </div>
-                {language['input.background.label']}
-            </SolidLabel>
+                <span>{language['input.background.label']}</span>
+            </PopoverButton>
         </Popover>
-        {OpacityList.map(({ labelKey, type }) => {
-            if (type === 'pendulum' && !isPendulum) return null;
-            return <CombinedSliderContainer key={type}
-                className={[
-                    'card-opacity-slider',
-                ].join(' ')}
-            >
-                <SolidLabel className="slider-label">
-                    {language[labelKey]}
-                </SolidLabel>
-                <InputNumber
-                    size="small"
-                    min={0}
-                    max={100}
-                    onChange={value => setOpacity(cur => ({ ...cur, [type]: typeof value === 'number' ? value : 100 }))}
-                    value={opacity[type] ?? 100}
-                />
-                <GuardedSlider
-                    min={0}
-                    max={100}
-                    step={5}
-                    onChange={value => setOpacity(cur => ({ ...cur, [type]: value }))}
-                    value={opacity[type] ?? 100}
-                />
-                <div className="slider-padding" />
-            </CombinedSliderContainer>;
-        })}
+        <OpacityPicker
+            value={opacity}
+            onChange={setOpacity}
+        />
+        <FrameBlendingPanel
+            onTainted={onTainted}
+            receivingCanvas={overlayReceivingCanvas}
+            onFrameChange={onFrameChange}
+            onCropChange={onCropChange}
+            onSourceLoaded={onSourceLoaded}
+        />
+        {showCreativeOption && <PopoverButton
+            tabIndex={0}
+            $softMode={softMode}
+            $active={isCustomCardLayout}
+            className="frame-layout-button"
+            onClick={() => setFrameCoordinateVisible(true)}
+            onKeyDown={e => {
+                if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
+                    setFrameCoordinateVisible(true);
+
+                    return false;
+                }
+            }}
+        >
+            <div className="button-label">
+                {language['input.frame-coordinate.label']}
+            </div>
+        </PopoverButton>}
+        <Modal
+            visible={frameCoordinateVisible}
+            onCancel={() => setFrameCoordinateVisible(false)}
+            width={380}
+            closable={false}
+            footer={null}
+            className="global-input-overlay frame-coordinate-overlay layout-picker-overlay"
+        >
+            <FrameCoordinatePanel
+                ref={frameCoordinateRef}
+            />
+        </Modal>
     </StyledLayoutPickerContainer>;
 });

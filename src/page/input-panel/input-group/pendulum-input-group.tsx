@@ -1,76 +1,12 @@
-import { Checkbox, Input, Modal, Popover } from 'antd';
-import { CardLayoutPreview, InternalPopover, PopoverButton, StyledDropdown, StyledPopMarkdown } from 'src/component';
+import { Checkbox, Input, Popover } from 'antd';
+import { PopoverButton, StyledDropdown } from 'src/component';
 import { CardTextArea, CardTextAreaRef, CardTextInput } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
-import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CanvasConst, DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent, getDefaultCoordinateMap } from 'src/model';
-import { ApartmentOutlined } from '@ant-design/icons';
-import { getFrameButtonList } from '../const';
+import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import { DEFAULT_PENDULUM_SIZE, PendulumSizeMap, CheckboxChangeEvent } from 'src/model';
 import styled from 'styled-components';
-import { isJsonObjectEqual, resolveFrameStyle } from 'src/util';
-import {
-    FrameBehaviorSettingPanel,
-    FrameCoordinatePanel,
-    FrameCoordinatePanelRef,
-    FrameLayoutSettingPanel,
-} from '../frame-setting-panel';
-import { FlagPresentationList } from '../../common';
 
-const {
-    width,
-    height,
-} = CanvasConst;
-
-type BottomFrameOptionGridRef = {
-    focus: () => void,
-};
-
-const StyledFrameSettingModal = styled(Modal)`
-    .ant-modal-content .ant-modal-body {
-        padding: 0;
-    }
-`;
-const StyledPendulumFrameInputContainer = styled.div`
-    display: inline-flex;
-    cursor: pointer;
-    vertical-align: bottom;
-    box-shadow: var(--bs-button);
-    border-radius: var(--br-lg);
-    background-color: var(--main-level-4);
-    align-items: center;
-    &:focus-visible {
-        outline: 2px solid var(--focus);
-    }
-    .flag-list-indicator {
-        box-shadow: 0 0 0 var(--bw) var(--sub-level-1) inset;
-        padding: var(--spacing-xs);
-        border-radius: 0 var(--br-lg) var(--br-lg) 0;
-        &:empty:before {
-            content: "\\200B";
-        }
-    }
-    .pendulum-frame-label {
-        display: inline-block;
-        background: var(--main-level-4);
-        border: var(--bw) solid var(--sub-level-1);
-        border-right: none;
-        padding: var(--spacing-px) var(--spacing-xs);
-        border-radius: var(--br-lg) 0 0 var(--br-lg);
-        line-height: 2; // Alignment
-        &:last-child {
-            border-radius: var(--br-lg);
-            border-right: var(--bw) solid var(--sub-level-1);
-        }
-    }
-    .card-layout-preview-container {
-        line-height: 0;
-        border: var(--bw) solid var(--sub-level-1);
-        border-left: none;
-        border-right: none;
-        overflow: hidden;
-    }
-`;
 const StyledPendulumInputContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -92,7 +28,7 @@ const StyledPendulumInputContainer = styled.div`
         display: grid;
         grid-template-columns: var(--width-label) 1fr;
         align-items: center;
-        .pendulum-frame-input,
+        .frame-blend-input,
         .pendulum-checkbox {
             flex: 0 0 auto;
         }
@@ -104,12 +40,6 @@ const StyledPendulumInputContainer = styled.div`
                 transform: translateY(-1px); // Alignment, but why?
             }
         }
-    }
-    .frame-layout-button {
-        vertical-align: bottom;
-        flex: 0 0 auto;
-        margin: 0;
-        margin-right: var(--spacing);
     }
     .joined-row {
         position: relative;
@@ -138,7 +68,7 @@ const StyledPendulumInputContainer = styled.div`
             /** Alignment **/
             width: var(--width-label);
         }
-        .pendulum-frame-input {
+        .frame-blend-input {
             margin-right: var(--spacing);
         }
         .pendulum-size {
@@ -166,69 +96,35 @@ export type PendulumInputGroupRef = {
 export type PendulumInputGroup = {
     softMode: boolean,
     showCreativeOption: boolean,
-    showExtraDecorativeOption: boolean,
 }
-    & Pick<CardTextInput, 'onTakePicker'>
-    & Pick<FrameLayoutSettingPanel, 'receivingCanvas' | 'onFrameChange' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
+    & Pick<CardTextInput, 'onTakePicker'>;
 export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInputGroup>(({
     softMode,
     showCreativeOption,
-    showExtraDecorativeOption,
-    receivingCanvas,
     onTakePicker,
-    onFrameChange,
-    onCropChange,
-    onTainted,
-    onSourceLoaded,
 }, ref) => {
     const language = useLanguage();
     const {
         isPendulum,
-        frame,
-        foil,
-        leftFrame, rightFrame,
-        pendulumFrame, pendulumRightFrame,
-        effectBackground, pendulumEffectBackground,
         pendulumScaleBlue,
         pendulumScaleRed,
         pendulumSize,
-        coordinateMap,
-        dyeList,
-        flag,
         setCard,
         getUpdater,
     } = useCard(useShallow(({
         card: {
             isPendulum,
-            frame,
-            foil,
-            leftFrame, rightFrame,
-            pendulumFrame, pendulumRightFrame,
             pendulumScaleBlue,
             pendulumScaleRed,
             pendulumSize,
-            effectStyle,
-            pendulumStyle,
-            coordinateMap,
-            dyeList,
-            flag,
         },
         setCard,
         getUpdater,
     }) => ({
         isPendulum,
-        frame,
-        foil,
-        leftFrame, rightFrame,
-        pendulumFrame, pendulumRightFrame,
         pendulumScaleBlue,
         pendulumScaleRed,
         pendulumSize,
-        effectBackground: effectStyle.background,
-        pendulumEffectBackground: pendulumStyle.background,
-        coordinateMap,
-        dyeList,
-        flag,
         setCard,
         getUpdater,
     })));
@@ -242,12 +138,7 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         mirrorPendulumScale,
         updateSetting,
     })));
-    const containerRef = useRef<HTMLDivElement>(null);
-    const frameBlenderRef = useRef<BottomFrameOptionGridRef>(null);
-    const frameCoordinateRef = useRef<FrameCoordinatePanelRef>(null);
     const pendulumEffectInputRef = useRef<CardTextAreaRef>(null);
-    const [frameBlenderVisible, setFrameBlenderVisible] = useState(false);
-    const [frameCoordinateVisible, setFrameCoordinateVisible] = useState(false);
     const changeToPendulum = (e: CheckboxChangeEvent) => setCard(currentCard => {
         const willBecomePendulum = e.target.checked;
         /** It is rather not desirable to seemingly reduce opacity of pendulum frame, even though it looks closer to real card */
@@ -271,39 +162,12 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
         label: language[labelKey],
         value: key,
     })), [language]);
-    const frameList = useMemo(() => getFrameButtonList('both')
-        .filter(entry => {
-            return showExtraDecorativeOption || entry.edition === 'normal';
-        }),
-        [showExtraDecorativeOption],
-    );
 
     useImperativeHandle(ref, () => ({
         setValue: ({ pendulumEffect }) => {
             if (pendulumEffect) pendulumEffectInputRef.current?.setValue(pendulumEffect);
         }
     }));
-
-    const layoutState = {
-        frame,
-        topLeftFrame: leftFrame,
-        topRightFrame: rightFrame,
-        bottomLeftFrame: pendulumFrame,
-        bottomRightFrame: pendulumRightFrame,
-        effectBackground,
-        pendulumEffectBackground,
-    };
-    const advanceLayoutPreviewHeight = 30; // Alignment with frame input
-    const flagList = flag
-        .map((entry, index) => {
-            const target = FlagPresentationList[index];
-
-            if (entry !== 0 && target) return <li key={target.labelKey}>
-                {target.valueDisplay(language, entry)}
-            </li>;
-            return null;
-        })
-        .filter(entry => entry != null);
 
     return <StyledPendulumInputContainer
         className="pendulum-input"
@@ -316,105 +180,6 @@ export const PendulumInputGroup = forwardRef<PendulumInputGroupRef, PendulumInpu
                 >{language['input.pendulum.label']}</Checkbox>
             </div>
             <div className="pendulum-option-container">
-                <StyledFrameSettingModal
-                    visible={frameBlenderVisible}
-                    onCancel={() => setFrameBlenderVisible(false)}
-                    width={613}
-                    forceRender
-                    closable={false}
-                    footer={null}
-                    className="global-input-overlay frame-blender-overlay layout-picker-overlay"
-                >
-                    <FrameLayoutSettingPanel ref={frameBlenderRef}
-                        isPendulum={isPendulum}
-                        frameList={frameList}
-                        pendulumFrame={pendulumFrame}
-                        onTainted={onTainted}
-                        onCropChange={onCropChange}
-                        onSourceLoaded={onSourceLoaded}
-                        receivingCanvas={receivingCanvas}
-                        onFrameChange={onFrameChange}
-                        onCancel={() => {
-                            setFrameBlenderVisible(false);
-                            containerRef.current?.focus();
-                        }}
-                    />
-                    <FrameBehaviorSettingPanel />
-                </StyledFrameSettingModal>
-                <Modal
-                    visible={frameCoordinateVisible}
-                    onCancel={() => setFrameCoordinateVisible(false)}
-                    width={380}
-                    closable={false}
-                    footer={null}
-                    className="global-input-overlay frame-coordinate-overlay layout-picker-overlay"
-                >
-                    <FrameCoordinatePanel
-                        ref={frameCoordinateRef}
-                    />
-                </Modal>
-                {showCreativeOption && <StyledPendulumFrameInputContainer ref={containerRef}
-                    className="pendulum-frame-input"
-                    tabIndex={0}
-                    onClick={() => setFrameBlenderVisible(true)}
-                    onKeyDown={e => {
-                        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
-                            setFrameBlenderVisible(true);
-                            /** Popover takes time to mount / become visible */
-                            setTimeout(() => {
-                                frameBlenderRef.current?.focus();
-                            }, 200);
-
-                            return false;
-                        }
-                    }}
-                >
-                    <span className="pendulum-frame-label">
-                        {language['input.advanced-frame.label']}
-                    </span>
-                    <div className="card-layout-preview-container">
-                        <CardLayoutPreview
-                            width={Math.round(advanceLayoutPreviewHeight * width / height)}
-                            height={advanceLayoutPreviewHeight}
-                            isPendulum={isPendulum}
-                            resolvedLayoutState={resolveFrameStyle(layoutState, isPendulum)}
-                            tabIndex={-1}
-                            dyeList={dyeList}
-                            foil={foil}
-                            language={language}
-                        />
-                    </div>
-                    <div className="flag-list-indicator">
-                        {flagList.length > 0
-                            ? <InternalPopover
-                                content={<StyledPopMarkdown>
-                                    {language['input.flag.effective.label']}
-                                    <ul>{flagList}</ul>
-                                </StyledPopMarkdown>}
-                            >
-                                <ApartmentOutlined />
-                            </InternalPopover>
-                            : null}
-                    </div>
-                </StyledPendulumFrameInputContainer>}
-                {showCreativeOption && <PopoverButton
-                    tabIndex={0}
-                    $softMode={softMode}
-                    $active={!isJsonObjectEqual(coordinateMap, getDefaultCoordinateMap())}
-                    className="frame-layout-button"
-                    onClick={() => setFrameCoordinateVisible(true)}
-                    onKeyDown={e => {
-                        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {
-                            setFrameCoordinateVisible(true);
-
-                            return false;
-                        }
-                    }}
-                >
-                    <div className="button-label">
-                        {language['input.frame-coordinate.label']}
-                    </div>
-                </PopoverButton>}
                 {(isPendulum && showCreativeOption) && <div className="pendulum-size">
                     <Popover key="color-picker"
                         overlayClassName="global-input-overlay font-picker-overlay"

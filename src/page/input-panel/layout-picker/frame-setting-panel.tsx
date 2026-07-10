@@ -1,0 +1,495 @@
+import { getNavigationProps, mergeClass, resolveFrameStyle } from 'src/util';
+import { StyledFrameMixer } from '../input-panel.styled';
+import { forwardRef, lazy, Suspense, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { FramePreset, useCard, useCarderDb, useGlobal, useLanguage, useSetting } from 'src/service';
+import { getFoilButtonList, getFrameButtonList } from '../const';
+import { Button, Checkbox } from 'antd';
+import { CardLayoutPreview, FrameInfoBlock, ImageCropper, LoadingLabel, RadioTrain, StandaloneLabel } from 'src/component';
+import styled from 'styled-components';
+import { CanvasConst, DefaultFrameInfo, DyeIndexMap, FrameDyeList, FrameInfoMap, FramePositionMap, getDefaultCard, getDefaultDyeList, getOverlayCompositeList, OverlayComposite } from 'src/model';
+import { useShallow } from 'zustand/react/shallow';
+import { v4 as uuid } from 'uuid';
+import { FramePresetPanel } from './frame-preset-panel';
+import { OverlayInputGroup, OverlayInputGroupRef } from './overlay-input-group';
+
+const HorizontalSketchPicker = lazy(() => import('src/component/inline-sketch-picker').then(({ HorizontalSketchPicker }) => {
+    return { default: HorizontalSketchPicker };
+}));
+const {
+    width,
+    height,
+} = CanvasConst;
+const FrameLayoutContainer = styled.div`
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--spacing-sm);
+    background-color: var(--main-level-3);
+    padding: var(--spacing-sm);
+    ${StyledFrameMixer} {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+    .visual-preview-container {
+        color: var(--color-heavy);
+        width: 110px; // Alignment
+        text-align: center;
+        label {
+            display: block;
+            padding-bottom: var(--spacing-xxs);
+        }
+        .frame-info-block {
+			height: 30px; // Alignment
+			line-height: 28px; // Alignment with border 1px
+            border: var(--bw) solid var(--sub-level-1);
+            background-color: var(--main-level-1);
+            margin-bottom: var(--spacing-xs);
+            cursor: pointer;
+            .frame-info-block-label {
+                padding: 0 var(--spacing-xs);
+            }
+            &.active {
+                border: var(--bw) dashed var(--main-level-2);
+            }
+            &:hover {
+                border: var(--bw) solid var(--main-level-2);
+            }
+        }
+    }
+    .frame-action {
+        .ant-btn {
+            width: 100%;
+            & + .ant-btn {
+                margin-top: var(--spacing-xs);
+            }
+        }
+    }
+    .frame-preset-panel {
+        grid-column: -1 / 1;
+        padding-top: var(--spacing-sm);
+        border-top: var(--bw) solid var(--sub-level-3);
+    }
+    .radio-train.overlay-radio {
+        display: grid;
+        margin-top: var(--spacing-sm);
+        .ant-radio-button-wrapper {
+            font-size: var(--fs);
+            min-width: unset;
+        }
+        .standalone-addon {
+            border: none;
+            padding-bottom: var(--spacing-xxs);
+        }
+        .radio-train-input-group {
+            gap: 0;
+        }
+        .ant-radio-button-wrapper {
+            &:hover {
+                outline: none;
+            }
+        }
+    }
+    .part-radio {
+        .radio-train-input-group {
+            grid-template-columns: 1fr;
+        }
+    }
+    .foil-radio {
+        grid-template-columns: var(--width-label) 1fr;
+        .radio-train-input-group {
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        }
+    }
+    .custom-overlay-group {
+        padding-top: var(--spacing-2xl);
+        .card-image-source-input {
+            width: 280px;
+            padding-right: var(--spacing-sm);
+        }
+    }
+    .custom-overlay-group-hidden {
+        visibility: hidden;
+        position: absolute;
+        width: 0;
+        .custom-overlay-part-group {
+            display: none;
+        }
+    }
+    .custom-overlay-part-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-sm);
+    }
+`;
+
+type FramelayoutSettingPanelRef = {
+    focus: () => void,
+};
+export type FrameLayoutSettingPanel = {
+    isPendulum: boolean,
+    pendulumFrame: string,
+    frameList: ReturnType<typeof getFrameButtonList>,
+    onFrameChange: (frame: string) => void,
+    onCancel: () => void,
+} & Pick<ImageCropper, 'receivingCanvas' | 'onSourceLoaded' | 'onTainted' | 'onCropChange'>;
+export const FrameLayoutSettingPanel = forwardRef<FramelayoutSettingPanelRef, FrameLayoutSettingPanel>(({
+    frameList,
+    receivingCanvas,
+    onSourceLoaded,
+    onTainted,
+    onCropChange,
+    onFrameChange,
+    onCancel,
+}, ref) => {
+    const { db } = useCarderDb();
+    const language = useLanguage();
+    const {
+        isPendulum,
+        foil,
+        overlayType, overlaySource, overlay, overlayData,
+        frame,
+        leftFrame, rightFrame,
+        pendulumFrame, pendulumRightFrame,
+        effectBackground, pendulumEffectBackground,
+        dyeList,
+        setCard,
+        getUpdater,
+    } = useCard(useShallow(({
+        card: {
+            isPendulum,
+            foil,
+            overlayType, overlaySource, overlay, overlayData,
+            frame,
+            leftFrame, rightFrame,
+            pendulumFrame, pendulumRightFrame,
+            dyeList,
+            effectStyle,
+            pendulumStyle,
+        },
+        setCard,
+        getUpdater,
+    }) => ({
+        isPendulum,
+        foil,
+        overlayType, overlaySource, overlay, overlayData,
+        frame,
+        leftFrame, rightFrame,
+        pendulumFrame, pendulumRightFrame,
+        effectBackground: effectStyle.background,
+        pendulumEffectBackground: pendulumStyle.background,
+        dyeList,
+        setCard,
+        getUpdater,
+    })));
+    const {
+        globalScale,
+    } = useSetting(useShallow(({ setting: {
+        globalScale,
+    } }) => ({
+        globalScale,
+    })));
+    const [, setLayoutPresetList] = useGlobal('layoutPresetList');
+    const recentCustomPendulumFrame = useRef({
+        topLeftFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
+        topRightFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
+        bottomLeftFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
+        bottomRightFrame: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
+        effectBackground: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
+        pendulumEffectBackground: pendulumFrame === 'auto' ? 'spell' : pendulumFrame,
+    });
+    const [focus, setFocus] = useState(0);
+    const [activeLayout, setActiveLayout] = useState('frame');
+    const frameLayoutMainId = 'frame-layout-main';
+    const overlayInputRef = useRef<OverlayInputGroupRef>(null);
+    const foilButtonList = useMemo(() => getFoilButtonList(language), [language]);
+    const overlayCompositeList = useMemo(() => getOverlayCompositeList(language), [language]);
+
+    useEffect(() => {
+        /** Avoid confusion */
+        if (activeLayout === 'pendulumEffectBackground' && !isPendulum) setActiveLayout('frame');
+    }, [activeLayout, isPendulum]);
+
+    useImperativeHandle(ref, () => ({
+        focus: () => document.getElementById(frameLayoutMainId)?.focus(),
+    }));
+
+    const changeFoil = useMemo(() => getUpdater('foil'), [getUpdater]);
+    const changeOverlayType = useMemo(() => getUpdater('overlayType'), [getUpdater]);
+    const changeBottomLeftFrame = useMemo(() => getUpdater('pendulumFrame'), [getUpdater]);
+    const changeBottomRightFrame = useMemo(() => getUpdater('pendulumRightFrame'), [getUpdater]);
+    const changeTopLeftFrame = useMemo(() => getUpdater('leftFrame'), [getUpdater]);
+    const changeTopRightFrame = useMemo(() => getUpdater('rightFrame'), [getUpdater]);
+    const changeEffectBackground = (background: string) => setCard(currentCard => {
+        const nextEffectStyle = { ...currentCard.effectStyle };
+        nextEffectStyle.background = background;
+
+        return {
+            ...currentCard,
+            effectStyle: nextEffectStyle,
+        };
+    });
+    const changePendulumEffectBackground = (background: string) => setCard(currentCard => {
+        const nextPendulumEffectStyle = { ...currentCard.pendulumStyle };
+        nextPendulumEffectStyle.background = background;
+
+        return {
+            ...currentCard,
+            pendulumStyle: nextPendulumEffectStyle,
+        };
+    });
+    const changeDyeList = useMemo(() => getUpdater('dyeList'), [getUpdater]);
+    const changeDye = (color: string, name: string) => setCard(currentCard => {
+        const position = DyeIndexMap[name];
+
+        if (typeof position !== 'number') return currentCard;
+        const nextDyeList = [...currentCard.dyeList] as FrameDyeList;
+        nextDyeList[position] = color;
+
+        return {
+            ...currentCard,
+            dyeList: nextDyeList,
+        };
+    });
+    const changeLayout = (layoutValue: string) => {
+        if (activeLayout === 'bottomLeftFrame') changeBottomLeftFrame(layoutValue);
+        if (activeLayout === 'bottomRightFrame') changeBottomRightFrame(layoutValue);
+        if (activeLayout === 'topLeftFrame') changeTopLeftFrame(layoutValue);
+        if (activeLayout === 'topRightFrame') changeTopRightFrame(layoutValue);
+        if (activeLayout === 'effectBackground') changeEffectBackground(layoutValue);
+        if (activeLayout === 'pendulumEffectBackground') changePendulumEffectBackground(layoutValue);
+    };
+    const overlayList = overlayType.split('|');
+    const borderOverlay = overlayList.find(entry => entry.includes('border,'));
+    const frameOverlay = overlayList.find(entry => entry.includes('frame,'));
+    const borderOverlayType: OverlayComposite = (borderOverlay?.split(',')?.[1] as OverlayComposite | undefined) ?? 'source-in';
+    const frameOverlayType: OverlayComposite = (frameOverlay?.split(',')?.[1] as OverlayComposite | undefined) ?? 'none';
+    const changeBorderOverlay = (composite: OverlayComposite) => {
+        changeOverlayType(`border,${composite}|${frameOverlay}`);
+    };
+    const changeFrameOverlay = (composite: OverlayComposite) => {
+        changeOverlayType(`${borderOverlay}|frame,${composite}`);
+    };
+
+    const layoutState = {
+        frame,
+        topLeftFrame: leftFrame,
+        topRightFrame: rightFrame,
+        bottomLeftFrame: pendulumFrame,
+        bottomRightFrame: pendulumRightFrame,
+        effectBackground,
+        pendulumEffectBackground,
+    };
+    const activeFrame = layoutState[activeLayout];
+    const resolvedLayoutStyle = resolveFrameStyle(layoutState, isPendulum);
+    const dyeColor = DyeIndexMap[activeLayout];
+    const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
+        || (overlaySource === 'offline' && overlayData.trim() !== '');
+    return <FrameLayoutContainer className="frame-layout-container">
+        <div className="visual-preview-container">
+            <label>{language['input.advanced-frame.main.label']}</label>
+            <FrameInfoBlock
+                id={frameLayoutMainId}
+                tabIndex={0}
+                className={activeLayout === 'frame' ? 'active' : ''}
+                {...FrameInfoMap[frame] ?? DefaultFrameInfo}
+                onClick={() => setActiveLayout('frame')}
+            />
+            <label>{language['input.advanced-frame.detailed.label']}</label>
+            <CardLayoutPreview
+                width={Math.round(width / 20) * 2}
+                height={Math.round(height / 20) * 2}
+                isPendulum={isPendulum}
+                baseLayoutState={layoutState}
+                resolvedLayoutState={resolvedLayoutStyle}
+                activeLayout={activeLayout}
+                onLayoutSelect={key => setActiveLayout(key)}
+                dyeList={dyeList}
+                foil={foil}
+                language={language}
+                vertical={true}
+            />
+            <div className="frame-action">
+                <Button
+                    size="small"
+                    onClick={() => {
+                        changeBottomLeftFrame('auto');
+                        changeBottomRightFrame('auto');
+                        changeTopLeftFrame('auto');
+                        changeTopRightFrame('auto');
+                        changeEffectBackground('auto');
+                        changePendulumEffectBackground('auto');
+                        changeFoil('normal');
+                        changeOverlayType(getDefaultCard().overlayType);
+                        changeDyeList(getDefaultDyeList());
+                    }}
+                >
+                    {language['generic.reset.label']}
+                </Button>
+                <Button
+                    size="small"
+                    type="primary"
+                    onClick={async () => {
+                        const key = uuid();
+                        const value: FramePreset = {
+                            foil,
+                            frame,
+                            leftFrame,
+                            pendulumFrame,
+                            pendulumRightFrame,
+                            rightFrame,
+                            effectStyle: { background: effectBackground },
+                            pendulumStyle: { background: pendulumEffectBackground },
+                            dyeList: [...dyeList],
+                        };
+                        if (db) {
+                            const tx = db.transaction('presetLayoutStore', 'readwrite');
+                            await db.put('presetLayoutStore', { key, content: JSON.stringify(value) });
+                            await tx.done;
+                        }
+                        setLayoutPresetList(cur => [
+                            ...cur,
+                            {
+                                key,
+                                content: value,
+                            },
+                        ]);
+                    }}
+                >
+                    {language['input.advanced-frame.save.label']}
+                </Button>
+            </div>
+        </div>
+        <div>
+            <StyledFrameMixer
+                className="frame-mixer"
+                {...getNavigationProps({
+                    stopPropagation: true,
+                    optionLength: frameList.length,
+                    setFocus,
+                    onTrigger: () => {
+                        if (focus >= 0) changeLayout(frameList[focus].value);
+                    },
+                    onCancel,
+                })}
+            >
+                <div className="frame-part-name">
+                    {language[FramePositionMap[activeLayout]?.labelKey]}
+                </div>
+                {/** Avoid collapsing in case of frame */}
+                {activeLayout !== 'foil' && <Checkbox
+                    className={mergeClass('inline-input', activeLayout === 'frame' ? 'checkbox-disabled' : '')}
+                    checked={activeFrame === 'auto'}
+                    disabled={activeLayout === 'frame'}
+                    onChange={e => {
+                        changeLayout(e.target.checked ? 'auto' : (recentCustomPendulumFrame.current[activeLayout] ?? 'auto'));
+                    }}
+                >{language['input.frame.auto']}</Checkbox>}
+                {activeLayout !== 'foil' && <RadioTrain
+                    className="frame-radio"
+                    value={activeFrame}
+                    onChange={value => {
+                        if (activeLayout === 'frame') onFrameChange(value);
+                        else changeLayout(value);
+                    }}
+                    optionList={frameList}
+                />}
+                {/** Must mount foil overlay even to make sure it display correctly */}
+                <div
+                    className={mergeClass('custom-overlay-group', activeLayout !== 'foil' ? 'custom-overlay-group-hidden' : '')}
+                    style={{
+                        ...({
+                            '--card-height': `${height * globalScale}px`,
+                            '--card-width': `${width * globalScale}px`,
+                            '--global-scale': `${globalScale}`,
+                            '--cropper-width': `${200}px`,
+                        }),
+                    } as React.CSSProperties}
+                >
+                    <OverlayInputGroup
+                        ref={overlayInputRef}
+                        receivingCanvas={receivingCanvas}
+                        onSourceLoaded={onSourceLoaded}
+                        onTainted={onTainted}
+                        onCropChange={onCropChange}
+                    >
+                        <RadioTrain className="overlay-radio foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
+                            <span>{language['input.foil.label']}</span>
+                        </RadioTrain>
+                        {hasOverlay && <div className="custom-overlay-part-group">
+                            <RadioTrain className="overlay-radio part-radio" value={borderOverlayType} onChange={changeBorderOverlay} optionList={overlayCompositeList}>
+                                <span>{language['input.advanced-frame.overlay-blend.border.label']}</span>
+                            </RadioTrain>
+                            <RadioTrain className="overlay-radio part-radio" value={frameOverlayType} onChange={changeFrameOverlay} optionList={overlayCompositeList}>
+                                <span>{language['input.advanced-frame.overlay-blend.frame.label']}</span>
+                            </RadioTrain>
+                        </div>}
+                    </OverlayInputGroup>
+                </div>
+                {typeof dyeColor === 'number' && <Suspense fallback={<LoadingLabel />}>
+                    <HorizontalSketchPicker
+                        value={dyeList[dyeColor]}
+                        onChange={color => {
+                            if (color !== dyeList[dyeColor]) changeDye(color, activeLayout);
+                        }}
+                    >
+                        <StandaloneLabel $fixedSize={false}>{language['input.advanced-frame.dye']}</StandaloneLabel>
+                    </HorizontalSketchPicker>
+                </Suspense>}
+            </StyledFrameMixer>
+        </div>
+        <FramePresetPanel
+            language={language}
+            isPendulum={isPendulum}
+            onOverwrite={async key => {
+                const value: FramePreset = {
+                    foil,
+                    frame,
+                    leftFrame,
+                    pendulumFrame,
+                    pendulumRightFrame,
+                    rightFrame,
+                    effectStyle: { background: effectBackground },
+                    pendulumStyle: { background: pendulumEffectBackground },
+                    dyeList: [...dyeList],
+                };
+                if (db) {
+                    const tx = db.transaction('presetLayoutStore', 'readwrite');
+                    await db.put('presetLayoutStore', { key, content: JSON.stringify(value) });
+                    await tx.done;
+                }
+                setLayoutPresetList(cur => cur.map(entry => {
+                    if (entry.key === key) {
+                        return {
+                            key,
+                            content: value,
+                        };
+                    } else {
+                        return entry;
+                    }
+                }));
+            }}
+            onActive={content => {
+                const {
+                    dyeList,
+                    foil,
+                    frame,
+                    pendulumFrame,
+                    leftFrame,
+                    pendulumRightFrame,
+                    rightFrame,
+                    effectStyle,
+                    pendulumStyle,
+                } = content;
+                onFrameChange(frame);
+                changeBottomLeftFrame(pendulumFrame);
+                changeBottomRightFrame(pendulumRightFrame);
+                changeTopLeftFrame(leftFrame);
+                changeTopRightFrame(rightFrame);
+                changeEffectBackground(effectStyle.background);
+                changePendulumEffectBackground(pendulumStyle.background);
+                changeFoil(foil);
+                changeDyeList(dyeList);
+            }}
+        />
+    </FrameLayoutContainer>;
+});

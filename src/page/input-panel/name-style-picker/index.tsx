@@ -76,7 +76,6 @@ export const NameStylePicker = forwardRef(({
             setType('custom');
             onChange('custom', value);
         }
-
     }, [sendCustomStyleSignal]);
 
     const shadowPickeRef = useRef<GridSliderInputRef>(null);
@@ -261,9 +260,9 @@ export const NameStylePicker = forwardRef(({
                         content={<div className="overlay-event-absorber">
                             <div className={'input-popover'}>
                                 <div className="custom-style-text">
-                                    <h3>
+                                    <h2>
                                         {language['input.name-style.color.text.label']}
-                                    </h3>
+                                    </h2>
                                     <TextColorPicker
                                         color={fillStyle}
                                         onChange={hexColor => {
@@ -275,9 +274,9 @@ export const NameStylePicker = forwardRef(({
                                 </div>
                                 <hr />
                                 <div className="custom-style-text">
-                                    <h3>
+                                    <h2>
                                         {language['input.name-style.color.ruby.label']}
-                                    </h3>
+                                    </h2>
                                     <Suspense fallback={<LoadingLabel margin="all" />}>
                                         <CompactPicker
                                             colors={DefaultColorList}
@@ -300,7 +299,7 @@ export const NameStylePicker = forwardRef(({
                             $active={isStyleCustom}
                             className="picker-dropdown color-picker-dropdown"
                         >
-                            {language['input.name-style.color.label']} <CaretDownOutlined />
+                            {language['input.name-style.color.label']}
                         </PopoverButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="shadow-picker"
@@ -308,7 +307,7 @@ export const NameStylePicker = forwardRef(({
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'input-popover'}>
-                                <h3 className="custom-style-expand">
+                                <h2 className="custom-style-expand">
                                     <Checkbox value={'has-shadow'} checked={hasShadow} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasShadow: !cur.hasShadow }));
@@ -316,7 +315,7 @@ export const NameStylePicker = forwardRef(({
                                     }}>
                                         {language['input.name-style.shadow.toggle.label']}
                                     </Checkbox>
-                                </h3>
+                                </h2>
                                 {hasShadow && <GridSliderInput ref={shadowPickeRef}
                                     className="custom-style-shadow"
                                     fieldMap={{
@@ -349,7 +348,7 @@ export const NameStylePicker = forwardRef(({
                             $active={isStyleCustom && hasShadow}
                             className="picker-dropdown shadow-picker-dropdown"
                         >
-                            {language['input.name-style.shadow.label']} <CaretDownOutlined />
+                            {language['input.name-style.shadow.label']}
                         </PopoverButton>
                     </Popover>}
                     <Popover key="outline-picker"
@@ -357,7 +356,7 @@ export const NameStylePicker = forwardRef(({
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'input-popover'}>
-                                <h3 className="custom-style-expand">
+                                <h2 className="custom-style-expand">
                                     <Checkbox value={'has-line'} checked={hasOutline} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasOutline: !cur.hasOutline }));
@@ -365,7 +364,7 @@ export const NameStylePicker = forwardRef(({
                                     }}>
                                         {language['input.name-style.outline.toggle.label']}
                                     </Checkbox>
-                                </h3>
+                                </h2>
                                 {hasOutline && <GridSliderInput ref={outlinePickeRef}
                                     className="custom-style-line"
                                     fieldMap={{
@@ -398,7 +397,7 @@ export const NameStylePicker = forwardRef(({
                             $active={isStyleCustom && hasOutline}
                             className="picker-dropdown outline-picker-dropdown"
                         >
-                            {language['input.name-style.outline.label']} <CaretDownOutlined />
+                            {language['input.name-style.outline.label']}
                         </PopoverButton>
                     </Popover>
                     {showExtraDecorativeOption && <Popover key="gradient-picker"
@@ -406,7 +405,7 @@ export const NameStylePicker = forwardRef(({
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className={'input-popover'}>
-                                <h3 className="custom-style-expand">
+                                <h2 className="custom-style-expand">
                                     <Checkbox value={'has-gradient'} checked={hasGradient} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasGradient: !cur.hasGradient }));
@@ -414,7 +413,7 @@ export const NameStylePicker = forwardRef(({
                                     }}>
                                         {language['input.name-style.gradient.toggle.label']}
                                     </Checkbox>
-                                </h3>
+                                </h2>
                                 {hasGradient && <div className="custom-style-gradient">
                                     <TextGradientPicker
                                         angle={gradientAngle}
@@ -431,7 +430,7 @@ export const NameStylePicker = forwardRef(({
                             $active={isStyleCustom && hasGradient}
                             className="picker-dropdown gradient-picker-dropdown"
                         >
-                            {language['input.name-style.gradient.label']} <CaretDownOutlined />
+                            {language['input.name-style.gradient.label']}
                         </PopoverButton>
                     </Popover>}
                     {showExtraDecorativeOption && <Popover key="pattern-picker"
@@ -511,7 +510,7 @@ export const NameStylePicker = forwardRef(({
                         overlayClassName="global-input-overlay global-style-picker-overlay"
                         content={<div className="overlay-event-absorber">
                             <div className="input-popover">
-                                <h3 className="custom-style-expand">
+                                <h2 className="custom-style-expand">
                                     <Checkbox value={'has-emboss'} checked={hasEmboss} onChange={() => {
                                         setType('custom');
                                         setValue(cur => ({ ...cur, hasEmboss: !cur.hasEmboss }));
@@ -519,7 +518,7 @@ export const NameStylePicker = forwardRef(({
                                     }}>
                                         {language['input.name-style.emboss.toggle.label']}
                                     </Checkbox>
-                                </h3>
+                                </h2>
                                 {hasEmboss && <EmbossController ref={embossControllerRef}
                                     language={language}
                                     defaultPitch={embossPitch}

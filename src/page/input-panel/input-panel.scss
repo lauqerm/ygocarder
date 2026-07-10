@@ -196,26 +196,30 @@
     .custom-style-text {
         overflow: hidden;
     }
-    .input-popover {
+    .overlay-event-absorber > div {
         color: var(--color);
-        background-color: var(--main-level-3);
         position: relative;
         border: var(--bw) solid var(--sub-level-1);
         border-radius: var(--br);
-        min-width: 247px; /** To avoid text overflow in different language */
+    }
+    .overlay-event-absorber {
+        background-color: var(--main-level-3);
         h2,
         h3 {
             text-align: left;
             background-color: var(--main-level-3);
             margin: 0;
-            padding: var(--spacing-sm) var(--spacing-xs);
             font-size: var(--fs);
+            line-height: 16px; // Alignment
             .ant-checkbox-wrapper {
                 color: var(--color);
             }
         }
         h3 {
-            padding: var(--spacing-xxs) var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-xs);
+        }
+        h2 {
+            padding: var(--spacing-xs);
             background-color: var(--main-level-4);
             border-bottom: var(--bw) solid var(--sub-level-4);
             &.inactive,
@@ -223,6 +227,9 @@
                 border-bottom-color: transparent;
             }
         }
+    }
+    .input-popover {
+        min-width: 247px; /** To avoid text overflow in different language */
         .compact-picker {
             color: var(--color-heavy);
             background-color: var(--main-level-3);
