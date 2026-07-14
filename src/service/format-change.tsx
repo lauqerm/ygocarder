@@ -1,6 +1,32 @@
-import { RegionMap, DefaultFormatAttribute, InternalCard, ocgToTCGTermMap, tcgToOCGTermMap } from 'src/model';
+import {
+    CardFormatMode,
+    getCardFormatMode,
+    ocgToTCGTermMap,
+    scToTCGTermMap,
+    tcgToOCGTermMap,
+    tcgToSCTermMap,
+} from 'src/model/format';
+import type { InternalCard } from 'src/model/card';
 
-export const changeCardFormat = (card: InternalCard, targetFormat: string): InternalCard => {
+const formatModeData: Record<CardFormatMode, { format: 'tcg' | 'ocg', region: 'en' | 'jp' | 'ch', setIdRegion: string }> = {
+    tcg: { format: 'tcg', region: 'en', setIdRegion: 'EN' },
+    ocg: { format: 'ocg', region: 'jp', setIdRegion: 'JP' },
+    sc: { format: 'ocg', region: 'ch', setIdRegion: 'SC' },
+};
+
+const convertTerm = (term: string, sourceMode: CardFormatMode, targetMode: CardFormatMode) => {
+    const tcgTerm = sourceMode === 'ocg'
+        ? ocgToTCGTermMap[term] ?? term
+        : sourceMode === 'sc'
+            ? scToTCGTermMap[term] ?? term
+            : term;
+
+    if (targetMode === 'ocg') return tcgToOCGTermMap[tcgTerm] ?? tcgTerm;
+    if (targetMode === 'sc') return tcgToSCTermMap[tcgTerm] ?? tcgTerm;
+    return tcgTerm;
+};
+
+export const changeCardFormat = (card: InternalCard, targetModeValue: string): InternalCard => {
     const {
         creator,
         effect,
@@ -14,29 +40,29 @@ export const changeCardFormat = (card: InternalCard, targetFormat: string): Inte
         typeAbility,
     } = card;
 
-    if (format === targetFormat) return card;
+    const sourceMode = getCardFormatMode(format, region);
+    const targetMode: CardFormatMode = targetModeValue === 'sc'
+        ? 'sc'
+        : targetModeValue === 'ocg'
+            ? 'ocg'
+            : 'tcg';
+    if (sourceMode === targetMode) return card;
 
-    const targetRegion = RegionMap[region].category === targetFormat
-        ? region
-        : RegionMap[DefaultFormatAttribute[targetFormat]].key;
-    const termMap = targetFormat === 'ocg' ? tcgToOCGTermMap : ocgToTCGTermMap;
-    const newSetId = (targetFormat === 'ocg' && /-EN/.test(setId))
-        ? setId.replace('-EN', '-JP')
-        : targetFormat === 'tcg' && /-JP/.test(setId)
-            ? setId.replace('-JP', '-EN')
-            : setId;
+    const target = formatModeData[targetMode];
+    const newSetId = setId.replace(/-[A-Z]{2}(?=\d)/i, `-${target.setIdRegion}`);
 
     return {
         ...card,
-        name: termMap[name] ?? name,
-        format: targetFormat,
-        region: targetRegion,
-        effect: termMap[effect] ?? effect,
-        pendulumEffect: termMap[pendulumEffect] ?? pendulumEffect,
-        typeAbility: typeAbility.map(entry => termMap[entry] ?? entry),
-        creator: termMap[creator] ?? creator,
-        password: termMap[password] ?? password,
+        name: convertTerm(name, sourceMode, targetMode),
+        format: target.format,
+        region: target.region,
+        effect: convertTerm(effect, sourceMode, targetMode),
+        pendulumEffect: convertTerm(pendulumEffect, sourceMode, targetMode),
+        typeAbility: typeAbility.map(entry => convertTerm(entry, sourceMode, targetMode)),
+        creator: convertTerm(creator, sourceMode, targetMode),
+        password: convertTerm(password, sourceMode, targetMode),
         setId: newSetId,
-        isFirstEdition: targetFormat === 'ocg' ? false : isFirstEdition,
+        isFirstEdition: target.format === 'ocg' ? false : isFirstEdition,
+        furiganaHelper: targetMode === 'sc' ? false : card.furiganaHelper,
     };
 };

@@ -29,3 +29,11 @@
     font-style: normal;
     font-display: swap;
 }
+/** Simplified Chinese OCG name, effect and type text */
+@font-face {
+	font-family: 'Yu-Gi-Oh! DFKaiW5-A';
+	src: url('./font/Yu-Gi-Oh-DFKaiW5-A-SC.ttf') format('truetype');
+	font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}

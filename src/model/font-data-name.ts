@@ -1,11 +1,11 @@
-import { FontData } from './font-data-effect';
+import { FontData, SIMPLIFIED_CHINESE_FONT_FAMILY } from './font-data-effect';
 
 export type NameFontData = {
     value: string,
     labelKey: string,
     fontData: FontData,
 };
-export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
+export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG' | 'SC', NameFontData> = {
     Default: {
         value: 'Default',
         labelKey: 'input.name-style.font-type.default',
@@ -300,5 +300,37 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                 offsetY: 0,
             }],
         }
+    },
+    SC: {
+        value: 'SC',
+        labelKey: 'input.name-style.font-type.sc',
+        fontData: {
+            alphabetFont: SIMPLIFIED_CHINESE_FONT_FAMILY,
+            font: SIMPLIFIED_CHINESE_FONT_FAMILY,
+            fontStyle: 'ocg',
+            furiganaFont: 'DFHSGothic-W3-WIN-RKSJ-H',
+            headTextBold: true,
+            headTextHeightRatio: 0.775,
+            headTextOverflow: 'condense',
+            metricMethod: 'name',
+            numberFont: SIMPLIFIED_CHINESE_FONT_FAMILY,
+            numberFontRatio: 1.00,
+            ordinalFont: SIMPLIFIED_CHINESE_FONT_FAMILY,
+            symbolFont: 'matrix',
+            symbolFontRatio: 0.775,
+            vietnameseFont: SIMPLIFIED_CHINESE_FONT_FAMILY,
+            vietnameseFontRatio: 1,
+            variant: 'sc-name',
+            fontList: [{
+                bulletWidth: 42.67,
+                fontSize: 64,
+                headTextFontRatio: 0.175,
+                headTextSpacing: 3,
+                letterSpacing: -0.03,
+                lineCount: 1,
+                lineHeight: 64,
+                offsetY: 0,
+            }],
+        },
     },
 };

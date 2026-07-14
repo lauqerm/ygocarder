@@ -114,6 +114,7 @@ export const resolveFrameStyle = (frameData: Record<string, string | undefined>,
 
 export const resolveNameStyle = ({
     format,
+    region,
     frame,
     nameStyle,
     nameStyleType,
@@ -123,11 +124,12 @@ export const resolveNameStyle = ({
     nameStyle: Partial<NameStyle>,
     frame: string,
     format: string,
+    region?: string,
     foil: Foil,
 }) => {
     const isSpeedSkill = checkSpeedSkill({ frame });
     let contextualFont = nameStyleType === 'auto' ? AUTO_FONT : nameStyle.font;
-    if (contextualFont === AUTO_FONT && format === 'ocg') contextualFont = 'OCG';
+    if (contextualFont === AUTO_FONT && format === 'ocg') contextualFont = region === 'ch' ? 'SC' : 'OCG';
     if (contextualFont === AUTO_FONT && format === 'tcg') contextualFont = 'Default';
     if (contextualFont === AUTO_FONT && isSpeedSkill && format === 'tcg') contextualFont = 'Arial';
 

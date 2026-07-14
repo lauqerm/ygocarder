@@ -1,4 +1,16 @@
 {
+    "zhs": {
+        "name": "简体中文",
+        "formalName": "Simplified Chinese",
+        "codeName": "zhs",
+        "initialMessage": "正在加载字体和脚本……",
+        "order": 0,
+        "style": {
+            "font-family": "'Microsoft YaHei', 'PingFang SC', sans-serif",
+            "--width-label": "120px"
+        },
+        "active": true
+    },
     "eng": {
         "name": "English",
         "formalName": "English",

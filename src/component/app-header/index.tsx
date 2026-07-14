@@ -195,7 +195,7 @@ export const AppHeader = ({
                             </Radio.Button>;
                         })}
                 </Radio.Group>
-                <Tooltip title="Check the FAQ Button => Feedbacks to see if your issue is already answered.">
+                <Tooltip title={language['contributor.bug-report.tooltip-detail']}>
                     <span
                         id="sentry-bug-report"
                         className="bug-report"

@@ -3,6 +3,7 @@ import {
     DefaultTCGEffectFontData,
     DefaultTCGNormalFontData,
     FontData,
+    applySimplifiedChineseFont,
 } from './font-data-effect';
 
 /** OCG does not have different fonts between normal and effect monsters */
@@ -118,3 +119,10 @@ export const PendulumEffectFontData: Record<string, FontData> = {
         ],
     },
 };
+
+Object.entries(PendulumEffectFontData)
+    .filter(([key]) => key.startsWith('ocg-'))
+    .forEach(([key, fontData]) => {
+        const simplifiedChineseKey = `sc${key.slice(3)}`;
+        PendulumEffectFontData[simplifiedChineseKey] = applySimplifiedChineseFont(fontData, simplifiedChineseKey);
+    });

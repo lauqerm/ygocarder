@@ -117,6 +117,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         frame,
         cardIcon,
         format,
+        region,
         furiganaHelper,
         condenseTolerant,
         setCard,
@@ -126,6 +127,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             frame,
             cardIcon,
             format,
+            region,
             furiganaHelper,
             effectStyle,
         },
@@ -135,6 +137,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         frame,
         cardIcon,
         format,
+        region,
         furiganaHelper,
         condenseTolerant: effectStyle?.condenseTolerant,
         setCard,
@@ -228,7 +231,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         : IconTypeMap[cardIcon]?.value === 'st'
             ? 'input.type.st.label'
             : 'input.type.monster.label';
-    const isOCG = format === 'ocg';
+    const isOCG = format === 'ocg' && region !== 'ch';
     return <>
         <PostPendulumFirstLineContainer className={`post-pendulum-input first-line variant-${format}`}>
             <CardTextInput ref={typeAbilityInputRef}
