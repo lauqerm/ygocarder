@@ -26,7 +26,7 @@ const convertTerm = (term: string, sourceMode: CardFormatMode, targetMode: CardF
     return tcgTerm;
 };
 
-export const changeCardFormat = (card: InternalCard, targetModeValue: string): InternalCard => {
+export const changeCardFormat = (card: InternalCard, targetMode: CardFormatMode): InternalCard => {
     const {
         creator,
         effect,
@@ -41,11 +41,6 @@ export const changeCardFormat = (card: InternalCard, targetModeValue: string): I
     } = card;
 
     const sourceMode = getCardFormatMode(format, region);
-    const targetMode: CardFormatMode = targetModeValue === 'sc'
-        ? 'sc'
-        : targetModeValue === 'ocg'
-            ? 'ocg'
-            : 'tcg';
     if (sourceMode === targetMode) return card;
 
     const target = formatModeData[targetMode];

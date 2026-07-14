@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import WebFont from 'webfontloader';
 import { useCard } from './use-card';
 import { useShallow } from 'zustand/react/shallow';
-import { PUBLIC_PATH } from 'src/model';
+import { getCardFormatMode, PUBLIC_PATH } from 'src/model';
 
 export type UseOCGFont = {
     isLanguageInitiating: boolean,
@@ -32,7 +32,8 @@ export const useOCGFont = ({
     const readyMap = useRef<Record<'ocg' | 'sc', boolean>>({ ocg: false, sc: false });
     const loadAttemptMap = useRef<Record<'ocg' | 'sc', number>>({ ocg: 0, sc: 0 });
     useEffect(() => {
-        const mode = (format === 'ocg' && region === 'ch') || font === 'SC' ? 'sc' : 'ocg';
+        const cardMode = getCardFormatMode(format, region);
+        const mode = font === 'SC' || cardMode === 'sc' ? 'sc' : 'ocg';
         const shouldLoad = format === 'ocg' || font === 'OCG' || font === 'SC';
         if (
             shouldLoad

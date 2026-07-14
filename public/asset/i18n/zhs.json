@@ -462,6 +462,7 @@
         "manager.button.delete.tooltip": "删除",
         "manager.button.download.tooltip": "复制原始数据",
         "manager.button.duplicate.tooltip": "创建副本",
+        "manager.card.copy-suffix": "副本",
         "manager.button.search.button.reset.label": "重置筛选",
         "manager.button.search.no-card.message": "列表中没有卡片",
         "manager.button.search.text.placeholder": "卡名或文字",

@@ -9,6 +9,7 @@ import { getTypeAbilityFontData } from '../src/model/font-data-other';
 import {
     getCardFormatMode,
     passwordSentenceMap,
+    tcgToSCTermMap,
 } from '../src/model/format';
 import type { InternalCard } from '../src/model/card';
 import { changeCardFormat } from '../src/service/format-change';
@@ -54,5 +55,8 @@ assert.equal(NameFontDataMap.SC.fontData.font, SIMPLIFIED_CHINESE_FONT_FAMILY);
 assert.equal(EffectFontData.sc.font, SIMPLIFIED_CHINESE_FONT_FAMILY);
 assert.equal(PendulumEffectFontData['sc-medium'].font, SIMPLIFIED_CHINESE_FONT_FAMILY);
 assert.equal(getTypeAbilityFontData().sc.font, SIMPLIFIED_CHINESE_FONT_FAMILY);
+assert.equal(tcgToSCTermMap['Equip'], '装备');
+assert.equal(tcgToSCTermMap['Quick-Play'], '速攻');
+assert.equal(tcgToSCTermMap['Continuous'], '永续');
 
 console.log('Simplified Chinese card mode tests passed.');

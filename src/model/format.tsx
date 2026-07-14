@@ -336,6 +336,12 @@ export const tcgToSCTermMap: Record<string, string> = {
     'Link': '连接',
     'Token': '衍生物',
     'Special Summon': '特殊召唤',
+    /** Spell/Trap icon subtype */
+    'Equip': '装备',
+    'Field': '场地',
+    'Quick-Play': '速攻',
+    'Continuous': '永续',
+    'Counter': '反击',
     /** ability */
     'Tuner': '协调',
     'Gemini': '二重',

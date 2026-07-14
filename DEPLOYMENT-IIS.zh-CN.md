@@ -4,7 +4,7 @@
 
 ## 前置条件
 
-- Windows Server 上已安装 Node.js。
+- Windows Server 上已安装 Node.js 22.12 或更高版本。
 - IIS 已启用“静态内容”功能。
 - 安装 Microsoft IIS URL Rewrite 2 模块。`public/web.config` 用它完成 SPA 回退路由；未安装时 IIS 会因不识别 `<rewrite>` 节而报错。
 - 建议为站点配置 HTTPS。普通制卡功能可在 HTTP 下运行，但 Service Worker、离线缓存和 PWA 安装需要 HTTPS（localhost 除外）。

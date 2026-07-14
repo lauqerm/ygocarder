@@ -4,6 +4,7 @@ import {
     DEFAULT_TEXT_COLOR,
     Foil,
     frameList,
+    getCardFormatMode,
     LINK_RATING_BEHAVIOR_ALWAYS_AUTO,
     LINK_RATING_BEHAVIOR_ALWAYS_HIDE,
     LINK_RATING_BEHAVIOR_ALWAYS_SHOW,
@@ -128,8 +129,11 @@ export const resolveNameStyle = ({
     foil: Foil,
 }) => {
     const isSpeedSkill = checkSpeedSkill({ frame });
-    let contextualFont = nameStyleType === 'auto' ? AUTO_FONT : nameStyle.font;
-    if (contextualFont === AUTO_FONT && format === 'ocg') contextualFont = region === 'ch' ? 'SC' : 'OCG';
+    const formatMode = getCardFormatMode(format, region ?? '');
+    let contextualFont = formatMode === 'sc'
+        ? 'SC'
+        : nameStyleType === 'auto' ? AUTO_FONT : nameStyle.font;
+    if (contextualFont === AUTO_FONT && format === 'ocg') contextualFont = 'OCG';
     if (contextualFont === AUTO_FONT && format === 'tcg') contextualFont = 'Default';
     if (contextualFont === AUTO_FONT && isSpeedSkill && format === 'tcg') contextualFont = 'Arial';
 
@@ -154,7 +158,9 @@ export const resolveNameStyle = ({
         return {
             ...contextualColor,
             ...resultNameStyle,
-            font: resultNameStyle.font === AUTO_FONT ? contextualFont : resultNameStyle.font,
+            font: formatMode === 'sc'
+                ? 'SC'
+                : resultNameStyle.font === AUTO_FONT ? contextualFont : resultNameStyle.font,
         };
     }
 
@@ -176,5 +182,6 @@ export const resolveNameStyle = ({
         ...contextualOutline,
         ...foilStyle,
         ...frameStyle,
+        ...(formatMode === 'sc' ? { font: 'SC' } : {}),
     };
 };

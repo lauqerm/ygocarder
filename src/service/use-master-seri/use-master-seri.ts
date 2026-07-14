@@ -46,6 +46,7 @@ import {
     LINK_ON_TOP_ALWAYS,
     LINK_ON_TOP_ACTIVATED_ONLY,
     LINK_ON_TOP_NEVER,
+    getCardFormatMode,
 } from 'src/model';
 import {
     checkDiplayLinkRating,
@@ -156,7 +157,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         furiganaHelper,
         flag,
     } = card;
-    const typographyFormat = format === 'ocg' && region === 'ch' ? 'sc' : format;
+    const typographyFormat = getCardFormatMode(format, region);
     const textFuriganaHelper = typographyFormat === 'sc' ? false : furiganaHelper;
     const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
         || (overlaySource === 'offline' && overlayData.trim() !== '');

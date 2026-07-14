@@ -6,6 +6,7 @@ import {
     NameStyleType,
     FrameInfoMap,
     FinishMap,
+    CardFormatMode,
     getCardFormatMode,
 } from '../../model';
 import {
@@ -157,7 +158,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
     const changeFormat = (formatValue: string | number) => {
         setCard(currentCard => {
-            const nextFormat = `${formatValue}`;
+            const nextFormat = `${formatValue}` as CardFormatMode;
             const formatSwappedCard = changeCardFormat(currentCard, nextFormat);
 
             const { name, setId, effect, typeAbility, password, creator, pendulumEffect } = formatSwappedCard;
