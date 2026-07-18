@@ -1,4 +1,4 @@
-import { FontData } from './font-data-effect';
+import { FontData, applySimplifiedChineseFont } from './font-data-effect';
 
 export const tcgCreatorFontData: FontData = {
     font: 'stone-serif-regular',
@@ -216,4 +216,5 @@ export const ocgTypeAbilityFontData: FontData = {
 export const getTypeAbilityFontData = (): Record<string, FontData> => ({
     tcg: tcgTypeAbilityFontData,
     ocg: ocgTypeAbilityFontData,
+    sc: applySimplifiedChineseFont(ocgTypeAbilityFontData, 'sc-type-ability'),
 });

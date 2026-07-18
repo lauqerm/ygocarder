@@ -10,6 +10,7 @@ import {
 import styled from 'styled-components';
 import { ZoomInOutlined, ZoomOutOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { CardActionButton } from '../atom';
+import { useLanguage } from 'src/service';
 
 const { height: CanvasHeight, width: CanvasWidth } = CanvasConst;
 const StyledLightboxContainer = styled.div`
@@ -129,6 +130,7 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
     globalScale,
     children,
 }, ref) => {
+    const language = useLanguage();
     const [lightboxVisible, setLightboxVisible] = useState(false);
     const [lightboxBusy, setLightboxBusy] = useState(false);
     const [canvasKey, setCanvasKey] = useState(0);
@@ -236,7 +238,7 @@ export const Lightbox = forwardRef<LightboxRef, Lightbox>(({
                 }}
             </TransformWrapper>
             {lightboxBusy && <div className="lightbox-guard" onContextMenu={e => e.preventDefault()}>
-                <div className="canvas-guard-alert">Generating...</div>
+                <div className="canvas-guard-alert">{language['generic.generating.label']}</div>
             </div>}
         </StyledLightboxContainer>
     </Modal>;

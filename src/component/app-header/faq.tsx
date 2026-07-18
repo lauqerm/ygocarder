@@ -1,6 +1,6 @@
 import { Modal, notification, Tabs } from 'antd';
 import { FaqButtonLabel, QuoteContainer } from './styled';
-import { useNotification } from 'src/service';
+import { useLanguage, useNotification } from 'src/service';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FAQ_BUTTON_ID } from './model';
@@ -531,6 +531,7 @@ const feedbackList: Feedback[] = [
     },
 ];
 export const QuestionAndFeedback = () => {
+    const language = useLanguage();
     const [visible, setVisible] = useState(false);
     const [faqReminder, setMemoizedReminder] = useNotification('faqReminder');
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
@@ -558,15 +559,15 @@ export const QuestionAndFeedback = () => {
         if (feedbackReminder !== true) {
             setFeedbackReminder(true);
             notification.info({
-                message: 'Feedback Reminder',
-                description: 'If you have any feedback or suggestion, please check the FAQ button first to see if your feedback has been addressed.',
+                message: language['faq.reminder.message'],
+                description: language['faq.reminder.description'],
                 duration: 10,
                 onClose: () => {
                     setAnimating(false);
                 }
             });
         }
-    }, [feedbackReminder, setFeedbackReminder]);
+    }, [feedbackReminder, language, setFeedbackReminder]);
 
     return <>
         <FaqButtonLabel
@@ -578,12 +579,12 @@ export const QuestionAndFeedback = () => {
                 setHighlighting(false);
             }}
         >
-            {'FAQ'}
+            {language['faq.button.label']}
         </FaqButtonLabel>
         <Modal width={600} visible={visible} onCancel={() => setVisible(false)} footer={null}>
             <Tabs>
-                <Tabs.TabPane key="feedback" tab="Feedbacks">
-                    <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
+                <Tabs.TabPane key="feedback" tab={language['faq.feedback.tab']}>
+                    <div><i>{language['faq.feedback.stale']}</i></div>
                     <br />
                     {feedbackList.map(({ author, question, answer, image }, index) => {
                         return <Quote key={index} author={author} question={question} image={image}>
@@ -591,15 +592,15 @@ export const QuestionAndFeedback = () => {
                         </Quote>;
                     })}
                 </Tabs.TabPane>
-                <Tabs.TabPane key="faq" tab="Frequently Asked Questions">
+                <Tabs.TabPane key="faq" tab={language['faq.questions.tab']}>
                     {[
                         {
-                            question: 'Can you make the pendulum effect box semi-transparent? Just like real pendulum cards.',
-                            answer: 'Yes, both pendulum and default card effect box can be made semi-transparent. In "Layout" row you can find "Pendulum" and "Effect" slider, each control how transparent the effect box is (0 is fully see-through and 100 is fully solid).',
+                            question: language['faq.questions.pendulum-opacity.question'],
+                            answer: language['faq.questions.pendulum-opacity.answer'],
                         },
                         {
-                            question: 'Will you make another version for Rush Duel cards?',
-                            answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
+                            question: language['faq.questions.rush-duel.question'],
+                            answer: language['faq.questions.rush-duel.answer'],
                         }
                     ].map(({ question, answer }, index) => {
                         return <Quote key={index} question={question}>

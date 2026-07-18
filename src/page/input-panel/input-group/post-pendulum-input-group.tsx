@@ -4,7 +4,7 @@ import { CardTextInput, CardTextInputRef } from '../input-text';
 import { useCard, useLanguage, useSetting } from 'src/service';
 import { useShallow } from 'zustand/react/shallow';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { CondenseType, IconTypeMap, CheckboxChangeEvent, CondenseTolerantLabelMap } from 'src/model';
+import { CondenseType, IconTypeMap, CheckboxChangeEvent, CondenseTolerantLabelMap, getCardFormatMode } from 'src/model';
 import styled from 'styled-components';
 import { checkMonster } from 'src/util';
 
@@ -117,6 +117,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         frame,
         cardIcon,
         format,
+        region,
         furiganaHelper,
         condenseTolerant,
         setCard,
@@ -126,6 +127,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
             frame,
             cardIcon,
             format,
+            region,
             furiganaHelper,
             effectStyle,
         },
@@ -135,6 +137,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         frame,
         cardIcon,
         format,
+        region,
         furiganaHelper,
         condenseTolerant: effectStyle?.condenseTolerant,
         setCard,
@@ -228,7 +231,7 @@ export const PostPendulumInputGroup = forwardRef<PostPendulumInputGroupRef, Post
         : IconTypeMap[cardIcon]?.value === 'st'
             ? 'input.type.st.label'
             : 'input.type.monster.label';
-    const isOCG = format === 'ocg';
+    const isOCG = getCardFormatMode(format, region) === 'ocg';
     return <>
         <PostPendulumFirstLineContainer className={`post-pendulum-input first-line variant-${format}`}>
             <CardTextInput ref={typeAbilityInputRef}

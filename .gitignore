@@ -3,6 +3,7 @@ node_modules
 
 # dependencies
 /node_modules
+/.yarn-cache-codex
 /.pnp
 .pnp.js
 

@@ -259,7 +259,7 @@ export const EmbossController = forwardRef<EmbossControllerRef, EmbossController
             </div>
         </div>
         {allowPickColor && <div className="emboss-control-right">
-            <h2>Light color</h2>
+            <h2>{language['input.name-style.emboss.light-color.label']}</h2>
             <Suspense fallback={<LoadingLabel margin="hor" />}>
                 <ChromePicker
                     styles={{

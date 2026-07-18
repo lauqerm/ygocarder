@@ -254,6 +254,9 @@ export const copyrightMap = {
         '©1996 KAZUKI TAKAHASHI',
         '©KAZUKI TAKAHASHI / SHUEISHA',
     ],
+    sc: [
+        '©2020 Studio Dice/SHUEISHA, TV TOKYO, KONAMI',
+    ],
 };
 
 export const editionList = [
@@ -268,7 +271,103 @@ export const editionList = [
 export const passwordSentenceMap: Record<string, string> = {
     ocg: '※デッキ構築には使用できません。',
     tcg: 'This card cannot be in a Deck.',
+    sc: '※不能使用于牌组构筑。',
 };
+
+export type CardFormatMode = 'tcg' | 'ocg' | 'sc';
+
+/**
+ * Simplified Chinese cards use the OCG template and layout. `sc` is only a
+ * presentation/editing mode; serialized card data remains `format: "ocg"`
+ * with `region: "ch"` so existing OCG rendering and saved cards stay
+ * compatible.
+ */
+export const getCardFormatMode = (format: string, region: string): CardFormatMode => {
+    if (format === 'ocg' && region === 'ch') return 'sc';
+    return format === 'ocg' ? 'ocg' : 'tcg';
+};
+
+export const isSimplifiedChineseCard = (format: string, region: string) => (
+    getCardFormatMode(format, region) === 'sc'
+);
+
+/** Official Simplified Chinese master-series terminology supplied from the card database. */
+export const tcgToSCTermMap: Record<string, string> = {
+    /** monster type */
+    'Aqua': '水族',
+    'Beast': '兽族',
+    'Beast-Warrior': '兽战士族',
+    'Creator God': '创造神族',
+    'Cyberse': '电子界族',
+    'Dinosaur': '恐龙族',
+    'Divine-Beast': '幻神兽族',
+    'Dragon': '龙族',
+    'Fairy': '天使族',
+    'Fiend': '恶魔族',
+    'Fish': '鱼族',
+    'Galaxy': '银河族',
+    'Illusion': '幻想魔族',
+    'Insect': '昆虫族',
+    'Machine': '机械族',
+    'Plant': '植物族',
+    'Psychic': '念动力族',
+    'Pyro': '炎族',
+    'Reptile': '爬虫类族',
+    'Rock': '岩石族',
+    'Sea Serpent': '海龙族',
+    'Spellcaster': '魔法师族',
+    'Thunder': '雷族',
+    'Warrior': '战士族',
+    'Winged Beast': '鸟兽族',
+    'Wyrm': '幻龙族',
+    'Zombie': '不死族',
+    /** type */
+    'Monster': '怪兽',
+    'Spell Card': '魔法卡',
+    'Trap Card': '陷阱卡',
+    /** subtype */
+    'Normal': '通常',
+    'Effect': '效果',
+    'Ritual': '仪式',
+    'Fusion': '融合',
+    'Synchro': '同步',
+    'Xyz': '超量',
+    'Pendulum': '灵摆',
+    'Link': '连接',
+    'Token': '衍生物',
+    'Special Summon': '特殊召唤',
+    /** Spell/Trap icon subtype */
+    'Equip': '装备',
+    'Field': '场地',
+    'Quick-Play': '速攻',
+    'Continuous': '永续',
+    'Counter': '反击',
+    /** ability */
+    'Tuner': '协调',
+    'Gemini': '二重',
+    'Flip': '反转',
+    'Toon': '卡通',
+    'Spirit': '灵魂',
+    'Union': '联合',
+    /** attribute */
+    'LIGHT': '光',
+    'DARK': '暗',
+    'WATER': '水',
+    'FIRE': '炎',
+    'EARTH': '地',
+    'WIND': '风',
+    'DIVINE': '神',
+    'SPELL': '魔法',
+    'TRAP': '陷阱',
+    /** fixed card text */
+    [copyrightMap.tcg[0]]: copyrightMap.sc[0],
+    [passwordSentenceMap.tcg]: passwordSentenceMap.sc,
+};
+
+export const scToTCGTermMap = Object.entries(tcgToSCTermMap).reduce((acc, [tcgTerm, scTerm]) => {
+    acc[scTerm] = tcgTerm;
+    return acc;
+}, {} as Record<string, string>);
 
 /** Automatically convert popular OCG terms into their TCG counterpart. Never introduce machine translation here :'( */
 export const ocgToTCGTermMap: Record<string, string> = {

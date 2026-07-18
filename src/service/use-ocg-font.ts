@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import WebFont from 'webfontloader';
 import { useCard } from './use-card';
 import { useShallow } from 'zustand/react/shallow';
-import { PUBLIC_PATH } from 'src/model';
+import { getCardFormatMode, PUBLIC_PATH } from 'src/model';
 
 export type UseOCGFont = {
     isLanguageInitiating: boolean,
@@ -21,22 +21,27 @@ export const useOCGFont = ({
     const {
         font,
         format,
+        region,
     } = useCard(useShallow(state => ({
         format: state.card.format,
         font: state.card.nameStyle.font,
+        region: state.card.region,
     })));
     const [styleContent, setStyleContent] = useState('');
 
-    const ocgReady = useRef(false);
-    const loadAttempt = useRef(0);
+    const readyMap = useRef<Record<'ocg' | 'sc', boolean>>({ ocg: false, sc: false });
+    const loadAttemptMap = useRef<Record<'ocg' | 'sc', number>>({ ocg: 0, sc: 0 });
     useEffect(() => {
+        const cardMode = getCardFormatMode(format, region);
+        const mode = font === 'SC' || cardMode === 'sc' ? 'sc' : 'ocg';
+        const shouldLoad = format === 'ocg' || font === 'OCG' || font === 'SC';
         if (
-            (format === 'ocg' || font === 'OCG')
-            && ocgReady.current === false
-            && loadAttempt.current <= 3
+            shouldLoad
+            && readyMap.current[mode] === false
+            && loadAttemptMap.current[mode] <= 3
             && isLanguageInitiating === false
         ) {
-            loadAttempt.current += 1;
+            loadAttemptMap.current[mode] += 1;
             setStyleContent(`${PUBLIC_PATH}/asset/ocg-font.css`);
             onBeforeLoad();
 
@@ -48,21 +53,22 @@ export const useOCGFont = ({
                         'DFKakuTaiHiStd-W4',
                         'FOT-Rodin Pro M',
                         'Yu-Gi-Oh! DF Leisho 3',
+                        ...(mode === 'sc' ? ['Yu-Gi-Oh! DFKaiW5-A'] : []),
                     ],
-                    urls: ['asset/ocg-font.css'],
+                    urls: [`${PUBLIC_PATH}/asset/ocg-font.css`],
                 },
                 active: () => {
-                    ocgReady.current = true;
+                    readyMap.current[mode] = true;
                     onActive();
                 },
                 inactive: () => {
-                    ocgReady.current = true;
+                    readyMap.current[mode] = true;
                     onInactive();
                 },
                 fontinactive: onFontInactive,
             });
         }
-    }, [format, font, isLanguageInitiating, onActive, onBeforeLoad, onFontInactive, onInactive]);
+    }, [format, font, region, isLanguageInitiating, onActive, onBeforeLoad, onFontInactive, onInactive]);
 
     return {
         styleContent,
