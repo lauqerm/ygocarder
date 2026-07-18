@@ -36,10 +36,10 @@ export const useI18N = create<I18NStore>((set, get) => {
             const cachedLanguage = localStorage.getItem('language');
 
             if (cachedLanguage) return cachedLanguage;
-            return 'zhs';
+            return 'eng';
         } catch (e) {
             console.error('useSetting: Error when getting cached language', e);
-            return 'zhs';
+            return 'eng';
         }
     })();
     const languageMap: Partial<Record<string, LanguageData>> = {};

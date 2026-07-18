@@ -593,7 +593,6 @@
         "manager.header.button.convert.raw-text.label": "纯文本",
         "version-log.empty": "暂无更新记录",
         "version-log.loading": "正在加载更新记录……",
-        "version-log.open-image.tooltip": "在新标签页中打开图片",
-        "contributor.made-by": "由 Lauqerm 制作"
+        "version-log.open-image.tooltip": "在新标签页中打开图片"
     }
 }

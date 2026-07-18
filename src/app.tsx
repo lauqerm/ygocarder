@@ -880,7 +880,7 @@ function App() {
                         <FileImageOutlined /><br /><div>{language['button.far-sight.label']}</div>
                     </FarSightButton>
                     <StyledByMe className="by-me" id="hash-2">
-                        {language['contributor.made-by']} <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
+                        Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                     </StyledByMe>
                 </div>
                 {/* <div id="debug-container" /> */}

@@ -593,7 +593,6 @@
         "manager.header.button.convert.raw-text.label": "Raw text",
         "version-log.empty": "No changelogs",
         "version-log.loading": "Loading changelog…",
-        "version-log.open-image.tooltip": "Open image in a new tab",
-        "contributor.made-by": "Made by Lauqerm"
+        "version-log.open-image.tooltip": "Open image in a new tab"
     }
 }
