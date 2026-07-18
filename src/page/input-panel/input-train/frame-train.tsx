@@ -3,7 +3,7 @@ import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
 import { getFrameButtonList } from '../const';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { FrameInfoMap, NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap } from 'src/model';
+import { FrameInfoMap, getCardFormatMode, NO_ATTRIBUTE, passwordSentenceMap, tcgToOCGTermMap, tcgToSCTermMap } from 'src/model';
 import { TrainGridStyle } from './input-train.styled';
 import { PopoverButton, RadioTrain } from 'src/component';
 import { BookOutlined } from '@ant-design/icons';
@@ -114,6 +114,7 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
                 typeAbility,
                 attribute,
                 format,
+                region,
                 password,
                 star,
                 atk,
@@ -123,17 +124,20 @@ export const FrameTrain = forwardRef<FrameTrainRef, FrameTrain>(({
             const nextFrame = `${frameValue}`;
             const willBecomeST = nextFrame === 'spell' || nextFrame === 'trap';
             const willRemoveStat = willBecomeST || nextFrame === 'speed-skill';
-            const termMap = format === 'tcg'
+            const formatMode = getCardFormatMode(format, region);
+            const termMap = formatMode === 'tcg'
                 ? {
                     'Spell Card': 'Spell Card',
                     'Trap Card': 'Trap Card',
                 }
-                : tcgToOCGTermMap;
+                : formatMode === 'sc'
+                    ? tcgToSCTermMap
+                    : tcgToOCGTermMap;
             const nextTypeAbility = nextFrame === 'spell'
                 ? [termMap['Spell Card']]
                 : nextFrame === 'trap' ? [termMap['Trap Card']] : typeAbility;
             const nextPassword = nextFrame === 'token'
-                ? passwordSentenceMap[format]
+                ? passwordSentenceMap[formatMode]
                 : password;
             const nextAtk = willRemoveStat ? '' : (atk === '' ? '0' : atk);
             const nextDef = willRemoveStat ? '' : (def === '' ? '0' : def);

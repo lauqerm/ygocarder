@@ -23,12 +23,14 @@ import { tokenizeText, getWritingDirection } from '../text-util';
 /** Sections inside effect box (stats and type) will affect the amount of line and applicable font size use for the text. */
 export const getEffectFontAndCoordinate = ({
     format,
+    fontFormat = format,
     useItalic,
     statInEffect,
     typeInEffect,
     frameType,
 }: {
     format: string,
+    fontFormat?: string,
     statInEffect: boolean,
     typeInEffect: boolean,
     useItalic: boolean,
@@ -41,14 +43,14 @@ export const getEffectFontAndCoordinate = ({
         statInEffect ? 'stat' : ''
     ].filter(entry => entry !== '').join('-');
     const fontDataKey = [
-        format,
+        fontFormat,
         ...(frameType === 'pendulumLarge' ? ['pendulumLarge'] : []),
         typeInEffect ? 'type' : '',
         statInEffect ? 'stat' : ''
     ].filter(entry => entry !== '').join('-');
 
     let fontData = EffectFontData[fontDataKey];
-    if (useItalic && format === 'tcg' && NormalFontData[fontDataKey]) {
+    if (useItalic && fontFormat === 'tcg' && NormalFontData[fontDataKey]) {
         fontData = NormalFontData[fontDataKey];
     }
 

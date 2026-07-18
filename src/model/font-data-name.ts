@@ -1,11 +1,11 @@
-import { FontData } from './font-data-effect';
+import { applySimplifiedChineseFont, FontData } from './font-data-effect';
 
 export type NameFontData = {
     value: string,
     labelKey: string,
     fontData: FontData,
 };
-export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
+const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
     Default: {
         value: 'Default',
         labelKey: 'input.name-style.font-type.default',
@@ -300,5 +300,14 @@ export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> 
                 offsetY: 0,
             }],
         }
+    },
+};
+
+export const NameFontDataMap: Record<'Default' | 'Arial' | 'OCG' | 'SC', NameFontData> = {
+    ...BaseNameFontDataMap,
+    SC: {
+        value: 'SC',
+        labelKey: 'input.name-style.font-type.sc',
+        fontData: applySimplifiedChineseFont(BaseNameFontDataMap.OCG.fontData, 'sc-name'),
     },
 };

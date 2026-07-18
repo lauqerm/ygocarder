@@ -372,13 +372,13 @@ export const CardManagerPanel = forwardRef(({
                                 {[
                                     {
                                         value: 'mse',
-                                        label: 'Magic Set Editor (may take a while)',
+                                        label: language['manager.header.button.convert.mse.label'],
                                         converter: convertToMse,
                                         active: true,
                                     },
                                     {
                                         value: 'text',
-                                        label: 'Raw text',
+                                        label: language['manager.header.button.convert.raw-text.label'],
                                         converter: convertToText,
                                         active: true,
                                     },

@@ -195,7 +195,7 @@ export const AppHeader = ({
                             </Radio.Button>;
                         })}
                 </Radio.Group>
-                <Tooltip title="Check the FAQ Button => Feedbacks to see if your issue is already answered.">
+                <Tooltip title={language['contributor.bug-report.tooltip-detail']}>
                     <span
                         id="sentry-bug-report"
                         className="bug-report"
@@ -291,6 +291,12 @@ export const AppHeader = ({
                                             href="https://www.facebook.com/61577932176567/"
                                             target="_blank"
                                             rel="noreferrer"><b>Trần Quang Anh</b></a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://github.com/amarillonmc"
+                                            target="_blank"
+                                            rel="noreferrer"><b>amarillonmc</b></a>
                                     </li>
                                 </ul>
                             </AdditionalContributorContainer>}

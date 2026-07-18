@@ -401,17 +401,17 @@ function InstallViewIos() {
             <ol>
                 <li>
                     {language['cache-install.modal.result.ios-instruction.first-line'](
-                        <Text strong>Share</Text>
+                        <Text strong>{language['cache-install.system.share']}</Text>
                     )}
                 </li>
                 <li>
                     {language['cache-install.modal.result.ios-instruction.second-line'](
-                        <Text strong>Add to Home Screen</Text>,
-                        <Text strong>Add to Dock</Text>
+                        <Text strong>{language['cache-install.system.add-home']}</Text>,
+                        <Text strong>{language['cache-install.system.add-dock']}</Text>
                     )}</li>
                 <li>
                     {language['cache-install.modal.result.ios-instruction.third-line'](
-                        <Text strong>Add</Text>
+                        <Text strong>{language['cache-install.system.add']}</Text>
                     )}
                 </li>
             </ol>

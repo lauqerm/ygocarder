@@ -85,12 +85,13 @@ const CardDataCopyButton = ({
     disabled,
     withText,
 }: CardDataCopyButton) => {
+    const language = useLanguage();
     return <Copiable
         disabled={disabled}
         data={data}
         container={StyledCardDataCopyButton}
         overlay={withText
-            ? <>Copied&nbsp;<CheckOutlined /></>
+            ? <>{language['generic.copied.label']}&nbsp;<CheckOutlined /></>
             : <CheckOutlined />}
     >{children}</Copiable>;
 };

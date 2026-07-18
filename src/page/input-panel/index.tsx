@@ -6,6 +6,8 @@ import {
     NameStyleType,
     FrameInfoMap,
     FinishMap,
+    CardFormatMode,
+    getCardFormatMode,
 } from '../../model';
 import {
     Affiliation,
@@ -56,6 +58,14 @@ import { AttributeInputGroup, AttributeInputGroupRef } from './attribute-input-g
 const NameStylePicker = lazy(() => import('./name-style-picker').then(({ NameStylePicker }) => ({ default: NameStylePicker })));
 const FormatButtonList = [
     {
+        label: '简中',
+        value: 'sc',
+        props: {
+            className: 'sc-button',
+            style: { fontWeight: 'bold' } as React.CSSProperties
+        },
+    },
+    {
         label: 'OCG',
         value: 'ocg',
         props: {
@@ -98,13 +108,14 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     const language = useLanguage();
     const {
         format,
+        region,
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
         getUpdater,
         setCard,
     } = useCard(useShallow(({
         card: {
-            format,
+            format, region,
             frame, foil, finish, opacity,
             nameStyleType, nameStyle,
             isLink,
@@ -112,7 +123,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         getUpdater,
         setCard,
     }) => ({
-        format,
+        format, region,
         frame, foil, finish, opacity,
         nameStyleType, nameStyle,
         isLink,
@@ -127,6 +138,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     const isMonster = checkMonster({ frame });
     const [stylePickerResetCount, setStylePickerResetCount] = useState(0);
     const foilButtonList = useMemo(() => getFoilButtonList(language), [language]);
+    const formatMode = getCardFormatMode(format, region);
 
     const frameTrainRef = useRef<FrameTrainRef>(null);
     const attributeInputGroupRef = useRef<AttributeInputGroupRef>(null);
@@ -146,7 +158,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
 
     const changeFormat = (formatValue: string | number) => {
         setCard(currentCard => {
-            const nextFormat = `${formatValue}`;
+            const nextFormat = `${formatValue}` as CardFormatMode;
             const formatSwappedCard = changeCardFormat(currentCard, nextFormat);
 
             const { name, setId, effect, typeAbility, password, creator, pendulumEffect } = formatSwappedCard;
@@ -254,7 +266,7 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
         <Affiliation />
 
         <div className="card-overlay-input">
-            <StyledFormatRadioTrain className="format-radio" value={format} onChange={changeFormat} optionList={FormatButtonList}>
+            <StyledFormatRadioTrain className="format-radio" value={formatMode} onChange={changeFormat} optionList={FormatButtonList}>
                 <span>{language['input.format.label']}</span>
             </StyledFormatRadioTrain>
             <RadioTrain className="foil-radio" value={foil} onChange={changeFoil} optionList={foilButtonList}>
