@@ -292,6 +292,12 @@ export const AppHeader = ({
                                             target="_blank"
                                             rel="noreferrer"><b>Trần Quang Anh</b></a>
                                     </li>
+                                    <li>
+                                        <a
+                                            href="https://github.com/amarillonmc"
+                                            target="_blank"
+                                            rel="noreferrer"><b>amarillonmc</b></a>
+                                    </li>
                                 </ul>
                             </AdditionalContributorContainer>}
                         />

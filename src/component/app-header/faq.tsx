@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '08/07/2026';
+const currentReminder = '18/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Anonymous at Jul 14, 2026',
+        question: 'Would it be possible to add the templates from the 4Kids version of the Yu-Gi-Oh anime to this card maker?',
+        answer: 'Yeah, I think it is highly possible, but only when I have free time for that, so no promise right now.'
+    },
     {
         author: 'Anonymous at Jul 7, 2026',
         question: 'RE: Oh okay, My bad.. I just realized that Art over link arrows only affected deactivate arrows, i didn\'t notice cuz i always hide them (－‸ლ). For my 2nd problem tho.. it only occured after the minor fix on the last patch. i tried using different browser and refresh the pages, the problem still persist. I guess it\'s only on my end then.. however, it\'s only a minor problem, it isn\'t a bother at all. Thanks for the recognition as always ^_^',

@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.6.0 (2026/07/18)",
+        "logList": [
+            {
+                "content": "Feat: Support UI and font adjustment for simplified Chinese, thanks to @amarillonmc."
+            }
+        ]
+    },
+    {
         "version": "v2.5.9 (2026/07/08)",
         "logList": [
             {
