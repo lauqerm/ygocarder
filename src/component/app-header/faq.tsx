@@ -44,12 +44,26 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '18/07/2026';
+const currentReminder = '24/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Blake at Jul 22, 2026',
+        question: 'When I go to my files, I don’t see the card I downloaded.',
+        answer: 'Have you checked the downloads button (the icon with a downward arrow) to see where the file is going? Once the download succeeds it is outside the app\'s control, so I can\'t help further with that.'
+    },
+    {
+        author: 'Anonymous at Jul 21, 2026',
+        question: 'Can you give us the feature to use the Astral glyphs from Yu-Gi-Oh ZEXAL?',
+        answer: 'I think it is MAYBE possible, but it would be a hard feature for sure, and I have no plan for it in near future.'
+    },
+    {
+        author: 'Anonymous at Jul 21, 2026',
+        question: 'Would it be possible to add the templates from the 4Kids version of the Yu-Gi-Oh anime to this card maker please??'
+    },
     {
         author: 'Anonymous at Jul 14, 2026',
         question: 'Would it be possible to add the templates from the 4Kids version of the Yu-Gi-Oh anime to this card maker?',
-        answer: 'Yeah, I think it is highly possible, but only when I have free time for that, so no promise right now.'
+        answer: 'I think it is possible, but only when I have free time for that, so no promise right now.'
     },
     {
         author: 'Anonymous at Jul 7, 2026',
