@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.6.1 (2026/07/31)",
+        "logList": [
+            {
+                "content": "Fix: Incorrect behavior when user try to export card on mobile."
+            }
+        ]
+    },
+    {
         "version": "v2.6.0 (2026/07/18)",
         "logList": [
             {
