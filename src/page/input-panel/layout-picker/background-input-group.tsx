@@ -120,6 +120,7 @@ export const BackgroundInputGroup = forwardRef<BackgroundInputGroupRef, Backgrou
 
     return <StyledImageCropper
         ref={imageCropperRef}
+        cropperName="background"
         title={language['input.background-image.label']}
         backgroundColor={backgroundColor}
         defaultSourceType={backgroundSource}

@@ -20,6 +20,7 @@ export type FramePreset = {
 };
 export const RESET_CANVAS_BASE_COUNTER = 0;
 export type GlobalMemory = {
+    isProxyAvailable: boolean,
     resetCanvasCounter: number,
     activeDropzone: number,
     layoutPresetList: {
@@ -44,6 +45,7 @@ export type GlobalStore = {
 export const useGlobalMemory = create<GlobalStore>((set) => {
     return {
         memory: {
+            isProxyAvailable: true,
             resetCanvasCounter: RESET_CANVAS_BASE_COUNTER,
             activeDropzone: 0,
             layoutPresetList: [],

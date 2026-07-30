@@ -44,8 +44,27 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '24/07/2026';
+const currentReminder = '31/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Jul 29, 2026',
+        question: 'Also reporting other cases of wrong text rendering in the name box, regarding letters with curved strokes. It seems like the old problem came back. And judging from the cards where it was found on, I deduce that the most baffling fact is that there is no single string of characters you can type to test if the problem has been fixed or not: Shining Neos Wingman clearly has the C in "Lucente" (I create cards in Italian) too high, but paradoxically the new Blue-Eyes with the longest name of all its forms (White Phantom Beast, for me "Drago Bianco Occhi Blu, la Bestia Fantasma Bianca") seems just fine! I think I\'ll stop my card production until we\'ll be sure that this damned issue is fixed.',
+    },
+    {
+        author: 'RedSupernovaDragon at Jul 29, 2026',
+        question: 'Hello,\nI\'ve finally started the production of custom cards for all the protagonists and rivals\' ace monsters (+evolutions), and it\'s going well.\nHowever, I noticed the same text compression issue on just one card, "Shining Neos Wingman", so a long card name that shrinks wrongly the letters S and C. I was wondering if you could fix that issue, hopefully without changing the rendering on other card names. I\'ve currently created more than 100 cards, spanning from Dark Magician to Armed Dragon LV10 (which I consider the GX rival ace). I still have plenty of work to do, and I\'d like to keep the 99% cards that have the names rendered correctly. Thank you for your hard working!',
+        answer: 'It\'s unfortunate to hear that. Can you attach some images so I can visualize the problem better? Honestly, I\'m out of idea from the last time I attempt the fix, and my best bet right now is a fix that may noticeably reduce the sharpness of the letter which I would want to avoid if possible.'
+    },
+    {
+        author: 'Anonymous at Jul 28, 2026',
+        question: 'I\'m unable to save the image on Android. I\'ve tried both Brave and Firefox. When long pressing on the image, I don\'t get any options, and trying to use the download option presents a "right-click image to save image".',
+        answer: 'Hi, thanks for your report, the "long" download button should be working correctly now.'
+    },
+    {
+        author: 'Anonymous at Jul 24, 2026',
+        question: 'If you can\'t find the entire set of symbols I can provide you with the symbols required',
+        answer: 'Thank you. I did find out about a Deviant Art account that offers a full set of astral symbols, but still because those are not standard font, it will take a considerable effort from me to support them, hence I can\'t promise anything yet.'
+    },
     {
         author: 'Blake at Jul 22, 2026',
         question: 'When I go to my files, I don’t see the card I downloaded.',
@@ -604,6 +623,7 @@ export const QuestionAndFeedback = () => {
             <Tabs>
                 <Tabs.TabPane key="feedback" tab={language['faq.feedback.tab']}>
                     <div><i>{language['faq.feedback.stale']}</i></div>
+                    <div><i>Last update: {currentReminder}</i></div>
                     <br />
                     {feedbackList.map(({ author, question, answer, image }, index) => {
                         return <Quote key={index} author={author} question={question} image={image}>

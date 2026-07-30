@@ -13,6 +13,7 @@ import {
     Affiliation,
     AppHeader,
     IconButton,
+    ImageCropper,
     RadioTrain,
     StandaloneLabel,
     StyledPopMarkdown,
@@ -92,7 +93,7 @@ export type CardInputPanel = {
     backgroundCanvas: ImageInputGroup['receivingCanvas'],
     iconImageCanvas: ImageInputGroup['receivingCanvas'],
     overlayCanvas: ImageInputGroup['receivingCanvas'],
-} & Pick<ImageInputGroup, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData' | 'resetCardData'>;
+} & Pick<ImageCropper, 'onCropChange' | 'onTainted' | 'onSourceLoaded'> & Pick<AppHeader, 'applyCardData' | 'resetCardData'>;
 export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
     resetCardData,
     applyCardData,

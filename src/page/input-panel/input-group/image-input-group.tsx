@@ -265,6 +265,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
 
     return <ImageCropper
         ref={imageCropperRef}
+        cropperName="art"
         title={language['input.card-art.label']}
         defaultSourceType={artSource}
         defaultExternalSource={art}

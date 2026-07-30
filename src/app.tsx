@@ -7,6 +7,7 @@ import './reduce-color-motion.scss';
 import {
     CanvasConst,
     Card,
+    CARD_CROPPER_NAME,
     getDefaultCard,
     ImagePreset,
     ImageSourceType,
@@ -529,18 +530,28 @@ function App() {
         };
     }, [downloadFromHotkey, exportData, importData, mergeData, displayLightbox]);
 
+    const taintedImageRef = useRef<Record<string, boolean>>({});
+    const checkTaintedCanvas = useCallback(() => {
+        const isTainted = Object.values(taintedImageRef.current).some(entry => {
+            return entry === true;
+        });
+        if (isTainted) setTainted(true);
+        else setTainted(false);
+    }, []);
+
     const alertDownloadError = useCallback(() => {
         setTainted(true);
         alert(language['prompt.download.tainted.message']);
     }, [language]);
 
-    const rerenderAllImage = useCallback((crossorigin?: string) => {
+    const rerenderAllImage = useCallback((name: string, crossorigin?: string) => {
         if (crossorigin === 'anonymous') {
-            setTainted(false);
+            taintedImageRef.current[name] = false;
             lightboxRef.current?.refresh();
         }
+        checkTaintedCanvas();
         setImageChangeCount(cnt => cnt + 1);
-    }, []);
+    }, [checkTaintedCanvas]);
 
     const rerenderCardImage: NonNullable<CardInputPanel['onCropChange']> = useCallback((_, sourceType) => {
         setImageChangeCount(cnt => cnt + 1);
@@ -561,20 +572,22 @@ function App() {
         rerenderCardImage(iconImageCrop, iconImageSource);
     }, [rerenderCardImage, iconImageCrop, iconImageSource, updateCanvasRenderCount]);
 
-    const markTaintedImage = useCallback(() => {
+    const markTaintedImage = useCallback((name: string) => {
         setImageChangeCount(cnt => cnt + 1);
-        setTainted(true);
-    }, []);
+        taintedImageRef.current[name] = true;
+        checkTaintedCanvas();
+    }, [checkTaintedCanvas]);
 
     const toggleManagerMode = useCallback((value: boolean) => {
         setManagerVisible(value);
     }, []);
 
     const onExportSuccess = useCallback(() => {
-        setTainted(false);
+        taintedImageRef.current[CARD_CROPPER_NAME] = false;
+        checkTaintedCanvas();
         updateCanvasData(['iconImage']);
         setDownloading(false);
-    }, [updateCanvasData]);
+    }, [checkTaintedCanvas, updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
     return (

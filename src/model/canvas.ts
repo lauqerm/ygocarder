@@ -574,3 +574,5 @@ export const getArtCanvasCoordinate = (
             : result.backgroundRatio,
     };
 };
+
+export const CARD_CROPPER_NAME = 'card';
