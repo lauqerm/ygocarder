@@ -111,9 +111,9 @@ export const AttributeImageInput = forwardRef<AttributeImageInputRef, AttributeI
         if (byUser) onUserChange?.();
         changeAttributeImageCrop(cropInfo, sourceType, byUser);
     }, [changeAttributeImageCrop, onUserChange]);
-    const intermediateOnSourceLoaded: NonNullable<AttributeImageInput['onSourceLoaded']> = useCallback((crossorigin, byUser) => {
+    const intermediateOnSourceLoaded: NonNullable<AttributeImageInput['onSourceLoaded']> = useCallback((name, crossorigin, byUser) => {
         if (byUser) onUserChange?.();
-        onSourceLoaded?.(crossorigin, byUser);
+        onSourceLoaded?.(name, crossorigin, byUser);
     }, [onUserChange, onSourceLoaded]);
 
     useImperativeHandle(ref, () => ({
@@ -152,6 +152,7 @@ export const AttributeImageInput = forwardRef<AttributeImageInputRef, AttributeI
 
     return <StyledImageCropper
         ref={imageCropperRef}
+        cropperName="attribute"
         title={language['input.background-image.label']}
         defaultSourceType={attributeImageSource}
         defaultInternalSource={attributeImageData}

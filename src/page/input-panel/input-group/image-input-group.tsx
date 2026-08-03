@@ -122,7 +122,9 @@ const OtherFinishPicker = ({
                         }}
                     >
                         <div className="value">
-                            <div className="tag">{valueMap[value] === 'normal' || valueMap[value] === '' ? 'Auto' : valueMap[value]}</div>
+                            <div className="tag">{valueMap[value] === 'normal' || valueMap[value] === ''
+                                ? language['input.name-style.type.auto.label']
+                                : valueMap[value]}</div>
                         </div>
                         <div className="label">{label}</div>
                     </FinishLabel>;
@@ -263,6 +265,7 @@ export const ImageInputGroup = forwardRef<ImageInputGroupRef, ImageInputGroup>((
 
     return <ImageCropper
         ref={imageCropperRef}
+        cropperName="art"
         title={language['input.card-art.label']}
         defaultSourceType={artSource}
         defaultExternalSource={art}

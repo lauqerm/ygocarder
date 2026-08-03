@@ -210,7 +210,7 @@ export type CardListStore = {
     changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
     deleteCard: (id: string) => void,
     selectCard: (id: string, type: 'add' | 'remove') => void,
-    duplicateCard: (card: Card,) => void,
+    duplicateCard: (card: Card, copySuffix?: string) => void,
     resetFilter: () => void,
     setActiveId: (id: string) => void,
     setSelectMap: (id: InternalCard[], type?: 'add' | 'replace') => void,
@@ -353,13 +353,13 @@ export const useCardList = create<
                 };
             });
         },
-        duplicateCard: card => {
+        duplicateCard: (card, copySuffix = 'Copy') => {
             set(({ cardList, filterFunctionMap }) => {
                 const targetIndex = cardList.findIndex(({ name }) => name === card.name);
                 const clonedId = uuid();
                 const clonedCard = {
                     ...clone(card),
-                    name: `${card.name} - Copy`,
+                    name: `${card.name} - ${copySuffix}`,
                     id: clonedId,
                 };
                 const nextCardList = targetIndex < 0

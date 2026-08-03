@@ -162,6 +162,9 @@ export const ManagerCardList = ({
     const onSelect: CardThumbRowData['onSelect'] = useCallback((card, type) => {
         selectCard(card.id, type);
     }, [selectCard]);
+    const duplicateWithLocalizedName = useCallback((card: InternalCard) => {
+        duplicateCard(card, language['manager.card.copy-suffix']);
+    }, [duplicateCard, language]);
     const deleteAndReselect = (id: string) => {
         deleteCard(id);
         setReselectCnt(cnt => cnt + 1);
@@ -250,7 +253,7 @@ export const ManagerCardList = ({
                             language,
                             activeId,
                             selectedMap,
-                            onDuplicate: duplicateCard,
+                            onDuplicate: duplicateWithLocalizedName,
                             onActive,
                             onDelete: deleteAndReselect,
                             onSelect,

@@ -1,6 +1,6 @@
 import { Modal, notification, Tabs } from 'antd';
 import { FaqButtonLabel, QuoteContainer } from './styled';
-import { useNotification } from 'src/service';
+import { useLanguage, useNotification } from 'src/service';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FAQ_BUTTON_ID } from './model';
@@ -44,8 +44,46 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '08/07/2026';
+const currentReminder = '31/07/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Jul 29, 2026',
+        question: 'Also reporting other cases of wrong text rendering in the name box, regarding letters with curved strokes. It seems like the old problem came back. And judging from the cards where it was found on, I deduce that the most baffling fact is that there is no single string of characters you can type to test if the problem has been fixed or not: Shining Neos Wingman clearly has the C in "Lucente" (I create cards in Italian) too high, but paradoxically the new Blue-Eyes with the longest name of all its forms (White Phantom Beast, for me "Drago Bianco Occhi Blu, la Bestia Fantasma Bianca") seems just fine! I think I\'ll stop my card production until we\'ll be sure that this damned issue is fixed.',
+    },
+    {
+        author: 'RedSupernovaDragon at Jul 29, 2026',
+        question: 'Hello,\nI\'ve finally started the production of custom cards for all the protagonists and rivals\' ace monsters (+evolutions), and it\'s going well.\nHowever, I noticed the same text compression issue on just one card, "Shining Neos Wingman", so a long card name that shrinks wrongly the letters S and C. I was wondering if you could fix that issue, hopefully without changing the rendering on other card names. I\'ve currently created more than 100 cards, spanning from Dark Magician to Armed Dragon LV10 (which I consider the GX rival ace). I still have plenty of work to do, and I\'d like to keep the 99% cards that have the names rendered correctly. Thank you for your hard working!',
+        answer: 'It\'s unfortunate to hear that. Can you attach some images so I can visualize the problem better? Honestly, I\'m out of idea from the last time I attempt the fix, and my best bet right now is a fix that may noticeably reduce the sharpness of the letter which I would want to avoid if possible.'
+    },
+    {
+        author: 'Anonymous at Jul 28, 2026',
+        question: 'I\'m unable to save the image on Android. I\'ve tried both Brave and Firefox. When long pressing on the image, I don\'t get any options, and trying to use the download option presents a "right-click image to save image".',
+        answer: 'Hi, thanks for your report, the "long" download button should be working correctly now.'
+    },
+    {
+        author: 'Anonymous at Jul 24, 2026',
+        question: 'If you can\'t find the entire set of symbols I can provide you with the symbols required',
+        answer: 'Thank you. I did find out about a Deviant Art account that offers a full set of astral symbols, but still because those are not standard font, it will take a considerable effort from me to support them, hence I can\'t promise anything yet.'
+    },
+    {
+        author: 'Blake at Jul 22, 2026',
+        question: 'When I go to my files, I don’t see the card I downloaded.',
+        answer: 'Have you checked the downloads button (the icon with a downward arrow) to see where the file is going? Once the download succeeds it is outside the app\'s control, so I can\'t help further with that.'
+    },
+    {
+        author: 'Anonymous at Jul 21, 2026',
+        question: 'Can you give us the feature to use the Astral glyphs from Yu-Gi-Oh ZEXAL?',
+        answer: 'I think it is MAYBE possible, but it would be a hard feature for sure, and I have no plan for it in near future.'
+    },
+    {
+        author: 'Anonymous at Jul 21, 2026',
+        question: 'Would it be possible to add the templates from the 4Kids version of the Yu-Gi-Oh anime to this card maker please??'
+    },
+    {
+        author: 'Anonymous at Jul 14, 2026',
+        question: 'Would it be possible to add the templates from the 4Kids version of the Yu-Gi-Oh anime to this card maker?',
+        answer: 'I think it is possible, but only when I have free time for that, so no promise right now.'
+    },
     {
         author: 'Anonymous at Jul 7, 2026',
         question: 'RE: Oh okay, My bad.. I just realized that Art over link arrows only affected deactivate arrows, i didn\'t notice cuz i always hide them (－‸ლ). For my 2nd problem tho.. it only occured after the minor fix on the last patch. i tried using different browser and refresh the pages, the problem still persist. I guess it\'s only on my end then.. however, it\'s only a minor problem, it isn\'t a bother at all. Thanks for the recognition as always ^_^',
@@ -531,6 +569,7 @@ const feedbackList: Feedback[] = [
     },
 ];
 export const QuestionAndFeedback = () => {
+    const language = useLanguage();
     const [visible, setVisible] = useState(false);
     const [faqReminder, setMemoizedReminder] = useNotification('faqReminder');
     const [feedbackReminder, setFeedbackReminder] = useNotification('feedbackReminder');
@@ -558,15 +597,15 @@ export const QuestionAndFeedback = () => {
         if (feedbackReminder !== true) {
             setFeedbackReminder(true);
             notification.info({
-                message: 'Feedback Reminder',
-                description: 'If you have any feedback or suggestion, please check the FAQ button first to see if your feedback has been addressed.',
+                message: language['faq.reminder.message'],
+                description: language['faq.reminder.description'],
                 duration: 10,
                 onClose: () => {
                     setAnimating(false);
                 }
             });
         }
-    }, [feedbackReminder, setFeedbackReminder]);
+    }, [feedbackReminder, language, setFeedbackReminder]);
 
     return <>
         <FaqButtonLabel
@@ -578,12 +617,13 @@ export const QuestionAndFeedback = () => {
                 setHighlighting(false);
             }}
         >
-            {'FAQ'}
+            {language['faq.button.label']}
         </FaqButtonLabel>
         <Modal width={600} visible={visible} onCancel={() => setVisible(false)} footer={null}>
             <Tabs>
-                <Tabs.TabPane key="feedback" tab="Feedbacks">
-                    <div><i>Solved or stale (4 weeks of inactive) feedbacks are removed.</i></div>
+                <Tabs.TabPane key="feedback" tab={language['faq.feedback.tab']}>
+                    <div><i>{language['faq.feedback.stale']}</i></div>
+                    <div><i>Last update: {currentReminder}</i></div>
                     <br />
                     {feedbackList.map(({ author, question, answer, image }, index) => {
                         return <Quote key={index} author={author} question={question} image={image}>
@@ -591,15 +631,15 @@ export const QuestionAndFeedback = () => {
                         </Quote>;
                     })}
                 </Tabs.TabPane>
-                <Tabs.TabPane key="faq" tab="Frequently Asked Questions">
+                <Tabs.TabPane key="faq" tab={language['faq.questions.tab']}>
                     {[
                         {
-                            question: 'Can you make the pendulum effect box semi-transparent? Just like real pendulum cards.',
-                            answer: 'Yes, both pendulum and default card effect box can be made semi-transparent. In "Layout" row you can find "Pendulum" and "Effect" slider, each control how transparent the effect box is (0 is fully see-through and 100 is fully solid).',
+                            question: language['faq.questions.pendulum-opacity.question'],
+                            answer: language['faq.questions.pendulum-opacity.answer'],
                         },
                         {
-                            question: 'Will you make another version for Rush Duel cards?',
-                            answer: 'I do want to create a similar editor for Rush Duel cards, but it will require a significant amount of effort that I currently lack. Additionally, since there is no official adaptation of Rush cards for TCG, doing this now risks a considerable incompatibility issue in the future.',
+                            question: language['faq.questions.rush-duel.question'],
+                            answer: language['faq.questions.rush-duel.answer'],
                         }
                     ].map(({ question, answer }, index) => {
                         return <Quote key={index} question={question}>

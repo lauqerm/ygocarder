@@ -1,6 +1,6 @@
 import { Button, Dropdown, notification, Tooltip } from 'antd';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import { MasterSeriesCanvas } from 'src/model';
+import { CARD_CROPPER_NAME, MasterSeriesCanvas } from 'src/model';
 import { UseCardExport, useCardExport, useLanguage, useMasterSeriDrawer, useSetting } from 'src/service';
 import { GatewayOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -69,7 +69,7 @@ export type DownloadPanel = {
     imageChangeCount: number,
     globalScale: number,
     canvasMap: MasterSeriesCanvas,
-    onTainted: () => void,
+    onTainted: (name: string) => void,
     onExportSucess: () => void,
 } & Pick<UseCardExport, 'isTainted'
     | 'isInitializing'
@@ -111,7 +111,7 @@ export const DownloadPanel = forwardRef<DownloadPanelRef, DownloadPanel>(({
             ...param,
             onError: e => {
                 if (!isTainted && String(e).includes('Tainted canvases')) {
-                    onTainted();
+                    onTainted(CARD_CROPPER_NAME);
                 }
             },
             onSuccess: onExportSucess,

@@ -107,9 +107,9 @@ export const IconImageInput = forwardRef<IconImageInputRef, IconImageInput>(({
         if (byUser) onUserChange?.();
         changeIconImageCrop(cropInfo, sourceType, byUser);
     }, [changeIconImageCrop, onUserChange]);
-    const intermediateOnSourceLoaded: NonNullable<IconImageInput['onSourceLoaded']> = useCallback((crossorigin, byUser) => {
+    const intermediateOnSourceLoaded: NonNullable<IconImageInput['onSourceLoaded']> = useCallback((name, crossorigin, byUser) => {
         if (byUser) onUserChange?.();
-        onSourceLoaded?.(crossorigin, byUser);
+        onSourceLoaded?.(name, crossorigin, byUser);
     }, [onUserChange, onSourceLoaded]);
 
     useImperativeHandle(ref, () => ({
@@ -148,6 +148,7 @@ export const IconImageInput = forwardRef<IconImageInputRef, IconImageInput>(({
 
     return <StyledImageCropper
         ref={imageCropperRef}
+        cropperName="icon"
         title={language['input.background-image.label']}
         defaultSourceType={iconImageSource}
         defaultInternalSource={iconImageData}

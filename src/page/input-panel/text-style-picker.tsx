@@ -331,7 +331,7 @@ export const TextStylePicker = () => {
                             fontStyle: (custom && fontStyle === 'italic') ? 'italic' : 'normal',
                         }}
                     >
-                        {(upSize && custom) ? <div>+{upSize}</div> : 'Auto'}
+                        {(upSize && custom) ? <div>+{upSize}</div> : language['input.name-style.type.auto.label']}
                     </div>;
                 })}
             </div>

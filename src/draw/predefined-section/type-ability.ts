@@ -29,6 +29,7 @@ const sizeMap: Record<TypeAbilityCoordinateType, number> = {
 export const drawTypeAbilityText = async ({
     ctx,
     format,
+    fontFormat = format,
     furiganaHelper,
     globalScale,
     metricMethod,
@@ -38,6 +39,7 @@ export const drawTypeAbilityText = async ({
 }: {
     ctx: CanvasRenderingContext2D,
     format: string,
+    fontFormat?: string,
     furiganaHelper: boolean,
     globalScale: number,
     metricMethod?: FontData['metricMethod'],
@@ -64,7 +66,7 @@ export const drawTypeAbilityText = async ({
         globalScale,
     );
     const direction = getWritingDirection(value);
-    const scaledBaseFontData = scaleFontData(getTypeAbilityFontData()[format], globalScale);
+    const scaledBaseFontData = scaleFontData(getTypeAbilityFontData()[fontFormat], globalScale);
     const fontData = {
         ...scaledBaseFontData,
         metricMethod: metricMethod ?? scaledBaseFontData.metricMethod,
@@ -141,6 +143,7 @@ export const drawTypeAbility = async ({
     offsetData,
     ctx,
     format,
+    fontFormat = format,
     frame,
     furiganaHelper,
     globalScale,
@@ -153,6 +156,7 @@ export const drawTypeAbility = async ({
 }: {
     ctx?: CanvasRenderingContext2D | null,
     format: string,
+    fontFormat?: string,
     frame: string,
     furiganaHelper: boolean,
     globalScale: number,
@@ -189,6 +193,7 @@ export const drawTypeAbility = async ({
         offsetData,
         ctx,
         format,
+        fontFormat,
         furiganaHelper,
         globalScale,
         metricMethod: !isMonster ? 'compact' : undefined,

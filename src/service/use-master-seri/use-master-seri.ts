@@ -46,6 +46,7 @@ import {
     LINK_ON_TOP_ALWAYS,
     LINK_ON_TOP_ACTIVATED_ONLY,
     LINK_ON_TOP_NEVER,
+    getCardFormatMode,
 } from 'src/model';
 import {
     checkDiplayLinkRating,
@@ -156,6 +157,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         furiganaHelper,
         flag,
     } = card;
+    const typographyFormat = getCardFormatMode(format, region);
+    const textFuriganaHelper = typographyFormat === 'sc' ? false : furiganaHelper;
     const hasOverlay = (overlaySource === 'online' && overlay.trim() !== '')
         || (overlaySource === 'offline' && overlayData.trim() !== '');
     const hasIconImage = (iconImageSource === 'online' && iconImage.trim() !== '')
@@ -384,8 +387,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 attribute === NO_ATTRIBUTE
                     ? (format === 'tcg' ? 688 : 674)
                     : (format === 'tcg' ? 608 : 598),
-                resolveNameStyle({ format, frame, nameStyle, nameStyleType, foil }),
-                { isSpeedSkill, format, frame, furiganaHelper, globalScale },
+                resolveNameStyle({ format, region, frame, nameStyle, nameStyleType, foil }),
+                { isSpeedSkill, format, frame, furiganaHelper: textFuriganaHelper, globalScale },
             );
         };
     }, [
@@ -401,6 +404,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         nameCanvasRef,
         nameStyle,
         nameStyleType,
+        region,
+        textFuriganaHelper,
     ]);
     const normalizedBoundless = { ...getDefaultCardOpacity(), ...opacity }.boundless;
     const drawNameStarBelowImage = useMemo(
@@ -977,7 +982,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 fontLevel: !isNumberPassword ? 1 : 0
             });
             const editionTextUseTopPosition = (isLegacyCard || !isNumberPassword) && !isPendulum;
-            if (isFirstEdition) {
+            if (isFirstEdition && typographyFormat !== 'sc') {
                 const willDrawFirstEdition = isPendulum
                     ? isNumberPassword ? true : false
                     : true;
@@ -1081,6 +1086,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         pendulumSize,
         requireShadow,
         resolvedOtherEffectTextStyle,
+        typographyFormat,
     ]);
 
     /** DRAW CREATOR (COPYRIGHT) TEXT */
@@ -1224,10 +1230,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 region,
                 condenseTolerant,
                 format,
-                furiganaHelper,
+                furiganaHelper: textFuriganaHelper,
                 offsetData: effectBoxOffsetData,
                 ...getEffectFontAndCoordinate({
                     format,
+                    fontFormat: typographyFormat,
                     statInEffect,
                     typeInEffect,
                     useItalic,
@@ -1248,8 +1255,9 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 ctx: typeCtx,
                 globalScale,
                 format,
+                fontFormat: typographyFormat,
                 frame,
-                furiganaHelper,
+                furiganaHelper: textFuriganaHelper,
                 isMonster,
                 textStyle: resolvedTypeTextStyle,
                 offsetData: typeInEffect
@@ -1292,6 +1300,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         statInEffect,
         typeCanvasRef,
         typeInEffect,
+        textFuriganaHelper,
+        typographyFormat,
     ]);
 
     /** DRAW PENDULUM EFFECT */
@@ -1307,7 +1317,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 const customPendulumStyle = pendulumTextStyle[0];
                 const normalizedUpSize = customPendulumStyle ? upSize : 0;
                 const useItalic = customPendulumStyle ? (format === 'tcg' && fontStyle === 'italic') : false;
-                const fontDataKey = `${format}-${pendulumSize}`;
+                const fontDataKey = `${typographyFormat}-${pendulumSize}`;
                 const coordinateList = PendulumEffectCoordinateMap[
                     (withBlueScale && withRedScale) ? 'normal' : 'scaleless'
                 ][
@@ -1339,7 +1349,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                     sizeList: modifiedCoordinateList,
                     condenseTolerant,
                     format,
-                    furiganaHelper,
+                    furiganaHelper: textFuriganaHelper,
                     offsetData: effectBoxOffsetData,
                     option: {
                         forceRelaxCondenseLimit: DEFAULT_PENDULUM_EFFECT_NORMAL_SIZE,
@@ -1370,6 +1380,8 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
         resolvedPendulumEffectTextStyle,
         withBlueScale,
         withRedScale,
+        textFuriganaHelper,
+        typographyFormat,
     ]);
 
     /** DRAW TOTAL OVERLAY */

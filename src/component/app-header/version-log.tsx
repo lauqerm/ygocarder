@@ -2,7 +2,7 @@ import { Popover } from 'antd';
 import { memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { StyledPopMarkdown } from '../atom';
-import { useNotification } from 'src/service';
+import { useLanguage, useNotification } from 'src/service';
 import { VersionLogButtonLabel } from './styled';
 import { PUBLIC_PATH } from 'src/model';
 
@@ -55,6 +55,7 @@ const VersionLogStore = (() => {
     };
 })();
 export const VersionInformation = () => {
+    const language = useLanguage();
     const [log, setLog] = useState<VersionLog>([]);
     const [loading, setLoading] = useState(false);
 
@@ -68,8 +69,8 @@ export const VersionInformation = () => {
         })();
     }, []);
 
-    if (log.length === 0 && !loading) return <div>No changelogs</div>;
-    if (loading) return <div>Loading changelog...</div>;
+    if (log.length === 0 && !loading) return <div>{language['version-log.empty']}</div>;
+    if (loading) return <div>{language['version-log.loading']}</div>;
     return <div>
         {log.map(({ logList, version }, index) => {
             return <div key={`${version}-${index}`} className="log-section">
@@ -81,7 +82,7 @@ export const VersionInformation = () => {
                             <div className="content">
                                 {content}
                             </div>
-                            {image && <a target="_blank" rel="noreferrer" href={image} title="Click to open in new tab">
+                            {image && <a target="_blank" rel="noreferrer" href={image} title={language['version-log.open-image.tooltip']}>
                                 <img src={image} alt={`version-${version}-illust`} />
                             </a>}
                         </LogSentence>;

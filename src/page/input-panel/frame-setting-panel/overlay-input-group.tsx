@@ -113,6 +113,7 @@ export const OverlayInputGroup = forwardRef<OverlayInputGroupRef, OverlayInputGr
 
     return <StyledImageCropper
         ref={imageCropperRef}
+        cropperName="overlay"
         title={language['input.background-image.label']}
         defaultSourceType={overlaySource}
         defaultInternalSource={overlayData}
