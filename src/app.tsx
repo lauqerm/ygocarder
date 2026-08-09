@@ -15,9 +15,12 @@ import {
     PUBLIC_PATH,
 } from './model';
 import {
+    AtlasVariant,
     DebugCanvas,
     forceRefocus,
+    loadAtlas,
     mergeClass,
+    selectVariant,
 } from './util';
 import {
     BatchConverter,
@@ -347,6 +350,15 @@ function App() {
             },
             active: async () => {
                 (async () => {
+                    const atlasMd1 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@1x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@1x.json`);
+                    const atlasMd2 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.json`);
+                    useGlobalMemory.getState().updateGlobalMemory({
+                        atlasMap: {
+                            atlasMd1,
+                            atlasMd2,
+                        }
+                    });
+
                     const retrievedCard = await retrieveSavedCard();
 
                     setCard(retrievedCard);

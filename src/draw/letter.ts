@@ -19,7 +19,7 @@ import {
     TCGOffsetMap,
     nonBreakableSymbolRegex,
 } from 'src/model';
-import { fontMeasurer } from 'src/util';
+import { fontMeasurer, fontMeasurerV2 } from 'src/util';
 
 /**
  * Return the width of a letter. This function return true width of a scalable letter, but will return the inverse-scaled width of a non-scalable letter (based on the `xRatio` property). For example:
@@ -206,17 +206,13 @@ export const drawLetter = ({
         ascentCompensate,
         descentCompensate,
     } = fontMeasurer.get(baseLetter) ?? {};
+    const {
+        drawY = 95,
+        scaleY = 1,
+    } = fontMeasurerV2.get(baseLetter) ?? {};
 
     const letterWidth = metric.width * xRatio;
     const scaledBoundingWidth = boundWidth ? boundWidth * xRatio : letterWidth;
-    const worker = textDrawer ?? (({
-        ctx,
-        letter,
-        scaledBaseline,
-        scaledEdge,
-    }) => {
-        ctx.fillText(letter, scaledEdge, scaledBaseline);
-    });
 
     const boundingOffset = (letterWidth - scaledBoundingWidth) / 2;
     const externalOffset = scaledBoundingWidth * offsetRatio;
@@ -240,12 +236,27 @@ export const drawLetter = ({
         // const actualLetterHeight = actualBoundingBoxAscent + actualBoundingBoxDescent;
         compensateYScale = (actualLetterHeight + normalizedDescentCompensate + normalizedAscentCompensate) / actualLetterHeight;
     }
-    ctx.scale(1, compensateYScale);
+    const worker = textDrawer ?? (({
+        ctx,
+        letter,
+        scaledBaseline,
+        scaledEdge,
+    }) => {
+        // ctx.fillText(letter, scaledEdge, scaledBaseline);
+    });
+    // ctx.scale(1, compensateYScale);
+    // const y = baseline;
+    ctx.save();
+    ctx.translate(0, baseline);
+    ctx.scale(1, scaleY);
+    ctx.translate(0, -baseline);
+    // ctx.fillText(letter, edge / xRatio - boundingOffset - externalOffset, baseline);
     worker({
         ctx,
         letter,
         scaledEdge: edge / xRatio - boundingOffset - externalOffset,
-        scaledBaseline: (baseline + normalizedDescentCompensate) / compensateYScale,
+        scaledBaseline: baseline,
     });
-    ctx.scale(1, 1 / compensateYScale);
+    ctx.restore();
+    // ctx.scale(1, 1 / compensateYScale);
 };

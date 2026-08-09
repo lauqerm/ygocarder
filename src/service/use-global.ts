@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { Foil, FrameDyeList, ImagePreset, NameStyle } from 'src/model';
+import { LoadedAtlas } from 'src/util';
 import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -23,6 +24,7 @@ export type GlobalMemory = {
     isProxyAvailable: boolean,
     resetCanvasCounter: number,
     activeDropzone: number,
+    atlasMap: Record<string, LoadedAtlas | undefined>,
     layoutPresetList: {
         key: string,
         content: FramePreset,
@@ -48,6 +50,7 @@ export const useGlobalMemory = create<GlobalStore>((set) => {
             isProxyAvailable: true,
             resetCanvasCounter: RESET_CANVAS_BASE_COUNTER,
             activeDropzone: 0,
+            atlasMap: {},
             layoutPresetList: [],
             nameStylePresetList: [],
             imagePresetList: [],

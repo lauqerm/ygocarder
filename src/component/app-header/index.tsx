@@ -2,7 +2,8 @@ import { GithubFilled, InfoCircleOutlined, LoadingOutlined } from '@ant-design/i
 import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { useI18N, useLanguage } from 'src/service';
-import { Radio, Tooltip } from 'antd';
+import { Button, Radio, Tooltip } from 'antd';
+import { buildGlyphAtlas, CHARSET, exportAtlas, reportOutliers } from 'src/util/normalize-v2/glyph-atlas-build';
 import { captureException } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
@@ -303,6 +304,72 @@ export const AppHeader = ({
                         />
                     )}
                 </span>
+                <Button onClick={async () => {
+                    await document.fonts.ready; // never skip this, or you cache the fallback font
+
+                    const overrideMap = {
+                        scale1: {
+                            ratio1: {
+                                1: { offsetY: 1, scaleY: 1.0217 },
+                                2: { offsetY: 1, scaleY: 1.0217 },
+                                3: { offsetY: 2, scaleY: 1.0652 },
+                                4: { scaleY: 1.0217 },
+                                5: { offsetY: 2, scaleY: 1.0652 },
+                                6: { scaleY: 1.0217 },
+                                7: { scaleY: 1.0217 },
+                                8: { scaleY: 1.0217 },
+                                9: { scaleY: 1.0217 },
+                                E: { offsetY: 1, scaleY: 1.0222 },
+                                i: { offsetY: 1, scaleY: 1.0294 },
+                                I: { offsetY: 1, scaleY: 1.0222 },
+                                N: { offsetY: 1, scaleY: 1.02 },
+                                O: { scaleY: 0.9787 },
+                            },
+                            ratio2: {
+                                2: { offsetY: 1, scaleY: 1.0109 },
+                                3: { scaleY: 1.0215 },
+                                4: { scaleY: 1.022 },
+                                5: { scaleY: 1.0215 },
+                                6: { scaleY: 1.022 },
+                                7: { scaleY: 1.022 },
+                                8: { scaleY: 1.022 },
+                                9: { scaleY: 1.022 },
+                                c: { scaleY: 0.9857 },
+                                E: { offsetY: 1, scaleY: 1.0111 },
+                                g: { scaleY: 0.9857 },
+                                i: { offsetY: 1, scaleY: 1.0147 },
+                                I: { offsetY: 1, scaleY: 1.0111 },
+                                N: { offsetY: 1, scaleY: 1.0101 },
+                                o: { scaleY: 0.9857 },
+                                O: { scaleY: 0.9787 },
+                                q: { scaleY: 0.9867 },
+                                Q: { offsetY: -1, scaleY: 0.9798 },
+                                s: { scaleY: 0.9857 },
+                            },
+                        },
+                    };
+                    // const atlas = buildGlyphAtlas(
+                    //     [
+                    //         { id: 'caps', chars: CHARSET.upper, fontSizeCss: 91, anchorChar: 'H', overrides: overrideMap.scale1.ratio2 },
+                    //         { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'x', overrides: overrideMap.scale1.ratio2 },
+                    //         { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale1.ratio2 },
+                    //     ],
+                    //     { fontFamily: 'MatrixRegularSmallCaps', pixelRatio: 2 },
+                    // );
+                    const atlas = buildGlyphAtlas(
+                        [
+                            { id: 'caps', chars: CHARSET.upper, fontSizeCss: 91, anchorChar: 'H', overrides: overrideMap.scale1.ratio1 },
+                            { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'x', overrides: overrideMap.scale1.ratio1 },
+                            { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale1.ratio1 },
+                        ],
+                        { fontFamily: 'MatrixRegularSmallCaps', pixelRatio: 1, fillStyle: '#000' },
+                    );
+
+                    console.table(reportOutliers(atlas.meta, 1)); // informational, see below
+                    await exportAtlas(atlas, 'matrix-md@1x');
+                }}>
+                    Generate
+                </Button>
             </div>
         </div>
         <React.Suspense

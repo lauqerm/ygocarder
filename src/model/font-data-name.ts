@@ -43,6 +43,9 @@ const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
                         '0': { baseLetter: '0' },
                         '1': { baseLetter: '1' },
                         '2': { baseLetter: '2' },
+
+                        á: { baseLetter: 'a' },
+
                         C: { baseLetter: 'C' },
                         Ć: { baseLetter: 'C' },
                         Ĉ: { baseLetter: 'C' },
@@ -237,6 +240,7 @@ const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
                         ᶇ: { baseLetter: 'n' },
 
                         G: { baseLetter: 'G' },
+                        g: { baseLetter: 'g' },
                     },
                 },
             },
