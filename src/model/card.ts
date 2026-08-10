@@ -38,6 +38,8 @@ export const getDefaultCoordinateMap = (): Record<keyof typeof MoveableRegionMap
     starBox: compileCoordinate(CanvasConst.starBox),
 });
 
+export type Series = 'modern' | 'classic';
+
 /**
  * Check following things when adding new attributes:
  * * Default card and empty card
@@ -49,7 +51,8 @@ export const getDefaultCoordinateMap = (): Record<keyof typeof MoveableRegionMap
  */
 export type Card = ReturnType<typeof getDefaultCard>;
 export const getDefaultCard = () => ({
-    version: 2,
+    version: 3,
+    series: 'modern' as Series,
     format: 'tcg',
     region: 'en',
     frame: 'fusion',
@@ -175,6 +178,7 @@ export const getDefaultInternalCard = () => ({
 
 export const getEmptyCard = (): Card => ({
     version: 3,
+    series: 'modern' as Series,
     format: 'tcg',
     region: 'en',
     /** Why we split frame and left frame here? Because there is more nuance to the card other than individual frames, for example name bevel, border bevel, effect bevel etc..., so "frame" here is a kind of "main frame" that dictates all those nuance, why the actual card background is constructed from those 4 corner frames. */

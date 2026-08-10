@@ -193,6 +193,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
     subFamily: 'sf',
     starList: 'stl',
     star: 'st',
+    series: 'se',
     starAlignment: 'sa',
     cardIcon: 'it',
     linkMap: 'lm',
