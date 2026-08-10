@@ -247,6 +247,7 @@ export const drawName = async (
     const atlas = useGlobalMemory.getState().memory.atlasMap[
         `${font === 'Default' ? 'atlas' : font}${globalScale === 1 ? 'Md' : 'Lg'}${dpr}`
     ];
+    let checked = false;
     const { tokenEdge } = await drawLine({
         ctx,
         tokenList,
@@ -262,6 +263,7 @@ export const drawName = async (
             if (!atlas) {
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             } else {
+                checked = true;
                 const { missing } = drawString(
                     ctx,
                     atlas,
@@ -308,6 +310,7 @@ export const drawName = async (
                     ctx.scale(1, yRatio);
                     ctx.fillText(letter, scaledEdge, (scaledBaseline - (isSpeedSkill ? offsetY : 0) - yCompensate) / yRatio);
                     ctx.restore();
+                    console.log('🚀 ~ drawName ~ yCompensate:', yCompensate);
                 }
             }
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));

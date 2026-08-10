@@ -3,7 +3,7 @@
   "pixelRatio": 1,
   "supersample": 1,
   "fillStyle": "#000",
-  "fontFamily": "MatrixRegularSmallCaps",
+  "fontFamily": "MatrixRegularSmallCaps, Times New Roman",
   "fontWeight": "normal",
   "fontStyle": "normal",
   "atlasWidth": 2039,
@@ -12,14 +12,14 @@
     "caps": {
       "chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       "fontSizeCss": 91,
-      "anchorChar": "H",
+      "anchorChar": "M",
       "anchorAscent": 45,
       "anchorInkHeight": 46
     },
     "smallcaps": {
       "chars": "abcdefghijklmnopqrstuvwxyz",
       "fontSizeCss": 91,
-      "anchorChar": "x",
+      "anchorChar": "m",
       "anchorAscent": 34,
       "anchorInkHeight": 35
     },
@@ -173,7 +173,7 @@
       "ascent": 45,
       "advance": 42.01165771484375,
       "offsetY": 1,
-      "scaleY": 1.02,
+      "scaleY": 1,
       "scaleX": 1
     },
     "Q": {
