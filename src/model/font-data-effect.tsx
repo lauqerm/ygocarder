@@ -56,8 +56,6 @@ export const DefaultFontSizeData = {
  * 
  * ~~So for now we can only hardcode a list of problematic letters with their correpsonding treatment. This is just baffling.~~
  * 
- * Check out `getCanvasFontDebugger` function for one of my most bullshit brute force method.
- * 
  * Because letter can combine with diacritics, we must store a base letter for them to avoid incompatible comparison.
  */
 export type FontDeviation = {

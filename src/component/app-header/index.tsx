@@ -362,11 +362,11 @@ export const AppHeader = ({
                             { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'x', overrides: overrideMap.scale1.ratio1 },
                             { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale1.ratio1 },
                         ],
-                        { fontFamily: 'MatrixRegularSmallCaps', pixelRatio: 1, fillStyle: '#000' },
+                        { fontFamily: 'MatrixRegularSmallCaps', pixelRatio: 2, fillStyle: '#000' },
                     );
 
                     console.table(reportOutliers(atlas.meta, 1)); // informational, see below
-                    await exportAtlas(atlas, 'matrix-md@1x');
+                    await exportAtlas(atlas, 'matrix-md@2x');
                 }}>
                     Generate
                 </Button>

@@ -221,7 +221,7 @@ function rasterizeGlyph(
     config: BuildConfig,
 ): RasterizedGlyph | null {
     const dpr = config.pixelRatio * (config.supersample ?? 1);
-    const alphaThreshold = config.alphaThreshold ?? 32;
+    const alphaThreshold = config.alphaThreshold ?? 10;
 
     // 4x the em box in both axes leaves room for wide glyphs, tall accents and
     // descenders without clipping.

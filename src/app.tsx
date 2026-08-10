@@ -15,12 +15,10 @@ import {
     PUBLIC_PATH,
 } from './model';
 import {
-    AtlasVariant,
     DebugCanvas,
     forceRefocus,
     loadAtlas,
     mergeClass,
-    selectVariant,
 } from './util';
 import {
     BatchConverter,
@@ -720,7 +718,6 @@ function App() {
                                         </LightboxButton>
                                     </Tooltip>
                                     {/** <div id="debug-monitor" /> */}
-                                    {/** This canvas should reset everytime globalScale change so `getCanvasFontDebugger` works. */}
                                     <canvas
                                         key={globalScale + 'scale'}
                                         id="debug-canvas"

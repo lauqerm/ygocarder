@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, fontMeasurer, normalizeCardName, applyEmboss, fontMeasurerV2, drawString } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, normalizeCardName, applyEmboss, drawString } from 'src/util';
 import { getWritingDirection, tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
@@ -15,7 +15,7 @@ import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { setTextStyle } from '../canvas-util';
 import { useGlobalMemory } from 'src/service';
-import { auditDrawCall, diagnoseOffset, sweepBaselineFractions, verifyScaleXInvariance } from 'src/util/normalize-v2/diagnose';
+import { verifyScaleXInvariance } from 'src/util';
 
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
@@ -103,7 +103,6 @@ export const drawName = async (
         globalScale: number,
     },
 ) => {
-    console.log('🚀 ~ drawName ~ canvas:', canvas.width, canvas.height);
     const { isSpeedSkill, format, frame, furiganaHelper, globalScale } = option;
     const edge = _edge * globalScale;
     const trueBaseline = _trueBaseline * globalScale;
@@ -225,34 +224,8 @@ export const drawName = async (
         )
         : undefined;
 
-
-    // fontMeasurer.test(
-    //     { globalScale, xRatio, normalStyle },
-    //     {
-    //         scale: globalScale,
-    //         xRatio,
-    //         setup: debugCtx => {
-    //             debugCtx.font = normalStyle;
-    //             debugCtx.resetTransform();
-    //             debugCtx.scale(xRatio, yRatio);
-    //         },
-    //     },
-    // );
-    // fontMeasurerV2.test(
-    //     { globalScale, xRatio, normalStyle },
-    //     {
-    //         scale: globalScale,
-    //         xRatio,
-    //         setup: debugCtx => {
-    //             debugCtx.font = normalStyle;
-    //             debugCtx.resetTransform();
-    //             debugCtx.scale(xRatio, yRatio);
-    //         },
-    //     },
-    // );
     const letterMap = fontData.letterDeviationMap?.['default'].letterMap;
-    const atlas = useGlobalMemory.getState().memory.atlasMap['atlasMd1'];
-    console.log('🚀 ~ drawName ~ atlas:', atlas);
+    const dpr = window.devicePixelRatio;
     /**
      * First iteration: Draw the name with color and gradient. We explicitly draw on base canvas here to avoid data loss from putImageData / drawImage method.
      * 
@@ -271,8 +244,9 @@ export const drawName = async (
         });
     }
     ctx.fillStyle = gradient ?? fillStyle;
-    console.log('🚀 ~ drawName ~ ctx.fillStyle:', ctx.fillStyle);
-    const drawed = true;
+    const atlas = useGlobalMemory.getState().memory.atlasMap[
+        `${font === 'Default' ? 'atlas' : font}${globalScale === 1 ? 'Md' : 'Lg'}${dpr}`
+    ];
     const { tokenEdge } = await drawLine({
         ctx,
         tokenList,
@@ -288,20 +262,6 @@ export const drawName = async (
             if (!atlas) {
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             } else {
-                let fallback = false;
-                const baselineYCss = scaledBaseline - (isSpeedSkill ? offsetY : 0);
-                const x = scaledEdge * xRatio;
-                // if (atlas && drawed) {
-                //     drawed = false;
-                //     auditDrawCall(ctx, 'fillText path', baselineYCss);
-                //     ctx.fillText('A', x, baselineYCss);
-
-                //     auditDrawCall(ctx, 'atlas path', baselineYCss);
-                //     drawString(ctx, atlas, 'C', { xCss: x, baselineYCss, color: gradient ?? fillStyle });
-                // }
-                // ctx.save();
-                // ctx.scale(xRatio, 1);
-                console.log('🚀 ~ drawName ~ xRatio:', xRatio);
                 const { missing } = drawString(
                     ctx,
                     atlas,
@@ -313,7 +273,7 @@ export const drawName = async (
                         scaleX: xRatio,
                     },
                 );
-                // ctx.restore();
+                let fallback = false;
                 if (missing.length > 0) fallback = true;
                 if (fallback) {
                     let yCompensate = 0;
@@ -321,13 +281,13 @@ export const drawName = async (
                     const baseLetter = letterMap?.[letter]?.baseLetter;
                     if (baseLetter) {
                         const letterValue = verifyScaleXInvariance(atlas, letter, {
-                            font: '91px MatrixRegularSmallCaps, "Times New Roman", Arial',
+                            font: normalStyle,
                             color: gradient ?? fillStyle,
                             baselineYCss: 116,
                             scales: [xRatio],
                         }).default;
                         const baseLetterValue = verifyScaleXInvariance(atlas, baseLetter, {
-                            font: '91px MatrixRegularSmallCaps, "Times New Roman", Arial',
+                            font: normalStyle,
                             color: gradient ?? fillStyle,
                             baselineYCss: 116,
                             scales: [xRatio],
@@ -344,7 +304,6 @@ export const drawName = async (
                     const yRatio = letterHeight === 0
                         ? 1
                         : (letterHeight - yCompensate) / letterHeight;
-                    console.log('🚀 ~ drawName ~ letterHeight:', yRatio, letter, baseLetter, letterHeight);
                     ctx.save();
                     ctx.scale(1, yRatio);
                     ctx.fillText(letter, scaledEdge, (scaledBaseline - (isSpeedSkill ? offsetY : 0) - yCompensate) / yRatio);
@@ -355,16 +314,16 @@ export const drawName = async (
         },
         debug,
     });
-    const canvas2 = document.createElement('canvas');
-    canvas2.width = 813;
-    canvas2.height = 148;
-    const ctx2 = canvas2.getContext('2d');
-    if (ctx2) {
-        ctx2.fillStyle = gradient ?? fillStyle;
-        ctx2.fillRect(0, 0, 813, 148);
+    const gradientCanvas = document.createElement('canvas');
+    gradientCanvas.width = canvas.width;
+    gradientCanvas.height = canvas.height;
+    const gradientContext = gradientCanvas.getContext('2d');
+    if (gradientContext) {
+        gradientContext.fillStyle = gradient ?? fillStyle;
+        gradientContext.fillRect(0, 0, canvas.width, canvas.height);
         ctx.scale(1 / xRatio, 1);
         ctx.globalCompositeOperation = 'source-in';
-        ctx.drawImage(canvas2, 0, 0);
+        ctx.drawImage(gradientCanvas, 0, 0);
         ctx.globalCompositeOperation = 'source-over';
         ctx.scale(xRatio, 1);
     }

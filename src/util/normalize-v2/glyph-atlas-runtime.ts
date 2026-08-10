@@ -65,6 +65,10 @@ export type LoadedAtlas = {
     supersample: number;
     /** Colour the glyphs were rasterized in. Only its alpha profile matters. */
     fillStyle: string;
+    /** The font this atlas was built from, so it can describe itself. */
+    fontFamily: string;
+    fontWeight: string;
+    fontStyle: string;
     groups: Record<string, GroupMeta>;
 };
 
@@ -110,6 +114,9 @@ export async function loadAtlas(pngUrl: string, jsonUrl: string): Promise<Loaded
         pixelRatio: meta.pixelRatio,
         supersample: meta.supersample ?? 1,
         fillStyle: meta.fillStyle ?? '#000',
+        fontFamily: meta.fontFamily,
+        fontWeight: meta.fontWeight ?? 'normal',
+        fontStyle: meta.fontStyle ?? 'normal',
         groups: meta.groups,
     };
 }
@@ -153,7 +160,14 @@ export function snapBaseline(
 export type LayoutOptions = {
     /** Extra tracking between glyphs, CSS px. Negative tightens. */
     letterSpacingCss?: number;
-    /** Defaults to window.devicePixelRatio. */
+    /**
+     * Override for the CSS-to-device-pixel scale.
+     *
+     * Normally omit this: drawString reads the target context's own transform,
+     * which is correct whether or not the canvas was set up with scale(dpr, dpr).
+     * Passing window.devicePixelRatio on a canvas that is NOT dpr-scaled draws
+     * everything at double size on a Retina display.
+     */
     devicePixelRatio?: number;
 };
 
@@ -363,7 +377,25 @@ export function drawString(
     text: string,
     options: DrawOptions,
 ): DrawResult {
-    const dpr = options.devicePixelRatio ?? window.devicePixelRatio ?? 1;
+    // The target context's transform is the authority on how a CSS unit maps to
+    // a device pixel — NOT window.devicePixelRatio. A canvas whose backing store
+    // equals its CSS size has an identity transform even on a DPR 2 display, and
+    // scaling by the window's ratio there would draw everything at double size.
+    // That failure is invisible at DPR 1 and obvious on a Retina Mac.
+    const m = targetCtx.getTransform();
+    if (m.b !== 0 || m.c !== 0) {
+        console.warn(
+            'drawString: the target context has a rotation or skew, which is not ' +
+            'supported. Only translation and axis-aligned scale are honoured.',
+        );
+    }
+
+    const override = options.devicePixelRatio;
+    const scaleXCtx = override ?? m.a;
+    const scaleYCtx = override ?? m.d;
+    const translateDevX = m.e;
+    const translateDevY = m.f;
+
     const layout = layoutString(atlas, text, options);
 
     if (layout.missing.length > 0) {
@@ -379,13 +411,15 @@ export function drawString(
 
     const runScaleX = options.scaleX ?? 1;
 
-    // Atlas device px per CSS px, and the factor down to the target's device px.
+    // Atlas device px per CSS px, and the per-axis factor down to the target's
+    // device px. Kept separate so a non-square context scale still works.
     const a = atlasPixelsPerCss(atlas);
-    const k = dpr / a;
+    const kx = scaleXCtx / a;
+    const ky = scaleYCtx / a;
 
     const pad = 2; // guard against edge bleed during the final blit
-    const layerWidth = 813;//Math.ceil(layout.inkRight - layout.inkLeft) + pad * 2;
-    const layerHeight = 148;//Math.ceil(layout.inkBottom - layout.inkTop) + pad * 2;
+    const layerWidth = Math.ceil(layout.inkRight - layout.inkLeft) + pad * 2;
+    const layerHeight = Math.ceil(layout.inkBottom - layout.inkTop) + pad * 2;
 
     const layer = acquireTintLayer(layerWidth, layerHeight);
     const originX = pad - layout.inkLeft;
@@ -413,31 +447,16 @@ export function drawString(
         layer.ctx.save();
         layer.ctx.globalCompositeOperation = 'source-in';
         layer.ctx.fillStyle = options.color;
-        console.log('🚀 ~ drawString ~ options.color:', options.color, layer.canvas.width, layer.canvas.height);
         layer.ctx.fillRect(0, 0, layerWidth, layerHeight);
         layer.ctx.restore();
     }
 
-    const scaledAdvance = layout.advanceWidth * k * runScaleX;
+    const scaledAdvance = layout.advanceWidth * kx * runScaleX;
 
     let alignOffset = 0;
     if (options.align === 'center') alignOffset = -scaledAdvance / 2;
     else if (options.align === 'right') alignOffset = -scaledAdvance;
 
-    // Read the caller's transform BEFORE resetting it. Dropping to identity is
-    // load-bearing for the scale — under scale(dpr, dpr) an integer CSS
-    // coordinate is a half device pixel and the resampler engages — but a
-    // translate on the master context is real layout intent, and discarding it
-    // silently offsets every run relative to fillText.
-    const m = targetCtx.getTransform();
-    if (m.b !== 0 || m.c !== 0) {
-        console.warn(
-            'drawString: the target context has a rotation or skew, which is not ' +
-            'supported. Only translation and axis-aligned scale are honoured.',
-        );
-    }
-    const translateDevX = m.e;
-    const translateDevY = m.f;
 
     // The effective device baseline must be integral for this path to agree with
     // fillText. Both round to the same row only when the fractional part is
@@ -446,14 +465,15 @@ export function drawString(
     // a pixel off. Flat-terminal glyphs like H often agree by luck while round
     // ones like C and O do not.
     if (warnOnFractionalBaseline) {
-        const effectiveBaselineDev = translateDevY + options.baselineYCss * dpr;
+        const effectiveBaselineDev = translateDevY + options.baselineYCss * scaleYCtx;
         const fraction = Math.abs(effectiveBaselineDev - Math.round(effectiveBaselineDev));
         if (fraction > 1e-6) {
             console.warn(
                 `drawString: effective device baseline is ${effectiveBaselineDev.toFixed(3)}, ` +
                 'not a whole pixel. Individual glyphs will sit up to 1px away from where ' +
                 'fillText would put them, inconsistently between letters. ' +
-                `baselineYCss=${options.baselineYCss}, dpr=${dpr}, translateY=${translateDevY}. ` +
+                `baselineYCss=${options.baselineYCss}, contextScaleY=${scaleYCtx}, ` +
+                `translateY=${translateDevY}. ` +
                 'Call setWarnOnFractionalBaseline(false) to silence.',
             );
         }
@@ -466,7 +486,7 @@ export function drawString(
     // resolution, with any horizontal scale folded in. Doing it in one step
     // rather than two keeps each stem's partial-coverage band about one pixel
     // wide, which is what stops the glyph reading heavier than native text.
-    const resamples = k !== 1 || runScaleX !== 1;
+    const resamples = kx !== 1 || ky !== 1 || runScaleX !== 1;
     targetCtx.imageSmoothingEnabled = resamples;
     if (resamples) targetCtx.imageSmoothingQuality = 'high';
 
@@ -477,17 +497,20 @@ export function drawString(
         layerWidth,
         layerHeight,
         Math.round(
-            translateDevX + options.xCss * dpr + alignOffset + (layout.inkLeft - pad) * k * runScaleX,
+            translateDevX +
+            options.xCss * scaleXCtx +
+            alignOffset +
+            (layout.inkLeft - pad) * kx * runScaleX,
         ),
-        Math.round(translateDevY + options.baselineYCss * dpr + (layout.inkTop - pad) * k),
-        Math.max(1, Math.round(layerWidth * k * runScaleX)),
-        Math.max(1, Math.round(layerHeight * k)),
+        Math.round(translateDevY + options.baselineYCss * scaleYCtx + (layout.inkTop - pad) * ky),
+        Math.max(1, Math.round(layerWidth * kx * runScaleX)),
+        Math.max(1, Math.round(layerHeight * ky)),
     );
     targetCtx.restore();
 
     return {
-        nextXCss: options.xCss + scaledAdvance / dpr,
-        advanceWidthCss: scaledAdvance / dpr,
+        nextXCss: options.xCss + scaledAdvance / scaleXCtx,
+        advanceWidthCss: scaledAdvance / scaleXCtx,
         missing: layout.missing,
     };
 }
