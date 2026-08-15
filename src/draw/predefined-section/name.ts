@@ -7,7 +7,7 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, normalizeCardName, applyEmboss, drawString } from 'src/util';
+import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, normalizeCardName, applyEmboss, drawString, drawOutlined } from 'src/util';
 import { getWritingDirection, tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
@@ -168,15 +168,10 @@ export const drawName = async (
         defaultWeight: fontData.weight,
     });
     const normalStyle = fontGetterForWidthCalculating.getFont();
-    const symbolStyle = fontGetterForWidthCalculating
-        .setSize(cur => cur * fontData.symbolFontRatio)
-        .setStyle('small-caps')
-        .setFamily(fontData.symbolFont)
-        .getFont();
     let maxAscent = 0;
     let maxDescent = 0;
-    crudeTokenList.forEach((cur, index) => {
-        ctx.font = index % 2 === 0 ? normalStyle : symbolStyle;
+    crudeTokenList.forEach(cur => {
+        ctx.font = normalStyle;
 
         const textMetric = ctx.measureText(cur.replaceAll(NormalizeTextRegex, ''));
         maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
@@ -247,7 +242,6 @@ export const drawName = async (
     const atlas = useGlobalMemory.getState().memory.atlasMap[
         `${font === 'Default' ? 'atlas' : font}${globalScale === 1 ? 'Md' : 'Lg'}${dpr}`
     ];
-    let checked = false;
     const { tokenEdge } = await drawLine({
         ctx,
         tokenList,
@@ -260,19 +254,17 @@ export const drawName = async (
         option: { drawHeadText: false, direction },
         width: actualLineWidth * xRatio,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-            if (!atlas) {
+            if (!atlas || !atlas.entries.get(letter)) {
                 ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
             } else {
-                checked = true;
                 const { missing } = drawString(
                     ctx,
                     atlas,
                     letter,
                     {
-                        xCss: scaledEdge * xRatio,
+                        xCss: scaledEdge,
                         baselineYCss: scaledBaseline - (isSpeedSkill ? offsetY : 0) - 1,
                         color: gradient ?? fillStyle,
-                        scaleX: xRatio,
                     },
                 );
                 let fallback = false;
@@ -310,7 +302,6 @@ export const drawName = async (
                     ctx.scale(1, yRatio);
                     ctx.fillText(letter, scaledEdge, (scaledBaseline - (isSpeedSkill ? offsetY : 0) - yCompensate) / yRatio);
                     ctx.restore();
-                    console.log('🚀 ~ drawName ~ yCompensate:', yCompensate);
                 }
             }
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
@@ -351,11 +342,12 @@ export const drawName = async (
             patternContext.resetTransform();
             /** The first letter of card name may reach outside of the card edge (for example letter J), so we skew the pattern image if needed. */
             const offset = ctx.measureText(normalizedName).actualBoundingBoxLeft;
+            const padding = 1;
             await drawAssetWithSize(
                 patternContext, `finish-name/${patternImage}.png`,
-                edge - offset, trueBaseline - maxAscent,
+                edge - offset, trueBaseline - maxAscent - padding,
                 width + offset,
-                maxAscent + maxDescent,
+                maxAscent + maxDescent + padding * 2,
             );
             ctx.globalCompositeOperation = 'source-in';
             ctx.drawImage(patternCanvas, 0, 0);
@@ -379,44 +371,21 @@ export const drawName = async (
     }
 
     /**
-     * Fourth iteration: Apply "outline" to card name. We use stroke method to simulate outline behavior.
-     * 
-     * We stroke the text behind the canvas to avoid polluting current effects. Because we already drawn a layer of outline if emboss thickness is applied, we will also increase outline thickness to compensate.
+     * Fourth iteration: Apply "outline" to card name. We use stamping method to avoid using stroke text (with inherit the font problem).
      * */
     if (hasOutline) {
-        const resetStroke = setTextStyle({
-            ctx,
-            lineWidth: lineWidth + (hasEmboss ? embossThickness : 0),
-            lineColor,
-            globalScale,
-            useDefault: false,
-        });
-        ctx.globalCompositeOperation = 'destination-over';
-        await drawLine({
-            ctx,
-            tokenList,
-            xRatio, yRatio,
-            trueEdge: edge, trueBaseline,
-            textData,
-            lineHeight,
-            format,
-            globalScale,
-            option: { drawHeadText: false, direction },
-            width: actualLineWidth * xRatio,
-            drawImage: false,
-            textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                ctx.lineJoin = 'round';
-                ctx.strokeText(
-                    letter,
-                    scaledEdge + lineOffsetX,
-                    scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
-                );
-            },
-            debug,
-        });
-        ctx.lineJoin = 'miter';
-        ctx.globalCompositeOperation = 'source-over';
-        resetStroke();
+        const outlineCanvas = canvas.cloneNode() as HTMLCanvasElement;
+        const outlineContext = outlineCanvas.getContext('2d');
+        if (outlineContext) {
+
+            ctx.scale(1 / xRatio, 1 / yRatio);
+            drawOutlined(outlineContext, canvas, lineOffsetX, lineOffsetY, lineColor, lineColor, lineWidth / 2 * globalScale);
+            outlineContext.drawImage(canvas, 0, 0);
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.drawImage(outlineCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.scale(xRatio, yRatio);
+        }
     }
 
     /**

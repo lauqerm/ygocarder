@@ -22,7 +22,7 @@ export * from './image';
 export * from './imgur';
 export * from './navigation';
 export * from './normalize';
-export * from './normalize-v2';
+export * from './canvas-text';
 export * from './other';
 export * from './random';
 export * from './report';

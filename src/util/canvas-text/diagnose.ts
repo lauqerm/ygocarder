@@ -111,8 +111,8 @@ export function verifyScaleXInvariance(
         };
     }
 
-    console.log(`vertical ink rows by horizontal scale — "${text}", dpr=${dpr}`);
-    console.table(rows);
+    // console.log(`vertical ink rows by horizontal scale — "${text}", dpr=${dpr}`);
+    // console.table(rows);
     return {
         default: rows[`scaleX=${scales[0]}`],
         rows,

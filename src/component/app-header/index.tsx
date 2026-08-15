@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Explanation } from '../explanation';
 import { useI18N, useLanguage } from 'src/service';
 import { Button, Radio, Tooltip } from 'antd';
-import { buildGlyphAtlas, CHARSET, exportAtlas, reportOutliers } from 'src/util/normalize-v2/glyph-atlas-build';
+import { buildGlyphAtlas, CHARSET, exportAtlas } from 'src/util/canvas-text/glyph-atlas-build';
 import { captureException } from 'src/util';
 import { VersionLogButton } from './version-log';
 import { StyledPopMarkdown } from '../atom';
