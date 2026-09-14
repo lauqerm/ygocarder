@@ -417,7 +417,7 @@ export function drawString(
     const kx = scaleXCtx / a;
     const ky = scaleYCtx / a;
 
-    const pad = 2; // guard against edge bleed during the final blit
+    const pad = 4; // guard against edge bleed during the final blit
     const layerWidth = Math.ceil(layout.inkRight - layout.inkLeft) + pad * 2;
     const layerHeight = Math.ceil(layout.inkBottom - layout.inkTop) + pad * 2;
 

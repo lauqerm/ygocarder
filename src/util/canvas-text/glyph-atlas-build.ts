@@ -291,7 +291,7 @@ function rasterizeGlyph(
 
 export function buildGlyphAtlas(groups: BuildGroup[], config: BuildConfig): GlyphAtlas {
     const maxWidth = config.maxAtlasWidth ?? 2048;
-    const pad = config.padding ?? 2;
+    const pad = config.padding ?? 4;
 
     type Collected = {
         char: string;

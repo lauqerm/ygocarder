@@ -345,22 +345,20 @@ export const AppHeader = ({
                         },
                         scale2: {
                             ratio1: {
-                                1: { offsetY: 1, scaleY: 1.022 },
+                                1: { offsetY: 1, scaleY: 1.0217 },
                                 2: { offsetY: 1, scaleY: 1.0217 },
-                                3: { offsetY: 2, scaleY: 1.043 },
-                                4: { scaleY: 1.022 },
-                                5: { offsetY: 1, scaleY: 1.0323 },
-                                6: { scaleY: 1.022 },
-                                7: { scaleY: 1.022 },
-                                8: { scaleY: 1.022 },
-                                9: { scaleY: 1.022 },
-                                E: { offsetY: 1, scaleY: 1.0111 },
-                                i: { offsetY: 1, scaleY: 1.0147 },
-                                I: { offsetY: 1, scaleY: 1.0111 },
-                                N: { offsetY: 1, scaleY: 1.0101 },
-                                O: { offsetY: -1, scaleY: 0.9681 },
-                                q: { scaleY: 0.9867 },
-                                Q: { offsetY: -1, scaleY: 0.9798 },
+                                3: { offsetY: 2, scaleY: 1.0652 },
+                                4: { scaleY: 1.0217 },
+                                5: { offsetY: 2, scaleY: 1.0652 },
+                                6: { scaleY: 1.0217 },
+                                7: { scaleY: 1.0217 },
+                                8: { scaleY: 1.0217 },
+                                9: { scaleY: 1.0217 },
+                                E: { offsetY: 1, scaleY: 1.0222 },
+                                i: { offsetY: 1, scaleY: 1.0294 },
+                                I: { offsetY: 1, scaleY: 1.0222 },
+                                n: { offsetY: -15 },
+                                O: { scaleY: 0.9787 },
                             },
                             ratio2: {
                                 1: { offsetY: 1, scaleY: 1.022 },
@@ -433,29 +431,29 @@ export const AppHeader = ({
                     //     ],
                     //     { fontFamily: 'MatrixRegularSmallCaps, Times New Roman', pixelRatio: 1, fillStyle: '#000' },
                     // ), 'matrix-lg@1x');
-                    await exportAtlas(buildGlyphAtlas(
-                        [
-                            { id: 'caps', chars: CHARSET.upper, fontSizeCss: 182, anchorChar: 'M', overrides: overrideMap.scale2.ratio1 },
-                            { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 182, anchorChar: 'm', overrides: overrideMap.scale2.ratio1 },
-                            { id: 'digits', chars: CHARSET.digits, fontSizeCss: 182, anchorChar: '0', overrides: overrideMap.scale2.ratio1 },
-                        ],
-                        { fontFamily: 'MatrixRegularSmallCaps, Times New Roman', pixelRatio: 2, fillStyle: '#000' },
-                    ), 'matrix-lg@2x');
                     // await exportAtlas(buildGlyphAtlas(
                     //     [
-                    //         { id: 'caps', chars: CHARSET.upper, fontSizeCss: 91, anchorChar: 'M', overrides: overrideMap.scale1.ratio1 },
-                    //         { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'm', overrides: overrideMap.scale1.ratio1 },
-                    //         { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale1.ratio1 },
-                    //     ],
-                    //     { fontFamily: 'MatrixRegularSmallCaps, Times New Roman', pixelRatio: 1, fillStyle: '#000' },
-                    // ), 'matrix-md@1x');
-                    // await exportAtlas(buildGlyphAtlas(
-                    //     [
-                    //         { id: 'caps', chars: CHARSET.upper, fontSizeCss: 91, anchorChar: 'M', overrides: overrideMap.scale1.ratio1 },
-                    //         { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'm', overrides: overrideMap.scale1.ratio1 },
-                    //         { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale1.ratio1 },
+                    //         { id: 'caps', chars: CHARSET.upper, fontSizeCss: 182, anchorChar: 'M', overrides: overrideMap.scale2.ratio1 },
+                    //         { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 182, anchorChar: 'm', overrides: overrideMap.scale2.ratio1 },
+                    //         { id: 'digits', chars: CHARSET.digits, fontSizeCss: 182, anchorChar: '0', overrides: overrideMap.scale2.ratio1 },
                     //     ],
                     //     { fontFamily: 'MatrixRegularSmallCaps, Times New Roman', pixelRatio: 2, fillStyle: '#000' },
+                    // ), 'matrix-lg@2x');
+                    await exportAtlas(buildGlyphAtlas(
+                        [
+                            { id: 'caps', chars: CHARSET.upper, fontSizeCss: 91, anchorChar: 'M', overrides: overrideMap.scale1.ratio1 },
+                            { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'm', overrides: overrideMap.scale1.ratio1 },
+                            { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale1.ratio1 },
+                        ],
+                        { fontFamily: 'MatrixRegularSmallCaps, Times New Roman', pixelRatio: 1, fillStyle: '#000' },
+                    ), 'matrix-md@1x');
+                    // await exportAtlas(buildGlyphAtlas(
+                    //     [
+                    //         { id: 'caps', chars: CHARSET.upper, fontSizeCss: 91, anchorChar: 'M', overrides: overrideMap.scale2.ratio1 },
+                    //         { id: 'smallcaps', chars: CHARSET.lower, fontSizeCss: 91, anchorChar: 'm', overrides: overrideMap.scale2.ratio1 },
+                    //         { id: 'digits', chars: CHARSET.digits, fontSizeCss: 91, anchorChar: '0', overrides: overrideMap.scale2.ratio1 },
+                    //     ],
+                    //     { fontFamily: 'MatrixRegularSmallCaps, Times New Roman', pixelRatio: 2, fillStyle: '#000', supersample: 2 },
                     // ), 'matrix-md@2x');
                 }}>
                     Generate

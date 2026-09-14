@@ -18,6 +18,7 @@ import {
     DebugCanvas,
     forceRefocus,
     loadAtlas,
+    LoadedAtlas,
     mergeClass,
 } from './util';
 import {
@@ -348,13 +349,19 @@ function App() {
             },
             active: async () => {
                 (async () => {
+                    let atlasMap: Record<string, LoadedAtlas | undefined> = {};
+                    // const dpr = window.devicePixelRatio;
+                    // if (dpr === 1) {
                     const atlasMd1 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@1x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@1x.json`);
-                    const atlasMd2 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.json`);
+                    const atlasLg1 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@1x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@1x.json`);
+                    atlasMap = { ...atlasMap, atlasMd1, atlasLg1 };
+                    // } else {
+                    // const atlasMd2 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.json`);
+                    // const atlasLg2 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@2x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@2x.json`);
+                    // atlasMap = { ...atlasMap, atlasMd2, atlasLg2 };
+                    // }
                     useGlobalMemory.getState().updateGlobalMemory({
-                        atlasMap: {
-                            atlasMd1,
-                            atlasMd2,
-                        }
+                        atlasMap,
                     });
 
                     const retrievedCard = await retrieveSavedCard();
