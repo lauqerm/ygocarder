@@ -75,6 +75,7 @@ import {
     isTouchDevice,
 } from './pwa';
 import { type LightboxRef } from './component/lightbox';
+import { TestGlyphFit } from './test-glyph-fit';
 
 const Lightbox = lazy(() => import('./component/lightbox').then(({ Lightbox }) => ({ default: Lightbox })));
 /** React hotkey setup */
@@ -607,6 +608,7 @@ function App() {
     }, [checkTaintedCanvas, updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
+    if (Math.random() > 0) return <TestGlyphFit />;
     return (
         <ChunkErrorBoundary>
             <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
