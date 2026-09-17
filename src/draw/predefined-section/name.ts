@@ -16,6 +16,7 @@ import {
     normalizeCardName,
     applyEmboss,
     drawOutlined,
+    drawFitGlyph,
 } from 'src/util';
 import { getWritingDirection, tokenizeText } from '../text-util';
 import { drawLine } from '../line';
@@ -23,10 +24,9 @@ import { createLineList } from '../line-list';
 import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { setTextStyle } from '../canvas-util';
-import { useGlobalMemory } from 'src/service';
-import { verifyScaleXInvariance } from 'src/util';
-import { baselineForAnchorTop, drawString } from 'src/util/canvas-text/glyph-render-directly';
 
+export const BASE_CANVAS_ID = 'base-canvas';
+export const ADJUSTED_CANVAS_ID = 'adjusted-canvas';
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
     angleAsDegree: number,
@@ -189,7 +189,6 @@ export const drawName = async (
     }, 0);
 
     ctx.font = normalStyle;
-    console.log('🚀 ~ drawName ~ normalStyle:', normalStyle);
     /** Calculate fitting ratio like normal */
     let actualLineWidth = 0;
     const lineHeight = textData.fontData.fontList[textData.fontLevel].lineHeight;
@@ -211,7 +210,6 @@ export const drawName = async (
         },
     );
     const xRatio = internalEffectiveMedian / 1000;
-    console.log('🚀 ~ drawName ~ xRatio:', xRatio);
     const yRatio = 1;
 
     ctx.scale(xRatio, yRatio);
@@ -231,7 +229,6 @@ export const drawName = async (
         )
         : undefined;
 
-    const letterMap = fontData.letterDeviationMap?.['default'].letterMap;
     const dpr = window.devicePixelRatio;
     /**
      * First iteration: Draw the name with color and gradient. We explicitly draw on base canvas here to avoid data loss from putImageData / drawImage method.
@@ -251,17 +248,10 @@ export const drawName = async (
         });
     }
     ctx.fillStyle = gradient ?? fillStyle;
-    /** In theory, our atlas should be scaled accordingly based on the device's DPR, not 1. In practice, however, it create a much better result when we let the device do the final upscale, as it produces a smoother, more consistent result. */
-    const atlas = useGlobalMemory.getState().memory.atlasMap[
-        `${font === 'Default' ? 'atlas' : font}${globalScale === 1 ? 'Md' : 'Lg'}${1}`
-    ];
-    console.log('🚀 ~ drawName ~ atlas:', {
-        color: gradient ?? fillStyle,
-        family: fontGetterForWidthCalculating.getFontInfo().family,
-        sizeCss: fontGetterForWidthCalculating.getFontInfo().sizeAsNumber,
-        alphaThreshold: 1,
-        scaleX: xRatio,
-    });
+    const actualLineHeightData = textData.fontData.fontList[textData.fontLevel].actualLineHeightData?.[`${globalScale}`];
+    const baseCanvas = document.getElementById(BASE_CANVAS_ID) as HTMLCanvasElement | null;
+    const adjustedCanvas = document.getElementById(ADJUSTED_CANVAS_ID) as HTMLCanvasElement | null;
+    const willUseDynamicRender = font === 'Default';
     const { tokenEdge } = await drawLine({
         ctx,
         tokenList,
@@ -274,80 +264,39 @@ export const drawName = async (
         option: { drawHeadText: false, direction },
         width: actualLineWidth * xRatio,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-            if (!atlas || !atlas.entries.get(letter)) {
-                ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+            const base = scaledBaseline - (isSpeedSkill ? offsetY : 0);
+            if (
+                !willUseDynamicRender
+                || baseCanvas === null
+                || adjustedCanvas === null
+                || actualLineHeightData === undefined
+            ) {
+                ctx.fillText(letter, scaledEdge, base);
             } else {
-                const family = fontGetterForWidthCalculating.getFontInfo().family;
-                const sizeCss = fontGetterForWidthCalculating.getFontInfo().sizeAsNumber;
-                const spec = {
-                    family, sizeCss, color: gradient ?? fillStyle,
-                    alphaThreshold: 10,
-                    scaleX: xRatio,
-                    weight: '',
-                    style: '',
-                };
-                // const scaleY = scaleYToFitAnchors(ctx, 'H', spec, anchorBottomCss - anchorTopCss);
-                // const sizeCss = fontSizeToFitAnchors(ctx, 'H', spec, anchorBottomCss - anchorTopCss);
-                // const fitted = { ...spec, sizeCss, scaleX: scaleXToFit(ctx, name, { ...spec, sizeCss }, maxWidthCss) };
-
-                // const baselineYCss = baselineForAnchorTop(ctx, 'H', anchorTopCss, fitted);
-
-                drawString(
+                baseCanvas.width = canvas.width;
+                baseCanvas.height = canvas.height;
+                adjustedCanvas.width = canvas.width;
+                adjustedCanvas.height = canvas.height;
+                const drawable = drawFitGlyph({
                     ctx,
+                    globalScale,
+                    baseCanvas,
+                    adjustedCanvas,
                     letter,
-                    spec,
-                    {
-                        baselineYCss: scaledBaseline - (isSpeedSkill ? offsetY : 0) - 1,
-                        xCss: scaledEdge * xRatio,
-                    }
-                );
-                // const { missing } = drawString(
-                //     ctx,
-                //     atlas,
-                //     letter,
-                //     {
-                //         xCss: scaledEdge,
-                //         baselineYCss: scaledBaseline - (isSpeedSkill ? offsetY : 0) - 1,
-                //         color: gradient ?? fillStyle,
-                //     },
-                // );
-                // let fallback = false;
-                // if (missing.length > 0) fallback = true;
-                // if (fallback) {
-                //     let yCompensate = 0;
-                //     let letterHeight = 0;
-                //     const baseLetter = letterMap?.[letter]?.baseLetter;
-                //     if (baseLetter) {
-                //         const letterValue = verifyScaleXInvariance(atlas, letter, {
-                //             font: normalStyle,
-                //             color: gradient ?? fillStyle,
-                //             baselineYCss: 116,
-                //             scales: [xRatio],
-                //         }).default;
-                //         const baseLetterValue = verifyScaleXInvariance(atlas, baseLetter, {
-                //             font: normalStyle,
-                //             color: gradient ?? fillStyle,
-                //             baselineYCss: 116,
-                //             scales: [xRatio],
-                //         }).default;
-                //         if (letterValue && baseLetterValue) {
-                //             yCompensate = typeof letterValue.fillTextBottom === 'string' || typeof baseLetterValue.fillTextBottom === 'string'
-                //                 ? 0
-                //                 : letterValue.fillTextBottom - baseLetterValue.fillTextBottom;
-                //             letterHeight = typeof baseLetterValue.fillTextTop === 'string' || typeof baseLetterValue.fillTextBottom === 'string'
-                //                 ? 0
-                //                 : baseLetterValue.fillTextBottom - baseLetterValue.fillTextTop;
-                //         }
-                //     }
-                //     const yRatio = letterHeight === 0
-                //         ? 1
-                //         : (letterHeight - yCompensate) / letterHeight;
-                //     ctx.save();
-                //     ctx.scale(1, yRatio);
-                //     ctx.fillText(letter, scaledEdge, (scaledBaseline - (isSpeedSkill ? offsetY : 0) - yCompensate) / yRatio);
-                //     ctx.restore();
-                // }
-                // ctx.imageSmoothingQuality = 'low';
+                    xRatio,
+                    yRatio,
+                    edge: scaledEdge,
+                    base: base,
+                    line: actualLineHeightData,
+                    setupContext: ctx => {
+                        ctx.scale(xRatio, 1);
+                        ctx.fillStyle = fillStyle;
+                        ctx.font = normalStyle;
+                    },
+                });
+                if (!drawable) {
+                    ctx.fillText(letter, scaledEdge, base);
+                }
             }
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
         },

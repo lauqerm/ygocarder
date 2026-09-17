@@ -17,8 +17,6 @@ import {
 import {
     DebugCanvas,
     forceRefocus,
-    loadAtlas,
-    LoadedAtlas,
     mergeClass,
 } from './util';
 import {
@@ -54,7 +52,7 @@ import {
 } from './service';
 import { notification, Tooltip } from 'antd';
 import { ChunkErrorBoundary, CROPPER_WIDTH, TaintedCanvasWarning } from './component';
-import { clearCanvas } from './draw';
+import { ADJUSTED_CANVAS_ID, BASE_CANVAS_ID, clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined, FileImageOutlined } from '@ant-design/icons';
 import {
     CardPreviewContainer,
@@ -76,12 +74,22 @@ import {
 } from './pwa';
 import { type LightboxRef } from './component/lightbox';
 import { TestGlyphFit } from './test-glyph-fit';
+import styled from 'styled-components';
 
 const Lightbox = lazy(() => import('./component/lightbox').then(({ Lightbox }) => ({ default: Lightbox })));
 /** React hotkey setup */
 configure({
     ignoreTags: [],
 });
+const GlyphFitBox = styled.div`
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    pointer-events: none;
+    overflow: auto;
+    width: 100%;
+    visibility: hidden;
+`;
 const AppGlobalHotkeyMap = {
     EXPORT: ['ctrl+d', 'command+d'],
     IMPORT: ['ctrl+e', 'command+e'],
@@ -350,21 +358,6 @@ function App() {
             },
             active: async () => {
                 (async () => {
-                    let atlasMap: Record<string, LoadedAtlas | undefined> = {};
-                    // const dpr = window.devicePixelRatio;
-                    // if (dpr === 1) {
-                    const atlasMd1 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@1x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@1x.json`);
-                    const atlasLg1 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@1x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@1x.json`);
-                    atlasMap = { ...atlasMap, atlasMd1, atlasLg1 };
-                    // } else {
-                    // const atlasMd2 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-md@2x.json`);
-                    // const atlasLg2 = await loadAtlas(`${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@2x.png`, `${import.meta.env.BASE_URL}/asset/atlas/matrix-lg@2x.json`);
-                    // atlasMap = { ...atlasMap, atlasMd2, atlasLg2 };
-                    // }
-                    useGlobalMemory.getState().updateGlobalMemory({
-                        atlasMap,
-                    });
-
                     const retrievedCard = await retrieveSavedCard();
 
                     setCard(retrievedCard);
@@ -608,7 +601,8 @@ function App() {
     }, [checkTaintedCanvas, updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
-    if (Math.random() > 0) return <TestGlyphFit />;
+    const debugMode = 'none' as 'none' | 'glyph';
+    if (debugMode === 'glyph') return <TestGlyphFit />;
     return (
         <ChunkErrorBoundary>
             <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
@@ -913,6 +907,10 @@ function App() {
                     <StyledByMe className="by-me" id="hash-2">
                         Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                     </StyledByMe>
+                    <GlyphFitBox>
+                        <canvas id={BASE_CANVAS_ID} />
+                        <canvas id={ADJUSTED_CANVAS_ID} />
+                    </GlyphFitBox>
                 </div>
                 {/* <div id="debug-container" /> */}
             </HotKeys>
