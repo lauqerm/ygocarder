@@ -44,8 +44,37 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '10/08/2026';
+const currentReminder = '17/09/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Sep 14, 2026',
+        question: 'Hi! I have a question regarding the card name box/title background in YGO Carder.\n\nI\'m trying to recreate the soft/faded name box used on some Yu-Gi-Oh! cards/tokens, where the background behind the card name gradually fades into the card background on the right side instead of ending with a hard rectangular edge.\nIs there already a setting in YGO Carder that allows me to achieve this?\n\nIf not, would it be possible to add this as an option, for example as an alternative Name Box / Title Box style?\n\nIdeally, I would like to keep the normal card name and attribute placement, but have the name box fade smoothly into the surrounding card background.\n\nThanks a lot for your work on YGO Carder!',
+        answer: 'Do you have any examples so I can take a look? It will be helpful for me to decide if the feature is feasible or not.'
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 10, 2026',
+        question: '1 month has passed since your last reply on the problem, and I\'m happy to confirm that, indeed, "rogue" letters have been tamed *almost* successfully, at least on the examples I\'ve already sent in July. Now they\'re off by really, really a bit, you have to zoom in to clearly see that they don\'t fit in the correct range! Whatever this new approach is, it seems to be the right one. I have no problem waiting for further development, maybe this time we can truly fix this issue that was originally brought up more than 6 months ago.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 7, 2026',
+        question: 'Writing this after almost a month to let you know that the problem, even though still present, has been reduced significantly (at least on the examples I tested on).',
+        answer: 'Hi there, finally I can take a breather after a month of busy work irl! This version (v2.6.1) contains an entirely new approach for this problem (the third time I scrap everything and rewrite a new algorithm, (un)fortunately). Let\'s see how this one fares against this dreadful enemy.'
+    },
+    {
+        author: 'Anonymous at Sep 6, 2026',
+        question: 'Hi! First of all, I wanted to say congratulations on the card maker. it’s really perfect! There’s just one small correction you could make. Would it be possible to add an option so that the artwork of the overframes stops at the level of the box effect instead of extending beyond it? Thanks',
+        answer: 'Thanks for your kind words. Hopefully I can adjust the feature soon™..',
+    },
+    {
+        author: 'Anonymous at Aug 29, 2026',
+        question: 'Hi! First of all, I wanted to say congratulations on the card maker. it’s really perfect! There’s just one small correction you could make. Would it be possible to add an option so that the artwork of the overframes stops at the level of the box effect instead of extending beyond it? Thanks',
+        answer: 'Thanks for your kind words. Hopefully I can adjust the feature soon™..',
+    },
+    {
+        author: 'Anonymous at Aug 29, 2026',
+        question: 'Have you considered turning your app into an installable exe with Electron?\nBasically what it does is that it makes a small Chromium based browser that\'s programmed to only run the webpage or site you input when you type the command \nHere\'s the GitHub  https://github.com/electron/electron',
+        answer: 'Hi there, I did consider shipping the app as an executable file using Electron, but it still needs some additional work that I\'m not really ready to do right now.',
+    },
     {
         author: 'RedSupernovaDragon at Aug 06, 2026',
         question: 'I made a card called Squog the Car and the Q is a little below the U in terms of centering',
@@ -641,6 +670,7 @@ export const QuestionAndFeedback = () => {
                 <Tabs.TabPane key="feedback" tab={language['faq.feedback.tab']}>
                     <div><i>{language['faq.feedback.stale']}</i></div>
                     <div><i>Last update: {currentReminder}</i></div>
+                    <div><b><i>I'm swamped by my IRL job during the last two months, so sorry for the late reply! This project is not dead (yet).</i> 🥲</b></div>
                     <br />
                     {feedbackList.map(({ author, question, answer, image }, index) => {
                         return <Quote key={index} author={author} question={question} image={image}>
