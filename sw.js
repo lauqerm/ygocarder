@@ -3,7 +3,7 @@
 /** WORKER: Asset caching */
 const CACHE_NAME = 'ygocarder-assets-v1';
 const MANIFEST_CACHE = 'ygocarder-manifest-v1';
-const SHELL_CACHE = 'ygocarder-shell-v1';
+const SHELL_CACHE = 'ygocarder-shell-v2';
 const BASE_PATH = '/ygocarder/';
 const MANIFEST_URL = `${BASE_PATH}asset-manifest.json`;
 const SHELL_URL = `${BASE_PATH}index.html`;
@@ -19,13 +19,29 @@ self.addEventListener('install', (event) => {
         // Precache the app shell so the start_url loads offline.
         // This is what makes the PWA pass Chrome's installability check on mobile.
         const cache = await caches.open(SHELL_CACHE);
-        try {
-            await cache.add(new Request(SHELL_URL, { cache: 'reload' }));
-        } catch (err) {
-            console.warn('[sw] failed to precache shell', err);
-        }
 
-        // Activate immediately on first install
+        // Fetch the shell fresh
+        const shellResponse = await fetch(new Request(SHELL_URL, { cache: 'reload' }));
+        if (!shellResponse.ok) throw new Error(`Shell fetch failed: ${shellResponse.status}`);
+
+        const shellHtml = await shellResponse.clone().text();
+
+        // Store the shell
+        await cache.put(SHELL_URL, shellResponse);
+
+        // Extract asset URLs from the HTML and precache them
+        const assetPattern = new RegExp(`${BASE_PATH}assets/[^"'\\s]+`, 'g');
+        const assetUrls = [...new Set(shellHtml.match(assetPattern) ?? [])];
+
+        const appAssetsCache = await caches.open(APP_ASSETS_CACHE);
+        await Promise.all(
+            assetUrls.map((url) =>
+                fetch(new Request(url, { cache: 'reload' }))
+                    .then((r) => (r.ok ? appAssetsCache.put(url, r) : null))
+                    .catch((err) => console.warn('[sw] failed to precache', url, err))
+            )
+        );
+
         self.skipWaiting();
     })());
 });

@@ -23,22 +23,37 @@
   <link href="/ygocarder/asset/font.css" rel="stylesheet">
   <!-- <script src="/asset/script/JSONCrush.min.js" type="text/javascript"></script> -->
   <title>Yugioh Carder</title>
-  <script type="module" crossorigin src="/ygocarder/assets/index--3H4nCQe.js"></script>
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/rolldown-runtime-C3dOgSm3.js">
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/other-B9Sk_qM1.js">
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/vendor-moveable-C9fu5DVd.js">
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/toString-CcNTmV3B.js">
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/react-is-CopnQNy2.js">
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/model-0DgZWnOA.js">
-  <link rel="modulepreload" crossorigin href="/ygocarder/assets/atom-QqNJi1nq.js">
-  <link rel="stylesheet" crossorigin href="/ygocarder/assets/index-DfGXWEf_.css">
+  <script type="module" crossorigin src="/ygocarder/assets/index-BhWMwnby.js"></script>
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/rolldown-runtime-C_U3L2H2.js">
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/other-D97QHZjM.js">
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/vendor-moveable-_Q9pEXrA.js">
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/toString-Dtw0A3t4.js">
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/react-is-pMsKaJOn.js">
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/model-C54DmcM1.js">
+  <link rel="modulepreload" crossorigin href="/ygocarder/assets/atom-bcaLT-Ll.js">
+  <link rel="stylesheet" crossorigin href="/ygocarder/assets/index-Bz1y8RwZ.css">
 </head>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="js-fallback" style="display: none; padding: 40px; text-align: center; font-family: sans-serif;">
+    <h2>Something went wrong loading the app</h2>
+    <p>If you're offline, please connect to the internet and refresh this page.</p>
+    <button onclick="location.reload()">Reload</button>
+  </div>
+
+  <script>
+    // If React hasn't mounted in 5 seconds, show the fallback
+    setTimeout(() => {
+      const root = document.getElementById('root');
+      if (!root.hasChildNodes()) {
+        document.getElementById('js-fallback').style.display = 'block';
+      }
+    }, 5000);
+  </script>
   <!-- 100% privacy-first analytics -->
   <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-  <div id="root"></div>
+  <div id="root"></div>
   <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

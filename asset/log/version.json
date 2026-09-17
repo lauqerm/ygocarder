@@ -1,7 +1,19 @@
 [
     {
-        "version": "v2.6.1 (2026/07/31)",
+        "version": "v2.6.1 (2026/09/19)",
         "logList": [
+            {
+                "content": "Fix: Incorrect gradient alignment in card name."
+            },
+            {
+                "content": "Feat: Minor UI updates and restructure."
+            },
+            {
+                "content": "Feat: Adding an expand icon in the symbol box for more exotic ones (±, △, or Ω)."
+            },
+            {
+                "content": "Feat: Allow importing individual JSON files into the manager."
+            },
             {
                 "content": "Fix: Incorrect behavior when user try to export card on mobile."
             }

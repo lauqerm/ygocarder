@@ -98,7 +98,7 @@
         "error.convert.description": "可尝试使用其他文件。",
         "error.convert.message": "转换失败",
         "error.csv-import.description": "文件为空或格式错误。请确保 CSV 包含表头。",
-        "error.csv-import.message": "无法导入 CSV 文件",
+        "error.file-import.message": "无法导入文件",
         "error.database-initialize.description": "你将无法读取本设备上保存的本地数据。",
         "error.database-initialize.message": "无法连接本地数据库",
         "error.draw.error.description": "卡片数据可能有误或不完整。",
@@ -593,6 +593,9 @@
         "manager.header.button.convert.raw-text.label": "纯文本",
         "version-log.empty": "暂无更新记录",
         "version-log.loading": "正在加载更新记录……",
-        "version-log.open-image.tooltip": "在新标签页中打开图片"
+        "version-log.open-image.tooltip": "在新标签页中打开图片",
+        "error.json-import.success.description": "{count} files imported.",
+        "error.json-import.failed.description": "{count} files could not be imported.",
+        "error.json-import.partial.description": "{count} files partially imported."
     }
 }

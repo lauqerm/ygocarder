@@ -98,7 +98,7 @@
         "error.convert.description": "{maxAmount}枚以上のカードを変換できませんでした。",
         "error.convert.message": "代わりに別のファイルを試してください",
         "error.csv-import.description": " CSVファイルが空か汚染です。CSVファイルにヘッダーがあることを確認してください。",
-        "error.csv-import.message": " CSVファイルを読み込めませんでした。",
+        "error.file-import.message": "ファイルをインポートできませんでした。",
         "error.database-initialize.description": "ローカルに保存された一部のデータを読み込めません。",
         "error.database-initialize.message": "ローカルデータベースに接続できませんでした",
         "error.draw.error.description": "カードデータにエラーがあるか、不完全な可能性があります",
@@ -332,7 +332,7 @@
         "input.icon.normal": "通常",
         "input.icon.quick-play": "速攻",
         "input.icon.ritual": "儀式",
-        "input.layout.label": "レイアウト",
+        "input.layout.label": "フレーム",
         "input.layout.tooltip": "オーバーレイタイプの機能影響を与える可能性があります。",
         "input.legacy.label": "レガシー",
         "input.legacy.tooltip": "",
@@ -383,6 +383,7 @@
         "input.name-style.type.predefined.label": "プリセット",
         "input.name.label": "カード名",
         "input.name.tooltip": "コピー",
+        "input.opacity.label": "不透明度",
         "input.opacity.art-border.label": "イラストの枠を維持",
         "input.opacity.art-border.tooltip": "カードのボディーが透明でも、アートの境界線を保持します。",
         "input.opacity.body.label": "カード枠",
@@ -569,6 +570,9 @@
         "manager.header.button.convert.alert": "変換は保存とは異なります。作業内容を失わないよう、変換後に必ずリストをエクスポートしてください。",
         "error.export.too-long.description": "Card data exceeding the current limit, try exporting as CSV format instead.",
         "error.export.too-long.message": "Data exceeded limit",
-        "generic.recommended.label": "Recommended"
+        "generic.recommended.label": "Recommended",
+        "error.json-import.success.description": "{count} files imported.",
+        "error.json-import.failed.description": "{count} files could not be imported.",
+        "error.json-import.partial.description": "{count} files partially imported."
     }
 }

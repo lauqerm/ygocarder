@@ -98,7 +98,7 @@
         "error.convert.description": "Tối đa chuyển đổi được {maxAmount} thẻ.",
         "error.convert.message": "Hãy thử sử dụng file khác.",
         "error.csv-import.description": "Hãy đảm bảo file của bạn không bị trống và có dòng tiêu đề.",
-        "error.csv-import.message": "Không đọc được dữ liệu",
+        "error.file-import.message": "Không đọc được dữ liệu",
         "error.database-initialize.description": "Bạn sẽ không tiếp cận được một số nội dung đã lưu trên thiết bị này.",
         "error.database-initialize.message": "Không đọc được thông tin cục bộ",
         "error.draw.error.description": "Dữ liệu có thể bị sai hoặc không đầy đủ.",
@@ -341,7 +341,7 @@
         "input.icon.normal": "Normal",
         "input.icon.quick-play": "Quick-Play",
         "input.icon.ritual": "Ritual",
-        "input.layout.label": "Bố cục",
+        "input.layout.label": "Nền",
         "input.layout.tooltip": "Có thể ảnh hưởng lên lớp phủ của thẻ (nếu có).",
         "input.legacy.label": "Bố cục cũ",
         "input.legacy.tooltip": "Dùng bố cục của thẻ thuộc dòng cũ hơn.",
@@ -392,6 +392,7 @@
         "input.name-style.type.predefined.label": "Mẫu có sẵn",
         "input.name.label": "Tên",
         "input.name.tooltip": "Sao chép tên",
+        "input.opacity.label": "Độ trong",
         "input.opacity.art-border.label": "Giữ khung ảnh",
         "input.opacity.art-border.tooltip": "Giữ khung ảnh ngay cả với nền thẻ trong suốt.",
         "input.opacity.body.label": "Nền thẻ",
@@ -568,6 +569,9 @@
         "setting.option.sliding-type.auto.label": "Tự di chuyển",
         "setting.option.sliding-type.label": "Xem trước",
         "setting.option.sliding-type.manual.label": "Kéo thủ công",
-        "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn"
+        "setting.option.soft-mode.label": "Dùng tông màu nhẹ hơn",
+        "error.json-import.success.description": "Đã tải lên ${count} file.",
+        "error.json-import.failed.description": "{count} file thất bại.",
+        "error.json-import.partial.description": "{count} file tải lên một phần."
     }
 }
