@@ -27,6 +27,7 @@ import { getCarderDb } from './use-carder-db';
 export const decodeCard = (
     cardData: Record<string, unknown> | string | null,
     baseCard?: Card,
+    notify: boolean = true,
 ): {
     card: InternalCard,
     isPartial: boolean,
@@ -82,13 +83,13 @@ export const decodeCard = (
         console.error('decodedCard', cardData, e);
         try {
             decodedCard = legacyRebuildCardData(cardData, true) as Card;
-            notification.info({
+            if (notify) notification.info({
                 message: getLanguage()['service.decode.outdated.message'],
                 description: getLanguage()['service.decode.outdated.description'],
             });
         } catch (e) {
             console.error('cardData', cardData, e);
-            notification.error({
+            if (notify) notification.error({
                 message: getLanguage()['service.decode.error.message'],
                 description: getLanguage()['service.decode.error.description'],
             });

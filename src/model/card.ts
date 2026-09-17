@@ -373,6 +373,18 @@ export const ExportFormatList = [
     },
 ];
 
+export type ImportFormat = typeof ImportFormatList[0]['value'];
+export const ImportFormatList = [
+    {
+        value: 'list' as const,
+        label: '.csv / .xlsx',
+    },
+    {
+        value: 'json' as const,
+        label: '.json',
+    },
+];
+
 export type SlindingType = ReturnType<typeof getSlindingTypeList>[0]['value'];
 export const getSlindingTypeList = (language: Record<string, string>) => [
     {

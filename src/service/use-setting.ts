@@ -1,7 +1,7 @@
 import { CanvasConst, ExportFormat, SlindingType } from 'src/model';
 import { create } from 'zustand';
 
-const DefaultSymbolShortList = [
+export const DefaultSymbolShortList = [
     '∞',
     '☆',
     '★',

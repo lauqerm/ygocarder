@@ -28,12 +28,12 @@ const StyledAppHeaderButtonContainer = styled.div`
     align-self: center;
     border: var(--bw) solid var(--sub-level-1);
     border-radius: var(--br-lg);
-    padding: var(--spacing-xxs) var(--spacing-sm);
     background-color: var(--main-level-4);
     label {
         text-align: center;
     }
     .button-label {
+        padding: var(--spacing-xxs) var(--spacing-sm);
         position: relative;
         .anticon {
             margin: var(--spacing-px);

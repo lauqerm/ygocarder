@@ -59,6 +59,18 @@ export const processLanguage = (rawLanguageData: RawLanguageData, fallbackRawDic
             return getDictionaryEntry('error.max-size.description')
                 .replaceAll('{fileSize}', `${fileSize}`);
         },
+        'error.json-import.success.description': (count: number) => {
+            return getDictionaryEntry('error.json-import.success.description')
+                .replaceAll('{count}', `${count}`);
+        },
+        'error.json-import.failed.description': (count: number) => {
+            return getDictionaryEntry('error.json-import.failed.description')
+                .replaceAll('{count}', `${count}`);
+        },
+        'error.json-import.partial.description': (count: number) => {
+            return getDictionaryEntry('error.json-import.partial.description')
+                .replaceAll('{count}', `${count}`);
+        },
         'cache-install.button.tooltip.first-line': (cachedAssetCount: React.ReactNode) => {
             return applyTemplateNode(
                 getDictionaryEntry('cache-install.button.tooltip.first-line'),
