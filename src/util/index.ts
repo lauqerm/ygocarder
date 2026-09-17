@@ -7,6 +7,7 @@ export function mergeClass(...args: (boolean | string | undefined | null)[]) {
 }
 
 export * from './canvas';
+export * from './canvas-text';
 export * from './categorize';
 export * from './codec';
 export * from './codec-mse';

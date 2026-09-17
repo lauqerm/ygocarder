@@ -12,18 +12,20 @@ export type FontGetter = {
     setSize(nextSize: number | `${number}px` | ((currentSize: number) => number | `${number}px`)): FontGetter,
     setFamily(nextFamily: string): FontGetter,
 };
-
+export type LineKey = 'high' | 'medium' | 'low' | 'origin';
+export type ActualLineHeightData = Record<LineKey | '_scale', number>;
 export type FontSizeData = {
+    actualLineHeightData?: Record<string, ActualLineHeightData>,
     allRightSymbolOffset?: number,
     bulletOffset?: number,
     bulletWidth: number,
     capitalLetterRatio?: number,
+    fontLetterOffsetMap?: Record<string, LetterOffset>,
     fontSize: number,
     headTextFontRatio?: number,
     headTextSpacing?: number,
     iconSymbolWidth?: number,
     largeSymbolRatio?: number,
-    fontLetterOffsetMap?: Record<string, LetterOffset>,
     letterSpacing?: number,
     lineCount: number,
     lineHeight: number,
@@ -56,8 +58,6 @@ export const DefaultFontSizeData = {
  * 
  * ~~So for now we can only hardcode a list of problematic letters with their correpsonding treatment. This is just baffling.~~
  * 
- * Check out `getCanvasFontDebugger` function for one of my most bullshit brute force method.
- * 
  * Because letter can combine with diacritics, we must store a base letter for them to avoid incompatible comparison.
  */
 export type FontDeviation = {
@@ -83,6 +83,7 @@ export type FontData = {
     headTextGapRatio?: number,
     headTextHeightRatio?: number,
     headTextOverflow?: 'normal' | 'condense',
+    /** Legacy usage, thereotically the new `drawFitGlyph` function should replace this */
     letterDeviationMap?: { [key: string]: FontDeviationMap },
     letterOffsetMap?: Record<string, LetterOffset>,
     metricMethod?: MetricMethod,

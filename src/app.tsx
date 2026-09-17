@@ -52,7 +52,7 @@ import {
 } from './service';
 import { notification, Tooltip } from 'antd';
 import { ChunkErrorBoundary, CROPPER_WIDTH, TaintedCanvasWarning } from './component';
-import { clearCanvas } from './draw';
+import { ADJUSTED_CANVAS_ID, BASE_CANVAS_ID, clearCanvas } from './draw';
 import { ZoomInOutlined, ClearOutlined, FileImageOutlined } from '@ant-design/icons';
 import {
     CardPreviewContainer,
@@ -73,12 +73,23 @@ import {
     isTouchDevice,
 } from './pwa';
 import { type LightboxRef } from './component/lightbox';
+import { TestGlyphFit } from './test-glyph-fit';
+import styled from 'styled-components';
 
 const Lightbox = lazy(() => import('./component/lightbox').then(({ Lightbox }) => ({ default: Lightbox })));
 /** React hotkey setup */
 configure({
     ignoreTags: [],
 });
+const GlyphFitBox = styled.div`
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    pointer-events: none;
+    overflow: auto;
+    width: 100%;
+    visibility: hidden;
+`;
 const AppGlobalHotkeyMap = {
     EXPORT: ['ctrl+d', 'command+d'],
     IMPORT: ['ctrl+e', 'command+e'],
@@ -590,6 +601,8 @@ function App() {
     }, [checkTaintedCanvas, updateCanvasData]);
 
     const isLoading = isLanguageLoading || isInitializing || !dbReady;
+    const debugMode = 'none' as 'none' | 'glyph';
+    if (debugMode === 'glyph') return <TestGlyphFit />;
     return (
         <ChunkErrorBoundary>
             <HotKeys keyMap={AppGlobalHotkeyMap} handlers={hotkeyHandlerMap}>
@@ -708,7 +721,6 @@ function App() {
                                         </LightboxButton>
                                     </Tooltip>
                                     {/** <div id="debug-monitor" /> */}
-                                    {/** This canvas should reset everytime globalScale change so `getCanvasFontDebugger` works. */}
                                     <canvas
                                         key={globalScale + 'scale'}
                                         id="debug-canvas"
@@ -895,6 +907,10 @@ function App() {
                     <StyledByMe className="by-me" id="hash-2">
                         Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
                     </StyledByMe>
+                    <GlyphFitBox>
+                        <canvas id={BASE_CANVAS_ID} />
+                        <canvas id={ADJUSTED_CANVAS_ID} />
+                    </GlyphFitBox>
                 </div>
                 {/* <div id="debug-container" /> */}
             </HotKeys>

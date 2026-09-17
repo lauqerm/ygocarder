@@ -7,7 +7,17 @@ import {
     TCG_LETTER_JOINLIST,
     getDefaultNameStyle,
 } from 'src/model';
-import { parsePalette, createFontGetter, condense, scaleFontData, scaleFontSizeData, fontMeasurer, normalizeCardName, applyEmboss } from 'src/util';
+import {
+    parsePalette,
+    createFontGetter,
+    condense,
+    scaleFontData,
+    scaleFontSizeData,
+    normalizeCardName,
+    applyEmboss,
+    drawOutlined,
+    drawFitGlyph,
+} from 'src/util';
 import { getWritingDirection, tokenizeText } from '../text-util';
 import { drawLine } from '../line';
 import { createLineList } from '../line-list';
@@ -15,6 +25,8 @@ import { normalizeCardText } from '../text-normalize';
 import { drawAsset, drawAssetWithSize } from '../image';
 import { setTextStyle } from '../canvas-util';
 
+export const BASE_CANVAS_ID = 'base-canvas';
+export const ADJUSTED_CANVAS_ID = 'adjusted-canvas';
 const getNameGradient = (
     ctx: CanvasRenderingContext2D,
     angleAsDegree: number,
@@ -166,15 +178,10 @@ export const drawName = async (
         defaultWeight: fontData.weight,
     });
     const normalStyle = fontGetterForWidthCalculating.getFont();
-    const symbolStyle = fontGetterForWidthCalculating
-        .setSize(cur => cur * fontData.symbolFontRatio)
-        .setStyle('small-caps')
-        .setFamily(fontData.symbolFont)
-        .getFont();
     let maxAscent = 0;
     let maxDescent = 0;
-    crudeTokenList.forEach((cur, index) => {
-        ctx.font = index % 2 === 0 ? normalStyle : symbolStyle;
+    crudeTokenList.forEach(cur => {
+        ctx.font = normalStyle;
 
         const textMetric = ctx.measureText(cur.replaceAll(NormalizeTextRegex, ''));
         maxAscent = Math.max(maxAscent, textMetric.actualBoundingBoxAscent);
@@ -222,19 +229,7 @@ export const drawName = async (
         )
         : undefined;
 
-
-    fontMeasurer.test(
-        { globalScale, xRatio, normalStyle },
-        {
-            scale: globalScale,
-            xRatio,
-            setup: debugCtx => {
-                debugCtx.font = normalStyle;
-                debugCtx.resetTransform();
-                debugCtx.scale(xRatio, yRatio);
-            },
-        },
-    );
+    const dpr = window.devicePixelRatio;
     /**
      * First iteration: Draw the name with color and gradient. We explicitly draw on base canvas here to avoid data loss from putImageData / drawImage method.
      * 
@@ -253,6 +248,10 @@ export const drawName = async (
         });
     }
     ctx.fillStyle = gradient ?? fillStyle;
+    const actualLineHeightData = textData.fontData.fontList[textData.fontLevel].actualLineHeightData?.[`${globalScale}`];
+    const baseCanvas = document.getElementById(BASE_CANVAS_ID) as HTMLCanvasElement | null;
+    const adjustedCanvas = document.getElementById(ADJUSTED_CANVAS_ID) as HTMLCanvasElement | null;
+    const willUseDynamicRender = font === 'Default';
     const { tokenEdge } = await drawLine({
         ctx,
         tokenList,
@@ -265,11 +264,57 @@ export const drawName = async (
         option: { drawHeadText: false, direction },
         width: actualLineWidth * xRatio,
         textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-            ctx.fillText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
+            const base = scaledBaseline - (isSpeedSkill ? offsetY : 0);
+            if (
+                !willUseDynamicRender
+                || baseCanvas === null
+                || adjustedCanvas === null
+                || actualLineHeightData === undefined
+            ) {
+                ctx.fillText(letter, scaledEdge, base);
+            } else {
+                baseCanvas.width = canvas.width;
+                baseCanvas.height = canvas.height;
+                adjustedCanvas.width = canvas.width;
+                adjustedCanvas.height = canvas.height;
+                const drawable = drawFitGlyph({
+                    ctx,
+                    globalScale,
+                    baseCanvas,
+                    adjustedCanvas,
+                    letter,
+                    xRatio,
+                    yRatio,
+                    edge: scaledEdge,
+                    base: base,
+                    line: actualLineHeightData,
+                    setupContext: ctx => {
+                        ctx.scale(xRatio, 1);
+                        ctx.fillStyle = fillStyle;
+                        ctx.font = normalStyle;
+                    },
+                });
+                if (!drawable) {
+                    ctx.fillText(letter, scaledEdge, base);
+                }
+            }
             if (thickenEmboss) ctx.strokeText(letter, scaledEdge, scaledBaseline - (isSpeedSkill ? offsetY : 0));
         },
         debug,
     });
+    const gradientCanvas = document.createElement('canvas');
+    gradientCanvas.width = canvas.width;
+    gradientCanvas.height = canvas.height;
+    const gradientContext = gradientCanvas.getContext('2d');
+    if (gradientContext) {
+        gradientContext.fillStyle = gradient ?? fillStyle;
+        gradientContext.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.scale(1 / xRatio, 1);
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.drawImage(gradientCanvas, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.scale(xRatio, 1);
+    }
     resetEmbossStroke();
 
     /** 
@@ -291,11 +336,12 @@ export const drawName = async (
             patternContext.resetTransform();
             /** The first letter of card name may reach outside of the card edge (for example letter J), so we skew the pattern image if needed. */
             const offset = ctx.measureText(normalizedName).actualBoundingBoxLeft;
+            const padding = 1;
             await drawAssetWithSize(
                 patternContext, `finish-name/${patternImage}.png`,
-                edge - offset, trueBaseline - maxAscent,
+                edge - offset, trueBaseline - maxAscent - padding,
                 width + offset,
-                maxAscent + maxDescent,
+                maxAscent + maxDescent + padding * 2,
             );
             ctx.globalCompositeOperation = 'source-in';
             ctx.drawImage(patternCanvas, 0, 0);
@@ -319,44 +365,21 @@ export const drawName = async (
     }
 
     /**
-     * Fourth iteration: Apply "outline" to card name. We use stroke method to simulate outline behavior.
-     * 
-     * We stroke the text behind the canvas to avoid polluting current effects. Because we already drawn a layer of outline if emboss thickness is applied, we will also increase outline thickness to compensate.
+     * Fourth iteration: Apply "outline" to card name. We use stamping method to avoid using stroke text (with inherit the font problem).
      * */
     if (hasOutline) {
-        const resetStroke = setTextStyle({
-            ctx,
-            lineWidth: lineWidth + (hasEmboss ? embossThickness : 0),
-            lineColor,
-            globalScale,
-            useDefault: false,
-        });
-        ctx.globalCompositeOperation = 'destination-over';
-        await drawLine({
-            ctx,
-            tokenList,
-            xRatio, yRatio,
-            trueEdge: edge, trueBaseline,
-            textData,
-            lineHeight,
-            format,
-            globalScale,
-            option: { drawHeadText: false, direction },
-            width: actualLineWidth * xRatio,
-            drawImage: false,
-            textDrawer: ({ ctx, letter, scaledEdge, scaledBaseline }) => {
-                ctx.lineJoin = 'round';
-                ctx.strokeText(
-                    letter,
-                    scaledEdge + lineOffsetX,
-                    scaledBaseline + lineOffsetY - (isSpeedSkill ? offsetY : 0),
-                );
-            },
-            debug,
-        });
-        ctx.lineJoin = 'miter';
-        ctx.globalCompositeOperation = 'source-over';
-        resetStroke();
+        const outlineCanvas = canvas.cloneNode() as HTMLCanvasElement;
+        const outlineContext = outlineCanvas.getContext('2d');
+        if (outlineContext) {
+
+            ctx.scale(1 / xRatio, 1 / yRatio);
+            drawOutlined(outlineContext, canvas, lineOffsetX, lineOffsetY, lineColor, lineColor, lineWidth / 2 / dpr * globalScale);
+            outlineContext.drawImage(canvas, 0, 0);
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.drawImage(outlineCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.scale(xRatio, yRatio);
+        }
     }
 
     /**

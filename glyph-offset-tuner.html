@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Glyph tuner</title>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+      background: #14161a;
+      color: #d6dae0;
+    }
+
+    h1 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      letter-spacing: .04em;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    label {
+      color: #8b939e;
+    }
+
+    input[type=text],
+    input[type=number],
+    select {
+      background: #1d2026;
+      border: 1px solid #2e333b;
+      color: #d6dae0;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font: inherit;
+    }
+
+    input[type=text] {
+      width: 300px;
+    }
+
+    input[type=number] {
+      width: 66px;
+    }
+
+    button {
+      background: #2a2f37;
+      border: 1px solid #3a4048;
+      color: #d6dae0;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #333942;
+    }
+
+    .modes {
+      display: inline-flex;
+      border: 1px solid #3a4048;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .modes button {
+      border: 0;
+      border-radius: 0;
+      padding: 5px 14px;
+    }
+
+    .modes button.on {
+      background: #e8b84b;
+      color: #14161a;
+      font-weight: 600;
+    }
+
+    #stage {
+      background: #1a1d22;
+      border: 1px solid #2e333b;
+      border-radius: 6px;
+      overflow: auto;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+
+    canvas {
+      image-rendering: pixelated;
+      display: block;
+      cursor: pointer;
+    }
+
+    #status {
+      color: #8b939e;
+      min-height: 20px;
+      margin-bottom: 8px;
+    }
+
+    #status b {
+      color: #e8b84b;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      height: 190px;
+      box-sizing: border-box;
+      background: #1d2026;
+      border: 1px solid #2e333b;
+      color: #9fd0a8;
+      padding: 10px;
+      border-radius: 4px;
+      font: inherit;
+      resize: vertical;
+    }
+
+    .hint {
+      color: #6c757f;
+      font-size: 12px;
+      margin: 6px 0 14px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #8b939e;
+      margin-bottom: 8px;
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 3px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>GLYPH TUNER</h1>
+
+  <p class="hint">
+    Load the <code>.png</code> and <code>.json</code> a build produced. Click a glyph, then
+    <b>&uarr;</b>/<b>&darr;</b> to adjust it by one device pixel (hold Shift for five).
+    <b>Move</b> shifts the glyph along the vertical axis. <b>Stretch</b> scales it vertically
+    about the baseline, leaving width and stroke weight alone. Both are draw-time values, so
+    what you see here is exactly what the runtime produces.
+  </p>
+
+  <div class="row">
+    <label>atlas png <input type="file" id="png" accept="image/png"></label>
+    <label>meta json <input type="file" id="json" accept="application/json"></label>
+  </div>
+
+  <div class="row">
+    <span class="modes">
+      <button id="modeMove" class="on">move</button>
+      <button id="modeStretch">stretch</button>
+    </span>
+    <label>group <select id="group"></select></label>
+    <label>preview <input type="text" id="text" value="FINALE"></label>
+    <label>zoom <input type="number" id="zoom" value="4" min="1" max="16" step="1"></label>
+    <button id="showAll">whole group</button>
+    <button id="reset">reset selected</button>
+  </div>
+
+  <div class="legend">
+    <span><span class="swatch" style="background:#e0574a"></span>anchor lines</span>
+    <span><span class="swatch" style="background:#4ac07a"></span>baseline</span>
+    <span><span class="swatch" style="background:#e8b84b"></span>selection</span>
+  </div>
+
+  <div id="status"></div>
+  <div id="stage"><canvas id="view" width="10" height="10"></canvas></div>
+
+  <textarea id="out" readonly placeholder="Adjustments appear here as a paste-ready overrides block."></textarea>
+
+  <script>
+    'use strict';
+
+    let atlasImage = null;
+    let meta = null;
+    let selectedIndex = -1;
+    let mode = 'move'; // 'move' | 'stretch'
+
+    /** char -> { offsetY, scaleY }. Seeded from whatever is already in the JSON. */
+    const tweaks = new Map();
+    /** Hit regions from the last render, for click selection. */
+    let regions = [];
+
+    const $ = (id) => document.getElementById(id);
+
+    const tweakFor = (char) => {
+      if (!tweaks.has(char)) tweaks.set(char, { offsetY: 0, scaleY: 1 });
+      return tweaks.get(char);
+    };
+
+    $('png').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      atlasImage = await createImageBitmap(file);
+      render();
+    });
+
+    $('json').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      meta = JSON.parse(await file.text());
+
+      tweaks.clear();
+      for (const [char, entry] of Object.entries(meta.entries)) {
+        tweaks.set(char, { offsetY: entry.offsetY ?? 0, scaleY: entry.scaleY ?? 1 });
+      }
+
+      const groupSelect = $('group');
+      groupSelect.innerHTML = '';
+      for (const id of Object.keys(meta.groups)) {
+        groupSelect.appendChild(Object.assign(document.createElement('option'), {
+          value: id, textContent: id,
+        }));
+      }
+      render();
+    });
+
+    $('modeMove').addEventListener('click', () => setMode('move'));
+    $('modeStretch').addEventListener('click', () => setMode('stretch'));
+
+    function setMode(next) {
+      mode = next;
+      $('modeMove').classList.toggle('on', next === 'move');
+      $('modeStretch').classList.toggle('on', next === 'stretch');
+      render();
+    }
+
+    for (const id of ['group', 'text', 'zoom']) {
+      $(id).addEventListener('input', () => { selectedIndex = -1; render(); });
+    }
+
+    $('showAll').addEventListener('click', () => {
+      if (!meta) return;
+      const group = meta.groups[$('group').value];
+      if (group) { $('text').value = group.chars; selectedIndex = -1; render(); }
+    });
+
+    $('reset').addEventListener('click', () => {
+      const region = regions.find((r) => r.index === selectedIndex);
+      if (!region) return;
+      tweaks.set(region.char, { offsetY: 0, scaleY: 1 });
+      render();
+    });
+
+    function render() {
+      if (!atlasImage || !meta) return;
+      const group = meta.groups[$('group').value];
+      if (!group) return;
+
+      const zoom = Math.max(1, parseInt($('zoom').value, 10) || 4);
+      const text = [...$('text').value];
+
+      // Lay the run out on a shared baseline, exactly as the runtime does.
+      const placed = [];
+      let pen = 0;
+      let inkTop = Infinity, inkBottom = -Infinity;
+
+      for (const char of text) {
+        const entry = meta.entries[char];
+        if (!entry) continue;
+        const { offsetY, scaleY } = tweakFor(char);
+
+        const dh = entry.sh * scaleY;
+        const dy = -entry.ascent * scaleY + offsetY;
+
+        placed.push({ char, entry, offsetY, scaleY, dx: Math.round(pen + entry.bearingX), dy, dh });
+        inkTop = Math.min(inkTop, dy);
+        inkBottom = Math.max(inkBottom, dy + dh);
+        pen += entry.advance;
+      }
+
+      if (placed.length === 0) {
+        $('status').textContent = 'No glyphs from this string are in the atlas.';
+        regions = [];
+        return;
+      }
+
+      // The anchor span, measured downward from the baseline.
+      const anchorTop = -group.anchorAscent;
+      const anchorBottom = anchorTop + group.anchorInkHeight;
+
+      const margin = 24;
+      const top = Math.min(inkTop, anchorTop) - margin;
+      const bottom = Math.max(inkBottom, anchorBottom) + margin;
+
+      const width = Math.ceil(pen) + margin * 2;
+      const height = Math.ceil(bottom - top);
+
+      const canvas = $('view');
+      canvas.width = width * zoom;
+      canvas.height = height * zoom;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.setTransform(zoom, 0, 0, zoom, 0, 0);
+
+      const originX = margin;
+      const originY = -top; // baseline position within the canvas
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Guide lines drawn as 1px rects rather than strokes so they land on exact
+      // rows at any zoom.
+      const line = (y, color) => { ctx.fillStyle = color; ctx.fillRect(0, originY + y, width, 1); };
+      line(anchorTop, '#e0574a');
+      line(anchorBottom, '#e0574a');
+      line(0, '#4ac07a');
+
+      regions = [];
+      placed.forEach((g, i) => {
+        const x = originX + g.dx;
+        const y = originY + g.dy;
+
+        if (i === selectedIndex) {
+          ctx.fillStyle = 'rgba(232,184,75,0.18)';
+          ctx.fillRect(x - 1, y - 1, g.entry.sw + 2, g.dh + 2);
+        }
+
+        // Stretching resamples, which is what the runtime does too, so the preview
+        // is exact rather than an approximation.
+        ctx.imageSmoothingEnabled = g.scaleY !== 1;
+        ctx.drawImage(
+          atlasImage,
+          g.entry.sx, g.entry.sy, g.entry.sw, g.entry.sh,
+          x, y, g.entry.sw, g.dh,
+        );
+        ctx.imageSmoothingEnabled = false;
+
+        regions.push({ index: i, char: g.char, x, y, w: g.entry.sw, h: g.dh });
+      });
+
+      updateStatus(placed, anchorTop, anchorBottom);
+      updateOutput();
+    }
+
+    function updateStatus(placed, anchorTop, anchorBottom) {
+      if (selectedIndex < 0 || selectedIndex >= placed.length) {
+        $('status').textContent = `mode: ${mode} — click a glyph to select it.`;
+        return;
+      }
+      const g = placed[selectedIndex];
+      const overTop = anchorTop - g.dy;
+      const overBottom = (g.dy + g.dh) - anchorBottom;
+
+      $('status').innerHTML =
+        `<b>${mode}</b> &nbsp; selected <b>${g.char}</b> &nbsp;` +
+        ` offsetY <b>${g.offsetY}</b> &nbsp; scaleY <b>${g.scaleY.toFixed(4)}</b> &nbsp;` +
+        ` height ${g.dh.toFixed(1)}px &nbsp;` +
+        ` above top ${overTop.toFixed(1)} &nbsp; below bottom ${overBottom.toFixed(1)}`;
+    }
+
+    $('view').addEventListener('click', (e) => {
+      const zoom = Math.max(1, parseInt($('zoom').value, 10) || 4);
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / zoom;
+      const y = (e.clientY - rect.top) / zoom;
+
+      // Last match wins so overlapping glyphs select the one drawn on top.
+      let hit = -1;
+      for (const r of regions) {
+        if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) hit = r.index;
+      }
+      selectedIndex = hit;
+      render();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      if (selectedIndex < 0 || !meta) return;
+      const region = regions.find((r) => r.index === selectedIndex);
+      if (!region) return;
+
+      e.preventDefault();
+      const step = (e.shiftKey ? 5 : 1) * (e.key === 'ArrowDown' ? 1 : -1);
+      const tweak = tweakFor(region.char);
+      const entry = meta.entries[region.char];
+
+      if (mode === 'move') {
+        tweak.offsetY += step;
+      } else {
+        // Step by one device pixel of resulting ink height rather than by a raw
+        // ratio, so the control means the same thing at every glyph size.
+        // Down arrow grows the glyph, matching "extend toward the bottom anchor".
+        tweak.scaleY = Math.max(0.05, tweak.scaleY + step / entry.sh);
+      }
+      render();
+    });
+
+    function updateOutput() {
+      const adjusted = [...tweaks.entries()]
+        .filter(([, t]) => t.offsetY !== 0 || t.scaleY !== 1)
+        .sort((a, b) => a[0].localeCompare(b[0]));
+
+      if (adjusted.length === 0) {
+        $('out').value = '// Nothing adjusted. Every glyph is using the font as designed.';
+        return;
+      }
+
+      const lines = adjusted.map(([char, t]) => {
+        const key = /^[A-Za-z0-9]$/.test(char) ? char : JSON.stringify(char);
+        const parts = [];
+        if (t.offsetY !== 0) parts.push(`offsetY: ${t.offsetY}`);
+        if (t.scaleY !== 1) parts.push(`scaleY: ${Number(t.scaleY.toFixed(4))}`);
+        return `  ${key}: { ${parts.join(', ')} },`;
+      });
+
+      $('out').value = `overrides: {\n${lines.join('\n')}\n}`;
+    }
+  </script>
+</body>
+
+</html>

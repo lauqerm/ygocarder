@@ -23,6 +23,22 @@ const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
             arabicFontRatio: 0.75,
             variant: 'default-name',
             fontList: [{
+                actualLineHeightData: {
+                    '1': {
+                        _scale: 1,
+                        origin: 0,
+                        medium: 34,
+                        high: 45,
+                        low: -3,
+                    },
+                    '2': {
+                        _scale: 2,
+                        origin: 0,
+                        medium: 69,
+                        high: 91,
+                        low: -5,
+                    },
+                },
                 bulletWidth: 64,
                 fontSize: 91,
                 headTextFontRatio: 0.190,
@@ -43,6 +59,9 @@ const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
                         '0': { baseLetter: '0' },
                         '1': { baseLetter: '1' },
                         '2': { baseLetter: '2' },
+
+                        á: { baseLetter: 'a' },
+
                         C: { baseLetter: 'C' },
                         Ć: { baseLetter: 'C' },
                         Ĉ: { baseLetter: 'C' },
@@ -237,6 +256,7 @@ const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
                         ᶇ: { baseLetter: 'n' },
 
                         G: { baseLetter: 'G' },
+                        g: { baseLetter: 'g' },
                     },
                 },
             },

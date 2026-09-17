@@ -731,7 +731,7 @@ export const ImageCropper = forwardRef<ImageCropperRef, ImageCropper>(({
                             setCrossOrigin('anonymous');
                             setExternalSource(toProxiedUrl(externalSource));
                         } else {
-                            captureException(`Failed proxy: ${externalSource}`);
+                            captureException('Failed proxy', { extra: { externalSource } });
                             setCrossOrigin(undefined);
                             onTainted(cropperName);
                         }

@@ -44,8 +44,25 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '31/07/2026';
+const currentReminder = '10/08/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Aug 06, 2026',
+        question: 'I made a card called Squog the Car and the Q is a little below the U in terms of centering',
+    },
+    {
+        author: 'RedSupernovaDragon at Aug 02, 2026',
+        question: 'Last one for Dark Magician',
+    },
+    {
+        author: 'RedSupernovaDragon at Aug 02, 2026',
+        question: 'on G. It\'s tiny, but it\'s clearly there. Compared to the situation we had months ago, having fixed the problem for *almost* all cases I\'ve faced is remarkable as an improvement',
+    },
+    {
+        author: 'RedSupernovaDragon at Aug 02, 2026',
+        question: 'New report to help you with the text shrinking issue. I\'m sending the screenshots you requested; as far as I went in my card production, these are the only cases in which the problem is present.',
+        answer: 'Thanks for both of your reports. You two share the same class of errors. Right now I\'m working on an entirely new approach for this inconsistency, and it may take some time, so please bear with it for a bit.',
+    },
     {
         author: 'RedSupernovaDragon at Jul 29, 2026',
         question: 'Also reporting other cases of wrong text rendering in the name box, regarding letters with curved strokes. It seems like the old problem came back. And judging from the cards where it was found on, I deduce that the most baffling fact is that there is no single string of characters you can type to test if the problem has been fixed or not: Shining Neos Wingman clearly has the C in "Lucente" (I create cards in Italian) too high, but paradoxically the new Blue-Eyes with the longest name of all its forms (White Phantom Beast, for me "Drago Bianco Occhi Blu, la Bestia Fantasma Bianca") seems just fine! I think I\'ll stop my card production until we\'ll be sure that this damned issue is fixed.',
