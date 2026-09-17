@@ -1,59 +1,75 @@
 // import { useCallback, useEffect, useState } from 'react';
 // import Moveable from 'react-moveable';
 // import { EllipsisOutlined } from '@ant-design/icons';
+import { UpOutlined } from '@ant-design/icons';
+import { Button, Popover } from 'antd';
 import { Explanation, StyledPopMarkdown } from 'src/component';
-import { useLanguage } from 'src/service';
+import { DefaultSymbolShortList, useLanguage, useSetting } from 'src/service';
 import { insertAtCursor } from 'src/util';
 import styled from 'styled-components';
+import { useShallow } from 'zustand/react/shallow';
 
+const StyledCharListContainer = styled.div`
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+    button.ant-btn {
+        padding: 0;
+    }
+    .handler,
+    .ant-btn {
+        background-color: var(--main-level-1);
+        color: var(--color-heavy);
+        text-shadow: var(--ts);
+        font-family: Segoe UI Symbol, sans-serif;
+        border: 1px solid var(--sub-level-1);
+        border-radius: 0;
+        padding: 0 var(--spacing);
+        + .ant-btn {
+            border-left-width: 0;
+        }
+        &:hover {
+            color: var(--main-active);
+        }
+        &:first-child {
+            border-radius: var(--br) 0 0 var(--br);
+        }
+        &:last-child {
+            border-radius: 0 var(--br) var(--br) 0;
+        }
+    }
+    /** Currently char picker no longer movable */
+    /* .handler {
+        cursor: grabbing;
+        background-color: var(--main-level-2);
+        height: unset;
+        font-size: var(--fs-xl);
+        height: var(--fs-xl);
+        line-height: 1;
+        padding: 0;
+        text-align: center;
+    } */
+`;
+const FullStyledCharListContainer = styled(StyledCharListContainer)`
+    width: 250px;
+    border: var(--bw) solid var(--sub-level-3);
+    .ant-btn {
+        border-radius: 0;
+        &:first-child {
+            border-radius: 0;
+        }
+        &:last-child {
+            border-radius: 0;
+        }
+    }
+`;
 const StyledCharPickerContainer = styled.div`
     z-index: 10;
     display: inline-grid;
-    grid-template-columns: 1fr max-content;
+    grid-template-columns: 1fr max-content max-content;
     align-items: center;
     column-gap: var(--spacing-sm);
 
-    .char-picker {
-        z-index: 1;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
-        button.ant-btn {
-            padding: 0;
-        }
-        .handler,
-        .ant-btn {
-            background-color: var(--main-level-1);
-            color: var(--color-heavy);
-            text-shadow: var(--ts);
-            font-family: Segoe UI Symbol, sans-serif;
-            border: 1px solid var(--sub-level-1);
-            border-radius: 0;
-            padding: 0 var(--spacing);
-            + .ant-btn {
-                border-left-width: 0;
-            }
-            &:hover {
-                color: var(--main-active);
-            }
-            &:first-child {
-                border-radius: var(--br) 0 0 var(--br);
-            }
-            &:last-child {
-                border-radius: 0 var(--br) var(--br) 0;
-            }
-        }
-        /** Currently char picker no longer movable */
-        /* .handler {
-            cursor: grabbing;
-            background-color: var(--main-level-2);
-            height: unset;
-            font-size: var(--fs-xl);
-            height: var(--fs-xl);
-            line-height: 1;
-            padding: 0;
-            text-align: center;
-        } */
-    }
     .moveable-control-box {
         .moveable-control.moveable-origin,
         .moveable-line.moveable-direction {
@@ -63,6 +79,16 @@ const StyledCharPickerContainer = styled.div`
     }
 `;
 
+const FullSymbolList = [
+    ...DefaultSymbolShortList,
+    '※',
+    '±',
+    '△',
+    'Ø',
+    '#',
+    '@',
+    'Ω',
+];
 /** The dragging experience is not good. Currently turn it off for now and glue it into effect's textarea. */
 export type CharPicker = {
     targetId: string,
@@ -73,6 +99,13 @@ export const CharPicker = ({
     onPick = () => { },
 }: CharPicker) => {
     const language = useLanguage();
+    const {
+        symbolShortList,
+        updateSetting,
+    } = useSetting(useShallow(state => ({
+        symbolShortList: state.setting.symbolShortList,
+        updateSetting: state.updateSetting,
+    })));
     // const [target, setTarget] = useState<HTMLElement | null>(null);
     const internalOnPick = (letter: string) => {
         const inputTarget = document.getElementById(targetId) as HTMLTextAreaElement;
@@ -80,6 +113,21 @@ export const CharPicker = ({
             const { value } = insertAtCursor(inputTarget, letter);
 
             onPick(value, letter);
+            updateSetting(state => {
+                const currentSymbolShortList = state.symbolShortList;
+                const nextSymbolShortList = [
+                    letter,
+                    ...currentSymbolShortList.includes(letter)
+                        ? currentSymbolShortList.filter(entry => entry !== letter)
+                        : currentSymbolShortList.slice(0, -1)
+                ];
+                const nextState = {
+                    ...state,
+                    symbolShortList: nextSymbolShortList,
+                };
+
+                return nextState;
+            });
         }
     };
 
@@ -99,29 +147,45 @@ export const CharPicker = ({
 
     /** No tabIndex here because this is not an essential input, but rather a QoL component */
     return <StyledCharPickerContainer tabIndex={-1} className="char-picker-container">
-        {<div id={'char-picker'} className="char-picker">
+        <StyledCharListContainer id={'char-picker'} className="char-picker">
             {/* <div className="handler">
                 <EllipsisOutlined />
             </div> */}
-            {[
-                '∞',
-                '☆',
-                '★',
-                '●',
-                '©',
-                '™',
-                'Ɐ',
-                'Я',
-                'Ø',
-                '※',
-            ].map(entry => {
+            {symbolShortList.map(entry => {
                 return <button key={entry}
                     tabIndex={-1}
                     className="ant-btn"
                     onClick={() => internalOnPick(entry)}
                 >{entry}</button>;
             })}
-        </div>}
+        </StyledCharListContainer>
+        <Popover
+            overlayClassName="global-input-overlay global-style-picker-overlay"
+            content={<div className="overlay-event-absorber">
+                <div>
+                    <FullStyledCharListContainer id={'full-char-picker'} className="full-char-picker">
+                        {FullSymbolList.map(entry => {
+                            return <button key={entry}
+                                tabIndex={-1}
+                                className="ant-btn"
+                                onClick={() => internalOnPick(entry)}
+                            >{entry}</button>;
+                        })}
+                    </FullStyledCharListContainer>
+                </div>
+            </div>}
+        >
+            <Button
+                // className="formatting-help-button"
+                // type="primary"
+                size="small"
+                onClick={() => {
+                    // setDrawerOpen(true);
+                }}
+            >
+                <UpOutlined />
+            </Button>
+        </Popover>
         <div className="char-picker-guideline">
             <Explanation
                 content={<StyledPopMarkdown>

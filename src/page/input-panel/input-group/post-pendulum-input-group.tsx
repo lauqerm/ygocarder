@@ -73,6 +73,11 @@ const AdvancedParagraphButton = styled.div`
         line-height: 2;
         padding: var(--spacing-px) var(--spacing-xs);
     }
+    &:hover {
+        color: var(--color-heavy);
+        background: var(--sub-level-4);
+        border-color: var(--sub-level-4);
+    }
 `;
 const AdvancedParagraphPanel = styled.div`
     width: 20rem;

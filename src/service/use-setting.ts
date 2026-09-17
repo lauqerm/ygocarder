@@ -1,6 +1,17 @@
 import { CanvasConst, ExportFormat, SlindingType } from 'src/model';
 import { create } from 'zustand';
 
+const DefaultSymbolShortList = [
+    '∞',
+    '☆',
+    '★',
+    '●',
+    '©',
+    '™',
+    'Ɐ',
+    'Я',
+    'Ø',
+];
 export type Setting = {
     allowHotkey: boolean,
     exportFormat: ExportFormat,
@@ -13,6 +24,7 @@ export type Setting = {
     showExtraAttribute: boolean,
     showExtraDecorativeOption: boolean,
     slidingType: SlindingType,
+    symbolShortList: string[],
 };
 export type SettingStore = {
     setting: Setting,
@@ -31,6 +43,7 @@ export const useSetting = create<SettingStore>((set) => {
         showExtraAttribute,
         showExtraDecorativeOption,
         slidingType,
+        symbolShortList,
     } = ((): Record<string, unknown> => {
         try {
             const cachedStore = JSON.parse(localStorage.getItem('setting') ?? '{}');
@@ -60,6 +73,7 @@ export const useSetting = create<SettingStore>((set) => {
             showExtraAttribute: typeof showExtraAttribute === 'boolean' ? showExtraAttribute : true,
             showExtraDecorativeOption: typeof showExtraDecorativeOption === 'boolean' ? showExtraDecorativeOption : true,
             mirrorPendulumScale: typeof mirrorPendulumScale === 'boolean' ? mirrorPendulumScale : false,
+            symbolShortList: Array.isArray(symbolShortList) ? symbolShortList : [...DefaultSymbolShortList],
         },
         updateSetting: transformerOrPayload => {
             set(currentStore => {
