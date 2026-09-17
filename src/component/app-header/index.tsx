@@ -27,11 +27,10 @@ export const Affiliation = () => {
 
 const AppHeaderContainer = styled.div`
     display: inline-grid;
-    grid-template-columns: max-content 1fr max-content max-content max-content max-content 85px;
+    grid-template-columns: max-content 2fr 1fr;
     margin-bottom: var(--spacing-sm);
     background-color: var(--main-level-3);
     padding: 3px; // Alignment
-    padding-right: var(--spacing);
     border-radius: var(--br);
     box-shadow: var(--bs-block);
     transition: width linear 2s;
@@ -297,6 +296,12 @@ export const AppHeader = ({
                                             href="https://github.com/amarillonmc"
                                             target="_blank"
                                             rel="noreferrer"><b>amarillonmc</b></a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://github.com/tiendatbinhan"
+                                            target="_blank"
+                                            rel="noreferrer"><b>tiendatbinhan</b></a>
                                     </li>
                                 </ul>
                             </AdditionalContributorContainer>}

@@ -10,18 +10,34 @@ import { SampleCard, SampleCardRef } from './sample';
 import { useRef } from 'react';
 import { InstallButton } from '../install-button';
 
+const StyledAppHeaderToolbarContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-left: var(--spacing);
+    align-content: flex-start;
+    > .app-header-button {
+        flex: 1 0 auto;
+        &.install-app {
+            flex-basis: 85px;
+        }
+    }
+`;
 const StyledAppHeaderButtonContainer = styled.div`
     align-content: center;
     align-self: center;
-    border-left: var(--bw) dashed #b1b1b1;
-    padding-left: var(--spacing);
-    margin-left: var(--spacing);
-    height: 100%;
+    border: var(--bw) solid var(--sub-level-1);
+    border-radius: var(--br-lg);
+    padding: var(--spacing-xxs) var(--spacing-sm);
+    background-color: var(--main-level-4);
     label {
         text-align: center;
     }
     .button-label {
         position: relative;
+        .anticon {
+            margin: var(--spacing-px);
+        }
     }
     .manager-notice {
         position: absolute;
@@ -36,6 +52,9 @@ const StyledAppHeaderButtonContainer = styled.div`
         .anticon {
             color: var(--main-online);
         }
+    }
+    &:hover {
+        background-color: var(--sub-level-4);
     }
 `;
 export type HeaderPanel = Pick<SampleCard, 'applyCardData'>;
@@ -77,7 +96,7 @@ export const HeaderPanel = ({
     })));
     const sampleCardRef = useRef<SampleCardRef>(null);
 
-    return <>
+    return <StyledAppHeaderToolbarContainer className="app-header-toolbar">
         <StyledAppHeaderButtonContainer className="app-header-button app-setting">
             <SettingButton />
         </StyledAppHeaderButtonContainer>
@@ -130,5 +149,5 @@ export const HeaderPanel = ({
                 <InstallButton className="button-label" />
             </StyledHeaderButtonContainer>
         </StyledAppHeaderButtonContainer>
-    </>;
+    </StyledAppHeaderToolbarContainer>;
 };

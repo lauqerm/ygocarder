@@ -54,10 +54,11 @@ export const StyledHeaderButtonContainer = styled.div<{ $softMode?: boolean }>`
         font-size: var(--fs-xl);
         justify-self: center;
     }
-    &:hover {
+    /** Prefer background instead of text */
+    /* &:hover {
         color: var(--main-active);
         .anticon {
             color: var(--sub-active);
         }
-    }
+    } */
 `;
