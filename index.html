@@ -27,6 +27,21 @@
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="js-fallback" style="display: none; padding: 40px; text-align: center; font-family: sans-serif;">
+    <h2>Something went wrong loading the app</h2>
+    <p>If you're offline, please connect to the internet and refresh this page.</p>
+    <button onclick="location.reload()">Reload</button>
+  </div>
+
+  <script>
+    // If React hasn't mounted in 5 seconds, show the fallback
+    setTimeout(() => {
+      const root = document.getElementById('root');
+      if (!root.hasChildNodes()) {
+        document.getElementById('js-fallback').style.display = 'block';
+      }
+    }, 5000);
+  </script>
   <!-- 100% privacy-first analytics -->
   <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
   <div id="root"></div>
