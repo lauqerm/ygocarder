@@ -44,8 +44,29 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '17/09/2026';
+const currentReminder = '18/09/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'The same problem with the number 3 is also present on the number 5, like I found in the Italian name of "Number 95: Galaxy-Eyes Dark Matter Dragon". As far as I can see, in the pictures of real Italian "Number" cards I\'ve stored on my computer, the 5 and 3 seems to be perfectly aligned with the other numbers, which is something that your rendering still needs to achieve.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'Yes, I can confirm that 3 extends too much below the line. Perhaps Konami uses a slightly modified version of Matrix Regular SC? Assuming this, there might be other differences, but fortunately only this is evident.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'Image to let you compare the Italian card with how the 3 in 39 is rendered. I wish I could send you the picture of card I\'ve downloaded; it might be useful to add this function in the reports! You can compare with this:',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'I\'ve checked up to Utopia in the series of cards I want to create, typing ALL names to see if there are problems. I\'m happy to say that all letters behave well; however, we need to revisit the number situation. Last time you told me that 3 and 5 have the feature to extend below the line. Are you sure that this feature is implemented on real cards? Because looking at the recent Utopia retrain (for me, "Numero 39: Utopia, Emissario della Luce"), the 3 seems just off! Because it extends a lot under the line and it becomes particularly visible on this card.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'Hello Lauqerm!\nI saw the update on the site, and I have tested typing in the same names I used in the last month: with my great surprise (and joy) I can confirm all those letters now behave correctly. Those names I used in the test are the longest in Italian among the cards I\'m interested to create; however, since other cases may arise, I think further testing is needed before we can finally claim this "dreadful enemy" defeated for sure. As always, thank you for your hard work!',
+        answer: 'I see, this is indeed a feature of the font as I said. But with the new approach, I have much more control over the letter size, so let me adjust the tail part of it a little bit. Based on cards like Number 51 and Number 35, the tail part of the numbers 3 and 5 does have a lower baseline compared to normal letters, just not that low like what we are currently have. I have reduced it a bit more to see if it fit better now. Your extensive test is very welcome.'
+    },
     {
         author: 'RedSupernovaDragon at Sep 14, 2026',
         question: 'Hi! I have a question regarding the card name box/title background in YGO Carder.\n\nI\'m trying to recreate the soft/faded name box used on some Yu-Gi-Oh! cards/tokens, where the background behind the card name gradually fades into the card background on the right side instead of ending with a hard rectangular edge.\nIs there already a setting in YGO Carder that allows me to achieve this?\n\nIf not, would it be possible to add this as an option, for example as an alternative Name Box / Title Box style?\n\nIdeally, I would like to keep the normal card name and attribute placement, but have the name box fade smoothly into the surrounding card background.\n\nThanks a lot for your work on YGO Carder!',
