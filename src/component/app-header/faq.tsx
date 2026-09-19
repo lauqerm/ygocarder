@@ -44,8 +44,27 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '18/09/2026';
+const currentReminder = '19/09/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Sep 19, 2026',
+        question: 'It might be useful to check the letters again, since there might be some issues on longer text compression. In the Italian name of Number C62, I think that some letters like O and I do not behave well. but when it comes to these extremely long names, it\'s difficult to see, so it could very well be an illusion.\nThere are also two things I noticed that are not problem in themselves, but rather small differences with the real cards. When I was test-typing the names of Armageddon\'s forms (kinda long names), I noticed that Purple Armageddon\'s IT name is rendered differently from the other two Super Kings. The way it appears compressed on real cards is not different from the other two; on the app, instead, it\'s clearly less compressed due to it being shorter.\nThe second thing I noticed is that sometimes, one or more letters appear more prominently than others, but that\'s just due to their larger traits, like B and O. So I don\'t think this is an issue, but the first point still stands. I also got the general impression that the name box is very close to the Attribute, while on real cards the space is slightly bigger.',
+        answer: 'It\'s hard for me to find Italian cards, but it seems like there are some deliberate micro adjustments going on (even though the image is not perfectly aligned, you can still see the difference). I\'m not sure if this is the case, but you can sort of simulate this by just adding empty spaces behind card names. I can adjust the spacing between the card name and its attribute, but I\'m lacking the information to make a general decision.\nAlso, for what it\'s worth, when evaluating the card, especially tiny things like alignment, you should use the "original size" function (Ctrl + Y, or the zoom icon at the top right of the card). It will display the card as the actual size (when you download it), not as the preview size, which will complicate things like this.',
+        image: ['https://i.postimg.cc/DfBnMynM/image.png', 'https://i.postimg.cc/7LxKdDxs/image.png'],
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'Well, I\'m glad my extensive tests are useful. I finished typing in all the names of the cards I want to create with your app (from Dark Magician to Borreload, there are more than 200): never ran into a problem on the letters, so that is excellent!\nI also confirm that the issue on 3 and 5 is fixed: upon further inspection, I saw their tails do indeed extend a tiny bit lower, and now the app displays those names correctly; this naturally extends to numbers with letters like the C39s.\nIn conclusion, as far as my production is concerned, this issue seems to have been fixed, finally!',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'Now that the namebox problem seems to have been fixed for good, maybe you can also adjust the ATK/DEF box.\nThe ? ATK seems fine, but I noticed that the slash has the same height as letters and numbers, while on real cards it is a bit higher. It is surely a minor point compared to the name issue, but if we can fix it, the card\'s realism would increase a bit. I checked on Japanese cards, btw, specifically the new versions of 104 that came out nearly two months ago.',
+        answer: 'I see, let\'s me check them first.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 18, 2026',
+        question: 'The same problem with the number 3 is also present on the number 5, like I found in the Italian name of "Number 95: Galaxy-Eyes Dark Matter Dragon". As far as I can see, in the pictures of real Italian "Number" cards I\'ve stored on my computer, the 5 and 3 seems to be perfectly aligned with the other numbers, which is something that your rendering still needs to achieve.',
+    },
     {
         author: 'RedSupernovaDragon at Sep 18, 2026',
         question: 'The same problem with the number 3 is also present on the number 5, like I found in the Italian name of "Number 95: Galaxy-Eyes Dark Matter Dragon". As far as I can see, in the pictures of real Italian "Number" cards I\'ve stored on my computer, the 5 and 3 seems to be perfectly aligned with the other numbers, which is something that your rendering still needs to achieve.',
