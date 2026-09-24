@@ -44,8 +44,33 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '19/09/2026';
+const currentReminder = '24/09/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Anonymous at Sep 22, 2026',
+        question: 'When changing the opacity slider of the effect box in the layout row, the artwork gets stretched and there is no way to avoid this. Instead, I had a custom image as foil in the blending section which I wanted to show up in the text box semi transparently. The goal was actually to recreate a QCR effect with a custom logo instead of the 25th anniversary. I think this would be a great feature to add. Cheers and thanks for the great work.',
+        answer: 'Hi there, the little box here will force the app to use the entire card image, leading it to stretch the card because it tries to fit a square card into a rectangle shape. You can untick it to preserve the ratio of the image.',
+        image: ['https://i.postimg.cc/2SWv26tt/Screenshot-2026-09-24-at-18-56-42.png'],
+    },
+    {
+        author: 'StardustixArt at Sep 21, 2026',
+        question: 'Hi, I’ve published some resources for the Grand Master rarity on my profile (StardustixArt on DeviantArt). I’m not sure if they could be useful for the website, as they would need to be adapted a little. I can upload the Grand Master rarity border without any issues, but I’m having some problems with the attributes and the levels/ranks, despite the good quality. I also recreated the text box (both the proxy and realistic versions), but as I said, some adjustments still need to be made.',
+        answer: 'Thank you so much for letting me know. I am currently a bit busy at the moment, but I will definitely get back to this when I have chance.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 20, 2026',
+        question: 'I checked again the longest card names in my planned production and, with the zoom in function, I found some cases where some Is and Os appear to be off by a REALLY tiny bit. The maximum zoom possible (4x) reveals that those Is and Os are higher than their nearest letters.',
+        answer: 'For this, I will not take any action for now and will only keep monitoring. Because at some point zooming may introduce anti-aliasing and supersampling that produce a rather unpredictable result between devices and browsers, which is honestly a pain to work on.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 20, 2026',
+        question: 'Sending this to you so you can compare with real Purple Armageddon, in case you decide to change the namebox length. The left side is fine, it\'s the right side that imo stretches too close to the Attribute. However, this is a difference that becomes evident only if you have a real card to compare with.',
+    },
+    {
+        author: 'RedSupernovaDragon at Sep 20, 2026',
+        question: 'Well, yeah, maybe there are micro-adjustments, but as I said those were not problems in themselves, just a slight difference I noted with Italian cards. Those cards produced with the app are still very good. Additionally, on real cards, the rarity itself also affects the spacing: I have many italian Number cards in different rarities whose names are not aligned correctly! Therefore I only checked Common cards. I saw that you can simulate by adding spaces at the end of the card name, but personally I don\'t think I\'ll do this. The spacing between the namebox and the Attribute is okay-ish, I would not change it if there is no info available. After all, I\'m sure we can always find a minor difference between these cards and Konami\'s offical ones, but that\'s completely ok.\nI also know and use that button, it\'s the one that lets me zoom in to see if the letters are aligned or not.\n\nAnyway, since it appears that namebox still has some issue, I\'ll do extensive testing once again, but this time only on longer names like 62 and C62, since it basically didn\'t fail on short ones. I think there are some letters that do not fit correctly: I and O are surely off, the others seem fine.',
+        answer: 'Thanks, I will keep that in mind. The only reliable digital source that I can use for alignment is AE cards, which is honestly not the best source to have, but at least it is close enough for common cases.'
+    },
     {
         author: 'RedSupernovaDragon at Sep 19, 2026',
         question: 'It might be useful to check the letters again, since there might be some issues on longer text compression. In the Italian name of Number C62, I think that some letters like O and I do not behave well. but when it comes to these extremely long names, it\'s difficult to see, so it could very well be an illusion.\nThere are also two things I noticed that are not problem in themselves, but rather small differences with the real cards. When I was test-typing the names of Armageddon\'s forms (kinda long names), I noticed that Purple Armageddon\'s IT name is rendered differently from the other two Super Kings. The way it appears compressed on real cards is not different from the other two; on the app, instead, it\'s clearly less compressed due to it being shorter.\nThe second thing I noticed is that sometimes, one or more letters appear more prominently than others, but that\'s just due to their larger traits, like B and O. So I don\'t think this is an issue, but the first point still stands. I also got the general impression that the name box is very close to the Attribute, while on real cards the space is slightly bigger.',
