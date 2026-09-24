@@ -49,7 +49,7 @@ const feedbackList: Feedback[] = [
     {
         author: 'Anonymous at Sep 22, 2026',
         question: 'When changing the opacity slider of the effect box in the layout row, the artwork gets stretched and there is no way to avoid this. Instead, I had a custom image as foil in the blending section which I wanted to show up in the text box semi transparently. The goal was actually to recreate a QCR effect with a custom logo instead of the 25th anniversary. I think this would be a great feature to add. Cheers and thanks for the great work.',
-        answer: 'Hi there, the little box here will force the app to use the entire card image, leading it to stretch the card because it tries to fit a square card into a rectangle shape. You can untick it to preserve the ratio of the image.',
+        answer: 'Hi there, the little box here will force the app to use the entire card image, leading it to stretch the artwork because it tries to fit a square image into a rectangle shape. You can untick it to preserve the ratio of the image.',
         image: ['https://i.postimg.cc/2SWv26tt/Screenshot-2026-09-24-at-18-56-42.png'],
     },
     {
