@@ -291,6 +291,11 @@ export const drawName = async (
                     setupContext: ctx => {
                         ctx.scale(xRatio, 1);
                         ctx.fillStyle = fillStyle;
+                        // if (letter === 'i' && globalScale === 1) {
+                        //     const adjustedFontGetter = cloneFontGetter(fontGetterForWidthCalculating)
+                        //     .setSize(fontGetterForWidthCalculating.getFontInfo().sizeAsNumber - 2).getFont();
+                        //     ctx.font = adjustedFontGetter;
+                        // } else
                         ctx.font = normalStyle;
                     },
                 });

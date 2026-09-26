@@ -1,5 +1,14 @@
 import { FontData, FontGetter, FontSizeData } from 'src/model';
 
+export const cloneFontGetter = (fontGetter: FontGetter): FontGetter => {
+    const { style, family, sizeAsNumber, weight } = fontGetter.getFontInfo();
+    return createFontGetter({
+        defaultFamily: family,
+        defaultSize: sizeAsNumber,
+        defaultStyle: style,
+        defaultWeight: weight,
+    });
+};
 export const createFontGetter = (props?: {
     defaultWeight?: '' | 'bold',
     defaultStyle?: '' | 'italic' | 'small-caps',

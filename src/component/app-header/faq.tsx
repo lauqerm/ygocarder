@@ -44,8 +44,14 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '24/09/2026';
+const currentReminder = '26/09/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Sep 26, 2026',
+        question: 'Ok, I\'ve seen the reply. The thing is that those defects can also be seen without zooming, if you look carefully. Are you sure that there is no way you can fix the problem on these longer names, like you did on "shorter" ones?',
+        answer: 'I mean monitoring is the safest I can do right now, as I need to do my own test too to make sure I don\'t accidentally break other things. Even with the example of the Italian Number C62, I can only somewhat see the problem with the letter "i", but I can\'t really see the problem with the letter "o" and so if I try to fix them now, they will look off to me 🥲. You can see the attached image, using non-aliasing zoom, it\'s really hard to say both letters has some problem.',
+        image: ['https://i.postimg.cc/tC2WqsqG/image.png'],
+    },
     {
         author: 'Anonymous at Sep 22, 2026',
         question: 'When changing the opacity slider of the effect box in the layout row, the artwork gets stretched and there is no way to avoid this. Instead, I had a custom image as foil in the blending section which I wanted to show up in the text box semi transparently. The goal was actually to recreate a QCR effect with a custom logo instead of the 25th anniversary. I think this would be a great feature to add. Cheers and thanks for the great work.',
