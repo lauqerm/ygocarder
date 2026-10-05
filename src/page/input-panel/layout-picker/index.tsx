@@ -127,7 +127,6 @@ const StyledBaseFillPickerContainer = styled.div`
         font-weight: normal;
     }
     .background-picker {
-        padding: var(--spacing-xs);
         /** No display none here, again we want to keep card cropper painted, just not visible */
         &.overlay-no-background {
             visibility: hidden;

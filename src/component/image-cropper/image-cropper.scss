@@ -8,6 +8,7 @@
 	/** Avoid flashing when switching mode **/
 	.card-image-source-input-container {
 		min-height: 78px; // Alignment
+		padding: var(--spacing-xs);
 	}
 
 	.disabled,

@@ -86,6 +86,8 @@ const AdvancedParagraphPanel = styled.div`
         h2 {
             padding-left: 0;
             padding-right: 0;
+            background-color: var(--main-level-3);
+            border-bottom: none;
         }
         small {
             display: block;
