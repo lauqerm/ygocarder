@@ -293,7 +293,7 @@ export const drawName = async (
                         ctx.fillStyle = fillStyle;
                         // if (letter === 'i' && globalScale === 1) {
                         //     const adjustedFontGetter = cloneFontGetter(fontGetterForWidthCalculating)
-                        //     .setSize(fontGetterForWidthCalculating.getFontInfo().sizeAsNumber - 2).getFont();
+                        //     .mutateSize(fontGetterForWidthCalculating.getFontInfo().sizeAsNumber - 2).getFont();
                         //     ctx.font = adjustedFontGetter;
                         // } else
                         ctx.font = normalStyle;

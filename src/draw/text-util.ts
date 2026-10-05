@@ -52,35 +52,35 @@ export const getTextWorker = (
     let numberFontMemory = fontController.getFontInfo();
     const applyNumberFont = () => {
         numberFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(numberFont).setSize(fontSize * numberFontRatio).getFont();
+        ctx.font = fontController.mutateFamily(numberFont).mutateSize(fontSize * numberFontRatio).getFont();
     };
     const stopApplyNumberFont = () => {
         ctx.font = fontController
-            .setFamily(numberFontMemory.family)
-            .setSize(numberFontMemory.size)
+            .mutateFamily(numberFontMemory.family)
+            .mutateSize(numberFontMemory.size)
             .getFont();
     };
 
     let vietnameseFontMemory = fontController.getFontInfo();
     const applyVietnameseFont = () => {
         vietnameseFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(vietnameseFont).setSize(fontSize * vietnameseFontRatio).getFont();
+        ctx.font = fontController.mutateFamily(vietnameseFont).mutateSize(fontSize * vietnameseFontRatio).getFont();
     };
     const stopApplyVietnameseFont = () => {
         ctx.font = fontController
-            .setFamily(vietnameseFontMemory.family)
-            .setSize(vietnameseFontMemory.size)
+            .mutateFamily(vietnameseFontMemory.family)
+            .mutateSize(vietnameseFontMemory.size)
             .getFont();
     };
 
     let arabicFontMemory = fontController.getFontInfo();
     const applyArabicFont = () => {
         arabicFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setSize(fontSize * arabicFontRatio).getFont();
+        ctx.font = fontController.mutateSize(fontSize * arabicFontRatio).getFont();
     };
     const stopApplyArabicFont = () => {
         ctx.font = fontController
-            .setSize(arabicFontMemory.size)
+            .mutateSize(arabicFontMemory.size)
             .getFont();
     };
 
@@ -88,27 +88,27 @@ export const getTextWorker = (
     const applySymbolFont = (ratio = symbolFontRatio) => {
         symbolFontMemory = fontController.getFontInfo();
         const nextRatio = fontSize * ratio;
-        ctx.font = fontController.setFamily(symbolFont).setSize(nextRatio).getFont();
+        ctx.font = fontController.mutateFamily(symbolFont).mutateSize(nextRatio).getFont();
         return {
             fontSize: nextRatio,
         };
     };
     const stopApplySymbolFont = () => {
         ctx.font = fontController
-            .setFamily(symbolFontMemory.family)
-            .setSize(symbolFontMemory.size)
+            .mutateFamily(symbolFontMemory.family)
+            .mutateSize(symbolFontMemory.size)
             .getFont();
     };
 
     let ordinalFontMemory = fontController.getFontInfo();
     const applyOrdinalFont = () => {
         ordinalFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(ordinalFont).setSize(fontSize * ordinalFontRatio).getFont();
+        ctx.font = fontController.mutateFamily(ordinalFont).mutateSize(fontSize * ordinalFontRatio).getFont();
     };
     const stopApplyOrdinalFont = () => {
         ctx.font = fontController
-            .setFamily(ordinalFontMemory.family)
-            .setSize(ordinalFontMemory.size)
+            .mutateFamily(ordinalFontMemory.family)
+            .mutateSize(ordinalFontMemory.size)
             .getFont();
     };
 
@@ -123,13 +123,13 @@ export const getTextWorker = (
     let furiganaFontMemory = fontController.getFontInfo();
     const applyFuriganaFont = (bold = false) => {
         furiganaFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setFamily(furiganaFont).setWeight(bold ? 'bold' : '').setSize(fontSize * headTextFontRatio).getFont();
+        ctx.font = fontController.mutateFamily(furiganaFont).mutateWeight(bold ? 'bold' : '').mutateSize(fontSize * headTextFontRatio).getFont();
     };
     const stopApplyFuriganaFont = () => {
         ctx.font = fontController
-            .setFamily(furiganaFontMemory.family)
-            .setWeight(furiganaFontMemory.weight)
-            .setSize(furiganaFontMemory.size)
+            .mutateFamily(furiganaFontMemory.family)
+            .mutateWeight(furiganaFontMemory.weight)
+            .mutateSize(furiganaFontMemory.size)
             .getFont();
     };
 
@@ -144,10 +144,10 @@ export const getTextWorker = (
     let largerTextFontMemory = fontController.getFontInfo();
     const applyLargerText = (fontRatio = 1) => {
         largerTextFontMemory = fontController.getFontInfo();
-        ctx.font = fontController.setSize(fontSize * fontRatio).getFont();
+        ctx.font = fontController.mutateSize(fontSize * fontRatio).getFont();
     };
     const stopApplyLargerText = () => {
-        ctx.font = fontController.setSize(largerTextFontMemory.size).getFont();
+        ctx.font = fontController.mutateSize(largerTextFontMemory.size).getFont();
     };
 
     return {
@@ -237,14 +237,14 @@ export const analyzeHeadText = ({
     else if (condenseHeadText <= 1.560) {
         /** If the head text is too long, we start to introduce negative spacing. Example like "S" - Synchro in OCG. */
         alignCenterLetterSpacing = headTextSpacing >= 0
-            ? headTextSpacing * -1/4
+            ? headTextSpacing * -1 / 4
             : headTextSpacing * 3;
     }
     else {
         /** If the head text is way too long, not only we introduce negative spacing, but also condense the actual letter. "P" - Pendulum is a notorious example. */
         internalXRatio = 0.66;
         alignCenterLetterSpacing = headTextSpacing >= 0
-            ? headTextSpacing * -1/4
+            ? headTextSpacing * -1 / 4
             : headTextSpacing * 2;
     }
     if (fitFootText || (xRatio > 0 && xRatio < 1)) {
@@ -253,8 +253,8 @@ export const analyzeHeadText = ({
 
     const alignCenterHeadTextWidth = headTextLetterWidth * ((xRatio && !fitFootText)
         ? xRatio
-            : (!internalXRatio || fitFootText) ? 1 : internalXRatio)
-                + alignCenterLetterSpacing * (headText.length - 1);
+        : (!internalXRatio || fitFootText) ? 1 : internalXRatio)
+        + alignCenterLetterSpacing * (headText.length - 1);
     const alignEvenlyLetterSpacing = noHeadText ? 0 : (footTextWidth - headTextLetterWidth) / headText.length;
     const alignEvenlyHeadTextWidth = footTextWidth;
 
@@ -401,7 +401,7 @@ function splitStringTrails(text: string) {
     };
     const closers = new Set(Object.values(pairs));
     const standardQuotes = new Set(['"', '\'']);
-    
+
     const protectedIndices = new Set<number>();
     const stack: { char: string; index: number }[] = [];
 
@@ -410,26 +410,26 @@ function splitStringTrails(text: string) {
         const char = text[i];
 
         if (pairs[char]) {
-        // Opening bracket/curly quote
-        stack.push({ char, index: i });
-        } else if (closers.has(char)) {
-        // Closing bracket/curly quote
-        const last = stack[stack.length - 1];
-        if (last && pairs[last.char] === char) {
-            protectedIndices.add(last.index);
-            protectedIndices.add(i);
-            stack.pop();
-        }
-        } else if (standardQuotes.has(char)) {
-        // Handle standard quotes with greedy forward matching
-        const last = stack[stack.length - 1];
-        if (last && last.char === char) {
-            protectedIndices.add(last.index);
-            protectedIndices.add(i);
-            stack.pop();
-        } else {
+            // Opening bracket/curly quote
             stack.push({ char, index: i });
-        }
+        } else if (closers.has(char)) {
+            // Closing bracket/curly quote
+            const last = stack[stack.length - 1];
+            if (last && pairs[last.char] === char) {
+                protectedIndices.add(last.index);
+                protectedIndices.add(i);
+                stack.pop();
+            }
+        } else if (standardQuotes.has(char)) {
+            // Handle standard quotes with greedy forward matching
+            const last = stack[stack.length - 1];
+            if (last && last.char === char) {
+                protectedIndices.add(last.index);
+                protectedIndices.add(i);
+                stack.pop();
+            } else {
+                stack.push({ char, index: i });
+            }
         }
     }
 

@@ -216,9 +216,7 @@ export const drawLine = async ({
             fontSizeData = currentFontData.fontList[fontLevel];
             textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentTextData.currentFont, globalScale);
             persistentFlag.italic = true;
-            ctx.font = currentTextData.currentFont
-                .setStyle('italic')
-                .getFont();
+            ctx.font = currentTextData.currentFont.setStyle('italic').getFont();
             continue;
         } else if (potentialTaggedToken === ITALIC_CLOSE_TAG) {
             currentTextData = textData;
@@ -227,22 +225,16 @@ export const drawLine = async ({
             fontSizeData = currentFontData.fontList[fontLevel];
             textWorker = getTextWorker(ctx, currentFontData, fontSizeData, currentFont, globalScale);
             persistentFlag.italic = false;
-            ctx.font = currentFont
-                .setStyle('')
-                .getFont();
+            ctx.font = currentFont.setStyle('').getFont();
             continue;
         }
         if (potentialTaggedToken === BOLD_OPEN_TAG) {
             persistentFlag.bold = true;
-            ctx.font = currentFont
-                .setWeight('bold')
-                .getFont();
+            ctx.font = currentFont.setWeight('bold').getFont();
             continue;
         } else if (potentialTaggedToken === BOLD_CLOSE_TAG) {
             persistentFlag.bold = false;
-            ctx.font = currentFont
-                .setWeight('')
-                .getFont();
+            ctx.font = currentFont.setWeight('').getFont();
             continue;
         }
         if (potentialTaggedToken === PRE_OPEN_TAG) {

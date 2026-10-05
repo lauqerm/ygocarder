@@ -534,24 +534,24 @@ export const analyzeLine = ({
 
             currentTextData = swapTextData(textData, italicFontData);
             ctx.font = currentTextData.currentFont
-                .setStyle('italic')
+                .mutateStyle('italic')
                 .getFont();
             continue;
         } else if (token === ITALIC_CLOSE_TAG) {
             currentTextData = textData;
             ctx.font = currentTextData.currentFont
-                .setStyle('')
+                .mutateStyle('')
                 .getFont();
             continue;
         }
         if (token === BOLD_OPEN_TAG) {
             ctx.font = currentTextData.currentFont
-                .setWeight('bold')
+                .mutateWeight('bold')
                 .getFont();
             continue;
         } else if (token === BOLD_CLOSE_TAG) {
             ctx.font = currentTextData.currentFont
-                .setWeight('')
+                .mutateWeight('')
                 .getFont();
             continue;
         }

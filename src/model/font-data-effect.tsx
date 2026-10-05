@@ -7,9 +7,13 @@ export type FontGetter = {
         family: string,
         weight: '' | 'bold',
     },
+    mutateWeight(nextWeight: '' | 'bold'): FontGetter,
     setWeight(nextWeight: '' | 'bold'): FontGetter,
+    mutateStyle(nextStyle: '' | 'italic' | 'small-caps'): FontGetter,
     setStyle(nextStyle: '' | 'italic' | 'small-caps'): FontGetter,
+    mutateSize(nextSize: number | `${number}px` | ((currentSize: number) => number | `${number}px`)): FontGetter,
     setSize(nextSize: number | `${number}px` | ((currentSize: number) => number | `${number}px`)): FontGetter,
+    mutateFamily(nextFamily: string): FontGetter,
     setFamily(nextFamily: string): FontGetter,
 };
 export type LineKey = 'high' | 'medium' | 'low' | 'origin';

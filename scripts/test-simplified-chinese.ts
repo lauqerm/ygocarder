@@ -59,4 +59,4 @@ assert.equal(tcgToSCTermMap['Equip'], '装备');
 assert.equal(tcgToSCTermMap['Quick-Play'], '速攻');
 assert.equal(tcgToSCTermMap['Continuous'], '永续');
 
-console.log('Simplified Chinese card mode tests passed.');
+console.info('Simplified Chinese card mode tests passed.');

@@ -194,9 +194,9 @@ export const drawEffect = async ({
 
         const currentFont = createFontGetter();
         ctx.font = currentFont
-            .setWeight(format === 'tcg' ? '' : '')
-            .setSize(fontSize)
-            .setFamily(dynamicFont)
+            .mutateWeight(format === 'tcg' ? '' : '')
+            .mutateSize(fontSize)
+            .mutateFamily(dynamicFont)
             .getFont();
         ctx.textAlign = 'left';
         const textData = {
@@ -303,8 +303,8 @@ export const drawEffect = async ({
                             : flavorFontData.fontList[appliedSizeLevel];
                         const flavorTextCurrentFont = createFontGetter();
                         ctx.font = flavorTextCurrentFont
-                            .setSize(fontSize)
-                            .setFamily(flavorFontData.font)
+                            .mutateSize(fontSize)
+                            .mutateFamily(flavorFontData.font)
                             .getFont();
                         const flavorTextData = {
                             fontData: dynamicFlavorFontData,
@@ -333,8 +333,8 @@ export const drawEffect = async ({
                         finalSpaceWidth = 0;
                         finalTextData = flavorTextData;
                         ctx.font = flavorTextCurrentFont
-                            .setSize(dynamicFontData.fontList[dynamicSizeLevel].fontSize)
-                            .setFamily(dynamicFontData.font)
+                            .mutateSize(dynamicFontData.fontList[dynamicSizeLevel].fontSize)
+                            .mutateFamily(dynamicFontData.font)
                             .getFont();
                     } else {
                         /** Normal line: Draw with the calculated median */
