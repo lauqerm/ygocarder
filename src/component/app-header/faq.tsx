@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '26/09/2026';
+const currentReminder = '05/10/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Anonymous at Oct 04, 2026',
+        question: 'Hi. There seems to be an error when using the italics function. I tried using it, but only the first row gets italics - the other one stays normal. So I tried separating the two lines and make them italics individually or just add <i> without </i> but if I try and justify the text, the script doesn\'t work. Is there\'s something I\'m doing wrong?',
+        answer: 'Thanks for your report, it is indeed a bug in the formatter. The italic tag should work across multiple lines without using additional formatting syntax. I have issued a fix for this.',
+    },
     {
         author: 'RedSupernovaDragon at Sep 26, 2026',
         question: 'Ok, I\'ve seen the reply. The thing is that those defects can also be seen without zooming, if you look carefully. Are you sure that there is no way you can fix the problem on these longer names, like you did on "shorter" ones?',

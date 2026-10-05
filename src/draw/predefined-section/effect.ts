@@ -368,6 +368,10 @@ export const drawEffect = async ({
                     };
                 });
 
+            let persistentFlag = {
+                italic: false,
+                bold: false,
+            };
             for (const lineDrawInfo of lineDrawInfoList) {
                 const {
                     xRatio,
@@ -381,6 +385,8 @@ export const drawEffect = async ({
                 ctx.font = currentFont
                     .setSize(fontSize)
                     .setFamily(fontData.font)
+                    .setWeight(persistentFlag.bold ? 'bold' : '')
+                    .setStyle(persistentFlag.italic ? 'italic' : '')
                     .getFont();
                 if (precalculatedLine === FULL_LINE_PLACEHOLDER) {
                     ctx.scale(xRatio, yRatio);
@@ -430,10 +436,11 @@ export const drawEffect = async ({
                         option: { direction },
                     });
                 }
-                await result;
+                const awaitedResult = await result;
 
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 trueBaseline += lineHeight;
+                persistentFlag = awaitedResult.persistentFlag;
             }
             break;
         }
