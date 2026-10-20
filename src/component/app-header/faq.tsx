@@ -44,8 +44,24 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '05/10/2026';
+const currentReminder = '20/10/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Anonymous Admin at Oct 18, 2026',
+        question: 'I tried applying my custom colour but the star icon is getting cropped up. It works fine by using the default colours.',
+        answer: 'Hi there, could you try some other names like "Evil★Twins Ki-sikil & Lil-la" and see if the problem still persists? The app still renders correctly on my end, so I can\'t quite reproduce the issue just yet.',
+        image: ['https://i.postimg.cc/L8DBMbsx/image.png'],
+    },
+    {
+        author: 'Daniel at Oct 18, 2026',
+        question: 'i add a custom frame in blending and it changes the cards backgorund color. when i add it over the sample blue eyes chaos max it turns darker blue but over a effect or spell the whole card becomes grey',
+        answer: 'Hi there. If it is not too much of a hassle, could you send me the background file you are using? I have tried various options but can\'t quite reproduce your issue.',
+    },
+    {
+        author: 'lukas Fawful at Oct 17, 2026',
+        question: 'I know you don\'t want to do a Rush Duel template, but could you add more Card Layout options, like the name position/size, type and attribute size, please? I never got this close to make a good Rush Overframe card. Regardless of whether or not you end up implementing this, thank you for creating this site. It has already been a great help with my collections.',
+        answer: 'Hi, adding more position options should be easy, but I will need a bit of time in the case of adjusting size, because the text might end up blurry or misaligned. Hopefully I can make share progress soon.',
+    },
     {
         author: 'Anonymous at Oct 04, 2026',
         question: 'Hi. There seems to be an error when using the italics function. I tried using it, but only the first row gets italics - the other one stays normal. So I tried separating the two lines and make them italics individually or just add <i> without </i> but if I try and justify the text, the script doesn\'t work. Is there\'s something I\'m doing wrong?',
