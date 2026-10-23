@@ -278,6 +278,8 @@
         "input.frame-coordinate.label": "Bố cục",
         "input.frame-coordinate.left": "Trái",
         "input.frame-coordinate.top": "Trên",
+        "input.frame-coordinate.width": "Dài",
+        "input.frame-coordinate.height": "Cao",
         "input.frame.auto": "Tự động",
         "input.frame.dark-synchro": "Dark Synchro",
         "input.frame.effect": "Effect",

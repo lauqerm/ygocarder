@@ -7,7 +7,7 @@ import { useCard, useLanguage } from 'src/service';
 import { mergeClass } from 'src/util';
 import styled from 'styled-components';
 import { useShallow } from 'zustand/react/shallow';
-import { VerticalAlignMiddleOutlined } from '@ant-design/icons';
+import { VerticalAlignMiddleOutlined, RedoOutlined } from '@ant-design/icons';
 
 const {
     width,
@@ -33,12 +33,21 @@ const FrameCoordinatePanelContainer = styled.div`
     .control-panel {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: max-content max-content max-content 1fr;
+        grid-template-rows: max-content max-content max-content max-content max-content 1fr;
         gap: var(--spacing);
         align-items: center;
         label {
-            display: block;
-            margin-bottom: var(--spacing-xxs);
+            margin-bottom: var(--spacing-xs);
+            display: grid;
+            align-items: center;
+            grid-template-columns: 1fr max-content;
+            gap: var(--spacing-xs);
+            .hidden {
+                visibility: none;
+            }
+        }
+        .ant-input-number {
+            width: 100%;
         }
         .control-panel-action {
             align-self: start;
@@ -88,6 +97,9 @@ export const FrameCoordinatePanel = forwardRef(() => {
         y: 0,
         width: 0,
         height: 0,
+        minWidth: 0,
+        minHeight: 0,
+        resizable: false,
         useDefault: true,
     });
     const moveableMapRef = useRef<Record<string, Moveable>>({});
@@ -120,6 +132,13 @@ export const FrameCoordinatePanel = forwardRef(() => {
             };
         });
     }, [setCard]);
+    const changeTarget = (name: string, transformer: (target: HTMLDivElement) => void) => {
+        const target = document.querySelector(`.moveable-region-${name}`) as HTMLDivElement | null;
+        if (target) {
+            transformer(target);
+            moveableMapRef.current[name]?.updateRect();
+        }
+    };
 
     useEffect(() => {
         let relevant = true;
@@ -154,6 +173,13 @@ export const FrameCoordinatePanel = forwardRef(() => {
         startDragRotate: 0,
         throttleDragRotate: 0,
     };
+    const commontResetButtonProps = {
+        Icon: RedoOutlined,
+        tooltipProps: {
+            title: language['generic.reset.tooltip'],
+        },
+    };
+    const activeRegionName = currentCoordinate.name;
     return (
         <FrameCoordinatePanelContainer className="frame-coordinate-panel">
             <div className="moveable-area-container">
@@ -164,21 +190,27 @@ export const FrameCoordinatePanel = forwardRef(() => {
                     }}>
                         {MoveableRegionList.map(({
                             name,
+                            resizable,
                         }) => {
-                            const { width, height } = CanvasConst[name];
+                            const allowResize = activeRegionName === name && resizable;
+                            const { width, height, minWidth, minHeight } = CanvasConst[name];
                             return <Fragment key={name}>
                                 <MoveableTarget
                                     className={mergeClass(
                                         'move-target',
                                         `moveable-region-${name}`,
-                                        currentCoordinate.name === name ? 'active-target' : '',
+                                        activeRegionName === name ? 'active-target' : '',
                                     )}
                                     onMouseDown={() => {
-                                        const regionCoordinate = parseCoordinate(coordinateMap[name], CanvasConst[name]);
+                                        const defaultCoordinate = CanvasConst[name];
+                                        const regionCoordinate = parseCoordinate(coordinateMap[name], defaultCoordinate);
                                         setCurrentCoordinate({
                                             ...regionCoordinate,
                                             name,
                                             useDefault: coordinateMap[name] ? false : true,
+                                            minHeight: defaultCoordinate.minHeight,
+                                            minWidth: defaultCoordinate.minWidth,
+                                            resizable: defaultCoordinate.resizable,
                                         });
                                     }}
                                 />
@@ -190,6 +222,8 @@ export const FrameCoordinatePanel = forwardRef(() => {
                                     target={`.moveable-region-${name}`}
                                     edgeDraggable={false}
                                     {...commonProps}
+                                    resizable={allowResize}
+                                    keepRatio={allowResize ? false : true}
                                     edge={[]}
                                     bounds={{
                                         'left': -width + BOUND_PADDING,
@@ -203,9 +237,9 @@ export const FrameCoordinatePanel = forwardRef(() => {
                                         e.target.style.transform = e.transform;
                                     }}
                                     onResize={e => {
-                                        setCurrentCoordinate(cur => ({ ...cur, width: e.width, y: e.height, useDefault: false }));
-                                        e.target.style.width = `${e.width}px`;
-                                        e.target.style.height = `${e.height}px`;
+                                        setCurrentCoordinate(cur => ({ ...cur, width: e.width, height: e.height, useDefault: false }));
+                                        e.target.style.width = `${Math.max(minWidth, e.width)}px`;
+                                        e.target.style.height = `${Math.max(minHeight, e.height)}px`;
                                         e.target.style.transform = e.drag.transform;
                                     }}
                                 />
@@ -217,9 +251,26 @@ export const FrameCoordinatePanel = forwardRef(() => {
             <div className="control-panel">
                 <h3>{language['input.frame-coordinate.label']}</h3>
                 <div>
-                    <label>{language['input.frame-coordinate.top']}</label>
+                    <label>
+                        {language['input.frame-coordinate.top']}
+                        <IconButton
+                            {...commontResetButtonProps}
+                            containerProps={{ className: (activeRegionName === 'none') ? 'hidden' : '' }}
+                            onClick={() => {
+                                setCurrentCoordinate(cur => {
+                                    if (currentCoordinate.y !== CanvasConst[activeRegionName].y) {
+                                        return { ...cur, y: CanvasConst[activeRegionName].y, useDefault: false };
+                                    }
+                                    return cur;
+                                });
+                                changeTarget(activeRegionName, target => {
+                                    target.style.transform = `translate(${currentCoordinate.x}px, calc(${CanvasConst[activeRegionName].y}px)`;
+                                });
+                            }}
+                        />
+                    </label>
                     <InputNumber
-                        disabled={currentCoordinate.name === 'none'}
+                        disabled={activeRegionName === 'none'}
                         value={currentCoordinate.y}
                         onChange={value => {
                             setCurrentCoordinate(cur => {
@@ -232,14 +283,95 @@ export const FrameCoordinatePanel = forwardRef(() => {
                     />
                 </div>
                 <div>
-                    <label>{language['input.frame-coordinate.left']}</label>
+                    <label>
+                        {language['input.frame-coordinate.left']}
+                        <IconButton
+                            {...commontResetButtonProps}
+                            containerProps={{ className: (activeRegionName === 'none') ? 'hidden' : '' }}
+                            onClick={() => {
+                                setCurrentCoordinate(cur => {
+                                    if (currentCoordinate.x !== CanvasConst[activeRegionName].x) {
+                                        return { ...cur, x: CanvasConst[activeRegionName].x, useDefault: false };
+                                    }
+                                    return cur;
+                                });
+                                changeTarget(activeRegionName, target => {
+                                    target.style.transform = `translate(${CanvasConst[activeRegionName].x}px, calc(${currentCoordinate.y}px)`;
+                                });
+                            }}
+                        />
+                    </label>
                     <InputNumber
-                        disabled={currentCoordinate.name === 'none'}
+                        disabled={activeRegionName === 'none'}
                         value={currentCoordinate.x}
                         onChange={value => {
                             setCurrentCoordinate(cur => {
                                 if (typeof value === 'number' && cur.x !== value) {
                                     return { ...cur, x: value, useDefault: false };
+                                }
+                                return cur;
+                            });
+                        }}
+                    />
+                </div>
+                <div>
+                    <label>
+                        {language['input.frame-coordinate.width']}
+                        <IconButton
+                            {...commontResetButtonProps}
+                            containerProps={{ className: (activeRegionName === 'none' || !currentCoordinate.resizable) ? 'hidden' : '' }}
+                            onClick={() => {
+                                setCurrentCoordinate(cur => {
+                                    if (currentCoordinate.width !== CanvasConst[activeRegionName].width) {
+                                        return { ...cur, width: CanvasConst[activeRegionName].width, useDefault: false };
+                                    }
+                                    return cur;
+                                });
+                                changeTarget(activeRegionName, target => {
+                                    target.style.width = `${CanvasConst[activeRegionName].width}px`;
+                                });
+                            }}
+                        />
+                    </label>
+                    <InputNumber
+                        disabled={activeRegionName === 'none' || !currentCoordinate.resizable}
+                        value={currentCoordinate.width}
+                        onChange={value => {
+                            setCurrentCoordinate(cur => {
+                                if (typeof value === 'number' && cur.width !== value) {
+                                    return { ...cur, width: value, useDefault: false };
+                                }
+                                return cur;
+                            });
+                        }}
+                    />
+                </div>
+                <div>
+                    <label>
+                        {language['input.frame-coordinate.height']}
+                        <IconButton
+                            {...commontResetButtonProps}
+                            containerProps={{ className: (activeRegionName === 'none' || !currentCoordinate.resizable) ? 'hidden' : '' }}
+                            onClick={() => {
+                                setCurrentCoordinate(cur => {
+                                    if (currentCoordinate.height !== CanvasConst[activeRegionName].height) {
+                                        return { ...cur, height: CanvasConst[activeRegionName].height, useDefault: false };
+                                    }
+                                    return cur;
+                                });
+                                changeTarget(activeRegionName, target => {
+                                    target.style.height = `${CanvasConst[activeRegionName].height}px`;
+                                });
+                            }}
+                        />
+                    </label>
+                    <InputNumber
+                        disabled={activeRegionName === 'none' || !currentCoordinate.resizable}
+                        value={currentCoordinate.height}
+                        onChange={value => {
+                            setCurrentCoordinate(cur => {
+                                if (typeof value === 'number' && cur.height !== value) {
+                                    return { ...cur, height: value, useDefault: false };
                                 }
                                 return cur;
                             });
@@ -301,13 +433,11 @@ export const FrameCoordinatePanel = forwardRef(() => {
                                     ...CanvasConst[name],
                                 };
                                 setCurrentCoordinate(nextCoordinate);
-                                const target = document.querySelector(`.moveable-region-${name}`) as HTMLDivElement | null;
-                                if (target) {
+                                changeTarget(name, target => {
                                     target.style.width = `${nextCoordinate.width}px`;
                                     target.style.height = `${nextCoordinate.height}px`;
                                     target.style.transform = `translate(${nextCoordinate.x}px, calc(${nextCoordinate.y}px)`;
-                                    moveableMapRef.current[name]?.updateRect();
-                                }
+                                });
                             }}
                         >{language['generic.reset.label']}</IconButton>
                     </div>}

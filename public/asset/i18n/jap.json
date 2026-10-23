@@ -190,6 +190,8 @@
         "input.advanced-frame.label": "ブレンドモード",
         "input.frame-coordinate.top": "上",
         "input.frame-coordinate.left": "左",
+        "input.frame-coordinate.width": "任意",
+        "input.frame-coordinate.height": "任意",
         "input.frame-coordinate.label": "カードレイアウト",
         "input.advanced-frame.main.label": "一般設定",
         "input.advanced-frame.name.bottom-left": "左下",

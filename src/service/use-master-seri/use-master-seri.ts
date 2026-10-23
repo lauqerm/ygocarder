@@ -383,14 +383,15 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
             if (!clearCanvas(ctx) || !nameCanvasRef.current) return;
 
             const {
-                canvas: wokringCanvas,
+                canvas: workingCanvas,
                 ctx: workingCtx,
-            } = createCanvas(CanvasWidth, 148);
+            } = createCanvas(CanvasWidth * globalScale, 148 * globalScale);
             const {
                 x, y,
+                height, width,
             } = parseOffset(coordinateMap.nameBox, nameBox);
             await drawName(
-                wokringCanvas,
+                workingCanvas,
                 workingCtx,
                 name,
                 format === 'tcg' ? 63 : 68, 116,
@@ -400,7 +401,11 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 resolveNameStyle({ format, region, frame, nameStyle, nameStyleType, foil }),
                 { isSpeedSkill, format, frame, furiganaHelper: textFuriganaHelper, globalScale },
             );
-            ctx.drawImage(wokringCanvas, -x, -y);
+            ctx.drawImage(
+                workingCanvas,
+                -x * globalScale, -y * globalScale,
+                (workingCanvas.width - width * globalScale), (workingCanvas.height - height * globalScale)
+            );
         };
     }, [
         attribute,

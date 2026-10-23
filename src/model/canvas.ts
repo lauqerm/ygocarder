@@ -138,16 +138,22 @@ export const CanvasConst = {
         name: 'effectBox' as const,
         x: 35, y: 860,
         width: 743, height: 280,
+        minWidth: 743, minHeight: 280,
+        resizable: false,
     },
     starBox: {
         name: 'starBox' as const,
         x: 0, y: 145,
         width: 813, height: 50,
+        minWidth: 813, minHeight: 50,
+        resizable: false,
     },
     nameBox: {
         name: 'nameBox' as const,
         x: 44, y: 47,
         width: 726, height: 91,
+        minWidth: 200, minHeight: 60,
+        resizable: true,
     },
 };
 export const MoveableRegionMap = {
