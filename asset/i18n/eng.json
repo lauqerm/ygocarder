@@ -279,6 +279,8 @@
         "input.frame-coordinate.label": "Card Layout",
         "input.frame-coordinate.left": "Left",
         "input.frame-coordinate.top": "Top",
+        "input.frame-coordinate.width": "Width",
+        "input.frame-coordinate.height": "Height",
         "input.frame.auto": "Auto",
         "input.frame.dark-synchro": "Dark Synchro",
         "input.frame.effect": "Effect",

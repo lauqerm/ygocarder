@@ -1,5 +1,13 @@
 [
     {
+        "version": "v2.6.2 (2026/10/23)",
+        "logList": [
+            {
+                "content": "Feat: Experimental feature to allow adjusting the size and position of the card name in Card Layout option."
+            }
+        ]
+    },
+    {
         "version": "v2.6.1 (2026/09/19)",
         "logList": [
             {
