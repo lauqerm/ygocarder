@@ -115,6 +115,7 @@ export const probe = ({
     };
 };
 type AtlasEntry = {
+    letter: string,
     topX: number,
     bottomX: number,
     from: LineKey,
@@ -135,70 +136,70 @@ export const CharsetMap = {
         'ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ',
 } as const;
 export const letterAtlas: Record<string, AtlasEntry> = {
-    'A': { topX: 16, bottomX: 1, from: 'high', to: 'origin', alignment: 'both' },
-    'B': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'C': { topX: 18, bottomX: 18, from: 'high', to: 'origin', alignment: 'both' },
-    'D': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'E': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'F': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'G': { topX: 20, bottomX: 20, from: 'high', to: 'origin', alignment: 'both' },
-    'H': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'I': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'J': { topX: 5, bottomX: 1, from: 'high', to: 'origin', alignment: 'top' },
-    'K': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'L': { topX: 6, bottomX: 6, from: 'high', to: 'origin', alignment: 'both' },
-    'M': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'N': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'O': { topX: 16, bottomX: 16, from: 'high', to: 'origin', alignment: 'both' },
-    'P': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'Q': { topX: 16, bottomX: 16, from: 'high', to: 'origin', alignment: 'top' },
-    'R': { topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
-    'S': { topX: 11, bottomX: 11, from: 'high', to: 'origin', alignment: 'both' },
-    'T': { topX: 10, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
-    'U': { topX: 1, bottomX: 15, from: 'high', to: 'origin', alignment: 'both' },
-    'V': { topX: 1, bottomX: 15, from: 'high', to: 'origin', alignment: 'both' },
-    'W': { topX: 1, bottomX: 16, from: 'high', to: 'origin', alignment: 'both' },
-    'X': { topX: 1, bottomX: 1, from: 'high', to: 'origin', alignment: 'both' },
-    'Y': { topX: 1, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
-    'Z': { topX: 2, bottomX: 2, from: 'high', to: 'origin', alignment: 'both' },
+    'A': { letter: 'A', topX: 16, bottomX: 1, from: 'high', to: 'origin', alignment: 'both' },
+    'B': { letter: 'B', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'C': { letter: 'C', topX: 18, bottomX: 18, from: 'high', to: 'origin', alignment: 'both' },
+    'D': { letter: 'D', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'E': { letter: 'E', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'F': { letter: 'F', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'G': { letter: 'G', topX: 20, bottomX: 20, from: 'high', to: 'origin', alignment: 'both' },
+    'H': { letter: 'H', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'I': { letter: 'I', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'J': { letter: 'J', topX: 5, bottomX: 1, from: 'high', to: 'origin', alignment: 'top' },
+    'K': { letter: 'K', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'L': { letter: 'L', topX: 6, bottomX: 6, from: 'high', to: 'origin', alignment: 'both' },
+    'M': { letter: 'M', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'N': { letter: 'N', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'O': { letter: 'O', topX: 16, bottomX: 16, from: 'high', to: 'origin', alignment: 'both' },
+    'P': { letter: 'P', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'Q': { letter: 'Q', topX: 16, bottomX: 16, from: 'high', to: 'origin', alignment: 'top' },
+    'R': { letter: 'R', topX: 5, bottomX: 5, from: 'high', to: 'origin', alignment: 'both' },
+    'S': { letter: 'S', topX: 11, bottomX: 11, from: 'high', to: 'origin', alignment: 'both' },
+    'T': { letter: 'T', topX: 10, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
+    'U': { letter: 'U', topX: 1, bottomX: 15, from: 'high', to: 'origin', alignment: 'both' },
+    'V': { letter: 'V', topX: 1, bottomX: 15, from: 'high', to: 'origin', alignment: 'both' },
+    'W': { letter: 'W', topX: 1, bottomX: 16, from: 'high', to: 'origin', alignment: 'both' },
+    'X': { letter: 'X', topX: 1, bottomX: 1, from: 'high', to: 'origin', alignment: 'both' },
+    'Y': { letter: 'Y', topX: 1, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
+    'Z': { letter: 'Z', topX: 2, bottomX: 2, from: 'high', to: 'origin', alignment: 'both' },
 
-    'a': { topX: 14, bottomX: 1, from: 'medium', to: 'origin', alignment: 'both' },
-    'b': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'c': { topX: 15, bottomX: 15, from: 'medium', to: 'origin', alignment: 'both' },
-    'd': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'e': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'f': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'g': { topX: 17, bottomX: 17, from: 'medium', to: 'origin', alignment: 'both' },
-    'h': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'i': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'j': { topX: 7, bottomX: 1, from: 'medium', to: 'origin', alignment: 'top' },
-    'k': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'l': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'm': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'n': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'o': { topX: 14, bottomX: 14, from: 'medium', to: 'origin', alignment: 'both' },
-    'p': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    'q': { topX: 15, bottomX: 15, from: 'medium', to: 'origin', alignment: 'top' },
-    'r': { topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
-    's': { topX: 11, bottomX: 11, from: 'medium', to: 'origin', alignment: 'both' },
-    't': { topX: 11, bottomX: 11, from: 'medium', to: 'origin', alignment: 'both' },
-    'u': { topX: 1, bottomX: 14, from: 'medium', to: 'origin', alignment: 'both' },
-    'v': { topX: 1, bottomX: 13, from: 'medium', to: 'origin', alignment: 'both' },
-    'w': { topX: 1, bottomX: 13, from: 'medium', to: 'origin', alignment: 'both' },
-    'x': { topX: 1, bottomX: 1, from: 'medium', to: 'origin', alignment: 'both' },
-    'y': { topX: 1, bottomX: 10, from: 'medium', to: 'origin', alignment: 'both' },
-    'z': { topX: 1, bottomX: 1, from: 'medium', to: 'origin', alignment: 'both' },
+    'a': { letter: 'a', topX: 14, bottomX: 1, from: 'medium', to: 'origin', alignment: 'both' },
+    'b': { letter: 'b', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'c': { letter: 'c', topX: 15, bottomX: 15, from: 'medium', to: 'origin', alignment: 'both' },
+    'd': { letter: 'd', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'e': { letter: 'e', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'f': { letter: 'f', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'g': { letter: 'g', topX: 17, bottomX: 17, from: 'medium', to: 'origin', alignment: 'both' },
+    'h': { letter: 'h', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'i': { letter: 'i', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'j': { letter: 'j', topX: 7, bottomX: 1, from: 'medium', to: 'origin', alignment: 'top' },
+    'k': { letter: 'k', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'l': { letter: 'l', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'm': { letter: 'm', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'n': { letter: 'n', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'o': { letter: 'o', topX: 14, bottomX: 14, from: 'medium', to: 'origin', alignment: 'both' },
+    'p': { letter: 'p', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    'q': { letter: 'q', topX: 15, bottomX: 15, from: 'medium', to: 'origin', alignment: 'top' },
+    'r': { letter: 'r', topX: 5, bottomX: 5, from: 'medium', to: 'origin', alignment: 'both' },
+    's': { letter: 's', topX: 11, bottomX: 11, from: 'medium', to: 'origin', alignment: 'both' },
+    't': { letter: 't', topX: 11, bottomX: 11, from: 'medium', to: 'origin', alignment: 'both' },
+    'u': { letter: 'u', topX: 1, bottomX: 14, from: 'medium', to: 'origin', alignment: 'both' },
+    'v': { letter: 'v', topX: 1, bottomX: 13, from: 'medium', to: 'origin', alignment: 'both' },
+    'w': { letter: 'w', topX: 1, bottomX: 13, from: 'medium', to: 'origin', alignment: 'both' },
+    'x': { letter: 'x', topX: 1, bottomX: 1, from: 'medium', to: 'origin', alignment: 'both' },
+    'y': { letter: 'y', topX: 1, bottomX: 10, from: 'medium', to: 'origin', alignment: 'both' },
+    'z': { letter: 'z', topX: 1, bottomX: 1, from: 'medium', to: 'origin', alignment: 'both' },
 
-    '0': { topX: 13, bottomX: 13, from: 'high', to: 'origin', alignment: 'both' },
-    '1': { topX: 16, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
-    '2': { topX: 15, bottomX: 3, from: 'high', to: 'origin', alignment: 'both' },
-    '3': { topX: 13, bottomX: 3, from: 'high', to: 'low', alignment: 'both' },
-    '4': { topX: 22, bottomX: 16, from: 'high', to: 'origin', alignment: 'both' },
-    '5': { topX: 5, bottomX: 5, from: 'high', to: 'low', alignment: 'both' },
-    '6': { topX: 21, bottomX: 13, from: 'high', to: 'origin', alignment: 'both' },
-    '7': { topX: 3, bottomX: 8, from: 'high', to: 'origin', alignment: 'both' },
-    '8': { topX: 14, bottomX: 14, from: 'high', to: 'origin', alignment: 'both' },
-    '9': { topX: 14, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
+    '0': { letter: '0', topX: 13, bottomX: 13, from: 'high', to: 'origin', alignment: 'both' },
+    '1': { letter: '1', topX: 16, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
+    '2': { letter: '2', topX: 15, bottomX: 3, from: 'high', to: 'origin', alignment: 'both' },
+    '3': { letter: '3', topX: 13, bottomX: 3, from: 'high', to: 'low', alignment: 'both' },
+    '4': { letter: '4', topX: 22, bottomX: 16, from: 'high', to: 'origin', alignment: 'both' },
+    '5': { letter: '5', topX: 5, bottomX: 5, from: 'high', to: 'low', alignment: 'both' },
+    '6': { letter: '6', topX: 21, bottomX: 13, from: 'high', to: 'origin', alignment: 'both' },
+    '7': { letter: '7', topX: 3, bottomX: 8, from: 'high', to: 'origin', alignment: 'both' },
+    '8': { letter: '8', topX: 14, bottomX: 14, from: 'high', to: 'origin', alignment: 'both' },
+    '9': { letter: '9', topX: 14, bottomX: 10, from: 'high', to: 'origin', alignment: 'both' },
 };
 export const drawFitGlyph = ({
     ctx,
@@ -263,10 +264,11 @@ export const drawFitGlyph = ({
         /** If the height difference is more than acceptable maxAdjustment => just return the glyph as is without adjustment */
         const initialProbeResult = probe({ canvas: baseCanvas, topX: probeTopX, bottomX: probeBotX, opacityThreshold, debug: false });
         if (maxAdjustment > 0 && Math.abs(initialProbeResult.height - expectedHeight) > maxAdjustment) {
-            ctx.drawImage(baseCanvas, 0, base);
+            ctx.drawImage(baseCanvas, 0, 0);
             return true;
         }
 
+        let foundResult = false;
         let probeResult = { top: 0, bottom: 0, height: 0 };
         /** We always prefer not adjusting anything */
         const stretchingList = [0];
@@ -284,10 +286,15 @@ export const drawFitGlyph = ({
             const currentProbeResult = probe({ canvas: adjustedCanvas, topX: probeTopX, bottomX: probeBotX, opacityThreshold, debug });
             if (currentProbeResult.height === expectedHeight) {
                 probeResult = currentProbeResult;
+                foundResult = true;
                 break;
             }
         }
-        ctx.drawImage(adjustedCanvas, 0, base - line[to] - (probeResult.bottom + 1));
+        if (foundResult) {
+            ctx.drawImage(adjustedCanvas, 0, base - line[to] - (probeResult.bottom + 1));
+        } else {
+            ctx.drawImage(baseCanvas, 0, 0);
+        }
     } else {
         adjustedCtx.clearRect(0, 0, adjustedCanvas.width, adjustedCanvas.height);
         adjustedCtx.drawImage(

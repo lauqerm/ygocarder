@@ -144,10 +144,16 @@ export const CanvasConst = {
         x: 0, y: 145,
         width: 813, height: 50,
     },
+    nameBox: {
+        name: 'nameBox' as const,
+        x: 44, y: 47,
+        width: 726, height: 91,
+    },
 };
 export const MoveableRegionMap = {
     effectBox: CanvasConst.effectBox,
     starBox: CanvasConst.starBox,
+    nameBox: CanvasConst.nameBox,
 };
 export type RegionOffset = {
     x: number,

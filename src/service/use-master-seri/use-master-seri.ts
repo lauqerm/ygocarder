@@ -83,6 +83,9 @@ const {
     stickerX,
     stickerY,
     stickerSize,
+    effectBox,
+    starBox,
+    nameBox,
 } = CanvasConst;
 type DrawerProp = {
     imageChangeCount: number,
@@ -299,7 +302,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
     ]);
     const foilDyeColor = dyeList[6];
     const effectBoxOffsetData = useMemo(
-        () => parseOffset(coordinateMap.effectBox, CanvasConst.effectBox),
+        () => parseOffset(coordinateMap.effectBox, effectBox),
         [coordinateMap.effectBox],
     );
 
@@ -379,9 +382,16 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
 
             if (!clearCanvas(ctx) || !nameCanvasRef.current) return;
 
+            const {
+                canvas: wokringCanvas,
+                ctx: workingCtx,
+            } = createCanvas(CanvasWidth, 148);
+            const {
+                x, y,
+            } = parseOffset(coordinateMap.nameBox, nameBox);
             await drawName(
-                nameCanvasRef.current,
-                ctx,
+                wokringCanvas,
+                workingCtx,
                 name,
                 format === 'tcg' ? 63 : 68, 116,
                 attribute === NO_ATTRIBUTE
@@ -390,20 +400,22 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 resolveNameStyle({ format, region, frame, nameStyle, nameStyleType, foil }),
                 { isSpeedSkill, format, frame, furiganaHelper: textFuriganaHelper, globalScale },
             );
+            ctx.drawImage(wokringCanvas, -x, -y);
         };
     }, [
-        readyToDraw,
-        globalScale,
         attribute,
+        coordinateMap.nameBox,
         foil,
         format,
         frame,
         furiganaHelper,
+        globalScale,
         isSpeedSkill,
         name,
         nameCanvasRef,
         nameStyle,
         nameStyleType,
+        readyToDraw,
         region,
         textFuriganaHelper,
     ]);
@@ -1262,7 +1274,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 textStyle: resolvedTypeTextStyle,
                 offsetData: typeInEffect
                     ? effectBoxOffsetData
-                    : parseOffset(coordinateMap.starBox, CanvasConst.starBox),
+                    : parseOffset(coordinateMap.starBox, starBox),
                 size: !typeInEffect
                     ? 'large'
                     : (isPendulum && pendulumSize === 'large')

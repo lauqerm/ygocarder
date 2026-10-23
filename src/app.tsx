@@ -759,7 +759,7 @@ function App() {
                                         <canvas id="nameCanvas"
                                             ref={nameCanvasRef}
                                             width={CanvasWidth * globalScale}
-                                            height={148 * globalScale}
+                                            height={CanvasHeight * globalScale}
                                         />
                                         <canvas id="cardIconCanvas"
                                             ref={cardIconCanvasRef}

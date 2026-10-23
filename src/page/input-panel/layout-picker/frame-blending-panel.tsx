@@ -158,7 +158,6 @@ export const FrameBlendingPanel = ({
             return null;
         })
         .filter(entry => entry != null);
-    console.log(flag);
     const isActive = layoutState['bottomLeftFrame'] !== 'auto'
         || layoutState['bottomRightFrame'] !== 'auto'
         || layoutState['topLeftFrame'] !== 'auto'

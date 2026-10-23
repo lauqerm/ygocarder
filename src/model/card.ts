@@ -36,6 +36,7 @@ export const getDefaultIconCrop = () => ({
 export const getDefaultCoordinateMap = (): Record<keyof typeof MoveableRegionMap, string | undefined> => ({
     effectBox: compileCoordinate(CanvasConst.effectBox),
     starBox: compileCoordinate(CanvasConst.starBox),
+    nameBox: compileCoordinate(CanvasConst.nameBox),
 });
 
 export type Series = 'modern' | 'classic';

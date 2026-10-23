@@ -233,6 +233,7 @@ const currentCardFieldShortenMap: Record<keyof Card, string | Record<string, str
         _newKey: 'cm',
         effectBox: 'cmeb',
         starBox: 'cmsb',
+        nameBox: 'cmnb',
     },
     externalInfo: 'ei',
 };
