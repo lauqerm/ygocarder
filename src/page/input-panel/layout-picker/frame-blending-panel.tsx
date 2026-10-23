@@ -21,7 +21,7 @@ const StyledFrameSettingModal = styled(Modal)`
         padding: 0;
     }
 `;
-const StyledPendulumFrameInputContainer = styled.div`
+const StyledPendulumFrameInputContainer = styled.div<{ $active?: boolean, $softMode?: boolean }>`
     display: inline-flex;
     cursor: pointer;
     vertical-align: bottom;
@@ -57,6 +57,15 @@ const StyledPendulumFrameInputContainer = styled.div`
         border: none;
         overflow: hidden;
     }
+    ${({ $active }) => $active ? 'border: var(--bw) solid var(--main-active);' : 'border: var(--bw) solid var(--sub-level-1);'}
+    ${({ $softMode, $active }) => {
+        return $softMode
+            ? `
+                border: var(--bw) solid var(--main-level-4);
+                ${$active ? 'outline: var(--bw) solid var(--main-active);' : ''}
+            `
+            : '';
+    }}
 `;
 type BottomFrameOptionGridRef = {
     focus: () => void,
@@ -80,6 +89,7 @@ export const FrameBlendingPanel = ({
         effectBackground, pendulumEffectBackground,
         dyeList,
         flag,
+        overlay, overlaySource, overlayData,
     } = useCard(useShallow(({
         card: {
             isPendulum,
@@ -91,6 +101,7 @@ export const FrameBlendingPanel = ({
             pendulumStyle,
             dyeList,
             flag,
+            overlay, overlaySource, overlayData,
         },
     }) => ({
         isPendulum,
@@ -102,6 +113,7 @@ export const FrameBlendingPanel = ({
         pendulumEffectBackground: pendulumStyle.background,
         dyeList,
         flag,
+        overlay, overlaySource, overlayData,
     })));
     const {
         showCreativeOption,
@@ -115,6 +127,7 @@ export const FrameBlendingPanel = ({
         showCreativeOption,
         showExtraDecorativeOption,
     })));
+    const reduceMotionColor = useSetting(state => state.setting.reduceMotionColor);
     const containerRef = useRef<HTMLDivElement>(null);
     const frameBlenderRef = useRef<BottomFrameOptionGridRef>(null);
     const [frameBlenderVisible, setFrameBlenderVisible] = useState(false);
@@ -145,7 +158,17 @@ export const FrameBlendingPanel = ({
             return null;
         })
         .filter(entry => entry != null);
-
+    console.log(flag);
+    const isActive = layoutState['bottomLeftFrame'] !== 'auto'
+        || layoutState['bottomRightFrame'] !== 'auto'
+        || layoutState['topLeftFrame'] !== 'auto'
+        || layoutState['topRightFrame'] !== 'auto'
+        || layoutState['effectBackground'] !== 'auto'
+        || layoutState['pendulumEffectBackground'] !== 'auto'
+        || foil !== 'normal'
+        || dyeList.join('') !== ''
+        || ((overlaySource === 'offline' && overlayData.length !== 0) || (overlaySource === 'online' && overlay.length !== 0))
+        || flag.some(entry => entry !== 0);
     return <>
         <StyledFrameSettingModal
             visible={frameBlenderVisible}
@@ -175,6 +198,8 @@ export const FrameBlendingPanel = ({
         {showCreativeOption && <StyledPendulumFrameInputContainer ref={containerRef}
             className="frame-blend-input"
             tabIndex={0}
+            $active={isActive}
+            $softMode={reduceMotionColor}
             onClick={() => setFrameBlenderVisible(true)}
             onKeyDown={e => {
                 if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === '  ') {

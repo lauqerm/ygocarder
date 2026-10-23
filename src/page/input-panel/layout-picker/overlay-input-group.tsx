@@ -11,6 +11,9 @@ const StyledImageCropper = styled(ImageCropper)`
     grid-template-columns: max-content max-content;
     align-items: start;
     gap: 0;
+    .card-image-source-input-container {
+        padding: 0;
+    }
     .card-image-source-input {
         display: flex;
         flex-direction: column;
