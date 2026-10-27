@@ -1,13 +1,13 @@
 {
-  "version": "7e34f6b3ff00abb5",
-  "generatedAt": "2026-10-23T10:04:50.030Z",
+  "version": "30675a14f4bbb7db",
+  "generatedAt": "2026-10-27T13:24:35.061Z",
   "basePath": "/ygocarder/",
   "assetCount": 666,
-  "totalBytes": 102628936,
+  "totalBytes": 102632506,
   "assets": {
     "/ygocarder/asset/font.css": {
-      "hash": "62e6b4a8a85c0c1b",
-      "size": 2627
+      "hash": "927e46a66e38bcdf",
+      "size": 2720
     },
     "/ygocarder/asset/font/DFHsg3.ttf": {
       "hash": "891be08f88c2c1a9",
@@ -46,8 +46,8 @@
       "size": 13804
     },
     "/ygocarder/asset/font/README-SIMPLIFIED-CHINESE.md": {
-      "hash": "86ecdbc430842f80",
-      "size": 606
+      "hash": "8f77f9b0b3f33a3b",
+      "size": 620
     },
     "/ygocarder/asset/font/RoGSanSrfStd-Bd.otf": {
       "hash": "e7c93ff7251c4ccc",
@@ -118,24 +118,24 @@
       "size": 24764
     },
     "/ygocarder/asset/i18n/eng.json": {
-      "hash": "e9dcd4ff39b962f5",
-      "size": 44881
+      "hash": "f3eacf3c6b8974d8",
+      "size": 45484
     },
     "/ygocarder/asset/i18n/jap.json": {
-      "hash": "456eb60927e97527",
-      "size": 51141
+      "hash": "0d07737c53586776",
+      "size": 51720
     },
     "/ygocarder/asset/i18n/metadata.json": {
-      "hash": "dd119469b1f7eb47",
-      "size": 1406
+      "hash": "f4d92404a0e0e3c7",
+      "size": 1459
     },
     "/ygocarder/asset/i18n/vie.json": {
-      "hash": "b3065b9482f7b8bf",
-      "size": 49169
+      "hash": "03d3b54382117625",
+      "size": 49747
     },
     "/ygocarder/asset/i18n/zhs.json": {
-      "hash": "7fc4a7ec3fb709d4",
-      "size": 43147
+      "hash": "d4d3ed2dc6dcf794",
+      "size": 43747
     },
     "/ygocarder/asset/image/attribute/attr-ch-dark.png": {
       "hash": "4bdad1239b4dd115",
@@ -2658,12 +2658,12 @@
       "size": 198
     },
     "/ygocarder/asset/log/version.json": {
-      "hash": "6164d596335564cb",
-      "size": 31200
+      "hash": "9e6ef3af7df88d60",
+      "size": 32211
     },
     "/ygocarder/asset/ocg-font.css": {
-      "hash": "828be84ec77a5e4a",
-      "size": 966
+      "hash": "57cd709284baea78",
+      "size": 1005
     },
     "/ygocarder/asset/script/JSONCrush.min.js": {
       "hash": "5747c2d8a975f968",
