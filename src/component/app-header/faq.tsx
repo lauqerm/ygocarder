@@ -44,10 +44,30 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '20/10/2026';
+const currentReminder = '27/10/2026';
 const feedbackList: Feedback[] = [
     {
-        author: 'Anonymous Admin at Oct 18, 2026',
+        author: 'Anonymous at Oct 24, 2026',
+        question: 'Just a question. Any way to:\n- Remove the Pendulum Effect box in pendulum mode?\n- Extend the height of the main effect box in pendulum mode?',
+        answer: 'Hi there, unfortunately both are not possible at this moment. I have tried to implement this feature before, but the results are not good enough to ship. I may look at these again in the near future.'
+    },
+    {
+        author: 'Xeno at Oct 23, 2026',
+        question: 'Hello, I\'m having a rather strange issue, if I click on the "Download" button to save a card to my PC, it will override the saved folder used for the "Browse" button to whatever folder I saved the card to (I save artworks and completed cards in separate folders). But this doesn\'t happen in reverse, "Browse" does not reset the "Download" button. This was not always the case, neither of these buttons interfered with each other, but I haven\'t used this site in a few weeks so I have no idea when specifically this changed.\n\nThanks for making the best card maker on the internet, I\'ll make do with a shortcut for now.',
+        answer: 'Thanks for your kind words. For the problem you mentioned, it is very likely a browser change that is outside of my control. I will try to look around for a fix, but chances are I can\'t really do anything about that.'
+    },
+    {
+        author: 'Anonymous at Oct 22, 2026',
+        question: 'Hi. The star seems a bit more round and smaller than the TCG one. I tried using it with Evil Twin and stuff, but it still looks the same :(',
+        answer: 'Hi there, I have updated both forms of star icons, hopefully it looks better now.'
+    },
+    {
+        author: 'RedSupernovaDragon at Oct 21, 2026',
+        question: 'I\'m back! Yes, it\'s really hard to see if there is a problem or not on those letters, in your attached image. I personally see it on the cards produced, as well as on the site, but again if you need to do tests that\'s fine!\nAny progress on the other minor adjustment I mentioned, the ATK/DEF bar?',
+        answer: 'To be honest, I completely forgot about that 🥲, I will look into it later. For the main problem regarding the card name, I *may* have some clues about what is going on, but I need to be able to reproduce it consistently before attempting any additional fix.'
+    },
+    {
+        author: 'Anonymous at Oct 18, 2026',
         question: 'I tried applying my custom colour but the star icon is getting cropped up. It works fine by using the default colours.',
         answer: 'Hi there, could you try some other names like "Evil★Twins Ki-sikil & Lil-la" and see if the problem still persists? The app still renders correctly on my end, so I can\'t quite reproduce the issue just yet.',
         image: ['https://i.postimg.cc/L8DBMbsx/image.png'],

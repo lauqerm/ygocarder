@@ -48,8 +48,8 @@ const BaseNameFontDataMap: Record<'Default' | 'Arial' | 'OCG', NameFontData> = {
                 offsetY: 0,
             }],
             letterOffsetMap: {
-                '★': { ratio: 0.55, baseline: -0.05, yRatio: 1 },
-                '☆': { ratio: 0.55, baseline: -0.05, yRatio: 1 },
+                '★': { ratio: 0.7, baseline: 0.0, edge: 0.05, yRatio: 1 },
+                '☆': { ratio: 0.7, baseline: 0.0, edge: 0.05, yRatio: 1 },
                 '¡': { ratio: 1, baseline: -0.098, edge: 0.02, yRatio: 0.58 },
             },
             letterDeviationMap: {
