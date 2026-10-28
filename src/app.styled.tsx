@@ -195,12 +195,21 @@ export const StyledByMe = styled.div`
 	right: var(--spacing);
 	bottom: 0;
 	font-size: var(--fs-xs);
-	opacity: 0.5;
-	padding: var(--spacing-px) var(--spacing-xs);
+	padding: var(--spacing-xxs) var(--spacing-xxs);
 	color: var(--color-dim);
-    img {
-        height: 10px;
-        margin-left: 1px;
+    text-align: right;
+    line-height: 2;
+    .by-name {
+	    opacity: 0.5;
+        img {
+            height: 10px;
+            margin-left: 1px;
+        }
+    }
+    picture {
+        img {
+            height: 35px;
+        }
     }
 `;
 

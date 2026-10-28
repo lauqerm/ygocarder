@@ -905,7 +905,23 @@ function App() {
                         <FileImageOutlined /><br /><div>{language['button.far-sight.label']}</div>
                     </FarSightButton>
                     <StyledByMe className="by-me" id="hash-2">
-                        Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
+                        <div className="by-name">
+                            Made by Lauqerm <img src="https://i.imgur.com/RY6IRqn.png" alt="avatar" />
+                        </div>
+                        <a href="https://www.simpleanalytics.com?utm_source=example.com&utm_content=badge" referrerPolicy="origin" target="_blank">
+                            <picture>
+                                <source
+                                    srcSet="https://simpleanalyticsbadges.com/example.com?mode=dark&counter=false&radius=1&logo=%238888aa&background=%23333333&text=%23d3d3d6"
+                                    media="(prefers-color-scheme: dark)"
+                                />
+                                <img
+                                    src="https://simpleanalyticsbadges.com/example.com?mode=dark&counter=false&radius=1&logo=%238888aa&background=%23333333&text=%23d3d3d6"
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer"
+                                    crossOrigin="anonymous"
+                                />
+                            </picture>
+                        </a>
                     </StyledByMe>
                     <GlyphFitBox>
                         <canvas id={BASE_CANVAS_ID} />

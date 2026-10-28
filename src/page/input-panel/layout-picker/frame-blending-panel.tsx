@@ -33,7 +33,6 @@ const StyledPendulumFrameInputContainer = styled.div<{ $active?: boolean, $softM
         outline: 2px solid var(--focus);
     }
     .flag-list-indicator {
-        box-shadow: 0 0 0 var(--bw) var(--sub-level-1) inset;
         padding: var(--spacing-xxs) var(--spacing-xs);
         border-radius: 0 var(--br-lg) var(--br-lg) 0;
         &:empty:before {
@@ -43,8 +42,6 @@ const StyledPendulumFrameInputContainer = styled.div<{ $active?: boolean, $softM
     .pendulum-frame-label {
         display: inline-block;
         background: var(--main-level-4);
-        border: var(--bw) solid var(--sub-level-1);
-        border-right: none;
         padding: var(--spacing-px) var(--spacing-xs);
         border-radius: var(--br-lg) 0 0 var(--br-lg);
         &:last-child {
@@ -147,7 +144,7 @@ export const FrameBlendingPanel = ({
         effectBackground,
         pendulumEffectBackground,
     };
-    const advanceLayoutPreviewHeight = 28; // Alignment with frame input
+    const advanceLayoutPreviewHeight = 26; // Alignment with frame input
     const flagList = flag
         .map((entry, index) => {
             const target = FlagPresentationList[index];
