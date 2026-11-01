@@ -263,7 +263,6 @@ export const CardInputPanel = forwardRef<CardInputPanelRef, CardInputPanel>(({
             resetCardData={resetCardData}
             applyCardData={applyCardData}
         />
-        <br />
         <Affiliation />
 
         <div className="card-overlay-input">

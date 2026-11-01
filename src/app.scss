@@ -229,13 +229,13 @@ hr {
     }
     .card-info-panel {
         flex: 3;
-        padding: var(--spacing);
+        padding: var(--spacing-sm);
         color: var(--color-heavy);
         text-shadow: var(--ts);
         position: relative;
     }
     .card-preview-panel {
-        flex: 0 0 580px;
+        flex: 0 0 574px; // Alignment
         position: relative;
         overflow: hidden;
         &.export-tainted {

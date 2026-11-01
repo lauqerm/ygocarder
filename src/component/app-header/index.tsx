@@ -26,7 +26,7 @@ export const Affiliation = () => {
 };
 
 const AppHeaderContainer = styled.div`
-    display: inline-grid;
+    display: grid;
     grid-template-columns: max-content 2fr 1fr;
     margin-bottom: var(--spacing-sm);
     background-color: var(--main-level-3);
@@ -34,6 +34,7 @@ const AppHeaderContainer = styled.div`
     border-radius: var(--br);
     box-shadow: var(--bs-block);
     transition: width linear 2s;
+    max-width: 950px;
     .app-logo {
         cursor: pointer;
         padding: 3px 0; // Alignment
