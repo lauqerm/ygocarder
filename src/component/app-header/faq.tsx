@@ -44,8 +44,22 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '27/10/2026';
+const currentReminder = '01/11/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Vendoz at Nov 01, 2026',
+        question: 'RE: Just a heads up, I just found out the effect text become "jittery" every time I try to open the \'Text style\' tab.'
+    },
+    {
+        author: 'Vendoz at Nov 01, 2026',
+        question: 'IHello Lau, The effect text kinda like crunchy everytime i try to import an existing file, usually it solved itself by realoding the page.. however it kinda persistent now. Thanks for your time Lau.',
+        answer: 'Hi, can you help me click the original size button (the button on the top right corner of the card when you hover the mouse over the top of it) and confirm that the problem still happens? I\'ve tried to recreate your problem, but so far everything seems fine on my device, so I\'m not sure what could cause the problem to persist yet.'
+    },
+    {
+        author: 'Ryan at Oct 28, 2026',
+        question: 'Importing a card loads the image as always cropped, needing to press "Use Whole Image".',
+        answer: 'Hi, when you said "importing a card," did you mean import a real card (like writing "Blue-Eyes White Dragon" in the input panel), or did you mean you load a JSON file? This will help me narrow down the problem.'
+    },
     {
         author: 'Anonymous at Oct 24, 2026',
         question: 'Just a question. Any way to:\n- Remove the Pendulum Effect box in pendulum mode?\n- Extend the height of the main effect box in pendulum mode?',
