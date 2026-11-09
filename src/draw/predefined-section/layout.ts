@@ -673,9 +673,15 @@ export const getLayoutDrawFunction = ({
             ctx.scale(globalScale, globalScale);
             await drawAsset(ctx, `frame/frame-border-${frameBorderType}.png`, 0, 0);
             if (isPendulum && !isXyz) await drawAsset(ctx, 'frame/frame-border-pendulum.png', 0, 0);
-            if (frame === 'dynamis') await drawAsset(ctx, 'frame/frame-border-dynamis.png', 0, 0);
             ctx.resetTransform();
             return;
+        },
+        /** Dynamis exclusive side arrows. Not optional: always drawn for the Dynamis frame, on top of the art and its border. */
+        drawDynamisArrow: async () => {
+            if (!ctx || frame !== 'dynamis') return;
+            ctx.scale(globalScale, globalScale);
+            await drawAsset(ctx, 'frame/frame-border-dynamis.png', 0, 8);
+            ctx.resetTransform();
         },
         drawNameBorder: async () => {
             if (nameBorder && ctx) {

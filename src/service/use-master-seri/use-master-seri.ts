@@ -401,6 +401,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 drawEffectBackground,
 
                 drawFrameBorder,
+                drawDynamisArrow,
                 drawNameBorder,
                 drawArtBorder,
                 drawPendulumBorder,
@@ -604,6 +605,7 @@ export const useMasterSeriDrawer = (active: boolean, canvasMap: MasterSeriesCanv
                 await drawNameBorder();
                 await drawFrameBorder();
             }
+            await drawDynamisArrow();
             try {
                 await drawAttribute();
             } catch (e) {
