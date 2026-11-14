@@ -44,8 +44,19 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '01/11/2026';
+const currentReminder = '14/11/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Nov 09, 2026',
+        question: 'Hello,\npossible minor update that could be implemented: are we sure that the level bar is aligned correctly? I mean horizontally, as by applying Level 12 it seems like it is not aligned to the artwork frame border (the rightmost star seems to go out a tiny bit, which also explains why the leftmost one appears shifted inside)',
+        answer: 'I\'ve nudged the render position a bit to the right; it should have better alignment now. This affects every level number from 1 to 12.'
+    },
+    {
+        author: 'Vendoz at Nov 02, 2026',
+        question: 'RE:RE "Jittery letters on effect text"',
+        answer: 'I\'ve tried to reproduce the issue on Firefox, but the result is still unlike your provided image. I\'m sorry, but right now I have no other lead to resolve the problem yet.',
+        image: ['https://i.postimg.cc/8CYF7WxX/image.png'],
+    },
     {
         author: 'Vendoz at Nov 01, 2026',
         question: 'RE: Just a heads up, I just found out the effect text become "jittery" every time I try to open the \'Text style\' tab.'

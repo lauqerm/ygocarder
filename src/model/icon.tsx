@@ -657,7 +657,7 @@ export const IconTypeStMap: Record<string, IconTypeInfo> = {
 export const IconTypeStList = Object.values(IconTypeStMap);
 
 export const IconWithGlowMap = {
-    'rank': 'rank',
+    // 'rank': 'rank',
     'ritual': 'ritual',
     'ritual-l': 'ritual-l',
     'spell': 'spell',

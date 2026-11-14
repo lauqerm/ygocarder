@@ -43,7 +43,7 @@ export const drawStarContent = async ({
         ? starList
         : [];
     const starWidth = 50;
-    const starSpacing = 3.8;
+    const starSpacing = 3.9;
     let normalizedStarCount = cardIcon === 'custom'
         ? normalizedStarList.length
         : typeof star === 'string'
@@ -68,8 +68,8 @@ export const drawStarContent = async ({
     const leftEdge = alignment === 'center'
         ? x + (CanvasWidth + totalWidth) / 2
         : alignment === 'left'
-            ? x + 86 + totalWidth
-            : x + 729;
+            ? x + 85 + totalWidth
+            : x + 728;
 
     let offset = 0 - (starWidth + starSpacing);
 
