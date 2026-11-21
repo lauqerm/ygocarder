@@ -217,7 +217,7 @@ export const drawStatText = (
     const cursorEndOfATK = fillTextLeftWithSpacing(ctx, value, 0.075, edge, baseline / 0.98);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(1, 1.01);
-    ctx.font = `bold ${34.74 * globalScale}px Matrix-Bold`;
+    ctx.font = `bold ${36 * globalScale}px Matrix-Bold`;
     fillTextLeftWithSpacing(ctx, '/', 0.15, cursorEndOfATK + 5 * globalScale, baseline / 1.01);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 };

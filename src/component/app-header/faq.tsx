@@ -44,8 +44,18 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '14/11/2026';
+const currentReminder = '21/11/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'Vendoz at Nov 21, 2026',
+        question: 'Hello Lau, just found a solution for my own problem, by clearing the cache and pressing the paintbrush ^_^',
+        answer: 'That\'s great to hear! Glad you have found a solution because I really am out of options to fix this otherwise.'
+    },
+    {
+        author: 'RedSupernovaDragon at Nov 16, 2026',
+        question: 'yes, now the level is aligned as it should! What about the slash in the ATK/DEF bar? Checking on real cards, it turns out that only a minor height increase is necessary.',
+        answer: 'Hi, I\'ve pushed their height a bit, too; I try to go for a whole pixel because otherwise it creates a faint half-pixel which doesn\'t look good to me. Let me know if it looks ok to you now.'
+    },
     {
         author: 'RedSupernovaDragon at Nov 09, 2026',
         question: 'Hello,\npossible minor update that could be implemented: are we sure that the level bar is aligned correctly? I mean horizontally, as by applying Level 12 it seems like it is not aligned to the artwork frame border (the rightmost star seems to go out a tiny bit, which also explains why the leftmost one appears shifted inside)',
