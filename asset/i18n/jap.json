@@ -575,6 +575,7 @@
         "generic.recommended.label": "Recommended",
         "error.json-import.success.description": "{count} files imported.",
         "error.json-import.failed.description": "{count} files could not be imported.",
+        "manager.button.delete-all.label": "Delete selected cards?",
         "error.json-import.partial.description": "{count} files partially imported."
     }
 }

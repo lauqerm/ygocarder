@@ -466,6 +466,7 @@
         "manager.button.delete.confirm.label": "Delete",
         "manager.button.delete.label": "Delete this card?",
         "manager.button.delete.tooltip": "Delete",
+        "manager.button.delete-all.label": "Delete selected cards?",
         "manager.button.download.tooltip": "Copy raw data",
         "manager.button.duplicate.tooltip": "Duplicate",
         "manager.card.copy-suffix": "Copy",
