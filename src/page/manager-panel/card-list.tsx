@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getEmptyCard, InternalCard, PUBLIC_PATH } from 'src/model';
 import { v4 as uuid } from 'uuid';
 import styled from 'styled-components';
-import { Button, Dropdown, Menu } from 'antd';
+import { Button, Checkbox, Dropdown, Menu, Popconfirm, Tooltip } from 'antd';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { ListChildComponentProps, FixedSizeList as List } from 'react-window';
 import { BatchDownloadButton } from './batch-download-button';
@@ -30,8 +30,8 @@ const StyledManagerCardList = styled.div`
         margin-bottom: var(--spacing-xs);
     }
     .select-panel {
-        display: grid;
-        grid-template-columns: max-content max-content 1fr;
+        display: flex;
+        flex-wrap: wrap;
         padding: var(--spacing-xs);
         gap: var(--spacing-xs);
         text-align: right;
@@ -40,6 +40,10 @@ const StyledManagerCardList = styled.div`
         }
         .scheme-button {
             display: inline-block;
+        }
+        .scheme-dropdown {
+            flex: 1 0 auto;
+            text-align: right;
         }
     }
     .no-card {
@@ -157,6 +161,7 @@ export const ManagerCardList = ({
         updateSetting,
     })));
 
+    // const [isDeletingAll, setDeletingAll] = useState(false);
     const [reselectCnt, setReselectCnt] = useState(0);
 
     const onSelect: CardThumbRowData['onSelect'] = useCallback((card, type) => {
@@ -166,7 +171,7 @@ export const ManagerCardList = ({
         duplicateCard(card, language['manager.card.copy-suffix']);
     }, [duplicateCard, language]);
     const deleteAndReselect = (id: string) => {
-        deleteCard(id);
+        deleteCard([id]);
         setReselectCnt(cnt => cnt + 1);
     };
     /** Throttle re-select after delete */
@@ -182,6 +187,7 @@ export const ManagerCardList = ({
                     /** Empty list, create placeholder card */
                     const emptyCard = { id: uuid(), ...getEmptyCard() };
                     setCardList([emptyCard], emptyCard.name);
+                    onActive(emptyCard);
                 }
             }
         }, 500);
@@ -189,27 +195,53 @@ export const ManagerCardList = ({
         return () => {
             relevant = false;
         };
-    }, [onActive, reselectCnt]);
+    }, [onActive, onSelect, reselectCnt]);
 
+    const selectedLength = Object.keys(selectedMap).length;
     return <StyledManagerCardList
         style={{
             backgroundImage: `url("${PUBLIC_PATH}/asset/image/texture/dark-denim-3.png")`,
         }}
     >
         {cardDisplayList.length > 0 && <div className="select-panel">
+            <Checkbox
+                indeterminate={selectedLength > 0 && selectedLength < cardDisplayList.length}
+                checked={selectedLength === cardDisplayList.length}
+                onChange={() => {
+                    if (selectedLength >= cardDisplayList.length) {
+                        setSelectMap([], 'replace');
+                    } else {
+                        setSelectMap(cardDisplayList, 'add');
+                    }
+                }}
+            />
             <Button
                 size="small"
                 onClick={() => setSelectMap([], 'replace')}
             >
                 {language['manager.batch.batch-download.clear.label']}
             </Button>
-            <Button
-                size="small"
-                onClick={() => setSelectMap(cardDisplayList, 'add')}
+            <Popconfirm
+                placement="left"
+                title={language['manager.button.delete-all.label']}
+                onConfirm={() => {
+                    deleteCard(Object.values(selectedMap));
+                    setSelectMap([], 'replace');
+                    setReselectCnt(cnt => cnt + 1);
+                }}
+                okText={language['manager.button.delete.confirm.label']}
+                cancelText={language['manager.button.delete.cancel.label']}
             >
-                {language['manager.batch.batch-download.all.label']}
-            </Button>
-            <div>
+                <Tooltip placement="left" title={language['manager.button.delete.tooltip']}>
+                    <Button
+                        size="small"
+                    // disabled={isDeletingAll}
+                    >
+                        {language['manager.button.delete.tooltip']}
+                    </Button>
+                </Tooltip>
+            </Popconfirm>
+            <div className="scheme-dropdown">
                 <Dropdown
                     overlay={<Menu>
                         {[

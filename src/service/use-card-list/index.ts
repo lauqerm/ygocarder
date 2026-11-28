@@ -208,7 +208,7 @@ export type CardListStore = {
     addCard: (card: Card) => void,
     changeActiveCard: (nextActiveCard: InternalCard, checkPurity?: boolean) => void,
     changeEditStatus: (event: 'download' | 'load' | 'switch-card' | 'update-card') => void,
-    deleteCard: (id: string) => void,
+    deleteCard: (idList: string[]) => void,
     selectCard: (id: string, type: 'add' | 'remove') => void,
     duplicateCard: (card: Card, copySuffix?: string) => void,
     resetFilter: () => void,
@@ -337,19 +337,24 @@ export const useCardList = create<
                 cardDisplayList: [...cardList],
             });
         },
-        deleteCard: id => {
+        deleteCard: idList => {
             set(({ cardList, activeId, cardDisplayList }) => {
-                const normalizedCardList = cardList.filter(card => card.id !== id);
-                const normalizedCardDisplayList = cardDisplayList.filter(card => card.id !== id);
-                const currentActiveId = normalizedCardDisplayList.findIndex(card => card.id === activeId);
-                const nextActiveId = activeId === id
-                    ? normalizedCardDisplayList[currentActiveId - 1]?.id ?? normalizedCardDisplayList[0]?.id ?? ''
-                    : activeId;
+                const idMap = idList.reduce((prev, cur) => {
+                    prev[cur] = cur;
+                    return prev;
+                }, {} as Record<string, string>);
+                const activeIdPosition = cardDisplayList.findIndex(card => card.id === activeId);
+                const afterActiveCardList = cardDisplayList.slice(activeIdPosition);
+                const nextCardList = cardList.filter(card => !(typeof idMap[card.id] === 'string'));
+                const nextCardDisplayList = cardDisplayList.filter(card => !(typeof idMap[card.id] === 'string'));
+                const nextAfterActiveCardList = afterActiveCardList.filter(card => !(typeof idMap[card.id] === 'string'));
+                const nextActiveId = nextAfterActiveCardList[0]?.id ?? nextCardList[0]?.id;
 
                 return {
+                    isListDirty: true,
                     activeId: nextActiveId,
-                    cardList: normalizedCardList,
-                    cardDisplayList: normalizedCardDisplayList,
+                    cardList: nextCardList,
+                    cardDisplayList: nextCardDisplayList,
                 };
             });
         },
@@ -372,6 +377,7 @@ export const useCardList = create<
                     ];
 
                 return {
+                    isListDirty: true,
                     activeId: clonedId,
                     pendingActiveCard: clonedCard,
                     cardList: nextCardList,

@@ -625,8 +625,8 @@ const DelayedImage = ({
     const [internalLink, setInternalLink] = useState('https://imgur.com/pdSVzUZ.png');
     const imageRef = useRef<HTMLImageElement>(null);
     const [calculatedStyle, setCalculatedStyle] = useState(() => calculateThumbArtStyle(
-        imageRef.current?.naturalWidth ?? 1,
-        imageRef.current?.naturalHeight ?? 1,
+        1,
+        1,
         canvasCoordinate,
         baseCrop,
         fit,

@@ -44,8 +44,13 @@ const Quote = ({
     </StyledQuoteContainer>;
 };
 
-const currentReminder = '21/11/2026';
+const currentReminder = '23/11/2026';
 const feedbackList: Feedback[] = [
+    {
+        author: 'RedSupernovaDragon at Nov 23, 2026',
+        question: 'A button in the Manager to quickly delete cards would be helpful, since I plan to create and download them en masse, for example, Dark Magician and Blue-Eyes 30+ variations.',
+        answer: 'Hi, now you can select multiple (or all) cards in the manager to delete them in batch.'
+    },
     {
         author: 'Vendoz at Nov 21, 2026',
         question: 'Hello Lau, just found a solution for my own problem, by clearing the cache and pressing the paintbrush ^_^',

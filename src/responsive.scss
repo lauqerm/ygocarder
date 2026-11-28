@@ -555,6 +555,10 @@
 			.app-logo {
 				grid-row: span 2;
 			}
+			.app-header-toolbar {
+				grid-column: span 5;
+				padding-left: var(--spacing-xs);
+			}
 			.app-description {
 				grid-column: span 5;
 				.app-contribution {
@@ -565,8 +569,6 @@
 				}
 			}
 			.app-header-button {
-				padding-left: var(--spacing-xs);
-				margin-left: var(--spacing-xs);
 				text-align: center;
 			}
 		}
